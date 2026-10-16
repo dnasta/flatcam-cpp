@@ -1,0 +1,29 @@
+FlatCAM-cpp
+Copyright (c) 2026 dnasta (ver LICENSE, licencia MIT).
+
+Este proyecto es un port a C++17 / Qt6 de FlatCAM 2024.4 beta. Es una obra derivada de FlatCAM, que
+también se distribuye bajo licencia MIT. Se conservan los avisos de copyright de los autores originales:
+
+  FlatCAM: 2D Post-processing for Manufacturing (http://flatcam.org)
+  Copyright (c) 2014-2016 Juan Pablo Caram                      (autor original, MIT)
+
+  Rama FlatCAM Beta (versiones 8.9xx y 2024.x)
+  Copyright (c) 2019-2024 Marius Adrian Stanciu y colaboradores (MIT)
+  Con aportes, entre otros, de Matthieu Berthomé y Dennis Hayrullin, según los encabezados
+  "File Author" de los archivos originales.
+
+Los fuentes originales de referencia están en reference/FlatCAM_2024_4/ y conservan sus encabezados.
+
+Texto de la licencia MIT de FlatCAM (el mismo que figura en la ventana "Acerca de" del programa):
+
+  Se concede permiso, libre de cargos, a cualquier persona que obtenga una copia de este software y de
+  los archivos de documentación asociados (el "Software"), a utilizar el Software sin restricción,
+  incluyendo sin limitación los derechos a usar, copiar, modificar, fusionar, publicar, distribuir,
+  sublicenciar y/o vender copias del Software, y a permitir a las personas a las que se les proporcione
+  el Software a hacer lo mismo, sujeto a las siguientes condiciones: el aviso de copyright anterior y
+  este aviso de permiso se incluirán en todas las copias o partes sustanciales del Software.
+
+  EL SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA O IMPLÍCITA.
+
+Dependencias de este proyecto (cada una con su propia licencia):
+  GEOS (LGPL-2.1), Qt6 (LGPL-3.0 / GPL / comercial), GoogleTest (BSD-3-Clause, solo para tests).
