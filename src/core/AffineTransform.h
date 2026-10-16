@@ -9,8 +9,14 @@
 namespace flatcam {
 
 /**
- * @brief Transformación afín 2D representada por la matriz
- * \f$\begin{pmatrix} a & b & x_{off} \\ d & e & y_{off} \\ 0 & 0 & 1 \end{pmatrix}\f$.
+ * @brief Transformación afín 2D representada por una matriz de 3x3 (coeficientes a, b, d, e y
+ * desplazamientos xoff, yoff).
+ *
+ * @code
+ *   | a  b  xoff |       x' = a*x + b*y + xoff
+ *   | d  e  yoff |       y' = d*x + e*y + yoff
+ *   | 0  0   1   |
+ * @endcode
  *
  * Reproduce las funciones `shapely.affinity.scale/rotate/skew/translate` que FlatCAM usa en
  * `camlib.py`, incluido el detalle de anular los valores de seno/coseno menores a 2.5e-16 para que las
