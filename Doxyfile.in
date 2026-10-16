@@ -2,12 +2,12 @@
 PROJECT_NAME           = "FlatCAM-cpp"
 PROJECT_NUMBER         = @PROJECT_VERSION@
 PROJECT_BRIEF          = "Port a C++17 / Qt6 de FlatCAM 2024.4"
-OUTPUT_DIRECTORY       = @CMAKE_CURRENT_BINARY_DIR@/doxygen
+OUTPUT_DIRECTORY       = "@CMAKE_CURRENT_BINARY_DIR@/doxygen"
 OUTPUT_LANGUAGE        = Spanish
-INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/src \
-                         @CMAKE_CURRENT_SOURCE_DIR@/docs \
-                         @CMAKE_CURRENT_SOURCE_DIR@/README.md
-USE_MDFILE_AS_MAINPAGE = @CMAKE_CURRENT_SOURCE_DIR@/README.md
+# Las rutas van entre comillas porque pueden contener espacios.
+INPUT                  = "@CMAKE_CURRENT_SOURCE_DIR@/src" \
+                         "@CMAKE_CURRENT_SOURCE_DIR@/README.md"
+USE_MDFILE_AS_MAINPAGE = "@CMAKE_CURRENT_SOURCE_DIR@/README.md"
 FILE_PATTERNS          = *.h *.dox *.md
 RECURSIVE              = YES
 EXCLUDE_PATTERNS       = */internal/*
