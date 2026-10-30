@@ -11,8 +11,8 @@ clase del port indica en su documentación de qué archivo y función de Python 
 | Fase | Contenido | Estado |
 |---|---|---|
 | 1 | CMake, Doxygen y núcleo de geometría (`Shape`, `Geometry`, `ArcMath`, `AffineTransform`) | Hecha |
-| 2 | Parsers de Gerber y Excellon, con tests contra archivos reales | Pendiente |
-| 3 | Herramientas (Isolation, NCC, Paint, Drilling, CutOut, PCB a 2 caras) y salida de G-code | Pendiente |
+| 2 | Parsers de Gerber y Excellon, con tests contra archivos reales | Hecha |
+| 3 | Herramientas (Isolation, NCC, Paint, Drilling, CutOut, PCB a 2 caras) y salida de G-code | Siguiente |
 | 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | Pendiente |
 | 5 | Herramientas secundarias y postprocesadores restantes | Pendiente |
 
@@ -23,7 +23,10 @@ Quedan fuera del alcance los editores de Gerber, Geometría y Excellon.
 ```
 src/core/        Núcleo sin dependencias de Qt (Shape, Geometry, ArcMath, AffineTransform, Types)
 src/core/internal/  Detalles internos de GEOS (no forman parte de la API)
-tests/           Tests unitarios (GoogleTest); tests/golden_data.h tiene valores de referencia de Shapely
+src/parsers/     Lectores de Gerber, Excellon y macros de apertura
+tests/           Tests unitarios (GoogleTest); los golden_*.h tienen valores de referencia de Shapely y de los
+                 parsers originales de FlatCAM
+tests/data/      Gerber, Excellon y G-code reales de un proyecto (más parámetros en PARAMETROS.md)
 tests/tools/     Script que regenera esos valores de referencia
 reference/       Fuentes originales de FlatCAM 2024.4 (solo lectura)
 ```
@@ -70,9 +73,10 @@ open build/doxygen/html/index.html      # en Linux: xdg-open
 
 ## Cómo se verifica
 
-Los valores esperados de los tests no se escribieron a mano: `tests/tools/gen_golden.py` los calcula
-con Shapely y numpy, usando copias fieles de las funciones de `camlib.py`. Así se comprueba que el port
-reproduce los resultados del programa original (áreas de buffers, uniones, transformaciones, arcos).
+Los valores esperados de los tests no se escribieron a mano. `tests/tools/gen_golden.py` los calcula con Shapely y
+numpy (buffers, uniones, transformaciones, arcos) y los oráculos `oracle_gerber.py` y `oracle_excellon.py` ejecutan
+los parsers **originales** de FlatCAM sobre los archivos de `tests/data/`. Así se comprueba que el port reproduce
+los resultados del programa original.
 
 ## Licencia
 
