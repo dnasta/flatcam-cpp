@@ -92,6 +92,19 @@ public:
                          const std::vector<std::vector<Point2D>>& holes = {});
 
     /**
+     * @brief Crea un rectángulo alineado con los ejes, como `shapely.geometry.box(..., ccw=True)`.
+     *
+     * Los vértices salen en el mismo orden que en Shapely: `(xmax, ymin)`, `(xmax, ymax)`, `(xmin, ymax)`,
+     * `(xmin, ymin)`.
+     * @param xmin Límite izquierdo.
+     * @param ymin Límite inferior.
+     * @param xmax Límite derecho.
+     * @param ymax Límite superior.
+     * @return Polígono rectangular.
+     */
+    static Shape box(double xmin, double ymin, double xmax, double ymax);
+
+    /**
      * @brief Crea un disco aproximado por un polígono, como `Point(c).buffer(r, resolution)` en Shapely.
      * @param center Centro.
      * @param radius Radio.

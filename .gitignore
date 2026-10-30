@@ -5,3 +5,5 @@ cmake-build-*/
 .vscode/
 .idea/
 *.user
+__pycache__/
+*.pyc

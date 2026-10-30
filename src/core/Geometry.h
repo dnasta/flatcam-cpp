@@ -39,7 +39,8 @@ struct ToolEntry {
  *   forman parte de esta clase; esa responsabilidad pasa a las capas superiores.
  *
  * Las subclases deben reimplementar @ref scale y @ref offset, que en la base no hacen nada (igual que
- * en `camlib.py`).
+ * en `camlib.py`). Los demás métodos de transformación también son virtuales: @ref Gerber y @ref Excellon
+ * los redefinen para mover además sus datos propios (aperturas, taladros).
  */
 class Geometry {
 public:
@@ -206,21 +207,21 @@ public:
      * @param objUnits Unidades de destino.
      * @return Factor de escala aplicado (1.0 si las unidades ya coinciden).
      */
-    double convertUnits(Units objUnits);
+    virtual double convertUnits(Units objUnits);
 
     /**
      * @brief Refleja la geometría alrededor de un eje (`mirror`).
      * @param axis Eje de reflexión.
      * @param point Punto por el que pasa el eje.
      */
-    void mirror(Axis axis, const Point2D& point);
+    virtual void mirror(Axis axis, const Point2D& point);
 
     /**
      * @brief Rota la geometría (`rotate`).
      * @param angle Ángulo en grados (antihorario positivo).
      * @param point Centro de giro.
      */
-    void rotate(double angle, const Point2D& point);
+    virtual void rotate(double angle, const Point2D& point);
 
     /**
      * @brief Inclina la geometría (`skew`).
@@ -228,7 +229,7 @@ public:
      * @param angleY Ángulo de cizalla en Y, en grados.
      * @param point Punto fijo.
      */
-    void skew(double angleX, double angleY, const Point2D& point);
+    virtual void skew(double angleX, double angleY, const Point2D& point);
 
     /**
      * @brief Aplica un buffer a cada figura (`buffer`).
@@ -236,7 +237,7 @@ public:
      * @param join Tipo de unión de esquinas.
      * @param factor Si es `true`, en lugar de un buffer escala cada figura respecto de su centro.
      */
-    void buffer(double distance, JoinStyle join, bool factor);
+    virtual void buffer(double distance, JoinStyle join, bool factor);
 
 private:
     /** @brief Aplica @p fn a cada figura de la geometría sólida (o de las herramientas en multigeo). */

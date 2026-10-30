@@ -7,6 +7,9 @@ add_library(flatcam_core STATIC
     core/Shape.cpp
     core/Types.cpp
     core/internal/GeosContext.cpp
+    parsers/ApertureMacro.cpp
+    parsers/Gerber.cpp
+    parsers/Excellon.cpp
 )
 add_library(flatcam::core ALIAS flatcam_core)
 
