@@ -10,6 +10,8 @@ add_library(flatcam_core STATIC
     parsers/ApertureMacro.cpp
     parsers/Gerber.cpp
     parsers/Excellon.cpp
+    cam/PyNumber.cpp
+    cam/Preprocessor.cpp
 )
 add_library(flatcam::core ALIAS flatcam_core)
 
