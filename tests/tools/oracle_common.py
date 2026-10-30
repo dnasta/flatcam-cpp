@@ -43,6 +43,10 @@ def make_stub(name, **attrs):
 
 
 def install_stubs():
+    # El original usa nombres que NumPy 2 eliminó.
+    for old, new in (('Inf', np.inf), ('NaN', np.nan)):
+        if not hasattr(np, old):
+            setattr(np, old, new)
     """Reemplaza las dependencias que no hacen falta para parsear."""
     for name in ["PyQt5", "PyQt5.QtWidgets", "PyQt5.QtCore", "PyQt5.QtGui", "rtree", "lxml", "lxml.etree",
                  "descartes", "descartes.patch", "rasterio", "rasterio.features", "ezdxf", "ortools",
