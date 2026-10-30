@@ -869,4 +869,141 @@ bool Gerber::parseLines(const std::vector<std::string>& glines) {
     return true;
 }
 
+// ------------------------------------------------------------------------- transformaciones
+
+template <typename Fn>
+void Gerber::transformAll(Fn fn) {
+    for (Shape& s : solidGeometry()) s = fn(s);
+    for (Shape& s : followGeometry()) s = fn(s);
+    for (auto& [id, ap] : apertures_) {
+        for (ApertureGeometry& g : ap.geometry) {
+            if (g.solid) g.solid = fn(*g.solid);
+            if (g.follow) g.follow = fn(*g.follow);
+            if (g.clear) g.clear = fn(*g.clear);
+        }
+    }
+}
+
+void Gerber::scale(double xfactor, double yfactor, const std::optional<Point2D>& point) {
+    if (xfactor == 0 && yfactor == 0) return;
+    const Point2D origin = point.value_or(Point2D{0, 0});
+    transformAll([&](const Shape& s) { return s.transform(AffineTransform::scaling(xfactor, yfactor, origin)); });
+    for (auto& [id, ap] : apertures_) {
+        if (ap.type == "R" || ap.type == "O") {
+            ap.width *= xfactor;
+            ap.height *= xfactor;
+        } else if (ap.type == "P") {
+            ap.diam *= xfactor;
+        }
+        if (ap.size) ap.size = *ap.size * xfactor;
+    }
+}
+
+void Gerber::offset(const Point2D& vect) {
+    if (vect.x == 0 && vect.y == 0) return;
+    transformAll([&](const Shape& s) { return s.translate(vect.x, vect.y); });
+}
+
+void Gerber::mirror(Axis axis, const Point2D& point) {
+    transformAll([&](const Shape& s) { return s.transform(AffineTransform::mirror(axis, point)); });
+}
+
+void Gerber::rotate(double angle, const Point2D& point) {
+    if (angle == 0) return;
+    transformAll([&](const Shape& s) { return s.rotate(angle, point); });
+}
+
+void Gerber::skew(double angleX, double angleY, const Point2D& point) {
+    if (angleX == 0 && angleY == 0) return;
+    transformAll([&](const Shape& s) { return s.skew(angleX, angleY, point); });
+}
+
+void Gerber::buffer(double distance, JoinStyle join, bool factor) {
+    if (distance == 0) return;
+    const int steps = options_.circleSteps;
+
+    if (!factor) {
+        auto bufferGeom = [&](const Shape& s) { return s.buffer(distance, steps, join); };
+        for (Shape& s : solidGeometry()) s = bufferGeom(s);
+        for (auto& [id, ap] : apertures_) {
+            for (ApertureGeometry& g : ap.geometry) {
+                if (g.solid) g.solid = bufferGeom(*g.solid);
+                if (g.clear) g.clear = bufferGeom(*g.clear);
+            }
+            if (ap.type == "R" || ap.type == "O") {
+                ap.width += distance * 2;
+                ap.height += distance * 2;
+            } else if (ap.type == "P") {
+                ap.diam += distance * 2;
+            }
+            if (ap.size) ap.size = *ap.size + distance * 2;
+        }
+        return;
+    }
+
+    // Con factor: se escalan las aperturas y se rehace la geometría desde las líneas centrales.
+    for (auto& [id, ap] : apertures_) {
+        if (ap.type == "R" || ap.type == "O") {
+            ap.width *= distance;
+            ap.height *= distance;
+        } else if (ap.type == "P") {
+            ap.diam *= distance;
+        }
+        if (ap.size) ap.size = *ap.size * distance;
+        if (!ap.hasGeometry) continue;
+        if (!ap.size) {
+            Logger::error("Gerber buffer: la apertura " + id + " no tiene tamaño");
+            return;
+        }
+        std::vector<ApertureGeometry> rebuilt;
+        for (const ApertureGeometry& g : ap.geometry) {
+            ApertureGeometry n;
+            if (g.follow) {
+                n.follow = g.follow;
+                const double size = *ap.size;
+                if (g.follow->type() == ShapeType::Point) {
+                    if (ap.type == "C") {
+                        n.solid = g.follow->buffer(size / 1.9999, steps);
+                    } else if (ap.type == "R") {
+                        const Point2D c = g.follow->coordinates().front();
+                        n.solid = Shape::box(c.x - ap.width / 2, c.y - ap.height / 2, c.x + ap.width / 2,
+                                             c.y + ap.height / 2);
+                    } else {
+                        Logger::warning("Gerber buffer: tipo de apertura no soportado: " + ap.type);
+                    }
+                } else {
+                    n.solid = g.follow->buffer(size / 1.9999, steps);
+                }
+            }
+            if (g.clear) n.clear = g.clear;
+            rebuilt.push_back(n);
+        }
+        ap.geometry = rebuilt;
+    }
+    ShapeList solids;
+    for (const auto& [id, ap] : apertures_) {
+        for (const ApertureGeometry& g : ap.geometry) {
+            if (g.solid) solids.push_back(*g.solid);
+        }
+    }
+    Shape result = Shape::collection(solids).buffer(0.000001).buffer(-0.000001);
+    solidGeometry() = {result};
+}
+
+Shape Gerber::getBoundingBox(double margin, bool rounded) const {
+    ShapeList parts;
+    for (const Shape& s : solidGeometry()) {
+        if (!s.isEmpty()) parts.push_back(s);
+    }
+    if (parts.empty()) return Shape();
+    const auto b = Shape::unaryUnion(parts).bounds();
+    if (!b) return Shape();
+    Shape bbox = Shape::box(b->xmin, b->ymin, b->xmax, b->ymax).buffer(margin);
+    if (!rounded) {
+        const auto bb = bbox.bounds();
+        if (bb) bbox = Shape::box(bb->xmin, bb->ymin, bb->xmax, bb->ymax);
+    }
+    return bbox;
+}
+
 }  // namespace flatcam

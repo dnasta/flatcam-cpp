@@ -56,15 +56,16 @@ logo) y **CutOut** → **CNC Job** con G-code. Taladros y alineación con **PCB 
 | Fase | Contenido | Estado |
 |---|---|---|
 | 1 | CMake, Doxygen y núcleo de geometría | **Hecha**, verificada en macOS (arm64) y Linux |
-| 2 | Parsers de Gerber y Excellon con tests contra archivos reales | **Hecha** (lectura; falta lo propio de cada objeto, ver sección 10) |
-| 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | **Siguiente** |
+| 2 | Parsers de Gerber y Excellon con tests contra archivos reales | **Hecha** |
+| 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | **En curso** (hecho: transformaciones de Gerber) |
 | 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | Pendiente |
 | 5 | Herramientas secundarias y postprocesadores restantes | Pendiente |
 
 Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (AppleClang, GEOS 3.15). Doxygen genera
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
-Fase 2: 84 tests pasan en Linux (GEOS 3.12); falta confirmarlo en macOS. Los parsers coinciden con los originales de
-FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
+Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
+con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
+Fase 3 (hasta ahora): 111 tests en Linux; se sumaron las transformaciones de `Gerber` (24 casos contra el original).
 
 ## 5. Arquitectura
 
@@ -86,6 +87,7 @@ src/parsers/           Lectores de archivos (sin Qt, derivan de Geometry)
   ApertureMacro.*        Macros de apertura de Gerber (`%AM`), con su evaluador de expresiones
   Gerber.*               Parser de Gerber RS-274X (aperturas, trazos, arcos, regiones, polaridad)
   Excellon.*             Parser de Excellon (herramientas, agujeros, ranuras) y sus transformaciones
+  (Gerber.* también trae scale, offset, mirror, rotate, skew, buffer y getBoundingBox)
 tests/                 GoogleTest; golden_*.h generados; data/ con archivos reales; tools/ con los oráculos
 reference/             Fuentes Python originales (solo lectura)
 ```
@@ -144,6 +146,8 @@ Reglas de calidad (deben cumplirse antes de dar una tanda por terminada):
   Requieren `python3 -m pip install shapely numpy` (Shapely 2.x en vez de 1.8.4; no cambia los resultados). No
   editar los `golden_*.h` a mano. Para cada herramienta de la fase 3 conviene hacer un oráculo igual (ver
   `tests/tools/oracle_common.py`) además de comparar contra los `.nc` de `tests/data/`.
+- `tests/tools/oracle_gerber_ops.py` genera `tests/golden_gerber_ops.h`: aplica las operaciones originales (scale, offset,
+  mirror, rotate, skew, buffer con y sin factor) y resume el resultado (polígonos tras unir, área, límites, aperturas).
 - **Fase 3:** comparar el G-code generado contra los `.nc` de `tests/data/` (ver sección 8).
 - Cuando se porte una función de `camlib.py` o de las herramientas, leer el original **completo** y respetar sus
   detalles numéricos (redondeos, tolerancias, orden de operaciones): el G-code debe coincidir.
@@ -228,11 +232,14 @@ Decisiones y desvíos (también documentados en los encabezados):
 - Los parsers usan `std::regex` (más lento con `libc++` que con `libstdc++`); si en macOS el parseo de `B_Cu` (15.000
   líneas) tarda varios segundos, agregar un despacho por primer carácter.
 
-### Falta de la fase 2 (hacerlo al empezar la fase 3)
+### Transformaciones de `Gerber` (hechas al empezar la fase 3)
 
-Los métodos propios de `Gerber` que sobrescriben a `Geometry`: `scale`, `offset`, `mirror`, `rotate`, `skew`, `buffer`,
-`convert_units`, `bounds`, `get_bounding_box` (`ParseGerber.py` líneas ~1689-2506). Mueven `solidGeometry`,
-`followGeometry` y la geometría de cada apertura. El usuario necesita `mirror` (el logo sale reflejado en X).
+`scale`, `offset`, `mirror`, `rotate`, `skew`, `buffer` y `getBoundingBox` mueven la geometría sólida, la de seguimiento y la
+de cada apertura, como el original. `convert_units` y `bounds` no hacen falta: los de `Geometry` ya hacen lo mismo.
+Desvíos: `scale` no multiplica `nVertices` de las aperturas P (el original lo dejaba como número no entero); en `buffer`
+con factor, las aperturas de tipo no soportado quedan sin geometría sólida en vez de abortar. `buffer` se aplica
+polígono por polígono (Shapely 1.8); el oráculo usa Shapely 2, que lo aplica a todo junto, por eso los tests comparan
+las figuras después de unirlas.
 
 ### Fase 3: qué portar (todo en `reference/FlatCAM_2024_4/FlatCAM/`)
 
@@ -248,7 +255,7 @@ Los métodos propios de `Gerber` que sobrescriben a `Geometry`: `scale`, `offset
 | CutOut | `appTools/ToolCutOut.py` | 2.465 |
 | PCB a 2 caras | `appTools/ToolDblSided.py` | 975 |
 
-Orden sugerido: (1) métodos de `Gerber`; (2) `CNCjob` + postprocesador `default` y probarlo con el taladro
+Orden sugerido: (1) métodos de `Gerber` (hecho); (2) `CNCjob` + postprocesador `default` y probarlo con el taladro
 (`DosCau_PPal-Drill.nc`, el más simple), luego `Alinea` y `Edge_Cuts` (CutOut); (3) `GRBL_laser` + NCC y Paint
 con `B_Cu` y `Logo`. Parámetros exactos en `tests/data/PARAMETROS.md`. El G-code de referencia viene de la 8.994:
 confirmar si la 2024.4 da lo mismo.
@@ -266,4 +273,3 @@ simplejson→nlohmann/json, qrcode→libqrencode. `winreg` y `tkinter` no se por
 3. Taladro `(0, 0)` en `Alinea` (el G-code taladra 5 posiciones, el job cuenta 4): aclarar leyendo `ToolDblSided.py`.
 4. Confirmar si Isolation entra en el alcance.
 5. Elegir la estrategia de render del canvas (`QOpenGLWidget` o `QGraphicsView`) al llegar a la fase 4.
-6. Confirmar en macOS los 84 tests de la fase 2 y medir el tiempo de parseo de `B_Cu`.

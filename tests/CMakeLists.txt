@@ -17,6 +17,7 @@ add_executable(core_tests
     test_geometry.cpp
     test_aperture_macro.cpp
     test_gerber.cpp
+    test_gerber_ops.cpp
     test_excellon.cpp
 )
 target_link_libraries(core_tests PRIVATE flatcam::core GTest::gtest_main)
