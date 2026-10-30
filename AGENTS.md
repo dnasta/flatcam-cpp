@@ -56,13 +56,15 @@ logo) y **CutOut** → **CNC Job** con G-code. Taladros y alineación con **PCB 
 | Fase | Contenido | Estado |
 |---|---|---|
 | 1 | CMake, Doxygen y núcleo de geometría | **Hecha**, verificada en macOS (arm64) y Linux |
-| 2 | Parsers de Gerber y Excellon con tests contra archivos reales | **Siguiente** |
-| 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | Pendiente |
+| 2 | Parsers de Gerber y Excellon con tests contra archivos reales | **Hecha** (lectura; falta lo propio de cada objeto, ver sección 10) |
+| 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | **Siguiente** |
 | 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | Pendiente |
 | 5 | Herramientas secundarias y postprocesadores restantes | Pendiente |
 
 Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (AppleClang, GEOS 3.15). Doxygen genera
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
+Fase 2: 84 tests pasan en Linux (GEOS 3.12); falta confirmarlo en macOS. Los parsers coinciden con los originales de
+FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
 
 ## 5. Arquitectura
 
@@ -80,7 +82,11 @@ src/core/              Núcleo (biblioteca estática flatcam_core, namespace fla
   ArcMath.*              arc, arc2, arc_angle, three_point_circle, distance (de camlib.py)
   Geometry.*             Port de camlib.Geometry (contenedor de geometría sólida)
   internal/GeosContext.* Contexto GEOS por hilo (no es API pública)
-tests/                 GoogleTest; golden_data.h generado; data/ con archivos reales
+src/parsers/           Lectores de archivos (sin Qt, derivan de Geometry)
+  ApertureMacro.*        Macros de apertura de Gerber (`%AM`), con su evaluador de expresiones
+  Gerber.*               Parser de Gerber RS-274X (aperturas, trazos, arcos, regiones, polaridad)
+  Excellon.*             Parser de Excellon (herramientas, agujeros, ranuras) y sus transformaciones
+tests/                 GoogleTest; golden_*.h generados; data/ con archivos reales; tools/ con los oráculos
 reference/             Fuentes Python originales (solo lectura)
 ```
 
@@ -131,7 +137,14 @@ Reglas de calidad (deben cumplirse antes de dar una tanda por terminada):
 - `tests/tools/gen_golden.py` calcula con **Shapely y numpy** los valores esperados (áreas de buffers, uniones,
   transformaciones, arcos) y escribe `tests/golden_data.h`. Las funciones de arcos son copias fieles de `camlib.py`.
   Para regenerar: `python3 -m pip install shapely numpy` y `python3 tests/tools/gen_golden.py`. No editar a mano.
-- **Fase 2 y 3:** comparar contra los archivos reales de `tests/data/` (ver sección 8).
+- **Oráculos de Python (fase 2):** `tests/tools/oracle_gerber.py` y `oracle_excellon.py` ejecutan el parser
+  **original** de FlatCAM (con las dependencias de Qt, rtree, etc. reemplazadas por módulos vacíos; ver
+  `oracle_common.py`) sobre `tests/data/` y escriben `tests/golden_gerber.h` y `tests/golden_excellon.h`. Los tests
+  de C++ comparan áreas, límites, cantidad de figuras, aperturas, taladros y 1.200 puntos de muestra por archivo.
+  Requieren `python3 -m pip install shapely numpy` (Shapely 2.x en vez de 1.8.4; no cambia los resultados). No
+  editar los `golden_*.h` a mano. Para cada herramienta de la fase 3 conviene hacer un oráculo igual (ver
+  `tests/tools/oracle_common.py`) además de comparar contra los `.nc` de `tests/data/`.
+- **Fase 3:** comparar el G-code generado contra los `.nc` de `tests/data/` (ver sección 8).
 - Cuando se porte una función de `camlib.py` o de las herramientas, leer el original **completo** y respetar sus
   detalles numéricos (redondeos, tolerancias, orden de operaciones): el G-code debe coincidir.
 
@@ -193,25 +206,52 @@ Hallazgos que condicionan el trabajo:
   `README.md`.
 - Claude Code lee `CLAUDE.md`, no `AGENTS.md`; por eso `CLAUDE.md` solo importa a este archivo con `@AGENTS.md`.
 
-## 10. Siguiente paso: fase 2 (parsers de Gerber y Excellon)
+## 10. Fase 2 hecha y siguiente paso: fase 3
 
-Qué portar y desde dónde (todo en `reference/FlatCAM_2024_4/FlatCAM/`):
+### Lo que quedó de la fase 2 (`src/parsers/`)
+
+| Clase | Origen en Python | Notas |
+|---|---|---|
+| `ApertureMacro` | `camlib.py` (clase en la línea ~75) | 8 primitivas y evaluador propio de expresiones (variables solo `$` + dígitos) |
+| `Gerber` | `appParsers/ParseGerber.py` | `parse_lines` portado con el mismo orden de comprobaciones; guarda la geometría de cada apertura |
+| `Excellon` | `appParsers/ParseExcellon.py` | incluye `scale`, `offset`, `mirror`, `rotate`, `skew` y `convertUnits` de los taladros |
+
+Decisiones y desvíos (también documentados en los encabezados):
+
+- Se reproducen comportamientos raros del original: `parse_number` con `"L"` divide por `10^(dígitos - enteros)`; en un
+  Excellon sin cabecera, volver a elegir una herramienta pisa su diámetro con uno inventado (en pulgadas, porque
+  compara `excellon_units` con `"MM"` cuando vale `"METRIC"`); los trazos se engrosan con `ancho / 1.999`.
+- `extra_buffering` se aplica polígono por polígono (como Shapely 1.8). La lista `solidGeometry()` puede traer
+  polígonos vacíos (parte que desaparece al achicar 1e-7); los tests los descartan, igual que el oráculo.
+- `Shape::unite` y `difference` devuelven directo el otro operando cuando uno está vacío (con GEOS 3.12 aparecían
+  miembros vacíos que el original no tiene).
+- Los parsers usan `std::regex` (más lento con `libc++` que con `libstdc++`); si en macOS el parseo de `B_Cu` (15.000
+  líneas) tarda varios segundos, agregar un despacho por primer carácter.
+
+### Falta de la fase 2 (hacerlo al empezar la fase 3)
+
+Los métodos propios de `Gerber` que sobrescriben a `Geometry`: `scale`, `offset`, `mirror`, `rotate`, `skew`, `buffer`,
+`convert_units`, `bounds`, `get_bounding_box` (`ParseGerber.py` líneas ~1689-2506). Mueven `solidGeometry`,
+`followGeometry` y la geometría de cada apertura. El usuario necesita `mirror` (el logo sale reflejado en X).
+
+### Fase 3: qué portar (todo en `reference/FlatCAM_2024_4/FlatCAM/`)
 
 | Qué | Origen en Python | Líneas |
 |---|---|---|
-| Macros de apertura (`ApertureMacro`) | `camlib.py` (clase en la línea ~75) | ~420 |
-| Parser de Gerber (`Gerber(Geometry)`) | `appParsers/ParseGerber.py` | 2.536 |
-| Parser de Excellon (`Excellon(Geometry)`) | `appParsers/ParseExcellon.py` | 1.597 |
-| Objetos con lógica propia (scale, offset, mirror, buffer de aperturas...) | `appObjects/FlatCAMGerber.py`, `FlatCAMExcellon.py` | 1.550 / 1.302 |
+| Generación de G-code (`CNCjob`) | `camlib.py` (clase desde la línea ~2619) | ~5.400 |
+| Postprocesadores `default` y `GRBL_laser` | `preprocessors/default.py`, `GRBL_laser.py`, `appPreProcessor.py` | 253 / 110 / 164 |
+| Objetos Geometry y CNCJob | `appObjects/FlatCAMGeometry.py`, `FlatCAMCNCJob.py` | 3.310 / 2.594 |
+| NCC | `appTools/ToolNCC.py` | 4.607 |
+| Paint | `appTools/ToolPaint.py` | 3.261 |
+| Isolation | `appTools/ToolIsolation.py` | 3.604 |
+| Perforación | `appTools/ToolDrilling.py` | 2.685 |
+| CutOut | `appTools/ToolCutOut.py` | 2.465 |
+| PCB a 2 caras | `appTools/ToolDblSided.py` | 975 |
 
-Plan: clases `ApertureMacro`, `Gerber` y `Excellon` en `src/parsers/` (o dentro de `src/core/`), derivadas de
-`Geometry`, sin Qt. Para el Gerber de KiCad hacen falta: formato `FS`, unidades `MO`, aperturas `AD` (C, R, O, P y
-macros `AM` con primitivas de círculo, línea de centro/vector y polígono), regiones `G36/G37`, arcos `G02/G03` con
-`G74/G75`, `D01/D02/D03`, polaridad `LP`, y los atributos X2 (se leen y se ignoran). Para el Excellon de KiCad:
-`M48`, `METRIC`, `FMAT`, definición de herramientas `TnCd`, coordenadas decimales absolutas y `G05`.
-Tests: parsear cada archivo de `tests/data/` y comparar áreas, límites, cantidad de figuras y agujeros contra lo que
-calcula el FlatCAM original (se puede correr el Python original en una máquina con PyQt5, Shapely 1.8.4 y las
-demás dependencias, o usar los datos del G-code).
+Orden sugerido: (1) métodos de `Gerber`; (2) `CNCjob` + postprocesador `default` y probarlo con el taladro
+(`DosCau_PPal-Drill.nc`, el más simple), luego `Alinea` y `Edge_Cuts` (CutOut); (3) `GRBL_laser` + NCC y Paint
+con `B_Cu` y `Logo`. Parámetros exactos en `tests/data/PARAMETROS.md`. El G-code de referencia viene de la 8.994:
+confirmar si la 2024.4 da lo mismo.
 
 Fases 3 a 5: ver la tabla de la sección 4. Dependencias de Python a reemplazar: Shapely→GEOS (hecho), numpy→Eigen
 o `std::vector`, vispy/OpenGL→`QOpenGLWidget`/`QGraphicsView`, ezdxf→libdxfrw, rtree→Boost.Geometry,
@@ -226,3 +266,4 @@ simplejson→nlohmann/json, qrcode→libqrencode. `winreg` y `tkinter` no se por
 3. Taladro `(0, 0)` en `Alinea` (el G-code taladra 5 posiciones, el job cuenta 4): aclarar leyendo `ToolDblSided.py`.
 4. Confirmar si Isolation entra en el alcance.
 5. Elegir la estrategia de render del canvas (`QOpenGLWidget` o `QGraphicsView`) al llegar a la fase 4.
+6. Confirmar en macOS los 84 tests de la fase 2 y medir el tiempo de parseo de `B_Cu`.
