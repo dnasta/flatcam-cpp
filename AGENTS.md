@@ -167,10 +167,15 @@ Hallazgos que condicionan el trabajo:
   ("luz de noche Pascual"), no del dosificador de los `.nc`. Coinciden NCC/Paint con láser (0,1 mm, 80 %, método
   estándar, margen 0, conectar y contorno, `GRBL_laser`, avance 500, potencia 300) y el paso medido en el G-code
   (0,02 mm); no coinciden los Z de corte, avances y brechas del CutOut y el taladro.
-- El `.FlatPrj` es JSON, comprimido con LZMA si está activa la opción de guardar comprimido (se abre con `json` o
-  `lzma` de Python). El usuario indicó la ruta de uno en su Mac, que el entorno del chat **no puede leer**; hay
-  que subirlo al repo (`tests/data/`) o adjuntarlo al chat. Pidió el del proyecto *luz de noche Pascual*, no el del
-  dosificador.
+- El `.FlatPrj` es JSON, comprimido con LZMA si está activa la opción de guardar comprimido (el valor por defecto).
+  Los del dosificador pesan ~1 GB (no entran en GitHub ni en el chat) y el entorno del chat no puede leer el disco
+  del usuario. Por eso se extraen **los parámetros en su Mac** con `tools/extract_flatprj_params.py` (solo
+  biblioteca estándar, lectura en streaming, descarta geometría y G-code; filtra las opciones globales por
+  privacidad) y se sube el JSON chico a `tests/data/`. El proyecto que corresponde a los `.nc` es
+  `dosificador caudalimetro - PCB principal.FlatPrj` (carpeta `cnc/`, guardado el 12/11/2024), no los de
+  `FlatCAM v0.01 alpha`, `PCB reles` ni `PCB transistores`. El script tiene su test en
+  `tests/tools/test_extract_flatprj_params.py`. Las capturas que pasó el usuario eran del proyecto *luz de noche
+  Pascual*, no del dosificador.
 - `DosCau_PPal-B_Cu.nc` pesa 15,7 MB (502.025 líneas): sirve también de prueba de rendimiento.
 
 ## 9. Flujo de entrega y Git
@@ -216,8 +221,10 @@ simplejson→nlohmann/json, qrcode→libqrencode. `winreg` y `tkinter` no se por
 
 ## 11. Pendientes y preguntas abiertas
 
-1. Valores de NCC y Paint **del dosificador** (los de las capturas son de otro proyecto): confirmar con el usuario o
-   leer el `.FlatPrj` del dosificador cuando esté en el repo.
+1. Valores de NCC y Paint **del dosificador** (los de las capturas son de otro proyecto): el usuario debe correr
+   `tools/extract_flatprj_params.py` sobre el `.FlatPrj` del dosificador y subir
+   `tests/data/dosificador_PCB_principal.params.json`. Hasta entonces, los valores de las capturas (0,1 mm, 80 %)
+   solo están corroborados por el paso medido en el G-code.
 2. Re-exportar los 5 `.nc` con FlatCAM 2024.4 y compararlos con los de la 8.994.
 3. Confirmar eje y punto del reflejo para la cara inferior, y si `B_Cu` y `Logo` también se reflejan.
 4. Tamaño del puente del CutOut (en el recorrido hay 1,6 mm de hueco) y origen del taladro (0,0) en `Alinea`.
