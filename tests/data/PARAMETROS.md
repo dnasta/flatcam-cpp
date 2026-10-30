@@ -5,8 +5,12 @@ sus movimientos. Todo está en milímetros. Sirve como entrada de los tests de l
 port debe generar el mismo G-code a partir de los Gerber/Excellon con estos parámetros.
 
 > **Atención:** los cinco `.nc` fueron generados por **FlatCAM v8.994 (fecha de versión 2020/11/7)**, no por la
-> 2024.4 β cuyos fuentes están en `reference/`. Hay que confirmar con una exportación de la 2024.4 si ambas
-> producen el mismo G-code (ver "Pendientes" al final).
+> 2024.4 β cuyos fuentes están en `reference/`. El proyecto (`.FlatPrj`) también lo guardó la 8.994. Hay que
+> confirmar con una exportación de la 2024.4 si ambas producen el mismo G-code (ver "Pendientes" al final).
+>
+> Los valores marcados como **confirmados** están leídos del `.FlatPrj` del dosificador (archivo
+> `tests/data/dosificador_PCB_principal.params.json`, extraído con `tools/extract_flatprj_params.py`); el resto
+> sale de los encabezados de los `.nc`.
 
 ## Resumen de los cinco trabajos
 
@@ -74,8 +78,8 @@ Deducido del G-code (no figura en el encabezado):
 - Una sola pasada en profundidad (Z -4,5 una vez por tramo).
 - **Dos puentes (gaps)**, uno arriba y otro abajo, centrados en X = 0: la trayectoria se interrumpe entre
   X = -0,8 y X = +0,8 (1,6 mm de hueco en el recorrido del centro de la fresa) en Y = ±39,15. Corresponde a
-  la opción de puentes "arriba y abajo" (2tb). El valor exacto del parámetro "tamaño del puente" se
-  confirmará leyendo la herramienta en la fase 3.
+  puentes "arriba y abajo". Ver "Parámetros confirmados": el tamaño del puente es 0,4 mm (0,4 + 1,2 de fresa =
+  1,6 mm en el recorrido).
 - Esquinas redondeadas con 16 segmentos por cuarto de círculo (equivale a los 64 pasos por círculo).
 
 ### `DosCau_PPal-Drill.nc` (taladrado)
@@ -125,12 +129,95 @@ además de los cuatro de las esquinas; se aclarará al leer la herramienta "PCB 
   está confirmado que se hayan usado esos valores en este proyecto.
 - **Paint (`Logo`)**: la separación entre trazados no muestra un patrón claro; no se pudo estimar.
 
+## Parámetros confirmados (leídos del `.FlatPrj` del dosificador, guardado con FlatCAM 8.994)
+
+Estos son los valores que tenía cada objeto del proyecto. Coinciden con los encabezados de los `.nc`.
+
+### NCC: `PCB ppal-B_Cu.gbl_ncc`
+| Parámetro | Valor |
+|---|---|
+| Herramienta | 0,1 mm (C1) |
+| Operación | limpiar (`clear`) |
+| Superposición | 80 % |
+| Método | 0 (estándar) |
+| Margen | 0,0 |
+| Conectar / Contorno | sí / sí |
+| Offset (compensar) | no (0,0) |
+| Resto | no |
+| Verificar validez | sí |
+| Referencia | 0 (el propio objeto) |
+| Tipo de fresado | `cl` (convencional) |
+| Postprocesador | `GRBL_laser` |
+| Avance | 500,0 (Z: 100,0, rápidos: 1500,0) |
+| Potencia (husillo) | 300 |
+| Viaje Z / Z cambio / Z final | 2,0 / 19,0 / 19,0 |
+| Z de corte | -3,5 (el láser lo ignora) |
+| Pasos por círculo | 64 |
+
+El paso entre pasadas es 0,1 × (1 − 0,8) = 0,02 mm, que es lo que se midió en el G-code.
+
+### Paint: `PCB principal-B_Logo.gbr_mt_paint`
+Herramienta 0,1 mm, superposición 80 %, método 0 (estándar), conectar sí, contorno sí, offset 0,0, resto no,
+método de selección 0. Postprocesador `GRBL_laser`, avance 500,0 (Z 100,0, rápidos 1500,0), potencia 300, viaje
+Z 2,0, Z de cambio y final 19,0.
+
+### CutOut: `PCB ppal-Edge_Cuts.gm1_cutout`
+| Parámetro | Valor |
+|---|---|
+| Fresa de la geometría | 1,2 mm (el último valor que quedó en el panel era 1,0) |
+| Tipo | `single` (objeto simple) |
+| Margen | 0,0 |
+| Forma convexa | no |
+| Tamaño del puente (gapsize) | **0,4 mm** |
+| Tipo de puente | `b` (puente) |
+| Cantidad de puentes guardada | `"4"` |
+| Z de corte | -4,5 |
+| Profundidad múltiple | no (por pasada 0,6) |
+| Avance | 100,0 (Z: 100,0, rápidos: 1500,0) |
+| Husillo | 1000 RPM, sentido horario |
+| Postprocesador | `default` |
+
+El recorrido de la fresa tiene un hueco de 1,6 mm en cada puente (0,4 de material más 1,2 de diámetro de
+fresa). El proyecto guarda la opción de puentes `"4"` aunque el G-code tiene solo dos (arriba y abajo): se
+hicieron seguramente con la opción manual de la herramienta.
+
+### Taladro: `PCB ppal-Drill.drl` (CNC Job `DosCau_PPal-Drill.nc`)
+| Herramienta | Diámetro | Agujeros | Z de corte |
+|---|---|---|---|
+| T1 | 0,8 | 90 | -3,5 |
+| T2 | 1,0 | 96 | -3,5 |
+| T3 | 1,5 | 2 | -3,5 |
+| T4 | 3,4 | 4 | **-4,5** |
+
+Comunes: postprocesador `default`, avance Z 100,0, rápidos 1500, viaje Z 2, Z de cambio 19,0, Z final 19,0, X,Y
+final 0,0, husillo 1000 RPM horario, orden de herramientas `no`, ranuras no, profundidad múltiple no, espera no,
+offset 0,0. Excellon del archivo: métrico, ceros `T`, formato 3,3, decimal absoluto.
+
+### Alineación: `PCB ppal-Alinea.drl` (CNC Job `DosCau_PPal-Alinea.nc`)
+Fresa 0,4 mm, 4 agujeros, Z de corte -3,5, avance 50,0 (el CNC Job guarda avance y avance Z de 50; el panel de
+la herramienta de taladro seguía en 100), rápidos 1500, viaje Z 2, Z de cambio y final 19,0, husillo 1000 RPM.
+Los límites del objeto, ±38,2 y ±39,7, coinciden con agujeros de 0,4 mm en `(±38, ±39,5)`.
+
+### Opciones de la herramienta "PCB a 2 caras" (guardadas en el proyecto)
+Eje de reflejo `X`, eje de alineación `X`, ubicación del eje `point` (punto), diámetro de taladro de
+alineación 3,125 (valor del panel; el job de alineación usó 0,4).
+
+### Lectura de los archivos
+Gerber: unidades MM, formato 4.6 (`int_digits` 4, `frac_digits` 6), 64 pasos por círculo, buffering `full`,
+factor de escala de aperturas 1,0, factor de buffer 0,0, `clean_apertures` sí. `B_Cu` usa las macros
+`HorizOval` y `RotRect`. Excellon: unidades métricas, formato 3,3, ceros `T`, 64 pasos por círculo.
+
+### Reflejo (mirror), verificado contra los archivos
+Los objetos del proyecto ya están reflejados: el **logo** (límites en X de [-0,2816; 4,2717] a [-4,3467; 0,3567]
+con el semitrazo de 0,075) y **los 192 agujeros** del `.drl` aparecen en el `.nc` con `x → -x` respecto de
+X = 0 (192 de 192 coincidencias). Las coordenadas Y no cambian. El cobre `B_Cu` es simétrico en sus límites
+(±36,4915 y ±37,9915), así que no se puede confirmar solo con eso; se comprobará con la geometría en la fase 3.
+
 ## Valores de los paneles de FlatCAM 2024.4 (capturas del 30/10/2026)
 
-**Ojo:** las capturas son del proyecto **luz de noche Pascual** (`luz de noche Pascual-B_Cu.gbr`, `-Logo.gbr`,
-`-Edge_Cuts.gbr`, `-PTH.drl`), **no del dosificador** del que salen los `.nc` de esta carpeta. El título de la
-ventana dice "Proyecto nuevo: no guardado". Sirven para conocer las opciones de cada herramienta y los valores
-que el usuario suele usar, pero **no se pueden dar por válidos para los `DosCau_*`**.
+**Ojo:** las capturas son del proyecto **luz de noche Pascual**, no del dosificador. Sirven para conocer las
+opciones y los valores habituales (los de NCC y Paint, 0,1 mm y 80 %, resultaron ser los mismos que los del
+dosificador), pero **no son válidos para los `DosCau_*`**:
 
 | Herramienta | Valores en las capturas (luz de noche Pascual) |
 |---|---|
@@ -153,12 +240,10 @@ contra 1000 RPM).
 Nota: "Herramienta de Perforación" es la herramienta de taladrado nueva de la 2024.4. El encabezado de
 `DosCau_PPal-Drill.nc` dice `Preprocessor Excellon`, así que ese G-code salió del flujo viejo (8.994).
 
-## Pendientes (no están en los `.nc`)
+## Pendientes
 
-1. **Parámetros de NCC y Paint del proyecto del dosificador**: las capturas son de otro proyecto. Falta
-   confirmar si para los `DosCau_*` se usó herramienta 0,1 mm, superposición 80 %, método estándar, margen 0,
-   conectar y contorno. Lo ideal es el `.FlatPrj` del dosificador.
-2. **Versión**: confirmar si la 2024.4 genera el mismo G-code que la 8.994 con el mismo proyecto.
-3. **Reflejo (mirror)**: confirmar el eje y el punto usados para la cara inferior (por el Excellon, X → -X
-   respecto de X = 0) y si `B_Cu` y `Logo` también se reflejan.
-4. **Tamaño del puente** del CutOut del dosificador y origen del taladro `(0, 0)` en `Alinea`.
+1. **Versión**: confirmar si la 2024.4 genera el mismo G-code que la 8.994 con el mismo proyecto (el usuario
+   puede abrir el proyecto en la 2024.4 y exportar de nuevo a `tests/data/2024_4/`).
+2. **Reflejo de `B_Cu`**: su geometría es simétrica en los límites; se confirma comparando la geometría en la fase 3.
+3. **Taladro `(0, 0)` en `Alinea`**: el G-code taladra 5 posiciones (las 4 esquinas más el origen) aunque el job
+   cuenta 4 agujeros; se aclarará al leer `ToolDblSided.py`.
