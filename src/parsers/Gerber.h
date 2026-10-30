@@ -78,8 +78,6 @@ struct GerberOptions {
  * Eagle y OrCAD. Los atributos X2 (`%TF`, `%TA`, `%TO`, `%TD`) se ignoran.
  *
  * ### Diferencias respecto de Python
- * - Los modificadores de reflejo, escala, etc. propios de `Gerber` (`mirror`, `scale`, `offset`...) se
- *   agregan en la fase 3.
  * - El ajuste de `extra_buffering` se aplica polígono por polígono, como en Shapely 1.8 (la versión que usa
  *   FlatCAM).
  * - Las expresiones de las macros se evalúan con un intérprete propio, no con `eval()`.
@@ -161,7 +159,57 @@ public:
     /** @brief Mensaje del último error de lectura, vacío si no hubo. @return El mensaje. */
     const std::string& lastError() const { return lastError_; }
 
+    // ---- métodos propios de Gerber: mueven la geometría sólida, la de seguimiento y la de cada apertura
+
+    /**
+     * @brief Escala la geometría (`scale`).
+     *
+     * También escala el tamaño de las aperturas: `size`, `width` y `height` (R, O) o `diam` (P). La cantidad de
+     * vértices de las aperturas P no se escala (el original la multiplicaba, lo que dejaba un valor inválido).
+     * @param xfactor Factor en X (se usa también para el tamaño de las aperturas).
+     * @param yfactor Factor en Y.
+     * @param point Punto fijo; por defecto el origen.
+     */
+    void scale(double xfactor, double yfactor, const std::optional<Point2D>& point = std::nullopt) override;
+
+    /** @brief Desplaza la geometría (`offset`). @param vect Vector de desplazamiento. */
+    void offset(const Point2D& vect) override;
+
+    /** @brief Refleja la geometría alrededor de un eje (`mirror`). @param axis Eje. @param point Punto por el que pasa el eje. */
+    void mirror(Axis axis, const Point2D& point) override;
+
+    /** @brief Rota la geometría (`rotate`). @param angle Ángulo en grados. @param point Centro de giro. */
+    void rotate(double angle, const Point2D& point) override;
+
+    /** @brief Inclina la geometría (`skew`). @param angleX Ángulo en X. @param angleY Ángulo en Y. @param point Punto fijo. */
+    void skew(double angleX, double angleY, const Point2D& point) override;
+
+    /**
+     * @brief Engrosa o escala la geometría (`buffer`).
+     *
+     * Con @p factor `false` aplica un buffer de @p distance a cada figura y agranda las aperturas en
+     * `2 * distance`. Con @p factor `true`, @p distance es un factor: se escalan las aperturas y se rehace la
+     * geometría a partir de las líneas centrales, como hace el original (las regiones se pierden, igual que en
+     * FlatCAM).
+     * @param distance Distancia del buffer, o factor si @p factor es `true`.
+     * @param join Tipo de unión de esquinas (solo sin factor).
+     * @param factor Si es `true`, @p distance se interpreta como factor.
+     */
+    void buffer(double distance, JoinStyle join, bool factor) override;
+
+    /**
+     * @brief Rectángulo que rodea la geometría sólida (`get_bounding_box`).
+     * @param margin Distancia que se agranda el rectángulo en todas las direcciones.
+     * @param rounded Si es `true` las esquinas quedan redondeadas con radio @p margin.
+     * @return Polígono del rectángulo (vacío si no hay geometría).
+     */
+    Shape getBoundingBox(double margin = 0.0, bool rounded = false) const;
+
 private:
+    /** @brief Aplica @p fn a la geometría sólida, la de seguimiento y la de cada apertura. */
+    template <typename Fn>
+    void transformAll(Fn fn);
+
     /** @brief Interpreta una definición de apertura (`aperture_parse`). */
     std::optional<std::string> apertureParse(const std::string& id, const std::string& type,
                                              const std::optional<std::string>& params);
