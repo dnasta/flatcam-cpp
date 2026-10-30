@@ -161,21 +161,20 @@ Hallazgos que condicionan el trabajo:
   cuyo origen hay que aclarar).
 - **Los `.nc` los generó FlatCAM v8.994 (2020/11/7), no la 2024.4** cuyos fuentes tenemos. Puede haber diferencias.
   Se le pidió al usuario re-exportar con la 2024.4 a `tests/data/2024_4/`. Si no hay diferencias, usar cualquiera.
-- NCC y Paint: el diámetro de herramienta, solapamiento, método, margen, "conectar" y "contorno" **no figuran** en
-  el G-code. El usuario pasó capturas de los paneles de FlatCAM 2024.4 (NCC, Paint, CutOut, Perforación y
-  propiedades de las geometrías), transcritas en `tests/data/PARAMETROS.md`, **pero son de otro proyecto**
-  ("luz de noche Pascual"), no del dosificador de los `.nc`. Coinciden NCC/Paint con láser (0,1 mm, 80 %, método
-  estándar, margen 0, conectar y contorno, `GRBL_laser`, avance 500, potencia 300) y el paso medido en el G-code
-  (0,02 mm); no coinciden los Z de corte, avances y brechas del CutOut y el taladro.
+- **Parámetros confirmados** (leídos del `.FlatPrj` del dosificador, que también guardó la 8.994; ver
+  `tests/data/PARAMETROS.md` y `tests/data/dosificador_PCB_principal.params.json`): NCC y Paint con herramienta de
+  0,1 mm, superposición 80 %, método estándar, margen 0, conectar y contorno, `GRBL_laser`, avance 500, potencia
+  300; CutOut con fresa 1,2, Z -4,5, avance 100, **puente de 0,4 mm** (hueco de 1,6 mm en el recorrido), 2 puentes
+  arriba y abajo; taladros con Z -3,5 (T4 de 3,4 mm: -4,5) y avance Z 100; Alinea con fresa 0,4 y avance 50.
+- Reflejo verificado: el logo y los 192 agujeros están reflejados con `x → -x` respecto de X = 0. El cobre `B_Cu`
+  es simétrico en sus límites, hay que confirmarlo con la geometría.
 - El `.FlatPrj` es JSON, comprimido con LZMA si está activa la opción de guardar comprimido (el valor por defecto).
-  Los del dosificador pesan ~1 GB (no entran en GitHub ni en el chat) y el entorno del chat no puede leer el disco
-  del usuario. Por eso se extraen **los parámetros en su Mac** con `tools/extract_flatprj_params.py` (solo
-  biblioteca estándar, lectura en streaming, descarta geometría y G-code; filtra las opciones globales por
-  privacidad) y se sube el JSON chico a `tests/data/`. El proyecto que corresponde a los `.nc` es
-  `dosificador caudalimetro - PCB principal.FlatPrj` (carpeta `cnc/`, guardado el 12/11/2024), no los de
-  `FlatCAM v0.01 alpha`, `PCB reles` ni `PCB transistores`. El script tiene su test en
-  `tests/tools/test_extract_flatprj_params.py`. Las capturas que pasó el usuario eran del proyecto *luz de noche
-  Pascual*, no del dosificador.
+  Los del dosificador pesan ~1 GB y el entorno del chat no puede leer el disco del usuario, por eso los
+  parámetros se extrajeron en su Mac con `tools/extract_flatprj_params.py` (biblioteca estándar, streaming,
+  filtra las opciones globales por privacidad; test en `tests/tools/test_extract_flatprj_params.py`). El proyecto
+  que corresponde a los `.nc` es `dosificador caudalimetro - PCB principal.FlatPrj`.
+- Las capturas de FlatCAM 2024.4 que pasó el usuario eran del proyecto *luz de noche Pascual*; solo sirven para ver
+  la interfaz y los valores habituales (los de NCC y Paint coinciden con los del dosificador).
 - `DosCau_PPal-B_Cu.nc` pesa 15,7 MB (502.025 líneas): sirve también de prueba de rendimiento.
 
 ## 9. Flujo de entrega y Git
@@ -221,12 +220,9 @@ simplejson→nlohmann/json, qrcode→libqrencode. `winreg` y `tkinter` no se por
 
 ## 11. Pendientes y preguntas abiertas
 
-1. Valores de NCC y Paint **del dosificador** (los de las capturas son de otro proyecto): el usuario debe correr
-   `tools/extract_flatprj_params.py` sobre el `.FlatPrj` del dosificador y subir
-   `tests/data/dosificador_PCB_principal.params.json`. Hasta entonces, los valores de las capturas (0,1 mm, 80 %)
-   solo están corroborados por el paso medido en el G-code.
-2. Re-exportar los 5 `.nc` con FlatCAM 2024.4 y compararlos con los de la 8.994.
-3. Confirmar eje y punto del reflejo para la cara inferior, y si `B_Cu` y `Logo` también se reflejan.
-4. Tamaño del puente del CutOut (en el recorrido hay 1,6 mm de hueco) y origen del taladro (0,0) en `Alinea`.
-5. Confirmar si Isolation entra en el alcance.
-6. Elegir la estrategia de render del canvas (`QOpenGLWidget` o `QGraphicsView`) al llegar a la fase 4.
+1. Confirmar si la 2024.4 genera el mismo G-code que la 8.994 con el mismo proyecto (el usuario puede exportar de
+   nuevo desde la 2024.4 a `tests/data/2024_4/`). Hasta entonces, la referencia es el G-code de la 8.994.
+2. Reflejo de `B_Cu` (simétrico en sus límites): confirmar con la geometría en la fase 3.
+3. Taladro `(0, 0)` en `Alinea` (el G-code taladra 5 posiciones, el job cuenta 4): aclarar leyendo `ToolDblSided.py`.
+4. Confirmar si Isolation entra en el alcance.
+5. Elegir la estrategia de render del canvas (`QOpenGLWidget` o `QGraphicsView`) al llegar a la fase 4.
