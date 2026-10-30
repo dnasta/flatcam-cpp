@@ -12,6 +12,8 @@ add_library(flatcam_core STATIC
     parsers/Excellon.cpp
     cam/PyNumber.cpp
     cam/Preprocessor.cpp
+    cam/PathOptimizer.cpp
+    cam/CncJob.cpp
 )
 add_library(flatcam::core ALIAS flatcam_core)
 

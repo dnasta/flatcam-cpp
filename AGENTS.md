@@ -57,7 +57,7 @@ logo) y **CutOut** → **CNC Job** con G-code. Taladros y alineación con **PCB 
 |---|---|---|
 | 1 | CMake, Doxygen y núcleo de geometría | **Hecha**, verificada en macOS (arm64) y Linux |
 | 2 | Parsers de Gerber y Excellon con tests contra archivos reales | **Hecha** |
-| 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | **En curso** (hecho: transformaciones de Gerber y postprocesadores) |
+| 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | **En curso** (hecho: transformaciones de Gerber, postprocesadores y G-code de taladrado) |
 | 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | Pendiente |
 | 5 | Herramientas secundarias y postprocesadores restantes | Pendiente |
 
@@ -65,8 +65,9 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-Fase 3 (hasta ahora): 338 tests en Linux; transformaciones de `Gerber` (24 casos contra el original) y postprocesadores
-`default` y `GRBL_laser` (224 líneas de G-code idénticas al original).
+Fase 3 (hasta ahora): 344 tests en Linux; transformaciones de `Gerber` (24 casos contra el original), postprocesadores
+`default` y `GRBL_laser` (224 líneas de G-code idénticas al original) y G-code de taladrado (`CncJob`): idéntico línea por
+línea al generador original con el orden del archivo, e igual al `.nc` real del usuario salvo el orden de los agujeros.
 
 ## 5. Arquitectura
 
@@ -92,6 +93,8 @@ src/parsers/           Lectores de archivos (sin Qt, derivan de Geometry)
 src/cam/                Generación de G-code (sin Qt)
   PyNumber.*             Número que recuerda si era int o float, para imprimir como `str()` de Python
   Preprocessor.*         Interfaz `Preprocessor` y los postprocesadores `default` y `GRBL_laser`
+  PathOptimizer.*        Orden de los agujeros (vecino más cercano + 2-opt; reemplaza a OR-Tools)
+  CncJob.*               G-code de taladrado con cambio de herramienta (`excellon_tool_gcode_gen`) y archivo exportado
 tests/                 GoogleTest; golden_*.h generados; data/ con archivos reales; tools/ con los oráculos
 reference/             Fuentes Python originales (solo lectura)
 ```
@@ -154,6 +157,11 @@ Reglas de calidad (deben cumplirse antes de dar una tanda por terminada):
   mirror, rotate, skew, buffer con y sin factor) y resume el resultado (polígonos tras unir, área, límites, aperturas).
 - `tests/tools/oracle_preprocessors.py` genera `tests/golden_preprocessors.h`: ejecuta los postprocesadores originales con 8
   juegos de parámetros y guarda el texto de cada método (más una lista de números para `pyFloatRepr`).
+- `tests/tools/oracle_drill.py` genera `tests/golden_drill.h`: ejecuta `CNCjob.excellon_tool_gcode_gen` **original** sobre el
+  Excellon del usuario (reflejado en X) con los parámetros del CNC Job guardado en el `.FlatPrj` (la herramienta 4 corta
+  a -4,5; el Excellon guarda el mismo diccionario para todas). La rama `"No"` del original está rota, así que el oráculo usa
+  la rama `'T'` con un optimizador que devuelve el orden del archivo. El archivo trae además la función que arma esos
+  mismos parámetros en C++.
 - **Fase 3:** comparar el G-code generado contra los `.nc` de `tests/data/` (ver sección 8).
 - Cuando se porte una función de `camlib.py` o de las herramientas, leer el original **completo** y respetar sus
   detalles numéricos (redondeos, tolerancias, orden de operaciones): el G-code debe coincidir.
@@ -261,7 +269,7 @@ las figuras después de unirlas.
 | CutOut | `appTools/ToolCutOut.py` | 2.465 |
 | PCB a 2 caras | `appTools/ToolDblSided.py` | 975 |
 
-Orden sugerido: (1) métodos de `Gerber` (hecho); (1b) postprocesadores `default` y `GRBL_laser` (hecho, `src/cam/`); (2) `CNCjob` + postprocesador `default` y probarlo con el taladro
+Orden sugerido: (1) métodos de `Gerber` (hecho); (1b) postprocesadores `default` y `GRBL_laser` (hecho, `src/cam/`); (2a) taladrado con `CncJob` (hecho); (2) resto de `CNCjob` + postprocesador `default` y probarlo con el taladro
 (`DosCau_PPal-Drill.nc`, el más simple), luego `Alinea` y `Edge_Cuts` (CutOut); (3) `GRBL_laser` + NCC y Paint
 con `B_Cu` y `Logo`. Parámetros exactos en `tests/data/PARAMETROS.md`. El G-code de referencia viene de la 8.994:
 confirmar si la 2024.4 da lo mismo.
@@ -278,9 +286,8 @@ simplejson→nlohmann/json, qrcode→libqrencode. `winreg` y `tkinter` no se por
 2. Reflejo de `B_Cu` (simétrico en sus límites): confirmar con la geometría en la fase 3.
 3. Taladro `(0, 0)` en `Alinea` (el G-code taladra 5 posiciones, el job cuenta 4): aclarar leyendo `ToolDblSided.py`.
 4. Confirmar si Isolation entra en el alcance.
-5. **Orden de los taladros.** El G-code de referencia (`DosCau_PPal-Drill.nc`) no sigue el orden del `.drl` ni el vecino más cercano:
-   lo calculó OR-Tools (`excellon_optimization_type = B`, `optimized_ortools_basic`, `depot = 0`). Reproducir el mismo orden
-   exige la biblioteca OR-Tools; hay que decidir con el usuario entre depender de ella o usar un optimizador propio y
-   comparar el G-code como conjunto (mismos agujeros, mismas profundidades, mismo formato). Los otros tipos son `M`
-   (OR-Tools con búsqueda guiada y límite de tiempo, no determinista), `T` (vecino más cercano, `optimized_travelling_salesman`,
-   que repite el primer punto porque `must_visit` incluye al inicio) y el orden del archivo.
+5. **Orden de los taladros (decidido).** El `.nc` de referencia lo ordenó OR-Tools (`excellon_optimization_type = B`). El usuario
+   eligió un **optimizador propio** (`PathOptimizer`: 2-opt desde el vecino más cercano y desde el orden del archivo, el
+   más corto gana). Los tests comparan el G-code como conjunto (mismos agujeros, profundidades y líneas fijas) y exigen
+   que el recorrido no supere en más de 10 % al de OR-Tools. OR-Tools queda como posible opción futura.
+6. Elegir la estrategia de render del canvas (`QOpenGLWidget` o `QGraphicsView`) al llegar a la fase 4.
