@@ -148,6 +148,10 @@ Shape Shape::polygon(const std::vector<Point2D>& exterior,
     return wrap(poly, "Polígono inválido");
 }
 
+Shape Shape::box(double xmin, double ymin, double xmax, double ymax) {
+    return polygon({{xmax, ymin}, {xmax, ymax}, {xmin, ymax}, {xmin, ymin}});
+}
+
 Shape Shape::circle(const Point2D& center, double radius, int resolution) {
     return point(center).buffer(radius, resolution);
 }
@@ -269,9 +273,13 @@ std::vector<Point2D> Shape::coordinates() const {
 // ------------------------------------------------------- operaciones booleanas
 
 Shape Shape::unite(const Shape& o) const {
+    // Atajo con figuras vacías: evita que algunas versiones de GEOS devuelvan miembros vacíos en el resultado.
+    if (isEmpty()) return o;
+    if (o.isEmpty()) return *this;
     return wrap(GEOSUnion_r(H(), raw(*this), raw(o)), "unite");
 }
 Shape Shape::difference(const Shape& o) const {
+    if (isEmpty() || o.isEmpty()) return *this;
     return wrap(GEOSDifference_r(H(), raw(*this), raw(o)), "difference");
 }
 Shape Shape::intersection(const Shape& o) const {
