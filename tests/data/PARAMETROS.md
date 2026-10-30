@@ -120,16 +120,45 @@ además de los cuatro de las esquinas; se aclarará al leer la herramienta "PCB 
 ## Estimaciones desde el G-code (no son parámetros confirmados)
 
 - **NCC (`B_Cu`)**: la distancia entre trazados vecinos tiene mediana de 0,04 mm y moda en 0,02 mm, es decir
-  pasadas muy juntas, propias de un láser. No alcanza para deducir el diámetro de herramienta ni el
-  solapamiento.
+  pasadas muy juntas, propias de un láser. Es coherente con una herramienta de 0,1 mm y 80 % de superposición
+  (0,1 × (1 − 0,8) = 0,02 mm), que son los valores de las capturas de la sección siguiente. Coincide, pero no
+  está confirmado que se hayan usado esos valores en este proyecto.
 - **Paint (`Logo`)**: la separación entre trazados no muestra un patrón claro; no se pudo estimar.
+
+## Valores de los paneles de FlatCAM 2024.4 (capturas del 30/10/2026)
+
+**Ojo:** las capturas son del proyecto **luz de noche Pascual** (`luz de noche Pascual-B_Cu.gbr`, `-Logo.gbr`,
+`-Edge_Cuts.gbr`, `-PTH.drl`), **no del dosificador** del que salen los `.nc` de esta carpeta. El título de la
+ventana dice "Proyecto nuevo: no guardado". Sirven para conocer las opciones de cada herramienta y los valores
+que el usuario suele usar, pero **no se pueden dar por válidos para los `DosCau_*`**.
+
+| Herramienta | Valores en las capturas (luz de noche Pascual) |
+|---|---|
+| **NCC** ("Herramienta NCC", Gerber) | Herramienta 0,1 mm (tipo C1). Orden de herramientas: Atrás. Operación: Limpiar. Superposición 80,0000 %. Método: Estándar. Margen 0. Conectar ✓. Contorno ✓. Compensar ☐ (0,0000). Resto ☐. Selección: Sí mismo. Verificar validez ✓. |
+| **Paint** ("Herramienta de pintura", Gerber) | Herramienta 0,1 mm (C1). Orden: Atrás. Superposición 80,000 %. Compensar 0,0000. Método: Estándar. Conectar ✓. Contorno ✓. Resto ☐. Selección: Todos. |
+| **CutOut** ("Herramienta de Corte") | Objeto simple (Soltero), tipo Gerber, forma convexa ☐. Fresa 1,2 mm. Corte Z -1,8. Profundidad múltiple ☐ (0,6). Margen 0. Tamaño de la brecha 0,6. Tipo de brecha: Puente. Brechas automáticas: 4. Cursor grande ✓ (manual). |
+| Geometría del CutOut (pestaña Propiedades) | Viaje Z 2,0. Avance X-Y 20,0. Avance Z 60,0. Eje de velocidad 10000. Habitar ☐ (1,0). Cambio de herramienta Z ✓ 19,0. Fin del movimiento Z 19,0. X,Y fin 0,0. Postprocesador `default`. Áreas de exclusión ☐. Acabado ☐. |
+| **Perforación** ("Herramienta de Perforación", Excellon `-PTH.drl`) | Herramientas: 0,8 mm × 84, 1,0 × 29, 1,5 × 4, 3,4 × 3 (120 taladros, 0 ranuras). Orden: No. Corte Z -2,4 (otra captura: -3,4). Profundidad múltiple ☐ (0,7). Viaje Z 2,0. Avance Z 20,0 (otra captura: 10,0). Eje de velocidad 10000. Habitar ☐ (1,0). Offset Z 0,0. Cambio de herramienta ✓, Z 19,0. Fin del movimiento Z 19,0. X,Y fin 0,0. Postprocesador `default`. Áreas de exclusión ☐. |
+| Geometría NCC / Paint con láser (Propiedades) | Herramienta 0,1 mm. Avance X-Y 500,0. Poder del láser 300. Cambio de herramienta Z 15,0 (desactivado). X,Y fin: 0,0 (NCC) y `None` (Paint). Postprocesador `GRBL_laser`. Áreas de exclusión ☐. Acabado ☐. |
+
+**Qué coincide con los `.nc` del dosificador:** postprocesador `GRBL_laser` con avance 500 y potencia 300; Z de
+viaje 2,0; Z de cambio de herramienta y final 19,0; X,Y final 0,0; postprocesador `default` en taladro y corte;
+paso de las pasadas del NCC (0,02 mm).
+
+**Qué NO coincide (son ajustes de otro proyecto):** Z de corte del CutOut (-1,8 contra -4,5), avances del CutOut
+(20 y 60 contra 100 y 100), brechas (0,6 mm y 4 contra 2 puentes arriba y abajo), Z de corte de los taladros
+(-2,4 o -3,4 contra -3,5 y -4,5), avance Z de los taladros (20 o 10 contra 100) y velocidad del husillo (10000
+contra 1000 RPM).
+
+Nota: "Herramienta de Perforación" es la herramienta de taladrado nueva de la 2024.4. El encabezado de
+`DosCau_PPal-Drill.nc` dice `Preprocessor Excellon`, así que ese G-code salió del flujo viejo (8.994).
 
 ## Pendientes (no están en los `.nc`)
 
-1. **NCC y Paint**: diámetro de herramienta, solapamiento, método (estándar, semilla, líneas), margen,
-   "conectar" y "contorno". FlatCAM no los escribe en el G-code. Los da el panel de cada herramienta o el
-   `.FlatPrj`.
+1. **Parámetros de NCC y Paint del proyecto del dosificador**: las capturas son de otro proyecto. Falta
+   confirmar si para los `DosCau_*` se usó herramienta 0,1 mm, superposición 80 %, método estándar, margen 0,
+   conectar y contorno. Lo ideal es el `.FlatPrj` del dosificador.
 2. **Versión**: confirmar si la 2024.4 genera el mismo G-code que la 8.994 con el mismo proyecto.
 3. **Reflejo (mirror)**: confirmar el eje y el punto usados para la cara inferior (por el Excellon, X → -X
    respecto de X = 0) y si `B_Cu` y `Logo` también se reflejan.
-4. **Tamaño del puente** del CutOut y origen del taladro `(0, 0)` en `Alinea`.
+4. **Tamaño del puente** del CutOut del dosificador y origen del taladro `(0, 0)` en `Alinea`.

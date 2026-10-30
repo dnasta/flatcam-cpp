@@ -162,8 +162,15 @@ Hallazgos que condicionan el trabajo:
 - **Los `.nc` los generó FlatCAM v8.994 (2020/11/7), no la 2024.4** cuyos fuentes tenemos. Puede haber diferencias.
   Se le pidió al usuario re-exportar con la 2024.4 a `tests/data/2024_4/`. Si no hay diferencias, usar cualquiera.
 - NCC y Paint: el diámetro de herramienta, solapamiento, método, margen, "conectar" y "contorno" **no figuran** en
-  el G-code. El usuario los va a pasar con capturas de los paneles o con el `.FlatPrj` (es JSON, comprimido con
-  LZMA si está activa la opción de guardar comprimido; se abre con `json` o `lzma` de Python).
+  el G-code. El usuario pasó capturas de los paneles de FlatCAM 2024.4 (NCC, Paint, CutOut, Perforación y
+  propiedades de las geometrías), transcritas en `tests/data/PARAMETROS.md`, **pero son de otro proyecto**
+  ("luz de noche Pascual"), no del dosificador de los `.nc`. Coinciden NCC/Paint con láser (0,1 mm, 80 %, método
+  estándar, margen 0, conectar y contorno, `GRBL_laser`, avance 500, potencia 300) y el paso medido en el G-code
+  (0,02 mm); no coinciden los Z de corte, avances y brechas del CutOut y el taladro.
+- El `.FlatPrj` es JSON, comprimido con LZMA si está activa la opción de guardar comprimido (se abre con `json` o
+  `lzma` de Python). El usuario indicó la ruta de uno en su Mac, que el entorno del chat **no puede leer**; hay
+  que subirlo al repo (`tests/data/`) o adjuntarlo al chat. Pidió el del proyecto *luz de noche Pascual*, no el del
+  dosificador.
 - `DosCau_PPal-B_Cu.nc` pesa 15,7 MB (502.025 líneas): sirve también de prueba de rendimiento.
 
 ## 9. Flujo de entrega y Git
@@ -209,8 +216,8 @@ simplejson→nlohmann/json, qrcode→libqrencode. `winreg` y `tkinter` no se por
 
 ## 11. Pendientes y preguntas abiertas
 
-1. Valores de NCC y Paint (herramienta, solapamiento, método, margen, conectar, contorno): esperando capturas o
-   el `.FlatPrj` del usuario.
+1. Valores de NCC y Paint **del dosificador** (los de las capturas son de otro proyecto): confirmar con el usuario o
+   leer el `.FlatPrj` del dosificador cuando esté en el repo.
 2. Re-exportar los 5 `.nc` con FlatCAM 2024.4 y compararlos con los de la 8.994.
 3. Confirmar eje y punto del reflejo para la cara inferior, y si `B_Cu` y `Logo` también se reflejan.
 4. Tamaño del puente del CutOut (en el recorrido hay 1,6 mm de hueco) y origen del taladro (0,0) en `Alinea`.
