@@ -48,7 +48,13 @@ def install_stubs():
         if not hasattr(np, old):
             setattr(np, old, new)
     """Reemplaza las dependencias que no hacen falta para parsear."""
-    for name in ["PyQt5", "PyQt5.QtWidgets", "PyQt5.QtCore", "PyQt5.QtGui", "rtree", "lxml", "lxml.etree",
+    # `rtree` se usa de verdad en la limpieza de cobre (índice de extremos): si está instalado se deja el real.
+    try:
+        import rtree.index  # noqa: F401
+        stub_rtree = []
+    except Exception:  # noqa: BLE001
+        stub_rtree = ["rtree"]
+    for name in stub_rtree + ["PyQt5", "PyQt5.QtWidgets", "PyQt5.QtCore", "PyQt5.QtGui", "lxml", "lxml.etree",
                  "descartes", "descartes.patch", "rasterio", "rasterio.features", "ezdxf", "ortools",
                  "ortools.constraint_solver", "svg", "svg.path"]:
         sys.modules[name] = mock.MagicMock()

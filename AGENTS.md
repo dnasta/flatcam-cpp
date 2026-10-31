@@ -71,15 +71,15 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang, GEOS 3.15.0):** 423 de 423 tests pasan con el commit `33def09`
-(incluye la capa de G-code del láser). Falta que confirme el parche que fija la variante 8.994 por defecto (424 tests en Linux).
+**Última confirmación en el Mac del usuario (M4, AppleClang, GEOS 3.15.0):** 424 de 424 tests pasan con el commit `555c470`
+(variante 8.994 por defecto). Falta que confirme el parche del pintado (445 tests en Linux).
 
-Fase 3 (hasta ahora): 424 tests en Linux; transformaciones de `Gerber` (24 casos contra el original), postprocesadores
+Fase 3 (hasta ahora): 445 tests en Linux; transformaciones de `Gerber` (24 casos contra el original), postprocesadores
 `default` y `GRBL_laser` (224 líneas de G-code idénticas al original) y G-code de taladrado (`CncJob`): idéntico línea por
 línea al generador original con el orden del archivo, e igual al `.nc` real del usuario salvo el orden de los agujeros. El G-code de geometrías (`generateFromGeometry`) reproduce
 byte por byte `DosCau_PPal-Edge_Cuts.nc` a partir de su propio recorrido.
 
-**Próximos pasos de la fase 3, en orden:** (1) ~~CutOut~~ (hecho: libre, rectangular y puente manual, reproduce el `.nc` del contorno); (2a) ~~capa de G-code del láser~~ (hecha: `B_Cu.nc` y `Logo.nc` se reproducen byte por byte desde sus propios trazados, con `GcodeFlavor::FlatCAM8_994`); (2b) **generación de los trazados de NCC y Paint**, que es lo que falta para ir del Gerber al `.nc` de láser (ver el plan de abajo); (3) PCB a 2 caras (`Alinea`); (4) Isolation si el usuario lo confirma. Dato del `.nc` del contorno: tiene
+**Próximos pasos de la fase 3, en orden:** (1) ~~CutOut~~ (hecho: libre, rectangular y puente manual, reproduce el `.nc` del contorno); (2a) ~~capa de G-code del láser~~ (hecha: `B_Cu.nc` y `Logo.nc` se reproducen byte por byte desde sus propios trazados, con `GcodeFlavor::FlatCAM8_994`); (2b) ~~**Paint**~~ (hecho, método estándar: `src/tools/Paint.*`, `src/cam/PolygonClearing.*`, `src/cam/EndpointStorage.*`, orden `R` en `CncJob`); (2c) **NCC** (`ToolNCC`: región a limpiar = caja menos cobre, margen, contorno; es lo que falta para `B_Cu.nc`); (3) PCB a 2 caras (`Alinea`); (4) Isolation si el usuario lo confirma. Dato del `.nc` del contorno: tiene
 **dos** trazados (puentes arriba y abajo), no uno.
 
 ## 5. Arquitectura
@@ -104,11 +104,14 @@ src/parsers/           Lectores de archivos (sin Qt, derivan de Geometry)
   Excellon.*             Parser de Excellon (herramientas, agujeros, ranuras) y sus transformaciones
   (Gerber.* también trae scale, offset, mirror, rotate, skew, buffer y getBoundingBox)
 src/tools/              Herramientas de FlatCAM (sin Qt)
+  Paint.*                Pintado de polígonos con el método estándar (`ToolPaint.py`)
   CutOut.*               Corte de contorno con puentes: libre, rectangular y puente manual (`ToolCutOut.py`)
 src/cam/                Generación de G-code (sin Qt)
   PyNumber.*             Número que recuerda si era int o float, para imprimir como `str()` de Python
   Preprocessor.*         Interfaz `Preprocessor` y los postprocesadores `default` y `GRBL_laser`
   PathOptimizer.*        Orden de los agujeros (vecino más cercano + 2-opt; reemplaza a OR-Tools)
+  EndpointStorage.*      Almacén de líneas por extremos con `nearest` y borrado (`FlatCAMRTreeStorage`, con una grilla)
+  PolygonClearing.*      `clear_polygon` (espiral) y `paint_connect` del original
   CncJob.*               G-code de taladrado (`excellon_tool_gcode_gen`) y de geometrías (`geometry_tool_gcode_gen`, `linear2gcode`), y archivo exportado
 tests/                 GoogleTest; golden_*.h generados; data/ con archivos reales; tools/ con los oráculos
 reference/             Fuentes Python originales (solo lectura)
@@ -188,6 +191,18 @@ Reglas de calidad (deben cumplirse antes de dar una tanda por terminada):
   `DosCau_PPal-Edge_Cuts.nc` como geometría de entrada y ejecuta `CNCjob.geometry_tool_gcode_gen` **original** con los
   parámetros del proyecto. Como la entrada sale del propio `.nc`, el G-code generado debe ser idéntico a ese archivo
   (salvo los `\r` de Windows): lo es. Lo que NO prueba es la creación de la geometría del CutOut (ver sección 10).
+- `tests/tools/oracle_paint.py` genera `tests/golden_paint.h` (3,3 MB): ejecuta `Geometry.clear_polygon` (con `rtree` real) y
+  `geometry_tool_gcode_gen` con orden `R` y tolerancia **originales** sobre el `Logo` del usuario (reflejado en X) y 8 casos
+  sintéticos. Las trayectorias coinciden con el original vértice por vértice (< 1e-9) y el G-code con el orden `R`, la
+  simplificación y la inversión de líneas coincide texto por texto. Entornos: `micromamba create -n old -c conda-forge
+  python=3.10 shapely=1.8.4 numpy=1.22 rtree` (con GEOS 3.11) y `-n g310 ... geos=3.10.3` (mismo resultado).
+  **Contra el `Logo.nc` real de la 8.994** (`PaintEndToEnd` en `test_paint.cpp`): 38 trazados contra 38, mismo orden y
+  orientación, distancia máxima entre trazados 3,5 micras, 6.408 puntos contra 6.402, y 5 trazados que arrancan en el
+  vértice vecino (hasta 0,05 mm). **No se puede igualar byte a byte** y la causa no es la versión de GEOS (3.10.3 y 3.11 dan lo
+  mismo): la 8.994 decide distinto al simplificar. Hechos medidos: la tolerancia es `global_tolerance / 20 = 0,00025`; el
+  proyecto trae el `Logo` reflejado en X; `contour` no se usa en `clear_polygon`; `rtree.nearest` devuelve los empates en un
+  orden interno (el port usa el primero insertado). El criterio de aceptación para NCC es el mismo: cantidad, orden, orientación
+  y micras, no texto idéntico.
 - `tests/tools/oracle_cutout.py` genera `tests/golden_cutout.h`: ejecuta `CutOut.on_freeform_cutout` y `on_rectangular_cutout`
   **originales** (con una interfaz simulada) sobre `Edge_Cuts.gm1` y 38 casos, además de 3 de puente manual. Requiere
   Shapely 1.8.4 (con 2.x el original no itera las figuras múltiples). Comprueba contorno, puentes finos y agujeros
@@ -339,7 +354,8 @@ Algoritmo que hay que portar, en este orden (`reference/FlatCAM_2024_4/FlatCAM/`
 
 Oráculo: hay que correr el original con el paquete `rtree` **real**; `tests/tools/oracle_common.py` lo reemplaza por un simulacro
 vacío. En el entorno de Shapely 1.8.4: `micromamba install -n old -c conda-forge rtree` (rtree 1.4.1, probado).
-Criterio de aceptación: el G-code que sale de `B_Cu.gbl` y `B_Logo.gbr` coincide con `DosCau_PPal-B_Cu.nc` y `-Logo.nc`.
+Criterio de aceptación (corregido): el G-code que sale de `B_Cu.gbl` y `B_Logo.gbr` coincide con `DosCau_PPal-B_Cu.nc` y `-Logo.nc` en
+cantidad de trazados, orden, orientación y distancia de micras (ver la sección 7); la igualdad byte a byte no es alcanzable.
 
 ## 11. Pendientes y preguntas abiertas
 

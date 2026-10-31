@@ -14,7 +14,10 @@ add_library(flatcam_core STATIC
     cam/Preprocessor.cpp
     cam/PathOptimizer.cpp
     cam/CncJob.cpp
+    cam/EndpointStorage.cpp
+    cam/PolygonClearing.cpp
     tools/CutOut.cpp
+    tools/Paint.cpp
 )
 add_library(flatcam::core ALIAS flatcam_core)
 
