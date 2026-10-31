@@ -522,6 +522,16 @@ trazados; taladro con los mismos agujeros (sección 7).
    `QOpenGLWidget`. Las capturas del usuario ya están resumidas en `docs/fase4_gui_referencia.md` (ventana, paneles, colores y su
    flujo). Falta acordar con el usuario el alcance de la primera versión y el idioma de la interfaz.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
+4. **Decisiones del usuario para la fase 4:** interfaz en **español**; alcance de la primera versión: abrir Gerber y Excellon, verlos
+   en el canvas OpenGL (zoom y desplazamiento), reflejar, Perforación, Corte, Paint y NCC con sus paneles, CNC Job y exportar `.nc`
+   (Isolation, PCB a 2 caras y proyectos van después); **la GUI tiene que ser exactamente igual a la del FlatCAM en Python**.
+5. **Método elegido para la igualdad exacta** (en curso): construir las clases de interfaz ORIGINALES con PyQt5 real
+   (`tools/gui_dump/fc_runtime.py`, entorno `old` con `pyqt=5.15` y `matplotlib`) y volcar su árbol de widgets (menús, acciones,
+   íconos por ruta de recurso, textos en español de `translate/es.bin`, tooltips, atajos, barras, pestañas, paneles) a código C++
+   generado; la lógica se porta a mano. Ya funciona `fc_runtime.build_main_gui()`: la `MainGUI` original se construye entera en
+   español (menús `Panel de palanca`, `Archivo`, `Editar`, `Opciones`, `Ver`, `Objetos`, `Herramienta`, `Ayuda`). Siguen: el
+   volcador (`dump_main_gui.py` → C++), extraer los íconos de `resources.py` (formato rcc: árbol + datos con qCompress) y la tabla
+   `es.bin` para los mensajes de la lógica, el objetivo `flatcam` en CMake con Qt 6.12 (Homebrew, ya instalado) y el canvas.
 
 ### 12.3 Cómo se trabaja acá (reglas del usuario)
 

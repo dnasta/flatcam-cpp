@@ -31,6 +31,8 @@ máquina del usuario.
 - **Regla de entrega:** correr toda la suite con GEOS 3.12 **y** 3.15.0 antes de dar algo por terminado; tolerancias en micras, no en el
   último bit (`AGENTS.md`, sección 6). Verificar y corregir apenas se detecte un problema. Actualizar este archivo y `AGENTS.md` antes
   del mensaje final de cada respuesta.
-- **Siguiente:** fase 4 (GUI Qt6 con `QOpenGLWidget`). Las capturas están resumidas en `docs/fase4_gui_referencia.md`. Falta que el
-  usuario confirme el alcance de la primera versión y el idioma de la interfaz. Pendientes menores: Paint/NCC con semilla y líneas,
+- **Fase 4 en curso** (GUI Qt6, `QOpenGLWidget`). Decidido por el usuario: interfaz en español, el alcance propuesto (ver
+  `AGENTS.md` 12.2.4) y que la GUI sea **exactamente igual** a la del FlatCAM en Python. Qt 6.12 instalado con Homebrew; PyQt5 en el
+  entorno `old`. Hecho: `tools/gui_dump/fc_runtime.py` construye la `MainGUI` original en español. Siguiente: volcar ese árbol a
+  C++ generado, extraer íconos y traducción, objetivo `flatcam` en CMake, canvas. Pendientes menores: Paint/NCC con semilla y líneas,
   resto de Paint/NCC, selección por área, verificación de diámetro seguro (`AGENTS.md`, sección 11).
