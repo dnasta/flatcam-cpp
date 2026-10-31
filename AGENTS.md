@@ -155,6 +155,8 @@ Reglas de calidad (deben cumplirse antes de dar una tanda por terminada):
   con 1.8.4 contra 3 con 2.x). Por eso los goldens se generan con 1.8.4. Entorno: bajar `micromamba` de
   `conda.anaconda.org/conda-forge/linux-64/` y `micromamba create -n old -c conda-forge python=3.10 shapely=1.8.4 numpy=1.22`
   (en su GEOS 3.11.0); con `python3 -m pip install shapely numpy` (Shapely 2.x) casi todo coincide, pero no esa cantidad.
+  Todos los goldens están generados con Shapely 1.8.4 (GEOS 3.11.0), incluido `golden_gerber.h` (cantidades de polígonos,
+  agujeros y vértices iguales a los de Shapely 2; solo cambian las últimas cifras de las áreas, ~1e-9 relativo).
   Verificado: con Shapely 1.8.4 (GEOS 3.11.0) y con 2.2 (GEOS 3.14.1) salen idénticos los goldens de preprocesadores,
   taladrado, geometría, Excellon y los 26 escenarios de `geometry_modes` (incluidos los desplazamientos de herramienta).
   No editar los `golden_*.h` a mano. Para cada herramienta de la fase 3 conviene hacer un oráculo igual (ver
