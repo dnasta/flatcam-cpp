@@ -33,7 +33,8 @@ postprocesadores que usa el usuario (`default` y `GRBL_laser`; luego el resto) y
 
 **Fuera de alcance:** los editores de Gerber, Geometría y Excellon (`appEditors`, ~17.600 líneas): el usuario no
 los usa; solo carga archivos y el programa genera la geometría y el G-code. A veces edita a mano el G-code para
-láser (quitar el movimiento en Z); el postprocesador `GRBL_laser` ya omite la Z, hay que comprobar si cubre ese caso.
+láser: con la 2024.4 agrega `G00 Z0` al empezar y quita el `G00 Z..` final. Eso es exactamente la variante
+`GcodeFlavor::FlatCAM8_994` del port (la predeterminada), comprobado con su `B_Cu.gbr_ncc_cnc.nc` de la placa "luz de noche".
 
 ### Flujo de trabajo del usuario (así usa FlatCAM)
 
@@ -71,10 +72,14 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 498 tests con el commit de Isolation (497 pasan y 1, la lenta del
-NCC, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba).
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 502 tests (501 pasan y 1, la lenta del NCC del dosificador, queda
+saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba).
 
-Fase 3: 498 tests (497 corren siempre y 1 es lenta; GEOS 3.12 y 3.15.0 en Linux y en el Mac); transformaciones de `Gerber` (24 casos contra el original), postprocesadores
+**Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
+byte por byte; Paint idéntico con GEOS 3.11 (17 líneas con cambios de última cifra con 3.12/3.15); NCC con los mismos 272 trazados
+(GEOS 3.11/3.12; solo cambian empates de `rtree`); taladro con los mismos 120 agujeros y un recorrido más corto.
+
+Fase 3: 502 tests (501 corren siempre y 1 es lenta; GEOS 3.12 y 3.15.0 en Linux y en el Mac); transformaciones de `Gerber` (24 casos contra el original), postprocesadores
 `default` y `GRBL_laser` (224 líneas de G-code idénticas al original) y G-code de taladrado (`CncJob`): idéntico línea por
 línea al generador original con el orden del archivo, e igual al `.nc` real del usuario salvo el orden de los agujeros. El G-code de geometrías (`generateFromGeometry`) reproduce
 byte por byte `DosCau_PPal-Edge_Cuts.nc` a partir de su propio recorrido.
@@ -253,6 +258,24 @@ fijan con sentido físico (micras), no en el último bit.
   3.11 coincide vértice por vértice; con 3.12 y 3.15 el buffer de 16 segmentos del resto da hasta 0,35 % menos vértices con la misma
   longitud a menos de una micra (el test admite 0,5 % de puntos y 1 micra de longitud), y GEOS 3.15 devuelve los 179 polígonos del
   Gerber en otro orden (con 3.11 y 3.12 el orden es idéntico al del original: el parser está bien).
+- **Contra el ejecutable FlatCAM 2024.4 del usuario** (`tests/test_luz_de_noche.cpp`, datos en `tests/data/luz_de_noche/`, parámetros
+  en `luz_de_noche.params.json` y en las capturas descritas en `docs/fase4_gui_referencia.md`). En esa placa el cobre, el logo y el
+  taladro también están **reflejados en X**. Resultados (con la GEOS que se indica):
+  - CutOut libre del contorno (fresa 1,2, 4 puentes de 0,6) → G-code **idéntico byte por byte** (GEOS 3.12 y 3.15). Hizo falta la
+    tolerancia de simplificación `global_tolerance / 20 = 0,00025` también en el contorno: sin ella quedan 16 vértices de más por
+    esquina (el fuente da los mismos 36 puntos por tramo que el port; los descarta la simplificación del CNC Job).
+  - Paint del Logo → 72 trazados y 13.553 puntos iguales; con GEOS 3.11 el archivo es idéntico, con 3.12 y 3.15 cambian 17 líneas
+    en las últimas cifras (menos de 1 micra).
+  - NCC de `B_Cu` → con GEOS 3.11 y 3.12, **272 trazados como el real** y 261.093 puntos contra 261.089; las únicas diferencias son
+    empates exactos de `rtree.nearest`. Con 3.15, 275 trazados (0,07 % menos puntos). El archivo real está editado a mano por el
+    usuario (`G00 Z0`, `G21f`, sin `G00 Z15.00` final) y coincide con la variante 8.994.
+  - Taladro → los mismos 120 agujeros con las mismas profundidades y las mismas líneas fijas; el orden es el de OR-Tools en el real
+    y el del optimizador propio en el port (828,6 mm de recorrido contra 1.323,1).
+  - **El ejecutable 2024.4 no es idéntico al fuente de referencia**: emite el Z inicial (línea vacía) antes del `M5`, como la 8.994.
+    Se agregó `GcodeFlavor::FlatCAM2024_4Release` para reproducirlo; `FlatCAM2024_4` sigue siendo el fuente (lo que ejecutan los
+    oráculos).
+  - Con Shapely 2 el CutOut original no corre, así que el ejecutable usa casi seguro Shapely 1.8; que coincida mejor con GEOS 3.11
+    sugiere que trae esa GEOS (no está comprobado: no se puede ver dentro del ejecutable desde acá).
 - `tests/tools/oracle_geometry_modes.py` genera `tests/golden_geometry_modes.h`: 26 escenarios sintéticos (profundidad múltiple,
   corte extra, puntos, tolerancia, segmentación, láser, sin cambio de herramienta, pulgadas) ejecutados con
   `geometry_tool_gcode_gen` **original**; los tests comparan el texto completo. Los desplazamientos de herramienta
@@ -276,6 +299,7 @@ Proyecto real del usuario (placa de un dosificador caudalímetro, KiCad 6.0.6): 
 | `PCB principal-F_Silkscreen.gto` | Serigrafía con arcos G75/G03 |
 | `PCB principal-Drill.drl` | Excellon KiCad (métrico, absoluto, decimal): 4 herramientas, 192 agujeros |
 | `DosCau_PPal-*.nc` | G-code generado por FlatCAM: B_Cu (NCC láser), Logo (Paint láser), Edge_Cuts (CutOut), Drill, Alinea |
+| `luz_de_noche/` | Otra placa del usuario (KiCad 10): Gerber `Edge_Cuts`, `B_Cu`, `Logo`, `PTH.drl`/`NPTH.drl` y los 4 `.nc` que generó su **FlatCAM 2024.4** (CutOut, Perforación, Paint, NCC); `luz_de_noche.params.json` extraído de su `.FlatPrj`. Subido al repo con permiso del usuario |
 
 Hallazgos que condicionan el trabajo:
 
@@ -411,7 +435,10 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
 
 ## 11. Pendientes y preguntas abiertas
 
-1. **¿La 2024.4 genera el mismo G-code que la 8.994?** Respuesta: casi, y las diferencias están medidas. Con el postprocesador
+1. **¿La 2024.4 genera el mismo G-code que la 8.994?** **Resuelto** con los `.nc` de la 2024.4 de la placa "luz de noche" (sección 7):
+   el port reproduce la 2024.4 (CutOut byte por byte, Paint y NCC salvo GEOS y empates). Además, el **ejecutable** 2024.4 difiere del
+   fuente en el orden de dos líneas (variante `FlatCAM2024_4Release`). Lo que sigue es el análisis original contra la 8.994.
+   Respuesta: casi, y las diferencias están medidas. Con el postprocesador
    `GRBL_laser` y en un trabajo de geometría sin cambio de herramienta la 8.994 (a) agrega `G00 Z0` en la cabecera, (b) emite
    el Z inicial *antes* de subir el láser (`M5`) y (c) cierra sin `G00 Z19.00`. El código lo cubre con `GcodeFlavor`
    (`FlatCAM8_994` **por defecto**, por decisión del usuario: "prefiero G00 Z0"; `FlatCAM2024_4` sigue disponible y es la que
@@ -439,7 +466,8 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
    que el recorrido no supere en más de 10 % al de OR-Tools. OR-Tools queda como posible opción futura.
 6. ~~Elegir el canvas~~ **Decidido por el usuario: `QOpenGLWidget`** (GPU, buffers de vértices; tiene que mover los 500.000 puntos de
    `B_Cu.nc` con fluidez). En macOS OpenGL está deprecado pero funciona; si algún día molesta, la alternativa es QRhi.
-7. **`B_Cu`: 746 trazados contra 723** del `.nc` real (puntos 0,05 %, longitud 0,015 % de diferencia). La 8.994 une unos 23 tramos más
+7. **Resuelto en lo que importa:** con la 2024.4 el NCC del port da los mismos trazados que el real (272 contra 272, placa "luz de
+   noche"), así que la diferencia del dosificador es de la 8.994, no del port. Análisis original: **`B_Cu`: 746 trazados contra 723** del `.nc` real (puntos 0,05 %, longitud 0,015 % de diferencia). La 8.994 une unos 23 tramos más
    (~0,45 mm cada uno). No se pudo deducir la regla (probado: radio y largo máximo de la unión, resolución del engrosado de 4 a 64).
    Candidatas sin probar: otro criterio en `paint_connect` de la 8.994, o un `rtree` distinto. Si el usuario exporta desde la 2024.4 se
    podría saber si el cambio es de versión.
@@ -449,7 +477,8 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
 9. **Métodos que faltan en Paint y NCC** (hoy devuelven error o no existen): semilla (`clear_polygon2`), líneas (`clear_polygon3`),
    combinado, mecanizado de resto, selección por área y por objeto de referencia, aislamiento previo (`isotooldia`). El usuario solo
    usa el método estándar, "Él mismo" y una herramienta.
-10. **Variante del G-code**: por defecto `GcodeFlavor::FlatCAM8_994` (decisión del usuario). El `Alinea.nc` de la 8.994 tiene además
+10. **Variante del G-code**: por defecto `GcodeFlavor::FlatCAM8_994` (decisión del usuario, y es lo que el usuario hace a mano con
+    los archivos de láser de la 2024.4). Hay tres: `FlatCAM2024_4` (fuente), `FlatCAM2024_4Release` (ejecutable) y `FlatCAM8_994`. El `Alinea.nc` de la 8.994 tiene además
     líneas en blanco tras cada agujero (el port no las reproduce) y el taladro en (0, 0), que agregó el usuario a mano (ver 3).
 11. **Isolation: desvíos conscientes** (documentados en `Isolation.h`): con pasadas separadas y un único polígono el original falla al
     iterar y el port lo devuelve; en el resto, si un buffer da varias partes (solo con diámetro negativo) el port las conserva.
@@ -461,7 +490,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **498 tests**: 497 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
+- **502 tests**: 501 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
   oráculos en Python (Shapely 1.8.4) y, donde existe, contra el `.nc` real del usuario (FlatCAM 8.994):
@@ -478,6 +507,9 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 | PCB a 2 caras | `src/tools/DoubleSided.*` | 6 casos, bits exactos | `Alinea.nc` salvo líneas en blanco y el agujero (0, 0), que agregó el usuario a mano |
 | Isolation | `src/tools/Isolation.*` | 27 casos exactos; `B_Cu` vértice por vértice con GEOS 3.11 | — (el usuario no tiene `.nc` de aislamiento) |
 
+Contra el **ejecutable 2024.4** del usuario (placa "luz de noche"): CutOut byte por byte; Paint idéntico con GEOS 3.11; NCC 272 = 272
+trazados; taladro con los mismos agujeros (sección 7).
+
 - Decisiones del usuario vigentes: G-code del láser como el de su 8.994 (`G00 Z0`, variante por defecto); optimizador propio de
   agujeros; método estándar de Paint/NCC; los Gerber del usuario inferiores están **reflejados en X**; Isolation entra en el alcance;
   el agujero (0, 0) de `Alinea` no se genera (lo puso a mano); el canvas de la fase 4 es **`QOpenGLWidget`**.
@@ -485,11 +517,10 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 498 tests, 1 saltado.
-2. Las tres preguntas que estaban abiertas ya tienen respuesta (sección 11: 3, 4 y 6). Lo que sigue es la **fase 4 (GUI Qt6)** con
-   canvas `QOpenGLWidget`. Antes de diseñar la ventana conviene pedirle al usuario una captura de cómo usa FlatCAM hoy (árbol de
-   proyecto, pestañas Selected/Project/Tool, paneles de cada herramienta) y acordar el alcance de la primera versión: cargar Gerber y
-   Excellon, verlos en el canvas, correr las herramientas y exportar el G-code.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 502 tests, 1 saltado.
+2. Las preguntas abiertas ya tienen respuesta (sección 11: 3, 4 y 6). Lo que sigue es la **fase 4 (GUI Qt6)** con canvas
+   `QOpenGLWidget`. Las capturas del usuario ya están resumidas en `docs/fase4_gui_referencia.md` (ventana, paneles, colores y su
+   flujo). Falta acordar con el usuario el alcance de la primera versión y el idioma de la interfaz.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
 
 ### 12.3 Cómo se trabaja acá (reglas del usuario)
@@ -537,5 +568,8 @@ Importante: Shapely
 - Para ver si una diferencia contra el original es del código o de GEOS: compilar contra `geos311` (la del oráculo) y comparar. Así se
   vio que en Isolation las diferencias de `B_Cu` (vértices del buffer de 16 segmentos con GEOS 3.12+, orden de los polígonos del Gerber
   con GEOS 3.15) son de GEOS: con 3.11 coincide todo.
+- La 2024.4 simplifica **todas** las trayectorias de geometría del CNC Job con `global_tolerance / 20` (también el contorno del
+  CutOut): sin eso sobran vértices en las esquinas redondeadas.
+- En los proyectos del usuario las capas inferiores y el taladro siempre están reflejados en X (`mirror(Axis::Y, {0, 0})`).
 - Para un oráculo de una herramienta con mucha interfaz conviene extraer los métodos del fuente con `ast` y darles una interfaz
   simulada (como `oracle_isolation.py`) en vez de transcribirlos: así se ejecuta el código original tal cual.

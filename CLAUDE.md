@@ -15,24 +15,22 @@ máquina del usuario.
 
 **Lo que hay que saber para retomar (el detalle está en `AGENTS.md`, sección 12).**
 
-- **Tests:** 498 (497 corren siempre; 1 lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del
-  usuario (M4, AppleClang). En el Mac hay micromamba con los entornos `old` (Shapely 1.8.4, GEOS 3.11, para los oráculos), `geos312` y
-  `geos311` (`AGENTS.md`, secciones 6 y 12.4).
-- **Hecho (fases 1, 2 y 3 completas):** núcleo de geometría, parsers de Gerber y Excellon, transformaciones, postprocesadores
-  `default` y `GRBL_laser`, G-code de taladrado y de geometrías (`CncJob`), CutOut, capa de G-code del láser, Paint estándar, NCC
-  estándar, PCB a 2 caras (`src/tools/DoubleSided.*`) e **Isolation** (`src/tools/Isolation.*`: pasadas separadas, combinadas y resto;
-  27 escenarios idénticos al código original, que el oráculo ejecuta tal cual extrayéndolo con `ast`).
-- **Preguntas que estaban abiertas, ya respondidas por el usuario:**
-  1. Agujero (0, 0) de `Alinea.nc`: lo agregó a mano con el editor de G-code de FlatCAM. El port no lo genera.
-  2. Isolation: entra en el alcance (ya portado).
-  3. Canvas de la fase 4: **`QOpenGLWidget`**.
-- **Decisiones del usuario vigentes:** G-code del láser como el de su 8.994 (con `G00 Z0`); optimizador propio de agujeros; método
-  estándar de Paint/NCC; sus Gerber inferiores (`B_Cu`, Logo) y los agujeros están reflejados en X; canvas `QOpenGLWidget`.
-- **Diferencias medidas 8.994 contra 2024.4:** `GRBL_laser` (cabecera y orden del Z inicial); `Alinea` (líneas en blanco; el (0, 0) lo
-  puso el usuario); `B_Cu` 746 trazados contra 723 (la 8.994 une ~23 tramos más; regla no deducible). Todo lo demás coincide.
+- **Tests:** 502 (501 corren siempre; 1 lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del
+  usuario (M4, AppleClang). En el Mac hay micromamba con los entornos `old` (Shapely 1.8.4, GEOS 3.11, para los oráculos), `sh2`
+  (Shapely 2.0), `geos312` y `geos311` (`AGENTS.md`, secciones 6 y 12.4).
+- **Hecho (fases 1, 2 y 3 completas):** parsers, transformaciones, postprocesadores, G-code de taladrado y de geometrías, CutOut,
+  Paint, NCC, PCB a 2 caras e Isolation. **Verificado contra el ejecutable FlatCAM 2024.4 del usuario** (placa "luz de noche",
+  `tests/data/luz_de_noche/`, `tests/test_luz_de_noche.cpp`): CutOut byte por byte, Paint idéntico con GEOS 3.11, NCC 272 = 272
+  trazados, taladro con los mismos 120 agujeros.
+- **Hallazgos de esta tanda:** el ejecutable 2024.4 difiere del fuente en el orden de dos líneas (nueva variante
+  `GcodeFlavor::FlatCAM2024_4Release`); la simplificación `0,00025` aplica también al contorno; lo que el usuario edita a mano en sus
+  `.nc` de láser es la variante 8.994 (la predeterminada); los 746 contra 723 trazados del dosificador eran de la 8.994.
+- **Decisiones del usuario vigentes:** G-code del láser como la 8.994 (con `G00 Z0`, sin `G00 Z` final); optimizador propio de
+  agujeros; método estándar de Paint/NCC; capas inferiores y taladros reflejados en X; Isolation dentro del alcance; el (0, 0) de
+  `Alinea` no se genera; canvas `QOpenGLWidget`; los datos de "luz de noche" pueden estar en el repo público.
 - **Regla de entrega:** correr toda la suite con GEOS 3.12 **y** 3.15.0 antes de dar algo por terminado; tolerancias en micras, no en el
   último bit (`AGENTS.md`, sección 6). Verificar y corregir apenas se detecte un problema. Actualizar este archivo y `AGENTS.md` antes
   del mensaje final de cada respuesta.
-- **Siguiente:** fase 4 (GUI Qt6 con `QOpenGLWidget`). Primero pedirle al usuario capturas de cómo usa FlatCAM y acordar el alcance
-  de la primera versión. Pendientes menores: Paint/NCC con semilla y líneas, mecanizado de resto de Paint/NCC, selección por área,
-  verificación de diámetro seguro de Isolation (`AGENTS.md`, sección 11).
+- **Siguiente:** fase 4 (GUI Qt6 con `QOpenGLWidget`). Las capturas están resumidas en `docs/fase4_gui_referencia.md`. Falta que el
+  usuario confirme el alcance de la primera versión y el idioma de la interfaz. Pendientes menores: Paint/NCC con semilla y líneas,
+  resto de Paint/NCC, selección por área, verificación de diámetro seguro (`AGENTS.md`, sección 11).

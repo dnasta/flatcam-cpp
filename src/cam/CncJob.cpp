@@ -601,8 +601,8 @@ bool CncJob::generateFromGeometry(const ShapeList& geometry, const GeometryJobSe
         } else {
             p.x = 0;
             p.y = 0;
-            if (js.flavor == GcodeFlavor::FlatCAM8_994) {
-                // La 8.994 emite el Z inicial antes de subir la herramienta.
+            if (js.flavor != GcodeFlavor::FlatCAM2024_4) {
+                // La 8.994 y el ejecutable 2024.4 emiten el Z inicial antes de subir la herramienta; el fuente, después.
                 g += pp->startzCode(p) + "\n";
                 g += pp->liftCode(p) + "\n";
             } else {

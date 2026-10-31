@@ -93,13 +93,23 @@ struct PreprocessorParams {
 /**
  * @brief Versión de FlatCAM cuyo G-code se reproduce.
  *
- * El G-code de referencia del usuario salió de FlatCAM 8.994, y el código fuente que se porta es el de la 2024.4. Casi
- * todo coincide byte por byte, pero el postprocesador `GRBL_laser` y el orden de las primeras líneas de un trabajo sin
- * cambio de herramienta cambiaron entre una y otra. Esta opción elige cuál de las dos se genera.
+ * Casi todo coincide byte por byte entre versiones; solo cambian, en un trabajo de geometría sin cambio de herramienta,
+ * la cabecera y el cierre del postprocesador `GRBL_laser` y el orden de dos líneas del comienzo:
+ *
+ * | Variante | `G00 Z0` en la cabecera | Línea vacía (Z inicial) respecto de `M5` | `G00 Z..` al cerrar |
+ * |---|---|---|---|
+ * | FlatCAM2024_4 (código fuente) | no | después | sí |
+ * | FlatCAM2024_4Release (ejecutable) | no | antes | sí |
+ * | FlatCAM8_994 | sí | antes | no |
+ *
+ * El ejecutable 2024.4 que usa el usuario no se comporta exactamente como el fuente de referencia (medido con sus archivos
+ * de la placa "luz de noche"). La variante 8.994 coincide además con lo que el usuario agrega a mano a sus archivos de
+ * láser de la 2024.4 (`G00 Z0` al empezar y sin subir Z al terminar).
  */
 enum class GcodeFlavor {
-    FlatCAM2024_4,  ///< Igual que FlatCAM 2024.4 (el código fuente de referencia).
-    FlatCAM8_994    ///< Igual que el G-code generado por FlatCAM 8.994 del usuario (**predeterminada**, por decisión del usuario).
+    FlatCAM2024_4,        ///< Igual que el código fuente de FlatCAM 2024.4 (el que ejecutan los oráculos).
+    FlatCAM2024_4Release, ///< Igual que el ejecutable de FlatCAM 2024.4 del usuario.
+    FlatCAM8_994          ///< Igual que FlatCAM 8.994 (**predeterminada**, por decisión del usuario).
 };
 
 /**
@@ -179,7 +189,8 @@ class GrblLaserPreprocessor : public Preprocessor {
 public:
     /**
      * @brief Crea el postprocesador.
-     * @param flavor Con @ref GcodeFlavor::FlatCAM8_994 la cabecera lleva `G00 Z0` y el cierre no lleva `G00 Z..`.
+     * @param flavor Con @ref GcodeFlavor::FlatCAM8_994 la cabecera lleva `G00 Z0` y el cierre no lleva `G00 Z..`; las
+     *        otras dos variantes generan lo mismo en este postprocesador.
      */
     explicit GrblLaserPreprocessor(GcodeFlavor flavor = GcodeFlavor::FlatCAM8_994) : flavor_(flavor) {}
 
@@ -207,7 +218,7 @@ private:
 /**
  * @brief Busca un postprocesador por nombre.
  * @param name `"default"` o `"GRBL_laser"`.
- * @param flavor Versión de FlatCAM cuyo G-code se reproduce (`default` es igual en las dos).
+ * @param flavor Versión de FlatCAM cuyo G-code se reproduce (`default` es igual en todas).
  * @return El postprocesador, o `nullptr` si no existe.
  */
 std::unique_ptr<Preprocessor> makePreprocessor(const std::string& name,
