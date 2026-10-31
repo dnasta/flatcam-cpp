@@ -91,6 +91,18 @@ struct PreprocessorParams {
 };
 
 /**
+ * @brief Versión de FlatCAM cuyo G-code se reproduce.
+ *
+ * El G-code de referencia del usuario salió de FlatCAM 8.994, y el código fuente que se porta es el de la 2024.4. Casi
+ * todo coincide byte por byte, pero el postprocesador `GRBL_laser` y el orden de las primeras líneas de un trabajo sin
+ * cambio de herramienta cambiaron entre una y otra. Esta opción elige cuál de las dos se genera.
+ */
+enum class GcodeFlavor {
+    FlatCAM2024_4,  ///< Igual que FlatCAM 2024.4 (el código fuente de referencia).
+    FlatCAM8_994    ///< Igual que el G-code generado por FlatCAM 8.994 del usuario.
+};
+
+/**
  * @brief Interfaz de un postprocesador: genera cada tipo de línea de G-code para un controlador concreto.
  *
  * Cada método recibe los parámetros y devuelve el texto de la línea (sin el salto de línea final), igual que los
@@ -165,6 +177,12 @@ public:
  */
 class GrblLaserPreprocessor : public Preprocessor {
 public:
+    /**
+     * @brief Crea el postprocesador.
+     * @param flavor Con @ref GcodeFlavor::FlatCAM8_994 la cabecera lleva `G00 Z0` y el cierre no lleva `G00 Z..`.
+     */
+    explicit GrblLaserPreprocessor(GcodeFlavor flavor = GcodeFlavor::FlatCAM2024_4) : flavor_(flavor) {}
+
     std::string name() const override { return "GRBL_laser"; }
     std::string startCode(const PreprocessorParams& p) const override;
     std::string startzCode(const PreprocessorParams& p) const override;
@@ -181,13 +199,18 @@ public:
     std::string spindleCode(const PreprocessorParams& p) const override;
     std::string dwellCode(const PreprocessorParams& p) const override;
     std::string spindleStopCode(const PreprocessorParams& p) const override;
+
+private:
+    GcodeFlavor flavor_;
 };
 
 /**
  * @brief Busca un postprocesador por nombre.
  * @param name `"default"` o `"GRBL_laser"`.
+ * @param flavor Versión de FlatCAM cuyo G-code se reproduce (`default` es igual en las dos).
  * @return El postprocesador, o `nullptr` si no existe.
  */
-std::unique_ptr<Preprocessor> makePreprocessor(const std::string& name);
+std::unique_ptr<Preprocessor> makePreprocessor(const std::string& name,
+                                               GcodeFlavor flavor = GcodeFlavor::FlatCAM2024_4);
 
 }  // namespace flatcam

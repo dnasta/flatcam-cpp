@@ -467,7 +467,7 @@ bool CncJob::generateFromGeometry(const ShapeList& geometry, const GeometryJobSe
     toolGcodes_.clear();
     const GeometryToolSettings& ts = js.toolSettings;
 
-    const auto pp = makePreprocessor(js.preprocessor);
+    const auto pp = makePreprocessor(js.preprocessor, js.flavor);
     if (!pp) {
         lastError_ = "Postprocesador desconocido: " + js.preprocessor;
         return false;
@@ -558,7 +558,7 @@ bool CncJob::generateFromGeometry(const ShapeList& geometry, const GeometryJobSe
         p.options.toolDia = PyNumber(ts.toolDia);
         // Igual que el original: la cabecera imprime los límites del objeto de geometría de origen (`options['xmin']`),
         // no los del recorrido ya desplazado por el offset de la herramienta.
-        std::optional<BoundingBox> bb = boundsOf(geometry);
+        std::optional<BoundingBox> bb = js.headerBounds ? js.headerBounds : boundsOf(geometry);
         if (bb) {
             p.options.xmin = PyNumber(bb->xmin);
             p.options.ymin = PyNumber(bb->ymin);
@@ -584,8 +584,14 @@ bool CncJob::generateFromGeometry(const ShapeList& geometry, const GeometryJobSe
         } else {
             p.x = 0;
             p.y = 0;
-            g += pp->liftCode(p) + "\n";
-            g += pp->startzCode(p) + "\n";
+            if (js.flavor == GcodeFlavor::FlatCAM8_994) {
+                // La 8.994 emite el Z inicial antes de subir la herramienta.
+                g += pp->startzCode(p) + "\n";
+                g += pp->liftCode(p) + "\n";
+            } else {
+                g += pp->liftCode(p) + "\n";
+                g += pp->startzCode(p) + "\n";
+            }
             if (!laser) g += pp->spindleCode(p) + "\n";
             if (ts.dwell) g += pp->dwellCode(p) + "\n";
         }

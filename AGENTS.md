@@ -71,16 +71,15 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang, GEOS 3.15.0):** 376 de 376 tests pasan con el commit `1c52023`.
-Falta que confirme el parche del CutOut (420 tests en Linux).
+**Última confirmación en el Mac del usuario (M4, AppleClang, GEOS 3.15.0):** 420 de 420 tests pasan con el commit `d265e06`
+(incluye el CutOut). Falta que confirme el parche del láser (423 tests en Linux).
 
-Fase 3 (hasta ahora): 420 tests en Linux; transformaciones de `Gerber` (24 casos contra el original), postprocesadores
+Fase 3 (hasta ahora): 423 tests en Linux; transformaciones de `Gerber` (24 casos contra el original), postprocesadores
 `default` y `GRBL_laser` (224 líneas de G-code idénticas al original) y G-code de taladrado (`CncJob`): idéntico línea por
 línea al generador original con el orden del archivo, e igual al `.nc` real del usuario salvo el orden de los agujeros. El G-code de geometrías (`generateFromGeometry`) reproduce
 byte por byte `DosCau_PPal-Edge_Cuts.nc` a partir de su propio recorrido.
 
-**Próximos pasos de la fase 3, en orden:** (1) ~~CutOut~~ (hecho: libre, rectangular y puente manual, reproduce el `.nc` del contorno); (2) NCC y Paint con láser (`GRBL_laser`) contra `B_Cu.nc` y
-`B_Logo.nc`; (3) PCB a 2 caras (`Alinea`); (4) Isolation si el usuario lo confirma. Dato del `.nc` del contorno: tiene
+**Próximos pasos de la fase 3, en orden:** (1) ~~CutOut~~ (hecho: libre, rectangular y puente manual, reproduce el `.nc` del contorno); (2a) ~~capa de G-code del láser~~ (hecha: `B_Cu.nc` y `Logo.nc` se reproducen byte por byte desde sus propios trazados, con `GcodeFlavor::FlatCAM8_994`); (2b) **generación de los trazados de NCC y Paint** (`clear_polygon` y las herramientas `ToolNCC`/`ToolPaint`), que es lo que falta para ir del Gerber al `.nc` de láser; (3) PCB a 2 caras (`Alinea`); (4) Isolation si el usuario lo confirma. Dato del `.nc` del contorno: tiene
 **dos** trazados (puentes arriba y abajo), no uno.
 
 ## 5. Arquitectura
@@ -322,7 +321,12 @@ simplejson→nlohmann/json, qrcode→libqrencode. `winreg` y `tkinter` no se por
 
 ## 11. Pendientes y preguntas abiertas
 
-1. Confirmar si la 2024.4 genera el mismo G-code que la 8.994 con el mismo proyecto. **Evidencia a favor:** el taladro (todo
+1. **¿La 2024.4 genera el mismo G-code que la 8.994?** Respuesta: casi, y las diferencias están medidas. Con el postprocesador
+   `GRBL_laser` y en un trabajo de geometría sin cambio de herramienta la 8.994 (a) agrega `G00 Z0` en la cabecera, (b) emite
+   el Z inicial *antes* de subir el láser (`M5`) y (c) cierra sin `G00 Z19.00`. El código lo cubre con `GcodeFlavor`
+   (`FlatCAM2024_4` por defecto, `FlatCAM8_994` para reproducir los archivos del usuario). **Decisión abierta con el usuario:**
+   qué variante usar por defecto en la aplicación. El postprocesador `default` es idéntico en las dos. **Evidencia de lo que
+   coincide:** el taladro (todo
    salvo el orden de los agujeros) y el contorno (byte por byte, desde el Gerber hasta el G-code pasando por el CutOut
    rectangular) coinciden con el generador de la 2024.4. Falta NCC/Paint y
    `Alinea`. El usuario puede exportar de nuevo desde la 2024.4 a `tests/data/2024_4/` para cerrarlo.
