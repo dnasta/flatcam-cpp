@@ -160,7 +160,7 @@ bool CncJob::toolGcode(int tool, const std::vector<Point2D>& points, const Excel
 
     // ---- orden de los agujeros
     std::vector<Point2D> ordered;
-    if (settings_.order == DrillOrder::Optimized) {
+    if (settings_.order != DrillOrder::FileOrder) {  // `RTree` solo existe para geometrías: aquí equivale a `Optimized`
         for (std::size_t i : PathOptimizer::order(points, {firstPoint[0], firstPoint[1]})) ordered.push_back(points[i]);
     } else {
         ordered = points;
@@ -525,6 +525,23 @@ bool CncJob::generateFromGeometry(const ShapeList& geometry, const GeometryJobSe
             std::vector<Point2D> starts;
             for (const auto& it : items) starts.push_back(it.coords.front());
             order = PathOptimizer::order(starts, {0, 0});
+        } else if (js.order == DrillOrder::RTree) {
+            // `geo_optimized_rtree` del original: desde (0, 0), siempre la línea de extremo más cercano. La búsqueda
+            // siguiente parte del ÚLTIMO punto de la línea tal como está guardada, aunque después se recorra invertida.
+            EndpointStorage storage;
+            for (const PathItem& it : items) storage.insert(it.coords, false);
+            order.clear();
+            Point2D current{0, 0};
+            while (auto nearest = storage.nearest(current)) {
+                storage.remove(nearest->index);
+                order.push_back(nearest->index);
+                PathItem& it = items[nearest->index];
+                current = it.coords.back();
+                // Si el extremo más cercano es el último (y no el primero) la línea se recorre al revés.
+                if (!(nearest->point == it.coords.front()) && nearest->point == it.coords.back()) {
+                    std::reverse(it.coords.begin(), it.coords.end());
+                }
+            }
         }
 
         // ---- parámetros del postprocesador

@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include "cam/EndpointStorage.h"
 #include "cam/Preprocessor.h"
 #include "parsers/Excellon.h"
 
@@ -18,7 +19,8 @@ namespace flatcam {
 /** @brief Orden en que se visitan los agujeros de cada herramienta. */
 enum class DrillOrder {
     FileOrder,   ///< El del archivo Excellon, sin optimizar (`excellon_optimization_type = 'No'`).
-    Optimized    ///< Recorrido corto calculado por @ref PathOptimizer.
+    Optimized,   ///< Recorrido corto calculado por @ref PathOptimizer.
+    RTree        ///< Solo trabajos de geometría: el `'R'` del original (siempre la línea de extremo más cercano, invirtiéndola si hace falta).
 };
 
 /**
