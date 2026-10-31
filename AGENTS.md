@@ -48,6 +48,12 @@ logo) y **CutOut** → **CNC Job** con G-code. Taladros y alineación con **PCB 
 - La ruta local del repo tiene **espacios** (está dentro de una carpeta de Google Drive): poné las rutas **entre
   comillas** y probá cualquier script o CMake con rutas con espacios.
 - Se propuso (y es recomendable) que el repo no esté dentro de Drive, porque Drive sincroniza `build/`.
+- **Regla permanente (pedida por el usuario):** verificá y corregí todo lo que haga falta verificar o corregir **apenas lo
+  detectes**, sin esperar a que lo pida. Si una afirmación tuya anterior resulta falsa o no comprobada, decilo, corregila
+  y arreglá el código, los tests y la documentación en el mismo turno.
+- **Regla permanente (pedida por el usuario):** al terminar cada respuesta, el estado del proyecto tiene que estar
+  actualizado en `CLAUDE.md` y en `AGENTS.md` (secciones 4 y 11 de este archivo y "Estado actual" de `CLAUDE.md`). Hacelo
+  **antes** del mensaje final y entregá esos cambios en el mismo parche.
 - Nunca pidas ni uses tokens o contraseñas del usuario. En el chat de claude.ai el entorno **puede leer GitHub pero
   no puede hacer `push`** (ver sección 9).
 
@@ -65,10 +71,19 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
+**Última confirmación en el Mac del usuario (M4, AppleClang, GEOS 3.15.0):** 376 de 376 tests pasan con el commit `95f5c79`
+(incluye los desplazamientos de herramienta en texto completo). Falta que confirme el parche `fase3` de documentación y del
+golden de Gerber con Shapely 1.8.4.
+
 Fase 3 (hasta ahora): 376 tests en Linux; transformaciones de `Gerber` (24 casos contra el original), postprocesadores
 `default` y `GRBL_laser` (224 líneas de G-code idénticas al original) y G-code de taladrado (`CncJob`): idéntico línea por
 línea al generador original con el orden del archivo, e igual al `.nc` real del usuario salvo el orden de los agujeros. El G-code de geometrías (`generateFromGeometry`) reproduce
 byte por byte `DosCau_PPal-Edge_Cuts.nc` a partir de su propio recorrido.
+
+**Próximos pasos de la fase 3, en orden:** (1) CutOut: generar la geometría con los dos puentes desde `Edge_Cuts.gm1` y
+comprobar que el recorrido coincide con el del `.nc` real; (2) NCC y Paint con láser (`GRBL_laser`) contra `B_Cu.nc` y
+`B_Logo.nc`; (3) PCB a 2 caras (`Alinea`); (4) Isolation si el usuario lo confirma. Dato del `.nc` del contorno: tiene
+**dos** trazados (puentes arriba y abajo), no uno.
 
 ## 5. Arquitectura
 
@@ -299,8 +314,9 @@ simplejson→nlohmann/json, qrcode→libqrencode. `winreg` y `tkinter` no se por
 
 ## 11. Pendientes y preguntas abiertas
 
-1. Confirmar si la 2024.4 genera el mismo G-code que la 8.994 con el mismo proyecto (el usuario puede exportar de
-   nuevo desde la 2024.4 a `tests/data/2024_4/`). Hasta entonces, la referencia es el G-code de la 8.994.
+1. Confirmar si la 2024.4 genera el mismo G-code que la 8.994 con el mismo proyecto. **Evidencia a favor:** el taladro (todo
+   salvo el orden de los agujeros) y el contorno (byte por byte) coinciden con el generador de la 2024.4. Falta NCC/Paint y
+   `Alinea`. El usuario puede exportar de nuevo desde la 2024.4 a `tests/data/2024_4/` para cerrarlo.
 2. Reflejo de `B_Cu` (simétrico en sus límites): confirmar con la geometría en la fase 3.
 3. Taladro `(0, 0)` en `Alinea` (el G-code taladra 5 posiciones, el job cuenta 4): aclarar leyendo `ToolDblSided.py`.
 4. Confirmar si Isolation entra en el alcance.
