@@ -556,7 +556,9 @@ bool CncJob::generateFromGeometry(const ShapeList& geometry, const GeometryJobSe
         p.toolC = PyNumber(ts.toolDia);
         p.options.type = "Geometry";
         p.options.toolDia = PyNumber(ts.toolDia);
-        std::optional<BoundingBox> bb = boundsOf(paths);
+        // Igual que el original: la cabecera imprime los límites del objeto de geometría de origen (`options['xmin']`),
+        // no los del recorrido ya desplazado por el offset de la herramienta.
+        std::optional<BoundingBox> bb = boundsOf(geometry);
         if (bb) {
             p.options.xmin = PyNumber(bb->xmin);
             p.options.ymin = PyNumber(bb->ymin);

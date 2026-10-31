@@ -110,7 +110,7 @@ def main():
     sys.path.insert(0, REF)
     camlib = load("camlib", os.path.join(REF, "camlib.py"))
     parse_gerber = load("ParseGerber", os.path.join(REF, "appParsers", "ParseGerber.py"))
-    result = {"shapely": shapely.__version__, "geos": shapely.geos_version_string, "files": {}}
+    result = {"shapely": shapely.__version__, "geos": getattr(shapely, "geos_version_string", None) or shapely.geos.geos_version_string, "files": {}}
     for name in FILES:
         print("Procesando", name, flush=True)
         result["files"][name] = summarize(os.path.join(DATA, name), camlib, parse_gerber)

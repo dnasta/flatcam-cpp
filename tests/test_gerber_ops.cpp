@@ -45,12 +45,11 @@ TEST_P(GerberOps, MatchesOriginalParser) {
     ASSERT_TRUE(g.parseFile(std::string(FLATCAM_TEST_DATA_DIR) + "/" + c.file));
     kOps.at(c.op)(g);
 
-    // Se compara la cantidad de polígonos tras unir. El original (con Shapely 2 en el oráculo) aplica el buffer a
-    // toda la geometría junta, mientras que FlatCAM con Shapely 1.8 y este port lo aplican polígono por polígono;
-    // al unir, ambos dan las mismas figuras.
+    // La cantidad de polígonos se compara tal cual, sin unirlos: el golden sale del FlatCAM original con Shapely 1.8,
+    // que aplica el buffer polígono por polígono igual que este port. El área y los límites se comparan sobre la unión.
     const ShapeList polys = polygonsOf(g);
+    EXPECT_EQ(static_cast<int>(polys.size()), c.nPolygons);
     const Shape all = Shape::unaryUnion(polys);
-    EXPECT_EQ(static_cast<int>(all.parts().size()), c.nPolygons);
     expectRelNear(all.area(), c.area, 1e-6);
     const auto b = all.bounds();
     ASSERT_TRUE(b.has_value());
