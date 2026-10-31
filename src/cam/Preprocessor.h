@@ -99,7 +99,7 @@ struct PreprocessorParams {
  */
 enum class GcodeFlavor {
     FlatCAM2024_4,  ///< Igual que FlatCAM 2024.4 (el código fuente de referencia).
-    FlatCAM8_994    ///< Igual que el G-code generado por FlatCAM 8.994 del usuario.
+    FlatCAM8_994    ///< Igual que el G-code generado por FlatCAM 8.994 del usuario (**predeterminada**, por decisión del usuario).
 };
 
 /**
@@ -181,7 +181,7 @@ public:
      * @brief Crea el postprocesador.
      * @param flavor Con @ref GcodeFlavor::FlatCAM8_994 la cabecera lleva `G00 Z0` y el cierre no lleva `G00 Z..`.
      */
-    explicit GrblLaserPreprocessor(GcodeFlavor flavor = GcodeFlavor::FlatCAM2024_4) : flavor_(flavor) {}
+    explicit GrblLaserPreprocessor(GcodeFlavor flavor = GcodeFlavor::FlatCAM8_994) : flavor_(flavor) {}
 
     std::string name() const override { return "GRBL_laser"; }
     std::string startCode(const PreprocessorParams& p) const override;
@@ -211,6 +211,6 @@ private:
  * @return El postprocesador, o `nullptr` si no existe.
  */
 std::unique_ptr<Preprocessor> makePreprocessor(const std::string& name,
-                                               GcodeFlavor flavor = GcodeFlavor::FlatCAM2024_4);
+                                               GcodeFlavor flavor = GcodeFlavor::FlatCAM8_994);
 
 }  // namespace flatcam

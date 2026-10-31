@@ -52,7 +52,7 @@ TEST_P(PreprocessorGolden, MatchesOriginalPreprocessor) {
     };
     const auto& c = golden_pp::kCases.at(GetParam());
     SCOPED_TRACE(std::string(c.pp) + " / " + golden_pp::kScenarioNames[c.scenario] + " / " + c.method);
-    const auto pp = makePreprocessor(c.pp);
+    const auto pp = makePreprocessor(c.pp, GcodeFlavor::FlatCAM2024_4);  // los goldens salen del código de la 2024.4
     ASSERT_NE(pp, nullptr);
     EXPECT_EQ(calls.at(c.method)(*pp, golden_pp::scenario(c.scenario)), c.expected);
 }

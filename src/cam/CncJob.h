@@ -100,7 +100,7 @@ struct GeometryJobSettings {
     bool toolchange{true};                 ///< Emitir el cambio de herramienta antes de empezar.
     int tool{1};                           ///< Número de herramienta.
     GeometryToolSettings toolSettings;     ///< Parámetros de corte.
-    GcodeFlavor flavor{GcodeFlavor::FlatCAM2024_4};  ///< Versión de FlatCAM cuyo G-code se reproduce.
+    GcodeFlavor flavor{GcodeFlavor::FlatCAM8_994};  ///< Versión de FlatCAM cuyo G-code se reproduce (predeterminada: 8.994).
     /// Límites que imprime la cabecera (`options['xmin']`...). Si falta se usan los de la geometría de origen.
     std::optional<BoundingBox> headerBounds;
 };

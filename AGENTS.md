@@ -71,15 +71,15 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang, GEOS 3.15.0):** 420 de 420 tests pasan con el commit `d265e06`
-(incluye el CutOut). Falta que confirme el parche del láser (423 tests en Linux).
+**Última confirmación en el Mac del usuario (M4, AppleClang, GEOS 3.15.0):** 423 de 423 tests pasan con el commit `33def09`
+(incluye la capa de G-code del láser). Falta que confirme el parche que fija la variante 8.994 por defecto (424 tests en Linux).
 
-Fase 3 (hasta ahora): 423 tests en Linux; transformaciones de `Gerber` (24 casos contra el original), postprocesadores
+Fase 3 (hasta ahora): 424 tests en Linux; transformaciones de `Gerber` (24 casos contra el original), postprocesadores
 `default` y `GRBL_laser` (224 líneas de G-code idénticas al original) y G-code de taladrado (`CncJob`): idéntico línea por
 línea al generador original con el orden del archivo, e igual al `.nc` real del usuario salvo el orden de los agujeros. El G-code de geometrías (`generateFromGeometry`) reproduce
 byte por byte `DosCau_PPal-Edge_Cuts.nc` a partir de su propio recorrido.
 
-**Próximos pasos de la fase 3, en orden:** (1) ~~CutOut~~ (hecho: libre, rectangular y puente manual, reproduce el `.nc` del contorno); (2a) ~~capa de G-code del láser~~ (hecha: `B_Cu.nc` y `Logo.nc` se reproducen byte por byte desde sus propios trazados, con `GcodeFlavor::FlatCAM8_994`); (2b) **generación de los trazados de NCC y Paint** (`clear_polygon` y las herramientas `ToolNCC`/`ToolPaint`), que es lo que falta para ir del Gerber al `.nc` de láser; (3) PCB a 2 caras (`Alinea`); (4) Isolation si el usuario lo confirma. Dato del `.nc` del contorno: tiene
+**Próximos pasos de la fase 3, en orden:** (1) ~~CutOut~~ (hecho: libre, rectangular y puente manual, reproduce el `.nc` del contorno); (2a) ~~capa de G-code del láser~~ (hecha: `B_Cu.nc` y `Logo.nc` se reproducen byte por byte desde sus propios trazados, con `GcodeFlavor::FlatCAM8_994`); (2b) **generación de los trazados de NCC y Paint**, que es lo que falta para ir del Gerber al `.nc` de láser (ver el plan de abajo); (3) PCB a 2 caras (`Alinea`); (4) Isolation si el usuario lo confirma. Dato del `.nc` del contorno: tiene
 **dos** trazados (puentes arriba y abajo), no uno.
 
 ## 5. Arquitectura
@@ -319,13 +319,35 @@ o `std::vector`, vispy/OpenGL→`QOpenGLWidget`/`QGraphicsView`, ezdxf→libdxfr
 lxml→pugixml o `QXmlStreamReader`, svglib→parser SVG o QtSvg, reportlab→`QPdfWriter`, ortools→OR-Tools C++,
 simplejson→nlohmann/json, qrcode→libqrencode. `winreg` y `tkinter` no se portan.
 
+### Plan para NCC y Paint (lo que falta de la fase 3)
+
+Datos del usuario (`tests/data/PARAMETROS.md`): herramienta de 0,1 mm, método estándar, solape 0,8 (paso 0,02 mm), margen 0,
+conectar sí, contorno sí, láser `GRBL_laser`. Los `.nc` de referencia traen 723 trazados y 499.094 puntos (`B_Cu`) y 38 trazados
+y 6.402 puntos (`Logo`); esos números ya se verificaron al reproducir los archivos desde sus trazados.
+
+Algoritmo que hay que portar, en este orden (`reference/FlatCAM_2024_4/FlatCAM/`):
+1. `FlatCAMRTree` / `FlatCAMRTreeStorage` (`camlib.py` 8538): índice de los extremos de cada línea, con `nearest`, `insert` y
+   `remove`. El original usa `rtree.Index.nearest`, que ante puntos **exactamente equidistantes** devuelve todos en un orden
+   interno de libspatialindex (con 4 puntos equidistantes dio los ids 0, 2, 1, 3, no por índice). El port puede usar una grilla
+   o un k-d con menor índice como desempate: solo cambia el resultado con empates exactos.
+2. `Geometry.paint_connect` (`camlib.py` 1967): une anillos vecinos si el tramo de unión cabe dentro del polígono
+   (`walk_cut.within(boundary)`) y mide menos de `10 * tooldia`.
+3. `Geometry.clear_polygon` (`camlib.py` 1407): `buffer(-tooldia / 1.999999)` y luego `buffer(-tooldia * (1 - overlap))`
+   repetido hasta que el área sea cero; cada anillo va al almacén; después `paint_connect` si `connect`.
+4. El flujo de la herramienta: `ToolPaint` (3261 líneas) para `Logo` (empezar por acá, es chico) y `ToolNCC` (4607 líneas;
+   `clear_polygon_worker` en la línea 2053) para `B_Cu`, incluyendo el contorno, la validez y el margen.
+
+Oráculo: hay que correr el original con el paquete `rtree` **real**; `tests/tools/oracle_common.py` lo reemplaza por un simulacro
+vacío. En el entorno de Shapely 1.8.4: `micromamba install -n old -c conda-forge rtree` (rtree 1.4.1, probado).
+Criterio de aceptación: el G-code que sale de `B_Cu.gbl` y `B_Logo.gbr` coincide con `DosCau_PPal-B_Cu.nc` y `-Logo.nc`.
+
 ## 11. Pendientes y preguntas abiertas
 
 1. **¿La 2024.4 genera el mismo G-code que la 8.994?** Respuesta: casi, y las diferencias están medidas. Con el postprocesador
    `GRBL_laser` y en un trabajo de geometría sin cambio de herramienta la 8.994 (a) agrega `G00 Z0` en la cabecera, (b) emite
    el Z inicial *antes* de subir el láser (`M5`) y (c) cierra sin `G00 Z19.00`. El código lo cubre con `GcodeFlavor`
-   (`FlatCAM2024_4` por defecto, `FlatCAM8_994` para reproducir los archivos del usuario). **Decisión abierta con el usuario:**
-   qué variante usar por defecto en la aplicación. El postprocesador `default` es idéntico en las dos. **Evidencia de lo que
+   (`FlatCAM8_994` **por defecto**, por decisión del usuario: "prefiero G00 Z0"; `FlatCAM2024_4` sigue disponible y es la que
+   usan los tests contra el código original). El postprocesador `default` es idéntico en las dos. **Evidencia de lo que
    coincide:** el taladro (todo
    salvo el orden de los agujeros) y el contorno (byte por byte, desde el Gerber hasta el G-code pasando por el CutOut
    rectangular) coinciden con el generador de la 2024.4. Falta NCC/Paint y
