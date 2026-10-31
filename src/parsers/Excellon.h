@@ -91,6 +91,15 @@ public:
     bool parseLines(const std::vector<std::string>& lines);
 
     /**
+     * @brief Agrega una herramienta con sus agujeros sin leer ningún archivo (como hace la herramienta "PCB a 2 caras").
+     * @param id Número de la herramienta.
+     * @param diameter Diámetro de la herramienta.
+     * @param drills Posiciones de los agujeros, en el orden en que se taladran si no se optimiza.
+     * Después hay que llamar a @ref createGeometry.
+     */
+    void addDrillTool(int id, double diameter, const std::vector<Point2D>& drills);
+
+    /**
      * @brief Crea la geometría de cada agujero y ranura (`create_geometry`).
      * @return `true` si se creó correctamente.
      */

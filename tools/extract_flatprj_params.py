@@ -7,10 +7,13 @@ en memoria: se lee línea por línea y se conserva solo lo chico (opciones, herr
 Se descartan las figuras (`solid_geometry`, `follow_geometry`), el G-code y las cadenas gigantes.
 
 Uso (solo usa la biblioteca estándar de Python 3):
-    python3 tools/extract_flatprj_params.py "ruta/al/proyecto.FlatPrj" [salida.json] [--todas-las-opciones]
+    python3 tools/extract_flatprj_params.py "ruta/al/proyecto.FlatPrj" [salida.json] [--todas-las-opciones] [--con-agujeros]
 
 Si no se indica la salida, escribe `<nombre del proyecto>.params.json` en la carpeta actual.
 El resultado es chico (unos cientos de KB) y se puede subir al repositorio.
+
+Con `--con-agujeros` se conservan además las posiciones de los agujeros y ranuras (`drills`, `slots`) de los objetos
+Excellon, que son pocas; sirve, por ejemplo, para ver qué agujeros tiene realmente el objeto de alineación.
 
 Privacidad: las opciones globales de FlatCAM pueden incluir rutas de carpetas y otros datos personales.
 Por defecto solo se conservan las de las herramientas (`tools_*`, `geometry_*`, `excellon_*`, `gerber_*`,
@@ -190,6 +193,9 @@ def summarize(res):
 def main(argv):
     args = [a for a in argv[1:] if not a.startswith("--")]
     keep_all = "--todas-las-opciones" in argv
+    if "--con-agujeros" in argv:
+        SKIP_KEYS.discard("drills")
+        SKIP_KEYS.discard("slots")
     if not args or "-h" in argv or "--help" in argv:
         print(__doc__)
         return 1

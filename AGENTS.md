@@ -71,16 +71,16 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang, GEOS 3.15.0):** 445 de 445 con el commit `d8f4630` (Paint con
-tolerancias corregidas). Falta que confirme el parche `fase3n` del NCC (454 tests en Linux con GEOS 3.12 y con 3.15.0, más una
-prueba lenta opcional).
+**Última confirmación en el Mac del usuario (M4, AppleClang, GEOS 3.15.0):** 455 tests con el commit `99e4799` (454 pasan y 1,
+la lenta del NCC, queda saltada a propósito). Falta que confirme el parche `fase3o` de PCB a 2 caras (464 tests en Linux con GEOS 3.12
+y con 3.15.0, más la prueba lenta opcional).
 
-Fase 3 (hasta ahora): 455 tests en Linux (GEOS 3.12 y 3.15.0; 454 corren siempre y 1 es lenta); transformaciones de `Gerber` (24 casos contra el original), postprocesadores
+Fase 3 (hasta ahora): 464 tests en Linux (GEOS 3.12 y 3.15.0; 463 corren siempre y 1 es lenta); transformaciones de `Gerber` (24 casos contra el original), postprocesadores
 `default` y `GRBL_laser` (224 líneas de G-code idénticas al original) y G-code de taladrado (`CncJob`): idéntico línea por
 línea al generador original con el orden del archivo, e igual al `.nc` real del usuario salvo el orden de los agujeros. El G-code de geometrías (`generateFromGeometry`) reproduce
 byte por byte `DosCau_PPal-Edge_Cuts.nc` a partir de su propio recorrido.
 
-**Próximos pasos de la fase 3, en orden:** (1) ~~CutOut~~ (hecho: libre, rectangular y puente manual, reproduce el `.nc` del contorno); (2a) ~~capa de G-code del láser~~ (hecha: `B_Cu.nc` y `Logo.nc` se reproducen byte por byte desde sus propios trazados, con `GcodeFlavor::FlatCAM8_994`); (2b) ~~**Paint**~~ (hecho, método estándar: `src/tools/Paint.*`, `src/cam/PolygonClearing.*`, `src/cam/EndpointStorage.*`, orden `R` en `CncJob`); (2c) ~~**NCC**~~ (hecho, "Él mismo" sobre un Gerber con el método estándar: `src/tools/Ncc.*`; verificado exacto contra el original con casos sintéticos y equivalente a `B_Cu.nc`, ver sección 7); (3) PCB a 2 caras (`Alinea`); (4) Isolation si el usuario lo confirma. Dato del `.nc` del contorno: tiene
+**Próximos pasos de la fase 3, en orden:** (1) ~~CutOut~~ (hecho: libre, rectangular y puente manual, reproduce el `.nc` del contorno); (2a) ~~capa de G-code del láser~~ (hecha: `B_Cu.nc` y `Logo.nc` se reproducen byte por byte desde sus propios trazados, con `GcodeFlavor::FlatCAM8_994`); (2b) ~~**Paint**~~ (hecho, método estándar: `src/tools/Paint.*`, `src/cam/PolygonClearing.*`, `src/cam/EndpointStorage.*`, orden `R` en `CncJob`); (2c) ~~**NCC**~~ (hecho, "Él mismo" sobre un Gerber con el método estándar: `src/tools/Ncc.*`; verificado exacto contra el original con casos sintéticos y equivalente a `B_Cu.nc`, ver sección 7); (3) ~~PCB a 2 caras (`Alinea`)~~ (hecho: `src/tools/DoubleSided.*`, agujeros de alineación y su G-code; queda abierta la pregunta del taladro en el origen, ver sección 11); (4) Isolation si el usuario lo confirma. Dato del `.nc` del contorno: tiene
 **dos** trazados (puentes arriba y abajo), no uno.
 
 ## 5. Arquitectura
@@ -107,6 +107,7 @@ src/parsers/           Lectores de archivos (sin Qt, derivan de Geometry)
 src/tools/              Herramientas de FlatCAM (sin Qt)
   Paint.*                Pintado de polígonos con el método estándar (`ToolPaint.py`)
   Ncc.*                  Limpieza de cobre de toda la placa, método estándar (`ToolNCC.py`)
+  DoubleSided.*          PCB a 2 caras: agujeros de alineación con sus reflejos (`ToolDblSided.py`)
   CutOut.*               Corte de contorno con puentes: libre, rectangular y puente manual (`ToolCutOut.py`)
 src/cam/                Generación de G-code (sin Qt)
   PyNumber.*             Número que recuerda si era int o float, para imprimir como `str()` de Python
@@ -269,8 +270,14 @@ Hallazgos que condicionan el trabajo:
 - Postprocesadores usados: **`GRBL_laser`** (B_Cu y Logo: avance 500, rápidos 1500, Z Focus 2,0, potencia 300, sin
   movimientos en Z) y **`default`** (Mach3; Drill, Alinea, Edge_Cuts).
 - Taladros reflejados en X (el `.drl` trae `X-26.239` y el G-code `X26.2390`).
-- `Alinea` no tiene `.drl`: lo genera la herramienta "PCB a 2 caras" (4 agujeros en las esquinas, más uno en 0,0
-  cuyo origen hay que aclarar).
+- `Alinea` no tiene `.drl`: lo genera la herramienta "PCB a 2 caras" (`on_create_alignment_holes`): el usuario tipea los agujeros y la
+  herramienta agrega el reflejo de cada uno respecto de un eje que pasa por un punto (`affinity.scale`, fórmula exacta
+  `factor * x + (pivote - pivote * factor)`). Con `(-38, 39.5)` y `(38, 39.5)`, eje X por el origen, salen los 4 agujeros de las esquinas.
+  **El `Alinea.nc` real no se reproduce byte a byte, por dos diferencias que vienen de otro camino de código de la 8.994** (el de la
+  pestaña del propio objeto Excellon, que ya no existe en la 2024.4): (a) deja una línea en blanco después de cada agujero y (b)
+  taladra primero en el origen (0, 0), aunque el objeto cuenta 4 agujeros ("Total drills = 4"). Sin esas dos cosas el port da
+  exactamente tu archivo (orden de los agujeros, cabecera y rangos). Ese (0, 0) es un agujero en el centro de la placa: hay que
+  preguntarle al usuario si lo quiere (sección 11).
 - **Los `.nc` los generó FlatCAM v8.994 (2020/11/7), no la 2024.4** cuyos fuentes tenemos. Puede haber diferencias.
   Se le pidió al usuario re-exportar con la 2024.4 a `tests/data/2024_4/`. Si no hay diferencias, usar cualquiera.
 - **Parámetros confirmados** (leídos del `.FlatPrj` del dosificador, que también guardó la 8.994; ver
@@ -396,7 +403,12 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
    rectangular) coinciden con el generador de la 2024.4. Falta NCC/Paint y
    `Alinea`. El usuario puede exportar de nuevo desde la 2024.4 a `tests/data/2024_4/` para cerrarlo.
 2. Reflejo de `B_Cu` (simétrico en sus límites): confirmar con la geometría en la fase 3.
-3. Taladro `(0, 0)` en `Alinea` (el G-code taladra 5 posiciones, el job cuenta 4): aclarar leyendo `ToolDblSided.py`.
+3. **Taladro `(0, 0)` en `Alinea`** (el G-code taladra 5 posiciones, el job cuenta 4). Leído `ToolDblSided.py`: la herramienta solo
+   crea los agujeros pedidos y sus reflejos, así que el (0, 0) no sale de ahí ni de OR-Tools (el `Drill.nc`, que usa la misma
+   optimización `B`, no taladra en el origen). Probablemente es un agujero que el objeto Excellon de alineación tenía en su lista o
+   una rareza del camino viejo de la 8.994. Para saberlo: `python3 tools/extract_flatprj_params.py proyecto.FlatPrj salida.json
+   --con-agujeros` y mirar `drills` de `PCB ppal-Alinea.drl`; y preguntar si el usuario quiere ese agujero en el centro de la placa.
+   El port NO lo taladra hasta que lo pida.
 4. Confirmar si Isolation entra en el alcance.
 5. **Orden de los taladros (decidido).** El `.nc` de referencia lo ordenó OR-Tools (`excellon_optimization_type = B`). El usuario
    eligió un **optimizador propio** (`PathOptimizer`: 2-opt desde el vecino más cercano y desde el orden del archivo, el

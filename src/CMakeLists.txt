@@ -19,6 +19,7 @@ add_library(flatcam_core STATIC
     tools/CutOut.cpp
     tools/Paint.cpp
     tools/Ncc.cpp
+    tools/DoubleSided.cpp
 )
 add_library(flatcam::core ALIAS flatcam_core)
 

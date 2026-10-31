@@ -246,4 +246,5 @@ Nota: "Herramienta de Perforación" es la herramienta de taladrado nueva de la 2
    puede abrir el proyecto en la 2024.4 y exportar de nuevo a `tests/data/2024_4/`).
 2. **Reflejo de `B_Cu`**: su geometría es simétrica en los límites; se confirma comparando la geometría en la fase 3.
 3. **Taladro `(0, 0)` en `Alinea`**: el G-code taladra 5 posiciones (las 4 esquinas más el origen) aunque el job
-   cuenta 4 agujeros; se aclarará al leer `ToolDblSided.py`.
+   cuenta 4 agujeros. `ToolDblSided.py` solo crea los agujeros pedidos y sus reflejos: el origen viene de otro camino de código
+   de la 8.994 (también deja una línea en blanco tras cada agujero). Pendiente de que el usuario diga si quiere ese agujero.

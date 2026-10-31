@@ -488,6 +488,13 @@ bool Excellon::parseLines(const std::vector<std::string>& elines) {
     return true;
 }
 
+void Excellon::addDrillTool(int id, double diameter, const std::vector<Point2D>& drills) {
+    ExcellonTool& t = drillTools_[id];
+    t.tooldia = diameter;
+    t.drills = drills;
+    t.slots.clear();
+}
+
 bool Excellon::createGeometry() {
     solidGeometry().clear();
     tools().clear();
