@@ -1,5 +1,6 @@
 #include "cam/CncJob.h"
 
+#include <algorithm>
 #include <cmath>
 
 #include "cam/PathOptimizer.h"
@@ -63,6 +64,13 @@ bool CncJob::generateFromExcellon(const Excellon& excellon) {
     if (selected.empty()) {
         lastError_ = "El Excellon no tiene agujeros para las herramientas configuradas";
         return false;
+    }
+    for (const auto& [id, tool] : excellon.drillTools()) {
+        if (!tool.slots.empty() && settings_.tools.count(id)) {
+            // El generador de taladrado del original solo recorre agujeros; las ranuras se fresan con otra herramienta.
+            Logger::warning("CncJob: la herramienta T" + std::to_string(id) + " tiene " + std::to_string(tool.slots.size()) +
+                            " ranura(s) que no se incluyen en el G-code de taladrado");
+        }
     }
 
     std::array<double, 2> firstPoint{0.0, 0.0};
@@ -212,7 +220,7 @@ bool CncJob::toolGcode(int tool, const std::vector<Point2D>& points, const Excel
 
 namespace {
 
-/// Expande figuras múltiples y polígonos en líneas y anillos (`flatten(..., pathonly=True)`).
+/// Expande figuras múltiples y polígonos en líneas, anillos y puntos (`flatten(..., pathonly=True)`).
 void flattenPaths(const Shape& s, ShapeList& out) {
     const ShapeType t = s.type();
     if (static_cast<int>(t) >= static_cast<int>(ShapeType::MultiPoint)) {
@@ -231,6 +239,225 @@ bool isClosed(const Shape& s) {
     return c.size() > 2 && c.front() == c.back();
 }
 
+/// Un trazado a recorrer: sus vértices y la información de tipo que usa el generador original.
+struct PathItem {
+    std::vector<Point2D> coords;
+    bool isPoint{false};
+    bool isLinearRing{false};  ///< Tipo `LinearRing` (los contornos de un polígono); los `LineString` cerrados no lo son.
+    bool isRing{false};        ///< `is_ring`: línea cerrada y simple.
+};
+
+/// Estado compartido por las funciones que generan el G-code de un trazado.
+struct GeoContext {
+    const Preprocessor& pp;
+    PreprocessorParams& p;
+    const GeometryToolSettings& ts;
+};
+
+/// Equivale a `Decimal(x).quantize(Decimal('0.000000001'))`, expresado en unidades de 1e-9.
+long long toNano(double x) { return static_cast<long long>(std::nearbyint(x * 1e9)); }
+
+/// Equivale a `CNCjob.segment`: parte los tramos largos para que se pueda nivelar la placa.
+std::vector<Point2D> segmentPath(const std::vector<Point2D>& coords, double segx, double segy) {
+    if (coords.size() < 2 || (segx <= 0 && segy <= 0)) return coords;
+
+    // linebreak_single: devuelve (valor en `dim`, valor en la otra coordenada) del punto a distancia dmax.
+    auto single = [](const Point2D& a, const Point2D& b, int dim, double dmax) -> std::optional<std::pair<double, double>> {
+        if (dmax <= 0) return std::nullopt;
+        const double a0 = dim == 0 ? a.x : a.y, a1 = dim == 0 ? a.y : a.x;
+        const double b0 = dim == 0 ? b.x : b.y, b1 = dim == 0 ? b.y : b.x;
+        double sign, d;
+        if (b0 > a0) {
+            sign = 1.0;
+            d = b0 - a0;
+        } else {
+            sign = -1.0;
+            d = a0 - b0;
+        }
+        if (d > dmax) {
+            const double dd = d > dmax * 2 ? dmax : d / 2;
+            return std::make_pair(a0 + dd * sign, a1 + dd * (b1 - a1) / d);
+        }
+        return std::nullopt;
+    };
+
+    std::vector<Point2D> path{coords.front()};
+    for (std::size_t i = 1; i < coords.size(); ++i) {
+        Point2D a = path.back();
+        const Point2D b = coords[i];
+        for (;;) {  // linebreak, de forma iterativa
+            std::optional<std::pair<double, double>> ptNew = single(a, b, 0, segx);
+            std::optional<std::pair<double, double>> ptNew2;
+            if (!ptNew) {
+                ptNew2 = single(a, b, 1, segy);
+            } else {
+                ptNew2 = single(a, Point2D{ptNew->first, ptNew->second}, 1, segy);
+            }
+            if (ptNew2) ptNew = std::make_pair(ptNew2->second, ptNew2->first);  // pt_new2[::-1]
+            if (!ptNew) {
+                path.push_back(b);
+                break;
+            }
+            path.push_back({ptNew->first, ptNew->second});
+            a = path.back();
+        }
+    }
+    return path;
+}
+
+/// Viaje rápido hasta (x, y) a la Z de viaje (sin áreas de exclusión es un solo movimiento rápido).
+std::string travelTo(GeoContext& c, double x, double y) {
+    c.p.x = x;
+    c.p.y = y;
+    return c.pp.rapidCode(c.p) + "\n";
+}
+
+/// Baja a la Z de corte: avance Z, bajada y avance de trabajo.
+std::string plunge(GeoContext& c, double x, double y, double zCut) {
+    c.p.x = x;
+    c.p.y = y;
+    c.p.zCut = PyNumber(zCut);
+    return c.pp.zFeedrateCode(c.p) + "\n" + c.pp.downCode(c.p) + "\n" + c.pp.feedrateCode(c.p) + "\n";
+}
+
+/// Sube a la Z de viaje desde (x, y).
+std::string lift(GeoContext& c, double x, double y) {
+    c.p.x = x;
+    c.p.y = y;
+    c.p.zMove = PyNumber(c.ts.travelZ);
+    return c.pp.liftCode(c.p) + "\n";
+}
+
+/// `CNCjob.linear2gcode`: recorre una línea a la Z indicada.
+std::string linear2gcode(GeoContext& c, const std::vector<Point2D>& line, double zCut, bool down, bool up) {
+    std::vector<Point2D> target = line;
+    if (c.ts.tolerance > 0) target = Shape::lineString(line).simplify(c.ts.tolerance).coordinates();
+    const std::vector<Point2D> path = segmentPath(target, c.ts.segX, c.ts.segY);
+
+    std::string g = travelTo(c, path.front().x, path.front().y);
+    if (down) g += plunge(c, path.front().x, path.front().y, zCut);
+    for (std::size_t i = 1; i < path.size(); ++i) {
+        c.p.x = path[i].x;
+        c.p.y = path[i].y;
+        c.p.zCut = PyNumber(zCut);
+        g += c.pp.linearCode(c.p) + "\n";
+    }
+    if (up) g += lift(c, path.back().x, path.back().y);
+    return g;
+}
+
+/// `CNCjob.linear2gcode_extra`: recorre un anillo cerrado y lo solapa un poco para que el corte quede completo.
+std::string linear2gcodeExtra(GeoContext& c, const std::vector<Point2D>& line, double zCut, bool up) {
+    std::vector<Point2D> path = line;
+    Shape target = Shape::lineString(line);
+    if (c.ts.tolerance > 0) {
+        target = target.simplify(c.ts.tolerance);
+        path = target.coordinates();
+    }
+    std::string g = travelTo(c, path.front().x, path.front().y);
+    g += plunge(c, path.front().x, path.front().y, zCut);
+    Point2D prev = path.front();
+    for (std::size_t i = 1; i < path.size(); ++i) {
+        c.p.x = path[i].x;
+        c.p.y = path[i].y;
+        c.p.zCut = PyNumber(zCut);
+        g += c.pp.linearCode(c.p) + "\n";
+        prev = path[i];
+    }
+
+    Point2D last = prev;
+    double extraLen = c.ts.extracutLength;
+    if (extraLen == 0.0) {
+        const std::vector<Point2D> extra{path.back(), path.front(), path.at(1)};
+        g += lift(c, prev.x, prev.y);
+        g += travelTo(c, extra[0].x, extra[0].y);
+        g += plunge(c, extra[0].x, extra[0].y, zCut);
+        for (std::size_t i = 1; i < extra.size(); ++i) {
+            c.p.x = extra[i].x;
+            c.p.y = extra[i].y;
+            g += c.pp.linearCode(c.p) + "\n";
+        }
+        c.p.x = path[0].x;
+        c.p.y = path[0].y;
+        g += c.pp.linearCode(c.p) + "\n";
+        last = path[0];
+    } else {
+        const double length = target.length();
+        if (extraLen >= length) extraLen = length;
+        const double startLength = length - (extraLen * 0.5);
+        std::vector<Point2D> extra = target.substring(startLength, length).coordinates();
+        g += lift(c, prev.x, prev.y);
+        g += travelTo(c, extra[0].x, extra[0].y);
+        g += plunge(c, extra[0].x, extra[0].y, zCut);
+        for (std::size_t i = 1; i < extra.size(); ++i) {
+            c.p.x = extra[i].x;
+            c.p.y = extra[i].y;
+            g += c.pp.linearCode(c.p) + "\n";
+        }
+        extra = target.substring(0, extraLen * 0.5).coordinates();
+        for (std::size_t i = 1; i < extra.size(); ++i) {
+            c.p.x = extra[i].x;
+            c.p.y = extra[i].y;
+            g += c.pp.linearCode(c.p) + "\n";
+        }
+        extra = target.substring(0, extraLen * 0.5).coordinates();
+        std::reverse(extra.begin(), extra.end());
+        last = extra[0];
+        for (std::size_t i = 1; i < extra.size(); ++i) {
+            c.p.x = extra[i].x;
+            c.p.y = extra[i].y;
+            g += c.pp.linearCode(c.p) + "\n";
+            last = extra[i];
+        }
+    }
+    if (up) g += lift(c, last.x, last.y);
+    return g;
+}
+
+/// `CNCjob.point2gcode`: un agujero en el punto.
+std::string point2gcode(GeoContext& c, const Point2D& pt) {
+    std::string g = travelTo(c, pt.x, pt.y);
+    g += plunge(c, pt.x, pt.y, c.ts.cutZ);
+    g += lift(c, pt.x, pt.y);
+    return g;
+}
+
+/// `CNCjob.create_gcode_single_pass`.
+std::string singlePass(GeoContext& c, const PathItem& item) {
+    if (item.isPoint) return point2gcode(c, item.coords.front());
+    if (!c.ts.extracut || !item.isRing) return linear2gcode(c, item.coords, c.ts.cutZ, true, true);
+    return linear2gcodeExtra(c, item.coords, c.ts.cutZ, true);
+}
+
+/// `CNCjob.create_gcode_multi_pass`: varias pasadas con profundidad creciente, con aritmética decimal exacta.
+std::string multiPass(GeoContext& c, PathItem& item, const Point2D& oldPoint) {
+    std::string g;
+    const long long zCut = toNano(c.ts.cutZ);
+    const long long perCut = toNano(c.ts.depthPerPass);
+    long long depth = 0;
+    bool reverse = false;
+    const bool exactLineString = !item.isPoint && !item.isLinearRing;  // `type(geometry) == LineString`
+    while (depth > zCut) {
+        depth -= perCut;
+        if (depth < zCut) depth = zCut;
+        const double depthValue = static_cast<double>(depth) / 1e9;
+        if (item.isPoint) {
+            g += point2gcode(c, item.coords.front());
+            break;
+        }
+        if (!c.ts.extracut || !item.isRing) g += linear2gcode(c, item.coords, depthValue, true, false);
+        else g += linear2gcodeExtra(c, item.coords, depthValue, false);
+        if (exactLineString) {
+            std::reverse(item.coords.begin(), item.coords.end());
+            reverse = true;
+        }
+        if (perCut <= 0) break;  // evita un bucle infinito con una profundidad por pasada inválida
+    }
+    if (reverse && exactLineString) std::reverse(item.coords.begin(), item.coords.end());
+    g += lift(c, oldPoint.x, oldPoint.y);
+    return g;
+}
+
 }  // namespace
 
 bool CncJob::generateFromGeometry(const ShapeList& geometry, const GeometryJobSettings& js) {
@@ -243,14 +470,6 @@ bool CncJob::generateFromGeometry(const ShapeList& geometry, const GeometryJobSe
     const auto pp = makePreprocessor(js.preprocessor);
     if (!pp) {
         lastError_ = "Postprocesador desconocido: " + js.preprocessor;
-        return false;
-    }
-    if (ts.multidepth) {
-        lastError_ = "La profundidad múltiple todavía no está soportada en el trabajo de geometría";
-        return false;
-    }
-    if (ts.extracut) {
-        lastError_ = "El corte extra todavía no está soportado";
         return false;
     }
 
@@ -277,24 +496,34 @@ bool CncJob::generateFromGeometry(const ShapeList& geometry, const GeometryJobSe
         } else {
             paths = flat;
         }
-        ShapeList lines;
+
+        std::vector<PathItem> items;
         for (const Shape& s : paths) {
-            if (s.type() == ShapeType::LineString || s.type() == ShapeType::LinearRing) lines.push_back(s);
-            else if (!s.isEmpty()) Logger::warning("CncJob: las figuras de tipo punto todavía no se mueven");
+            if (s.isEmpty()) continue;
+            PathItem item;
+            if (s.type() == ShapeType::Point) {
+                item.isPoint = true;
+            } else if (s.type() == ShapeType::LineString || s.type() == ShapeType::LinearRing) {
+                item.isLinearRing = s.type() == ShapeType::LinearRing;
+                item.isRing = s.isRing();
+            } else {
+                continue;
+            }
+            item.coords = s.coordinates();
+            if (!item.isPoint && item.coords.size() < 2) continue;
+            items.push_back(std::move(item));
         }
-        if (lines.empty()) {
+        if (items.empty()) {
             lastError_ = "No hay líneas para recorrer";
             return false;
         }
 
         // ---- orden de los trazados
-        std::vector<std::vector<Point2D>> coords;
-        for (const Shape& l : lines) coords.push_back(l.coordinates());
-        std::vector<std::size_t> order(coords.size());
+        std::vector<std::size_t> order(items.size());
         for (std::size_t i = 0; i < order.size(); ++i) order[i] = i;
         if (js.order == DrillOrder::Optimized) {
             std::vector<Point2D> starts;
-            for (const auto& c : coords) starts.push_back(c.front());
+            for (const auto& it : items) starts.push_back(it.coords.front());
             order = PathOptimizer::order(starts, {0, 0});
         }
 
@@ -308,7 +537,7 @@ bool CncJob::generateFromGeometry(const ShapeList& geometry, const GeometryJobSe
         p.zFeedrate = PyNumber(ts.feedrateZ);
         p.feedrateRapid = PyNumber(ts.feedrateRapid);
         p.zCut = PyNumber(ts.cutZ);
-        p.multidepth = false;
+        p.multidepth = ts.multidepth;
         p.zDepthPerCut = PyNumber(ts.depthPerPass);
         p.zMove = PyNumber(ts.travelZ);
         p.useUi = true;
@@ -342,8 +571,9 @@ bool CncJob::generateFromGeometry(const ShapeList& geometry, const GeometryJobSe
         g += pp->feedrateCode(p) + "\n";
         if (js.toolchange) {
             g += pp->toolchangeCode(p) + "\n";
-            if (!laser) g += pp->spindleCode(p) + "\n";
-            else {
+            if (!laser) {
+                g += pp->spindleCode(p) + "\n";
+            } else {
                 p.x = 0;
                 p.y = 0;
                 g += pp->liftCode(p) + "\n";
@@ -359,32 +589,19 @@ bool CncJob::generateFromGeometry(const ShapeList& geometry, const GeometryJobSe
         }
         g += pp->feedrateCode(p) + "\n";
 
+        GeoContext ctx{*pp, p, ts};
         Point2D current{0, 0};
         for (std::size_t idx : order) {
-            const std::vector<Point2D>& c = coords[idx];
-            if (c.size() < 2) continue;
-            // linear2gcode: viaje al inicio, bajada, recorrido y elevación
-            p.x = c.front().x;
-            p.y = c.front().y;
-            g += pp->rapidCode(p) + "\n";
-            g += pp->zFeedrateCode(p) + "\n";
-            p.zCut = PyNumber(ts.cutZ);
-            g += pp->downCode(p) + "\n";
-            g += pp->feedrateCode(p) + "\n";
-            for (std::size_t i = 1; i < c.size(); ++i) {
-                p.x = c[i].x;
-                p.y = c[i].y;
-                g += pp->linearCode(p) + "\n";
+            PathItem& item = items[idx];
+            if (!ts.multidepth) {
+                g += singlePass(ctx, item);
+            } else {
+                g += multiPass(ctx, item, current);
             }
-            p.x = c.back().x;
-            p.y = c.back().y;
-            g += pp->liftCode(p) + "\n";
-            current = c.back();
+            current = item.coords.back();
         }
         g += pp->spindleStopCode(p) + "\n";
-        p.x = current.x;
-        p.y = current.y;
-        g += pp->liftCode(p) + "\n";
+        g += lift(ctx, current.x, current.y);
         p.x = 0;
         p.y = 0;
         g += pp->endCode(p) + "\n";
