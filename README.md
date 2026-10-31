@@ -12,8 +12,8 @@ clase del port indica en su documentación de qué archivo y función de Python 
 |---|---|---|
 | 1 | CMake, Doxygen y núcleo de geometría (`Shape`, `Geometry`, `ArcMath`, `AffineTransform`) | Hecha |
 | 2 | Parsers de Gerber y Excellon, con tests contra archivos reales | Hecha |
-| 3 | Herramientas (Isolation, NCC, Paint, Drilling, CutOut, PCB a 2 caras) y salida de G-code | Siguiente |
-| 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | Pendiente |
+| 3 | Herramientas (Isolation, NCC, Paint, Drilling, CutOut, PCB a 2 caras) y salida de G-code | Hecha |
+| 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas `QOpenGLWidget`, paneles) | Siguiente |
 | 5 | Herramientas secundarias y postprocesadores restantes | Pendiente |
 
 Quedan fuera del alcance los editores de Gerber, Geometría y Excellon.
