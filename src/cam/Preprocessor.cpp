@@ -226,6 +226,7 @@ std::string GrblLaserPreprocessor::startCode(const PreprocessorParams& p) const 
     gcode += "(X range: " + right9(xmin) + " ... " + right9(xmax) + " " + units + ")\n";
     gcode += "(Y range: " + right9(ymin) + " ... " + right9(ymax) + " " + units + ")\n\n";
     gcode += "(Laser Power - Spindle Speed: " + strOrNone(p.spindleSpeed) + ")\n\n";
+    if (flavor_ == GcodeFlavor::FlatCAM8_994) gcode += "G00 Z0\n\n";  // la 8.994 lo emite en la cabecera del láser
     gcode += (upper(p.units) == "IN") ? "G20\n" : "G21\n";
     gcode += "G90\n";
     gcode += "G17\n";
@@ -245,7 +246,15 @@ std::string GrblLaserPreprocessor::linearCode(const PreprocessorParams& p) const
     return "G01 " + positionCode(p) + " F" + fmt(p.frDecimals, p.feedrate.value());
 }
 
-std::string GrblLaserPreprocessor::endCode(const PreprocessorParams& p) const { return endCodeCommon(p); }
+std::string GrblLaserPreprocessor::endCode(const PreprocessorParams& p) const {
+    if (flavor_ == GcodeFlavor::FlatCAM8_994) {
+        // La 8.994 no sube Z al terminar con el láser: solo vuelve a las coordenadas finales.
+        std::string gcode;
+        if (p.xyEnd) gcode += "G00 X" + (*p.xyEnd)[0].str() + " Y" + (*p.xyEnd)[1].str() + "\n";
+        return gcode;
+    }
+    return endCodeCommon(p);
+}
 
 std::string GrblLaserPreprocessor::feedrateCode(const PreprocessorParams& p) const {
     return "G01 F" + fmt(p.frDecimals, p.feedrate.value());
@@ -259,9 +268,9 @@ std::string GrblLaserPreprocessor::spindleCode(const PreprocessorParams& p) cons
 std::string GrblLaserPreprocessor::dwellCode(const PreprocessorParams&) const { return ""; }
 std::string GrblLaserPreprocessor::spindleStopCode(const PreprocessorParams&) const { return "M5"; }
 
-std::unique_ptr<Preprocessor> makePreprocessor(const std::string& name) {
+std::unique_ptr<Preprocessor> makePreprocessor(const std::string& name, GcodeFlavor flavor) {
     if (name == "default") return std::make_unique<DefaultPreprocessor>();
-    if (name == "GRBL_laser") return std::make_unique<GrblLaserPreprocessor>();
+    if (name == "GRBL_laser") return std::make_unique<GrblLaserPreprocessor>(flavor);
     return nullptr;
 }
 
