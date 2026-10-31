@@ -57,7 +57,7 @@ logo) y **CutOut** → **CNC Job** con G-code. Taladros y alineación con **PCB 
 |---|---|---|
 | 1 | CMake, Doxygen y núcleo de geometría | **Hecha**, verificada en macOS (arm64) y Linux |
 | 2 | Parsers de Gerber y Excellon con tests contra archivos reales | **Hecha** |
-| 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | **En curso** (hecho: transformaciones de Gerber, postprocesadores y G-code de taladrado) |
+| 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | **En curso** (hecho: transformaciones de Gerber, postprocesadores, G-code de taladrado y de geometrías) |
 | 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | Pendiente |
 | 5 | Herramientas secundarias y postprocesadores restantes | Pendiente |
 
@@ -65,9 +65,10 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-Fase 3 (hasta ahora): 344 tests en Linux; transformaciones de `Gerber` (24 casos contra el original), postprocesadores
+Fase 3 (hasta ahora): 349 tests en Linux; transformaciones de `Gerber` (24 casos contra el original), postprocesadores
 `default` y `GRBL_laser` (224 líneas de G-code idénticas al original) y G-code de taladrado (`CncJob`): idéntico línea por
-línea al generador original con el orden del archivo, e igual al `.nc` real del usuario salvo el orden de los agujeros.
+línea al generador original con el orden del archivo, e igual al `.nc` real del usuario salvo el orden de los agujeros. El G-code de geometrías (`generateFromGeometry`) reproduce
+byte por byte `DosCau_PPal-Edge_Cuts.nc` a partir de su propio recorrido.
 
 ## 5. Arquitectura
 
@@ -94,7 +95,7 @@ src/cam/                Generación de G-code (sin Qt)
   PyNumber.*             Número que recuerda si era int o float, para imprimir como `str()` de Python
   Preprocessor.*         Interfaz `Preprocessor` y los postprocesadores `default` y `GRBL_laser`
   PathOptimizer.*        Orden de los agujeros (vecino más cercano + 2-opt; reemplaza a OR-Tools)
-  CncJob.*               G-code de taladrado con cambio de herramienta (`excellon_tool_gcode_gen`) y archivo exportado
+  CncJob.*               G-code de taladrado (`excellon_tool_gcode_gen`) y de geometrías (`geometry_tool_gcode_gen`, `linear2gcode`), y archivo exportado
 tests/                 GoogleTest; golden_*.h generados; data/ con archivos reales; tools/ con los oráculos
 reference/             Fuentes Python originales (solo lectura)
 ```
@@ -162,6 +163,10 @@ Reglas de calidad (deben cumplirse antes de dar una tanda por terminada):
   a -4,5; el Excellon guarda el mismo diccionario para todas). La rama `"No"` del original está rota, así que el oráculo usa
   la rama `'T'` con un optimizador que devuelve el orden del archivo. El archivo trae además la función que arma esos
   mismos parámetros en C++.
+- `tests/tools/oracle_geometry.py` genera `tests/golden_geometry.h`: toma los dos trazados del contorno de
+  `DosCau_PPal-Edge_Cuts.nc` como geometría de entrada y ejecuta `CNCjob.geometry_tool_gcode_gen` **original** con los
+  parámetros del proyecto. Como la entrada sale del propio `.nc`, el G-code generado debe ser idéntico a ese archivo
+  (salvo los `\r` de Windows): lo es. Lo que NO prueba es la creación de la geometría del CutOut (ver sección 10).
 - **Fase 3:** comparar el G-code generado contra los `.nc` de `tests/data/` (ver sección 8).
 - Cuando se porte una función de `camlib.py` o de las herramientas, leer el original **completo** y respetar sus
   detalles numéricos (redondeos, tolerancias, orden de operaciones): el G-code debe coincidir.
@@ -269,7 +274,8 @@ las figuras después de unirlas.
 | CutOut | `appTools/ToolCutOut.py` | 2.465 |
 | PCB a 2 caras | `appTools/ToolDblSided.py` | 975 |
 
-Orden sugerido: (1) métodos de `Gerber` (hecho); (1b) postprocesadores `default` y `GRBL_laser` (hecho, `src/cam/`); (2a) taladrado con `CncJob` (hecho); (2) resto de `CNCjob` + postprocesador `default` y probarlo con el taladro
+Orden sugerido: (1) métodos de `Gerber` (hecho); (1b) postprocesadores `default` y `GRBL_laser` (hecho, `src/cam/`); (2a) taladrado con `CncJob` (hecho); (2b) G-code de geometrías para un trazado de una herramienta (hecho: sin profundidad
+múltiple, sin corte extra y sin puntos); (2c) creación de la geometría del CutOut (puentes) desde el Gerber del contorno; (2) resto de `CNCjob` + postprocesador `default` y probarlo con el taladro
 (`DosCau_PPal-Drill.nc`, el más simple), luego `Alinea` y `Edge_Cuts` (CutOut); (3) `GRBL_laser` + NCC y Paint
 con `B_Cu` y `Logo`. Parámetros exactos en `tests/data/PARAMETROS.md`. El G-code de referencia viene de la 8.994:
 confirmar si la 2024.4 da lo mismo.

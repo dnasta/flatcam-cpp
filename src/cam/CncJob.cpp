@@ -208,4 +208,195 @@ bool CncJob::toolGcode(int tool, const std::vector<Point2D>& points, const Excel
     return true;
 }
 
+// -------------------------------------------------------------------------------------- geometría
+
+namespace {
+
+/// Expande figuras múltiples y polígonos en líneas y anillos (`flatten(..., pathonly=True)`).
+void flattenPaths(const Shape& s, ShapeList& out) {
+    const ShapeType t = s.type();
+    if (static_cast<int>(t) >= static_cast<int>(ShapeType::MultiPoint)) {
+        for (const Shape& p : s.parts()) flattenPaths(p, out);
+    } else if (t == ShapeType::Polygon) {
+        out.push_back(s.exterior());
+        for (const Shape& r : s.interiors()) out.push_back(r);
+    } else {
+        out.push_back(s);
+    }
+}
+
+bool isClosed(const Shape& s) {
+    if (s.type() == ShapeType::LinearRing) return true;
+    const auto c = s.coordinates();
+    return c.size() > 2 && c.front() == c.back();
+}
+
+}  // namespace
+
+bool CncJob::generateFromGeometry(const ShapeList& geometry, const GeometryJobSettings& js) {
+    lastError_.clear();
+    startGcode_.clear();
+    gcode_.clear();
+    toolGcodes_.clear();
+    const GeometryToolSettings& ts = js.toolSettings;
+
+    const auto pp = makePreprocessor(js.preprocessor);
+    if (!pp) {
+        lastError_ = "Postprocesador desconocido: " + js.preprocessor;
+        return false;
+    }
+    if (ts.multidepth) {
+        lastError_ = "La profundidad múltiple todavía no está soportada en el trabajo de geometría";
+        return false;
+    }
+    if (ts.extracut) {
+        lastError_ = "El corte extra todavía no está soportado";
+        return false;
+    }
+
+    try {
+        ShapeList flat;
+        for (const Shape& g : geometry) flattenPaths(g, flat);
+
+        // ---- offset de la herramienta
+        double toolOffset = 0.0;
+        if (ts.offsetKind == "in") toolOffset = -ts.toolDia / 2.0;
+        else if (ts.offsetKind == "out") toolOffset = ts.toolDia / 2.0;
+        else if (ts.offsetKind == "custom") toolOffset = ts.offsetValue;
+        ShapeList paths;
+        if (toolOffset != 0.0) {
+            ShapeList moved;
+            for (const Shape& it : flat) {
+                Shape base = it;
+                if ((it.type() == ShapeType::LineString || it.type() == ShapeType::LinearRing) && isClosed(it)) {
+                    base = Shape::polygon(it.coordinates());
+                }
+                moved.push_back(base.buffer(toolOffset, 16, JoinStyle::Mitre));
+            }
+            for (const Shape& m : moved) flattenPaths(m, paths);
+        } else {
+            paths = flat;
+        }
+        ShapeList lines;
+        for (const Shape& s : paths) {
+            if (s.type() == ShapeType::LineString || s.type() == ShapeType::LinearRing) lines.push_back(s);
+            else if (!s.isEmpty()) Logger::warning("CncJob: las figuras de tipo punto todavía no se mueven");
+        }
+        if (lines.empty()) {
+            lastError_ = "No hay líneas para recorrer";
+            return false;
+        }
+
+        // ---- orden de los trazados
+        std::vector<std::vector<Point2D>> coords;
+        for (const Shape& l : lines) coords.push_back(l.coordinates());
+        std::vector<std::size_t> order(coords.size());
+        for (std::size_t i = 0; i < order.size(); ++i) order[i] = i;
+        if (js.order == DrillOrder::Optimized) {
+            std::vector<Point2D> starts;
+            for (const auto& c : coords) starts.push_back(c.front());
+            order = PathOptimizer::order(starts, {0, 0});
+        }
+
+        // ---- parámetros del postprocesador
+        PreprocessorParams p;
+        p.units = js.units;
+        p.coordsDecimals = js.coordsDecimals;
+        p.decimals = js.decimals;
+        p.frDecimals = js.frDecimals;
+        p.feedrate = PyNumber(ts.feedrate);
+        p.zFeedrate = PyNumber(ts.feedrateZ);
+        p.feedrateRapid = PyNumber(ts.feedrateRapid);
+        p.zCut = PyNumber(ts.cutZ);
+        p.multidepth = false;
+        p.zDepthPerCut = PyNumber(ts.depthPerPass);
+        p.zMove = PyNumber(ts.travelZ);
+        p.useUi = true;
+        p.toolchange = false;  // el original no actualiza este atributo: la cabecera no imprime el cambio de herramienta
+        p.zToolchange = PyNumber(ts.toolchangeZ);
+        p.xyToolchange = toPyPair(ts.toolchangeXY);
+        if (ts.startZ) p.startZ = PyNumber(*ts.startZ);
+        p.zEnd = PyNumber(ts.endZ);
+        p.xyEnd = toPyPair(ts.endXY);
+        p.stepsPerCircle = js.stepsPerCircle;
+        p.ppGeometryName = js.preprocessor;
+        p.spindleSpeed = PyNumber(ts.spindleSpeed);
+        p.spindleDir = ts.spindleDir;
+        p.dwellTime = PyNumber(ts.dwellTime);
+        p.tool = js.tool;
+        p.toolC = PyNumber(ts.toolDia);
+        p.options.type = "Geometry";
+        p.options.toolDia = PyNumber(ts.toolDia);
+        std::optional<BoundingBox> bb = boundsOf(paths);
+        if (bb) {
+            p.options.xmin = PyNumber(bb->xmin);
+            p.options.ymin = PyNumber(bb->ymin);
+            p.options.xmax = PyNumber(bb->xmax);
+            p.options.ymax = PyNumber(bb->ymax);
+        }
+
+        // ---- G-code
+        const bool laser = js.preprocessor.find("laser") != std::string::npos;
+        std::string g;
+        startGcode_ = pp->startCode(p) + "\n";
+        g += pp->feedrateCode(p) + "\n";
+        if (js.toolchange) {
+            g += pp->toolchangeCode(p) + "\n";
+            if (!laser) g += pp->spindleCode(p) + "\n";
+            else {
+                p.x = 0;
+                p.y = 0;
+                g += pp->liftCode(p) + "\n";
+            }
+            if (ts.dwell) g += pp->dwellCode(p) + "\n";
+        } else {
+            p.x = 0;
+            p.y = 0;
+            g += pp->liftCode(p) + "\n";
+            g += pp->startzCode(p) + "\n";
+            if (!laser) g += pp->spindleCode(p) + "\n";
+            if (ts.dwell) g += pp->dwellCode(p) + "\n";
+        }
+        g += pp->feedrateCode(p) + "\n";
+
+        Point2D current{0, 0};
+        for (std::size_t idx : order) {
+            const std::vector<Point2D>& c = coords[idx];
+            if (c.size() < 2) continue;
+            // linear2gcode: viaje al inicio, bajada, recorrido y elevación
+            p.x = c.front().x;
+            p.y = c.front().y;
+            g += pp->rapidCode(p) + "\n";
+            g += pp->zFeedrateCode(p) + "\n";
+            p.zCut = PyNumber(ts.cutZ);
+            g += pp->downCode(p) + "\n";
+            g += pp->feedrateCode(p) + "\n";
+            for (std::size_t i = 1; i < c.size(); ++i) {
+                p.x = c[i].x;
+                p.y = c[i].y;
+                g += pp->linearCode(p) + "\n";
+            }
+            p.x = c.back().x;
+            p.y = c.back().y;
+            g += pp->liftCode(p) + "\n";
+            current = c.back();
+        }
+        g += pp->spindleStopCode(p) + "\n";
+        p.x = current.x;
+        p.y = current.y;
+        g += pp->liftCode(p) + "\n";
+        p.x = 0;
+        p.y = 0;
+        g += pp->endCode(p) + "\n";
+
+        gcode_ = g;
+        toolGcodes_.push_back(g);
+    } catch (const std::exception& e) {
+        lastError_ = std::string("Error al generar el G-code de la geometría: ") + e.what();
+        Logger::error(lastError_);
+        return false;
+    }
+    return true;
+}
+
 }  // namespace flatcam
