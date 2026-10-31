@@ -21,6 +21,7 @@ add_executable(core_tests
     test_excellon.cpp
     test_preprocessors.cpp
     test_cnc_job.cpp
+    test_cnc_job_geometry.cpp
 )
 target_link_libraries(core_tests PRIVATE flatcam::core GTest::gtest_main)
 target_include_directories(core_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

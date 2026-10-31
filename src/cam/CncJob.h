@@ -60,6 +60,44 @@ struct DrillJobSettings {
     std::map<int, DrillToolSettings> tools;   ///< Parámetros por número de herramienta.
 };
 
+/** @brief Parámetros de corte de una herramienta de geometría (las claves de `tools[n]['data']` de FlatCAM). */
+struct GeometryToolSettings {
+    double toolDia{0.0};                   ///< Diámetro de la herramienta (`tooldia`).
+    std::string offsetKind{"Path"};        ///< `"Path"` (sobre la línea), `"in"`, `"out"` o `"custom"` (`offset`).
+    double offsetValue{0.0};               ///< Offset si @ref offsetKind es `"custom"` (`offset_value`).
+    double cutZ{0.0};                      ///< Z de corte (`cutz`).
+    bool multidepth{false};                ///< Profundidad múltiple (`multidepth`); todavía no soportada.
+    double depthPerPass{0.0};              ///< Profundidad por pasada (`depthperpass`).
+    double travelZ{0.0};                   ///< Z de viaje (`travelz`).
+    double feedrate{0.0};                  ///< Avance X-Y (`feedrate`).
+    double feedrateZ{0.0};                 ///< Avance Z (`feedrate_z`).
+    double feedrateRapid{0.0};             ///< Avance de rápidos (`feedrate_rapid`).
+    double spindleSpeed{0.0};              ///< Velocidad del husillo o potencia del láser (`spindlespeed`).
+    std::string spindleDir{"CW"};          ///< `"CW"` o `"CCW"` (`spindledir`).
+    bool dwell{false};                     ///< Espera tras encender el husillo (`dwell`).
+    double dwellTime{0.0};                 ///< Tiempo de espera (`dwelltime`).
+    std::optional<double> startZ;          ///< Z inicial (`startz`).
+    double endZ{0.0};                      ///< Z final (`endz`).
+    std::optional<std::array<double, 2>> endXY;         ///< X,Y final (`endxy`).
+    double toolchangeZ{0.0};               ///< Z de cambio de herramienta (`toolchangez`).
+    std::optional<std::array<double, 2>> toolchangeXY;  ///< X,Y de cambio de herramienta (`toolchangexy`).
+    bool extracut{false};                  ///< Corte extra al cerrar anillos (`extracut`); todavía no soportado.
+};
+
+/** @brief Todo lo necesario para generar el G-code de una geometría con una herramienta. */
+struct GeometryJobSettings {
+    std::string preprocessor{"default"};   ///< Postprocesador (`ppname_g`).
+    std::string units{"MM"};               ///< `"MM"` o `"IN"`.
+    int coordsDecimals{4};                 ///< Decimales de las coordenadas.
+    int decimals{4};                       ///< Decimales generales.
+    int frDecimals{2};                     ///< Decimales de los avances.
+    int stepsPerCircle{64};                ///< Pasos por circunferencia (solo se imprime en la cabecera).
+    DrillOrder order{DrillOrder::Optimized};  ///< Orden de los trazados.
+    bool toolchange{true};                 ///< Emitir el cambio de herramienta antes de empezar.
+    int tool{1};                           ///< Número de herramienta.
+    GeometryToolSettings toolSettings;     ///< Parámetros de corte.
+};
+
 /** @brief Datos de la cabecera de comentarios del archivo de G-code (`gcode_header`). */
 struct GcodeHeaderInfo {
     std::string version{"8.994"};          ///< Versión de FlatCAM que se declara.
@@ -92,7 +130,7 @@ public:
      * @brief Crea un trabajo.
      * @param settings Parámetros de taladrado.
      */
-    explicit CncJob(DrillJobSettings settings);
+    explicit CncJob(DrillJobSettings settings = {});
 
     /**
      * @brief Genera el G-code de todas las herramientas con agujeros del Excellon.
@@ -100,6 +138,18 @@ public:
      * @return `true` si se generó; `false` si falló (ver @ref lastError).
      */
     bool generateFromExcellon(const Excellon& excellon);
+
+    /**
+     * @brief Genera el G-code que sigue las líneas de una geometría con una herramienta (`geometry_tool_gcode_gen`).
+     *
+     * Cada línea o contorno se recorre con un movimiento rápido hasta su inicio, la bajada a Z de corte y los
+     * movimientos lineales. Si la herramienta tiene offset (`in`, `out` o `custom`) las figuras se desplazan antes.
+     * No están soportados todavía la profundidad múltiple ni el corte extra.
+     * @param geometry Figuras a recorrer (líneas, anillos o polígonos; los polígonos se recorren por sus contornos).
+     * @param settings Parámetros del trabajo.
+     * @return `true` si se generó; `false` si falló (ver @ref lastError).
+     */
+    bool generateFromGeometry(const ShapeList& geometry, const GeometryJobSettings& settings);
 
     /** @brief Código de inicio (cabecera del postprocesador), terminado en salto de línea. @return El texto. */
     const std::string& startGcode() const { return startGcode_; }
