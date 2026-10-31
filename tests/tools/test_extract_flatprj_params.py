@@ -86,5 +86,38 @@ class ExtractTest(unittest.TestCase):
         self.assertEqual(mod.filter_app_options(opts), {"units": "MM", "tools_ncc_overlap": 0.8})
 
 
+class KeepDrillsOption(unittest.TestCase):
+    """`--con-agujeros` conserva las posiciones de los agujeros de los objetos Excellon."""
+
+    def setUp(self):
+        self.saved = set(mod.SKIP_KEYS)
+
+    def tearDown(self):
+        mod.SKIP_KEYS.clear()
+        mod.SKIP_KEYS.update(self.saved)
+
+    def run_extractor(self, extra):
+        prj = {"version": 2024.4, "options": {},
+               "objs": [{"kind": "excellon", "options": {"name": "Alinea"},
+                         "tools": {"1": {"tooldia": 0.4, "drills": [{"x": 0.0, "y": 0.0}, {"x": -38.0, "y": 39.5}],
+                                         "slots": [], "solid_geometry": [{"a": 1}]}}}]}
+        with tempfile.TemporaryDirectory() as d:
+            src = os.path.join(d, "p.FlatPrj")
+            out = os.path.join(d, "o.json")
+            with open(src, "w") as f:
+                json.dump(prj, f, indent=2, sort_keys=True)
+            mod.main(["x", src, out] + extra)
+            with open(out) as f:
+                return json.load(f)
+
+    def test_drills_are_omitted_by_default(self):
+        res = self.run_extractor([])
+        self.assertEqual(res["objs"][0]["tools"]["1"]["drills"], "<omitido>")
+
+    def test_drills_are_kept_with_the_option(self):
+        res = self.run_extractor(["--con-agujeros"])
+        self.assertEqual(res["objs"][0]["tools"]["1"]["drills"], [{"x": 0.0, "y": 0.0}, {"x": -38.0, "y": 39.5}])
+
+
 if __name__ == "__main__":
     unittest.main()

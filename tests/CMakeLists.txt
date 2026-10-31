@@ -26,6 +26,7 @@ add_executable(core_tests
     test_cnc_job_laser.cpp
     test_paint.cpp
     test_ncc.cpp
+    test_double_sided.cpp
 )
 target_link_libraries(core_tests PRIVATE flatcam::core GTest::gtest_main)
 target_include_directories(core_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
