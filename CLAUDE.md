@@ -13,17 +13,26 @@ máquina del usuario.
 
 ## Estado actual (se actualiza al final de cada respuesta)
 
-- **Fase 3 en curso** (fases 1 y 2 hechas). 463 tests corren siempre (+1 lenta con `FLATCAM_SLOW_TESTS=1`) y pasan en Linux con
-  GEOS 3.12 y con 3.15.0; en el Mac del usuario (GEOS 3.15.0) pasaron 455 con `99e4799`. Falta confirmar el parche `fase3o`.
-- **Hecho:** núcleo de geometría, parsers de Gerber y Excellon, transformaciones, postprocesadores `default` y `GRBL_laser`, G-code
-  de taladrado y de geometrías (`CncJob`), **CutOut**, capa de G-code del láser, **Paint** y **NCC** estándar, y **PCB a 2 caras**
-  (`src/tools/DoubleSided.*`: agujeros de alineación con sus reflejos; `Excellon::addDrillTool`).
-- **Regla de entrega:** correr toda la suite con GEOS 3.12 (sistema) **y** 3.15.0 (micromamba) antes de entregar; tolerancias en micras.
-- **Alinea:** el G-code sale igual que tu `Alinea.nc` salvo (a) líneas en blanco tras cada agujero y (b) un agujero en el origen (0, 0)
-  que viene de otro camino de código de la 8.994. **Pregunta abierta al usuario:** ¿querés ese agujero en el centro de la placa? El
-  port no lo taladra. `tools/extract_flatprj_params.py --con-agujeros` vuelca los agujeros del proyecto para verlo.
-- **Decisión del usuario:** el G-code del láser sale como el de su FlatCAM 8.994 (con `G00 Z0`), variante por defecto.
-- **Siguiente:** cerrar la pregunta de Alinea; después Isolation si el usuario lo confirma, y la fase 4 (GUI Qt6; preguntas abiertas
-  en `AGENTS.md` sección 11). Pendientes menores: Paint/NCC con los métodos de semilla y líneas, mecanizado de resto, selección por área.
-- **Pendiente de que el usuario aplique:** parche `fase3o-alinea`.
-- Detalle completo en `AGENTS.md`, secciones 4, 6, 7, 10 y 11.
+**Lo que hay que saber para retomar (el detalle está en `AGENTS.md`, sección 12).**
+
+- **Tests:** 464 (463 corren siempre; 1 lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0. En el Mac del usuario
+  (M4, AppleClang, GEOS 3.15.0) pasaron con el commit `e5cbae8`.
+- **Hecho (fases 1 y 2 completas; fase 3 casi):** núcleo de geometría, parsers de Gerber y Excellon, transformaciones, postprocesadores
+  `default` y `GRBL_laser`, G-code de taladrado y de geometrías (`CncJob`), CutOut, capa de G-code del láser, Paint estándar, NCC
+  estándar y PCB a 2 caras (`src/tools/DoubleSided.*`). Todo verificado contra el código original (oráculos en Python con
+  Shapely 1.8.4) y, donde hay, contra los `.nc` reales del usuario (FlatCAM 8.994).
+- **Preguntas abiertas al usuario (hacerlas primero):**
+  1. **¿Querés el agujero en (0, 0) que tu `Alinea.nc` taladra primero?** Es el centro de la placa. El port no lo taladra. Para ver qué tenía
+     el objeto: `python3 tools/extract_flatprj_params.py "proyecto.FlatPrj" alinea.params.json --con-agujeros`.
+  2. **¿Isolation entra en el alcance?**
+  3. **Canvas de la fase 4:** `QOpenGLWidget` o `QGraphicsView`.
+- **Decisiones del usuario vigentes:** G-code del láser como el de su 8.994 (con `G00 Z0`); optimizador propio de agujeros; método
+  estándar de Paint/NCC; sus Gerber inferiores (`B_Cu`, Logo) y los agujeros están reflejados en X.
+- **Diferencias medidas 8.994 contra 2024.4:** `GRBL_laser` (cabecera y orden del Z inicial); `Alinea` (líneas en blanco y el (0, 0));
+  `B_Cu` 746 trazados contra 723 (la 8.994 une ~23 tramos más; regla no deducible). Todo lo demás coincide.
+- **Regla de entrega:** correr toda la suite con GEOS 3.12 **y** 3.15.0 antes de dar algo por terminado; tolerancias en micras, no en el
+  último bit (`AGENTS.md`, sección 6). Verificar y corregir apenas se detecte un problema. Actualizar este archivo y `AGENTS.md` antes
+  del mensaje final de cada respuesta.
+- **Siguiente:** cerrar las preguntas de arriba; después Isolation (si entra) y la fase 4 (GUI Qt6). Pendientes menores: Paint/NCC con
+  semilla y líneas, mecanizado de resto, selección por área (`AGENTS.md`, sección 11).
+- **Pendiente de que el usuario aplique:** parche `fase3p-estado` (solo documentación).

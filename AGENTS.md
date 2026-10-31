@@ -63,7 +63,7 @@ logo) y **CutOut** → **CNC Job** con G-code. Taladros y alineación con **PCB 
 |---|---|---|
 | 1 | CMake, Doxygen y núcleo de geometría | **Hecha**, verificada en macOS (arm64) y Linux |
 | 2 | Parsers de Gerber y Excellon con tests contra archivos reales | **Hecha** |
-| 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | **En curso** (hecho: transformaciones de Gerber, postprocesadores, G-code de taladrado y de geometrías) |
+| 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | **Casi hecha**: hechos transformaciones de Gerber, postprocesadores, G-code de taladrado y de geometrías, CutOut, capa de láser, Paint, NCC y PCB a 2 caras. Falta Isolation (si el usuario confirma el alcance) y cerrar la pregunta del agujero (0, 0) de `Alinea` |
 | 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | Pendiente |
 | 5 | Herramientas secundarias y postprocesadores restantes | Pendiente |
 
@@ -71,9 +71,8 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang, GEOS 3.15.0):** 455 tests con el commit `99e4799` (454 pasan y 1,
-la lenta del NCC, queda saltada a propósito). Falta que confirme el parche `fase3o` de PCB a 2 caras (464 tests en Linux con GEOS 3.12
-y con 3.15.0, más la prueba lenta opcional).
+**Última confirmación en el Mac del usuario (M4, AppleClang, GEOS 3.15.0):** 464 tests con el commit `e5cbae8` (463 pasan y 1, la
+lenta del NCC, queda saltada a propósito). Es el estado de `origin/main` más el parche `fase3p-estado` (solo documentación).
 
 Fase 3 (hasta ahora): 464 tests en Linux (GEOS 3.12 y 3.15.0; 463 corren siempre y 1 es lenta); transformaciones de `Gerber` (24 casos contra el original), postprocesadores
 `default` y `GRBL_laser` (224 líneas de G-code idénticas al original) y G-code de taladrado (`CncJob`): idéntico línea por
@@ -310,9 +309,13 @@ Hallazgos que condicionan el trabajo:
   Al empezar una sesión, clonar de nuevo y leer este archivo.
 - Al cerrar cada tanda: actualizar la tabla de la sección 4, los "Pendientes" de la sección 10 y, si cambió algo,
   `README.md`.
+- **Desde que el usuario pasó a Claude Code (CLI) en su Mac**: se commitea y se hace `push` directo, sin `.patch`. El flujo
+  de parches de arriba era solo para el chat de claude.ai y queda como referencia.
 - Claude Code lee `CLAUDE.md`, no `AGENTS.md`; por eso `CLAUDE.md` solo importa a este archivo con `@AGENTS.md`.
 
 ## 10. Fase 2 hecha y siguiente paso: fase 3
+
+> **Sección histórica.** Describe el plan con que se arrancó la fase 3. El estado vigente está en las secciones 4, 11 y 12.
 
 ### Lo que quedó de la fase 2 (`src/parsers/`)
 
@@ -400,9 +403,11 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
    usan los tests contra el código original). El postprocesador `default` es idéntico en las dos. **Evidencia de lo que
    coincide:** el taladro (todo
    salvo el orden de los agujeros) y el contorno (byte por byte, desde el Gerber hasta el G-code pasando por el CutOut
-   rectangular) coinciden con el generador de la 2024.4. Falta NCC/Paint y
-   `Alinea`. El usuario puede exportar de nuevo desde la 2024.4 a `tests/data/2024_4/` para cerrarlo.
-2. Reflejo de `B_Cu` (simétrico en sus límites): confirmar con la geometría en la fase 3.
+   rectangular) coinciden con el generador de la 2024.4. **NCC, Paint y Alinea ya se midieron** (secciones 7 y 11.3): coinciden en geometría con
+   diferencias de micras; la 8.994 une unos 23 tramos más en `B_Cu` y `Alinea` salió de otro camino de código. El usuario puede
+   exportar de nuevo desde la 2024.4 a `tests/data/2024_4/` para cerrarlo del todo.
+2. ~~Reflejo de `B_Cu`~~ **Resuelto**: está reflejado en X (`mirror(Axis::Y, {0, 0})`), igual que el Logo y los 192 agujeros; la envolvente
+   convexa del cobre reflejado da exactamente los rangos del encabezado de `B_Cu.nc`.
 3. **Taladro `(0, 0)` en `Alinea`** (el G-code taladra 5 posiciones, el job cuenta 4). Leído `ToolDblSided.py`: la herramienta solo
    crea los agujeros pedidos y sus reflejos, así que el (0, 0) no sale de ahí ni de OR-Tools (el `Drill.nc`, que usa la misma
    optimización `B`, no taladra en el origen). Probablemente es un agujero que el objeto Excellon de alineación tenía en su lista o
@@ -414,4 +419,96 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
    eligió un **optimizador propio** (`PathOptimizer`: 2-opt desde el vecino más cercano y desde el orden del archivo, el
    más corto gana). Los tests comparan el G-code como conjunto (mismos agujeros, profundidades y líneas fijas) y exigen
    que el recorrido no supere en más de 10 % al de OR-Tools. OR-Tools queda como posible opción futura.
-6. Elegir la estrategia de render del canvas (`QOpenGLWidget` o `QGraphicsView`) al llegar a la fase 4.
+6. Elegir la estrategia de render del canvas (`QOpenGLWidget` o `QGraphicsView`) al llegar a la fase 4. **Pendiente de decisión del usuario.**
+7. **`B_Cu`: 746 trazados contra 723** del `.nc` real (puntos 0,05 %, longitud 0,015 % de diferencia). La 8.994 une unos 23 tramos más
+   (~0,45 mm cada uno). No se pudo deducir la regla (probado: radio y largo máximo de la unión, resolución del engrosado de 4 a 64).
+   Candidatas sin probar: otro criterio en `paint_connect` de la 8.994, o un `rtree` distinto. Si el usuario exporta desde la 2024.4 se
+   podría saber si el cambio es de versión.
+8. **Empates de `rtree.nearest`**: ~15 empates exactos en 5.509 consultas del NCC; el `rtree` real elige a veces la línea insertada
+   antes y a veces la de después (depende de la estructura de su árbol). `EndpointStorage` elige la primera insertada. Cambia 1 o 2
+   uniones de ~670. Emularlo exigiría portar el R*-tree de libspatialindex: no vale la pena salvo que el usuario lo pida.
+9. **Métodos que faltan en Paint y NCC** (hoy devuelven error o no existen): semilla (`clear_polygon2`), líneas (`clear_polygon3`),
+   combinado, mecanizado de resto, selección por área y por objeto de referencia, aislamiento previo (`isotooldia`). El usuario solo
+   usa el método estándar, "Él mismo" y una herramienta.
+10. **Variante del G-code**: por defecto `GcodeFlavor::FlatCAM8_994` (decisión del usuario). El `Alinea.nc` de la 8.994 tiene además
+    líneas en blanco tras cada agujero y el taladro en (0, 0); el port no los reproduce (ver 3).
+
+## 12. Retomar el trabajo en Claude Code (CLI)
+
+Esta sección es para empezar una sesión nueva sin haber visto la conversación anterior. El estado real es lo que está en GitHub
+(`https://github.com/dnasta/flatcam-cpp`, rama `main`); lo que sigue lo resume.
+
+### 12.1 Dónde estamos (al cerrar la sesión del chat)
+
+- Último commit en `main` antes de este parche: `e5cbae8`. **464 tests**: 463 corren siempre y pasan; 1 es lenta
+  (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`. Pasan con GEOS 3.12 (Linux), GEOS 3.15.0 (Linux y Mac del
+  usuario). La GEOS 3.11 solo se usó para comparar el NCC con el original (la suite completa no se corrió con ella).
+- Fases 1 y 2 hechas. Fase 3 casi hecha. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
+  oráculos en Python (Shapely 1.8.4) y, donde existe, contra el `.nc` real del usuario (FlatCAM 8.994):
+
+| Pieza | Dónde | Contra el original | Contra el `.nc` real |
+|---|---|---|---|
+| Parsers Gerber/Excellon, transformaciones | `src/parsers/` | exacto | — |
+| Postprocesadores `default` y `GRBL_laser` | `src/cam/Preprocessor.*` | 224 líneas idénticas | `B_Cu.nc`, `Logo.nc` desde sus trazados: byte por byte |
+| Taladrado | `CncJob::generateFromExcellon` | idéntico con el orden del archivo | igual salvo el **orden** de los agujeros (OR-Tools; optimizador propio) |
+| G-code de geometrías | `CncJob::generateFromGeometry` | 26 escenarios exactos | contorno: byte por byte |
+| CutOut | `src/tools/CutOut.*` | vértice por vértice | contorno: byte por byte (corte rectangular) |
+| Paint estándar | `src/tools/Paint.*`, `PolygonClearing`, `EndpointStorage` | < 1e-9 (9 casos) | Logo: 38 trazados, 3,5–5 micras |
+| NCC estándar | `src/tools/Ncc.*` | 8 casos exactos | `B_Cu`: rangos exactos, 0,05 % de puntos; 746 contra 723 trazados |
+| PCB a 2 caras | `src/tools/DoubleSided.*` | 6 casos, bits exactos | `Alinea.nc` salvo líneas en blanco y el agujero (0, 0) |
+
+- Decisiones del usuario vigentes: G-code del láser como el de su 8.994 (`G00 Z0`, variante por defecto); optimizador propio de
+  agujeros; método estándar de Paint/NCC; los Gerber del usuario inferiores están **reflejados en X**.
+
+### 12.2 Lo primero que hay que hacer
+
+1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 464 tests, 1 saltado.
+2. **Preguntarle al usuario por el agujero (0, 0) de `Alinea`** (sección 11.3) y pedirle que corra
+   `python3 tools/extract_flatprj_params.py "proyecto.FlatPrj" alinea.params.json --con-agujeros` para ver los agujeros reales del
+   objeto. Si lo quiere, agregar una opción a `CncJob` o a `DoubleSided` (hoy no existe).
+3. Preguntarle si **Isolation** entra en el alcance (11.4). Si entra: leer `appTools/ToolIsolation.py` (carpeta `reference/`), escribir un
+   oráculo `tests/tools/oracle_isolation.py` y portarlo con el mismo método que NCC (sección 7).
+4. Si no hay más herramientas: pasar a la **fase 4** (GUI Qt6). Antes hay que decidir el canvas (11.6) y conviene pedirle al usuario una
+   captura de cómo usa FlatCAM hoy (árbol de proyecto, pestañas Selected/Project/Tool, paneles de cada herramienta).
+
+### 12.3 Cómo se trabaja acá (reglas del usuario)
+
+- Español rioplatense ("vos"), comandos para zsh, `python3 -m pip install`. Nunca pedir tokens ni contraseñas.
+- **Verificar y corregir todo apenas se detecte**, sin esperar a que lo pida; si una afirmación previa resulta falsa, decirlo y corregir
+  código, tests y docs en el mismo turno.
+- **Antes del mensaje final de cada respuesta, actualizar `CLAUDE.md` (sección "Estado actual") y `AGENTS.md` (secciones 4, 11 y 12).**
+- Commits en español con prefijo de fase, sin `--force`, sin tocar `reference/`. Doxygen en español en los encabezados, sin warnings.
+- **Probar siempre con dos versiones de GEOS** (sección 6). La regla salió de un caso real: con GEOS 3.15 fallaban tests que pasaban con
+  la 3.12. Las tolerancias de los tests de geometría se fijan en micras, no en el último bit; los tests que comparan con el original
+  tienen un nivel estricto (misma estructura: igualdad al milmillonésimo) y uno relajado (agregados: puntos, longitud, cantidad).
+- Un test que compara un texto consigo mismo siempre pasa: una vez se coló una aserción así; revisar que cada `EXPECT` pueda fallar.
+
+### 12.4 Entorno para regenerar los goldens (solo hace falta si se agrega un oráculo)
+
+Los goldens (`tests/golden_*.h`) **están commiteados**; los tests no necesitan Python. Para regenerarlos o crear oráculos nuevos hace falta
+el entorno fiel al original, que **no está instalado en el Mac** (se armó en el entorno del chat con micromamba, en Linux):
+
+```zsh
+brew install micromamba                      # o el instalador oficial
+micromamba create -n old -c conda-forge python=3.10 "shapely=1.8.4" numpy=1.22 rtree
+micromamba run -n old python tests/tools/oracle_paint.py     # ejemplo
+```
+
+No está comprobado que `shapely=1.8.4` exista para osx-arm64 con Python 3.10; si no está, probar `shapely=1.8.*`. Importante: Shapely
+1.8.x (no 2.x: da 3 polígonos donde 1.8.4 da 31 en el buffer de Gerber) y el paquete `rtree` **real** (el oráculo de Paint/NCC lo necesita;
+`tests/tools/oracle_common.py` solo lo reemplaza por un simulacro si no está instalado). Para probar con otra GEOS en el Mac:
+`micromamba create -n geos312 -c conda-forge geos=3.12` y compilar con `-DCMAKE_PREFIX_PATH=<raíz del entorno>
+-DGEOS_DIR=<raíz>/lib/cmake/GEOS -DCMAKE_BUILD_RPATH=<raíz>/lib`.
+
+### 12.5 Cosas que se aprendieron y conviene no repetir
+
+- El original (Python) tarda ~9 min en el NCC de `B_Cu` (26 millones de puntos); correr de a uno (la memoria no alcanza para dos a la vez)
+  y desacoplado de la terminal. El port tarda ~1 min.
+- Mapa de parámetros reales del usuario: `tests/data/PARAMETROS.md` y `tests/data/dosificador_PCB_principal.params.json`. La tolerancia de
+  simplificación del G-code es `global_tolerance / 20 = 0,00025`. Los pasos por círculo son 64.
+- Diferencias 8.994 contra 2024.4 ya medidas: `GRBL_laser` (`G00 Z0` en la cabecera, orden del Z inicial, sin `G00 Z..` al final);
+  `Alinea` (líneas en blanco por agujero y agujero en (0, 0)); `B_Cu` (23 uniones más). Todo lo demás coincide.
+- GEOS 3.15 empieza algunos contornos en otro vértice que la 3.11/3.12; eso cambia en ±1 trazado la unión de anillos del NCC y hasta 1,2 %
+  de longitud en casos chicos. No es un error.
+- `PreparedShape` (GEOS preparado) da exactamente los mismos resultados que los predicados sueltos y es mucho más rápido.
