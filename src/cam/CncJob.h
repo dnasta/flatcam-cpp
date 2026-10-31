@@ -66,7 +66,7 @@ struct GeometryToolSettings {
     std::string offsetKind{"Path"};        ///< `"Path"` (sobre la línea), `"in"`, `"out"` o `"custom"` (`offset`).
     double offsetValue{0.0};               ///< Offset si @ref offsetKind es `"custom"` (`offset_value`).
     double cutZ{0.0};                      ///< Z de corte (`cutz`).
-    bool multidepth{false};                ///< Profundidad múltiple (`multidepth`); todavía no soportada.
+    bool multidepth{false};                ///< Profundidad múltiple (`multidepth`).
     double depthPerPass{0.0};              ///< Profundidad por pasada (`depthperpass`).
     double travelZ{0.0};                   ///< Z de viaje (`travelz`).
     double feedrate{0.0};                  ///< Avance X-Y (`feedrate`).
@@ -81,7 +81,11 @@ struct GeometryToolSettings {
     std::optional<std::array<double, 2>> endXY;         ///< X,Y final (`endxy`).
     double toolchangeZ{0.0};               ///< Z de cambio de herramienta (`toolchangez`).
     std::optional<std::array<double, 2>> toolchangeXY;  ///< X,Y de cambio de herramienta (`toolchangexy`).
-    bool extracut{false};                  ///< Corte extra al cerrar anillos (`extracut`); todavía no soportado.
+    bool extracut{false};                  ///< Corte extra al cerrar anillos (`extracut`).
+    double extracutLength{0.1};            ///< Largo del corte extra (`extracut_length`); 0 usa el modo de tres puntos.
+    double tolerance{0.0};                 ///< Si es mayor que 0 se simplifica cada línea con esa tolerancia.
+    double segX{0.0};                      ///< Largo máximo de los tramos en X al segmentar (`segx`); 0 no segmenta.
+    double segY{0.0};                      ///< Largo máximo de los tramos en Y al segmentar (`segy`); 0 no segmenta.
 };
 
 /** @brief Todo lo necesario para generar el G-code de una geometría con una herramienta. */
@@ -114,6 +118,8 @@ struct GcodeHeaderInfo {
  * Reproduce `CNCjob.excellon_tool_gcode_gen` de FlatCAM 2024.4 con `toolchange = True` y los datos de la
  * interfaz: para cada herramienta emite el avance Z, el cambio de herramienta, el husillo y, por cada agujero,
  * el movimiento rápido, la bajada, la subida a Z0 y la elevación; la última herramienta cierra el programa.
+ * Solo se taladran agujeros: si el Excellon trae ranuras se avisa con un mensaje de registro, igual que el original,
+ * que las deja para la herramienta de fresado.
  *
  * @code
  * flatcam::Excellon ex(opt);
@@ -144,7 +150,9 @@ public:
      *
      * Cada línea o contorno se recorre con un movimiento rápido hasta su inicio, la bajada a Z de corte y los
      * movimientos lineales. Si la herramienta tiene offset (`in`, `out` o `custom`) las figuras se desplazan antes.
-     * No están soportados todavía la profundidad múltiple ni el corte extra.
+     * Soporta profundidad múltiple (aritmética decimal exacta de 9 decimales, como el original), corte extra en
+     * anillos cerrados, puntos sueltos (un agujero en cada uno), simplificación por tolerancia y segmentación de
+     * líneas largas.
      * @param geometry Figuras a recorrer (líneas, anillos o polígonos; los polígonos se recorren por sus contornos).
      * @param settings Parámetros del trabajo.
      * @return `true` si se generó; `false` si falló (ver @ref lastError).

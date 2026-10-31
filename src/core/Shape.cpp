@@ -2,6 +2,8 @@
 
 #include <geos_c.h>
 
+#include <algorithm>
+#include <cmath>
 #include <cstdlib>
 
 #include "GeometryError.h"
@@ -200,6 +202,51 @@ ShapeType Shape::type() const {
 bool Shape::isEmpty() const { return predicate(GEOSisEmpty_r(H(), raw(*this)), "isEmpty"); }
 
 bool Shape::isValid() const { return predicate(GEOSisValid_r(H(), raw(*this)), "isValid"); }
+
+bool Shape::isRing() const { return predicate(GEOSisRing_r(H(), raw(*this)), "isRing"); }
+
+namespace {
+
+/// Punto a una distancia dada desde el inicio de una polilínea (se acota a [0, largo]).
+Point2D interpolateAlong(const std::vector<Point2D>& pts, double distance) {
+    if (distance <= 0) return pts.front();
+    double acc = 0;
+    for (std::size_t i = 0; i + 1 < pts.size(); ++i) {
+        const double seg = std::hypot(pts[i + 1].x - pts[i].x, pts[i + 1].y - pts[i].y);
+        if (acc + seg >= distance) {
+            const double f = seg > 0 ? (distance - acc) / seg : 0.0;
+            return {pts[i].x + (pts[i + 1].x - pts[i].x) * f, pts[i].y + (pts[i + 1].y - pts[i].y) * f};
+        }
+        acc += seg;
+    }
+    return pts.back();
+}
+
+}  // namespace
+
+Shape Shape::substring(double startDistance, double endDistance) const {
+    const std::vector<Point2D> coords = coordinates();
+    double length = 0;
+    for (std::size_t i = 0; i + 1 < coords.size(); ++i) {
+        length += std::hypot(coords[i + 1].x - coords[i].x, coords[i + 1].y - coords[i].y);
+    }
+    startDistance = std::min(std::max(startDistance, 0.0), length);
+    endDistance = std::min(std::max(endDistance, 0.0), length);
+    if (startDistance == endDistance) return point(interpolateAlong(coords, startDistance));
+
+    const bool reversed = startDistance > endDistance;
+    if (reversed) std::swap(startDistance, endDistance);
+    std::vector<Point2D> vertices{interpolateAlong(coords, startDistance)};
+    double current = 0;
+    for (std::size_t i = 0; i + 1 < coords.size(); ++i) {
+        if (startDistance < current && current < endDistance) vertices.push_back(coords[i]);
+        else if (current >= endDistance) break;
+        current += std::hypot(coords[i + 1].x - coords[i].x, coords[i + 1].y - coords[i].y);
+    }
+    vertices.push_back(interpolateAlong(coords, endDistance));
+    if (reversed) std::reverse(vertices.begin(), vertices.end());
+    return lineString(vertices);
+}
 
 double Shape::area() const {
     double a = 0;

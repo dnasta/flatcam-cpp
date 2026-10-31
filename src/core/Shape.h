@@ -145,6 +145,17 @@ public:
     bool isEmpty() const;
     /** @brief Indica si la figura es válida según las reglas OGC. @return `true` si es válida. */
     bool isValid() const;
+    /** @brief Indica si la figura es una línea cerrada y simple (`is_ring` de Shapely). @return `true` si es un anillo. */
+    bool isRing() const;
+
+    /**
+     * @brief Tramo de una línea entre dos distancias medidas desde su inicio (`shapely.ops.substring`).
+     * @param startDistance Distancia inicial.
+     * @param endDistance Distancia final; si es menor que la inicial el tramo sale invertido.
+     * @return Línea con el tramo pedido (un punto si ambas distancias coinciden).
+     */
+    Shape substring(double startDistance, double endDistance) const;
+
     /** @brief Área de la figura (0 para puntos y líneas). @return El área. */
     double area() const;
     /** @brief Longitud de la figura (o perímetro en polígonos). @return La longitud. */

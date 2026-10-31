@@ -5,6 +5,7 @@
 
 #include "cam/CncJob.h"
 #include "golden_geometry.h"
+#include "golden_geometry_modes.h"
 
 using namespace flatcam;
 
@@ -77,18 +78,51 @@ TEST(CncJobGeometry, ToolOffsetMovesThePath) {
     EXPECT_NE(job.gcode().find("Y11.0000"), std::string::npos);
 }
 
-TEST(CncJobGeometry, UnsupportedOptionsAndErrorsAreReported) {
+TEST(CncJobGeometry, ErrorsAreReported) {
     GeometryJobSettings s = golden_geometry::settings();
-    s.toolSettings.multidepth = true;
-    CncJob multi;
-    EXPECT_FALSE(multi.generateFromGeometry(contourGeometry(), s));
-    EXPECT_FALSE(multi.lastError().empty());
-
-    s = golden_geometry::settings();
     s.preprocessor = "no_existe";
     CncJob bad;
     EXPECT_FALSE(bad.generateFromGeometry(contourGeometry(), s));
+    EXPECT_FALSE(bad.lastError().empty());
 
     CncJob empty;
     EXPECT_FALSE(empty.generateFromGeometry({}, golden_geometry::settings()));
+    EXPECT_FALSE(empty.lastError().empty());
+}
+
+// ------------------------------------------- modos: profundidad múltiple, corte extra, puntos, tolerancia...
+
+class GeometryModes : public ::testing::TestWithParam<std::size_t> {};
+
+TEST_P(GeometryModes, MatchesOriginalGenerator) {
+    const auto& sc = golden_geometry_modes::kScenarios.at(GetParam());
+    SCOPED_TRACE(sc.name);
+    CncJob job;
+    ASSERT_TRUE(job.generateFromGeometry(sc.geometry(), sc.settings())) << job.lastError();
+    EXPECT_EQ(job.startGcode() + "\n" + job.gcode(), sc.expected);
+}
+
+INSTANTIATE_TEST_SUITE_P(Original, GeometryModes,
+                         ::testing::Range<std::size_t>(0, golden_geometry_modes::kScenarios.size()),
+                         [](const ::testing::TestParamInfo<std::size_t>& info) {
+                             return std::string(golden_geometry_modes::kScenarios.at(info.param).name);
+                         });
+
+TEST(CncJobGeometry, MultidepthUsesExactDecimalArithmetic) {
+    // Con floats, -1.8 / 0.6 daría una pasada de más (0.6 * 3 = 1.7999999999999998 no llega a 1.8).
+    GeometryJobSettings s;
+    s.order = DrillOrder::FileOrder;
+    s.toolSettings.toolDia = 1.0;
+    s.toolSettings.cutZ = -1.8;
+    s.toolSettings.multidepth = true;
+    s.toolSettings.depthPerPass = 0.6;
+    s.toolSettings.travelZ = 2.0;
+    s.toolSettings.endZ = 10.0;
+    CncJob job;
+    ASSERT_TRUE(job.generateFromGeometry({Shape::lineString({{0, 0}, {5, 0}})}, s)) << job.lastError();
+    int downs = 0;
+    for (std::size_t pos = job.gcode().find("G01 Z-"); pos != std::string::npos; pos = job.gcode().find("G01 Z-", pos + 1)) ++downs;
+    EXPECT_EQ(downs, 3);
+    EXPECT_NE(job.gcode().find("G01 Z-1.8000"), std::string::npos);
+    EXPECT_EQ(job.gcode().find("G01 Z-2.4000"), std::string::npos);
 }
