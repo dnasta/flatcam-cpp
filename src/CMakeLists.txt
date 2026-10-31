@@ -20,6 +20,7 @@ add_library(flatcam_core STATIC
     tools/Paint.cpp
     tools/Ncc.cpp
     tools/DoubleSided.cpp
+    tools/Isolation.cpp
 )
 add_library(flatcam::core ALIAS flatcam_core)
 

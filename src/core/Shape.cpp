@@ -474,4 +474,8 @@ bool PreparedShape::contains(const Shape& other) const {
     return predicate(GEOSPreparedContains_r(H(), impl_->prepared, raw(other)), "contains (preparado)");
 }
 
+bool PreparedShape::intersects(const Shape& other) const {
+    return predicate(GEOSPreparedIntersects_r(H(), impl_->prepared, raw(other)), "intersects (preparado)");
+}
+
 }  // namespace flatcam

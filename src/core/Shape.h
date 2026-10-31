@@ -366,6 +366,13 @@ public:
      */
     bool contains(const Shape& other) const;
 
+    /**
+     * @brief Si la figura preparada toca a otra (igual que `shape.intersects(other)`).
+     * @param other Figura a comprobar.
+     * @return `true` si tienen algún punto en común.
+     */
+    bool intersects(const Shape& other) const;
+
 private:
     struct Impl;
     std::unique_ptr<Impl> impl_;
