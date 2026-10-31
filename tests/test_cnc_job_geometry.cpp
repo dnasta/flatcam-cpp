@@ -98,7 +98,9 @@ TEST_P(GeometryModes, MatchesOriginalGenerator) {
     const auto& sc = golden_geometry_modes::kScenarios.at(GetParam());
     SCOPED_TRACE(sc.name);
     CncJob job;
-    ASSERT_TRUE(job.generateFromGeometry(sc.geometry(), sc.settings())) << job.lastError();
+    GeometryJobSettings settings = sc.settings();
+    settings.flavor = GcodeFlavor::FlatCAM2024_4;  // los goldens salen del código de la 2024.4
+    ASSERT_TRUE(job.generateFromGeometry(sc.geometry(), settings)) << job.lastError();
     EXPECT_EQ(job.startGcode() + "\n" + job.gcode(), sc.expected);
 }
 

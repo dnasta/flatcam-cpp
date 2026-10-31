@@ -150,3 +150,14 @@ TEST(CncJobLaser, FlavorsDifferOnlyWhereFlatcamChanged) {
     EXPECT_FALSE(body(a).empty());
     EXPECT_EQ(body(a), body(b));
 }
+
+TEST(CncJobLaser, DefaultFlavorIsTheUsers8994WithG00Z0) {
+    // Decisión del usuario: el láser sale con `G00 Z0` en la cabecera, como en su FlatCAM 8.994.
+    EXPECT_EQ(GeometryJobSettings{}.flavor, GcodeFlavor::FlatCAM8_994);
+    GeometryJobSettings s = laserSettings({}, GcodeFlavor::FlatCAM8_994);
+    s.flavor = GeometryJobSettings{}.flavor;
+    CncJob job;
+    ASSERT_TRUE(job.generateFromGeometry({Shape::lineString({{0, 0}, {5, 0}})}, s)) << job.lastError();
+    EXPECT_NE(job.exportGcode({}).find("G00 Z0\n\nG21"), std::string::npos);
+    EXPECT_EQ(job.exportGcode({}).find("G00 Z19.00"), std::string::npos);
+}
