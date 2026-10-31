@@ -145,8 +145,22 @@ public:
     bool isEmpty() const;
     /** @brief Indica si la figura es válida según las reglas OGC. @return `true` si es válida. */
     bool isValid() const;
+    /**
+     * @brief Une las líneas que comparten extremos (`shapely.ops.linemerge`).
+     * @param shapes Líneas a unir (se ignoran las figuras que no sean líneas).
+     * @return Una línea o una colección de líneas.
+     */
+    static Shape lineMerge(const std::vector<Shape>& shapes);
+
     /** @brief Indica si la figura es una línea cerrada y simple (`is_ring` de Shapely). @return `true` si es un anillo. */
     bool isRing() const;
+
+    /**
+     * @brief Punto a una distancia dada desde el inicio de una línea (`interpolate` de Shapely).
+     * @param distance Distancia medida sobre la línea (se acota entre 0 y el largo).
+     * @return El punto.
+     */
+    Shape interpolate(double distance) const;
 
     /**
      * @brief Tramo de una línea entre dos distancias medidas desde su inicio (`shapely.ops.substring`).
