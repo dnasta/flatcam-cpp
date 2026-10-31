@@ -193,6 +193,18 @@ Shape Shape::unaryUnion(const std::vector<Shape>& shapes) {
     return wrap(result, "Falló la unión");
 }
 
+Shape Shape::lineMerge(const std::vector<Shape>& shapes) {
+    if (shapes.empty()) return Shape();
+    std::vector<GEOSGeometry*> kids;
+    for (const auto& s : shapes) kids.push_back(GEOSGeom_clone_r(H(), raw(s)));
+    GEOSGeometry* coll = GEOSGeom_createCollection_r(H(), GEOS_GEOMETRYCOLLECTION, kids.data(),
+                                                     static_cast<unsigned int>(kids.size()));
+    if (!coll) fail("No se pudo agrupar para unir líneas");
+    GEOSGeometry* result = GEOSLineMerge_r(H(), coll);
+    GEOSGeom_destroy_r(H(), coll);
+    return wrap(result, "Falló la unión de líneas");
+}
+
 // ---------------------------------------------------------------- propiedades
 
 ShapeType Shape::type() const {
@@ -223,6 +235,8 @@ Point2D interpolateAlong(const std::vector<Point2D>& pts, double distance) {
 }
 
 }  // namespace
+
+Shape Shape::interpolate(double distance) const { return point(interpolateAlong(coordinates(), distance)); }
 
 Shape Shape::substring(double startDistance, double endDistance) const {
     const std::vector<Point2D> coords = coordinates();

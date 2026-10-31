@@ -71,17 +71,15 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang, GEOS 3.15.0):** 376 de 376 tests pasan con el commit `95f5c79`
-(incluye los desplazamientos de herramienta en texto completo). Falta que confirme el parche `fase3` de documentación y del
-golden de Gerber con Shapely 1.8.4.
+**Última confirmación en el Mac del usuario (M4, AppleClang, GEOS 3.15.0):** 376 de 376 tests pasan con el commit `1c52023`.
+Falta que confirme el parche del CutOut (420 tests en Linux).
 
-Fase 3 (hasta ahora): 376 tests en Linux; transformaciones de `Gerber` (24 casos contra el original), postprocesadores
+Fase 3 (hasta ahora): 420 tests en Linux; transformaciones de `Gerber` (24 casos contra el original), postprocesadores
 `default` y `GRBL_laser` (224 líneas de G-code idénticas al original) y G-code de taladrado (`CncJob`): idéntico línea por
 línea al generador original con el orden del archivo, e igual al `.nc` real del usuario salvo el orden de los agujeros. El G-code de geometrías (`generateFromGeometry`) reproduce
 byte por byte `DosCau_PPal-Edge_Cuts.nc` a partir de su propio recorrido.
 
-**Próximos pasos de la fase 3, en orden:** (1) CutOut: generar la geometría con los dos puentes desde `Edge_Cuts.gm1` y
-comprobar que el recorrido coincide con el del `.nc` real; (2) NCC y Paint con láser (`GRBL_laser`) contra `B_Cu.nc` y
+**Próximos pasos de la fase 3, en orden:** (1) ~~CutOut~~ (hecho: libre, rectangular y puente manual, reproduce el `.nc` del contorno); (2) NCC y Paint con láser (`GRBL_laser`) contra `B_Cu.nc` y
 `B_Logo.nc`; (3) PCB a 2 caras (`Alinea`); (4) Isolation si el usuario lo confirma. Dato del `.nc` del contorno: tiene
 **dos** trazados (puentes arriba y abajo), no uno.
 
@@ -106,6 +104,8 @@ src/parsers/           Lectores de archivos (sin Qt, derivan de Geometry)
   Gerber.*               Parser de Gerber RS-274X (aperturas, trazos, arcos, regiones, polaridad)
   Excellon.*             Parser de Excellon (herramientas, agujeros, ranuras) y sus transformaciones
   (Gerber.* también trae scale, offset, mirror, rotate, skew, buffer y getBoundingBox)
+src/tools/              Herramientas de FlatCAM (sin Qt)
+  CutOut.*               Corte de contorno con puentes: libre, rectangular y puente manual (`ToolCutOut.py`)
 src/cam/                Generación de G-code (sin Qt)
   PyNumber.*             Número que recuerda si era int o float, para imprimir como `str()` de Python
   Preprocessor.*         Interfaz `Preprocessor` y los postprocesadores `default` y `GRBL_laser`
@@ -189,6 +189,14 @@ Reglas de calidad (deben cumplirse antes de dar una tanda por terminada):
   `DosCau_PPal-Edge_Cuts.nc` como geometría de entrada y ejecuta `CNCjob.geometry_tool_gcode_gen` **original** con los
   parámetros del proyecto. Como la entrada sale del propio `.nc`, el G-code generado debe ser idéntico a ese archivo
   (salvo los `\r` de Windows): lo es. Lo que NO prueba es la creación de la geometría del CutOut (ver sección 10).
+- `tests/tools/oracle_cutout.py` genera `tests/golden_cutout.h`: ejecuta `CutOut.on_freeform_cutout` y `on_rectangular_cutout`
+  **originales** (con una interfaz simulada) sobre `Edge_Cuts.gm1` y 38 casos, además de 3 de puente manual. Requiere
+  Shapely 1.8.4 (con 2.x el original no itera las figuras múltiples). Comprueba contorno, puentes finos y agujeros
+  vértice por vértice. Casos donde el original **falla** (y el port también): rectangular sin puentes, con margen
+  negativo en varias figuras y con mouse bites en varias figuras. **Prueba de punta a punta** en `test_cutout.cpp`:
+  `Edge_Cuts.gm1` -> CutOut rectangular (fresa 1,2, puentes arriba y abajo de 0,4) -> G-code == `DosCau_PPal-Edge_Cuts.nc`
+  del usuario, byte por byte. El usuario usó el corte **rectangular** (esquinas de radio 0,6 sobre esquinas cuadradas); el
+  libre redondea con el radio 0,05 del Gerber.
 - `tests/tools/oracle_geometry_modes.py` genera `tests/golden_geometry_modes.h`: 26 escenarios sintéticos (profundidad múltiple,
   corte extra, puntos, tolerancia, segmentación, láser, sin cambio de herramienta, pulgadas) ejecutados con
   `geometry_tool_gcode_gen` **original**; los tests comparan el texto completo. Los desplazamientos de herramienta
@@ -315,7 +323,8 @@ simplejson→nlohmann/json, qrcode→libqrencode. `winreg` y `tkinter` no se por
 ## 11. Pendientes y preguntas abiertas
 
 1. Confirmar si la 2024.4 genera el mismo G-code que la 8.994 con el mismo proyecto. **Evidencia a favor:** el taladro (todo
-   salvo el orden de los agujeros) y el contorno (byte por byte) coinciden con el generador de la 2024.4. Falta NCC/Paint y
+   salvo el orden de los agujeros) y el contorno (byte por byte, desde el Gerber hasta el G-code pasando por el CutOut
+   rectangular) coinciden con el generador de la 2024.4. Falta NCC/Paint y
    `Alinea`. El usuario puede exportar de nuevo desde la 2024.4 a `tests/data/2024_4/` para cerrarlo.
 2. Reflejo de `B_Cu` (simétrico en sus límites): confirmar con la geometría en la fase 3.
 3. Taladro `(0, 0)` en `Alinea` (el G-code taladra 5 posiciones, el job cuenta 4): aclarar leyendo `ToolDblSided.py`.
