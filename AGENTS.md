@@ -71,10 +71,11 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang, GEOS 3.15.0):** 424 de 424 tests pasan con el commit `555c470`
-(variante 8.994 por defecto). Falta que confirme el parche del pintado (445 tests en Linux).
+**Última confirmación en el Mac del usuario (M4, AppleClang, GEOS 3.15.0):** 443 de 445 con el commit `c09f003` (Paint). Los 2
+fallos eran de tolerancia por la versión de GEOS (ver sección 6); corregidos, falta que confirme el parche `fase3m` (445 tests
+en Linux con GEOS 3.12 y con 3.15.0).
 
-Fase 3 (hasta ahora): 445 tests en Linux; transformaciones de `Gerber` (24 casos contra el original), postprocesadores
+Fase 3 (hasta ahora): 445 tests en Linux (GEOS 3.12 y 3.15.0); transformaciones de `Gerber` (24 casos contra el original), postprocesadores
 `default` y `GRBL_laser` (224 líneas de G-code idénticas al original) y G-code de taladrado (`CncJob`): idéntico línea por
 línea al generador original con el orden del archivo, e igual al `.nc` real del usuario salvo el orden de los agujeros. El G-code de geometrías (`generateFromGeometry`) reproduce
 byte por byte `DosCau_PPal-Edge_Cuts.nc` a partir de su propio recorrido.
@@ -159,6 +160,15 @@ Reglas de calidad (deben cumplirse antes de dar una tanda por terminada):
   `Doxyfile.in` pone entre comillas las rutas por los espacios; mantenerlo así.
 - Los `.cpp` no se procesan con Doxygen: la API se documenta en los encabezados.
 
+**Regla de entrega: probar con dos versiones de GEOS.** El `buffer` y el resto de GEOS cambian de versión en versión, y el
+Mac del usuario trae la más nueva (3.15.0). Un test con tolerancia de 1e-9 que pasa con la GEOS del sistema (3.12) puede fallar
+con la 3.15 (pasó con el Paint: un vértice de 2.041 difería 6,5e-5 mm en el último anillo, que casi se colapsa). Antes de entregar
+hay que correr toda la suite contra las dos:
+`micromamba create -n geos315 -c conda-forge geos=3.15`, y después
+`cmake -S . -B /tmp/b315 -G Ninja -DCMAKE_PREFIX_PATH=$E -DGEOS_DIR=$E/lib/cmake/GEOS -DCMAKE_BUILD_RPATH=$E/lib` con
+`E=<raíz del entorno>` y `LD_LIBRARY_PATH=$E/lib /tmp/b315/tests/core_tests`. Las tolerancias de los tests de geometría se
+fijan con sentido físico (micras), no en el último bit.
+
 ## 7. Cómo se verifica que el port reproduce a FlatCAM
 
 - `tests/tools/gen_golden.py` calcula con **Shapely y numpy** los valores esperados (áreas de buffers, uniones,
@@ -197,8 +207,9 @@ Reglas de calidad (deben cumplirse antes de dar una tanda por terminada):
   simplificación y la inversión de líneas coincide texto por texto. Entornos: `micromamba create -n old -c conda-forge
   python=3.10 shapely=1.8.4 numpy=1.22 rtree` (con GEOS 3.11) y `-n g310 ... geos=3.10.3` (mismo resultado).
   **Contra el `Logo.nc` real de la 8.994** (`PaintEndToEnd` en `test_paint.cpp`): 38 trazados contra 38, mismo orden y
-  orientación, distancia máxima entre trazados 3,5 micras, 6.408 puntos contra 6.402, y 5 trazados que arrancan en el
-  vértice vecino (hasta 0,05 mm). **No se puede igualar byte a byte** y la causa no es la versión de GEOS (3.10.3 y 3.11 dan lo
+  orientación; con GEOS 3.12: distancia máxima entre trazados 3,5 micras, 6.408 puntos contra 6.402 y 5 trazados que arrancan en
+  el vértice vecino (hasta 0,05 mm); con GEOS 3.15.0: 5,0 micras, 6.404 puntos y 7 inicios distintos (hasta 0,098 mm). Umbrales del
+  test: 10 micras, 0,2 mm y 1 % de los puntos. **No se puede igualar byte a byte** y la causa no es la versión de GEOS (3.10.3 y 3.11 dan lo
   mismo): la 8.994 decide distinto al simplificar. Hechos medidos: la tolerancia es `global_tolerance / 20 = 0,00025`; el
   proyecto trae el `Logo` reflejado en X; `contour` no se usa en `clear_polygon`; `rtree.nearest` devuelve los empates en un
   orden interno (el port usa el primero insertado). El criterio de aceptación para NCC es el mismo: cantidad, orden, orientación
