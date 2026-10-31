@@ -34,6 +34,7 @@ std::optional<std::vector<EndpointStorage::Line>> PolygonClearing::paintConnect(
                                                                                 int stepsPerCircle) {
     const double maxWalk = 10 * tooldia;
     EndpointStorage optimized;
+    const PreparedShape preparedBoundary(boundary);  // la misma figura se consulta miles de veces
     Point2D currentPt{0, 0};
 
     auto first = storage.nearest(currentPt);
@@ -53,7 +54,7 @@ std::optional<std::vector<EndpointStorage::Line>> PolygonClearing::paintConnect(
 
         const Shape walkPath = Shape::lineString({currentPt, pt});
         const Shape walkCut = walkPath.buffer(tooldia / 2, stepsPerCircle);
-        if (walkCut.within(boundary) && walkPath.length() < maxWalk) {
+        if (preparedBoundary.contains(walkCut) && walkPath.length() < maxWalk) {
             geo.insert(geo.end(), candidate.begin(), candidate.end());
         } else {
             optimized.insert(geo, false);

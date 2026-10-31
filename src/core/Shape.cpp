@@ -455,4 +455,23 @@ std::string Shape::toWkt(int precision) const {
     return out;
 }
 
+struct PreparedShape::Impl {
+    Shape shape;  // mantiene viva la figura original, que GEOS referencia
+    const GEOSPreparedGeometry* prepared{nullptr};
+};
+
+PreparedShape::PreparedShape(const Shape& shape) : impl_(std::make_unique<Impl>()) {
+    impl_->shape = shape;
+    impl_->prepared = GEOSPrepare_r(H(), raw(impl_->shape));
+    if (!impl_->prepared) throw GeometryError("No se pudo preparar la figura");
+}
+
+PreparedShape::~PreparedShape() {
+    if (impl_ && impl_->prepared) GEOSPreparedGeom_destroy_r(H(), impl_->prepared);
+}
+
+bool PreparedShape::contains(const Shape& other) const {
+    return predicate(GEOSPreparedContains_r(H(), impl_->prepared, raw(other)), "contains (preparado)");
+}
+
 }  // namespace flatcam

@@ -71,16 +71,16 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang, GEOS 3.15.0):** 443 de 445 con el commit `c09f003` (Paint). Los 2
-fallos eran de tolerancia por la versión de GEOS (ver sección 6); corregidos, falta que confirme el parche `fase3m` (445 tests
-en Linux con GEOS 3.12 y con 3.15.0).
+**Última confirmación en el Mac del usuario (M4, AppleClang, GEOS 3.15.0):** 445 de 445 con el commit `d8f4630` (Paint con
+tolerancias corregidas). Falta que confirme el parche `fase3n` del NCC (454 tests en Linux con GEOS 3.12 y con 3.15.0, más una
+prueba lenta opcional).
 
-Fase 3 (hasta ahora): 445 tests en Linux (GEOS 3.12 y 3.15.0); transformaciones de `Gerber` (24 casos contra el original), postprocesadores
+Fase 3 (hasta ahora): 455 tests en Linux (GEOS 3.12 y 3.15.0; 454 corren siempre y 1 es lenta); transformaciones de `Gerber` (24 casos contra el original), postprocesadores
 `default` y `GRBL_laser` (224 líneas de G-code idénticas al original) y G-code de taladrado (`CncJob`): idéntico línea por
 línea al generador original con el orden del archivo, e igual al `.nc` real del usuario salvo el orden de los agujeros. El G-code de geometrías (`generateFromGeometry`) reproduce
 byte por byte `DosCau_PPal-Edge_Cuts.nc` a partir de su propio recorrido.
 
-**Próximos pasos de la fase 3, en orden:** (1) ~~CutOut~~ (hecho: libre, rectangular y puente manual, reproduce el `.nc` del contorno); (2a) ~~capa de G-code del láser~~ (hecha: `B_Cu.nc` y `Logo.nc` se reproducen byte por byte desde sus propios trazados, con `GcodeFlavor::FlatCAM8_994`); (2b) ~~**Paint**~~ (hecho, método estándar: `src/tools/Paint.*`, `src/cam/PolygonClearing.*`, `src/cam/EndpointStorage.*`, orden `R` en `CncJob`); (2c) **NCC** (`ToolNCC`: región a limpiar = caja menos cobre, margen, contorno; es lo que falta para `B_Cu.nc`); (3) PCB a 2 caras (`Alinea`); (4) Isolation si el usuario lo confirma. Dato del `.nc` del contorno: tiene
+**Próximos pasos de la fase 3, en orden:** (1) ~~CutOut~~ (hecho: libre, rectangular y puente manual, reproduce el `.nc` del contorno); (2a) ~~capa de G-code del láser~~ (hecha: `B_Cu.nc` y `Logo.nc` se reproducen byte por byte desde sus propios trazados, con `GcodeFlavor::FlatCAM8_994`); (2b) ~~**Paint**~~ (hecho, método estándar: `src/tools/Paint.*`, `src/cam/PolygonClearing.*`, `src/cam/EndpointStorage.*`, orden `R` en `CncJob`); (2c) ~~**NCC**~~ (hecho, "Él mismo" sobre un Gerber con el método estándar: `src/tools/Ncc.*`; verificado exacto contra el original con casos sintéticos y equivalente a `B_Cu.nc`, ver sección 7); (3) PCB a 2 caras (`Alinea`); (4) Isolation si el usuario lo confirma. Dato del `.nc` del contorno: tiene
 **dos** trazados (puentes arriba y abajo), no uno.
 
 ## 5. Arquitectura
@@ -106,6 +106,7 @@ src/parsers/           Lectores de archivos (sin Qt, derivan de Geometry)
   (Gerber.* también trae scale, offset, mirror, rotate, skew, buffer y getBoundingBox)
 src/tools/              Herramientas de FlatCAM (sin Qt)
   Paint.*                Pintado de polígonos con el método estándar (`ToolPaint.py`)
+  Ncc.*                  Limpieza de cobre de toda la placa, método estándar (`ToolNCC.py`)
   CutOut.*               Corte de contorno con puentes: libre, rectangular y puente manual (`ToolCutOut.py`)
 src/cam/                Generación de G-code (sin Qt)
   PyNumber.*             Número que recuerda si era int o float, para imprimir como `str()` de Python
@@ -201,6 +202,21 @@ fijan con sentido físico (micras), no en el último bit.
   `DosCau_PPal-Edge_Cuts.nc` como geometría de entrada y ejecuta `CNCjob.geometry_tool_gcode_gen` **original** con los
   parámetros del proyecto. Como la entrada sale del propio `.nc`, el G-code generado debe ser idéntico a ese archivo
   (salvo los `\r` de Windows): lo es. Lo que NO prueba es la creación de la geometría del CutOut (ver sección 10).
+- `tests/tools/oracle_ncc.py` genera `tests/golden_ncc.h` (1,8 MB): transcribe `ToolNCC.clear_copper` (región = envolvente convexa del
+  cobre, agrandada el margen con esquinas en ingletes, menos el cobre; después `clear_polygon` por polígono) sobre 8 casos
+  sintéticos. Con GEOS 3.12 los 8 coinciden con el original vértice por vértice. **Con GEOS 3.15 el contorno de algunos polígonos
+  empieza en otro vértice**, la región se compara sin depender de eso y, cuando cambia la unión de anillos (±1 trazado, hasta
+  1,2 % de longitud), el test compara el total de puntos (exacto), la longitud (2 %) y la cantidad de trazados (±1).
+- **NCC de `B_Cu` contra el `.nc` real** (`NccEndToEnd`, solo con `FLATCAM_SLOW_TESTS=1`, ~100 s): el cobre inferior está
+  **reflejado en X** como el Logo y la envolvente convexa da exactamente los rangos del encabezado (X −35,4124…35,6520; Y
+  −36,7244…36,9060). Mi resultado: 498.847 puntos contra 499.094 (0,05 %), 68.460,9 mm contra 68.471,2 mm (0,015 %) y 746 trazados
+  contra 723: la 8.994 une unos 23 tramos más (~0,45 mm cada uno). Probé en el `paint_connect` otros radios, otros largos máximos y
+  otras resoluciones del engrosado (16 a 64) y ninguna da 723 (el conteo salta de forma no monótona), así que la regla de la 8.994 no
+  se pudo deducir. Original (Python) 567 s, port 56 s.
+- **Empates de `rtree.nearest`**: repitiendo mis 5.509 elecciones del NCC contra el `rtree` real, solo ~15 difieren y todas son
+  empates exactos (0,02 mm) entre líneas distintas. El `rtree` real elige a veces la línea insertada antes y a veces la insertada
+  después (7 u 8 de ~15 para cada regla simple), porque depende de la estructura de su árbol; reproducirlo exigiría emular el
+  R*-tree de libspatialindex. Efecto: 1 o 2 uniones de unos 670 trazados (670 contra 668 sin reflejo).
 - `tests/tools/oracle_paint.py` genera `tests/golden_paint.h` (3,3 MB): ejecuta `Geometry.clear_polygon` (con `rtree` real) y
   `geometry_tool_gcode_gen` con orden `R` y tolerancia **originales** sobre el `Logo` del usuario (reflejado en X) y 8 casos
   sintéticos. Las trayectorias coinciden con el original vértice por vértice (< 1e-9) y el G-code con el orden `R`, la

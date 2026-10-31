@@ -13,15 +13,17 @@ máquina del usuario.
 
 ## Estado actual (se actualiza al final de cada respuesta)
 
-- **Fase 3 en curso** (fases 1 y 2 hechas). 445 tests pasan en Linux con GEOS 3.12 y con 3.15.0; en el Mac del usuario (GEOS 3.15.0)
-  pasaron 443 de 445 con `c09f003` (2 tolerancias, ya corregidas): falta confirmar el parche `fase3m`.
-- **Hecho:** núcleo de geometría, parsers de Gerber y Excellon, transformaciones de Gerber, postprocesadores `default` y
-  `GRBL_laser`, G-code de taladrado y de geometrías (`CncJob`), **CutOut**, capa de G-code del láser y **Paint estándar**.
-- **Regla de entrega nueva:** correr toda la suite con GEOS 3.12 (sistema) **y** 3.15.0 (micromamba) antes de entregar; las
-  tolerancias se fijan en micras, no en el último bit (detalle en `AGENTS.md`, sección 6).
-- **Verificación:** goldens de los originales con Shapely 1.8.4 (y `rtree` real). Byte por byte con los `.nc` reales: contorno y
-  `B_Cu.nc`/`Logo.nc` desde sus trazados. El Paint del `Logo` desde el Gerber: 38 trazados en el mismo orden, 3,5 a 5 micras.
+- **Fase 3 en curso** (fases 1 y 2 hechas). 454 tests corren siempre (+1 lenta con `FLATCAM_SLOW_TESTS=1`) y pasan en Linux con
+  GEOS 3.12 y con 3.15.0; en el Mac del usuario (GEOS 3.15.0) pasaron 445 de 445 con `d8f4630`. Falta confirmar el parche `fase3n`.
+- **Hecho:** núcleo de geometría, parsers de Gerber y Excellon, transformaciones, postprocesadores `default` y `GRBL_laser`, G-code
+  de taladrado y de geometrías (`CncJob`), **CutOut**, capa de G-code del láser, **Paint estándar** y **NCC estándar** (`src/tools/Ncc.*`,
+  `PreparedShape` en `Shape`).
+- **Regla de entrega:** correr toda la suite con GEOS 3.12 (sistema) **y** 3.15.0 (micromamba) antes de entregar; tolerancias en micras.
+- **NCC de `B_Cu`:** el cobre inferior está reflejado en X; los rangos del encabezado coinciden exactamente; 0,05 % de puntos y 0,015 % de
+  longitud de diferencia con el `.nc` real, pero 746 trazados contra 723 (la 8.994 une ~23 tramos más; regla no deducible). Los empates de
+  `rtree.nearest` cambian 1 o 2 uniones (no se puede emular sin el R*-tree de libspatialindex).
 - **Decisión del usuario:** el G-code del láser sale como el de su FlatCAM 8.994 (con `G00 Z0`), variante por defecto.
-- **Siguiente:** NCC (`ToolNCC`): región a limpiar, margen y contorno, y compararla con `B_Cu.nc`; después `Alinea`.
-- **Pendiente de que el usuario aplique:** parche `fase3m-geos315`.
+- **Siguiente:** `Alinea` (PCB a 2 caras, `ToolDblSided`, aclarar el taladro en (0,0)); después Isolation si el usuario lo confirma.
+  Pendientes menores: Paint/NCC con los métodos de semilla y líneas, mecanizado de resto, selección por área.
+- **Pendiente de que el usuario aplique:** parche `fase3n-ncc`.
 - Detalle completo en `AGENTS.md`, secciones 4, 6, 7, 10 y 11.

@@ -344,4 +344,31 @@ private:
 /** @brief Lista de figuras: reemplaza a las listas (anidadas) de objetos Shapely de FlatCAM. */
 using ShapeList = std::vector<Shape>;
 
+/**
+ * @brief Una figura preparada para consultarla muchas veces (`shapely.prepared.prep`).
+ *
+ * GEOS indexa la figura una sola vez y después cada consulta es mucho más rápida. Se usa cuando la misma figura grande
+ * (por ejemplo el polígono que se está limpiando) se compara con miles de figuras chicas. Los resultados son los mismos
+ * que los de los predicados de @ref Shape.
+ */
+class PreparedShape {
+public:
+    /** @brief Prepara una figura. @param shape Figura a consultar (se conserva una copia). */
+    explicit PreparedShape(const Shape& shape);
+    ~PreparedShape();
+    PreparedShape(const PreparedShape&) = delete;
+    PreparedShape& operator=(const PreparedShape&) = delete;
+
+    /**
+     * @brief Si la figura preparada contiene a otra (igual que `other.within(shape)`).
+     * @param other Figura a comprobar.
+     * @return `true` si @p other queda dentro.
+     */
+    bool contains(const Shape& other) const;
+
+private:
+    struct Impl;
+    std::unique_ptr<Impl> impl_;
+};
+
 }  // namespace flatcam

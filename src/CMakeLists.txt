@@ -18,6 +18,7 @@ add_library(flatcam_core STATIC
     cam/PolygonClearing.cpp
     tools/CutOut.cpp
     tools/Paint.cpp
+    tools/Ncc.cpp
 )
 add_library(flatcam::core ALIAS flatcam_core)
 
