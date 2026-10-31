@@ -65,7 +65,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-Fase 3 (hasta ahora): 369 tests en Linux; transformaciones de `Gerber` (24 casos contra el original), postprocesadores
+Fase 3 (hasta ahora): 376 tests en Linux; transformaciones de `Gerber` (24 casos contra el original), postprocesadores
 `default` y `GRBL_laser` (224 líneas de G-code idénticas al original) y G-code de taladrado (`CncJob`): idéntico línea por
 línea al generador original con el orden del archivo, e igual al `.nc` real del usuario salvo el orden de los agujeros. El G-code de geometrías (`generateFromGeometry`) reproduce
 byte por byte `DosCau_PPal-Edge_Cuts.nc` a partir de su propio recorrido.
@@ -151,8 +151,13 @@ Reglas de calidad (deben cumplirse antes de dar una tanda por terminada):
   **original** de FlatCAM (con las dependencias de Qt, rtree, etc. reemplazadas por módulos vacíos; ver
   `oracle_common.py`) sobre `tests/data/` y escriben `tests/golden_gerber.h` y `tests/golden_excellon.h`. Los tests
   de C++ comparan áreas, límites, cantidad de figuras, aperturas, taladros y 1.200 puntos de muestra por archivo.
-  Requieren `python3 -m pip install shapely numpy` (Shapely 2.x en vez de 1.8.4; no cambia los resultados). No
-  editar los `golden_*.h` a mano. Para cada herramienta de la fase 3 conviene hacer un oráculo igual (ver
+  El original usa **Shapely 1.8.4**, y algunos resultados cambian con Shapely 2 (p. ej. `buffer` de Gerber: 31 polígonos
+  con 1.8.4 contra 3 con 2.x). Por eso los goldens se generan con 1.8.4. Entorno: bajar `micromamba` de
+  `conda.anaconda.org/conda-forge/linux-64/` y `micromamba create -n old -c conda-forge python=3.10 shapely=1.8.4 numpy=1.22`
+  (en su GEOS 3.11.0); con `python3 -m pip install shapely numpy` (Shapely 2.x) casi todo coincide, pero no esa cantidad.
+  Verificado: con Shapely 1.8.4 (GEOS 3.11.0) y con 2.2 (GEOS 3.14.1) salen idénticos los goldens de preprocesadores,
+  taladrado, geometría, Excellon y los 26 escenarios de `geometry_modes` (incluidos los desplazamientos de herramienta).
+  No editar los `golden_*.h` a mano. Para cada herramienta de la fase 3 conviene hacer un oráculo igual (ver
   `tests/tools/oracle_common.py`) además de comparar contra los `.nc` de `tests/data/`.
 - `tests/tools/oracle_gerber_ops.py` genera `tests/golden_gerber_ops.h`: aplica las operaciones originales (scale, offset,
   mirror, rotate, skew, buffer con y sin factor) y resume el resultado (polígonos tras unir, área, límites, aperturas).
@@ -167,10 +172,11 @@ Reglas de calidad (deben cumplirse antes de dar una tanda por terminada):
   `DosCau_PPal-Edge_Cuts.nc` como geometría de entrada y ejecuta `CNCjob.geometry_tool_gcode_gen` **original** con los
   parámetros del proyecto. Como la entrada sale del propio `.nc`, el G-code generado debe ser idéntico a ese archivo
   (salvo los `\r` de Windows): lo es. Lo que NO prueba es la creación de la geometría del CutOut (ver sección 10).
-- `tests/tools/oracle_geometry_modes.py` genera `tests/golden_geometry_modes.h`: 19 escenarios sintéticos (profundidad múltiple,
+- `tests/tools/oracle_geometry_modes.py` genera `tests/golden_geometry_modes.h`: 26 escenarios sintéticos (profundidad múltiple,
   corte extra, puntos, tolerancia, segmentación, láser, sin cambio de herramienta, pulgadas) ejecutados con
   `geometry_tool_gcode_gen` **original**; los tests comparan el texto completo. Los desplazamientos de herramienta
-  (`in`/`out`/`custom`) no se comparan en texto porque el orden de vértices que devuelve el buffer depende de la versión de GEOS.
+  (`in`/`out`/`custom`) sí se comparan en texto (7 escenarios): el orden de vértices del buffer coincide entre GEOS 3.11.0,
+  3.12.1 y 3.14.1. La cabecera imprime los límites de la geometría de origen, no los del recorrido desplazado.
 - **Fase 3:** comparar el G-code generado contra los `.nc` de `tests/data/` (ver sección 8).
 - Cuando se porte una función de `camlib.py` o de las herramientas, leer el original **completo** y respetar sus
   detalles numéricos (redondeos, tolerancias, orden de operaciones): el G-code debe coincidir.
@@ -261,8 +267,8 @@ Decisiones y desvíos (también documentados en los encabezados):
 de cada apertura, como el original. `convert_units` y `bounds` no hacen falta: los de `Geometry` ya hacen lo mismo.
 Desvíos: `scale` no multiplica `nVertices` de las aperturas P (el original lo dejaba como número no entero); en `buffer`
 con factor, las aperturas de tipo no soportado quedan sin geometría sólida en vez de abortar. `buffer` se aplica
-polígono por polígono (Shapely 1.8); el oráculo usa Shapely 2, que lo aplica a todo junto, por eso los tests comparan
-las figuras después de unirlas.
+polígono por polígono (Shapely 1.8), igual que el original; el golden sale de Shapely 1.8.4, así que la cantidad de
+polígonos se compara exacta (el área y los límites sobre la unión).
 
 ### Fase 3: qué portar (todo en `reference/FlatCAM_2024_4/FlatCAM/`)
 

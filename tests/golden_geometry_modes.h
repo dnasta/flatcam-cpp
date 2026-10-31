@@ -18,6 +18,8 @@ inline flatcam::GeometryJobSettings settings0() {
     s.toolchange = true;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -1.8;
     t.depthPerPass = 0.6;
     t.travelZ = 2.0;
@@ -52,6 +54,8 @@ inline flatcam::GeometryJobSettings settings1() {
     s.toolchange = true;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -1.0;
     t.depthPerPass = 0.1;
     t.travelZ = 2.0;
@@ -86,6 +90,8 @@ inline flatcam::GeometryJobSettings settings2() {
     s.toolchange = true;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -1.0;
     t.depthPerPass = 0.4;
     t.travelZ = 2.0;
@@ -120,6 +126,8 @@ inline flatcam::GeometryJobSettings settings3() {
     s.toolchange = true;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -1.5;
     t.depthPerPass = 0.5;
     t.travelZ = 2.0;
@@ -154,6 +162,8 @@ inline flatcam::GeometryJobSettings settings4() {
     s.toolchange = true;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -2.0;
     t.depthPerPass = 0.5;
     t.travelZ = 2.0;
@@ -188,6 +198,8 @@ inline flatcam::GeometryJobSettings settings5() {
     s.toolchange = true;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -1.2;
     t.depthPerPass = 0.6;
     t.travelZ = 2.0;
@@ -222,6 +234,8 @@ inline flatcam::GeometryJobSettings settings6() {
     s.toolchange = true;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -0.5;
     t.depthPerPass = 0.6;
     t.travelZ = 2.0;
@@ -256,6 +270,8 @@ inline flatcam::GeometryJobSettings settings7() {
     s.toolchange = true;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -1.0;
     t.depthPerPass = 0.6;
     t.travelZ = 2.0;
@@ -290,6 +306,8 @@ inline flatcam::GeometryJobSettings settings8() {
     s.toolchange = true;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -1.0;
     t.depthPerPass = 0.6;
     t.travelZ = 2.0;
@@ -324,6 +342,8 @@ inline flatcam::GeometryJobSettings settings9() {
     s.toolchange = true;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -1.0;
     t.depthPerPass = 0.6;
     t.travelZ = 2.0;
@@ -358,6 +378,8 @@ inline flatcam::GeometryJobSettings settings10() {
     s.toolchange = true;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -1.0;
     t.depthPerPass = 0.5;
     t.travelZ = 2.0;
@@ -392,6 +414,8 @@ inline flatcam::GeometryJobSettings settings11() {
     s.toolchange = true;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -1.0;
     t.depthPerPass = 0.6;
     t.travelZ = 2.0;
@@ -426,6 +450,8 @@ inline flatcam::GeometryJobSettings settings12() {
     s.toolchange = true;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -0.5;
     t.depthPerPass = 0.6;
     t.travelZ = 2.0;
@@ -460,6 +486,8 @@ inline flatcam::GeometryJobSettings settings13() {
     s.toolchange = true;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -0.5;
     t.depthPerPass = 0.6;
     t.travelZ = 2.0;
@@ -494,6 +522,8 @@ inline flatcam::GeometryJobSettings settings14() {
     s.toolchange = true;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -0.5;
     t.depthPerPass = 0.6;
     t.travelZ = 2.0;
@@ -528,6 +558,8 @@ inline flatcam::GeometryJobSettings settings15() {
     s.toolchange = false;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -0.5;
     t.depthPerPass = 0.6;
     t.travelZ = 2.0;
@@ -563,6 +595,8 @@ inline flatcam::GeometryJobSettings settings16() {
     s.toolchange = true;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -0.5;
     t.depthPerPass = 0.6;
     t.travelZ = 2.0;
@@ -597,6 +631,8 @@ inline flatcam::GeometryJobSettings settings17() {
     s.toolchange = false;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -0.5;
     t.depthPerPass = 0.6;
     t.travelZ = 2.0;
@@ -631,6 +667,8 @@ inline flatcam::GeometryJobSettings settings18() {
     s.toolchange = true;
     flatcam::GeometryToolSettings& t = s.toolSettings;
     t.toolDia = 1.2;
+    t.offsetKind = "Path";
+    t.offsetValue = 0.0;
     t.cutZ = -0.07;
     t.depthPerPass = 0.02;
     t.travelZ = 0.08;
@@ -644,6 +682,258 @@ inline flatcam::GeometryJobSettings settings18() {
     t.extracutLength = 0.1;
     t.spindleDir = "CW";
     t.multidepth = true;
+    t.dwell = false;
+    t.extracut = false;
+    t.endXY = std::array<double, 2>{0.0, 0.0};
+    t.toolchangeXY = std::array<double, 2>{0.0, 0.0};
+    t.tolerance = 0.0;
+    t.segX = 0.0;
+    t.segY = 0.0;
+    return s;
+}
+inline flatcam::ShapeList geometry19() {  // offset_out_square
+    return {flatcam::Shape::fromWkt("POLYGON ((0 0, 10 0, 10 10, 0 10, 0 0))")};
+}
+inline flatcam::GeometryJobSettings settings19() {
+    flatcam::GeometryJobSettings s;
+    s.units = "MM";
+    s.preprocessor = "default";
+    s.order = flatcam::DrillOrder::FileOrder;
+    s.tool = 1;
+    s.toolchange = true;
+    flatcam::GeometryToolSettings& t = s.toolSettings;
+    t.toolDia = 1.2;
+    t.offsetKind = "out";
+    t.offsetValue = 0.0;
+    t.cutZ = -1.0;
+    t.depthPerPass = 0.6;
+    t.travelZ = 2.0;
+    t.feedrate = 100.0;
+    t.feedrateZ = 100.0;
+    t.feedrateRapid = 1500.0;
+    t.spindleSpeed = 1000.0;
+    t.dwellTime = 1.0;
+    t.endZ = 19.0;
+    t.toolchangeZ = 19.0;
+    t.extracutLength = 0.1;
+    t.spindleDir = "CW";
+    t.multidepth = false;
+    t.dwell = false;
+    t.extracut = false;
+    t.endXY = std::array<double, 2>{0.0, 0.0};
+    t.toolchangeXY = std::array<double, 2>{0.0, 0.0};
+    t.tolerance = 0.0;
+    t.segX = 0.0;
+    t.segY = 0.0;
+    return s;
+}
+inline flatcam::ShapeList geometry20() {  // offset_in_square_with_hole
+    return {flatcam::Shape::fromWkt("POLYGON ((0 0, 10 0, 10 10, 0 10, 0 0), (2 2, 4 2, 4 4, 2 4, 2 2))")};
+}
+inline flatcam::GeometryJobSettings settings20() {
+    flatcam::GeometryJobSettings s;
+    s.units = "MM";
+    s.preprocessor = "default";
+    s.order = flatcam::DrillOrder::FileOrder;
+    s.tool = 1;
+    s.toolchange = true;
+    flatcam::GeometryToolSettings& t = s.toolSettings;
+    t.toolDia = 1.2;
+    t.offsetKind = "in";
+    t.offsetValue = 0.0;
+    t.cutZ = -1.0;
+    t.depthPerPass = 0.6;
+    t.travelZ = 2.0;
+    t.feedrate = 100.0;
+    t.feedrateZ = 100.0;
+    t.feedrateRapid = 1500.0;
+    t.spindleSpeed = 1000.0;
+    t.dwellTime = 1.0;
+    t.endZ = 19.0;
+    t.toolchangeZ = 19.0;
+    t.extracutLength = 0.1;
+    t.spindleDir = "CW";
+    t.multidepth = false;
+    t.dwell = false;
+    t.extracut = false;
+    t.endXY = std::array<double, 2>{0.0, 0.0};
+    t.toolchangeXY = std::array<double, 2>{0.0, 0.0};
+    t.tolerance = 0.0;
+    t.segX = 0.0;
+    t.segY = 0.0;
+    return s;
+}
+inline flatcam::ShapeList geometry21() {  // offset_custom_open_line
+    return {flatcam::Shape::fromWkt("LINESTRING (0 0, 10 0, 10 5)")};
+}
+inline flatcam::GeometryJobSettings settings21() {
+    flatcam::GeometryJobSettings s;
+    s.units = "MM";
+    s.preprocessor = "default";
+    s.order = flatcam::DrillOrder::FileOrder;
+    s.tool = 1;
+    s.toolchange = true;
+    flatcam::GeometryToolSettings& t = s.toolSettings;
+    t.toolDia = 1.2;
+    t.offsetKind = "custom";
+    t.offsetValue = 0.3;
+    t.cutZ = -1.0;
+    t.depthPerPass = 0.6;
+    t.travelZ = 2.0;
+    t.feedrate = 100.0;
+    t.feedrateZ = 100.0;
+    t.feedrateRapid = 1500.0;
+    t.spindleSpeed = 1000.0;
+    t.dwellTime = 1.0;
+    t.endZ = 19.0;
+    t.toolchangeZ = 19.0;
+    t.extracutLength = 0.1;
+    t.spindleDir = "CW";
+    t.multidepth = false;
+    t.dwell = false;
+    t.extracut = false;
+    t.endXY = std::array<double, 2>{0.0, 0.0};
+    t.toolchangeXY = std::array<double, 2>{0.0, 0.0};
+    t.tolerance = 0.0;
+    t.segX = 0.0;
+    t.segY = 0.0;
+    return s;
+}
+inline flatcam::ShapeList geometry22() {  // offset_out_closed_linestring
+    return {flatcam::Shape::fromWkt("LINESTRING (0 0, 6 0, 6 6, 0 6, 0 0)")};
+}
+inline flatcam::GeometryJobSettings settings22() {
+    flatcam::GeometryJobSettings s;
+    s.units = "MM";
+    s.preprocessor = "default";
+    s.order = flatcam::DrillOrder::FileOrder;
+    s.tool = 1;
+    s.toolchange = true;
+    flatcam::GeometryToolSettings& t = s.toolSettings;
+    t.toolDia = 1.2;
+    t.offsetKind = "out";
+    t.offsetValue = 0.0;
+    t.cutZ = -1.0;
+    t.depthPerPass = 0.6;
+    t.travelZ = 2.0;
+    t.feedrate = 100.0;
+    t.feedrateZ = 100.0;
+    t.feedrateRapid = 1500.0;
+    t.spindleSpeed = 1000.0;
+    t.dwellTime = 1.0;
+    t.endZ = 19.0;
+    t.toolchangeZ = 19.0;
+    t.extracutLength = 0.1;
+    t.spindleDir = "CW";
+    t.multidepth = false;
+    t.dwell = false;
+    t.extracut = false;
+    t.endXY = std::array<double, 2>{0.0, 0.0};
+    t.toolchangeXY = std::array<double, 2>{0.0, 0.0};
+    t.tolerance = 0.0;
+    t.segX = 0.0;
+    t.segY = 0.0;
+    return s;
+}
+inline flatcam::ShapeList geometry23() {  // offset_out_two_shapes
+    return {flatcam::Shape::fromWkt("POLYGON ((0 0, 10 0, 10 10, 0 10, 0 0))"), flatcam::Shape::fromWkt("POLYGON ((20 0, 28 0, 24 6, 20 0))")};
+}
+inline flatcam::GeometryJobSettings settings23() {
+    flatcam::GeometryJobSettings s;
+    s.units = "MM";
+    s.preprocessor = "default";
+    s.order = flatcam::DrillOrder::FileOrder;
+    s.tool = 1;
+    s.toolchange = true;
+    flatcam::GeometryToolSettings& t = s.toolSettings;
+    t.toolDia = 1.2;
+    t.offsetKind = "out";
+    t.offsetValue = 0.0;
+    t.cutZ = -1.0;
+    t.depthPerPass = 0.6;
+    t.travelZ = 2.0;
+    t.feedrate = 100.0;
+    t.feedrateZ = 100.0;
+    t.feedrateRapid = 1500.0;
+    t.spindleSpeed = 1000.0;
+    t.dwellTime = 1.0;
+    t.endZ = 19.0;
+    t.toolchangeZ = 19.0;
+    t.extracutLength = 0.1;
+    t.spindleDir = "CW";
+    t.multidepth = false;
+    t.dwell = false;
+    t.extracut = false;
+    t.endXY = std::array<double, 2>{0.0, 0.0};
+    t.toolchangeXY = std::array<double, 2>{0.0, 0.0};
+    t.tolerance = 0.0;
+    t.segX = 0.0;
+    t.segY = 0.0;
+    return s;
+}
+inline flatcam::ShapeList geometry24() {  // offset_out_multidepth
+    return {flatcam::Shape::fromWkt("POLYGON ((0 0, 10 0, 10 10, 0 10, 0 0))")};
+}
+inline flatcam::GeometryJobSettings settings24() {
+    flatcam::GeometryJobSettings s;
+    s.units = "MM";
+    s.preprocessor = "default";
+    s.order = flatcam::DrillOrder::FileOrder;
+    s.tool = 1;
+    s.toolchange = true;
+    flatcam::GeometryToolSettings& t = s.toolSettings;
+    t.toolDia = 1.2;
+    t.offsetKind = "out";
+    t.offsetValue = 0.0;
+    t.cutZ = -1.0;
+    t.depthPerPass = 0.5;
+    t.travelZ = 2.0;
+    t.feedrate = 100.0;
+    t.feedrateZ = 100.0;
+    t.feedrateRapid = 1500.0;
+    t.spindleSpeed = 1000.0;
+    t.dwellTime = 1.0;
+    t.endZ = 19.0;
+    t.toolchangeZ = 19.0;
+    t.extracutLength = 0.1;
+    t.spindleDir = "CW";
+    t.multidepth = true;
+    t.dwell = false;
+    t.extracut = false;
+    t.endXY = std::array<double, 2>{0.0, 0.0};
+    t.toolchangeXY = std::array<double, 2>{0.0, 0.0};
+    t.tolerance = 0.0;
+    t.segX = 0.0;
+    t.segY = 0.0;
+    return s;
+}
+inline flatcam::ShapeList geometry25() {  // offset_custom_negative_ring
+    return {flatcam::Shape::fromWkt("POLYGON ((0 0, 10 0, 10 10, 0 10, 0 0))")};
+}
+inline flatcam::GeometryJobSettings settings25() {
+    flatcam::GeometryJobSettings s;
+    s.units = "MM";
+    s.preprocessor = "default";
+    s.order = flatcam::DrillOrder::FileOrder;
+    s.tool = 1;
+    s.toolchange = true;
+    flatcam::GeometryToolSettings& t = s.toolSettings;
+    t.toolDia = 1.2;
+    t.offsetKind = "custom";
+    t.offsetValue = -0.4;
+    t.cutZ = -1.0;
+    t.depthPerPass = 0.6;
+    t.travelZ = 2.0;
+    t.feedrate = 100.0;
+    t.feedrateZ = 100.0;
+    t.feedrateRapid = 1500.0;
+    t.spindleSpeed = 1000.0;
+    t.dwellTime = 1.0;
+    t.endZ = 19.0;
+    t.toolchangeZ = 19.0;
+    t.extracutLength = 0.1;
+    t.spindleDir = "CW";
+    t.multidepth = false;
     t.dwell = false;
     t.extracut = false;
     t.endXY = std::array<double, 2>{0.0, 0.0};
@@ -674,5 +964,12 @@ inline const std::vector<Scenario> kScenarios = {
 {"laser_single_pass", geometry16, settings16, "(This preprocessor is used with a motion controller loaded with GRBL firmware. )\n(It is for the case when it is used together with a LASER connected on the SPINDLE connector.)\n\n(Feedrate: 500.0 mm/min)\n(Feedrate rapids: 1500.0 mm/min)\n\n(Z Focus: 2.0 mm)\n(Steps per circle: 64)\n(Preprocessor Geometry: GRBL_laser)\n\n(X range:    0.0000 ...   10.0000  mm)\n(Y range:    0.0000 ...    5.0000  mm)\n\n(Laser Power - Spindle Speed: 300.0)\n\nG21\nG90\nG17\nG94\n\nG01 F500.00\n\nM5\nG01 F500.00\nG00 X0.0000 Y0.0000\nG01 F100.00\nM03 S300.0\nG01 F500.00\nG01 X10.0000 Y0.0000 F500.00\nG01 X10.0000 Y5.0000 F500.00\nM5\nM5\nM5\nG00 Z19.00\nG00 X0.0 Y0.0\n\n"},
 {"laser_no_toolchange", geometry17, settings17, "(This preprocessor is used with a motion controller loaded with GRBL firmware. )\n(It is for the case when it is used together with a LASER connected on the SPINDLE connector.)\n\n(Feedrate: 500.0 mm/min)\n(Feedrate rapids: 1500.0 mm/min)\n\n(Z Focus: 2.0 mm)\n(Steps per circle: 64)\n(Preprocessor Geometry: GRBL_laser)\n\n(X range:    0.0000 ...   10.0000  mm)\n(Y range:    0.0000 ...    5.0000  mm)\n\n(Laser Power - Spindle Speed: 300.0)\n\nG21\nG90\nG17\nG94\n\nG01 F500.00\nM5\n\nG01 F500.00\nG00 X0.0000 Y0.0000\nG01 F100.00\nM03 S300.0\nG01 F500.00\nG01 X10.0000 Y0.0000 F500.00\nG01 X10.0000 Y5.0000 F500.00\nM5\nM5\nM5\nG00 Z19.00\nG00 X0.0 Y0.0\n\n"},
 {"inches", geometry18, settings18, "(This preprocessor is the default preprocessor used by FlatCAM.)\n(It is made to work with MACH3 compatible motion controllers.)\n\n(TOOL DIAMETER: 1.2 in)\n(Feedrate_XY: 100.0 in/min)\n(Feedrate_Z: 100.0 in/min)\n(Feedrate rapids 1500.0 in/min)\n\n(Z_Cut: -0.07 in)\n(DepthPerCut: 0.02 in <=>4 passes)\n(Z_Move: 0.08 in)\n(Z Start: None in)\n(Z End: 19.0 in)\n(X,Y End: 0.0000, 0.0000 in)\n(Steps per circle: 64)\n(Preprocessor Geometry: default)\n\n(X range:    0.0000 ...   10.0000  in)\n(Y range:    0.0000 ...    5.0000  in)\n\n(Spindle Speed: 1000.0 RPM)\nG20\nG90\nG94\n\nG01 F100.00\n\nM5\nG00 Z19.0000\nG00 X0.0000 Y0.0000\nT1\nM6    \n(MSG, Change to Tool Dia = 1.2000)\nM0\nG00 Z19.0000\n\nM03 S1000.0\nG01 F100.00\nG00 X0.0000 Y0.0000\nG01 F100.00\nG01 Z-0.0200\nG01 F100.00\nG01 X10.0000 Y0.0000\nG01 X10.0000 Y5.0000\nG00 X10.0000 Y5.0000\nG01 F100.00\nG01 Z-0.0400\nG01 F100.00\nG01 X10.0000 Y0.0000\nG01 X0.0000 Y0.0000\nG00 X0.0000 Y0.0000\nG01 F100.00\nG01 Z-0.0600\nG01 F100.00\nG01 X10.0000 Y0.0000\nG01 X10.0000 Y5.0000\nG00 X10.0000 Y5.0000\nG01 F100.00\nG01 Z-0.0700\nG01 F100.00\nG01 X10.0000 Y0.0000\nG01 X0.0000 Y0.0000\nG00 Z0.0800\nM05\nG00 Z0.0800\nG00 Z19.00\nG00 X0.0 Y0.0\n\n"},
+{"offset_out_square", geometry19, settings19, "(This preprocessor is the default preprocessor used by FlatCAM.)\n(It is made to work with MACH3 compatible motion controllers.)\n\n(TOOL DIAMETER: 1.2 mm)\n(Feedrate_XY: 100.0 mm/min)\n(Feedrate_Z: 100.0 mm/min)\n(Feedrate rapids 1500.0 mm/min)\n\n(Z_Cut: -1.0 mm)\n(Z_Move: 2.0 mm)\n(Z Start: None mm)\n(Z End: 19.0 mm)\n(X,Y End: 0.0000, 0.0000 mm)\n(Steps per circle: 64)\n(Preprocessor Geometry: default)\n\n(X range:    0.0000 ...   10.0000  mm)\n(Y range:    0.0000 ...   10.0000  mm)\n\n(Spindle Speed: 1000.0 RPM)\nG21\nG90\nG94\n\nG01 F100.00\n\nM5\nG00 Z19.0000\nG00 X0.0000 Y0.0000\nT1\nM6    \n(MSG, Change to Tool Dia = 1.2000)\nM0\nG00 Z19.0000\n\nM03 S1000.0\nG01 F100.00\nG00 X-0.6000 Y-0.6000\nG01 F100.00\nG01 Z-1.0000\nG01 F100.00\nG01 X-0.6000 Y10.6000\nG01 X10.6000 Y10.6000\nG01 X10.6000 Y-0.6000\nG01 X-0.6000 Y-0.6000\nG00 Z2.0000\nM05\nG00 Z2.0000\nG00 Z19.00\nG00 X0.0 Y0.0\n\n"},
+{"offset_in_square_with_hole", geometry20, settings20, "(This preprocessor is the default preprocessor used by FlatCAM.)\n(It is made to work with MACH3 compatible motion controllers.)\n\n(TOOL DIAMETER: 1.2 mm)\n(Feedrate_XY: 100.0 mm/min)\n(Feedrate_Z: 100.0 mm/min)\n(Feedrate rapids 1500.0 mm/min)\n\n(Z_Cut: -1.0 mm)\n(Z_Move: 2.0 mm)\n(Z Start: None mm)\n(Z End: 19.0 mm)\n(X,Y End: 0.0000, 0.0000 mm)\n(Steps per circle: 64)\n(Preprocessor Geometry: default)\n\n(X range:    0.0000 ...   10.0000  mm)\n(Y range:    0.0000 ...   10.0000  mm)\n\n(Spindle Speed: 1000.0 RPM)\nG21\nG90\nG94\n\nG01 F100.00\n\nM5\nG00 Z19.0000\nG00 X0.0000 Y0.0000\nT1\nM6    \n(MSG, Change to Tool Dia = 1.2000)\nM0\nG00 Z19.0000\n\nM03 S1000.0\nG01 F100.00\nG00 X0.6000 Y0.6000\nG01 F100.00\nG01 Z-1.0000\nG01 F100.00\nG01 X0.6000 Y9.4000\nG01 X9.4000 Y9.4000\nG01 X9.4000 Y0.6000\nG01 X0.6000 Y0.6000\nG00 Z2.0000\nG00 X2.6000 Y2.6000\nG01 F100.00\nG01 Z-1.0000\nG01 F100.00\nG01 X2.6000 Y3.4000\nG01 X3.4000 Y3.4000\nG01 X3.4000 Y2.6000\nG01 X2.6000 Y2.6000\nG00 Z2.0000\nM05\nG00 Z2.0000\nG00 Z19.00\nG00 X0.0 Y0.0\n\n"},
+{"offset_custom_open_line", geometry21, settings21, "(This preprocessor is the default preprocessor used by FlatCAM.)\n(It is made to work with MACH3 compatible motion controllers.)\n\n(TOOL DIAMETER: 1.2 mm)\n(Feedrate_XY: 100.0 mm/min)\n(Feedrate_Z: 100.0 mm/min)\n(Feedrate rapids 1500.0 mm/min)\n\n(Z_Cut: -1.0 mm)\n(Z_Move: 2.0 mm)\n(Z Start: None mm)\n(Z End: 19.0 mm)\n(X,Y End: 0.0000, 0.0000 mm)\n(Steps per circle: 64)\n(Preprocessor Geometry: default)\n\n(X range:    0.0000 ...   10.0000  mm)\n(Y range:    0.0000 ...    5.0000  mm)\n\n(Spindle Speed: 1000.0 RPM)\nG21\nG90\nG94\n\nG01 F100.00\n\nM5\nG00 Z19.0000\nG00 X0.0000 Y0.0000\nT1\nM6    \n(MSG, Change to Tool Dia = 1.2000)\nM0\nG00 Z19.0000\n\nM03 S1000.0\nG01 F100.00\nG00 X9.7000 Y0.3000\nG01 F100.00\nG01 Z-1.0000\nG01 F100.00\nG01 X9.7000 Y5.0000\nG01 X9.7014 Y5.0294\nG01 X9.7058 Y5.0585\nG01 X9.7129 Y5.0871\nG01 X9.7228 Y5.1148\nG01 X9.7354 Y5.1414\nG01 X9.7506 Y5.1667\nG01 X9.7681 Y5.1903\nG01 X9.7879 Y5.2121\nG01 X9.8097 Y5.2319\nG01 X9.8333 Y5.2494\nG01 X9.8586 Y5.2646\nG01 X9.8852 Y5.2772\nG01 X9.9129 Y5.2871\nG01 X9.9415 Y5.2942\nG01 X9.9706 Y5.2986\nG01 X10.0000 Y5.3000\nG01 X10.0294 Y5.2986\nG01 X10.0585 Y5.2942\nG01 X10.0871 Y5.2871\nG01 X10.1148 Y5.2772\nG01 X10.1414 Y5.2646\nG01 X10.1667 Y5.2494\nG01 X10.1903 Y5.2319\nG01 X10.2121 Y5.2121\nG01 X10.2319 Y5.1903\nG01 X10.2494 Y5.1667\nG01 X10.2646 Y5.1414\nG01 X10.2772 Y5.1148\nG01 X10.2871 Y5.0871\nG01 X10.2942 Y5.0585\nG01 X10.2986 Y5.0294\nG01 X10.3000 Y5.0000\nG01 X10.3000 Y-0.3000\nG01 X0.0000 Y-0.3000\nG01 X-0.0294 Y-0.2986\nG01 X-0.0585 Y-0.2942\nG01 X-0.0871 Y-0.2871\nG01 X-0.1148 Y-0.2772\nG01 X-0.1414 Y-0.2646\nG01 X-0.1667 Y-0.2494\nG01 X-0.1903 Y-0.2319\nG01 X-0.2121 Y-0.2121\nG01 X-0.2319 Y-0.1903\nG01 X-0.2494 Y-0.1667\nG01 X-0.2646 Y-0.1414\nG01 X-0.2772 Y-0.1148\nG01 X-0.2871 Y-0.0871\nG01 X-0.2942 Y-0.0585\nG01 X-0.2986 Y-0.0294\nG01 X-0.3000 Y0.0000\nG01 X-0.2986 Y0.0294\nG01 X-0.2942 Y0.0585\nG01 X-0.2871 Y0.0871\nG01 X-0.2772 Y0.1148\nG01 X-0.2646 Y0.1414\nG01 X-0.2494 Y0.1667\nG01 X-0.2319 Y0.1903\nG01 X-0.2121 Y0.2121\nG01 X-0.1903 Y0.2319\nG01 X-0.1667 Y0.2494\nG01 X-0.1414 Y0.2646\nG01 X-0.1148 Y0.2772\nG01 X-0.0871 Y0.2871\nG01 X-0.0585 Y0.2942\nG01 X-0.0294 Y0.2986\nG01 X0.0000 Y0.3000\nG01 X9.7000 Y0.3000\nG00 Z2.0000\nM05\nG00 Z2.0000\nG00 Z19.00\nG00 X0.0 Y0.0\n\n"},
+{"offset_out_closed_linestring", geometry22, settings22, "(This preprocessor is the default preprocessor used by FlatCAM.)\n(It is made to work with MACH3 compatible motion controllers.)\n\n(TOOL DIAMETER: 1.2 mm)\n(Feedrate_XY: 100.0 mm/min)\n(Feedrate_Z: 100.0 mm/min)\n(Feedrate rapids 1500.0 mm/min)\n\n(Z_Cut: -1.0 mm)\n(Z_Move: 2.0 mm)\n(Z Start: None mm)\n(Z End: 19.0 mm)\n(X,Y End: 0.0000, 0.0000 mm)\n(Steps per circle: 64)\n(Preprocessor Geometry: default)\n\n(X range:    0.0000 ...    6.0000  mm)\n(Y range:    0.0000 ...    6.0000  mm)\n\n(Spindle Speed: 1000.0 RPM)\nG21\nG90\nG94\n\nG01 F100.00\n\nM5\nG00 Z19.0000\nG00 X0.0000 Y0.0000\nT1\nM6    \n(MSG, Change to Tool Dia = 1.2000)\nM0\nG00 Z19.0000\n\nM03 S1000.0\nG01 F100.00\nG00 X-0.6000 Y-0.6000\nG01 F100.00\nG01 Z-1.0000\nG01 F100.00\nG01 X-0.6000 Y6.6000\nG01 X6.6000 Y6.6000\nG01 X6.6000 Y-0.6000\nG01 X-0.6000 Y-0.6000\nG00 Z2.0000\nM05\nG00 Z2.0000\nG00 Z19.00\nG00 X0.0 Y0.0\n\n"},
+{"offset_out_two_shapes", geometry23, settings23, "(This preprocessor is the default preprocessor used by FlatCAM.)\n(It is made to work with MACH3 compatible motion controllers.)\n\n(TOOL DIAMETER: 1.2 mm)\n(Feedrate_XY: 100.0 mm/min)\n(Feedrate_Z: 100.0 mm/min)\n(Feedrate rapids 1500.0 mm/min)\n\n(Z_Cut: -1.0 mm)\n(Z_Move: 2.0 mm)\n(Z Start: None mm)\n(Z End: 19.0 mm)\n(X,Y End: 0.0000, 0.0000 mm)\n(Steps per circle: 64)\n(Preprocessor Geometry: default)\n\n(X range:    0.0000 ...   28.0000  mm)\n(Y range:    0.0000 ...   10.0000  mm)\n\n(Spindle Speed: 1000.0 RPM)\nG21\nG90\nG94\n\nG01 F100.00\n\nM5\nG00 Z19.0000\nG00 X0.0000 Y0.0000\nT1\nM6    \n(MSG, Change to Tool Dia = 1.2000)\nM0\nG00 Z19.0000\n\nM03 S1000.0\nG01 F100.00\nG00 X-0.6000 Y-0.6000\nG01 F100.00\nG01 Z-1.0000\nG01 F100.00\nG01 X-0.6000 Y10.6000\nG01 X10.6000 Y10.6000\nG01 X10.6000 Y-0.6000\nG01 X-0.6000 Y-0.6000\nG00 Z2.0000\nG00 X18.8789 Y-0.6000\nG01 F100.00\nG01 Z-1.0000\nG01 F100.00\nG01 X24.0000 Y7.0817\nG01 X29.1211 Y-0.6000\nG01 X18.8789 Y-0.6000\nG00 Z2.0000\nM05\nG00 Z2.0000\nG00 Z19.00\nG00 X0.0 Y0.0\n\n"},
+{"offset_out_multidepth", geometry24, settings24, "(This preprocessor is the default preprocessor used by FlatCAM.)\n(It is made to work with MACH3 compatible motion controllers.)\n\n(TOOL DIAMETER: 1.2 mm)\n(Feedrate_XY: 100.0 mm/min)\n(Feedrate_Z: 100.0 mm/min)\n(Feedrate rapids 1500.0 mm/min)\n\n(Z_Cut: -1.0 mm)\n(DepthPerCut: 0.5 mm <=>2 passes)\n(Z_Move: 2.0 mm)\n(Z Start: None mm)\n(Z End: 19.0 mm)\n(X,Y End: 0.0000, 0.0000 mm)\n(Steps per circle: 64)\n(Preprocessor Geometry: default)\n\n(X range:    0.0000 ...   10.0000  mm)\n(Y range:    0.0000 ...   10.0000  mm)\n\n(Spindle Speed: 1000.0 RPM)\nG21\nG90\nG94\n\nG01 F100.00\n\nM5\nG00 Z19.0000\nG00 X0.0000 Y0.0000\nT1\nM6    \n(MSG, Change to Tool Dia = 1.2000)\nM0\nG00 Z19.0000\n\nM03 S1000.0\nG01 F100.00\nG00 X-0.6000 Y-0.6000\nG01 F100.00\nG01 Z-0.5000\nG01 F100.00\nG01 X-0.6000 Y10.6000\nG01 X10.6000 Y10.6000\nG01 X10.6000 Y-0.6000\nG01 X-0.6000 Y-0.6000\nG00 X-0.6000 Y-0.6000\nG01 F100.00\nG01 Z-1.0000\nG01 F100.00\nG01 X-0.6000 Y10.6000\nG01 X10.6000 Y10.6000\nG01 X10.6000 Y-0.6000\nG01 X-0.6000 Y-0.6000\nG00 Z2.0000\nM05\nG00 Z2.0000\nG00 Z19.00\nG00 X0.0 Y0.0\n\n"},
+{"offset_custom_negative_ring", geometry25, settings25, "(This preprocessor is the default preprocessor used by FlatCAM.)\n(It is made to work with MACH3 compatible motion controllers.)\n\n(TOOL DIAMETER: 1.2 mm)\n(Feedrate_XY: 100.0 mm/min)\n(Feedrate_Z: 100.0 mm/min)\n(Feedrate rapids 1500.0 mm/min)\n\n(Z_Cut: -1.0 mm)\n(Z_Move: 2.0 mm)\n(Z Start: None mm)\n(Z End: 19.0 mm)\n(X,Y End: 0.0000, 0.0000 mm)\n(Steps per circle: 64)\n(Preprocessor Geometry: default)\n\n(X range:    0.0000 ...   10.0000  mm)\n(Y range:    0.0000 ...   10.0000  mm)\n\n(Spindle Speed: 1000.0 RPM)\nG21\nG90\nG94\n\nG01 F100.00\n\nM5\nG00 Z19.0000\nG00 X0.0000 Y0.0000\nT1\nM6    \n(MSG, Change to Tool Dia = 1.2000)\nM0\nG00 Z19.0000\n\nM03 S1000.0\nG01 F100.00\nG00 X0.4000 Y0.4000\nG01 F100.00\nG01 Z-1.0000\nG01 F100.00\nG01 X0.4000 Y9.6000\nG01 X9.6000 Y9.6000\nG01 X9.6000 Y0.4000\nG01 X0.4000 Y0.4000\nG00 Z2.0000\nM05\nG00 Z2.0000\nG00 Z19.00\nG00 X0.0 Y0.0\n\n"},
 };
 }  // namespace golden_geometry_modes

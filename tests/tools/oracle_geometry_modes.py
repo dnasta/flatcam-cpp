@@ -51,6 +51,14 @@ SCENARIOS = [
     ("laser_no_toolchange", [LINE], dict(cutz=-0.5, feedrate=500.0, spindlespeed=300, ppname_g="GRBL_laser"),
      dict(toolchange=False)),
     ("inches", [LINE], dict(cutz=-0.07, travelz=0.08, depthperpass=0.02, multidepth=True), dict(units="IN")),
+    # Desplazamientos de herramienta: el texto depende del orden de vértices que devuelve el buffer de GEOS.
+    ("offset_out_square", [SQUARE], dict(cutz=-1.0), dict(offset="out")),
+    ("offset_in_square_with_hole", [SQUARE_HOLE], dict(cutz=-1.0), dict(offset="in")),
+    ("offset_custom_open_line", [LINE], dict(cutz=-1.0), dict(offset="custom", offset_value=0.3)),
+    ("offset_out_closed_linestring", [CLOSED_LINESTRING], dict(cutz=-1.0), dict(offset="out")),
+    ("offset_out_two_shapes", [SQUARE, "POLYGON ((20 0, 28 0, 24 6, 20 0))"], dict(cutz=-1.0), dict(offset="out")),
+    ("offset_out_multidepth", [SQUARE], dict(cutz=-1.0, multidepth=True, depthperpass=0.5), dict(offset="out")),
+    ("offset_custom_negative_ring", [SQUARE], dict(cutz=-1.0), dict(offset="custom", offset_value=-0.4)),
 ]
 
 
@@ -118,12 +126,21 @@ def main():
         job.oldy = 0.0
         job.segx = float(jobopts.get("segx", 0.0))
         job.segy = float(jobopts.get("segy", 0.0))
+        offset_kind = jobopts.get("offset", "Path")
+        if offset_kind.lower() == "in":
+            tool_offset = -float(base_tool["tooldia"]) / 2.0
+        elif offset_kind.lower() == "out":
+            tool_offset = float(base_tool["tooldia"]) / 2.0
+        elif offset_kind.lower() == "custom":
+            tool_offset = jobopts.get("offset_value", 0.0)
+        else:
+            tool_offset = 0.0
         xmin, ymin, xmax, ymax = unary_union(shapes).bounds
         job.options = {"name": name, "type": "Geometry", "tool_dia": base_tool["tooldia"], "xmin": xmin, "ymin": ymin,
                        "xmax": xmax, "ymax": ymax}
         job.optimized_travelling_salesman = lambda points, start=None: list(points)
-        tools = {1: {"tooldia": base_tool["tooldia"], "offset": "Path", "offset_value": 0.0, "solid_geometry": shapes,
-                     "data": data}}
+        tools = {1: {"tooldia": base_tool["tooldia"], "offset": jobopts.get("offset", "Path"),
+                     "offset_value": jobopts.get("offset_value", 0.0), "solid_geometry": shapes, "data": data}}
         gcode, start = job.geometry_tool_gcode_gen(1, tools, first_pt=(0.0, 0.0),
                                                    tolerance=jobopts.get("tolerance", 0), is_first=True,
                                                    is_last=True, toolchange=toolchange)
@@ -138,7 +155,9 @@ def main():
                 '    s.preprocessor = "%s";' % pp_name, "    s.order = flatcam::DrillOrder::FileOrder;",
                 "    s.tool = 1;", "    s.toolchange = %s;" % str(bool(toolchange)).lower(),
                 "    flatcam::GeometryToolSettings& t = s.toolSettings;",
-                "    t.toolDia = %s;" % num(base_tool["tooldia"])]
+                "    t.toolDia = %s;" % num(base_tool["tooldia"]),
+                '    t.offsetKind = "%s";' % jobopts.get("offset", "Path"),
+                "    t.offsetValue = %s;" % num(jobopts.get("offset_value", 0.0))]
         for key, cpp in [("cutz", "cutZ"), ("depthperpass", "depthPerPass"), ("travelz", "travelZ"),
                          ("feedrate", "feedrate"), ("feedrate_z", "feedrateZ"), ("feedrate_rapid", "feedrateRapid"),
                          ("spindlespeed", "spindleSpeed"), ("dwelltime", "dwellTime"), ("endz", "endZ"),
