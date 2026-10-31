@@ -17,8 +17,10 @@ namespace flatcam {
  *
  * Reproduce `FlatCAMRTreeStorage` de FlatCAM, que indexa el primer y el último punto de cada línea en un R-tree
  * (`rtree.Index.nearest`). Aquí se usa una grilla uniforme, mucho más simple, con el mismo resultado salvo ante
- * extremos **exactamente equidistantes**: el original los devuelve en un orden interno de libspatialindex y este
- * almacén elige el que se insertó primero (cada línea aporta primero su inicio y luego su final).
+ * extremos **exactamente equidistantes**: el original los devuelve en un orden interno de libspatialindex que depende de la
+ * estructura de su árbol (medido en el NCC de `B_Cu`: unos 15 empates en 5.509 consultas; elige a veces la línea insertada
+ * antes y a veces la insertada después, sin una regla simple) y este almacén elige siempre el que se insertó primero (cada línea
+ * aporta primero su inicio y luego su final). Efecto: en `B_Cu` cambian 1 o 2 uniones de unos 670 trazados.
  */
 class EndpointStorage {
 public:
