@@ -1,5 +1,6 @@
 #include "gui/objects/ObjectCollection.h"
 
+#include <QMimeData>
 #include <QRegularExpression>
 
 #include "gui/Translation.h"
@@ -7,6 +8,8 @@
 namespace flatcam::gui {
 
 namespace {
+
+const char* const kMime = "application/x-flatcam-object";
 
 // Los índices de grupo no tienen puntero interno; los de objeto apuntan al objeto.
 int kindIndex(ObjectKind k) { return static_cast<int>(k); }
@@ -139,9 +142,83 @@ bool ObjectCollection::setData(const QModelIndex& idx, const QVariant& value, in
 }
 
 Qt::ItemFlags ObjectCollection::flags(const QModelIndex& idx) const {
-    if (!idx.isValid() || !objectAt(idx)) return Qt::ItemIsEnabled;  // los grupos no se seleccionan
+    if (!idx.isValid()) return Qt::ItemIsEnabled;
+    // Los grupos no se seleccionan; reciben objetos soltados para poder reordenar entre filas.
+    if (!objectAt(idx)) return Qt::ItemIsEnabled | Qt::ItemIsDropEnabled;
     return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsDragEnabled |
            Qt::ItemIsDropEnabled;
+}
+
+Qt::DropActions ObjectCollection::supportedDropActions() const { return Qt::MoveAction; }
+
+QStringList ObjectCollection::mimeTypes() const { return {kMime}; }
+
+QMimeData* ObjectCollection::mimeData(const QModelIndexList& indexes) const {
+    // Se arrastra un solo objeto (el primero de la selección): grupo y fila.
+    for (const QModelIndex& i : indexes) {
+        FlatCAMObj* o = objectAt(i);
+        if (!o) continue;
+        auto* m = new QMimeData;
+        m->setData(kMime, QByteArray::number(kindIndex(o->kind())) + ',' + QByteArray::number(i.row()));
+        return m;
+    }
+    return nullptr;
+}
+
+std::pair<FlatCAMObj*, int> ObjectCollection::dropTarget(const QMimeData* data, int row,
+                                                         const QModelIndex& parent) const {
+    if (!data || !data->hasFormat(kMime)) return {nullptr, -1};
+    const QList<QByteArray> f = data->data(kMime).split(',');
+    if (f.size() != 2) return {nullptr, -1};
+    const int g = f[0].toInt(), r = f[1].toInt();
+    if (g < 0 || g >= kGroups || r < 0 || r >= static_cast<int>(groups_[g].size())) return {nullptr, -1};
+    FlatCAMObj* o = groups_[g][r].get();
+    // Soltar sobre otro objeto lo pone en su lugar; entre filas del grupo, en esa posición; sobre el grupo, al final.
+    if (FlatCAMObj* target = objectAt(parent)) {
+        if (kindIndex(target->kind()) != g) return {nullptr, -1};
+        const int tr = parent.row();
+        return {o, tr > r ? tr + 1 : tr};
+    }
+    if (!parent.isValid() || parent.row() != g) return {nullptr, -1};
+    return {o, row < 0 ? static_cast<int>(groups_[g].size()) : row};
+}
+
+bool ObjectCollection::canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int,
+                                       const QModelIndex& parent) const {
+    return action == Qt::MoveAction && dropTarget(data, row, parent).first != nullptr;
+}
+
+bool ObjectCollection::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int,
+                                    const QModelIndex& parent) {
+    if (action != Qt::MoveAction) return false;
+    const auto [o, to] = dropTarget(data, row, parent);
+    // Se devuelve false aunque se haya movido: así la vista no intenta borrar la fila de origen.
+    if (o) moveObject(o, to);
+    return false;
+}
+
+bool ObjectCollection::moveObject(FlatCAMObj* obj, int row) {
+    const QModelIndex idx = indexOf(obj);
+    if (!idx.isValid()) return false;
+    auto& v = groups_[kindIndex(obj->kind())];
+    const int n = static_cast<int>(v.size()), from = idx.row();
+    if (row < 0 || row > n) row = n;
+    if (row == from || row == from + 1) return false;  // queda donde estaba
+    const QModelIndex g = groupIndex(obj->kind());
+    if (!beginMoveRows(g, from, from, g, row)) return false;
+    auto item = std::move(v[from]);
+    v.erase(v.begin() + from);
+    v.insert(v.begin() + (row > from ? row - 1 : row), std::move(item));
+    endMoveRows();
+    Q_EMIT orderChanged();
+    return true;
+}
+
+std::vector<int> ObjectCollection::drawOrder() const {
+    std::vector<int> out;
+    for (const auto& g : groups_)
+        for (auto it = g.rbegin(); it != g.rend(); ++it) out.push_back((*it)->id());
+    return out;
 }
 
 }  // namespace flatcam::gui

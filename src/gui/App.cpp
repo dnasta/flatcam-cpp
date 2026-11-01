@@ -68,6 +68,14 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     collection_ = new ObjectCollection(this);
     ui_->collection_view->setModel(collection_);
     ui_->collection_view->setMinimumWidth(290);
+    // Agregado del port (pedido del usuario): reordenar los objetos de un grupo arrastrándolos; el orden del árbol es
+    // el de dibujo (el primero queda arriba). Los archivos se siguen pudiendo soltar para abrirlos.
+    ui_->collection_view->setDragEnabled(true);
+    ui_->collection_view->setDragDropMode(QAbstractItemView::DragDrop);
+    ui_->collection_view->setDefaultDropAction(Qt::MoveAction);
+    ui_->collection_view->setDropIndicatorShown(true);
+    connect(collection_, &ObjectCollection::orderChanged, this,
+            [this] { ui_->plotCanvas()->setLayerOrder(collection_->drawOrder()); });
     ui_->setAcceptDrops(true);
     ui_->installEventFilter(this);
     defaultProperties_ = ui_->properties_scroll_area->widget();
@@ -266,6 +274,7 @@ FlatCAMObj* App::addObject(std::unique_ptr<FlatCAMObj> o) {
     ui_->inform(QString("[selected] %1 %2: <span style=\"color:%3;\">%4</span>")
                     .arg(kindName(obj->kind()), tr_("created/selected"), kindColor(obj->kind()), obj->name()));
     ui_->plotCanvas()->setLayer(obj->id(), obj->plotData());
+    ui_->plotCanvas()->setLayerOrder(collection_->drawOrder());
     onZoomFit();
     return obj;
 }

@@ -15,7 +15,7 @@ máquina del usuario.
 
 **Lo que hay que saber para retomar (el detalle está en `AGENTS.md`, sección 12).**
 
-- **Tests:** 517 (502 del núcleo + 14 de la GUI corren siempre; 1 lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
+- **Tests:** 518 (502 del núcleo + 15 de la GUI corren siempre; 1 lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
   y Qt 6.12 en el Mac del usuario (M4, AppleClang). micromamba: `old` (Shapely 1.8.4, GEOS 3.11, PyQt5 5.15, para oráculos y para
   volcar la interfaz original), `sh2`, `geos312`, `geos311` (`AGENTS.md`, secciones 6 y 12.4).
 - **Hecho (fases 1, 2 y 3 completas):** parsers, transformaciones, postprocesadores, G-code de taladrado y de geometrías, CutOut,
@@ -41,5 +41,7 @@ máquina del usuario.
   de los objetos con sus colores (la placa "luz de noche" se ve como en las capturas del usuario).
   **También:** Propiedades de Gerber y Excellon y los paneles de NCC, Paint, Perforación y Corte, generados igual (8 paneles).
   **Perforación completa:** desde la interfaz reproduce el `.nc` de la 2024.4 del usuario (salvo fecha y orden de agujeros).
+  **Agregado pedido por el usuario:** reordenar los objetos de un grupo del Proyecto con arrastrar y soltar; el orden del árbol
+  es el de dibujo (el primero queda arriba; entre grupos, Excellon/Geometría/CNC Job sobre Gerber) (`AGENTS.md` 11.12 h).
   **Siguiente** (`AGENTS.md` 11.13): Corte, Paint y NCC con el objeto Geometría, reflejar, preferencias del usuario. Pendientes menores: Paint/NCC con semilla y líneas, resto de Paint/NCC, selección por área,
   verificación de diámetro seguro (`AGENTS.md`, sección 11).

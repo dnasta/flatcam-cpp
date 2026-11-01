@@ -20,6 +20,9 @@
 #include "gui/objects/ObjectUIs.h"
 #include "gui/objects/CNCJobObject.h"
 #include <QFile>
+#include <QMimeData>
+#include <QDropEvent>
+#include "gui/widgets/KeySensitiveListView.h"
 #include <QTemporaryDir>
 #include <algorithm>
 
@@ -350,4 +353,62 @@ int main(int argc, char** argv) {
     Q_INIT_RESOURCE(flatcam);
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
+}
+
+// Agregado pedido por el usuario: los objetos de un grupo se reordenan arrastrándolos y el orden del árbol es el de dibujo.
+TEST(GuiApp, ReorderingTheProjectTreeChangesTheDrawOrder) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    FlatCAMObj* cu = app.openByExtension(QString::fromStdString(dir + "B_Cu.gbr"));
+    FlatCAMObj* edge = app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr"));
+    FlatCAMObj* logo = app.openByExtension(QString::fromStdString(dir + "Logo.gbr"));
+    FlatCAMObj* drl = app.openByExtension(QString::fromStdString(dir + "PTH.drl"));
+    ASSERT_TRUE(cu && edge && logo && drl);
+    ObjectCollection* col = app.collection();
+    PlotCanvas* c = app.ui()->plotCanvas();
+    // El primero del grupo queda arriba (se dibuja último dentro del grupo); el Excellon, sobre los Gerber.
+    EXPECT_EQ(c->layerOrder(), (std::vector<int>{logo->id(), edge->id(), cu->id(), drl->id()}));
+
+    // Arrastrar el Logo arriba de todo (soltarlo sobre B_Cu lo pone en su lugar).
+    const QModelIndexList drag{col->indexOf(logo)};
+    std::unique_ptr<QMimeData> m(col->mimeData(drag));
+    ASSERT_TRUE(m);
+    EXPECT_TRUE(col->canDropMimeData(m.get(), Qt::MoveAction, -1, -1, col->indexOf(cu)));
+    col->dropMimeData(m.get(), Qt::MoveAction, -1, -1, col->indexOf(cu));
+    EXPECT_EQ(col->names().mid(0, 3), (QStringList{"luz de noche Pascual-Logo.gbr", "luz de noche Pascual-B_Cu.gbr",
+                                                   "luz de noche Pascual-Edge_Cuts.gbr"}));
+    EXPECT_EQ(c->layerOrder(), (std::vector<int>{edge->id(), cu->id(), logo->id(), drl->id()}));
+
+    // Entre filas: B_Cu al final del grupo (fila 3).
+    m.reset(col->mimeData({col->indexOf(cu)}));
+    col->dropMimeData(m.get(), Qt::MoveAction, 3, 0, col->groupIndex(ObjectKind::Gerber));
+    EXPECT_EQ(col->indexOf(cu).row(), 2);
+    EXPECT_EQ(c->layerOrder(), (std::vector<int>{cu->id(), edge->id(), logo->id(), drl->id()}));
+
+    // No se puede pasar un objeto a otro grupo.
+    m.reset(col->mimeData({col->indexOf(drl)}));
+    EXPECT_FALSE(col->canDropMimeData(m.get(), Qt::MoveAction, -1, -1, col->indexOf(cu)));
+    EXPECT_FALSE(col->canDropMimeData(m.get(), Qt::MoveAction, 0, 0, col->groupIndex(ObjectKind::Gerber)));
+    EXPECT_FALSE(col->moveObject(cu, 2));  // ya está ahí
+    EXPECT_EQ(col->indexOf(drl).parent(), col->groupIndex(ObjectKind::Excellon));
+    // Con el mouse en la vista (Logo, Edge_Cuts, B_Cu): soltar Edge_Cuts en el borde de arriba de la fila de Logo lo
+    // pone primero.
+    KeySensitiveListView* view = app.ui()->collection_view;
+    EXPECT_TRUE(view->dragEnabled());
+    app.ui()->show();
+    view->expandAll();
+    QApplication::processEvents();
+    const QRect r = view->visualRect(col->indexOf(logo));
+    ASSERT_FALSE(r.isEmpty());
+    m.reset(col->mimeData({col->indexOf(edge)}));
+    const QPointF pos(r.center().x(), r.top() + 1);
+    QDragEnterEvent enter(pos, Qt::MoveAction, m.get(), Qt::LeftButton, Qt::NoModifier);
+    QApplication::sendEvent(view->viewport(), &enter);
+    QDragMoveEvent mv(pos, Qt::MoveAction, m.get(), Qt::LeftButton, Qt::NoModifier);
+    QApplication::sendEvent(view->viewport(), &mv);
+    EXPECT_TRUE(mv.isAccepted());
+    QDropEvent drop(pos, Qt::MoveAction, m.get(), Qt::LeftButton, Qt::NoModifier);
+    QApplication::sendEvent(view->viewport(), &drop);
+    EXPECT_EQ(col->indexOf(edge).row(), 0);
+    EXPECT_EQ(c->layerOrder(), (std::vector<int>{cu->id(), logo->id(), edge->id(), drl->id()}));
 }

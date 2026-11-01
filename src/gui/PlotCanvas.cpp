@@ -1,5 +1,7 @@
 #include "gui/PlotCanvas.h"
 
+#include <algorithm>
+
 #include <QApplication>
 #include <QMouseEvent>
 #include <QPainter>
@@ -131,6 +133,11 @@ void PlotCanvas::setLayerVisible(int id, bool visible) {
     update();
 }
 
+void PlotCanvas::setLayerOrder(std::vector<int> idsBottomFirst) {
+    order_ = std::move(idsBottomFirst);
+    update();
+}
+
 void PlotCanvas::removeLayer(int id) {
     auto it = layers_.find(id);
     if (it == layers_.end()) return;
@@ -194,7 +201,13 @@ void PlotCanvas::drawLayers(const QRectF& vr) {
         program_->disableAttributeArray(0);
         vbo->release();
     };
-    for (auto& [id, l] : layers_) {
+    std::vector<Layer*> seq;
+    for (auto& [id, l] : layers_)
+        if (std::find(order_.begin(), order_.end(), id) == order_.end()) seq.push_back(&l);
+    for (int id : order_)
+        if (auto it = layers_.find(id); it != layers_.end()) seq.push_back(&it->second);
+    for (Layer* lp : seq) {
+        Layer& l = *lp;
         if (l.dirty) {
             upload(l.fillVbo, l.data.fill);
             upload(l.lineVbo, l.data.lines);
