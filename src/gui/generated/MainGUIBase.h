@@ -82,6 +82,7 @@ public:
     QAction* calculator_tool_menuAction{nullptr};  ///< `calculator_tool_menuAction` del original.
     QAction* calculators_btn{nullptr};  ///< `calculators_btn` del original.
     QAction* clear_plot_btn{nullptr};  ///< `clear_plot_btn` del original.
+    KeySensitiveListView* collection_view{nullptr};  ///< `collection_view` del original.
     QToolBar* coords_toolbar{nullptr};  ///< `coords_toolbar` del original.
     QAction* copper_thieving_tool_menuAction{nullptr};  ///< `copper_thieving_tool_menuAction` del original.
     QAction* copperfill_btn{nullptr};  ///< `copperfill_btn` del original.

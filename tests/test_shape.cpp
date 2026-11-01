@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <cmath>
+
 #include "core/GeometryError.h"
 #include "core/Shape.h"
 #include "golden_data.h"
@@ -141,4 +143,28 @@ TEST(Shape, CopiesShareImmutableData) {
     const Shape b = a;  // copia barata
     EXPECT_TRUE(a.equalsExact(b));
     EXPECT_DOUBLE_EQ(a.area(), b.area());
+}
+
+TEST(Shape, TriangulateCoversThePolygonAndRespectsHoles) {
+    // Cuadrado de 10 x 10 con un agujero de 2 x 2: la suma de las áreas de los triángulos es 96 y ningún triángulo cae
+    // dentro del agujero.
+    const Shape poly = Shape::polygon({{0, 0}, {10, 0}, {10, 10}, {0, 10}}, {{{4, 4}, {6, 4}, {6, 6}, {4, 6}}});
+    const auto tri = poly.triangulate();
+    ASSERT_EQ(tri.size() % 3, 0u);
+    double area = 0;
+    for (std::size_t i = 0; i < tri.size(); i += 3) {
+        const Point2D a = tri[i], b = tri[i + 1], c = tri[i + 2];
+        area += std::fabs((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y)) / 2;
+        const Point2D centroid{(a.x + b.x + c.x) / 3, (a.y + b.y + c.y) / 3};
+        EXPECT_FALSE(centroid.x > 4 && centroid.x < 6 && centroid.y > 4 && centroid.y < 6) << "triángulo dentro del agujero";
+    }
+    EXPECT_NEAR(area, 96.0, 1e-9);
+    // Varias partes y figuras sin superficie.
+    const Shape multi = Shape::unaryUnion({Shape::box(0, 0, 1, 1), Shape::box(5, 5, 7, 6)});
+    double a2 = 0;
+    const auto t2 = multi.triangulate();
+    for (std::size_t i = 0; i < t2.size(); i += 3)
+        a2 += std::fabs((t2[i + 1].x - t2[i].x) * (t2[i + 2].y - t2[i].y) - (t2[i + 2].x - t2[i].x) * (t2[i + 1].y - t2[i].y)) / 2;
+    EXPECT_NEAR(a2, 3.0, 1e-9);
+    EXPECT_TRUE(Shape::lineString({{0, 0}, {1, 1}}).triangulate().empty());
 }

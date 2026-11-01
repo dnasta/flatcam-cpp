@@ -6,6 +6,9 @@ add_library(flatcam_gui STATIC
     Translation.cpp
     PlotCanvas.cpp
     MainGUI.cpp
+    App.cpp
+    objects/FlatCAMObj.cpp
+    objects/ObjectCollection.cpp
     generated/MainGUIBase.cpp
     widgets/FCLabel.cpp
     widgets/FCEntry.cpp
@@ -20,6 +23,9 @@ add_library(flatcam_gui STATIC
     resources/flatcam.qrc
 )
 target_include_directories(flatcam_gui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)
+# El núcleo usa identificadores como `slots` (ExcellonTool::slots, como en FlatCAM): sin las palabras clave de Qt no se
+# convierten en macros y las estructuras del núcleo tienen el mismo tamaño en la GUI. Se usa Q_SIGNALS/Q_SLOTS/Q_EMIT.
+target_compile_definitions(flatcam_gui PUBLIC QT_NO_KEYWORDS)
 target_link_libraries(flatcam_gui PUBLIC flatcam::core Qt6::Widgets Qt6::OpenGLWidgets)
 if(MSVC)
     target_compile_options(flatcam_gui PRIVATE /W4 /permissive- /utf-8)

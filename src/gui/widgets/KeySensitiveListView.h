@@ -19,7 +19,7 @@ public:
     /** @brief Crea la vista. @param parent Widget padre. */
     explicit KeySensitiveListView(QWidget* parent = nullptr);
 
-signals:
+Q_SIGNALS:
     /** @brief Se presionó una tecla. @param key Código de la tecla (`Qt::Key`). */
     void keyPressed(int key);
 

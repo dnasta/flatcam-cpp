@@ -7,7 +7,9 @@
 #include <QToolBar>
 #include <cmath>
 
+#include "gui/App.h"
 #include "gui/MainGUI.h"
+#include "gui/objects/ObjectCollection.h"
 #include "gui/PlotCanvas.h"
 #include "gui/Translation.h"
 #include "gui/widgets/FCDetachableTab.h"
@@ -132,6 +134,73 @@ TEST(GuiCanvas, TransformsAndZoomKeepTheCenterPoint) {
     const QPointF after = c.toPixel(anchor);
     EXPECT_NEAR(before.x(), after.x(), 1e-9);
     EXPECT_NEAR(before.y(), after.y(), 1e-9);
+}
+
+TEST(GuiObjects, FlatCamColorsAreRgbaHex) {
+    const QColor c = colorFromFlatCam("#BBF268BF");  // gerber_plot_fill
+    EXPECT_EQ(c.red(), 0xBB);
+    EXPECT_EQ(c.green(), 0xF2);
+    EXPECT_EQ(c.blue(), 0x68);
+    EXPECT_EQ(c.alpha(), 0xBF);
+    EXPECT_EQ(colorFromFlatCam("#FF0000").alpha(), 255);
+}
+
+TEST(GuiObjects, CollectionGroupsAndRenamesDuplicates) {
+    ObjectCollection c;
+    ASSERT_EQ(c.rowCount(), 6);
+    EXPECT_EQ(c.data(c.index(2, 0)).toString(), QString::fromUtf8("Geometría"));
+    EXPECT_EQ(c.data(c.index(4, 0)).toString(), QString::fromUtf8("Secuencia de Comandos"));
+    EXPECT_FALSE(c.flags(c.index(0, 0)).testFlag(Qt::ItemIsSelectable));  // los grupos no se seleccionan
+    auto make = [](const QString& n) {
+        auto g = std::make_unique<flatcam::Gerber>();
+        g->parseFile(std::string(FLATCAM_TEST_DATA_DIR) + "/PCB principal-Edge_Cuts.gm1");
+        return std::make_unique<GerberObject>(n, std::move(g));
+    };
+    // Mismo nombre: "x" -> "x_1"; termina en número: se incrementa (ObjectCollection.append).
+    EXPECT_EQ(c.append(make("borde"))->name(), "borde");
+    EXPECT_EQ(c.append(make("borde"))->name(), "borde_1");
+    EXPECT_EQ(c.append(make("borde"))->name(), "borde_2");
+    EXPECT_EQ(c.append(make("capa9"))->name(), "capa9");
+    EXPECT_EQ(c.append(make("capa9"))->name(), "capa10");
+    EXPECT_EQ(c.rowCount(c.groupIndex(ObjectKind::Gerber)), 5);
+    FlatCAMObj* o = c.byName("borde_1");
+    ASSERT_NE(o, nullptr);
+    EXPECT_EQ(o->kind(), ObjectKind::Gerber);
+    c.remove(o);
+    EXPECT_EQ(c.byName("borde_1"), nullptr);
+    EXPECT_EQ(c.rowCount(c.groupIndex(ObjectKind::Gerber)), 4);
+}
+
+TEST(GuiApp, OpensUserFilesPlotsAndFits) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    FlatCAMObj* g = app.openByExtension(QString::fromStdString(dir + "B_Cu.gbr"));
+    FlatCAMObj* e = app.openByExtension(QString::fromStdString(dir + "PTH.drl"));
+    ASSERT_NE(g, nullptr);
+    ASSERT_NE(e, nullptr);
+    EXPECT_EQ(g->kind(), ObjectKind::Gerber);
+    EXPECT_EQ(e->kind(), ObjectKind::Excellon);
+    EXPECT_EQ(app.openByExtension("algo.xyz"), nullptr);
+    // Lo dibujado tiene relleno y contorno, con los colores de FlatCAM.
+    const PlotLayerData d = g->plotData();
+    EXPECT_GT(d.fill.size(), 1000u);
+    EXPECT_EQ(d.fill.size() % 6, 0u);  // triángulos de 3 vértices x/y
+    EXPECT_GT(d.lines.size(), 1000u);
+    EXPECT_EQ(d.fillColor, colorFromFlatCam("#BBF268BF"));
+    EXPECT_EQ(e->plotData().fillColor, colorFromFlatCam("#C40000BF"));
+    // Los límites de lo dibujado son los del Gerber; el encuadre muestra toda la placa.
+    const QRectF b = g->bounds();
+    EXPECT_NEAR(d.bounds.left(), b.left(), 1e-6);
+    EXPECT_NEAR(d.bounds.right(), b.right(), 1e-6);
+    PlotCanvas* c = app.ui()->plotCanvas();
+    c->resize(800, 600);
+    app.onZoomFit();
+    const QRectF all = c->layersBounds().value();
+    EXPECT_TRUE(c->viewRect().contains(c->toPixel(all.topLeft())));
+    EXPECT_TRUE(c->viewRect().contains(c->toPixel(all.bottomRight())));
+    // El panel izquierdo se abre al agregar un objeto (global_project_autohide).
+    EXPECT_GT(app.ui()->splitter->sizes().value(0), 0);
+    EXPECT_EQ(app.collection()->names(), (QStringList{"luz de noche Pascual-B_Cu.gbr", "luz de noche Pascual-PTH.drl"}));
 }
 
 int main(int argc, char** argv) {

@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QPalette>
+#include <QVector4D>
 #include <QWheelEvent>
 #include <cmath>
 
@@ -98,7 +99,115 @@ void PlotCanvas::setGridEnabled(bool on) {
     update();
 }
 
-void PlotCanvas::initializeGL() {}
+void PlotCanvas::initializeGL() {
+    initializeOpenGLFunctions();
+    // GLSL 1.20: funciona con el contexto de compatibilidad por defecto en macOS, Windows y Linux.
+    program_ = std::make_unique<QOpenGLShaderProgram>();
+    program_->addShaderFromSourceCode(QOpenGLShader::Vertex,
+                                      "#version 120\n"
+                                      "attribute vec2 pos;\n"
+                                      "uniform vec4 view;  // centro x, centro y, escala x, escala y\n"
+                                      "void main() { gl_Position = vec4((pos - view.xy) * view.zw, 0.0, 1.0); }\n");
+    program_->addShaderFromSourceCode(QOpenGLShader::Fragment,
+                                      "#version 120\n"
+                                      "uniform vec4 color;\n"
+                                      "void main() { gl_FragColor = color; }\n");
+    program_->bindAttributeLocation("pos", 0);
+    program_->link();
+    for (auto& [id, l] : layers_) l.dirty = true;  // el contexto es nuevo: hay que volver a cargar todo
+}
+
+void PlotCanvas::setLayer(int id, PlotLayerData data) {
+    Layer& l = layers_[id];
+    l.data = std::move(data);
+    l.dirty = true;
+    update();
+}
+
+void PlotCanvas::setLayerVisible(int id, bool visible) {
+    auto it = layers_.find(id);
+    if (it == layers_.end()) return;
+    it->second.visible = visible;
+    update();
+}
+
+void PlotCanvas::removeLayer(int id) {
+    auto it = layers_.find(id);
+    if (it == layers_.end()) return;
+    makeCurrent();
+    layers_.erase(it);  // los buffers se liberan con el contexto activo
+    doneCurrent();
+    update();
+}
+
+std::optional<QRectF> PlotCanvas::layersBounds() const {
+    std::optional<QRectF> b;
+    for (const auto& [id, l] : layers_) {
+        if (!l.visible || l.data.bounds.isNull()) continue;
+        b = b ? b->united(l.data.bounds) : l.data.bounds;
+    }
+    return b;
+}
+
+void PlotCanvas::fitView() {
+    // Sin objetos: Rect(-1, -1, 20, 20) de vispy (izquierda, abajo, ancho, alto).
+    const QRectF r = layersBounds().value_or(QRectF(-1, -1, 20, 20));
+    const double dx = r.width() * 0.02, dy = r.height() * 0.02;
+    fitTo(r.adjusted(-dx, -dy, dx, dy));
+}
+
+void PlotCanvas::drawLayers(const QRectF& vr) {
+    if (!program_ || layers_.empty()) return;
+    const double dpr = devicePixelRatioF();
+    const int vx = static_cast<int>(vr.left() * dpr);
+    const int vy = static_cast<int>((height() - vr.bottom()) * dpr);  // OpenGL cuenta desde abajo
+    const int vw = static_cast<int>(vr.width() * dpr), vh = static_cast<int>(vr.height() * dpr);
+    glViewport(vx, vy, vw, vh);
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(vx, vy, vw, vh);
+    glEnable(GL_BLEND);
+    // El alfa del destino tiene que quedar en 1: Qt compone el framebuffer del widget como color premultiplicado, y un
+    // alfa menor deja los colores corridos (se veían magenta y verde azulado).
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_DEPTH_TEST);
+    program_->bind();
+    // Centro del mundo en el medio de la vista; escala en unidades normalizadas por mm.
+    const QPointF c = toWorld(vr.center());
+    program_->setUniformValue("view", QVector4D(float(c.x()), float(c.y()), float(2.0 * scale_ / vr.width()),
+                                                float(2.0 * scale_ / vr.height())));
+    auto upload = [](std::unique_ptr<QOpenGLBuffer>& vbo, const std::vector<float>& v) {
+        if (!vbo) {
+            vbo = std::make_unique<QOpenGLBuffer>(QOpenGLBuffer::VertexBuffer);
+            vbo->create();
+        }
+        vbo->bind();
+        vbo->allocate(v.data(), static_cast<int>(v.size() * sizeof(float)));
+        vbo->release();
+    };
+    auto draw = [this](QOpenGLBuffer* vbo, std::size_t floats, GLenum mode, const QColor& color) {
+        if (!vbo || floats == 0) return;
+        program_->setUniformValue("color", color);
+        vbo->bind();
+        program_->enableAttributeArray(0);
+        program_->setAttributeBuffer(0, GL_FLOAT, 0, 2);
+        glDrawArrays(mode, 0, static_cast<GLsizei>(floats / 2));
+        program_->disableAttributeArray(0);
+        vbo->release();
+    };
+    for (auto& [id, l] : layers_) {
+        if (l.dirty) {
+            upload(l.fillVbo, l.data.fill);
+            upload(l.lineVbo, l.data.lines);
+            l.dirty = false;
+        }
+        if (!l.visible) continue;
+        draw(l.fillVbo.get(), l.data.fill.size(), GL_TRIANGLES, l.data.fillColor);
+        draw(l.lineVbo.get(), l.data.lines.size(), GL_LINES, l.data.lineColor);
+    }
+    program_->release();
+    glDisable(GL_SCISSOR_TEST);
+    glViewport(0, 0, static_cast<int>(width() * dpr), static_cast<int>(height() * dpr));
+}
 
 void PlotCanvas::resizeGL(int, int) {
     if (firstResize_ && viewRect().width() > 0) {
@@ -119,6 +228,9 @@ void PlotCanvas::paintGL() {
     p.setClipRect(vr);
     p.setRenderHint(QPainter::Antialiasing, true);
     if (gridEnabled_) drawGrid(p, vr);
+    p.beginNativePainting();
+    drawLayers(vr);
+    p.endNativePainting();
     if (axisEnabled_) {
         const QPointF o = toPixel({0, 0});
         p.setPen(QPen(kAxisLineColor, 2));
@@ -223,7 +335,7 @@ void PlotCanvas::mousePressEvent(QMouseEvent* event) {
         lastClick_ = toWorld(event->position());
         update();
     }
-    emit mouseClicked(toWorld(event->position()), event->button());
+    Q_EMIT mouseClicked(toWorld(event->position()), event->button());
 }
 
 void PlotCanvas::mouseMoveEvent(QMouseEvent* event) {
@@ -234,7 +346,7 @@ void PlotCanvas::mouseMoveEvent(QMouseEvent* event) {
     }
     cursorInside_ = viewRect().contains(event->position());
     cursorWorld_ = toWorld(event->position());
-    emit mouseMoved(cursorWorld_);
+    Q_EMIT mouseMoved(cursorWorld_);
     update();
 }
 

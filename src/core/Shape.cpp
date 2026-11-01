@@ -399,6 +399,26 @@ Shape Shape::simplify(double tolerance, bool preserveTopology) const {
 
 Shape Shape::convexHull() const { return wrap(GEOSConvexHull_r(H(), raw(*this)), "convexHull"); }
 
+std::vector<Point2D> Shape::triangulate() const {
+    std::vector<Point2D> out;
+    if (isEmpty()) return out;
+    const ShapeType t = type();
+    if (t == ShapeType::MultiPolygon || t == ShapeType::GeometryCollection) {
+        for (const Shape& p : parts()) {
+            const auto tri = p.triangulate();
+            out.insert(out.end(), tri.begin(), tri.end());
+        }
+        return out;
+    }
+    if (t != ShapeType::Polygon) return out;
+    const Shape tris = wrap(GEOSConstrainedDelaunayTriangulation_r(H(), raw(*this)), "triangulate");
+    for (const Shape& tri : tris.parts()) {
+        const auto c = tri.exterior().coordinates();
+        if (c.size() >= 4) out.insert(out.end(), c.begin(), c.begin() + 3);
+    }
+    return out;
+}
+
 Shape Shape::makeValid() const { return wrap(GEOSMakeValid_r(H(), raw(*this)), "makeValid"); }
 
 Shape Shape::asLineString() const {

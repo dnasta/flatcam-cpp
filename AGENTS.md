@@ -65,14 +65,14 @@ logo) y **CutOut** → **CNC Job** con G-code. Taladros y alineación con **PCB 
 | 1 | CMake, Doxygen y núcleo de geometría | **Hecha**, verificada en macOS (arm64) y Linux |
 | 2 | Parsers de Gerber y Excellon con tests contra archivos reales | **Hecha** |
 | 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | **Hecha**: transformaciones de Gerber, postprocesadores, G-code de taladrado y de geometrías, CutOut, capa de láser, Paint, NCC, PCB a 2 caras e Isolation |
-| 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | **En curso**: ventana principal idéntica a la original (generada desde la interfaz Python real), widgets de `GUIElements`, canvas `QOpenGLWidget` con ejes, grilla, HUD, zoom y desplazamiento. Faltan: dibujar objetos, abrir archivos, árbol del proyecto, paneles de las herramientas y CNC Job |
+| 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | **En curso**: ventana principal idéntica a la original (generada desde la interfaz Python real), widgets de `GUIElements`, canvas `QOpenGLWidget` (ejes, grilla, HUD, zoom, paneo y dibujo de objetos con buffers de vértices), abrir Gerber y Excellon (menú, barra, arrastrar y soltar, línea de comandos) con el árbol del Proyecto. Faltan: Propiedades, paneles de las herramientas, CNC Job y exportar |
 | 5 | Herramientas secundarias y postprocesadores restantes | Pendiente |
 
 Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (AppleClang, GEOS 3.15). Doxygen genera
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 509 tests (501 del núcleo y 7 de la GUI pasan; 1, la lenta del NCC
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 513 tests (502 del núcleo y 10 de la GUI pasan; 1, la lenta del NCC
 del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -125,7 +125,11 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   generated/MainGUIBase.*  Ventana principal GENERADA por tools/gui_dump/gen_cpp.py (no editar): menús, acciones,
                          barras, pestañas, barra de estado y consola, con los nombres de atributo del original
   MainGUI.*              Lógica de la ventana (deriva de MainGUIBase): canvas, coordenadas, botones de la barra de estado
-  PlotCanvas.*           Canvas QOpenGLWidget: ejes con números, grilla, líneas por el origen, cursor, HUD, zoom y paneo
+  App.*                  La aplicación (partes de app_Main.App, AppIO y AppObject): abrir Gerber/Excellon, crear, dibujar, encuadrar
+  objects/               FlatCAMObj (base), GerberObject, ExcellonObject y ObjectCollection (modelo del árbol del Proyecto)
+  PlotCanvas.*           Canvas QOpenGLWidget: ejes con números, grilla, líneas por el origen, cursor, HUD, zoom y paneo;
+                         cada objeto es una capa con triángulos (Shape::triangulate, Delaunay restringido de GEOS) y contornos
+                         en buffers de vértices, con sus colores (#RRGGBBAA de FlatCAM)
   Translation.*          tr_(): los mismos textos en español de FlatCAM (resources/es.json, de translate/es.bin)
   widgets/               Port de GUIElements.py: FCLabel, FCEntry/FCEntry2, FCCheckBox, VerticalScrollArea, FCDock,
                          FCTree, KeySensitiveListView, FCDetachableTab(2), FlatCAMInfoBar, FlatCAMActivityView
@@ -506,12 +510,14 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     `-style macos` se usa el nativo. (b) En macOS la barra de menús es la del sistema, como en cualquier aplicación Qt (también la
     de Python). (c) `FCDetachableTab` desprende con doble clic a una ventana propia; falta arrastrar y soltar entre ventanas.
     (d) El canvas dibuja la grilla con dos escalas (gruesa y fina) en vez del shader de vispy, con los mismos colores.
+    (f) Los archivos se leen en el hilo de la interfaz (el original usa hilos de trabajo): el Gerber más grande tarda 0,6 s.
+    (g) La GUI compila con `QT_NO_KEYWORDS` (`Q_SIGNALS`, `Q_SLOTS`, `Q_EMIT`): con las palabras clave de Qt, `slots` es una macro
+    y el campo `ExcellonTool::slots` del núcleo desaparecía en la GUI (estructura de otro tamaño: riesgo de caída).
     (e) **Traducción corregida a pedido del usuario:** `tools/gui_dump/es_corrections.json` se aplica sobre `translate/es.bin`
     ("Open" es "Abrir", no "Abierto"; también "Abrir proyecto", "Abrir Excellon", "Abrir código G" y los mensajes de error al
     abrir). Para corregir otro texto: agregarlo ahí y regenerar (`extract_resources.py`, `dump_tree.py`, `gen_cpp.py`).
-13. **GUI: pendientes, en orden:** dibujar Gerber/Excellon/geometrías/CNC Job en el canvas con buffers de vértices (colores de
-    `docs/fase4_gui_referencia.md`); abrir archivos (menú Archivo, arrastrar y soltar) y el árbol del Proyecto (`ObjectCollection`);
-    pestaña Propiedades de cada objeto (`ObjectUI.py`, generada igual que la ventana); paneles de Perforación, Corte, Paint y NCC
+13. **GUI: pendientes, en orden:** ~~dibujar Gerber y Excellon~~ y ~~abrir archivos y el árbol del Proyecto~~ (hechos; falta
+    seleccionar objetos, menú contextual, mostrar/ocultar y borrar); pestaña Propiedades de cada objeto (`ObjectUI.py`, generada igual que la ventana); paneles de Perforación, Corte, Paint y NCC
     (generados desde `ToolDrilling`, `ToolCutOut`, `ToolPaint`, `ToolNCC` con sus valores de fábrica) y su lógica sobre el núcleo;
     CNC Job y exportar `.nc`; reflejar (herramienta PCB a 2 caras / Transformaciones).
 
@@ -522,7 +528,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **509 tests** (502 del núcleo y 7 de la GUI): 508 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
+- **513 tests** (503 del núcleo y 10 de la GUI): 512 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
   oráculos en Python (Shapely 1.8.4) y, donde existe, contra el `.nc` real del usuario (FlatCAM 8.994):
@@ -549,7 +555,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 509 tests, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 513 tests, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -619,6 +625,10 @@ Importante: Shapely
 - La 2024.4 simplifica **todas** las trayectorias de geometría del CNC Job con `global_tolerance / 20` (también el contorno del
   CutOut): sin eso sobran vértices en las esquinas redondeadas.
 - En los proyectos del usuario las capas inferiores y el taladro siempre están reflejados en X (`mirror(Axis::Y, {0, 0})`).
+- Al volcar la interfaz, comparar cada widget contra una instancia nueva de su **clase de Python** (no solo de la base de Qt):
+  `FCDetachableTab` deja las pestañas cerrables y el original lo desactiva después; comparando contra `QTabWidget` se perdía.
+- En el canvas, el blending tiene que dejar el alfa del destino en 1 (`glBlendFuncSeparate`): Qt compone el framebuffer de un
+  `QOpenGLWidget` como premultiplicado y los colores semitransparentes de FlatCAM salían corridos (magenta).
 - Para comparar la GUI con el original: correr `FlatCAM --screenshot` y mirar la captura junto a las del usuario (sus capturas
   son de Windows con el estilo nativo: por eso se usa Fusion).
 - Para un oráculo de una herramienta con mucha interfaz conviene extraer los métodos del fuente con `ast` y darles una interfaz

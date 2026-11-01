@@ -25,7 +25,7 @@ public:
     /** @brief Cambia el texto (`set_value`). @param val Texto nuevo. */
     void setValue(const QString& val) { setText(val); }
 
-signals:
+Q_SIGNALS:
     /** @brief Clic izquierdo. @param state Estado alternado después del clic. */
     void clicked(bool state);
     /** @brief Clic derecho. @param state Siempre `true`, como en el original. */
