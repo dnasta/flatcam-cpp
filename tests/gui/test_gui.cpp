@@ -25,6 +25,7 @@
 #include "tools/Isolation.h"
 #include <QFile>
 #include <QMimeData>
+#include <QRegularExpression>
 #include <QDropEvent>
 #include "gui/widgets/KeySensitiveListView.h"
 #include <QTemporaryDir>
@@ -909,4 +910,69 @@ TEST(GuiIsolation, CombinedSeparateAndRest) {
     EXPECT_EQ(rest[0]->name(), "luz de noche Pascual-B_Cu.gbr_iso_rest");
     t->rest_cb->setChecked(false);
     EXPECT_FALSE(t->combine_passes_cb->isChecked());  // vuelve a como estaba
+}
+
+TEST(GuiProject, OpensTheUsersProject) {
+    // Proyecto real del usuario (FlatCAM 2024.4), reducido a 7 objetos: Edge_Cuts, B_Cu y Logo (reflejados), PTH.drl,
+    // la Geometría del corte y los CNC Job del corte y del taladro.
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/";
+    ASSERT_TRUE(app.openProject(QString::fromStdString(dir + "luz_de_noche_reducido.FlatPrj")));
+    EXPECT_EQ(app.collection()->names(),
+              (QStringList{"luz de noche Pascual-Edge_Cuts.gbr", "luz de noche Pascual-B_Cu.gbr",
+                           "luz de noche Pascual-Logo.gbr", "luz de noche Pascual-PTH.drl",
+                           "luz de noche Pascual-Edge_Cuts.gbr_cutout", "luz de noche Pascual-Edge_Cuts.gbr_cutout_cnc",
+                           "luz de noche Pascual-PTH.drl_cnc"}));
+    EXPECT_TRUE(app.ui()->windowTitle().endsWith("luz_de_noche_reducido.FlatPrj"));
+    // Los Gerber quedan como estaban en el proyecto (B_Cu reflejado), no como el archivo original.
+    auto* cu = dynamic_cast<GerberObject*>(app.collection()->byName("luz de noche Pascual-B_Cu.gbr"));
+    ASSERT_NE(cu, nullptr);
+    flatcam::Gerber ref;
+    ASSERT_TRUE(ref.parseFile(dir + "luz de noche Pascual-B_Cu.gbr"));
+    ref.mirror(flatcam::Axis::Y, {0, 0});
+    EXPECT_NEAR(cu->gerber().bounds().xmin, ref.bounds().xmin, 1e-6);
+    EXPECT_NEAR(cu->gerber().bounds().xmax, ref.bounds().xmax, 1e-6);
+    EXPECT_EQ(cu->gerber().apertures().size(), ref.apertures().size());
+    EXPECT_EQ(cu->fillColor, colorFromFlatCam("#BBF268bf"));
+    // El Excellon, con sus 120 agujeros reflejados.
+    auto* drl = dynamic_cast<ExcellonObject*>(app.collection()->byName("luz de noche Pascual-PTH.drl"));
+    ASSERT_NE(drl, nullptr);
+    std::size_t holes = 0;
+    for (const auto& [id, t] : drl->excellon().drillTools()) holes += t.drills.size();
+    EXPECT_EQ(holes, 120u);
+    // La Geometría del corte, con los parámetros que usó el usuario.
+    auto* geo = dynamic_cast<GeometryObject*>(app.collection()->byName("luz de noche Pascual-Edge_Cuts.gbr_cutout"));
+    ASSERT_NE(geo, nullptr);
+    ASSERT_EQ(geo->tools().size(), 1u);
+    const GeometryTool& t = geo->tools().at(1);
+    EXPECT_DOUBLE_EQ(t.tooldia, 1.2);
+    EXPECT_DOUBLE_EQ(t.data.feedrate, 20.0);
+    EXPECT_DOUBLE_EQ(t.data.spindleSpeed, 10000.0);
+    ASSERT_TRUE(t.data.endXY.has_value());
+    EXPECT_FALSE(t.solidGeometry.empty());
+    // Generar de nuevo su CNC Job da el .nc real del usuario (salvo la fecha).
+    QString err;
+    auto job = geo->makeCncJob({1}, err);
+    ASSERT_TRUE(job) << err.toStdString();
+    const QStringList real = readTextLines(QString::fromStdString(dir + "luz de noche Pascual-Edge_Cuts.gbr_cutout_cnc.nc"));
+    QStringList mine = QString::fromStdString(job->exportText()).split('\n');
+    auto noDate = [](QStringList l) {
+        l.replaceInStrings(QRegularExpression("^\\(Created on .*\\)$"), "(Created on)");
+        return l;
+    };
+    EXPECT_EQ(noDate(mine), noDate(real));
+    // El CNC Job guardado se exporta como en el original después de abrir el proyecto: su cabecera guardada y el G-code,
+    // sin el código de inicio (gc_start no se guarda en el proyecto).
+    auto* cnc = dynamic_cast<CNCJobObject*>(app.collection()->byName("luz de noche Pascual-Edge_Cuts.gbr_cutout_cnc"));
+    ASSERT_NE(cnc, nullptr);
+    const QStringList restored = QString::fromStdString(cnc->exportText()).split('\n');
+    EXPECT_TRUE(restored.contains("G00 X0.0000 Y0.0000"));
+    EXPECT_FALSE(restored.contains("G21"));
+    EXPECT_EQ(restored.first(), real.first());
+    // El taladro guardado muestra su tabla de herramientas de Excellon.
+    auto* drill = dynamic_cast<CNCJobObject*>(app.collection()->byName("luz de noche Pascual-PTH.drl_cnc"));
+    ASSERT_NE(drill, nullptr);
+    ASSERT_EQ(drill->tools().size(), 4u);
+    EXPECT_EQ(drill->tools()[0].drills, 84);
+    EXPECT_GT(drill->plotData().fill.size(), 1000u);
 }

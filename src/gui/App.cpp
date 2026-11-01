@@ -15,6 +15,8 @@
 #include "gui/Translation.h"
 #include "gui/objects/CNCJobObject.h"
 #include "gui/objects/GeometryObject.h"
+#include "gui/ProjectIO.h"
+#include "gui/tools/ClearingTools.h"
 #include "gui/objects/ObjectUIs.h"
 
 namespace flatcam::gui {
@@ -125,6 +127,8 @@ void App::runTool(QWidget* panel, const ToolInfo& info, bool toggle) {
 }
 
 void App::connectSignals() {
+    for (QAction* a : {ui_->menufileopenproject, ui_->file_open_btn})
+        connect(a, &QAction::triggered, this, [this] { onFileOpenProject(); });
     connect(ui_->menufileopengerber, &QAction::triggered, this, [this] { onFileOpenGerber(); });
     connect(ui_->file_open_gerber_btn, &QAction::triggered, this, [this] { onFileOpenGerber(); });
     connect(ui_->menufileopenexcellon, &QAction::triggered, this, [this] { onFileOpenExcellon(); });
@@ -201,6 +205,63 @@ void App::connectSignals() {
 
 QString App::lastFolder() const { return lastFolder_; }
 
+void App::clearProject() {
+    ui_->properties_scroll_area->takeWidget();
+    showProperties(nullptr);
+    for (FlatCAMObj* o : collection_->objects()) {
+        ui_->plotCanvas()->removeLayer(o->id());
+        collection_->remove(o);
+    }
+    projectFilename_.clear();
+}
+
+void App::onFileOpenProject() {
+    const QString f = QFileDialog::getOpenFileName(ui_.get(), tr_("Open Project"), lastFolder(),
+                                                   "FlatCAM Project (*.FlatPrj);;All Files (*.*)");
+    if (f.isEmpty()) {
+        ui_->inform(QString("[WARNING_NOTCL] %1").arg(tr_("Cancelled.")));
+        return;
+    }
+    openProject(f);
+}
+
+bool App::openProject(const QString& filename) {
+    ui_->setUiTitle(tr_("Loading Project ... Please Wait ..."));
+    JsonValue root;
+    std::string error;
+    bool ok = false;
+    {
+        BusyScope busy(ui_.get());
+        ok = ProjectFile::read(filename.toStdString(), root, error, ProjectIO::skipFn());
+    }
+    if (!ok || !root["objs"].isArray()) {
+        ui_->inform(QString("[ERROR_NOTCL] %1: %2").arg(tr_("Failed to open project file"), filename));
+        ui_->setUiTitle(projectFilename_.isEmpty() ? tr_("New Project - Not saved") : projectFilename_);
+        return false;
+    }
+    clearProject();
+    projectOptions_ = root["options"];
+    QStringList failed;
+    {
+        BusyScope busy(ui_.get());
+        for (const JsonValue& d : root["objs"].items()) {
+            QString warning;
+            std::unique_ptr<FlatCAMObj> obj = ProjectIO::objectFrom(d, warning);
+            if (!obj) {
+                failed << warning;
+                continue;
+            }
+            addObject(std::move(obj));
+        }
+    }
+    projectFilename_ = filename;
+    lastFolder_ = QFileInfo(filename).absolutePath();
+    ui_->setUiTitle(filename);
+    if (!failed.isEmpty()) ui_->inform("[WARNING_NOTCL] " + failed.join("; "));
+    else ui_->inform(QString("[success] %1: %2").arg(tr_("Project loaded from"), filename));
+    return true;
+}
+
 void App::onFileOpenGerber() {
     QString selected = lastGerberFilter_;
     const QStringList files = QFileDialog::getOpenFileNames(ui_.get(), tr_("Open Gerber"), lastFolder(),
@@ -265,6 +326,10 @@ FlatCAMObj* App::openByExtension(const QString& filename) {
     const QString ext = QFileInfo(filename).suffix().toLower();
     if (kGerberExt.contains(ext)) return openGerber(filename);
     if (kExcellonExt.contains(ext)) return openExcellon(filename);
+    if (ext == "flatprj") {
+        openProject(filename);
+        return nullptr;
+    }
     return nullptr;
 }
 
@@ -346,6 +411,7 @@ FlatCAMObj* App::addObject(std::unique_ptr<FlatCAMObj> o) {
     ui_->inform(QString("[selected] %1 %2: <span style=\"color:%3;\">%4</span>")
                     .arg(kindName(obj->kind()), tr_("created/selected"), kindColor(obj->kind()), obj->name()));
     ui_->plotCanvas()->setLayer(obj->id(), obj->plotData());
+    ui_->plotCanvas()->setLayerVisible(obj->id(), obj->plotEnabled());
     ui_->plotCanvas()->setLayerOrder(collection_->drawOrder());
     onZoomFit();
     return obj;

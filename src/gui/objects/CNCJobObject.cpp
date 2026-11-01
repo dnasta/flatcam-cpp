@@ -23,6 +23,8 @@ CNCJobObject::CNCJobObject(QString name, std::unique_ptr<CncJob> job, GcodeHeade
 QColor CNCJobObject::travelColor() { return colorFromFlatCam("#B5AB3A4c"); }  // cncjob_travel_line
 
 std::string CNCJobObject::exportText() const {
+    // export_gcode: gc_header + gc_start + '\n' + gcode + '\n' (un trabajo abierto de un proyecto trae su cabecera).
+    if (storedHeader_) return *storedHeader_ + job_->startGcode() + "\n" + job_->gcode() + "\n";
     GcodeHeaderInfo h = header_;
     h.name = name().toStdString();
     // gcode_header: "Created on Friday, 30 October 2026 at 16:59" (strftime en inglés).

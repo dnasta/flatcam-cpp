@@ -95,9 +95,11 @@ public:
      * @param id Número de la herramienta.
      * @param diameter Diámetro de la herramienta.
      * @param drills Posiciones de los agujeros, en el orden en que se taladran si no se optimiza.
+     * @param slots Ranuras (punto inicial y final); por ejemplo, al restaurar un proyecto.
      * Después hay que llamar a @ref createGeometry.
      */
-    void addDrillTool(int id, double diameter, const std::vector<Point2D>& drills);
+    void addDrillTool(int id, double diameter, const std::vector<Point2D>& drills,
+                      const std::vector<std::pair<Point2D, Point2D>>& slots = {});
 
     /**
      * @brief Crea la geometría de cada agujero y ranura (`create_geometry`).

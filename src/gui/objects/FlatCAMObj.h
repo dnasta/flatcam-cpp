@@ -14,6 +14,7 @@
 #include <memory>
 
 #include "gui/PlotCanvas.h"
+#include "io/JsonValue.h"
 #include "parsers/Excellon.h"
 #include "parsers/Gerber.h"
 
@@ -58,6 +59,12 @@ public:
 
     /** @brief Muestra u oculta el objeto. @param on Dibujar. */
     void setPlotEnabled(bool on) { plot_ = on; }
+
+    /**
+     * @brief Lo que trajo el objeto desde un proyecto (`to_dict` del original, sin la geometría ni el G-code), para
+     * volver a guardarlo con todo lo que el port todavía no usa. Nulo si el objeto se creó en esta sesión.
+     */
+    JsonValue projectData;
 
     QColor outlineColor;  ///< Color del contorno (`outline_color`).
     QColor fillColor;     ///< Color del relleno (`fill_color`).
