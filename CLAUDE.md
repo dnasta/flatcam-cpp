@@ -15,9 +15,9 @@ máquina del usuario.
 
 **Lo que hay que saber para retomar (el detalle está en `AGENTS.md`, sección 12).**
 
-- **Tests:** 502 (501 corren siempre; 1 lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del
-  usuario (M4, AppleClang). En el Mac hay micromamba con los entornos `old` (Shapely 1.8.4, GEOS 3.11, para los oráculos), `sh2`
-  (Shapely 2.0), `geos312` y `geos311` (`AGENTS.md`, secciones 6 y 12.4).
+- **Tests:** 508 (501 del núcleo + 6 de la GUI corren siempre; 1 lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
+  y Qt 6.12 en el Mac del usuario (M4, AppleClang). micromamba: `old` (Shapely 1.8.4, GEOS 3.11, PyQt5 5.15, para oráculos y para
+  volcar la interfaz original), `sh2`, `geos312`, `geos311` (`AGENTS.md`, secciones 6 y 12.4).
 - **Hecho (fases 1, 2 y 3 completas):** parsers, transformaciones, postprocesadores, G-code de taladrado y de geometrías, CutOut,
   Paint, NCC, PCB a 2 caras e Isolation. **Verificado contra el ejecutable FlatCAM 2024.4 del usuario** (placa "luz de noche",
   `tests/data/luz_de_noche/`, `tests/test_luz_de_noche.cpp`): CutOut byte por byte, Paint idéntico con GEOS 3.11, NCC 272 = 272
@@ -31,8 +31,11 @@ máquina del usuario.
 - **Regla de entrega:** correr toda la suite con GEOS 3.12 **y** 3.15.0 antes de dar algo por terminado; tolerancias en micras, no en el
   último bit (`AGENTS.md`, sección 6). Verificar y corregir apenas se detecte un problema. Actualizar este archivo y `AGENTS.md` antes
   del mensaje final de cada respuesta.
-- **Fase 4 en curso** (GUI Qt6, `QOpenGLWidget`). Decidido por el usuario: interfaz en español, el alcance propuesto (ver
-  `AGENTS.md` 12.2.4) y que la GUI sea **exactamente igual** a la del FlatCAM en Python. Qt 6.12 instalado con Homebrew; PyQt5 en el
-  entorno `old`. Hecho: `tools/gui_dump/fc_runtime.py` construye la `MainGUI` original en español. Siguiente: volcar ese árbol a
-  C++ generado, extraer íconos y traducción, objetivo `flatcam` en CMake, canvas. Pendientes menores: Paint/NCC con semilla y líneas,
-  resto de Paint/NCC, selección por área, verificación de diámetro seguro (`AGENTS.md`, sección 11).
+- **Fase 4 en curso** (GUI Qt6). Decidido por el usuario: interfaz en español, el alcance propuesto (`AGENTS.md` 12.2.4) y GUI
+  **exactamente igual** a la del FlatCAM en Python. **Hecho:** la ventana principal se genera desde la interfaz original real
+  (`tools/gui_dump/` → `src/gui/generated/MainGUIBase.*`: 345 acciones, 267 íconos, mismos textos, barras del diseño `minimal`,
+  barra de estado), widgets de `GUIElements` portados, canvas `QOpenGLWidget` (ejes, grilla, HUD, zoom, paneo), estilo Fusion
+  (desvío consciente para verse como en Windows). `build/src/gui/FlatCAM.app` abre y se ve como las capturas del usuario.
+  **Siguiente** (`AGENTS.md` 11.13): dibujar objetos, abrir archivos y árbol del proyecto, Propiedades, paneles de Perforación,
+  Corte, Paint y NCC, CNC Job y exportar. Pendientes menores: Paint/NCC con semilla y líneas, resto de Paint/NCC, selección por área,
+  verificación de diámetro seguro (`AGENTS.md`, sección 11).

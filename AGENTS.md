@@ -65,15 +65,15 @@ logo) y **CutOut** → **CNC Job** con G-code. Taladros y alineación con **PCB 
 | 1 | CMake, Doxygen y núcleo de geometría | **Hecha**, verificada en macOS (arm64) y Linux |
 | 2 | Parsers de Gerber y Excellon con tests contra archivos reales | **Hecha** |
 | 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | **Hecha**: transformaciones de Gerber, postprocesadores, G-code de taladrado y de geometrías, CutOut, capa de láser, Paint, NCC, PCB a 2 caras e Isolation |
-| 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | **Siguiente**. Canvas decidido: `QOpenGLWidget` |
+| 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | **En curso**: ventana principal idéntica a la original (generada desde la interfaz Python real), widgets de `GUIElements`, canvas `QOpenGLWidget` con ejes, grilla, HUD, zoom y desplazamiento. Faltan: dibujar objetos, abrir archivos, árbol del proyecto, paneles de las herramientas y CNC Job |
 | 5 | Herramientas secundarias y postprocesadores restantes | Pendiente |
 
 Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (AppleClang, GEOS 3.15). Doxygen genera
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 502 tests (501 pasan y 1, la lenta del NCC del dosificador, queda
-saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba).
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 508 tests (501 del núcleo y 6 de la GUI pasan; 1, la lenta del NCC
+del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
 byte por byte; Paint idéntico con GEOS 3.11 (17 líneas con cambios de última cifra con 3.12/3.15); NCC con los mismos 272 trazados
@@ -121,7 +121,19 @@ src/cam/                Generación de G-code (sin Qt)
   EndpointStorage.*      Almacén de líneas por extremos con `nearest` y borrado (`FlatCAMRTreeStorage`, con una grilla)
   PolygonClearing.*      `clear_polygon` (espiral) y `paint_connect` del original
   CncJob.*               G-code de taladrado (`excellon_tool_gcode_gen`) y de geometrías (`geometry_tool_gcode_gen`, `linear2gcode`), y archivo exportado
-tests/                 GoogleTest; golden_*.h generados; data/ con archivos reales; tools/ con los oráculos
+src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM; namespace flatcam::gui)
+  generated/MainGUIBase.*  Ventana principal GENERADA por tools/gui_dump/gen_cpp.py (no editar): menús, acciones,
+                         barras, pestañas, barra de estado y consola, con los nombres de atributo del original
+  MainGUI.*              Lógica de la ventana (deriva de MainGUIBase): canvas, coordenadas, botones de la barra de estado
+  PlotCanvas.*           Canvas QOpenGLWidget: ejes con números, grilla, líneas por el origen, cursor, HUD, zoom y paneo
+  Translation.*          tr_(): los mismos textos en español de FlatCAM (resources/es.json, de translate/es.bin)
+  widgets/               Port de GUIElements.py: FCLabel, FCEntry/FCEntry2, FCCheckBox, VerticalScrollArea, FCDock,
+                         FCTree, KeySensitiveListView, FCDetachableTab(2), FlatCAMInfoBar, FlatCAMActivityView
+  resources/             Íconos de FlatCAM (extraídos de resources.py), es.json y flatcam.qrc (generados)
+  main.cpp               Arranque; estilo Fusion por defecto; --screenshot <png> [ancho alto] para pruebas
+tools/gui_dump/        fc_runtime.py (carga la interfaz original con PyQt5 y emula el arranque de App), dump_tree.py
+                       (árbol de widgets -> JSON), gen_cpp.py (JSON -> C++), extract_resources.py (íconos y textos)
+tests/                 GoogleTest; golden_*.h generados; data/ con archivos reales; tools/ con los oráculos; gui/ (Qt)
 reference/             Fuentes Python originales (solo lectura)
 ```
 
@@ -166,6 +178,13 @@ Reglas de calidad (deben cumplirse antes de dar una tanda por terminada):
   No usar fórmulas LaTeX en los comentarios (el usuario no tiene LaTeX instalado; usar texto plano o `@code`).
   `Doxyfile.in` pone entre comillas las rutas por los espacios; mantenerlo así.
 - Los `.cpp` no se procesan con Doxygen: la API se documenta en los encabezados.
+
+**Interfaz (Qt6):** `brew install qt` (Qt 6.12 en el Mac del usuario); CMake la encuentra solo y arma `build/src/gui/FlatCAM.app`
+y `gui_tests` (corren con `QT_QPA_PLATFORM=offscreen`). Sin Qt6 se compila solo el núcleo (`-DFLATCAM_BUILD_GUI=OFF` lo fuerza).
+Para regenerar la ventana principal desde el original: `MAMBA_ROOT_PREFIX=$HOME/.local/share/mamba micromamba run -n old python
+tools/gui_dump/dump_tree.py` (desde `tools/gui_dump/`) y después `python3 tools/gui_dump/gen_cpp.py`. Íconos y traducción:
+`micromamba run -n old python tools/gui_dump/extract_resources.py`. Captura para comparar con el original:
+`build/src/gui/FlatCAM.app/Contents/MacOS/FlatCAM --screenshot salida.png 1366 705`.
 
 **Regla de entrega: probar con dos versiones de GEOS.** El `buffer` y el resto de GEOS cambian de versión en versión, y el
 Mac del usuario trae la más nueva (3.15.0). Un test con tolerancia de 1e-9 que pasa con la GEOS del sistema (3.12) puede fallar
@@ -482,6 +501,16 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     líneas en blanco tras cada agujero (el port no las reproduce) y el taladro en (0, 0), que agregó el usuario a mano (ver 3).
 11. **Isolation: desvíos conscientes** (documentados en `Isolation.h`): con pasadas separadas y un único polígono el original falla al
     iterar y el port lo devuelve; en el resto, si un buffer da varias partes (solo con diámetro negativo) el port las conserva.
+12. **GUI: desvíos conscientes.** (a) Estilo **Fusion** por defecto en todas las plataformas (el original usa el nativo, que en el
+    Windows del usuario es `windowsvista`; en macOS el nativo se ve muy distinto: íconos de 32 px y pestañas centradas). Con
+    `-style macos` se usa el nativo. (b) En macOS la barra de menús es la del sistema, como en cualquier aplicación Qt (también la
+    de Python). (c) `FCDetachableTab` desprende con doble clic a una ventana propia; falta arrastrar y soltar entre ventanas.
+    (d) El canvas dibuja la grilla con dos escalas (gruesa y fina) en vez del shader de vispy, con los mismos colores.
+13. **GUI: pendientes, en orden:** dibujar Gerber/Excellon/geometrías/CNC Job en el canvas con buffers de vértices (colores de
+    `docs/fase4_gui_referencia.md`); abrir archivos (menú Archivo, arrastrar y soltar) y el árbol del Proyecto (`ObjectCollection`);
+    pestaña Propiedades de cada objeto (`ObjectUI.py`, generada igual que la ventana); paneles de Perforación, Corte, Paint y NCC
+    (generados desde `ToolDrilling`, `ToolCutOut`, `ToolPaint`, `ToolNCC` con sus valores de fábrica) y su lógica sobre el núcleo;
+    CNC Job y exportar `.nc`; reflejar (herramienta PCB a 2 caras / Transformaciones).
 
 ## 12. Retomar el trabajo en Claude Code (CLI)
 
@@ -490,7 +519,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **502 tests**: 501 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
+- **508 tests** (502 del núcleo y 6 de la GUI): 507 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
   oráculos en Python (Shapely 1.8.4) y, donde existe, contra el `.nc` real del usuario (FlatCAM 8.994):
@@ -517,10 +546,9 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 502 tests, 1 saltado.
-2. Las preguntas abiertas ya tienen respuesta (sección 11: 3, 4 y 6). Lo que sigue es la **fase 4 (GUI Qt6)** con canvas
-   `QOpenGLWidget`. Las capturas del usuario ya están resumidas en `docs/fase4_gui_referencia.md` (ventana, paneles, colores y su
-   flujo). Falta acordar con el usuario el alcance de la primera versión y el idioma de la interfaz.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 508 tests, 1 saltado.
+2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
+   `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
 4. **Decisiones del usuario para la fase 4:** interfaz en **español**; alcance de la primera versión: abrir Gerber y Excellon, verlos
    en el canvas OpenGL (zoom y desplazamiento), reflejar, Perforación, Corte, Paint y NCC con sus paneles, CNC Job y exportar `.nc`
@@ -532,6 +560,13 @@ trazados; taladro con los mismos agujeros (sección 7).
    español (menús `Panel de palanca`, `Archivo`, `Editar`, `Opciones`, `Ver`, `Objetos`, `Herramienta`, `Ayuda`). Siguen: el
    volcador (`dump_main_gui.py` → C++), extraer los íconos de `resources.py` (formato rcc: árbol + datos con qCompress) y la tabla
    `es.bin` para los mensajes de la lógica, el objetivo `flatcam` en CMake con Qt 6.12 (Homebrew, ya instalado) y el canvas.
+   **Hecho:** todo eso. `fc_runtime.build_app()` emula el arranque de `App` con sus métodos originales (vista de la colección,
+   `setup_default_properties_tab`, `install_tools`, `set_ui_title`, `on_layout('minimal')` de la primera ejecución, consola oculta,
+   panel izquierdo cerrado). El volcado compara cada `Q_PROPERTY` con una instancia nueva de la clase base de Qt y guarda solo lo
+   distinto; registra la ruta de cada `QIcon` y `QPixmap`. Notas: (a) los widgets dentro de un `QToolBar` aparecen ocultos hasta que
+   la ventana se muestra: su visibilidad real es la de la acción; (b) `QSettings` del original se redirige a un INI temporal (la
+   primera corrida escribió `com.open-source.FlatCAM.plist` en el Mac; se borró); (c) nunca borrar el módulo `resources` de
+   `sys.modules`: Qt usa sus bytes sin copiarlos (si se libera, `QPixmap` se cae); (d) la consola Tcl (`FCShell`) se reemplaza.
 
 ### 12.3 Cómo se trabaja acá (reglas del usuario)
 
@@ -581,5 +616,7 @@ Importante: Shapely
 - La 2024.4 simplifica **todas** las trayectorias de geometría del CNC Job con `global_tolerance / 20` (también el contorno del
   CutOut): sin eso sobran vértices en las esquinas redondeadas.
 - En los proyectos del usuario las capas inferiores y el taladro siempre están reflejados en X (`mirror(Axis::Y, {0, 0})`).
+- Para comparar la GUI con el original: correr `FlatCAM --screenshot` y mirar la captura junto a las del usuario (sus capturas
+  son de Windows con el estilo nativo: por eso se usa Fusion).
 - Para un oráculo de una herramienta con mucha interfaz conviene extraer los métodos del fuente con `ast` y darles una interfaz
   simulada (como `oracle_isolation.py`) en vez de transcribirlos: así se ejecuta el código original tal cual.

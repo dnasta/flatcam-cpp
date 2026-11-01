@@ -16,6 +16,7 @@ endif()
 
 option(FLATCAM_BUILD_TESTS "Compilar los tests unitarios (GoogleTest)" ON)
 option(FLATCAM_BUILD_DOCS  "Generar la documentación con Doxygen"      ON)
+option(FLATCAM_BUILD_GUI   "Compilar la interfaz gráfica (requiere Qt6)" ON)
 
 # ---------------------------------------------------------------------------
 # Dependencias
@@ -30,6 +31,18 @@ if(NOT TARGET GEOS::geos_c)
 endif()
 
 add_subdirectory(src)
+
+# ---------------------------------------------------------------------------
+# Interfaz gráfica (Qt6). El núcleo no depende de Qt; si Qt6 no está, solo se compila el núcleo.
+# ---------------------------------------------------------------------------
+if(FLATCAM_BUILD_GUI)
+    find_package(Qt6 6.2 QUIET COMPONENTS Widgets OpenGLWidgets)
+    if(Qt6_FOUND)
+        add_subdirectory(src/gui)
+    else()
+        message(STATUS "Qt6 no encontrado: no se compila la interfaz (FLATCAM_BUILD_GUI)")
+    endif()
+endif()
 
 if(FLATCAM_BUILD_TESTS)
     enable_testing()

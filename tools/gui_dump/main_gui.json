@@ -1,0 +1,7075 @@
+{
+ "window": {
+  "qt": "QMainWindow",
+  "py": "MainGUI",
+  "name": null,
+  "props": {
+   "acceptDrops": {
+    "t": "bool",
+    "v": true
+   },
+   "windowTitle": {
+    "t": "str",
+    "v": "FlatCAM 2024.4 BETA - 64bit - [3D]    Proyecto nuevo: no guardado"
+   }
+  },
+  "menubar": {
+   "qt": "QMenuBar",
+   "py": "QMenuBar",
+   "name": "menu",
+   "props": {},
+   "items": [
+    "5452550432",
+    "5454426128",
+    "5454426272",
+    "5454426416",
+    "5454426560",
+    "5454426704",
+    "5452110080",
+    "5454426848",
+    "5454426992",
+    "5454427136",
+    "5454427280"
+   ]
+  },
+  "toolbars": [
+   {
+    "area": 4,
+    "break": false,
+    "node": {
+     "qt": "QToolBar",
+     "py": "QToolBar",
+     "name": "toolbarfile",
+     "props": {
+      "windowTitle": {
+       "t": "str",
+       "v": "File Toolbar"
+      },
+      "movable": {
+       "t": "bool",
+       "v": false
+      }
+     },
+     "items": [
+      {
+       "action": "5453656800"
+      },
+      {
+       "action": "5453656944"
+      },
+      {
+       "action": "5453656656"
+      },
+      {
+       "action": "5453657232"
+      },
+      {
+       "action": "5453657376"
+      }
+     ]
+    },
+    "y": 0,
+    "x": 0
+   },
+   {
+    "area": 4,
+    "break": false,
+    "node": {
+     "qt": "QToolBar",
+     "py": "QToolBar",
+     "name": "toolbaredit",
+     "props": {
+      "windowTitle": {
+       "t": "str",
+       "v": "Edit Toolbar"
+      },
+      "movable": {
+       "t": "bool",
+       "v": false
+      }
+     },
+     "items": [
+      {
+       "action": "5453657520"
+      },
+      {
+       "action": "5453657664"
+      },
+      {
+       "action": "5453657088"
+      },
+      {
+       "action": "5453657952"
+      },
+      {
+       "action": "5453658096"
+      },
+      {
+       "action": "5453657808"
+      },
+      {
+       "action": "5453658384"
+      },
+      {
+       "action": "5453658528"
+      },
+      {
+       "action": "5453658672"
+      },
+      {
+       "action": "5453658816"
+      },
+      {
+       "action": "5453658960"
+      },
+      {
+       "action": "5453659104"
+      }
+     ]
+    },
+    "y": 0,
+    "x": 0
+   },
+   {
+    "area": 4,
+    "break": false,
+    "node": {
+     "qt": "QToolBar",
+     "py": "QToolBar",
+     "name": "toolbarview",
+     "props": {
+      "windowTitle": {
+       "t": "str",
+       "v": "View Toolbar"
+      },
+      "movable": {
+       "t": "bool",
+       "v": false
+      },
+      "hidden": {
+       "t": "bool",
+       "v": true
+      }
+     },
+     "items": [
+      {
+       "action": "5453659248"
+      },
+      {
+       "action": "5453659392"
+      },
+      {
+       "action": "5453659536"
+      },
+      {
+       "action": "5453659680"
+      },
+      {
+       "action": "5453659824"
+      }
+     ]
+    },
+    "y": 0,
+    "x": 0
+   },
+   {
+    "area": 4,
+    "break": false,
+    "node": {
+     "qt": "QToolBar",
+     "py": "QToolBar",
+     "name": "toolbarshell",
+     "props": {
+      "windowTitle": {
+       "t": "str",
+       "v": "Shell Toolbar"
+      },
+      "movable": {
+       "t": "bool",
+       "v": false
+      },
+      "hidden": {
+       "t": "bool",
+       "v": true
+      }
+     },
+     "items": [
+      {
+       "action": "5453659968"
+      },
+      {
+       "action": "5454413888"
+      },
+      {
+       "action": "5454414032"
+      },
+      {
+       "action": "5454414176"
+      }
+     ]
+    },
+    "y": 0,
+    "x": 0
+   },
+   {
+    "area": 4,
+    "break": false,
+    "node": {
+     "qt": "QToolBar",
+     "py": "QToolBar",
+     "name": "toolbartools",
+     "props": {
+      "windowTitle": {
+       "t": "str",
+       "v": "Tools Toolbar"
+      },
+      "movable": {
+       "t": "bool",
+       "v": false
+      }
+     },
+     "items": [
+      {
+       "action": "5454414320"
+      },
+      {
+       "action": "5454414464"
+      },
+      {
+       "action": "5454414608"
+      },
+      {
+       "action": "5454414752"
+      },
+      {
+       "action": "5454414896"
+      },
+      {
+       "action": "5454415040"
+      },
+      {
+       "action": "5454415184"
+      },
+      {
+       "action": "5454415328"
+      },
+      {
+       "action": "5453658240"
+      },
+      {
+       "action": "5454415616"
+      },
+      {
+       "action": "5454415760"
+      },
+      {
+       "action": "5454415904"
+      },
+      {
+       "action": "5454416048"
+      },
+      {
+       "action": "5454416192"
+      },
+      {
+       "action": "5454416336"
+      },
+      {
+       "action": "5454415472"
+      },
+      {
+       "action": "5454416624"
+      },
+      {
+       "action": "5454416768"
+      },
+      {
+       "action": "5454416912"
+      },
+      {
+       "action": "5454417056"
+      },
+      {
+       "action": "5454417200"
+      },
+      {
+       "action": "5454417344"
+      },
+      {
+       "action": "5454417488"
+      },
+      {
+       "action": "5454417632"
+      },
+      {
+       "action": "5454417776"
+      },
+      {
+       "action": "5454417920"
+      }
+     ]
+    },
+    "y": 0,
+    "x": 0
+   },
+   {
+    "area": 4,
+    "break": false,
+    "node": {
+     "qt": "QToolBar",
+     "py": "QToolBar",
+     "name": "exc_edit_toolbar",
+     "props": {
+      "windowTitle": {
+       "t": "str",
+       "v": "Excellon Editor Toolbar"
+      },
+      "movable": {
+       "t": "bool",
+       "v": false
+      },
+      "hidden": {
+       "t": "bool",
+       "v": true
+      }
+     },
+     "items": [
+      {
+       "action": "5454418064"
+      },
+      {
+       "action": "5454418208"
+      },
+      {
+       "action": "5454418352"
+      },
+      {
+       "action": "5454418496"
+      },
+      {
+       "action": "5454418640"
+      },
+      {
+       "action": "5454418784"
+      },
+      {
+       "action": "5454416480"
+      },
+      {
+       "action": "5454419072"
+      },
+      {
+       "action": "5454419216"
+      },
+      {
+       "action": "5454418928"
+      },
+      {
+       "action": "5454419504"
+      }
+     ]
+    },
+    "y": 0,
+    "x": 0
+   },
+   {
+    "area": 4,
+    "break": true,
+    "node": {
+     "qt": "QToolBar",
+     "py": "QToolBar",
+     "name": "geo_edit_toolbar",
+     "props": {
+      "windowTitle": {
+       "t": "str",
+       "v": "Geometry Editor Toolbar"
+      },
+      "movable": {
+       "t": "bool",
+       "v": false
+      },
+      "hidden": {
+       "t": "bool",
+       "v": true
+      }
+     },
+     "items": [
+      {
+       "action": "5454419648"
+      },
+      {
+       "action": "5454419792"
+      },
+      {
+       "action": "5454419936"
+      },
+      {
+       "action": "5454420080"
+      },
+      {
+       "action": "5454419360"
+      },
+      {
+       "action": "5454420368"
+      },
+      {
+       "action": "5454420512"
+      },
+      {
+       "action": "5454420224"
+      },
+      {
+       "action": "5454420800"
+      },
+      {
+       "action": "5454420944"
+      },
+      {
+       "action": "5454421088"
+      },
+      {
+       "action": "5454421232"
+      },
+      {
+       "action": "5454420656"
+      },
+      {
+       "action": "5454421520"
+      },
+      {
+       "action": "5454421664"
+      },
+      {
+       "action": "5454421808"
+      },
+      {
+       "action": "5454421952"
+      },
+      {
+       "action": "5454421376"
+      },
+      {
+       "action": "5454422240"
+      },
+      {
+       "action": "5454422384"
+      },
+      {
+       "action": "5454422528"
+      },
+      {
+       "action": "5454422672"
+      },
+      {
+       "action": "5454422096"
+      },
+      {
+       "action": "5454422960"
+      }
+     ]
+    },
+    "y": 0,
+    "x": 0
+   },
+   {
+    "area": 4,
+    "break": false,
+    "node": {
+     "qt": "QToolBar",
+     "py": "QToolBar",
+     "name": "grb_edit_toolbar",
+     "props": {
+      "windowTitle": {
+       "t": "str",
+       "v": "Gerber Editor Toolbar"
+      },
+      "movable": {
+       "t": "bool",
+       "v": false
+      },
+      "hidden": {
+       "t": "bool",
+       "v": true
+      }
+     },
+     "items": [
+      {
+       "action": "5454423104"
+      },
+      {
+       "action": "5454423248"
+      },
+      {
+       "action": "5454423392"
+      },
+      {
+       "action": "5454423536"
+      },
+      {
+       "action": "5454423680"
+      },
+      {
+       "action": "5454423824"
+      },
+      {
+       "action": "5454423968"
+      },
+      {
+       "action": "5454424112"
+      },
+      {
+       "action": "5454422816"
+      },
+      {
+       "action": "5454424400"
+      },
+      {
+       "action": "5454424544"
+      },
+      {
+       "action": "5454424688"
+      },
+      {
+       "action": "5454424832"
+      },
+      {
+       "action": "5454424256"
+      },
+      {
+       "action": "5454425120"
+      },
+      {
+       "action": "5454425264"
+      },
+      {
+       "action": "5454425408"
+      },
+      {
+       "action": "5454424976"
+      },
+      {
+       "action": "5454425696"
+      }
+     ]
+    },
+    "y": 0,
+    "x": 0
+   }
+  ],
+  "central": {
+   "qt": "QSplitter",
+   "py": "QSplitter",
+   "name": "splitter",
+   "props": {},
+   "widgets": [
+    {
+     "qt": "QSplitter",
+     "py": "QSplitter",
+     "name": "splitter_left",
+     "props": {
+      "sizePolicy": {
+       "t": "QSizePolicy",
+       "v": [
+        5,
+        7,
+        0,
+        0
+       ]
+      },
+      "orientation": {
+       "t": "int",
+       "v": 2
+      },
+      "handleWidth": {
+       "t": "int",
+       "v": 0
+      }
+     },
+     "widgets": [
+      {
+       "qt": "QTabWidget",
+       "py": "FCDetachableTab",
+       "name": "notebook",
+       "props": {
+        "elideMode": {
+         "t": "int",
+         "v": 1
+        }
+       },
+       "tabbar": {
+        "py": "FCTabBar",
+        "props": {
+         "contextMenuPolicy": {
+          "t": "int",
+          "v": 2
+         },
+         "acceptDrops": {
+          "t": "bool",
+          "v": true
+         },
+         "elideMode": {
+          "t": "int",
+          "v": 1
+         }
+        }
+       },
+       "tabs": [
+        {
+         "text": "Proyecto",
+         "icon": null,
+         "tooltip": "",
+         "protected": false,
+         "widget": {
+          "qt": "QWidget",
+          "py": "QWidget",
+          "name": "project_tab",
+          "props": {},
+          "layout": {
+           "qt": "QVBoxLayout",
+           "py": "QVBoxLayout",
+           "name": "project_frame_lay",
+           "props": {},
+           "margins": [
+            0,
+            0,
+            0,
+            0
+           ],
+           "spacing": 6,
+           "items": [
+            {
+             "align": 0,
+             "stretch": 0,
+             "widget": {
+              "qt": "QFrame",
+              "py": "QFrame",
+              "name": "project_frame",
+              "props": {},
+              "layout": {
+               "qt": "QVBoxLayout",
+               "py": "QVBoxLayout",
+               "name": "project_tab_layout",
+               "props": {},
+               "margins": [
+                2,
+                2,
+                2,
+                2
+               ],
+               "spacing": 6,
+               "items": [
+                {
+                 "align": 0,
+                 "stretch": 0,
+                 "widget": {
+                  "qt": "QTreeView",
+                  "py": "KeySensitiveListView",
+                  "name": null,
+                  "props": {
+                   "minimumSize": {
+                    "t": "QSize",
+                    "v": [
+                     290,
+                     0
+                    ]
+                   },
+                   "font": {
+                    "t": "QFont",
+                    "v": "Seagoe UI,-1,12,5,50,0,0,0,0,0"
+                   },
+                   "contextMenuPolicy": {
+                    "t": "int",
+                    "v": 3
+                   },
+                   "acceptDrops": {
+                    "t": "bool",
+                    "v": true
+                   },
+                   "editTriggers": {
+                    "t": "int",
+                    "v": 0
+                   },
+                   "dragDropMode": {
+                    "t": "int",
+                    "v": 2
+                   },
+                   "selectionMode": {
+                    "t": "int",
+                    "v": 3
+                   },
+                   "headerHidden": {
+                    "t": "bool",
+                    "v": true
+                   }
+                  }
+                 }
+                }
+               ]
+              }
+             }
+            }
+           ]
+          }
+         }
+        },
+        {
+         "text": "Propiedades",
+         "icon": null,
+         "tooltip": "",
+         "protected": false,
+         "widget": {
+          "qt": "QWidget",
+          "py": "QWidget",
+          "name": "properties_tab",
+          "props": {
+           "hidden": {
+            "t": "bool",
+            "v": true
+           }
+          },
+          "layout": {
+           "qt": "QVBoxLayout",
+           "py": "QVBoxLayout",
+           "name": "properties_tab_layout",
+           "props": {},
+           "margins": [
+            2,
+            2,
+            2,
+            2
+           ],
+           "spacing": 6,
+           "items": [
+            {
+             "align": 0,
+             "stretch": 0,
+             "widget": {
+              "qt": "QScrollArea",
+              "py": "VerticalScrollArea",
+              "name": "properties_scroll_area",
+              "props": {
+               "horizontalScrollBarPolicy": {
+                "t": "int",
+                "v": 1
+               },
+               "widgetResizable": {
+                "t": "bool",
+                "v": true
+               }
+              },
+              "widget": {
+               "qt": "QTreeWidget",
+               "py": "FCTree",
+               "name": null,
+               "props": {
+                "autoFillBackground": {
+                 "t": "bool",
+                 "v": true
+                },
+                "styleSheet": {
+                 "t": "str",
+                 "v": "QTreeWidget {border: 0px;}"
+                },
+                "headerHidden": {
+                 "t": "bool",
+                 "v": true
+                },
+                "columnCount": {
+                 "t": "int",
+                 "v": 2
+                }
+               }
+              }
+             }
+            }
+           ]
+          }
+         }
+        },
+        {
+         "text": "Herramienta",
+         "icon": null,
+         "tooltip": "",
+         "protected": false,
+         "widget": {
+          "qt": "QWidget",
+          "py": "QWidget",
+          "name": "tool_tab",
+          "props": {
+           "hidden": {
+            "t": "bool",
+            "v": true
+           }
+          },
+          "layout": {
+           "qt": "QVBoxLayout",
+           "py": "QVBoxLayout",
+           "name": "tool_tab_layout",
+           "props": {},
+           "margins": [
+            2,
+            2,
+            2,
+            2
+           ],
+           "spacing": 6,
+           "items": [
+            {
+             "align": 0,
+             "stretch": 0,
+             "widget": {
+              "qt": "QScrollArea",
+              "py": "VerticalScrollArea",
+              "name": "tool_scroll_area",
+              "props": {
+               "horizontalScrollBarPolicy": {
+                "t": "int",
+                "v": 1
+               },
+               "widgetResizable": {
+                "t": "bool",
+                "v": true
+               }
+              }
+             }
+            }
+           ]
+          }
+         }
+        }
+       ]
+      }
+     ],
+     "sizes": [
+      0
+     ]
+    },
+    {
+     "qt": "QWidget",
+     "py": "QWidget",
+     "name": "right_widget",
+     "props": {
+      "sizePolicy": {
+       "t": "QSizePolicy",
+       "v": [
+        13,
+        13,
+        2,
+        2
+       ]
+      }
+     },
+     "layout": {
+      "qt": "QVBoxLayout",
+      "py": "QVBoxLayout",
+      "name": "right_lay",
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QTabWidget",
+         "py": "FCDetachableTab2",
+         "name": "plot_tab_area",
+         "props": {
+          "elideMode": {
+           "t": "int",
+           "v": 1
+          },
+          "tabsClosable": {
+           "t": "bool",
+           "v": true
+          }
+         },
+         "tabbar": {
+          "py": "FCTabBar",
+          "props": {
+           "contextMenuPolicy": {
+            "t": "int",
+            "v": 2
+           },
+           "acceptDrops": {
+            "t": "bool",
+            "v": true
+           },
+           "elideMode": {
+            "t": "int",
+            "v": 1
+           },
+           "tabsClosable": {
+            "t": "bool",
+            "v": true
+           }
+          }
+         },
+         "tabs": [
+          {
+           "text": "Área de la parcela",
+           "icon": null,
+           "tooltip": "",
+           "protected": true,
+           "widget": {
+            "qt": "QWidget",
+            "py": "QWidget",
+            "name": "plot_tab",
+            "props": {},
+            "layout": {
+             "qt": "QVBoxLayout",
+             "py": "QVBoxLayout",
+             "name": "right_layout",
+             "props": {},
+             "margins": [
+              2,
+              2,
+              2,
+              2
+             ],
+             "spacing": 6,
+             "items": []
+            }
+           }
+          }
+         ]
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "sizes": [
+    0,
+    636
+   ]
+  },
+  "statusbar": {
+   "props": {
+    "sizePolicy": {
+     "t": "QSizePolicy",
+     "v": [
+      13,
+      0,
+      0,
+      0
+     ]
+    },
+    "minimumSize": {
+     "t": "QSize",
+     "v": [
+      0,
+      0
+     ]
+    },
+    "contextMenuPolicy": {
+     "t": "int",
+     "v": 2
+    }
+   },
+   "items": [
+    {
+     "qt": "QWidget",
+     "py": "FlatCAMInfoBar",
+     "name": "fcinfo",
+     "props": {},
+     "layout": {
+      "qt": "QHBoxLayout",
+      "py": "QHBoxLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       5,
+       0,
+       5,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "pixmap": {
+           "t": "QPixmap",
+           "v": ":/images/graylight12.png"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "¡Hola!"
+          },
+          "text": {
+           "t": "str",
+           "v": "Aplicacion iniciada ..."
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "spacer": [
+         0,
+         0,
+         7,
+         1
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "qt": "QToolBar",
+     "py": "QToolBar",
+     "name": "delta_coords_toolbar",
+     "props": {
+      "windowTitle": {
+       "t": "str",
+       "v": "Barra de herramientas de coordenadas delta"
+      },
+      "hidden": {
+       "t": "bool",
+       "v": true
+      }
+     },
+     "items": [
+      {
+       "widget": {
+        "qt": "QLabel",
+        "py": "FCLabel",
+        "name": "rel_position_label",
+        "props": {
+         "minimumSize": {
+          "t": "QSize",
+          "v": [
+           110,
+           0
+          ]
+         },
+         "toolTip": {
+          "t": "str",
+          "v": "Medida relativa.\nLa referencia es la posición del último clic"
+         },
+         "text": {
+          "t": "str",
+          "v": "<b>Dx</b>: 0.0000&nbsp;&nbsp;   <b>Dy</b>: 0.0000&nbsp;&nbsp;&nbsp;&nbsp;"
+         }
+        }
+       },
+       "action": null,
+       "visible": true
+      }
+     ]
+    },
+    {
+     "qt": "QToolBar",
+     "py": "QToolBar",
+     "name": "coords_toolbar",
+     "props": {
+      "windowTitle": {
+       "t": "str",
+       "v": "Barra de herramientas de coordenadas"
+      }
+     },
+     "items": [
+      {
+       "widget": {
+        "qt": "QLabel",
+        "py": "FCLabel",
+        "name": "position_label",
+        "props": {
+         "minimumSize": {
+          "t": "QSize",
+          "v": [
+           110,
+           0
+          ]
+         },
+         "toolTip": {
+          "t": "str",
+          "v": "Medida absoluta.\nLa referencia es (X = 0, Y = 0) posición"
+         },
+         "text": {
+          "t": "str",
+          "v": "&nbsp;<b>X</b>: 0.0000&nbsp;&nbsp;   <b>Y</b>: 0.0000&nbsp;"
+         }
+        }
+       },
+       "action": null,
+       "visible": true
+      }
+     ]
+    },
+    {
+     "qt": "QToolBar",
+     "py": "QToolBar",
+     "name": "grid_toolbar",
+     "props": {
+      "maximumSize": {
+       "t": "QSize",
+       "v": [
+        16777215,
+        24
+       ]
+      },
+      "windowTitle": {
+       "t": "str",
+       "v": "Barra de herramientas de cuadrícula"
+      },
+      "styleSheet": {
+       "t": "str",
+       "v": "\n\t\t\tQToolBar { padding: 0; }\n\t\t\tQToolBar QToolButton { padding: -2; margin: -2; }\n\t\t\t"
+      }
+     },
+     "items": [
+      {
+       "action": "5452601168"
+      },
+      {
+       "widget": {
+        "qt": "QLineEdit",
+        "py": "FCEntry2",
+        "name": "grid_gap_x_entry",
+        "props": {
+         "maximumSize": {
+          "t": "QSize",
+          "v": [
+           70,
+           16777215
+          ]
+         },
+         "toolTip": {
+          "t": "str",
+          "v": "Distancia de ajuste de la rejilla X"
+         },
+         "text": {
+          "t": "str",
+          "v": "1.0"
+         }
+        }
+       },
+       "action": null,
+       "visible": true
+      },
+      {
+       "widget": {
+        "qt": "QLabel",
+        "py": "FCLabel",
+        "name": null,
+        "props": {
+         "text": {
+          "t": "str",
+          "v": " "
+         }
+        }
+       },
+       "action": null,
+       "visible": true
+      },
+      {
+       "widget": {
+        "qt": "QCheckBox",
+        "py": "FCCheckBox",
+        "name": "grid_gap_link_cb",
+        "props": {
+         "toolTip": {
+          "t": "str",
+          "v": "Cuando está activo, el valor en Grid_X\nSe copia al valor Grid_Y."
+         },
+         "checked": {
+          "t": "bool",
+          "v": true
+         }
+        }
+       },
+       "action": null,
+       "visible": true
+      },
+      {
+       "widget": {
+        "qt": "QLabel",
+        "py": "FCLabel",
+        "name": null,
+        "props": {
+         "text": {
+          "t": "str",
+          "v": " "
+         }
+        }
+       },
+       "action": null,
+       "visible": true
+      },
+      {
+       "widget": {
+        "qt": "QLineEdit",
+        "py": "FCEntry2",
+        "name": "grid_gap_y_entry",
+        "props": {
+         "enabled": {
+          "t": "bool",
+          "v": false
+         },
+         "maximumSize": {
+          "t": "QSize",
+          "v": [
+           70,
+           16777215
+          ]
+         },
+         "toolTip": {
+          "t": "str",
+          "v": "Distancia de ajuste de cuadrícula Y"
+         },
+         "text": {
+          "t": "str",
+          "v": "1.0"
+         }
+        }
+       },
+       "action": null,
+       "visible": true
+      },
+      {
+       "widget": {
+        "qt": "QLabel",
+        "py": "FCLabel",
+        "name": null,
+        "props": {
+         "text": {
+          "t": "str",
+          "v": " "
+         }
+        }
+       },
+       "action": null,
+       "visible": true
+      },
+      {
+       "action": "5452603040"
+      },
+      {
+       "widget": {
+        "qt": "QLineEdit",
+        "py": "FCEntry",
+        "name": "snap_max_dist_entry",
+        "props": {
+         "enabled": {
+          "t": "bool",
+          "v": false
+         },
+         "maximumSize": {
+          "t": "QSize",
+          "v": [
+           70,
+           16777215
+          ]
+         },
+         "toolTip": {
+          "t": "str",
+          "v": "Distancia máxima del imán"
+         },
+         "text": {
+          "t": "str",
+          "v": "0.05"
+         }
+        }
+       },
+       "action": "snap_magnet",
+       "visible": false
+      }
+     ]
+    },
+    {
+     "qt": "QToolBar",
+     "py": "QToolBar",
+     "name": "status_toolbar",
+     "props": {
+      "maximumSize": {
+       "t": "QSize",
+       "v": [
+        16777215,
+        24
+       ]
+      },
+      "windowTitle": {
+       "t": "str",
+       "v": "Barra de herramientas de estado"
+      },
+      "styleSheet": {
+       "t": "str",
+       "v": "\n\t\t\tQToolBar { padding: 0; }\n\t\t\tQToolBar QToolButton { padding: -2; margin: -2; }\n\t\t\t"
+      }
+     },
+     "items": [
+      {
+       "widget": {
+        "qt": "QLabel",
+        "py": "FCLabel",
+        "name": "axis_status_label",
+        "props": {
+         "toolTip": {
+          "t": "str",
+          "v": "Alternar la visualización del eje en el lienzo"
+         },
+         "pixmap": {
+          "t": "QPixmap",
+          "v": ":/images/axis16.png"
+         }
+        }
+       },
+       "action": null,
+       "visible": true
+      },
+      {
+       "widget": {
+        "qt": "QLabel",
+        "py": "FCLabel",
+        "name": null,
+        "props": {
+         "text": {
+          "t": "str",
+          "v": " "
+         }
+        }
+       },
+       "action": null,
+       "visible": true
+      },
+      {
+       "widget": {
+        "qt": "QLabel",
+        "py": "FCLabel",
+        "name": "pref_status_label",
+        "props": {
+         "toolTip": {
+          "t": "str",
+          "v": "Preferencias"
+         },
+         "pixmap": {
+          "t": "QPixmap",
+          "v": ":/images/settings18.png"
+         }
+        }
+       },
+       "action": null,
+       "visible": true
+      },
+      {
+       "widget": {
+        "qt": "QLabel",
+        "py": "FCLabel",
+        "name": null,
+        "props": {
+         "text": {
+          "t": "str",
+          "v": " "
+         }
+        }
+       },
+       "action": null,
+       "visible": true
+      },
+      {
+       "widget": {
+        "qt": "QLabel",
+        "py": "FCLabel",
+        "name": "shell_status_label",
+        "props": {
+         "toolTip": {
+          "t": "str",
+          "v": "Línea de Comando"
+         },
+         "pixmap": {
+          "t": "QPixmap",
+          "v": ":/images/shell20.png"
+         }
+        }
+       },
+       "action": null,
+       "visible": true
+      },
+      {
+       "widget": {
+        "qt": "QLabel",
+        "py": "FCLabel",
+        "name": null,
+        "props": {
+         "text": {
+          "t": "str",
+          "v": " "
+         }
+        }
+       },
+       "action": null,
+       "visible": true
+      },
+      {
+       "widget": {
+        "qt": "QLabel",
+        "py": "FCLabel",
+        "name": "hud_label",
+        "props": {
+         "toolTip": {
+          "t": "str",
+          "v": "HUD (pantalla de visualización)"
+         },
+         "pixmap": {
+          "t": "QPixmap",
+          "v": ":/images/hud16.png"
+         }
+        }
+       },
+       "action": null,
+       "visible": true
+      },
+      {
+       "widget": {
+        "qt": "QLabel",
+        "py": "FCLabel",
+        "name": null,
+        "props": {
+         "text": {
+          "t": "str",
+          "v": " "
+         }
+        }
+       },
+       "action": null,
+       "visible": true
+      },
+      {
+       "widget": {
+        "qt": "QLabel",
+        "py": "FCLabel",
+        "name": "wplace_label",
+        "props": {
+         "toolTip": {
+          "t": "str",
+          "v": "Dibuja un rectángulo delimitador en el lienzo.\nEl propósito es ilustrar los límites de nuestro trabajo."
+         },
+         "text": {
+          "t": "str",
+          "v": "A4"
+         },
+         "margin": {
+          "t": "int",
+          "v": 2
+         }
+        }
+       },
+       "action": null,
+       "visible": true
+      },
+      {
+       "widget": {
+        "qt": "QLabel",
+        "py": "FCLabel",
+        "name": null,
+        "props": {
+         "text": {
+          "t": "str",
+          "v": " "
+         }
+        }
+       },
+       "action": null,
+       "visible": true
+      }
+     ]
+    },
+    {
+     "qt": "QLabel",
+     "py": "FCLabel",
+     "name": "units_label",
+     "props": {
+      "toolTip": {
+       "t": "str",
+       "v": "Application units"
+      },
+      "text": {
+       "t": "str",
+       "v": "[mm]"
+      },
+      "margin": {
+       "t": "int",
+       "v": 2
+      }
+     }
+    },
+    {
+     "qt": "QWidget",
+     "py": "FlatCAMActivityView",
+     "name": "activity_view",
+     "props": {
+      "minimumSize": {
+       "t": "QSize",
+       "v": [
+        200,
+        0
+       ]
+      }
+     },
+     "layout": {
+      "qt": "QHBoxLayout",
+      "py": "QHBoxLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       5,
+       0,
+       5,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {
+          "pixmap": {
+           "t": "QPixmap",
+           "v": ":/images/active_2_static.png"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "Ocioso."
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ]
+  },
+  "docks": [
+   {
+    "area": 8,
+    "node": {
+     "qt": "QDockWidget",
+     "py": "FCDock",
+     "name": "shell_dock",
+     "props": {
+      "windowTitle": {
+       "t": "str",
+       "v": "TCL Shell"
+      },
+      "floating": {
+       "t": "bool",
+       "v": false
+      },
+      "hidden": {
+       "t": "bool",
+       "v": true
+      }
+     }
+    }
+   }
+  ]
+ },
+ "actions": {
+  "5452550432": {
+   "name": "menu_toggle_nb",
+   "props": {
+    "checkable": {
+     "t": "bool",
+     "v": true
+    },
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/notebook32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Panel de palanca"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Panel de palanca"
+    }
+   }
+  },
+  "5452550720": {
+   "name": "menufilenewproject",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/file16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Nuevo Proyecto...\tCtrl+N"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Creará un nuevo proyecto en blanco"
+    }
+   }
+  },
+  "5452551008": {
+   "name": "menufilenewgeo",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/new_file_geo16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Geometría\tN"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Creará un nuevo objeto vacío de geometría."
+    }
+   }
+  },
+  "5452551152": {
+   "name": "menufilenewgrb",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/new_file_grb16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Gerber\tB"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Creará un nuevo objeto vacío de Gerber."
+    }
+   }
+  },
+  "5452551296": {
+   "name": "menufilenewexc",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/new_file_exc16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Excellon\tL"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Creará un objeto Excellon nuevo y vacío."
+    }
+   }
+  },
+  "5452550576": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452551584": {
+   "name": "menufilenewdoc",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/notes16_1.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Documento\tD"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Creará un nuevo objeto de Documento vacío."
+    }
+   }
+  },
+  "5454428000": {
+   "name": null,
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/file16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Nueva"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Nueva"
+    }
+   },
+   "menu": {
+    "name": "menufilenew",
+    "props": {
+     "title": {
+      "t": "str",
+      "v": "Nueva"
+     },
+     "icon": {
+      "t": "QIcon",
+      "v": ":/images/file16.png"
+     },
+     "toolTipsVisible": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "py": "QMenu",
+    "items": [
+     "5452551008",
+     "5452551152",
+     "5452551296",
+     "5452550576",
+     "5452551584"
+    ]
+   }
+  },
+  "5452551872": {
+   "name": "menufileopenproject",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/folder16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Proyecto abierto...\tCtrl+O"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Proyecto abierto\tCtrl+O"
+    }
+   }
+  },
+  "5452551440": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452552160": {
+   "name": "menufileopengerber",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/flatcam_icon24.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Abrir gerber...\tCtrl+G"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Abrir gerber\tCtrl+G"
+    }
+   }
+  },
+  "5452552304": {
+   "name": "menufileopenexcellon",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/open_excellon32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Abierto Excellon...\tCtrl+E"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Abierto Excellon\tCtrl+E"
+    }
+   }
+  },
+  "5452552448": {
+   "name": "menufileopengcode",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/code.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Código G abierto...\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Código G abierto"
+    }
+   }
+  },
+  "5452552016": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452552736": {
+   "name": "menufileopenconfig",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/folder16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Abierto Config...\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Abierto Config"
+    }
+   }
+  },
+  "5454428144": {
+   "name": null,
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/folder32_bis.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Abierto"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Abierto"
+    }
+   },
+   "menu": {
+    "name": "menufile_open",
+    "props": {
+     "title": {
+      "t": "str",
+      "v": "Abierto"
+     },
+     "icon": {
+      "t": "QIcon",
+      "v": ":/images/folder32_bis.png"
+     },
+     "toolTipsVisible": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "py": "QMenu",
+    "items": [
+     "5452551872",
+     "5452551440",
+     "5452552160",
+     "5452552304",
+     "5452552448",
+     "5452552016",
+     "5452552736"
+    ]
+   }
+  },
+  "5454428288": {
+   "name": null,
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/recent_files.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Proyectos recientes"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Proyectos recientes"
+    }
+   },
+   "menu": {
+    "name": "recent_projects",
+    "props": {
+     "title": {
+      "t": "str",
+      "v": "Proyectos recientes"
+     },
+     "icon": {
+      "t": "QIcon",
+      "v": ":/images/recent_files.png"
+     }
+    },
+    "py": "QMenu",
+    "items": []
+   }
+  },
+  "5454428432": {
+   "name": null,
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/recent_files.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Archivos recientes"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Archivos recientes"
+    }
+   },
+   "menu": {
+    "name": "recent",
+    "props": {
+     "title": {
+      "t": "str",
+      "v": "Archivos recientes"
+     },
+     "icon": {
+      "t": "QIcon",
+      "v": ":/images/recent_files.png"
+     }
+    },
+    "py": "QMenu",
+    "items": []
+   }
+  },
+  "5452553312": {
+   "name": "menufilesaveproject",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/floppy16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Guardar proyecto...\tCtrl+S"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Guardar proyecto\tCtrl+S"
+    }
+   }
+  },
+  "5452553456": {
+   "name": "menufilesaveprojectas",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/floppy16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Guardar proyecto como...\tCtrl+Shift+S"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Guardar proyecto como\tCtrl+Shift+S"
+    }
+   }
+  },
+  "5452552592": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5454428576": {
+   "name": null,
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/save_as.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Salvar"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Salvar"
+    }
+   },
+   "menu": {
+    "name": "menufile_save",
+    "props": {
+     "title": {
+      "t": "str",
+      "v": "Salvar"
+     },
+     "icon": {
+      "t": "QIcon",
+      "v": ":/images/save_as.png"
+     }
+    },
+    "py": "QMenu",
+    "items": [
+     "5452553312",
+     "5452553456",
+     "5452552592"
+    ]
+   }
+  },
+  "5452553600": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452554032": {
+   "name": "menufilenewscript",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/script_new16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Nuevo Script...\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Nuevo Script"
+    }
+   }
+  },
+  "5452554176": {
+   "name": "menufileopenscript",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/open_script32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Abrir Script...\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Abrir Script"
+    }
+   }
+  },
+  "5452554320": {
+   "name": "menufileopenscriptexample",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/open_script32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Abrir ejemplo...\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Abrir ejemplo"
+    }
+   }
+  },
+  "5452553744": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452554464": {
+   "name": "menufilerunscript",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/script16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Ejecutar script TCL...\tShift+S"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Ejecutará el Script Tcl abierto así\npermitiendo la automatización de ciertos\nFunciones de FlatCAM."
+    }
+   }
+  },
+  "5454428720": {
+   "name": null,
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/script16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Scripting"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Scripting"
+    }
+   },
+   "menu": {
+    "name": "menufile_scripting",
+    "props": {
+     "title": {
+      "t": "str",
+      "v": "Scripting"
+     },
+     "icon": {
+      "t": "QIcon",
+      "v": ":/images/script16.png"
+     },
+     "toolTipsVisible": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "py": "QMenu",
+    "items": [
+     "5452554032",
+     "5452554176",
+     "5452554320",
+     "5452553744",
+     "5452554464"
+    ]
+   }
+  },
+  "5452554608": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452555040": {
+   "name": "menufileimportsvg",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/svg16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "SVG como objeto de geometría...\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "SVG como objeto de geometría"
+    }
+   }
+  },
+  "5452555184": {
+   "name": "menufileimportsvg_as_gerber",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/svg16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "SVG como objeto de Gerber...\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "SVG como objeto de Gerber"
+    }
+   }
+  },
+  "5452554752": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452555472": {
+   "name": "menufileimportdxf",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/dxf16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "DXF como objeto de geometría...\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "DXF como objeto de geometría"
+    }
+   }
+  },
+  "5452555616": {
+   "name": "menufileimportdxf_as_gerber",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/dxf16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "DXF como objeto de Gerber...\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "DXF como objeto de Gerber"
+    }
+   }
+  },
+  "5452555328": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452555904": {
+   "name": "menufileimport_hpgl2_as_geo",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/dxf16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "HPGL2 como objeto de geometría...\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "HPGL2 como objeto de geometría"
+    }
+   }
+  },
+  "5452555760": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5453645712": {
+   "name": "pdf_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/pdf32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herram. de Import. de PDF\tCtrl+Q"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herram. de Import. de PDF\tCtrl+Q"
+    }
+   }
+  },
+  "5453645856": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5453650176": {
+   "name": "image_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/image32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Imagen como objeto"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Imagen como objeto"
+    }
+   }
+  },
+  "5453650320": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5453655504": {
+   "name": "pcb_wizard_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/drill32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herra. de import. PcbWizard"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herra. de import. PcbWizard"
+    }
+   }
+  },
+  "5454428864": {
+   "name": null,
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/import.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Importar"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Importar"
+    }
+   },
+   "menu": {
+    "name": "menufileimport",
+    "props": {
+     "title": {
+      "t": "str",
+      "v": "Importar"
+     },
+     "icon": {
+      "t": "QIcon",
+      "v": ":/images/import.png"
+     }
+    },
+    "py": "QMenu",
+    "items": [
+     "5452555040",
+     "5452555184",
+     "5452554752",
+     "5452555472",
+     "5452555616",
+     "5452555328",
+     "5452555904",
+     "5452555760",
+     "5453645712",
+     "5453645856",
+     "5453650176",
+     "5453650320",
+     "5453655504"
+    ]
+   }
+  },
+  "5452556336": {
+   "name": "menufileexportsvg",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/export.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Exportar SVG...\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Exportar SVG"
+    }
+   }
+  },
+  "5452556480": {
+   "name": "menufileexportdxf",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/export.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Exportar DXF...\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Exportar DXF"
+    }
+   }
+  },
+  "5452556048": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452556768": {
+   "name": "menufileexportpng",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/export_png32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Exportar PNG...\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Exportará una imagen en formato PNG,\nLa imagen guardada contendrá lo visual.\nInformación actualmente en FlatCAM Plot Area."
+    }
+   }
+  },
+  "5452556624": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452557056": {
+   "name": "menufileexportexcellon",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/drill32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Exportar Excellon...\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Exportará un objeto de Excellon como archivo de Excellon,\nEl formato de las coordenadas, las unidades de archivo y los ceros.\nse configuran en Preferencias -> Exportación de Excellon."
+    }
+   }
+  },
+  "5452557200": {
+   "name": "menufileexportgerber",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/flatcam_icon32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Gerber Exportación...\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Exportará un objeto Gerber como archivo Gerber,\nEl formato de las coordenadas, las unidades de archivo y los ceros.\nse establecen en Preferencias -> Exportar Gerber."
+    }
+   }
+  },
+  "5454429008": {
+   "name": null,
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/export.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Exportar"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Exportar"
+    }
+   },
+   "menu": {
+    "name": "menufileexport",
+    "props": {
+     "title": {
+      "t": "str",
+      "v": "Exportar"
+     },
+     "icon": {
+      "t": "QIcon",
+      "v": ":/images/export.png"
+     },
+     "toolTipsVisible": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "py": "QMenu",
+    "items": [
+     "5452556336",
+     "5452556480",
+     "5452556048",
+     "5452556768",
+     "5452556624",
+     "5452557056",
+     "5452557200"
+    ]
+   }
+  },
+  "5452556912": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452557632": {
+   "name": "menufileimportpref",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/backup_import24.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Importar preferencias del archivo...\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Importar preferencias del archivo"
+    }
+   }
+  },
+  "5452557776": {
+   "name": "menufileexportpref",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/backup_export24.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Exportar preferencias a un archivo...\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Exportar preferencias a un archivo"
+    }
+   }
+  },
+  "5452557344": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452558064": {
+   "name": "menufilesavedefaults",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/defaults.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Guardar Preferencias\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Guardar Preferencias"
+    }
+   }
+  },
+  "5454429152": {
+   "name": null,
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/backup24.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Apoyo"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Apoyo"
+    }
+   },
+   "menu": {
+    "name": "menufile_backup",
+    "props": {
+     "title": {
+      "t": "str",
+      "v": "Apoyo"
+     },
+     "icon": {
+      "t": "QIcon",
+      "v": ":/images/backup24.png"
+     }
+    },
+    "py": "QMenu",
+    "items": [
+     "5452557632",
+     "5452557776",
+     "5452557344",
+     "5452558064"
+    ]
+   }
+  },
+  "5452557920": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452558352": {
+   "name": "menufile_print",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/printer32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Imprimir (PDF)\tCtrl+P"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Imprimir (PDF)\tCtrl+P"
+    }
+   }
+  },
+  "5452558208": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452558640": {
+   "name": "menufile_exit",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/power16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Salida\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Salida"
+    }
+   }
+  },
+  "5454426128": {
+   "name": null,
+   "props": {
+    "text": {
+     "t": "str",
+     "v": "Archivo"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Archivo"
+    }
+   },
+   "menu": {
+    "name": "menufile",
+    "props": {
+     "title": {
+      "t": "str",
+      "v": "Archivo"
+     },
+     "toolTipsVisible": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "py": "QMenu",
+    "items": [
+     "5452550720",
+     "5454428000",
+     "5454428144",
+     "5454428288",
+     "5454428432",
+     "5454428576",
+     "5452553600",
+     "5454428720",
+     "5452554608",
+     "5454428864",
+     "5454429008",
+     "5452556912",
+     "5454429152",
+     "5452557920",
+     "5452558352",
+     "5452558208",
+     "5452558640"
+    ]
+   }
+  },
+  "5452558784": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452559072": {
+   "name": "menueditedit",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/edit16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Editar objeto\tE"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Editar objeto\tE"
+    }
+   }
+  },
+  "5452559216": {
+   "name": "menueditok",
+   "props": {
+    "enabled": {
+     "t": "bool",
+     "v": false
+    },
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/power16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Salir del editor\tCtrl+S"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Salir del editor\tCtrl+S"
+    }
+   }
+  },
+  "5452558928": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452559648": {
+   "name": "menuedit_convert_sg2mg",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/convert24.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Convertir solo geo a multi geo\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Convertirá un objeto de geometría de un tipo de geometría única\na un tipo de geometría múltiple."
+    }
+   }
+  },
+  "5452559792": {
+   "name": "menuedit_convert_mg2sg",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/convert24.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Convertir multi a solo Geo\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Convertirá un objeto de geometría de tipo de geometría múltiple\na un solo tipo de geometría."
+    }
+   }
+  },
+  "5452559360": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452560080": {
+   "name": "menueditconvert_any2geo",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/copy_geo.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Convertir cualquiera a Geo\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Convertir cualquiera a Geo"
+    }
+   }
+  },
+  "5452560224": {
+   "name": "menueditconvert_any2gerber",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/copy_geo.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Convertir cualquiera a Gerber\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Convertir cualquiera a Gerber"
+    }
+   }
+  },
+  "5452560368": {
+   "name": "menueditconvert_any2excellon",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/copy_geo.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Convertir cualquiera a Geo\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Convertir cualquiera a Geo"
+    }
+   }
+  },
+  "5454427712": {
+   "name": null,
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/convert24.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Conversión"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Conversión"
+    }
+   },
+   "menu": {
+    "name": "menuedit_convert",
+    "props": {
+     "title": {
+      "t": "str",
+      "v": "Conversión"
+     },
+     "icon": {
+      "t": "QIcon",
+      "v": ":/images/convert24.png"
+     },
+     "toolTipsVisible": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "py": "QMenu",
+    "items": [
+     "5452559648",
+     "5452559792",
+     "5452559360",
+     "5452560080",
+     "5452560224",
+     "5452560368"
+    ]
+   }
+  },
+  "5452559936": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452561232": {
+   "name": "menueditcopyobject",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/copy.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Dupdo\tCopiar"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Dupdo\tCopiar"
+    }
+   }
+  },
+  "5452561088": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452561520": {
+   "name": "menueditdelete",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/trash16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Borrar\tDEL"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Borrar\tDEL"
+    }
+   }
+  },
+  "5452561376": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5637693808": {
+   "name": "distance_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/distance16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Dist\tCtrl+M"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Dist\tCtrl+M"
+    }
+   }
+  },
+  "5637697120": {
+   "name": "distance_min_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/distance_min16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Distancia Mínima\tShift+M"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Distancia Mínima\tShift+M"
+    }
+   }
+  },
+  "5482692960": {
+   "name": "move_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/move16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Movimiento\tM"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Movimiento\tM"
+    }
+   }
+  },
+  "5452561808": {
+   "name": "menueditorigin",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/origin16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Establecer origen\tO"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Establecer origen\tO"
+    }
+   }
+  },
+  "5452561952": {
+   "name": "menuedit_move2origin",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/origin2_16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Mover al origen\tShift+O"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Mover al origen\tShift+O"
+    }
+   }
+  },
+  "5452562096": {
+   "name": "menueditjump",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/jump_to16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Saltar a la ubicación\tJ"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Saltar a la ubicación\tJ"
+    }
+   }
+  },
+  "5452562240": {
+   "name": "menueditlocate",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/locate16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Localizar en objeto\tShift+J"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Localizar en objeto\tShift+J"
+    }
+   }
+  },
+  "5452561664": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452103888": {
+   "name": "menuedittoggleunits",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/toggle_units16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "(Escriba ayuda para empezar)\tQ"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "(Escriba ayuda para empezar)\tQ"
+    }
+   }
+  },
+  "5452104032": {
+   "name": "menueditselectall",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/select_all.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Seleccionar todo\tCtrl+A"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Seleccionar todo\tCtrl+A"
+    }
+   }
+  },
+  "5452103744": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452104320": {
+   "name": "menueditpreferences",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/pref.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Preferencias\tShift+P"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Preferencias\tShift+P"
+    }
+   }
+  },
+  "5637697264": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5482693104": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5454426272": {
+   "name": null,
+   "props": {
+    "text": {
+     "t": "str",
+     "v": "Editar"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Editar"
+    }
+   },
+   "menu": {
+    "name": "menuedit",
+    "props": {
+     "title": {
+      "t": "str",
+      "v": "Editar"
+     }
+    },
+    "py": "QMenu",
+    "items": [
+     "5452558784",
+     "5452559072",
+     "5452559216",
+     "5452558928",
+     "5454427712",
+     "5454428000",
+     "5452559936",
+     "5452561232",
+     "5452561088",
+     "5452561520",
+     "5452561376",
+     "5637693808",
+     "5637697120",
+     "5482692960",
+     "5452561808",
+     "5452561952",
+     "5452562096",
+     "5452562240",
+     "5452561664",
+     "5452103888",
+     "5452104032",
+     "5452103744",
+     "5452104320",
+     "5637697264",
+     "5482693104"
+    ]
+   }
+  },
+  "5452104608": {
+   "name": "menuoptions_transform_rotate",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/rotate.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Rotar selección\tShift+(R)"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Rotar selección\tShift+(R)"
+    }
+   }
+  },
+  "5452104464": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452104896": {
+   "name": "menuoptions_transform_skewx",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/skewX.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Inclinar en el eje X\tShift+X"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Inclinar en el eje X\tShift+X"
+    }
+   }
+  },
+  "5452105040": {
+   "name": "menuoptions_transform_skewy",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/skewY.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Inclinar en el eje Y\tShift+Y"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Inclinar en el eje Y\tShift+Y"
+    }
+   }
+  },
+  "5452104752": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452105328": {
+   "name": "menuoptions_transform_flipx",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/flipx.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Voltear en el eje X\tX"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Voltear en el eje X\tX"
+    }
+   }
+  },
+  "5452105472": {
+   "name": "menuoptions_transform_flipy",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/flipy.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Voltear en el ejeY\tY"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Voltear en el ejeY\tY"
+    }
+   }
+  },
+  "5452105184": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452105760": {
+   "name": "menuoptions_view_source",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/source32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Ver fuente\tAlt+S"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Ver fuente\tAlt+S"
+    }
+   }
+  },
+  "5452105904": {
+   "name": "menuoptions_tools_db",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/database32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Base de Datos de Herramientas\tCtrl+D"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Base de Datos de Herramientas\tCtrl+D"
+    }
+   }
+  },
+  "5452105616": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5453643984": {
+   "name": "transform_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/transform.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Transform. de objetos\tAlt+T"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Transform. de objetos\tAlt+T"
+    }
+   }
+  },
+  "5453644128": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5453644992": {
+   "name": "properties_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/properties32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Propiedades\tP"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Propiedades\tP"
+    }
+   }
+  },
+  "5454426416": {
+   "name": null,
+   "props": {
+    "text": {
+     "t": "str",
+     "v": "Opciones"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Opciones"
+    }
+   },
+   "menu": {
+    "name": "menuoptions",
+    "props": {
+     "title": {
+      "t": "str",
+      "v": "Opciones"
+     }
+    },
+    "py": "QMenu",
+    "items": [
+     "5452104608",
+     "5452104464",
+     "5452104896",
+     "5452105040",
+     "5452104752",
+     "5452105328",
+     "5452105472",
+     "5452105184",
+     "5452105760",
+     "5452105904",
+     "5452105616",
+     "5453643984",
+     "5453644128",
+     "5453644992"
+    ]
+   }
+  },
+  "5452106336": {
+   "name": "menuviewenable",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/replot16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Permitir a todos\tAlt+1"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Permitir a todos\tAlt+1"
+    }
+   }
+  },
+  "5452106480": {
+   "name": "menuviewdisableall",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/clear_plot16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Desactivar todo\tAlt+2"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Desactivar todo\tAlt+2"
+    }
+   }
+  },
+  "5452106624": {
+   "name": "menuviewenableother",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/replot16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Enable non-selected\tAlt+3"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Enable non-selected\tAlt+3"
+    }
+   }
+  },
+  "5452106768": {
+   "name": "menuviewdisableother",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/clear_plot16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Disable non-selected\tAlt+4"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Disable non-selected\tAlt+4"
+    }
+   }
+  },
+  "5452106192": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452107056": {
+   "name": "menuview_zoom_fit",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/zoom_fit32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Ajuste de zoom\tV"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Ajuste de zoom\tV"
+    }
+   }
+  },
+  "5452107200": {
+   "name": "menuview_zoom_in",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/zoom_in32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Acercarse\t="
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Acercarse\t="
+    }
+   }
+  },
+  "5452107344": {
+   "name": "menuview_zoom_out",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/zoom_out32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Disminuir el zoom\t-"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Disminuir el zoom\t-"
+    }
+   }
+  },
+  "5452106912": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452107632": {
+   "name": "menuview_replot",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/replot32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Redibujar todo\tF5"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Redibujar todo\tF5"
+    }
+   }
+  },
+  "5452107488": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452107920": {
+   "name": "menuview_toggle_code_editor",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/code_editor32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Alternar editor de código\tShift+E"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Alternar editor de código\tShift+E"
+    }
+   }
+  },
+  "5452107776": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452108208": {
+   "name": "menuview_toggle_fscreen",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/fscreen32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Alternar pantalla completa\tAlt+F10"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Alternar pantalla completa\tAlt+F10"
+    }
+   }
+  },
+  "5452108352": {
+   "name": "menuview_toggle_parea",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/plot32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Alternar área de la parcela\tCtrl+F10"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Alternar área de la parcela\tCtrl+F10"
+    }
+   }
+  },
+  "5452108496": {
+   "name": "menuview_toggle_notebook",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/notebook32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Alternar Proyecto/Prop. /Herramienta\t`"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Alternar Proyecto/Prop. /Herramienta\t`"
+    }
+   }
+  },
+  "5452108064": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452108784": {
+   "name": "menuview_toggle_grid",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/grid32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Alternar ajuste de cuadrícula\tG"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Alternar ajuste de cuadrícula\tG"
+    }
+   }
+  },
+  "5452108928": {
+   "name": "menuview_toggle_grid_lines",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/grid_lines32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Alternar Líneas de Cuadrícula\tShift+G"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Alternar Líneas de Cuadrícula\tShift+G"
+    }
+   }
+  },
+  "5452109072": {
+   "name": "menuview_toggle_axis",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/axis32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Alternar eje\tShift+A"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Alternar eje\tShift+A"
+    }
+   }
+  },
+  "5452109216": {
+   "name": "menuview_toggle_workspace",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/workspace24.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Alternar espacio de trabajo\tShift+W"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Alternar espacio de trabajo\tShift+W"
+    }
+   }
+  },
+  "5452109360": {
+   "name": "menuview_toggle_hud",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/hud_32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Activar HUD\tShift+H"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Activar HUD\tShift+H"
+    }
+   }
+  },
+  "5454426560": {
+   "name": null,
+   "props": {
+    "text": {
+     "t": "str",
+     "v": "Ver"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Ver"
+    }
+   },
+   "menu": {
+    "name": "menuview",
+    "props": {
+     "title": {
+      "t": "str",
+      "v": "Ver"
+     }
+    },
+    "py": "QMenu",
+    "items": [
+     "5452106336",
+     "5452106480",
+     "5452106624",
+     "5452106768",
+     "5452106192",
+     "5452107056",
+     "5452107200",
+     "5452107344",
+     "5452106912",
+     "5452107632",
+     "5452107488",
+     "5452107920",
+     "5452107776",
+     "5452108208",
+     "5452108352",
+     "5452108496",
+     "5452108064",
+     "5452108784",
+     "5452108928",
+     "5452109072",
+     "5452109216",
+     "5452109360"
+    ]
+   }
+  },
+  "5452109504": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452109792": {
+   "name": "menuobjects_selall",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/select_all.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Seleccionar todo\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Seleccionar todo"
+    }
+   }
+  },
+  "5452109936": {
+   "name": "menuobjects_unselall",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/deselect_all32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Deseleccionar todo\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Deseleccionar todo"
+    }
+   }
+  },
+  "5454426704": {
+   "name": null,
+   "props": {
+    "text": {
+     "t": "str",
+     "v": "Objetos"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Objetos"
+    }
+   },
+   "menu": {
+    "name": "menuobjects",
+    "props": {
+     "title": {
+      "t": "str",
+      "v": "Objetos"
+     }
+    },
+    "py": "QMenu",
+    "items": [
+     "5452109504",
+     "5452109792",
+     "5452109936"
+    ]
+   }
+  },
+  "5452110368": {
+   "name": "menutoolshell",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/shell16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Línea de Comando\tS"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Línea de Comando\tS"
+    }
+   }
+  },
+  "5637282480": {
+   "name": "cal_exc_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/calibrate_16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Calibración\tAlt+E"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Calibración\tAlt+E"
+    }
+   }
+  },
+  "5637500368": {
+   "name": "dblsidedtool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/doubleside16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "PCB a 2 caras\tAlt+D"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "PCB a 2 caras\tAlt+D"
+    }
+   }
+  },
+  "5477731632": {
+   "name": "align_objects_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/align16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Alinear objetos\tAlt+A"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Alinear objetos\tAlt+A"
+    }
+   }
+  },
+  "5477741712": {
+   "name": "edrills_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/drill16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Extraer Taladros\tAlt+I"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Extraer Taladros\tAlt+I"
+    }
+   }
+  },
+  "5477741856": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5477341440": {
+   "name": "panelize_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/panelize16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Panelizar PCB\tAlt+Z"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Panelizar PCB\tAlt+Z"
+    }
+   }
+  },
+  "5476983872": {
+   "name": "film_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/film16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Película de PCB\tAlt+L"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Película de PCB\tAlt+L"
+    }
+   }
+  },
+  "5476720576": {
+   "name": "paste_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/solderpastebis32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herra. de Pasta de Soldadura\tAlt+K"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herra. de Pasta de Soldadura\tAlt+K"
+    }
+   }
+  },
+  "5482795296": {
+   "name": "calculator_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/calculator16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Calculadoras\tAlt+C"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Calculadoras\tAlt+C"
+    }
+   }
+  },
+  "5482795440": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5482706640": {
+   "name": "cutout_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/cut16_bis.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "PCB de corte\tAlt+X"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "PCB de corte\tAlt+X"
+    }
+   }
+  },
+  "5482347776": {
+   "name": "ncclear_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/ncc16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Compensación sin cobre\tAlt+N"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Compensación sin cobre\tAlt+N"
+    }
+   }
+  },
+  "5482607472": {
+   "name": "paint_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/paint16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de pintura\tAlt+P"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de pintura\tAlt+P"
+    }
+   }
+  },
+  "5483000544": {
+   "name": "isolation_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/iso_16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Aislamiento\tAlt+I"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Aislamiento\tAlt+I"
+    }
+   }
+  },
+  "5482495376": {
+   "name": "drilling_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/drill16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Perforación\tAlt+D"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Perforación\tAlt+D"
+    }
+   }
+  },
+  "5482800624": {
+   "name": "sub_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/sub32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Sustracción\tAlt+W"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Sustracción\tAlt+W"
+    }
+   }
+  },
+  "5482800768": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5482539776": {
+   "name": "rules_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/rules32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Verificar Reglas\tAlt+R"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Verificar Reglas\tAlt+R"
+    }
+   }
+  },
+  "5482544816": {
+   "name": "optimal_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/open_excellon32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Óptima\tAlt+O"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Óptima\tAlt+O"
+    }
+   }
+  },
+  "5482544960": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5482347920": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5482607616": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5483000688": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5482495520": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5453793600": {
+   "name": "copper_thieving_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/copperfill32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta Thieving Tool\tAlt+J"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta Thieving Tool\tAlt+J"
+    }
+   }
+  },
+  "5453795760": {
+   "name": "fiducial_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/fiducials_32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Fiduciales\tAlt+F"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Fiduciales\tAlt+F"
+    }
+   }
+  },
+  "5454648304": {
+   "name": "qrcode_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/qrcode32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta QRCode\tAlt+Q"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta QRCode\tAlt+Q"
+    }
+   }
+  },
+  "5454151888": {
+   "name": "punch_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/punch32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Gerber Perforadora\tAlt+H"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Gerber Perforadora\tAlt+H"
+    }
+   }
+  },
+  "5454156064": {
+   "name": "invert_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/invert32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herram. Invertir Gerber\tALT+G"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herram. Invertir Gerber\tALT+G"
+    }
+   }
+  },
+  "5454163408": {
+   "name": "corners_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/corners_32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herram. de Marca. de Esquina\tAlt+M"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herram. de Marca. de Esquina\tAlt+M"
+    }
+   }
+  },
+  "5454482592": {
+   "name": "etch_tool_menuAction",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/etch_32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Comp de Grabado\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Comp de Grabado"
+    }
+   }
+  },
+  "5452110080": {
+   "name": "menutoolaction",
+   "props": {
+    "text": {
+     "t": "str",
+     "v": "Herramienta"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta"
+    }
+   },
+   "menu": {
+    "name": "menutool",
+    "props": {
+     "title": {
+      "t": "str",
+      "v": "Herramienta"
+     }
+    },
+    "py": "QMenu",
+    "items": [
+     "5452110368",
+     "5637282480",
+     "5637500368",
+     "5477731632",
+     "5477741712",
+     "5477741856",
+     "5477341440",
+     "5476983872",
+     "5476720576",
+     "5482795296",
+     "5482795440",
+     "5482706640",
+     "5482347776",
+     "5482607472",
+     "5483000544",
+     "5482495376",
+     "5482800624",
+     "5482800768",
+     "5482539776",
+     "5482544816",
+     "5482544960",
+     "5482347920",
+     "5482607616",
+     "5483000688",
+     "5482495520",
+     "5453793600",
+     "5453795760",
+     "5454648304",
+     "5454151888",
+     "5454156064",
+     "5454163408",
+     "5454482592"
+    ]
+   }
+  },
+  "5452110656": {
+   "name": "menuhelp_manual",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/globe16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Ayuda en Online\tF1"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Ayuda en Online\tF1"
+    }
+   }
+  },
+  "5452110944": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452111376": {
+   "name": "menuhelp_report_bug",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/bug16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Reportar un error\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Reportar un error"
+    }
+   }
+  },
+  "5452111232": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452111664": {
+   "name": "menuhelp_exc_spec",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/pdf_link16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Especificación de Excellon\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Especificación de Excellon"
+    }
+   }
+  },
+  "5452111808": {
+   "name": "menuhelp_gerber_spec",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/pdf_link16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Especificación de Gerber\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Especificación de Gerber"
+    }
+   }
+  },
+  "5452111520": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452112096": {
+   "name": "menuhelp_shortcut_list",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/shortcuts24.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Lista de accesos directos\tF3"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Lista de accesos directos\tF3"
+    }
+   }
+  },
+  "5452112240": {
+   "name": "menuhelp_videohelp",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/youtube32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Canal de Youtube\tF4"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Canal de Youtube\tF4"
+    }
+   }
+  },
+  "5452111952": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452112528": {
+   "name": "menuhelp_readme",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/warning.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Cómo\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Cómo"
+    }
+   }
+  },
+  "5452112672": {
+   "name": "menuhelp_about",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/about32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Acerca de\t"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Acerca de"
+    }
+   }
+  },
+  "5454426848": {
+   "name": null,
+   "props": {
+    "text": {
+     "t": "str",
+     "v": "Ayuda"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Ayuda"
+    }
+   },
+   "menu": {
+    "name": "menuhelp",
+    "props": {
+     "title": {
+      "t": "str",
+      "v": "Ayuda"
+     }
+    },
+    "py": "QMenu",
+    "items": [
+     "5452110656",
+     "5454428000",
+     "5452110944",
+     "5452111376",
+     "5452111232",
+     "5452111664",
+     "5452111808",
+     "5452111520",
+     "5452112096",
+     "5452112240",
+     "5452111952",
+     "5452112528",
+     "5452112672"
+    ]
+   }
+  },
+  "5452112960": {
+   "name": "geo_add_circle_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/circle32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Círculo\tO"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Círculo\tO"
+    }
+   }
+  },
+  "5452113104": {
+   "name": "geo_add_arc_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/arc16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Arco\tA"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Arco\tA"
+    }
+   }
+  },
+  "5452112816": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452113392": {
+   "name": "geo_add_rectangle_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/rectangle32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Rectángulo\tR"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Rectángulo\tR"
+    }
+   }
+  },
+  "5452113536": {
+   "name": "geo_add_polygon_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/polygon32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Polígono\tN"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Polígono\tN"
+    }
+   }
+  },
+  "5452113680": {
+   "name": "geo_add_path_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/path32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Ruta\tP"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Ruta\tP"
+    }
+   }
+  },
+  "5452113248": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452113968": {
+   "name": "geo_add_text_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/text32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Texto\tT"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Texto\tT"
+    }
+   }
+  },
+  "5452113824": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452114256": {
+   "name": "geo_union_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/union16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Unión de polígonos\tU"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Unión de polígonos\tU"
+    }
+   }
+  },
+  "5452114400": {
+   "name": "geo_intersection_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/intersection16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Intersección de polígonos\tE"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Intersección de polígonos\tE"
+    }
+   }
+  },
+  "5452114544": {
+   "name": "geo_subtract_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/subtract16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Sustracción de polígonos\tS"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Sustracción de polígonos\tS"
+    }
+   }
+  },
+  "5452114112": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452114832": {
+   "name": "geo_cutpath_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/cutpath16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Camino de Corte\tX"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Camino de Corte\tX"
+    }
+   }
+  },
+  "5452114976": {
+   "name": "geo_copy_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/copy16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Copia Geo\tC"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Copia Geo\tC"
+    }
+   }
+  },
+  "5452115120": {
+   "name": "geo_delete_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/deleteshape16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Eliminar forma\tDEL"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Eliminar forma\tDEL"
+    }
+   }
+  },
+  "5452114688": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452115408": {
+   "name": "geo_move_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/move32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Movimiento\tM"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Movimiento\tM"
+    }
+   }
+  },
+  "5452115552": {
+   "name": "geo_buffer_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/buffer16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta Buffer\tB"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta Buffer\tB"
+    }
+   }
+  },
+  "5452115696": {
+   "name": "geo_paint_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/paint16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de pintura\tI"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de pintura\tI"
+    }
+   }
+  },
+  "5452115840": {
+   "name": "geo_transform_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/transform.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de transformación\tAlt+R"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de transformación\tAlt+R"
+    }
+   }
+  },
+  "5452115264": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452116128": {
+   "name": "geo_cornersnap_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/corner32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Alternar ajuste de esquina\tK"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Alternar ajuste de esquina\tK"
+    }
+   }
+  },
+  "5454426992": {
+   "name": null,
+   "props": {
+    "enabled": {
+     "t": "bool",
+     "v": false
+    },
+    "text": {
+     "t": "str",
+     "v": ">Geo Editor<"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": ">Geo Editor<"
+    }
+   },
+   "menu": {
+    "name": "geo_editor_menu",
+    "props": {
+     "enabled": {
+      "t": "bool",
+      "v": false
+     },
+     "title": {
+      "t": "str",
+      "v": ">Geo Editor<"
+     }
+    },
+    "py": "QMenu",
+    "items": [
+     "5452112960",
+     "5452113104",
+     "5452112816",
+     "5452113392",
+     "5452113536",
+     "5452113680",
+     "5452113248",
+     "5452113968",
+     "5452113824",
+     "5452114256",
+     "5452114400",
+     "5452114544",
+     "5452114112",
+     "5452114832",
+     "5452114976",
+     "5452115120",
+     "5452114688",
+     "5452115408",
+     "5452115552",
+     "5452115696",
+     "5452115840",
+     "5452115264",
+     "5452116128"
+    ]
+   }
+  },
+  "5452116416": {
+   "name": "exc_add_array_drill_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/rectangle32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Drill Array\tA"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Drill Array\tA"
+    }
+   }
+  },
+  "5452116560": {
+   "name": "exc_add_drill_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/plus16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir taladro\tD"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir taladro\tD"
+    }
+   }
+  },
+  "5452116272": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452116848": {
+   "name": "exc_add_array_slot_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/slot_array26.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Agregar matriz de ranuras\tQ"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Agregar matriz de ranuras\tQ"
+    }
+   }
+  },
+  "5452116992": {
+   "name": "exc_add_slot_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/slot26.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Agregar ranura\tW"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Agregar ranura\tW"
+    }
+   }
+  },
+  "5452116704": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452117280": {
+   "name": "exc_resize_drill_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/resize16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Cambiar el tamaño de taladro(s)\tR"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Cambiar el tamaño de taladro(s)\tR"
+    }
+   }
+  },
+  "5452117424": {
+   "name": "exc_copy_drill_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/copy32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Dupdo\tC"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Dupdo\tC"
+    }
+   }
+  },
+  "5452117568": {
+   "name": "exc_delete_drill_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/deleteshape32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Borrar\tDEL"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Borrar\tDEL"
+    }
+   }
+  },
+  "5452117136": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452117856": {
+   "name": "exc_move_drill_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/move32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Mover taladro\tM"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Mover taladro\tM"
+    }
+   }
+  },
+  "5454427136": {
+   "name": null,
+   "props": {
+    "enabled": {
+     "t": "bool",
+     "v": false
+    },
+    "text": {
+     "t": "str",
+     "v": ">Excellon Editor<"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": ">Excellon Editor<"
+    }
+   },
+   "menu": {
+    "name": "exc_editor_menu",
+    "props": {
+     "enabled": {
+      "t": "bool",
+      "v": false
+     },
+     "title": {
+      "t": "str",
+      "v": ">Excellon Editor<"
+     }
+    },
+    "py": "QMenu",
+    "items": [
+     "5452116416",
+     "5452116560",
+     "5452116272",
+     "5452116848",
+     "5452116992",
+     "5452116704",
+     "5452117280",
+     "5452117424",
+     "5452117568",
+     "5452117136",
+     "5452117856"
+    ]
+   }
+  },
+  "5452118144": {
+   "name": "grb_add_pad_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/aperture16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Pad\tP"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Pad\tP"
+    }
+   }
+  },
+  "5452118288": {
+   "name": "grb_add_pad_array_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/padarray32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Agregar matriz de pad\tA"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Agregar matriz de pad\tA"
+    }
+   }
+  },
+  "5452118432": {
+   "name": "grb_add_track_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/track32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Pista\tT"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Pista\tT"
+    }
+   }
+  },
+  "5452118576": {
+   "name": "grb_add_region_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/rectangle32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Región\tN"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Región\tN"
+    }
+   }
+  },
+  "5452118000": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452118864": {
+   "name": "grb_convert_poly_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/poligonize32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Poligonizar\tAlt+N"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Poligonizar\tAlt+N"
+    }
+   }
+  },
+  "5452119008": {
+   "name": "grb_add_semidisc_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/semidisc32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir medio disco\tE"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir medio disco\tE"
+    }
+   }
+  },
+  "5452119152": {
+   "name": "grb_add_disc_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/disc32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Agregar disco\tD"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Agregar disco\tD"
+    }
+   }
+  },
+  "5452119296": {
+   "name": "grb_add_buffer_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/buffer16-2.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Buffer\tB"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Buffer\tB"
+    }
+   }
+  },
+  "5452119440": {
+   "name": "grb_add_scale_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/scale32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Escala\tS"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Escala\tS"
+    }
+   }
+  },
+  "5452119584": {
+   "name": "grb_add_markarea_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/markarea32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Marcar area\tAlt+A"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Marcar area\tAlt+A"
+    }
+   }
+  },
+  "5452119728": {
+   "name": "grb_add_eraser_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/eraser26.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Borrador\tCtrl+E"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Borrador\tCtrl+E"
+    }
+   }
+  },
+  "5452119872": {
+   "name": "grb_transform_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/transform.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Transformar\tAlt+R"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Transformar\tAlt+R"
+    }
+   }
+  },
+  "5452118720": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452234960": {
+   "name": "grb_copy_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/copy32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Dupdo\tC"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Dupdo\tC"
+    }
+   }
+  },
+  "5452235104": {
+   "name": "grb_delete_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/deleteshape32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Borrar\tDEL"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Borrar\tDEL"
+    }
+   }
+  },
+  "5452234816": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5452235392": {
+   "name": "grb_move_menuitem",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/move32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Movimiento\tM"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Movimiento\tM"
+    }
+   }
+  },
+  "5454427280": {
+   "name": null,
+   "props": {
+    "enabled": {
+     "t": "bool",
+     "v": false
+    },
+    "text": {
+     "t": "str",
+     "v": ">Gerber Editor<"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": ">Gerber Editor<"
+    }
+   },
+   "menu": {
+    "name": "grb_editor_menu",
+    "props": {
+     "enabled": {
+      "t": "bool",
+      "v": false
+     },
+     "title": {
+      "t": "str",
+      "v": ">Gerber Editor<"
+     }
+    },
+    "py": "QMenu",
+    "items": [
+     "5452118144",
+     "5452118288",
+     "5452118432",
+     "5452118576",
+     "5452118000",
+     "5452118864",
+     "5452119008",
+     "5452119152",
+     "5452119296",
+     "5452119440",
+     "5452119584",
+     "5452119728",
+     "5452119872",
+     "5452118720",
+     "5452234960",
+     "5452235104",
+     "5452234816",
+     "5452235392"
+    ]
+   }
+  },
+  "5453656800": {
+   "name": "file_open_gerber_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/flatcam_icon32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Abrir gerber"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Abrir gerber"
+    }
+   }
+  },
+  "5453656944": {
+   "name": "file_open_excellon_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/drill32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Abierto Excellon"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Abierto Excellon"
+    }
+   }
+  },
+  "5453656656": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5453657232": {
+   "name": "file_open_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/folder32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Proyecto abierto"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Proyecto abierto"
+    }
+   }
+  },
+  "5453657376": {
+   "name": "file_save_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/project_save32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Guardar proyecto"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Guardar proyecto"
+    }
+   }
+  },
+  "5453657520": {
+   "name": "editgeo_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/edit32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Editor"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Editor"
+    }
+   }
+  },
+  "5453657664": {
+   "name": "update_obj_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/close_edit_file32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Guardar Objeto y cerrar el Editor"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Guardar Objeto y cerrar el Editor"
+    }
+   }
+  },
+  "5453657088": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5453657952": {
+   "name": "copy_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/copy_file32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Dupdo"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Dupdo"
+    }
+   }
+  },
+  "5453658096": {
+   "name": "delete_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/trash32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Borrar"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Borrar"
+    }
+   }
+  },
+  "5453657808": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5453658384": {
+   "name": "distance_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/distance32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Dist"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Dist"
+    }
+   }
+  },
+  "5453658528": {
+   "name": "distance_min_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/distance_min32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta Distancia Mínima"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta Distancia Mínima"
+    }
+   }
+  },
+  "5453658672": {
+   "name": "origin_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/origin32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Establecer origen"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Establecer origen"
+    }
+   }
+  },
+  "5453658816": {
+   "name": "move2origin_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/origin2_32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Mover al origen"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Mover al origen"
+    }
+   }
+  },
+  "5453658960": {
+   "name": "jmp_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/jump_to16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Saltar a la ubicación"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Saltar a la ubicación"
+    }
+   }
+  },
+  "5453659104": {
+   "name": "locate_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/locate32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Localizar en objeto"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Localizar en objeto"
+    }
+   }
+  },
+  "5453659248": {
+   "name": "replot_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/replot32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Replantear"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Replantear"
+    }
+   }
+  },
+  "5453659392": {
+   "name": "clear_plot_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/clear_plot32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Parcela clara"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Parcela clara"
+    }
+   }
+  },
+  "5453659536": {
+   "name": "zoom_in_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/zoom_in32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Acercarse"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Acercarse"
+    }
+   }
+  },
+  "5453659680": {
+   "name": "zoom_out_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/zoom_out32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Disminuir el zoom"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Disminuir el zoom"
+    }
+   }
+  },
+  "5453659824": {
+   "name": "zoom_fit_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/zoom_fit32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Ajuste de zoom"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Ajuste de zoom"
+    }
+   }
+  },
+  "5453659968": {
+   "name": "shell_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/shell32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Línea de Comando"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Línea de Comando"
+    }
+   }
+  },
+  "5454413888": {
+   "name": "new_script_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/script_new24.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Nuevo Script ..."
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Nuevo Script"
+    }
+   }
+  },
+  "5454414032": {
+   "name": "open_script_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/open_script32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Abrir Script ..."
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Abrir Script"
+    }
+   }
+  },
+  "5454414176": {
+   "name": "run_script_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/script16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Ejecutar script TCL ..."
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Ejecutar script TCL"
+    }
+   }
+  },
+  "5454414320": {
+   "name": "dblsided_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/doubleside32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herra. de 2 lados"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herra. de 2 lados"
+    }
+   }
+  },
+  "5454414464": {
+   "name": "align_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/align32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herram. de Alinear Objetos"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herram. de Alinear Objetos"
+    }
+   }
+  },
+  "5454414608": {
+   "name": "extract_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/extract_drill32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herram. de Extracción de Taladros"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herram. de Extracción de Taladros"
+    }
+   }
+  },
+  "5454414752": {
+   "name": "cutout_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/cut16_bis.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Corte"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Corte"
+    }
+   }
+  },
+  "5454414896": {
+   "name": "ncc_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/ncc16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta NCC"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta NCC"
+    }
+   }
+  },
+  "5454415040": {
+   "name": "paint_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/paint20_1.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de pintura"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de pintura"
+    }
+   }
+  },
+  "5454415184": {
+   "name": "isolation_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/iso_16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Aislamiento"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Aislamiento"
+    }
+   }
+  },
+  "5454415328": {
+   "name": "drill_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/drilling_tool32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Perforación"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Perforación"
+    }
+   }
+  },
+  "5453658240": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5454415616": {
+   "name": "panelize_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/panelize32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Panel"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Panel"
+    }
+   }
+  },
+  "5454415760": {
+   "name": "film_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/film16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Película"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Película"
+    }
+   }
+  },
+  "5454415904": {
+   "name": "solder_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/solderpastebis32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Pasta"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Pasta"
+    }
+   }
+  },
+  "5454416048": {
+   "name": "sub_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/sub32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Sustracción"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Sustracción"
+    }
+   }
+  },
+  "5454416192": {
+   "name": "rules_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/rules32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Reglas"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Reglas"
+    }
+   }
+  },
+  "5454416336": {
+   "name": "optimal_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/open_excellon32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Óptima"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Óptima"
+    }
+   }
+  },
+  "5454415472": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5454416624": {
+   "name": "calculators_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/calculator24.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Calculadoras"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Calculadoras"
+    }
+   }
+  },
+  "5454416768": {
+   "name": "transform_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/transform.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de transformación"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de transformación"
+    }
+   }
+  },
+  "5454416912": {
+   "name": "qrcode_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/qrcode32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta QRCode"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta QRCode"
+    }
+   }
+  },
+  "5454417056": {
+   "name": "copperfill_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/copperfill32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta Thieving Tool"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta Thieving Tool"
+    }
+   }
+  },
+  "5454417200": {
+   "name": "fiducials_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/fiducials_32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Fiduciales"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Fiduciales"
+    }
+   }
+  },
+  "5454417344": {
+   "name": "cal_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/calibrate_32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Calibración"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Calibración"
+    }
+   }
+  },
+  "5454417488": {
+   "name": "punch_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/punch32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herram. de Perforadora Gerber"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herram. de Perforadora Gerber"
+    }
+   }
+  },
+  "5454417632": {
+   "name": "invert_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/invert32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herram. Invertir Gerber"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herram. Invertir Gerber"
+    }
+   }
+  },
+  "5454417776": {
+   "name": "corners_tool_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/corners_32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herram. de Marca. de Esquina"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herram. de Marca. de Esquina"
+    }
+   }
+  },
+  "5454417920": {
+   "name": "etch_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/etch_32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Herramienta de Comp de Grabado"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Herramienta de Comp de Grabado"
+    }
+   }
+  },
+  "5454418064": {
+   "name": "select_drill_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/pointer32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Seleccionar"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Seleccionar"
+    }
+   }
+  },
+  "5454418208": {
+   "name": "add_drill_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/plus16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir taladro"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir taladro"
+    }
+   }
+  },
+  "5454418352": {
+   "name": "add_drill_array_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/addarray16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Drill Array"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Drill Array"
+    }
+   }
+  },
+  "5454418496": {
+   "name": "resize_drill_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/resize16.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Redimensionar taladro"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Redimensionar taladro"
+    }
+   }
+  },
+  "5454418640": {
+   "name": "add_slot_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/slot26.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Agregar ranura"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Agregar ranura"
+    }
+   }
+  },
+  "5454418784": {
+   "name": "add_slot_array_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/slot_array26.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Agregar matriz de ranuras"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Agregar matriz de ranuras"
+    }
+   }
+  },
+  "5454416480": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5454419072": {
+   "name": "copy_drill_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/copy32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Copia de taladro"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Copia de taladro"
+    }
+   }
+  },
+  "5454419216": {
+   "name": "delete_drill_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/trash32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Eliminar taladro"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Eliminar taladro"
+    }
+   }
+  },
+  "5454418928": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5454419504": {
+   "name": "move_drill_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/move32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Mover taladro"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Mover taladro"
+    }
+   }
+  },
+  "5454419648": {
+   "name": "geo_select_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/pointer32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Seleccionar"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Seleccionar"
+    }
+   }
+  },
+  "5454419792": {
+   "name": "geo_add_circle_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/circle32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Círculo"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Círculo"
+    }
+   }
+  },
+  "5454419936": {
+   "name": "geo_add_arc_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/arc32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Arco"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Arco"
+    }
+   }
+  },
+  "5454420080": {
+   "name": "geo_add_rectangle_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/rectangle32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Rectángulo"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Rectángulo"
+    }
+   }
+  },
+  "5454419360": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5454420368": {
+   "name": "geo_add_path_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/path32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Ruta"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Ruta"
+    }
+   }
+  },
+  "5454420512": {
+   "name": "geo_add_polygon_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/polygon32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Polígono"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Polígono"
+    }
+   }
+  },
+  "5454420224": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5454420800": {
+   "name": "geo_add_text_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/text32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Texto"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Texto"
+    }
+   }
+  },
+  "5454420944": {
+   "name": "geo_add_buffer_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/buffer16-2.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Buffer"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Buffer"
+    }
+   }
+  },
+  "5454421088": {
+   "name": "geo_add_paint_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/paint20_1.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Forma de pintura"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Forma de pintura"
+    }
+   }
+  },
+  "5454421232": {
+   "name": "geo_eraser_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/eraser26.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Borrador"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Borrador"
+    }
+   }
+  },
+  "5454420656": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5454421520": {
+   "name": "geo_union_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/union32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Unión de polígonos"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Unión de polígonos"
+    }
+   }
+  },
+  "5454421664": {
+   "name": "geo_explode_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/explode32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Polígono explotar"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Polígono explotar"
+    }
+   }
+  },
+  "5454421808": {
+   "name": "geo_intersection_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/intersection32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Intersección de polígonos"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Intersección de polígonos"
+    }
+   }
+  },
+  "5454421952": {
+   "name": "geo_subtract_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/subtract32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Sustracción de polígonos"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Sustracción de polígonos"
+    }
+   }
+  },
+  "5454421376": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5454422240": {
+   "name": "geo_cutpath_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/cutpath32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Camino de Corte"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Camino de Corte"
+    }
+   }
+  },
+  "5454422384": {
+   "name": "geo_copy_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/copy32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Copiar objetos"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Copiar objetos"
+    }
+   }
+  },
+  "5454422528": {
+   "name": "geo_delete_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/trash32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Eliminar forma"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Eliminar forma"
+    }
+   }
+  },
+  "5454422672": {
+   "name": "geo_transform_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/transform.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Transformaciones"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Transformaciones"
+    }
+   }
+  },
+  "5454422096": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5454422960": {
+   "name": "geo_move_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/move32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Mover objetos"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Mover objetos"
+    }
+   }
+  },
+  "5454423104": {
+   "name": "grb_select_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/pointer32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Seleccionar"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Seleccionar"
+    }
+   }
+  },
+  "5454423248": {
+   "name": "grb_add_pad_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/aperture32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Pad"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Pad"
+    }
+   }
+  },
+  "5454423392": {
+   "name": "add_pad_ar_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/padarray32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Agregar matriz de pad"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Agregar matriz de pad"
+    }
+   }
+  },
+  "5454423536": {
+   "name": "grb_add_track_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/track32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Pista"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Pista"
+    }
+   }
+  },
+  "5454423680": {
+   "name": "grb_add_region_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/polygon32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Añadir Región"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Añadir Región"
+    }
+   }
+  },
+  "5454423824": {
+   "name": "grb_convert_poly_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/poligonize32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Poligonizar"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Poligonizar"
+    }
+   }
+  },
+  "5454423968": {
+   "name": "grb_add_semidisc_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/semidisc32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Medio disco"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Medio disco"
+    }
+   }
+  },
+  "5454424112": {
+   "name": "grb_add_disc_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/disc32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Disco"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Disco"
+    }
+   }
+  },
+  "5454422816": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5454424400": {
+   "name": "aperture_buffer_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/buffer16-2.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Buffer"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Buffer"
+    }
+   }
+  },
+  "5454424544": {
+   "name": "aperture_scale_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/scale32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Escala"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Escala"
+    }
+   }
+  },
+  "5454424688": {
+   "name": "aperture_markarea_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/markarea32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Marcar area"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Marcar area"
+    }
+   }
+  },
+  "5454424832": {
+   "name": "aperture_eraser_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/eraser26.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Borrador"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Borrador"
+    }
+   }
+  },
+  "5454424256": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5454425120": {
+   "name": "aperture_copy_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/copy32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Dupdo"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Dupdo"
+    }
+   }
+  },
+  "5454425264": {
+   "name": "aperture_delete_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/trash32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Borrar"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Borrar"
+    }
+   }
+  },
+  "5454425408": {
+   "name": "grb_transform_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/transform.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Transformaciones"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Transformaciones"
+    }
+   }
+  },
+  "5454424976": {
+   "name": null,
+   "props": {},
+   "separator": true
+  },
+  "5454425696": {
+   "name": "aperture_move_btn",
+   "props": {
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/move32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Movimiento"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Movimiento"
+    }
+   }
+  },
+  "5452601168": {
+   "name": "grid_snap_btn",
+   "props": {
+    "checkable": {
+     "t": "bool",
+     "v": true
+    },
+    "checked": {
+     "t": "bool",
+     "v": true
+    },
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/grid32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Encajar a la cuadricula"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Encajar a la cuadricula"
+    }
+   }
+  },
+  "5452603040": {
+   "name": "corner_snap_btn",
+   "props": {
+    "checkable": {
+     "t": "bool",
+     "v": true
+    },
+    "enabled": {
+     "t": "bool",
+     "v": false
+    },
+    "icon": {
+     "t": "QIcon",
+     "v": ":/images/corner32.png"
+    },
+    "text": {
+     "t": "str",
+     "v": "Ajustar a la esquina"
+    },
+    "toolTip": {
+     "t": "str",
+     "v": "Ajustar a la esquina"
+    }
+   }
+  }
+ }
+}
