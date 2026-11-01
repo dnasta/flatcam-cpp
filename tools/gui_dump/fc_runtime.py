@@ -56,6 +56,46 @@ class RecordingIcon(_QIcon):
 
 QtGui.QIcon = RecordingIcon
 
+PIXMAP_PATHS = {}
+_QPixmap = QtGui.QPixmap
+
+
+class RecordingPixmap(_QPixmap):
+    """`QPixmap` que anota la ruta del recurso con que se creó (por su `cacheKey`)."""
+
+    def __init__(self, *args):
+        super().__init__(*args)
+        if args and isinstance(args[0], str):
+            PIXMAP_PATHS[self.cacheKey()] = args[0]
+
+
+QtGui.QPixmap = RecordingPixmap
+
+
+def pixmap_path(pm):
+    """Ruta del recurso de una imagen, o `None` si no tiene."""
+    if pm is None or pm.isNull():
+        return None
+    return PIXMAP_PATHS.get(pm.cacheKey())
+
+# ------------------------------------------------------------------ QSettings aislado
+# El original guarda el diseño y otras opciones en el QSettings del sistema ("Open Source", "FlatCAM"). Para no tocar
+# la configuración del usuario, todos los QSettings van a un archivo INI temporal que arranca vacío (primera ejecución).
+import tempfile  # noqa: E402
+
+_SETTINGS_DIR = tempfile.mkdtemp(prefix="fc_gui_dump_")
+_QSettings = QtCore.QSettings
+
+
+class IsolatedSettings(_QSettings):
+    """`QSettings` que siempre usa un INI temporal, sin importar la organización y la aplicación pedidas."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(os.path.join(_SETTINGS_DIR, "settings.ini"), _QSettings.IniFormat)
+
+
+QtCore.QSettings = IsolatedSettings
+
 
 def icon_path(icon):
     """Ruta del recurso de un ícono, o `None` si no tiene."""
@@ -70,6 +110,23 @@ def _stub(name, **attrs):
     for k, v in attrs.items():
         setattr(mod, k, v)
     sys.modules[name] = mod
+    return mod
+
+
+def _drawing_stub(name):
+    """Módulo vacío que exporta (con `import *`) los nombres públicos del módulo original, como simulacros."""
+    mod = types.ModuleType(name)
+    path = os.path.join(REF, *name.split(".")) + ".py"
+    names = []
+    if os.path.exists(path):
+        import re
+        src = open(path, encoding="utf-8").read()
+        names = sorted(set(re.findall(r"^(?:class|def)\s+([A-Za-z]\w*)", src, re.M) +
+                           re.findall(r"^([A-Za-z]\w*)\s*=", src, re.M)))
+    for n in names:
+        setattr(mod, n, mock.MagicMock(name=n))
+    mod.__all__ = names
+    mod.__getattr__ = lambda n: mock.MagicMock(name=n)
     return mod
 
 
@@ -89,8 +146,9 @@ def install():
     # El dibujo con vispy se reemplaza por el canvas OpenGL del port: no hace falta para construir la interfaz.
     for name in ["appGUI.VisPyVisuals", "appGUI.VisPyCanvas", "appGUI.VisPyPatches", "appGUI.VisPyTesselators",
                  "appGUI.PlotCanvas", "appGUI.PlotCanvasLegacy", "OpenGL", "OpenGL.GLU"]:
-        sys.modules[name] = mock.MagicMock()
+        sys.modules[name] = _drawing_stub(name)
     sys.path.insert(0, REF)
+    importlib.import_module("resources")  # registra los íconos en ':/' (tema claro, como el usuario)
     return app
 
 
@@ -102,15 +160,24 @@ def defaults():
     return d
 
 
+class DefaultsDict(dict):
+    """Diccionario de opciones con los métodos de `FlatCAMDefaults` que usa la interfaz."""
+
+    def report_usage(self, *args, **kwargs):
+        pass
+
+
 class FakeApp:
     """Lo mínimo de `App` que necesitan las clases de interfaz para construirse."""
 
     def __init__(self):
-        self.defaults = defaults()
+        self.defaults = DefaultsDict(defaults())
         self.options = self.defaults
         self.decimals = 4
         self.fractional_digits = 4
-        self.version = 8.995  # app_Main.App.version (2024.4 se muestra por la fecha de versión)
+        self.version = "2024.4"  # app_Main.App.version
+        self.version_date = "2024/04/15"
+        self.engine = "3D"  # global_graphic_engine
         self.beta = True
         self.is_legacy = False
         self.log = logging.getLogger("fc")
@@ -135,7 +202,8 @@ def import_original(modname):
                     os.path.exists(os.path.join(REF, *missing.split(".")) + ".py"):
                 raise
             for m in set(sys.modules) - before:  # descartar lo importado a medias
-                del sys.modules[m]
+                if m not in ("resources", "resources_dark"):  # Qt usa sus bytes sin copiarlos: no liberarlos
+                    del sys.modules[m]
             parts = missing.split(".")
             for i in range(1, len(parts) + 1):
                 sys.modules.setdefault(".".join(parts[:i]), mock.MagicMock())
@@ -161,4 +229,31 @@ def build_main_gui():
     fa = FakeApp()
     import_original("appGUI.preferences.OptionsGroupUI").OptionsGroupUI.app = fa  # atributo de clase en el original
     gui = import_original("appGUI.MainGUI").MainGUI(fa)
+    return qapp, fa, gui
+
+
+def build_app():
+    """Reproduce el arranque de `App.__init__` que arma la interfaz (primera ejecución, diseño `minimal`).
+
+    Usa los métodos ORIGINALES de `app_Main.App` sobre la aplicación simulada, en el mismo orden que el original:
+    `MainGUI`, vista de la colección en la pestaña Proyecto, `setup_default_properties_tab`, `install_tools`,
+    `set_ui_title` y `on_layout('minimal')`. Devuelve `(qapp, fake_app, main_gui)`.
+    """
+    qapp, fa, gui = build_main_gui()
+    fa.ui = gui
+    app_main = import_original("app_Main")
+    App = app_main.App
+    app_main.FCShell = mock.MagicMock()  # la consola Tcl está fuera del alcance (y exige una App real)
+    fa.collection = import_original("appObjects.ObjectCollection").ObjectCollection(app=fa)
+    gui.project_tab_layout.addWidget(fa.collection.view)
+    fa.collection.view.setMinimumWidth(290)
+    # app_Main: después de on_plotcanvas_setup (el canvas lo agrega el port en C++)
+    gui.splitter.setStretchFactor(1, 2)
+    gui.splitter.setSizes([1, 1] if fa.defaults["global_project_at_startup"] else [0, 1])
+    for name in ("setup_default_properties_tab", "install_tools"):
+        getattr(App, name)(fa)
+    if not fa.defaults["global_shell_at_startup"]:
+        gui.shell_dock.hide()
+    gui.set_ui_title(name=gettext("New Project - Not saved"))
+    App.on_layout(fa, lay="minimal")
     return qapp, fa, gui
