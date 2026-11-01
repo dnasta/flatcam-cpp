@@ -524,7 +524,8 @@
                0,
                0
               ],
-              "stretchLast": false
+              "stretchLast": false,
+              "hiddenCols": []
              }
             }
            },

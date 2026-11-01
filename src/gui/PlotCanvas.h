@@ -28,6 +28,8 @@ struct PlotLayerData {
     std::vector<float> lines;  ///< Segmentos del contorno: x, y por vértice, de a dos vértices.
     QColor fillColor;          ///< Color del relleno (con transparencia).
     QColor lineColor;          ///< Color del contorno.
+    std::vector<float> travel; ///< Segmentos de viaje de un CNC Job (de a dos vértices), dibujados encima.
+    QColor travelColor;        ///< Color de los viajes (`cncjob_travel_line`).
     QRectF bounds;             ///< Límites de lo dibujado, en mm.
 };
 
@@ -138,6 +140,7 @@ private:
         bool dirty{true};
         std::unique_ptr<QOpenGLBuffer> fillVbo;
         std::unique_ptr<QOpenGLBuffer> lineVbo;
+        std::unique_ptr<QOpenGLBuffer> travelVbo;
     };
     void drawLayers(const QRectF& vr);
     void drawGrid(class QPainter& p, const QRectF& vr) const;

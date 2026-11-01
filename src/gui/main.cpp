@@ -59,7 +59,10 @@ int main(int argc, char* argv[]) {
     }
     if (tool == "ncc") app.runTool(app.nccTool, flatcam::gui::NccTool::info());
     else if (tool == "paint") app.runTool(app.paintTool, flatcam::gui::PaintTool::info());
-    else if (tool == "drill") app.runTool(app.drillingTool, flatcam::gui::DrillingTool::info());
+    else if (tool == "drill") {
+        app.runTool(app.drillingTool, flatcam::gui::DrillingTool::info());
+        app.drillingTool->setToolUi();
+    }
     else if (tool == "cutout") app.runTool(app.cutoutTool, flatcam::gui::CutOutTool::info());
     if (!shotPath.isEmpty()) {
         QTimer::singleShot(1500, app.ui(), [&app, shotPath] {

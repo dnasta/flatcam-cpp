@@ -294,6 +294,7 @@ class Dumper:
                 "hheader": not hh.isHidden(), "vheader": not vh.isHidden(),
                 "resize": [int(hh.sectionResizeMode(i)) for i in range(w.columnCount())],
                 "stretchLast": hh.stretchLastSection(),
+                "hiddenCols": [i for i in range(w.columnCount()) if w.isColumnHidden(i)],
             }
             return node
         if isinstance(w, (QtWidgets.QAbstractItemView, QtWidgets.QComboBox, QtWidgets.QAbstractSpinBox,

@@ -12,6 +12,8 @@
 
 #include "gui/PlotCanvas.h"
 #include "gui/Translation.h"
+#include "gui/objects/CNCJobObject.h"
+#include "gui/objects/ObjectUIs.h"
 
 namespace flatcam::gui {
 
@@ -72,7 +74,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     // Las herramientas (install_tools): sus paneles viven mientras viva la ventana.
     nccTool = new NccTool(ui_.get());
     paintTool = new PaintTool(ui_.get());
-    drillingTool = new DrillingTool(ui_.get());
+    drillingTool = new DrillingTool(this, ui_.get());
     cutoutTool = new CutOutTool(ui_.get());
     for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool}) w->hide();
     connectSignals();
@@ -128,7 +130,10 @@ void App::connectSignals() {
     for (QAction* a : {ui_->paint_tool_menuAction, ui_->paint_btn})
         connect(a, &QAction::triggered, this, [this] { runTool(paintTool, PaintTool::info()); });
     for (QAction* a : {ui_->drilling_tool_menuAction, ui_->drill_btn})
-        connect(a, &QAction::triggered, this, [this] { runTool(drillingTool, DrillingTool::info()); });
+        connect(a, &QAction::triggered, this, [this] {
+            runTool(drillingTool, DrillingTool::info());
+            drillingTool->setToolUi();
+        });
     for (QAction* a : {ui_->cutout_tool_menuAction, ui_->cutout_btn})
         connect(a, &QAction::triggered, this, [this] { runTool(cutoutTool, CutOutTool::info()); });
     // ObjectCollection: elegir un objeto carga sus Propiedades; activarlo (doble clic o Enter) además abre la pestaña.
@@ -189,7 +194,7 @@ FlatCAMObj* App::openGerber(const QString& filename) {
         return nullptr;
     }
     lastFolder_ = QFileInfo(filename).absolutePath();
-    FlatCAMObj* obj = onObjectCreated(std::make_unique<GerberObject>(QFileInfo(filename).fileName(), std::move(gerber)));
+    FlatCAMObj* obj = addObject(std::make_unique<GerberObject>(QFileInfo(filename).fileName(), std::move(gerber)));
     ui_->inform(QString("[success] %1: %2").arg(tr_("Opened"), filename));
     return obj;
 }
@@ -208,7 +213,7 @@ FlatCAMObj* App::openExcellon(const QString& filename) {
         return nullptr;
     }
     lastFolder_ = QFileInfo(filename).absolutePath();
-    FlatCAMObj* obj = onObjectCreated(std::make_unique<ExcellonObject>(QFileInfo(filename).fileName(), std::move(exc)));
+    FlatCAMObj* obj = addObject(std::make_unique<ExcellonObject>(QFileInfo(filename).fileName(), std::move(exc)));
     ui_->inform(QString("[success] %1: %2").arg(tr_("Opened"), filename));
     return obj;
 }
@@ -220,7 +225,38 @@ FlatCAMObj* App::openByExtension(const QString& filename) {
     return nullptr;
 }
 
-FlatCAMObj* App::onObjectCreated(std::unique_ptr<FlatCAMObj> o) {
+FlatCAMObj* App::activeObject() const {
+    return collection_->objectAt(ui_->collection_view->currentIndex());
+}
+
+bool App::exportGcode(CNCJobObject* job, QString filename) {
+    if (filename.isEmpty()) {
+        // cncjob_save_filters
+        filename = QFileDialog::getSaveFileName(ui_.get(), tr_("Export Code ..."), lastFolder() + "/" + job->name(),
+                                                "G-Code Files .nc (*.nc);;G-Code Files .cnc (*.cnc);;"
+                                                "G-Code Files .gcode (*.gcode);;G-Code Files .ngc (*.ngc);;"
+                                                "G-Code Files .tap (*.tap);;All Files (*.*)");
+    }
+    if (filename.isEmpty()) {
+        ui_->inform(QString("[WARNING_NOTCL] %1").arg(tr_("Export cancelled ...")));
+        return false;
+    }
+    // export_gcode_handler: el objeto pasa a llamarse como el archivo (sin la extensión).
+    const QString newName = QFileInfo(filename).completeBaseName();
+    if (newName != job->name()) {
+        const QModelIndex idx = collection_->indexOf(job);
+        collection_->setData(idx, newName, Qt::EditRole);
+    }
+    if (!job->saveTo(filename)) {
+        ui_->inform(QString("[ERROR_NOTCL] %1: %2").arg(tr_("Failed to open file"), filename));
+        return false;
+    }
+    lastFolder_ = QFileInfo(filename).absolutePath();
+    ui_->inform(QString("[success] %1: %2").arg(tr_("File saved to"), filename));
+    return true;
+}
+
+FlatCAMObj* App::addObject(std::unique_ptr<FlatCAMObj> o) {
     FlatCAMObj* obj = collection_->append(std::move(o));
     // ObjectCollection.append: se expande el grupo y, con global_project_autohide, se abre el panel izquierdo.
     ui_->collection_view->setExpanded(collection_->groupIndex(obj->kind()), true);
@@ -239,7 +275,12 @@ void App::onZoomFit() { ui_->plotCanvas()->fitView(); }
 void App::showProperties(FlatCAMObj* obj) {
     QScrollArea* area = ui_->properties_scroll_area;
     area->takeWidget();  // no se destruye: es del objeto o el panel vacío
-    area->setWidget(obj ? obj->propertiesUi() : defaultProperties_);
+    QWidget* panel = obj ? obj->propertiesUi() : defaultProperties_;
+    if (obj && obj->kind() == ObjectKind::CNCJob) {
+        auto* job = static_cast<CNCJobObject*>(obj);
+        static_cast<CNCObjectUI*>(panel)->onExport = [this, job] { exportGcode(job); };
+    }
+    area->setWidget(panel);
 }
 
 bool App::eventFilter(QObject* obj, QEvent* ev) {

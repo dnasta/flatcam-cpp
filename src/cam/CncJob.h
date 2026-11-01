@@ -59,6 +59,12 @@ struct DrillJobSettings {
     int frDecimals{2};                    ///< Decimales de los avances.
     int stepsPerCircle{64};               ///< Pasos por circunferencia (solo se imprime en la cabecera).
     DrillOrder order{DrillOrder::Optimized};  ///< Orden de los agujeros.
+    /// Casilla "Cambio de herram" (`tools_drill_toolchange`). En `default` el cambio se emite igual; solo cambia la
+    /// cabecera, que con `true` imprime `Z Toolchange` y `X,Y Toolchange`.
+    bool toolchange{true};
+    /// Orden en que se taladran las herramientas (`sel_tools` de ToolDrilling: según "Orden de la Herram"); vacío =
+    /// por número de herramienta.
+    std::vector<int> toolOrder;
     std::map<int, DrillToolSettings> tools;   ///< Parámetros por número de herramienta.
 };
 

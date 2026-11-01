@@ -18,6 +18,10 @@
 #include "gui/widgets/NumericalEval.h"
 #include "gui/widgets/RadioSet.h"
 #include "gui/objects/ObjectUIs.h"
+#include "gui/objects/CNCJobObject.h"
+#include <QFile>
+#include <QTemporaryDir>
+#include <algorithm>
 
 using namespace flatcam::gui;
 
@@ -263,6 +267,81 @@ TEST(GuiApp, PropertiesAndToolPanelsLikeTheOriginal) {
     EXPECT_EQ(app.ui()->notebook->tabText(2), QString::fromUtf8("Herramienta de Perforación"));
     app.runTool(app.drillingTool, DrillingTool::info());
     EXPECT_EQ(app.ui()->splitter->sizes().value(0), 0);
+}
+
+TEST(GuiDrilling, UserWorkflowReproducesTheRealFile) {
+    // Como en las capturas del usuario: PTH.drl reflejado, Perforación con todas las herramientas, Corte Z -2,4 (la de
+    // 3,4 mm: -3,4), avance Z 10, cambio de herramienta en Z 19, Z final 19, X,Y final 0,0, velocidad 10000.
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* exc = static_cast<ExcellonObject*>(app.openByExtension(QString::fromStdString(dir + "PTH.drl")));
+    ASSERT_NE(exc, nullptr);
+    exc->excellon().mirror(flatcam::Axis::Y, {0, 0});
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(exc));
+    DrillingTool* t = app.drillingTool;
+    app.runTool(t, DrillingTool::info());
+    t->setToolUi();
+    EXPECT_EQ(t->object_combo->currentText(), exc->name());
+    ASSERT_EQ(t->tools_table->rowCount(), 6);
+    EXPECT_EQ(t->tools_table->item(0, 1)->text(), "0.8");
+    EXPECT_EQ(t->tools_table->item(4, 2)->text(), "120");
+    EXPECT_TRUE(t->tool_data_label->text().contains(QString::fromUtf8("Herramientas múltiples")));
+    // Todas elegidas (como deja build_tool_ui): parámetros para todas.
+    t->cutz_entry->setValue(-2.4);
+    t->feedrate_z_entry->setValue(10.0);
+    t->spindlespeed_entry->setValue(10000);
+    t->toolchange_cb->setChecked(true);
+    t->toolchangez_entry->setValue(19.0);
+    t->endz_entry->setValue(19.0);
+    t->endxy_entry->setText("0,0");
+    Q_EMIT t->endxy_entry->editingFinished();
+    // Solo la de 3,4 mm: -3,4.
+    t->tools_table->clearSelection();
+    t->tools_table->selectRow(3);
+    EXPECT_TRUE(t->tool_data_label->text().contains("4"));
+    t->cutz_entry->setValue(-3.4);
+    t->tools_table->clearSelection();
+    t->tools_table->setSelectionMode(QAbstractItemView::MultiSelection);
+    for (int r = 0; r < 4; ++r) t->tools_table->selectRow(r);
+    auto* cnc = static_cast<CNCJobObject*>(t->generateCnc());
+    ASSERT_NE(cnc, nullptr);
+    EXPECT_EQ(cnc->name(), "luz de noche Pascual-PTH.drl_cnc");
+    EXPECT_EQ(cnc->kind(), ObjectKind::CNCJob);
+
+    // Exportar con el nombre del archivo real: mismas líneas salvo la fecha y el orden de los agujeros (OR-Tools).
+    QTemporaryDir tmp;
+    const QString out = tmp.filePath("luz de noche Pascual-PTH.drl_cnc.nc");
+    ASSERT_TRUE(app.exportGcode(cnc, out));
+    auto readLines = [](const QString& path) {
+        QFile f(path);
+        if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) return QStringList();
+        QStringList l = QString::fromUtf8(f.readAll()).split('\n');
+        return l;
+    };
+    QStringList mine = readLines(out), real = readLines(QString::fromStdString(dir + "PTH.drl_cnc.nc"));
+    // En el proyecto del usuario la Z de corte quedó como resultado de una cuenta en coma flotante (-1,7 - 0,7); desde
+    // el campo (4 decimales) se obtiene -2,4 exacto. Es el mismo número a menos de 1e-15.
+    real.replaceInStrings("-2.4000000000000004", "-2.4");
+    real.replaceInStrings("-3.400000000000001", "-3.4");
+    ASSERT_EQ(mine.size(), real.size());
+    QStringList fixedMine, fixedReal, holesMine, holesReal;
+    auto split = [](const QStringList& L, QStringList& fixed, QStringList& holes) {
+        for (int i = 0; i < L.size(); ++i) {
+            if (L[i].startsWith("(Created on")) continue;
+            if (L[i].startsWith("G00 X") && i + 1 < L.size() && L[i + 1].startsWith("G01 Z-")) {
+                holes << L[i] + "|" + L[i + 1];
+                ++i;
+            } else {
+                fixed << L[i];
+            }
+        }
+        holes.sort();
+    };
+    split(mine, fixedMine, holesMine);
+    split(real, fixedReal, holesReal);
+    EXPECT_EQ(holesMine.size(), 120);
+    EXPECT_EQ(holesMine, holesReal);
+    EXPECT_EQ(fixedMine, fixedReal);
 }
 
 int main(int argc, char** argv) {

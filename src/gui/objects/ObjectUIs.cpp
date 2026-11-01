@@ -4,6 +4,7 @@
 #include <algorithm>
 
 #include "gui/Translation.h"
+#include "gui/objects/CNCJobObject.h"
 #include "gui/objects/FlatCAMObj.h"
 #include "gui/widgets/FCCheckBox.h"
 
@@ -160,6 +161,46 @@ void ExcellonObjectUI::build(ExcellonObject& obj) {
     generate_milling_button->setDisabled(!hasDrills);
     slot_tooldia_entry->setDisabled(!hasSlots);
     generate_milling_slots_button->setDisabled(!hasSlots);
+}
+
+CNCObjectUI::CNCObjectUI(QWidget* parent) : CNCObjectUIBase(parent) {
+    setupUi();
+    connect(export_gcode_button, &QPushButton::clicked, this, [this] {
+        if (onExport) onExport();
+    });
+}
+
+void CNCObjectUI::build(CNCJobObject& obj) {
+    name_entry->setText(obj.name());
+    plot_cb->setChecked(obj.plotEnabled());
+    // CNCJobObject.build_ui: los trabajos de taladrado muestran la tabla de herramientas de Excellon.
+    const auto& tools = obj.tools();
+    const bool excellon = !tools.empty() && tools.front().drills > 0;
+    cnc_tools_table->setVisible(!excellon);
+    exc_cnc_tools_table->setVisible(excellon);
+    if (!excellon) return;
+    exc_cnc_tools_table->setRowCount(static_cast<int>(tools.size()));
+    int row = 0;
+    for (const CncToolRow& t : tools) {
+        exc_cnc_tools_table->setItem(row, 0, item(QString::number(row + 1), Qt::ItemIsEnabled));
+        exc_cnc_tools_table->setItem(row, 1, item(fmt(t.dia), Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+        exc_cnc_tools_table->setItem(row, 2, item(QString::number(t.drills), Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+        exc_cnc_tools_table->setItem(row, 3, item(QString::number(t.slots), Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+        exc_cnc_tools_table->setItem(row, 4, item(QString::number(t.tool), Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+        exc_cnc_tools_table->setItem(row, 5, item(QString::asprintf("%f", t.cutZ), Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+        auto* plot = new FCCheckBox();
+        plot->setLayoutDirection(Qt::RightToLeft);
+        plot->setChecked(true);
+        exc_cnc_tools_table->setCellWidget(row, 6, plot);
+        ++row;
+    }
+    exc_cnc_tools_table->resizeColumnsToContents();
+    exc_cnc_tools_table->resizeRowsToContents();
+    exc_cnc_tools_table->verticalHeader()->hide();
+    exc_cnc_tools_table->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    exc_cnc_tools_table->setColumnHidden(4, true);  // identificador interno de la herramienta
+    exc_cnc_tools_table->setMinimumHeight(exc_cnc_tools_table->contentHeight());
+    exc_cnc_tools_table->setMaximumHeight(exc_cnc_tools_table->contentHeight());
 }
 
 }  // namespace flatcam::gui

@@ -544,7 +544,10 @@
                       0,
                       0
                      ],
-                     "stretchLast": false
+                     "stretchLast": false,
+                     "hiddenCols": [
+                      5
+                     ]
                     }
                    }
                   }
@@ -2153,7 +2156,8 @@
                           0,
                           0
                          ],
-                         "stretchLast": false
+                         "stretchLast": false,
+                         "hiddenCols": []
                         }
                        }
                       },

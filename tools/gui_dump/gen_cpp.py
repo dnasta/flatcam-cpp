@@ -260,6 +260,8 @@ class Gen:
             for i, m in enumerate(t["resize"]):
                 if m:
                     self.emit("%s->horizontalHeader()->setSectionResizeMode(%d, QHeaderView::ResizeMode(%d));" % (v, i, m))
+            for c in t.get("hiddenCols", []):
+                self.emit("%s->setColumnHidden(%d, true);" % (v, c))
             if t["stretchLast"]:
                 self.emit("%s->horizontalHeader()->setStretchLastSection(true);" % v)
             return v

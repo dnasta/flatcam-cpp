@@ -84,6 +84,25 @@ public:
      */
     void runTool(QWidget* panel, const ToolInfo& info, bool toggle = true);
 
+    /**
+     * @brief Agrega un objeto creado por una herramienta (`new_object` → `on_object_created`): al árbol, lo dibuja y
+     * encuadra.
+     * @param obj Objeto.
+     * @return El objeto agregado.
+     */
+    FlatCAMObj* addObject(std::unique_ptr<FlatCAMObj> obj);
+
+    /** @brief Objeto elegido en el árbol (`collection.get_active`). @return El objeto, o `nullptr`. */
+    FlatCAMObj* activeObject() const;
+
+    /**
+     * @brief Guarda el G-code de un CNC Job (`on_exportgcode_button_click` → `export_gcode_handler`).
+     * @param job Objeto.
+     * @param filename Archivo; si está vacío se pregunta con el diálogo de guardar.
+     * @return `true` si se guardó.
+     */
+    bool exportGcode(class CNCJobObject* job, QString filename = QString());
+
     NccTool* nccTool;            ///< Panel de NCC.
     PaintTool* paintTool;        ///< Panel de pintura.
     DrillingTool* drillingTool;  ///< Panel de perforación.
@@ -94,7 +113,6 @@ protected:
     bool eventFilter(QObject* obj, QEvent* ev) override;
 
 private:
-    FlatCAMObj* onObjectCreated(std::unique_ptr<FlatCAMObj> obj);
     void connectSignals();
     QString lastFolder() const;
 

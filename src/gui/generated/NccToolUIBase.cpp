@@ -66,6 +66,7 @@ void NccToolUIBase::setupUi() {
     tools_table->verticalHeader()->setVisible(false);
     tools_table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeMode(2));
     tools_table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeMode(1));
+    tools_table->setColumnHidden(3, true);
     tools_box->addWidget(tools_table, 0);
     auto* lay4 = new QGridLayout();
     lay4->setContentsMargins(0, 0, 0, 0);
