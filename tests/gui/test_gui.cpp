@@ -22,6 +22,7 @@
 #include "gui/objects/GeometryObject.h"
 #include "tools/CutOut.h"
 #include "tools/DoubleSided.h"
+#include "tools/Isolation.h"
 #include <QFile>
 #include <QMimeData>
 #include <QDropEvent>
@@ -839,4 +840,73 @@ TEST(GuiDblSided, MirrorAndAlignmentDrills) {
     EXPECT_EQ(t->alignment_holes->text(), "(1.5000, -2.2500),(1.5000, -2.2500),");
     t->delete_drill_point_button->click();
     EXPECT_EQ(t->alignment_holes->text(), "(1.5000, -2.2500),");
+}
+
+TEST(GuiIsolation, CombinedSeparateAndRest) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* cu = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "B_Cu.gbr")));
+    ASSERT_NE(cu, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(cu));
+    IsolationTool* t = app.isolationTool;
+    app.ui()->isolation_btn->trigger();
+    EXPECT_EQ(app.ui()->tool_scroll_area->widget(), t);
+    EXPECT_EQ(t->object_combo->currentText(), cu->name());
+    // De fábrica: una herramienta de 0,1, una pasada, 10 %, combinar; nivel Básico (sin resto ni tipo a la vista).
+    ASSERT_EQ(t->tools_table->rowCount(), 1);
+    EXPECT_EQ(t->tools_table->item(0, 1)->text(), "0.1000");
+    EXPECT_EQ(t->passes_entry->value(), 1);
+    EXPECT_DOUBLE_EQ(t->iso_overlap_entry->value(), 10.0);
+    EXPECT_TRUE(t->combine_passes_cb->isChecked());
+    EXPECT_FALSE(t->rest_cb->isVisibleTo(t));
+    EXPECT_TRUE(t->tool_data_label->text().contains("Herramienta 1"));
+
+    // Lo que da el núcleo con los mismos datos.
+    flatcam::IsolationTool it;
+    it.toolDia = 0.1;
+    it.passes = 1;
+    it.overlap = 0.1;
+    flatcam::IsolationOptions o;
+    flatcam::IsolationOutcome expected;
+    std::string err;
+    ASSERT_TRUE(flatcam::Isolation::isolate(cu->gerber().solidGeometry(), cu->gerber().followGeometry(), {it}, o,
+                                            expected, err));
+
+    t->generate_iso_button->click();
+    auto* comb = dynamic_cast<GeometryObject*>(app.collection()->byName("luz de noche Pascual-B_Cu.gbr_iso_combined"));
+    ASSERT_NE(comb, nullptr);
+    ASSERT_EQ(comb->tools().size(), 1u);
+    const flatcam::ShapeList& got = comb->tools().begin()->second.solidGeometry;
+    ASSERT_EQ(got.size(), expected.sets.at(0).geometry.size());
+    for (std::size_t i = 0; i < got.size(); ++i) EXPECT_NEAR(got[i].area(), expected.sets[0].geometry[i].area(), 1e-9);
+    EXPECT_EQ(app.ui()->notebook->currentWidget(), app.ui()->properties_tab);
+
+    // Dos pasadas sin combinar: un objeto por pasada con el nombre del original.
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(cu));
+    app.ui()->isolation_btn->trigger();  // el panel ya estaba: vuelve a la pestaña y lo prepara de nuevo
+    t->setToolUi();
+    t->passes_entry->setValue(2);
+    EXPECT_EQ(t->tools().begin()->second.passes, 2);
+    t->combine_passes_cb->setChecked(false);
+    const std::vector<FlatCAMObj*> sep = t->isolate();
+    ASSERT_EQ(sep.size(), 2u);
+    EXPECT_EQ(sep[0]->name(), "luz de noche Pascual-B_Cu.gbr_0.1000_iso1");
+    EXPECT_EQ(sep[1]->name(), "luz de noche Pascual-B_Cu.gbr_0.1000_iso2");
+
+    // Mecanizado de resto (opción avanzada): obliga a combinar y crea `_iso_rest`.
+    t->setToolUi();
+    t->new_tooldia_entry->setValue(0.4);
+    t->search_and_add_btn->click();
+    ASSERT_EQ(t->tools_table->rowCount(), 2);
+    EXPECT_EQ(t->tools_table->item(0, 1)->text(), "0.4000");  // orden "Atrás": la más grande primero
+    t->combine_passes_cb->setChecked(false);
+    t->rest_cb->setChecked(true);
+    EXPECT_TRUE(t->combine_passes_cb->isChecked());
+    EXPECT_FALSE(t->combine_passes_cb->isEnabled());
+    t->tools_table->selectAll();
+    const std::vector<FlatCAMObj*> rest = t->isolate();
+    ASSERT_EQ(rest.size(), 1u);
+    EXPECT_EQ(rest[0]->name(), "luz de noche Pascual-B_Cu.gbr_iso_rest");
+    t->rest_cb->setChecked(false);
+    EXPECT_FALSE(t->combine_passes_cb->isChecked());  // vuelve a como estaba
 }

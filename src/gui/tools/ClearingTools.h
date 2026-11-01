@@ -35,7 +35,7 @@ private:
 
 /**
  * @brief Una herramienta de la tabla de Paint o NCC: la herramienta de la Geometría que se va a crear (con sus parámetros
- * de corte) y los parámetros propios de la herramienta (`tools_paint_*` / `tools_ncc_*` de su `data`).
+ * de corte) y los parámetros propios de la herramienta (`tools_paint_*` / `tools_ncc_*` / `tools_iso_*` de su `data`).
  */
 struct ClearingTool {
     GeometryTool geo;          ///< Diámetro, tipo y parámetros de corte que pasan a la Geometría.
@@ -49,6 +49,9 @@ struct ClearingTool {
     QString operation{"clear"};    ///< NCC: `clear` o `iso` (`tools_ncc_operation`).
     QString millingType{"cl"};     ///< NCC: concordancia o convencional (`tools_ncc_milling_type`).
     bool checkValid{true};         ///< NCC: verificar el diámetro seguro (`tools_ncc_check_valid`).
+    int passes{1};                 ///< Isolation: pasadas (`tools_iso_passes`).
+    QString isoType{"full"};       ///< Isolation: `full`, `ext` o `int` (`tools_iso_isotype`).
+    bool follow{false};            ///< Isolation: seguir las líneas centrales (`tools_iso_follow`).
 };
 
 /**

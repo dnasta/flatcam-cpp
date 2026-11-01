@@ -41,7 +41,7 @@ def object_with_ui(fa, ou, cls, kind, module, objcls):
     return obj.ui
 # atributo de la aplicación -> nombre de la clase C++ del panel
 TOOLS = {"ncclear_tool": "NccToolUI", "paint_tool": "PaintToolUI", "drilling_tool": "DrillingToolUI",
-         "cutout_tool": "CutOutToolUI", "dblsidedtool": "DblSidedToolUI"}
+         "cutout_tool": "CutOutToolUI", "dblsidedtool": "DblSidedToolUI", "isolation_tool": "IsolationToolUI"}
 
 
 def main():

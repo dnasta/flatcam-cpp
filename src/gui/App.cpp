@@ -87,7 +87,10 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     drillingTool = new DrillingTool(this, ui_.get());
     cutoutTool = new CutOutTool(this, ui_.get());
     dblsidedTool = new DblSidedTool(this, ui_.get());
-    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool}) w->hide();
+    isolationTool = new IsolationTool(this, ui_.get());
+    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool,
+                                                      isolationTool})
+        w->hide();
     connectSignals();
 }
 
@@ -159,6 +162,11 @@ void App::connectSignals() {
     // Las teclas en el árbol del Proyecto van a los atajos de la ventana (view.keyPressed -> ui.keyPressEvent).
     connect(ui_->collection_view, &KeySensitiveListView::keyPressed, this,
             [this](int key) { handleKey(key, QApplication::keyboardModifiers()); });
+    for (QAction* a : {ui_->isolation_tool_menuAction, ui_->isolation_btn})
+        connect(a, &QAction::triggered, this, [this] {
+            runTool(isolationTool, IsolationTool::info());
+            isolationTool->setToolUi();
+        });
     for (QAction* a : {ui_->dblsidedtool_menuAction, ui_->dblsided_btn})
         connect(a, &QAction::triggered, this, [this] {
             runTool(dblsidedTool, DblSidedTool::info());
