@@ -68,7 +68,10 @@ int main(int argc, char* argv[]) {
         app.runTool(app.drillingTool, flatcam::gui::DrillingTool::info());
         app.drillingTool->setToolUi();
     }
-    else if (tool == "2sided") {
+    else if (tool == "iso") {
+        app.runTool(app.isolationTool, flatcam::gui::IsolationTool::info());
+        app.isolationTool->setToolUi();
+    } else if (tool == "2sided") {
         app.runTool(app.dblsidedTool, flatcam::gui::DblSidedTool::info());
         app.dblsidedTool->setToolUi();
     } else if (tool == "cutout") {

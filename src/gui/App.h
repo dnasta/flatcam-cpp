@@ -127,6 +127,7 @@ public:
     DrillingTool* drillingTool;  ///< Panel de perforación.
     CutOutTool* cutoutTool;      ///< Panel de corte.
     DblSidedTool* dblsidedTool;  ///< Panel de PCB a 2 caras.
+    IsolationTool* isolationTool;  ///< Panel de aislamiento.
 
     /** @brief Posición del último clic izquierdo en el canvas (`app.pos`). @return La posición en mm. */
     QPointF lastClickPosition() const { return lastClick_; }

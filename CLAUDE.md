@@ -15,7 +15,7 @@ máquina del usuario.
 
 **Lo que hay que saber para retomar (el detalle está en `AGENTS.md`, sección 12).**
 
-- **Tests:** 527 (505 del núcleo + 21 de la GUI corren siempre; 1 lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
+- **Tests:** 528 (505 del núcleo + 22 de la GUI corren siempre; 1 lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
   y Qt 6.12 en el Mac del usuario (M4, AppleClang). micromamba: `old` (Shapely 1.8.4, GEOS 3.11, PyQt5 5.15, para oráculos y para
   volcar la interfaz original), `sh2`, `geos312`, `geos311` (`AGENTS.md`, secciones 6 y 12.4).
 - **Hecho (fases 1, 2 y 3 completas):** parsers, transformaciones, postprocesadores, G-code de taladrado y de geometrías, CutOut,
@@ -52,5 +52,6 @@ máquina del usuario.
   **Reflejar:** Opciones → Voltear en el eje X / Y y teclas X / Y (también en el árbol). **El alcance v1 acordado está
   completo.** Corrección: las preferencias guardadas del usuario son las de fábrica (los 80 %, Estándar, etc. los escribe a
   mano), así que "cargar sus preferencias" no hacía falta. **PCB a 2 caras** hecho (reflejar con punto/caja/agujero y
-  "Alignment Drills"), aceptado por el usuario. **Siguiente:** Isolation y proyectos (guardar/abrir). Pendientes menores: Paint/NCC con semilla y líneas, resto de Paint/NCC, selección por área,
+  "Alignment Drills"), aceptado por el usuario. **Isolation** hecho (combinado, pasadas separadas, resto, referencia; falta la
+  selección por área/polígono con el mouse). **Siguiente:** proyectos (guardar/abrir `.FlatPrj`). Pendientes menores: Paint/NCC con semilla y líneas, resto de Paint/NCC, selección por área,
   verificación de diámetro seguro (`AGENTS.md`, sección 11).

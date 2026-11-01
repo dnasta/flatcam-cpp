@@ -7,3 +7,4 @@ PaintToolUI
 DrillingToolUI
 CutOutToolUI
 DblSidedToolUI
+IsolationToolUI
