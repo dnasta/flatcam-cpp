@@ -205,6 +205,19 @@ public:
      */
     Shape getBoundingBox(double margin = 0.0, bool rounded = false) const;
 
+    /**
+     * @brief Restaura un Gerber guardado en un proyecto (`from_dict` con los `ser_attrs`), sin volver a leer el archivo:
+     * así conserva las transformaciones que se le hicieron (por ejemplo, el reflejo).
+     * @param solid Geometría sólida.
+     * @param follow Geometría de seguimiento.
+     * @param apertures Aperturas con su geometría.
+     * @param intDigits Dígitos enteros del formato.
+     * @param fracDigits Dígitos decimales del formato.
+     * @param source Texto original del archivo (`source_file`).
+     */
+    void restore(ShapeList solid, ShapeList follow, std::map<std::string, Aperture> apertures, int intDigits,
+                 int fracDigits, std::string source);
+
 private:
     /** @brief Aplica @p fn a la geometría sólida, la de seguimiento y la de cada apertura. */
     template <typename Fn>

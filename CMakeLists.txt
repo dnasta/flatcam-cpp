@@ -30,6 +30,9 @@ if(NOT TARGET GEOS::geos_c)
     add_library(GEOS::geos_c ALIAS PkgConfig::GEOS)
 endif()
 
+# liblzma (xz): los proyectos de FlatCAM (.FlatPrj) se guardan comprimidos con XZ.
+find_package(LibLZMA REQUIRED)
+
 add_subdirectory(src)
 
 # ---------------------------------------------------------------------------

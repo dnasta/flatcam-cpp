@@ -188,6 +188,13 @@ public:
      */
     bool generateFromGeometryTools(const std::vector<GeometryToolJob>& tools);
 
+    /**
+     * @brief Restaura un trabajo guardado en un proyecto: su G-code tal como quedó (no se vuelve a generar).
+     * @param startGcode Código de inicio (en los proyectos de FlatCAM no se guarda: queda vacío).
+     * @param toolGcodes G-code de cada herramienta, en orden.
+     */
+    void restore(std::string startGcode, std::vector<std::string> toolGcodes);
+
     /** @brief Código de inicio (cabecera del postprocesador), terminado en salto de línea. @return El texto. */
     const std::string& startGcode() const { return startGcode_; }
 

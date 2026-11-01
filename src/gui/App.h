@@ -57,6 +57,22 @@ public:
      */
     FlatCAMObj* openByExtension(const QString& filename);
 
+    /**
+     * @brief Abre un proyecto de FlatCAM (`open_project`): borra el proyecto actual y crea sus objetos.
+     * @param filename Ruta del `.FlatPrj` (comprimido o no).
+     * @return `true` si se pudo leer (los objetos que no se pudieron crear quedan avisados).
+     */
+    bool openProject(const QString& filename);
+
+    /** @brief Pide el proyecto con el diálogo de archivos (`on_file_openproject`). */
+    void onFileOpenProject();
+
+    /** @brief Quita todos los objetos (`on_file_new` sin preguntar). */
+    void clearProject();
+
+    /** @brief Archivo del proyecto abierto o guardado (`project_filename`), vacío si no hay. @return La ruta. */
+    const QString& projectFilename() const { return projectFilename_; }
+
     /** @brief Pide los Gerber con el diálogo de archivos (`on_fileopengerber`). */
     void onFileOpenGerber();
 
@@ -152,6 +168,8 @@ private:
     QWidget* defaultProperties_{nullptr};  ///< Panel de Propiedades sin objeto (`setup_default_properties_tab`).
     ObjectCollection* collection_;
     QString lastFolder_;
+    QString projectFilename_;
+    JsonValue projectOptions_;  ///< Opciones del proyecto abierto (`options`), para volver a guardarlas.
     QPointF lastClick_{0.0, 0.0};
     QString lastGerberFilter_;
     QString lastExcellonFilter_;

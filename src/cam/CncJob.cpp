@@ -40,6 +40,14 @@ std::string CncJob::gcodeHeader(const GcodeHeaderInfo& info) {
     return g;
 }
 
+void CncJob::restore(std::string startGcode, std::vector<std::string> toolGcodes) {
+    lastError_.clear();
+    startGcode_ = std::move(startGcode);
+    toolGcodes_ = std::move(toolGcodes);
+    gcode_.clear();
+    for (const std::string& t : toolGcodes_) gcode_ += t;
+}
+
 std::string CncJob::exportGcode(const GcodeHeaderInfo& info) const {
     return gcodeHeader(info) + startGcode_ + "\n" + gcode_ + "\n";
 }

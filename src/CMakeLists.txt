@@ -21,11 +21,13 @@ add_library(flatcam_core STATIC
     tools/Ncc.cpp
     tools/DoubleSided.cpp
     tools/Isolation.cpp
+    io/JsonValue.cpp
+    io/ProjectFile.cpp
 )
 add_library(flatcam::core ALIAS flatcam_core)
 
 target_include_directories(flatcam_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(flatcam_core PUBLIC GEOS::geos_c)
+target_link_libraries(flatcam_core PUBLIC GEOS::geos_c LibLZMA::LibLZMA)
 target_compile_features(flatcam_core PUBLIC cxx_std_17)
 
 if(MSVC)

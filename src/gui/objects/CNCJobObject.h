@@ -5,6 +5,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "cam/CncJob.h"
@@ -70,6 +71,13 @@ public:
     /** @brief Panel `CNCObjectUI` cargado. @return El panel. */
     QWidget* propertiesUi() override;
 
+    /**
+     * @brief Cabecera guardada en un proyecto (`gc_header`): al exportar se usa tal cual, como el original, en vez de
+     * generar una con la fecha actual.
+     * @param header Texto de la cabecera.
+     */
+    void setStoredHeader(std::string header) { storedHeader_ = std::move(header); }
+
     /** @brief Color de los viajes (`cncjob_travel_line`). @return El color. */
     static QColor travelColor();
 
@@ -77,6 +85,7 @@ private:
     std::unique_ptr<CncJob> job_;
     GcodeHeaderInfo header_;
     std::vector<CncToolRow> tools_;
+    std::optional<std::string> storedHeader_;
 };
 
 }  // namespace flatcam::gui

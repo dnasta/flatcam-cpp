@@ -1006,4 +1006,14 @@ Shape Gerber::getBoundingBox(double margin, bool rounded) const {
     return bbox;
 }
 
+void Gerber::restore(ShapeList solid, ShapeList follow, std::map<std::string, Aperture> apertures, int intDigits,
+                     int fracDigits, std::string source) {
+    solidGeometry() = std::move(solid);
+    followGeometry() = std::move(follow);
+    apertures_ = std::move(apertures);
+    intDigits_ = intDigits;
+    fracDigits_ = fracDigits;
+    sourceFile_ = std::move(source);
+}
+
 }  // namespace flatcam
