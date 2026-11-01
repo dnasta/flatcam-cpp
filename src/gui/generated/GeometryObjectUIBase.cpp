@@ -107,6 +107,7 @@ void GeometryObjectUIBase::setupUi() {
     geo_tools_table->setProperty("sizeAdjustPolicy", 2);
     geo_tools_table->setColumnCount(7);
     geo_tools_table->setHorizontalHeaderLabels({QString::fromUtf8("#"), QString::fromUtf8("Dia"), QString::fromUtf8("Compensar"), QString::fromUtf8("Tipo"), QString::fromUtf8("TT"), QString::fromUtf8(""), QString::fromUtf8("P")});
+    geo_tools_table->setColumnHidden(5, true);
     lay4->addWidget(geo_tools_table, 1, 0, 1, 2);
     lay4->setColumnStretch(1, 1);
     geo_table_box->addLayout(lay4, 0);

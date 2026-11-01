@@ -5,6 +5,9 @@
  */
 #pragma once
 
+#include <functional>
+
+#include "gui/generated/CNCObjectUIBase.h"
 #include "gui/generated/ExcellonObjectUIBase.h"
 #include "gui/generated/GerberObjectUIBase.h"
 
@@ -12,6 +15,7 @@ namespace flatcam::gui {
 
 class GerberObject;
 class ExcellonObject;
+class CNCJobObject;
 
 /** @brief Propiedades de un Gerber (`GerberObjectUI`). */
 class GerberObjectUI : public GerberObjectUIBase {
@@ -44,6 +48,23 @@ public:
      * @param obj Objeto.
      */
     void build(ExcellonObject& obj);
+};
+
+/** @brief Propiedades de un CNC Job (`CNCObjectUI`). */
+class CNCObjectUI : public CNCObjectUIBase {
+    Q_OBJECT
+public:
+    /** @brief Crea el panel. @param parent Widget padre. */
+    explicit CNCObjectUI(QWidget* parent = nullptr);
+
+    /**
+     * @brief Carga el trabajo en el panel (`build_ui`): nombre y tabla de herramientas del taladrado.
+     * @param obj Objeto.
+     */
+    void build(CNCJobObject& obj);
+
+    /** @brief Qué hacer al apretar "Guardar código CNC" (lo fija la aplicación). */
+    std::function<void()> onExport;
 };
 
 }  // namespace flatcam::gui

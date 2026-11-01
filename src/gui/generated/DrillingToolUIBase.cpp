@@ -65,6 +65,7 @@ void DrillingToolUIBase::setupUi() {
     tools_table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeMode(1));
     tools_table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeMode(3));
     tools_table->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeMode(3));
+    tools_table->setColumnHidden(3, true);
     lay2->addWidget(tools_table, 3, 0, 1, 2);
     order_label = new QLabel(nullptr);
     order_label->setText(QString::fromUtf8("Orden de la Herram:"));

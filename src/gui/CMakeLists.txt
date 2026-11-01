@@ -11,6 +11,8 @@ add_library(flatcam_gui STATIC
     objects/ObjectCollection.cpp
     objects/ObjectUIs.cpp
     tools/ToolPanels.cpp
+    tools/DrillingTool.cpp
+    objects/CNCJobObject.cpp
     generated/MainGUIBase.cpp
     generated/GerberObjectUIBase.cpp
     generated/ExcellonObjectUIBase.cpp

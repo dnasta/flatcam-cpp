@@ -125,11 +125,13 @@ void CNCObjectUIBase::setupUi() {
     cnc_tools_table->setProperty("columnCount", 7);
     cnc_tools_table->setColumnCount(7);
     cnc_tools_table->setHorizontalHeaderLabels({QString::fromUtf8("#"), QString::fromUtf8("Dia"), QString::fromUtf8("Compensar"), QString::fromUtf8("Tipo"), QString::fromUtf8("TT"), QString::fromUtf8(""), QString::fromUtf8("P")});
+    cnc_tools_table->setColumnHidden(5, true);
     custom_box->addWidget(cnc_tools_table, 0);
     exc_cnc_tools_table = new FCTable(nullptr);
     exc_cnc_tools_table->setProperty("columnCount", 7);
     exc_cnc_tools_table->setColumnCount(7);
     exc_cnc_tools_table->setHorizontalHeaderLabels({QString::fromUtf8("#"), QString::fromUtf8("Dia"), QString::fromUtf8("Taladros"), QString::fromUtf8("Muesca"), QString::fromUtf8(""), QString::fromUtf8("Corte Z"), QString::fromUtf8("P")});
+    exc_cnc_tools_table->setColumnHidden(4, true);
     custom_box->addWidget(exc_cnc_tools_table, 0);
     tooldia_entry = new FCDoubleSpinner(nullptr);
     tooldia_entry->setProperty("decimals", 4);

@@ -56,10 +56,18 @@ bool CncJob::generateFromExcellon(const Excellon& excellon) {
         return false;
     }
 
-    // Herramientas con agujeros, en orden numérico.
+    // Herramientas con agujeros, en el orden pedido (por defecto, numérico).
     std::vector<int> selected;
-    for (const auto& [id, tool] : excellon.drillTools()) {
-        if (!tool.drills.empty() && settings_.tools.count(id)) selected.push_back(id);
+    if (!settings_.toolOrder.empty()) {
+        for (int id : settings_.toolOrder) {
+            const auto it = excellon.drillTools().find(id);
+            if (it != excellon.drillTools().end() && !it->second.drills.empty() && settings_.tools.count(id))
+                selected.push_back(id);
+        }
+    } else {
+        for (const auto& [id, tool] : excellon.drillTools()) {
+            if (!tool.drills.empty() && settings_.tools.count(id)) selected.push_back(id);
+        }
     }
     if (selected.empty()) {
         lastError_ = "El Excellon no tiene agujeros para las herramientas configuradas";
@@ -76,6 +84,21 @@ bool CncJob::generateFromExcellon(const Excellon& excellon) {
     std::array<double, 2> firstPoint{0.0, 0.0};
     if (const auto& tc = settings_.tools.at(selected.front()).toolchangeXY) firstPoint = *tc;
 
+    if (!settings_.toolchange) {
+        // ToolDrilling.on_cnc_button_click sin cambio de herramienta: todos los agujeros de las herramientas elegidas
+        // en un solo trabajo con la primera (no verificado contra el original con un oráculo).
+        std::vector<Point2D> all;
+        for (int t : selected) {
+            const auto& d = excellon.drillTools().at(t).drills;
+            all.insert(all.end(), d.begin(), d.end());
+        }
+        std::string tGcode, startGcode;
+        if (!toolGcode(selected.front(), all, excellon, firstPoint, true, true, tGcode, startGcode)) return false;
+        startGcode_ = startGcode;
+        gcode_ = tGcode;
+        toolGcodes_.push_back(tGcode);
+        return true;
+    }
     for (std::size_t k = 0; k < selected.size(); ++k) {
         const int tool = selected[k];
         std::string tGcode, startGcode;
@@ -118,7 +141,7 @@ bool CncJob::toolGcode(int tool, const std::vector<Point2D>& points, const Excel
     p.zDepthPerCut = ts.depthPerPass;
     p.zMove = ts.travelZ;
     p.useUi = true;
-    p.toolchange = true;
+    p.toolchange = settings_.toolchange;
     p.zToolchange = ts.toolchangeZ;
     p.xyToolchange = toPyPair(ts.toolchangeXY);
     p.startZ = ts.startZ;

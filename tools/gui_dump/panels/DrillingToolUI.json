@@ -302,7 +302,10 @@
                0,
                3
               ],
-              "stretchLast": false
+              "stretchLast": false,
+              "hiddenCols": [
+               3
+              ]
              }
             }
            },
@@ -1898,7 +1901,8 @@
                           3,
                           3
                          ],
-                         "stretchLast": false
+                         "stretchLast": false,
+                         "hiddenCols": []
                         }
                        }
                       },

@@ -6,17 +6,12 @@
 #pragma once
 
 #include "gui/generated/CutOutToolUIBase.h"
-#include "gui/generated/DrillingToolUIBase.h"
 #include "gui/generated/NccToolUIBase.h"
 #include "gui/generated/PaintToolUIBase.h"
+#include "gui/tools/DrillingTool.h"
+#include "gui/tools/ToolInfo.h"
 
 namespace flatcam::gui {
-
-/** @brief Datos comunes de una herramienta: su nombre (`toolName`) y el título de la pestaña al abrirla. */
-struct ToolInfo {
-    QString toolName;  ///< Nombre de la herramienta (`toolName`), que también es el nombre del panel.
-    QString tabText;   ///< Texto de la pestaña Herramienta (`notebook.setTabText(2, ...)`).
-};
 
 /** @brief Panel de la limpieza de cobre (`NonCopperClear`). */
 class NccTool : public NccToolUIBase {
@@ -34,16 +29,6 @@ class PaintTool : public PaintToolUIBase {
 public:
     /** @brief Crea el panel con los valores de fábrica. @param parent Widget padre. */
     explicit PaintTool(QWidget* parent = nullptr) : PaintToolUIBase(parent) { setupUi(); }
-    /** @brief Nombre y título de la pestaña. @return Los datos. */
-    static ToolInfo info();
-};
-
-/** @brief Panel de perforación (`ToolDrilling`). */
-class DrillingTool : public DrillingToolUIBase {
-    Q_OBJECT
-public:
-    /** @brief Crea el panel con los valores de fábrica. @param parent Widget padre. */
-    explicit DrillingTool(QWidget* parent = nullptr) : DrillingToolUIBase(parent) { setupUi(); }
     /** @brief Nombre y título de la pestaña. @return Los datos. */
     static ToolInfo info();
 };

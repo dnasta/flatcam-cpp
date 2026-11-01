@@ -198,11 +198,13 @@ void PlotCanvas::drawLayers(const QRectF& vr) {
         if (l.dirty) {
             upload(l.fillVbo, l.data.fill);
             upload(l.lineVbo, l.data.lines);
+            upload(l.travelVbo, l.data.travel);
             l.dirty = false;
         }
         if (!l.visible) continue;
         draw(l.fillVbo.get(), l.data.fill.size(), GL_TRIANGLES, l.data.fillColor);
         draw(l.lineVbo.get(), l.data.lines.size(), GL_LINES, l.data.lineColor);
+        draw(l.travelVbo.get(), l.data.travel.size(), GL_LINES, l.data.travelColor);
     }
     program_->release();
     glDisable(GL_SCISSOR_TEST);

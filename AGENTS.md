@@ -65,14 +65,14 @@ logo) y **CutOut** → **CNC Job** con G-code. Taladros y alineación con **PCB 
 | 1 | CMake, Doxygen y núcleo de geometría | **Hecha**, verificada en macOS (arm64) y Linux |
 | 2 | Parsers de Gerber y Excellon con tests contra archivos reales | **Hecha** |
 | 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | **Hecha**: transformaciones de Gerber, postprocesadores, G-code de taladrado y de geometrías, CutOut, capa de láser, Paint, NCC, PCB a 2 caras e Isolation |
-| 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | **En curso**: ventana principal idéntica a la original (generada desde la interfaz Python real), widgets de `GUIElements`, canvas `QOpenGLWidget` (ejes, grilla, HUD, zoom, paneo y dibujo de objetos con buffers de vértices), abrir Gerber y Excellon (menú, barra, arrastrar y soltar, línea de comandos) con el árbol del Proyecto; Propiedades de Gerber y Excellon (paneles generados + `build_ui`); paneles de NCC, Paint, Perforación y Corte en la pestaña Herramienta (generados, sin lógica todavía). Faltan: la lógica de las herramientas, Geometría y CNC Job, exportar |
+| 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | **En curso**: ventana principal idéntica a la original (generada desde la interfaz Python real), widgets de `GUIElements`, canvas `QOpenGLWidget` (ejes, grilla, HUD, zoom, paneo y dibujo de objetos con buffers de vértices), abrir Gerber y Excellon (menú, barra, arrastrar y soltar, línea de comandos) con el árbol del Proyecto; Propiedades de Gerber y Excellon (paneles generados + `build_ui`); paneles de NCC, Paint, Perforación y Corte en la pestaña Herramienta (generados). **Perforación completa:** objeto → tabla de herramientas → parámetros por herramienta → CNC Job (objeto, dibujo y Propiedades) → "Guardar código CNC"; desde la interfaz reproduce el `.nc` de la 2024.4 del usuario (salvo fecha y orden de agujeros). Faltan: la lógica de NCC, Paint y Corte, el objeto Geometría y las preferencias del usuario |
 | 5 | Herramientas secundarias y postprocesadores restantes | Pendiente |
 
 Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (AppleClang, GEOS 3.15). Doxygen genera
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 516 tests (502 del núcleo y 13 de la GUI pasan; 1, la lenta del NCC
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 517 tests (502 del núcleo y 14 de la GUI pasan; 1, la lenta del NCC
 del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -139,7 +139,10 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
                          y NccToolUI, PaintToolUI, DrillingToolUI, CutOutToolUI (pestaña Herramienta), desde
                          tools/gui_dump/dump_panels.py + gen_cpp.py --panels (las herramientas después de su run() original)
   objects/ObjectUIs.*    build_ui de Gerber (tabla de aperturas) y Excellon (tabla de herramientas con totales)
-  tools/ToolPanels.*     Paneles de las herramientas (por ahora solo interfaz) y su nombre/título de pestaña
+  tools/ToolPanels.*     Paneles de NCC, Paint y Corte (por ahora solo interfaz); lista de postprocesadores del combo
+  tools/DrillingTool.*   Perforación completa (port de ToolDrilling: tabla, almacén de parámetros con el tipo de Python de
+                         cada valor, formulario, postprocesador, generar el CNC Job)
+  objects/CNCJobObject.* Objeto CNC Job: G-code, dibujo (viajes, cortes, agujeros), exportación con la cabecera de la 2024.4
   resources/             Íconos de FlatCAM (extraídos de resources.py), es.json y flatcam.qrc (generados)
   main.cpp               Arranque; estilo Fusion por defecto; --screenshot <png> [ancho alto] para pruebas
 tools/gui_dump/        fc_runtime.py (carga la interfaz original con PyQt5 y emula el arranque de App), dump_tree.py
@@ -525,8 +528,8 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     abrir). Para corregir otro texto: agregarlo ahí y regenerar (`extract_resources.py`, `dump_tree.py`, `gen_cpp.py`).
 13. **GUI: pendientes, en orden:** ~~dibujar Gerber y Excellon~~, ~~abrir archivos y el árbol del Proyecto~~, ~~Propiedades de
     Gerber y Excellon~~ y ~~los paneles de las cuatro herramientas~~ (hechos; falta menú contextual del árbol, mostrar/ocultar y
-    borrar). Sigue: la lógica de cada herramienta sobre el núcleo (empezando por Perforación → CNC Job → exportar), objetos
-    Geometría y CNC Job con sus Propiedades, cargar las preferencias del usuario (hoy los paneles tienen los valores de fábrica:
+    borrar). ~~Perforación → CNC Job → exportar~~ (hecho). Sigue: Corte, Paint y NCC (crean objetos Geometría: falta el objeto
+    Geometría con sus Propiedades y su "Generar objeto CNCJob"), reflejar (Transformaciones o PCB a 2 caras), cargar las preferencias del usuario (hoy los paneles tienen los valores de fábrica:
     por ejemplo NCC 40 % y "Semilla" en vez de sus 80 % y "Estándar"); pestaña Propiedades de cada objeto (`ObjectUI.py`, generada igual que la ventana); paneles de Perforación, Corte, Paint y NCC
     (generados desde `ToolDrilling`, `ToolCutOut`, `ToolPaint`, `ToolNCC` con sus valores de fábrica) y su lógica sobre el núcleo;
     CNC Job y exportar `.nc`; reflejar (herramienta PCB a 2 caras / Transformaciones).
@@ -538,7 +541,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **516 tests** (503 del núcleo y 13 de la GUI): 515 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
+- **517 tests** (503 del núcleo y 14 de la GUI): 516 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
   oráculos en Python (Shapely 1.8.4) y, donde existe, contra el `.nc` real del usuario (FlatCAM 8.994):
@@ -565,7 +568,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 516 tests, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 517 tests, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -642,6 +645,11 @@ Importante: Shapely
 - Algunas clases del original pisan métodos de Qt con atributos (`FCDetachableTab.tabBar`, `layout` en otras): en el volcador
   llamar siempre a los métodos de la clase base (`QTabWidget.tabBar(w)`, `QWidget.layout(w)`).
 - Las fuentes se vuelcan solo con lo que difiere de la fuente por defecto (la familia del sistema donde corre Python no sirve).
+- El núcleo ganó `DrillJobSettings::toolchange` (solo cambia la cabecera en `default`; sin cambio de herramienta el
+  original junta todos los agujeros en un trabajo con la primera herramienta: portado pero NO verificado contra un oráculo) y
+  `DrillJobSettings::toolOrder` ("Orden de la Herram").
+- Las Z de corte del `.nc` real del usuario (`-2.4000000000000004`) vienen de una cuenta en coma flotante guardada en sus
+  preferencias; desde el campo (4 decimales) sale `-2.4`. No es una diferencia del port.
 - Para comparar la GUI con el original: correr `FlatCAM --screenshot` y mirar la captura junto a las del usuario (sus capturas
   son de Windows con el estilo nativo: por eso se usa Fusion).
 - Para un oráculo de una herramienta con mucha interfaz conviene extraer los métodos del fuente con `ast` y darles una interfaz

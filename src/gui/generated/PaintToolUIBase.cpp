@@ -65,6 +65,7 @@ void PaintToolUIBase::setupUi() {
     tools_table->verticalHeader()->setVisible(false);
     tools_table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeMode(2));
     tools_table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeMode(1));
+    tools_table->setColumnHidden(3, true);
     lay2->addWidget(tools_table, 7, 0, 1, 2);
     order_label = new FCLabel(nullptr);
     order_label->setText(QString::fromUtf8("<b>Orden de la Herram:</b>"));
