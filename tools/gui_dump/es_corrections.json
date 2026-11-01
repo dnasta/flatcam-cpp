@@ -1,0 +1,17 @@
+{
+  "_comentario": "Correcciones de la traducción al español de FlatCAM (translate/es.bin), pedidas por el usuario: 'Open' es una acción (Abrir), no un estado (Abierto). Las aplican fc_runtime.py (interfaz generada) y extract_resources.py (es.json).",
+  "Open": "Abrir",
+  "Open Config": "Abrir configuración",
+  "Open Excellon": "Abrir Excellon",
+  "Open Excellon File": "Abrir Excellon",
+  "Open G-Code": "Abrir código G",
+  "Open Gerber": "Abrir Gerber",
+  "Open HPGL2": "Abrir HPGL2",
+  "Open Project": "Abrir proyecto",
+  "Open Config file failed.": "Error al abrir el archivo de configuración.",
+  "Open Gerber failed. Probable not a Gerber file.": "Error al abrir el Gerber. Probablemente no sea un archivo Gerber.",
+  "Open PDF file failed.": "Error al abrir el archivo PDF.",
+  "Opening FlatCAM Config file.": "Abriendo el archivo de configuración de FlatCAM.",
+  "Opening FlatCAM Project file.": "Abriendo el archivo de proyecto de FlatCAM.",
+  "Opening HPGL2 file.": "Abriendo el archivo HPGL2."
+}

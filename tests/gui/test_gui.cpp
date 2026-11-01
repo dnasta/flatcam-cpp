@@ -30,6 +30,17 @@ TEST(GuiTranslation, UsesFlatCamSpanishTable) {
     EXPECT_EQ(tr_("Idle."), QString::fromUtf8("Ocioso."));
     EXPECT_EQ(tr_("File"), QString::fromUtf8("Archivo"));
     EXPECT_EQ(tr_("una frase que no está en la tabla"), QString::fromUtf8("una frase que no está en la tabla"));
+    // Correcciones del usuario sobre la traducción de FlatCAM: "Open" es una acción.
+    EXPECT_EQ(tr_("Open"), QString::fromUtf8("Abrir"));
+    EXPECT_EQ(tr_("Open Project"), QString::fromUtf8("Abrir proyecto"));
+}
+
+TEST(GuiMainWindow, OpenMenuUsesTheVerb) {
+    MainGUI w;
+    EXPECT_EQ(w.menufile_open->title(), QString::fromUtf8("Abrir"));
+    EXPECT_EQ(w.menufileopenproject->text(), QString::fromUtf8("Abrir proyecto...\tCtrl+O"));
+    EXPECT_EQ(w.menufileopenexcellon->text(), QString::fromUtf8("Abrir Excellon...\tCtrl+E"));
+    EXPECT_EQ(w.menufileopengerber->text(), QString::fromUtf8("Abrir Gerber...\tCtrl+G"));
 }
 
 TEST(GuiMainWindow, MenusToolbarsAndTabsLikeTheOriginal) {

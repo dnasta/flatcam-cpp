@@ -72,7 +72,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 508 tests (501 del núcleo y 6 de la GUI pasan; 1, la lenta del NCC
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 509 tests (501 del núcleo y 7 de la GUI pasan; 1, la lenta del NCC
 del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -506,6 +506,9 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     `-style macos` se usa el nativo. (b) En macOS la barra de menús es la del sistema, como en cualquier aplicación Qt (también la
     de Python). (c) `FCDetachableTab` desprende con doble clic a una ventana propia; falta arrastrar y soltar entre ventanas.
     (d) El canvas dibuja la grilla con dos escalas (gruesa y fina) en vez del shader de vispy, con los mismos colores.
+    (e) **Traducción corregida a pedido del usuario:** `tools/gui_dump/es_corrections.json` se aplica sobre `translate/es.bin`
+    ("Open" es "Abrir", no "Abierto"; también "Abrir proyecto", "Abrir Excellon", "Abrir código G" y los mensajes de error al
+    abrir). Para corregir otro texto: agregarlo ahí y regenerar (`extract_resources.py`, `dump_tree.py`, `gen_cpp.py`).
 13. **GUI: pendientes, en orden:** dibujar Gerber/Excellon/geometrías/CNC Job en el canvas con buffers de vértices (colores de
     `docs/fase4_gui_referencia.md`); abrir archivos (menú Archivo, arrastrar y soltar) y el árbol del Proyecto (`ObjectCollection`);
     pestaña Propiedades de cada objeto (`ObjectUI.py`, generada igual que la ventana); paneles de Perforación, Corte, Paint y NCC
@@ -519,7 +522,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **508 tests** (502 del núcleo y 6 de la GUI): 507 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
+- **509 tests** (502 del núcleo y 7 de la GUI): 508 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
   oráculos en Python (Shapely 1.8.4) y, donde existe, contra el `.nc` real del usuario (FlatCAM 8.994):
@@ -546,7 +549,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 508 tests, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 509 tests, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.

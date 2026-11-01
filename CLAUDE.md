@@ -15,7 +15,7 @@ máquina del usuario.
 
 **Lo que hay que saber para retomar (el detalle está en `AGENTS.md`, sección 12).**
 
-- **Tests:** 508 (501 del núcleo + 6 de la GUI corren siempre; 1 lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
+- **Tests:** 509 (501 del núcleo + 7 de la GUI corren siempre; 1 lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
   y Qt 6.12 en el Mac del usuario (M4, AppleClang). micromamba: `old` (Shapely 1.8.4, GEOS 3.11, PyQt5 5.15, para oráculos y para
   volcar la interfaz original), `sh2`, `geos312`, `geos311` (`AGENTS.md`, secciones 6 y 12.4).
 - **Hecho (fases 1, 2 y 3 completas):** parsers, transformaciones, postprocesadores, G-code de taladrado y de geometrías, CutOut,
@@ -35,7 +35,8 @@ máquina del usuario.
   **exactamente igual** a la del FlatCAM en Python. **Hecho:** la ventana principal se genera desde la interfaz original real
   (`tools/gui_dump/` → `src/gui/generated/MainGUIBase.*`: 345 acciones, 267 íconos, mismos textos, barras del diseño `minimal`,
   barra de estado), widgets de `GUIElements` portados, canvas `QOpenGLWidget` (ejes, grilla, HUD, zoom, paneo), estilo Fusion
-  (desvío consciente para verse como en Windows). `build/src/gui/FlatCAM.app` abre y se ve como las capturas del usuario.
+  (desvío consciente para verse como en Windows). Traducción corregida a pedido del usuario ("Abrir", no "Abierto") con
+  `tools/gui_dump/es_corrections.json`. `build/src/gui/FlatCAM.app` abre y se ve como las capturas del usuario.
   **Siguiente** (`AGENTS.md` 11.13): dibujar objetos, abrir archivos y árbol del proyecto, Propiedades, paneles de Perforación,
   Corte, Paint y NCC, CNC Job y exportar. Pendientes menores: Paint/NCC con semilla y líneas, resto de Paint/NCC, selección por área,
   verificación de diámetro seguro (`AGENTS.md`, sección 11).
