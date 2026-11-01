@@ -19,10 +19,11 @@ class FlatCAMObj;
  * Como el original: elige un Gerber o una Geometría (el activo si hay uno), y "Generar geometría de forma libre" o
  * "Generar geometría rectangular" crean `<objeto>_cutout`, una Geometría con una herramienta del diámetro elegido cuyos
  * parámetros son los `geometry_*` de fábrica con la Z de corte y la profundidad múltiple del panel (`cut_tool_dict`).
- * Con puentes finos agrega la herramienta 9999 con la Z de los puentes.
+ * Con puentes finos agrega la herramienta 9999 con la Z de los puentes; con "mouse bites" crea además el Excellon
+ * `<objeto>_mouse_bites` con los agujeros de los puentes.
  *
- * Desvíos conscientes: los "mouse bites" no crean todavía su Excellon de agujeros; los puentes manuales, la base de datos
- * de herramientas y el cursor grande no están (sus controles se ven pero no actúan).
+ * Desvíos conscientes: los puentes manuales, la base de datos de herramientas y el cursor grande no están todavía (sus
+ * controles se ven pero no actúan).
  */
 class CutOutTool : public CutOutToolUIBase {
     Q_OBJECT

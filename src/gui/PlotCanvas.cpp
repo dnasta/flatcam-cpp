@@ -212,11 +212,21 @@ void PlotCanvas::drawLayers(const QRectF& vr) {
             upload(l.fillVbo, l.data.fill);
             upload(l.lineVbo, l.data.lines);
             upload(l.travelVbo, l.data.travel);
+            l.groupVbos.resize(l.data.groups.size() * 2);
+            for (std::size_t g = 0; g < l.data.groups.size(); ++g) {
+                upload(l.groupVbos[2 * g], l.data.groups[g].fill);
+                upload(l.groupVbos[2 * g + 1], l.data.groups[g].lines);
+            }
             l.dirty = false;
         }
         if (!l.visible) continue;
         draw(l.fillVbo.get(), l.data.fill.size(), GL_TRIANGLES, l.data.fillColor);
         draw(l.lineVbo.get(), l.data.lines.size(), GL_LINES, l.data.lineColor);
+        for (std::size_t g = 0; g < l.data.groups.size(); ++g) {
+            const PlotGroup& pg = l.data.groups[g];
+            draw(l.groupVbos[2 * g].get(), pg.fill.size(), GL_TRIANGLES, pg.fillColor);
+            draw(l.groupVbos[2 * g + 1].get(), pg.lines.size(), GL_LINES, pg.lineColor);
+        }
         draw(l.travelVbo.get(), l.data.travel.size(), GL_LINES, l.data.travelColor);
     }
     program_->release();

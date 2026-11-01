@@ -93,6 +93,15 @@ protected:
      */
     static void addShape(const Shape& s, PlotLayerData& out, bool fill = true);
 
+    /**
+     * @brief Agrega una figura a un grupo con colores propios.
+     * @param s Figura.
+     * @param group Grupo a completar.
+     * @param bounds Límites a agrandar.
+     * @param fill Si es `false` solo se dibuja el contorno.
+     */
+    static void addShape(const Shape& s, PlotGroup& group, QRectF& bounds, bool fill = true);
+
 private:
     int id_;
     ObjectKind kind_;

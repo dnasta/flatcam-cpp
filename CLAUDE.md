@@ -15,7 +15,7 @@ máquina del usuario.
 
 **Lo que hay que saber para retomar (el detalle está en `AGENTS.md`, sección 12).**
 
-- **Tests:** 519 (502 del núcleo + 16 de la GUI corren siempre; 1 lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
+- **Tests:** 523 (505 del núcleo + 17 de la GUI corren siempre; 1 lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
   y Qt 6.12 en el Mac del usuario (M4, AppleClang). micromamba: `old` (Shapely 1.8.4, GEOS 3.11, PyQt5 5.15, para oráculos y para
   volcar la interfaz original), `sh2`, `geos312`, `geos311` (`AGENTS.md`, secciones 6 y 12.4).
 - **Hecho (fases 1, 2 y 3 completas):** parsers, transformaciones, postprocesadores, G-code de taladrado y de geometrías, CutOut,
@@ -45,6 +45,7 @@ máquina del usuario.
   es el de dibujo (el primero queda arriba; entre grupos, Excellon/Geometría/CNC Job sobre Gerber) (`AGENTS.md` 11.12 h).
   **Corte completo:** Corte → Geometría (Propiedades, parámetros por herramienta) → CNC Job → exportar; reproduce el `.nc` del
   contorno de la 2024.4 línea por línea salvo la fecha (el usuario lo hizo sin profundidad múltiple).
-  **Siguiente** (`AGENTS.md` 11.13): Paint y NCC con el objeto Geometría, reflejar, preferencias del usuario, varias
-  herramientas en un CNC Job. Pendientes menores: Paint/NCC con semilla y líneas, resto de Paint/NCC, selección por área,
+  **También:** varias herramientas en un CNC Job (verificado contra el original), color propio de los puentes delgados,
+  viajes engrosados en el dibujo y "mouse bites" con su Excellon (el usuario preguntó si esas limitaciones quedaban: no).
+  **Siguiente** (`AGENTS.md` 11.13): Paint y NCC con el objeto Geometría, reflejar, preferencias del usuario. Pendientes menores: Paint/NCC con semilla y líneas, resto de Paint/NCC, selección por área,
   verificación de diámetro seguro (`AGENTS.md`, sección 11).

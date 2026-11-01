@@ -18,6 +18,14 @@
 
 namespace flatcam::gui {
 
+/** @brief Figuras de un objeto con colores propios (otra herramienta, o los viajes engrosados de un CNC Job). */
+struct PlotGroup {
+    std::vector<float> fill;   ///< Triángulos de relleno: x, y por vértice.
+    std::vector<float> lines;  ///< Segmentos del contorno: x, y por vértice.
+    QColor fillColor;          ///< Color del relleno.
+    QColor lineColor;          ///< Color del contorno.
+};
+
 /**
  * @brief Lo que se dibuja de un objeto: triángulos de relleno y segmentos de contorno, con sus colores.
  *
@@ -28,6 +36,7 @@ struct PlotLayerData {
     std::vector<float> lines;  ///< Segmentos del contorno: x, y por vértice, de a dos vértices.
     QColor fillColor;          ///< Color del relleno (con transparencia).
     QColor lineColor;          ///< Color del contorno.
+    std::vector<PlotGroup> groups;  ///< Grupos con sus propios colores, dibujados encima del relleno y el contorno.
     std::vector<float> travel; ///< Segmentos de viaje de un CNC Job (de a dos vértices), dibujados encima.
     QColor travelColor;        ///< Color de los viajes (`cncjob_travel_line`).
     QRectF bounds;             ///< Límites de lo dibujado, en mm.
@@ -151,6 +160,7 @@ private:
         std::unique_ptr<QOpenGLBuffer> fillVbo;
         std::unique_ptr<QOpenGLBuffer> lineVbo;
         std::unique_ptr<QOpenGLBuffer> travelVbo;
+        std::vector<std::unique_ptr<QOpenGLBuffer>> groupVbos;  ///< Relleno y contorno de cada grupo, alternados.
     };
     void drawLayers(const QRectF& vr);
     void drawGrid(class QPainter& p, const QRectF& vr) const;

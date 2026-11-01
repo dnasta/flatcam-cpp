@@ -63,7 +63,10 @@ int main(int argc, char* argv[]) {
         app.runTool(app.drillingTool, flatcam::gui::DrillingTool::info());
         app.drillingTool->setToolUi();
     }
-    else if (tool == "cutout") app.runTool(app.cutoutTool, flatcam::gui::CutOutTool::info());
+    else if (tool == "cutout") {
+        app.runTool(app.cutoutTool, flatcam::gui::CutOutTool::info());
+        app.cutoutTool->setToolUi();
+    }
     if (!shotPath.isEmpty()) {
         QTimer::singleShot(1500, app.ui(), [&app, shotPath] {
             app.onZoomFit();

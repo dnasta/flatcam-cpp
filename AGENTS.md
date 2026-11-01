@@ -72,7 +72,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 519 tests (502 del núcleo y 16 de la GUI pasan; 1, la lenta del NCC
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 523 tests (505 del núcleo y 17 de la GUI pasan; 1, la lenta del NCC
 del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -314,6 +314,9 @@ fijan con sentido físico (micras), no en el último bit.
     oráculos).
   - Con Shapely 2 el CutOut original no corre, así que el ejecutable usa casi seguro Shapely 1.8; que coincida mejor con GEOS 3.11
     sugiere que trae esa GEOS (no está comprobado: no se puede ver dentro del ejecutable desde acá).
+- `tests/tools/oracle_geometry_multitool.py` genera `tests/golden_geometry_multitool.h`: una Geometría con varias herramientas
+  en un mismo CNC Job (`mtool_gen_cncjob` multigeo: `geometry_tool_gcode_gen` con `is_first`/`is_last`, `toolchange=True`), con el
+  corte con puentes finos (T1 + T9999), dos herramientas con parámetros distintos y tres de láser. Coinciden texto por texto.
 - `tests/tools/oracle_geometry_modes.py` genera `tests/golden_geometry_modes.h`: 26 escenarios sintéticos (profundidad múltiple,
   corte extra, puntos, tolerancia, segmentación, láser, sin cambio de herramienta, pulgadas) ejecutados con
   `geometry_tool_gcode_gen` **original**; los tests comparan el texto completo. Los desplazamientos de herramienta
@@ -537,16 +540,17 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     un grupo, el primero queda arriba (Silkscreen primero → se ve sobre B_Cu); entre grupos, los posteriores (Excellon,
     Geometría, CNC Job) quedan sobre los anteriores, porque se generan a partir de ellos. Soltar archivos sigue abriéndolos.
     Test: `GuiApp.ReorderingTheProjectTreeChangesTheDrawOrder` (incluye un soltado con eventos de mouse sobre la vista).
-    (i) El CNC Job de una geometría dibuja los cortes engrosados con el radio de la herramienta (como `plot2`) pero con 16
-    segmentos por cuarto de círculo en vez de 64, y los viajes como líneas (el original también los engrosa). Solo visual.
-    (j) Geometría: se genera el CNC Job de **una herramienta por vez** (el núcleo hace un trabajo por herramienta); los puentes
-    finos del Corte (herramienta 9999) se dibujan con el color general; los "mouse bites" no crean su Excellon todavía.
+    (i) El CNC Job dibuja cortes y viajes engrosados con el radio de la herramienta (como `plot2`: cortes azules, viajes
+    amarillos translúcidos encima) con 16 segmentos por cuarto de círculo en vez de 64. Solo visual.
+    (j) ~~Una herramienta por vez, color de los puentes finos, mouse bites~~: resuelto. Varias herramientas van en un mismo
+    CNC Job (`CncJob::generateFromGeometryTools`, verificado contra el original con `oracle_geometry_multitool.py`); cada
+    herramienta con `override_color` se dibuja con el suyo (`PlotGroup`); los "mouse bites" crean `<objeto>_mouse_bites`.
     (k) Dos errores del original que se reproducen a propósito: `geometry_plot_line` y `get_fg_blue()` usan `is_theme_black`
     sin llamarla, así que la geometría siempre se dibuja en `#FFAAAA` y el rótulo "Parámetros para" va en `#7777FF`.
 13. **GUI: pendientes, en orden:** ~~dibujar Gerber y Excellon~~, ~~abrir archivos y el árbol del Proyecto~~, ~~Propiedades de
     Gerber y Excellon~~ y ~~los paneles de las cuatro herramientas~~ (hechos; falta menú contextual del árbol, mostrar/ocultar y
     borrar). ~~Perforación → CNC Job → exportar~~ (hecho). ~~Corte → Geometría → CNC Job~~ (hecho; varias herramientas en un
-    CNC Job, pendiente). Sigue: Paint y NCC (crean Geometrías con la herramienta del láser), reflejar (Transformaciones o PCB a 2 caras), cargar las preferencias del usuario (hoy los paneles tienen los valores de fábrica:
+    CNC Job, hecho). Sigue: Paint y NCC (crean Geometrías con la herramienta del láser), reflejar (Transformaciones o PCB a 2 caras), cargar las preferencias del usuario (hoy los paneles tienen los valores de fábrica:
     por ejemplo NCC 40 % y "Semilla" en vez de sus 80 % y "Estándar"); pestaña Propiedades de cada objeto (`ObjectUI.py`, generada igual que la ventana); paneles de Perforación, Corte, Paint y NCC
     (generados desde `ToolDrilling`, `ToolCutOut`, `ToolPaint`, `ToolNCC` con sus valores de fábrica) y su lógica sobre el núcleo;
     CNC Job y exportar `.nc`; reflejar (herramienta PCB a 2 caras / Transformaciones).
@@ -558,7 +562,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **519 tests** (503 del núcleo y 16 de la GUI): 518 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
+- **523 tests** (506 del núcleo y 17 de la GUI): 522 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
   oráculos en Python (Shapely 1.8.4) y, donde existe, contra el `.nc` real del usuario (FlatCAM 8.994):
@@ -585,7 +589,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 519 tests, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 523 tests, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -625,6 +629,8 @@ trazados; taladro con los mismos agujeros (sección 7).
 - Los paneles de Propiedades se vuelcan después del `set_ui` del objeto original (que esconde lo del nivel Básico); para eso el
   objeto necesita sus opciones como en `AppObject.new_object` (`<tipo>_*` y las de herramientas) y vivir dentro del área de
   Propiedades (cambia los márgenes a 9).
+- Para mirar el canvas OpenGL desde un test: `QT_QPA_PLATFORM=cocoa build/tests/gui_tests --gtest_filter=...` (sin esa
+  variable los tests corren en "offscreen", donde `QOpenGLWidget` no dibuja) y `ui()->grab().save(...)`.
 - Un test que compara un texto consigo mismo siempre pasa: una vez se coló una aserción así; revisar que cada `EXPECT` pueda fallar.
 
 ### 12.4 Entorno para regenerar los goldens (solo hace falta si se agrega un oráculo)

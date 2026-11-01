@@ -46,9 +46,9 @@ GeometryTool defaultGeometryTool();
  * guarda su propia geometría.
  *
  * Se dibuja solo con líneas, del color `geometry_plot_line` (`#FFAAAA`: en el original `is_theme_black` se usa sin
- * llamarla y la condición siempre es verdadera). Desvío pendiente: las herramientas con color propio (los puentes finos
- * del Corte, `#29a3a3fa`) se dibujan con ese mismo color. "Generar objeto CNCJob" crea `<nombre>_cnc` con
- * `mtool_gen_cncjob`; por ahora de a una herramienta por vez.
+ * llamarla y la condición siempre es verdadera). Las herramientas con color propio (los puentes finos del Corte,
+ * `#29a3a3fa`) se dibujan con el suyo. "Generar objeto CNCJob" crea `<nombre>_cnc` con
+ * `mtool_gen_cncjob`, con todas las herramientas elegidas en un mismo trabajo.
  */
 class GeometryObject : public FlatCAMObj {
     Q_OBJECT
