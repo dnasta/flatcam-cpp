@@ -33,6 +33,39 @@ public:
      * @return El objeto, o `nullptr`.
      */
     static std::unique_ptr<FlatCAMObj> objectFrom(const JsonValue& d, QString& warning);
+
+    /** @brief Opciones de fábrica de FlatCAM 2024.4 (`factory_defaults`, de `resources/factory_defaults.json`). @return Las opciones. */
+    static const JsonValue& factoryDefaults();
+
+    /**
+     * @brief Diccionario de un objeto como lo guarda el original (`to_dict` con sus `ser_attrs`).
+     *
+     * Parte de lo que trajo el objeto si vino de un proyecto (así se conservan las claves que el port no usa) y si no,
+     * de las opciones de la aplicación como `AppObject.new_object`. El G-code interpretado (`gcode_parsed`) se arma con
+     * el algoritmo de `gcode_parse`, para que el FlatCAM en Python pueda dibujar el CNC Job al abrir el proyecto.
+     * @param obj Objeto.
+     * @param appOptions Opciones de la aplicación (las del proyecto abierto o las de fábrica).
+     * @return El diccionario.
+     */
+    static JsonValue toDict(const FlatCAMObj& obj, const JsonValue& appOptions);
+
+    /**
+     * @brief El documento completo del proyecto (`save_project`): `objs`, `options` y `version`.
+     * @param objs Objetos, en el orden del árbol.
+     * @param appOptions Opciones de la aplicación.
+     * @return El documento.
+     */
+    static JsonValue projectDict(const std::vector<FlatCAMObj*>& objs, const JsonValue& appOptions);
+
+    /**
+     * @brief `gcode_parse` del original (sin arcos): trazados separados en cada cambio de Z, con su tipo
+     * (`T`/`C` viaje o corte, `F`/`S` rápido o avance) y, en un taladrado, el círculo de cada agujero.
+     * @param gcode G-code de una herramienta.
+     * @param laser Si el postprocesador es de láser (M3/M5 hacen de Z).
+     * @param drillDia Diámetro de los agujeros si es un taladrado; 0 si no.
+     * @return La lista `[{"geom": ..., "kind": [..]}]`.
+     */
+    static JsonValue gcodeParse(const std::string& gcode, bool laser, double drillDia);
 };
 
 }  // namespace flatcam::gui

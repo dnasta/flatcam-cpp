@@ -9,6 +9,7 @@
 #include "cam/CncJob.h"
 #include "gui/generated/DrillingToolUIBase.h"
 #include "gui/tools/ToolInfo.h"
+#include "io/JsonValue.h"
 
 namespace flatcam::gui {
 
@@ -52,6 +53,7 @@ private:
         bool lastDrill{true};
     };
 
+    static JsonValue drillDataJson(const ToolData& d, const std::string& pp);
     void onObjectChanged();
     void buildToolUi();
     void onRowSelectionChange();

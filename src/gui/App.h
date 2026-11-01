@@ -67,6 +67,20 @@ public:
     /** @brief Pide el proyecto con el diálogo de archivos (`on_file_openproject`). */
     void onFileOpenProject();
 
+    /**
+     * @brief Guarda el proyecto (`save_project`): todos los objetos y las opciones, comprimido con XZ como el original
+     * (`global_save_compressed`, nivel `global_compression_level`).
+     * @param filename Ruta del `.FlatPrj`.
+     * @return `true` si se pudo escribir.
+     */
+    bool saveProject(const QString& filename);
+
+    /** @brief Guarda en el archivo del proyecto, o pregunta dónde si no tiene (`on_file_saveproject`). */
+    void onFileSaveProject();
+
+    /** @brief Pregunta dónde guardar el proyecto (`on_file_saveprojectas`). */
+    void onFileSaveProjectAs();
+
     /** @brief Quita todos los objetos (`on_file_new` sin preguntar). */
     void clearProject();
 

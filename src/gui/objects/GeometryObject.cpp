@@ -33,6 +33,47 @@ GeometryTool defaultGeometryTool() {
     return t;
 }
 
+JsonValue geometryToolDataJson(const GeometryTool& t, JsonValue base) {
+    if (!base.isObject()) base = JsonValue::object();
+    const GeometryToolSettings& d = t.data;
+    auto pair = [](const std::optional<std::array<double, 2>>& p) {
+        if (!p) return JsonValue();
+        JsonValue a = JsonValue::array();
+        a.push(JsonValue::real((*p)[0]));
+        a.push(JsonValue::real((*p)[1]));
+        return a;
+    };
+    base.set("cutz", JsonValue::real(d.cutZ));
+    base.set("multidepth", JsonValue::boolean(d.multidepth));
+    base.set("depthperpass", JsonValue::real(d.depthPerPass));
+    base.set("travelz", JsonValue::real(d.travelZ));
+    base.set("feedrate", JsonValue::real(d.feedrate));
+    base.set("feedrate_z", JsonValue::real(d.feedrateZ));
+    base.set("feedrate_rapid", JsonValue::real(d.feedrateRapid));
+    base.set("spindlespeed", JsonValue::integer(static_cast<long long>(d.spindleSpeed)));
+    base.set("spindledir", JsonValue::string(d.spindleDir));
+    base.set("dwell", JsonValue::boolean(d.dwell));
+    base.set("dwelltime", JsonValue::real(d.dwellTime));
+    base.set("startz", d.startZ ? JsonValue::real(*d.startZ) : JsonValue());
+    base.set("endz", JsonValue::real(d.endZ));
+    base.set("endxy", pair(d.endXY));
+    base.set("toolchange", JsonValue::boolean(t.toolchange));
+    base.set("toolchangez", JsonValue::real(d.toolchangeZ));
+    base.set("toolchangexy", pair(d.toolchangeXY));
+    base.set("extracut", JsonValue::boolean(d.extracut));
+    base.set("extracut_length", JsonValue::real(d.extracutLength));
+    base.set("ppname_g", JsonValue::string(t.ppname.toStdString()));
+    base.set("optimization_type", JsonValue::string(t.optimization.toStdString()));
+    base.set("vtipdia", JsonValue::real(t.vtipDia));
+    base.set("vtipangle", JsonValue::real(t.vtipAngle));
+    if (t.overrideColor.isValid()) {
+        const QColor c = t.overrideColor;
+        base.set("override_color", JsonValue::string(QString::asprintf("#%02x%02x%02x%02x", c.red(), c.green(), c.blue(),
+                                                                        c.alpha()).toStdString()));
+    }
+    return base;
+}
+
 GeometryObject::GeometryObject(QString name) : FlatCAMObj(ObjectKind::Geometry, std::move(name)) {
     outlineColor = plotLineColor();
     fillColor = Qt::transparent;
@@ -123,6 +164,7 @@ std::unique_ptr<CNCJobObject> GeometryObject::makeCncJob(const std::vector<int>&
         row.offset = t.offset;
         row.type = t.type;
         row.toolType = t.toolType;
+        row.data = geometryToolDataJson(t, t.projectData);
         rows.push_back(row);
     }
     auto job = std::make_unique<CncJob>();

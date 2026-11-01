@@ -347,5 +347,6 @@
     <file>images/zoom_in32.png</file>
     <file>images/zoom_out32.png</file>
     <file>es.json</file>
+    <file>factory_defaults.json</file>
 </qresource>
 </RCC>
