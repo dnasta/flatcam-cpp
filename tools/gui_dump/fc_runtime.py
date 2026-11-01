@@ -29,6 +29,11 @@ from PyQt5 import QtCore, QtGui, QtWidgets  # noqa: E402
 # ------------------------------------------------------------------ traducción
 with open(os.path.join(REF, "translate", "es.bin"), "rb") as f:
     SPANISH = pickle.load(f)
+# Correcciones de la traducción pedidas por el usuario (por ejemplo "Open" -> "Abrir", no "Abierto").
+import json  # noqa: E402
+
+with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "es_corrections.json"), encoding="utf-8") as f:
+    SPANISH.update({k: v for k, v in json.load(f).items() if not k.startswith("_")})
 
 
 def gettext(text):
