@@ -28,6 +28,8 @@ struct GeometryTool {
     QString type{"Rough"};        ///< Tipo de trabajo (`type`).
     QString toolType{"C1"};       ///< Forma de la herramienta (`tool_type`).
     GeometryToolSettings data;    ///< Parámetros de corte (`data`).
+    double vtipDia{0.1};          ///< Diámetro de la punta en V (`data['vtipdia']`).
+    double vtipAngle{30.0};       ///< Ángulo de la punta en V (`data['vtipangle']`).
     QString ppname{"default"};    ///< Postprocesador (`data['ppname_g']`).
     bool toolchange{false};       ///< Cambio de herramienta (`data['toolchange']`).
     QString optimization{"R"};    ///< Optimización del recorrido (`data['optimization_type']`; `R` = rtree).

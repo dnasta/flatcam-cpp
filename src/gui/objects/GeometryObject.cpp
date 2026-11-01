@@ -28,7 +28,7 @@ GeometryTool defaultGeometryTool() {
     d.toolchangeXY = std::array<double, 2>{0.0, 0.0};  // "0.0, 0.0"
     d.extracut = false;
     d.extracutLength = 0.1;
-    d.tolerance = 0.01 / 20;  // global_tolerance / 20, en mtool_gen_cncjob
+    d.tolerance = 0.005 / 20;  // global_tolerance (0,005) / 20 = 0,00025, en mtool_gen_cncjob
     return t;
 }
 

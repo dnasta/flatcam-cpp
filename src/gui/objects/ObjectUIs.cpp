@@ -2,6 +2,7 @@
 
 #include <QHeaderView>
 #include <algorithm>
+#include <cmath>
 
 #include "gui/Translation.h"
 #include "gui/objects/CNCJobObject.h"
@@ -297,9 +298,23 @@ void GeometryObjectUI::updateUi() {
     for (int r : rows) {
         auto it = obj_->tools().find(toolAt(r));
         if (it == obj_->tools().end()) continue;
+        // ui_update_v_shape: con herramienta en V se muestran la punta y el ángulo y la Z de corte se calcula
+        // (update_cutz, con los valores que tenga el formulario en ese momento, como el original).
+        const QComboBox* tt = qobject_cast<QComboBox*>(geo_tools_table->cellWidget(r, 4));
+        const bool vShape = tt && tt->currentText() == "V";
+        for (QWidget* w : std::initializer_list<QWidget*>{tipdialabel, tipdia_entry, tipanglelabel, tipangle_entry})
+            w->setVisible(vShape);
+        cutz_entry->setDisabled(vShape);
+        if (vShape) {
+            const double halfAngle = tipangle_entry->value() / 2.0 * M_PI / 180.0;
+            const double cut = (it->second.tooldia - tipdia_entry->value()) / (2.0 * std::tan(halfAngle));
+            it->second.data.cutZ = QString::number(cut, 'f', 4).toDouble() * -1.0;
+        }
         const GeometryTool& t = it->second;
         const GeometryToolSettings& d = t.data;
         cutz_entry->setValue(d.cutZ);
+        tipdia_entry->setValue(t.vtipDia);
+        tipangle_entry->setValue(t.vtipAngle);
         mpass_cb->setChecked(d.multidepth);
         maxdepth_entry->setValue(d.depthPerPass);
         travelz_entry->setValue(d.travelZ);
@@ -332,6 +347,8 @@ void GeometryObjectUI::formToStorage() {
     GeometryTool& t = it->second;
     GeometryToolSettings& d = t.data;
     d.cutZ = cutz_entry->value();
+    t.vtipDia = tipdia_entry->value();
+    t.vtipAngle = tipangle_entry->value();
     d.multidepth = mpass_cb->isChecked();
     d.depthPerPass = maxdepth_entry->value();
     d.travelZ = travelz_entry->value();

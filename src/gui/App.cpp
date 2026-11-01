@@ -81,8 +81,8 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     ui_->installEventFilter(this);
     defaultProperties_ = ui_->properties_scroll_area->widget();
     // Las herramientas (install_tools): sus paneles viven mientras viva la ventana.
-    nccTool = new NccTool(ui_.get());
-    paintTool = new PaintTool(ui_.get());
+    nccTool = new NccTool(this, ui_.get());
+    paintTool = new PaintTool(this, ui_.get());
     drillingTool = new DrillingTool(this, ui_.get());
     cutoutTool = new CutOutTool(this, ui_.get());
     for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool}) w->hide();
@@ -135,9 +135,15 @@ void App::connectSignals() {
         connect(a, &QAction::triggered, this, [zoomBy] { zoomBy(1 / 1.5); });
     // Herramientas: menú Herramienta y barra de herramientas.
     for (QAction* a : {ui_->ncclear_tool_menuAction, ui_->ncc_btn})
-        connect(a, &QAction::triggered, this, [this] { runTool(nccTool, NccTool::info()); });
+        connect(a, &QAction::triggered, this, [this] {
+            runTool(nccTool, NccTool::info());
+            nccTool->setToolUi();
+        });
     for (QAction* a : {ui_->paint_tool_menuAction, ui_->paint_btn})
-        connect(a, &QAction::triggered, this, [this] { runTool(paintTool, PaintTool::info()); });
+        connect(a, &QAction::triggered, this, [this] {
+            runTool(paintTool, PaintTool::info());
+            paintTool->setToolUi();
+        });
     for (QAction* a : {ui_->drilling_tool_menuAction, ui_->drill_btn})
         connect(a, &QAction::triggered, this, [this] {
             runTool(drillingTool, DrillingTool::info());
