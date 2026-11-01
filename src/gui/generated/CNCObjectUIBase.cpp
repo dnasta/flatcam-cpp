@@ -8,8 +8,9 @@ namespace flatcam::gui {
 
 void CNCObjectUIBase::setupUi() {
     // ---- acciones (compartidas entre menús y barras)
+    this->setAutoFillBackground(true);
     auto* lay1 = new QVBoxLayout();
-    lay1->setContentsMargins(11, 11, 11, 11);
+    lay1->setContentsMargins(9, 9, 9, 9);
     lay1->setSpacing(6);
     title_box = new QHBoxLayout();
     title_box->setContentsMargins(0, 0, 0, 0);
@@ -22,6 +23,7 @@ void CNCObjectUIBase::setupUi() {
     title_box->addWidget(title_label, 1);
     level = new FCLabel(nullptr);
     level->setProperty("alignment", 130);
+    level->setText(QString::fromUtf8("<span style=\"color:green;\"><b>BASIC</b></span>"));
     level->setToolTip(QString::fromUtf8("BASIC es adecuado para un principiante. Muchos parámetros\nestán ocultos para el usuario en este modo.\nEl modo AVANZADO pondrá a disposición todos los parámetros.\n\nPara cambiar el NIVEL de la aplicación, vaya a:\nEditar -> Preferencias -> General y verificar:\n'APP. NIVEL 'botón de radio."));
     title_box->addWidget(level, 0);
     lay1->addLayout(title_box, 0);
@@ -37,6 +39,7 @@ void CNCObjectUIBase::setupUi() {
     cncplot_method_label->setToolTip(QString::fromUtf8("Esto selecciona el tipo de geometrías en el lienzo para trazar.\nEsos pueden ser de tipo 'Viajes' lo que significa que los movimientos\nPor encima de la pieza de trabajo o puede ser de tipo 'Corte',\nLo que significa los movimientos que cortan en el material."));
     lay2->addWidget(cncplot_method_label, 0, 0, 1, 1);
     cncplot_method_combo = new RadioSet({{QString::fromUtf8("Todos"), QVariant(QString::fromUtf8("all"))}, {QString::fromUtf8("Viajar"), QVariant(QString::fromUtf8("travel"))}, {QString::fromUtf8("Cortar"), QVariant(QString::fromUtf8("cut"))}}, Qt::Horizontal, false, nullptr);
+    cncplot_method_combo->setValue(QVariant(QString::fromUtf8("all")));
     lay2->addWidget(cncplot_method_combo, 0, 1, 1, 2);
     name_hlay = new QHBoxLayout();
     name_hlay->setContentsMargins(0, 0, 0, 0);
@@ -45,6 +48,7 @@ void CNCObjectUIBase::setupUi() {
     w3->setText(QString::fromUtf8("<b>Nombre:</b>"));
     name_hlay->addWidget(w3, 0);
     name_entry = new FCEntry(nullptr);
+    name_entry->setText(QString::fromUtf8("x"));
     name_hlay->addWidget(name_entry, 0);
     lay2->addLayout(name_hlay, 2, 0, 1, 3);
     editor_button = new FCButton(nullptr);
@@ -72,6 +76,7 @@ void CNCObjectUIBase::setupUi() {
     properties_frame->setLayout(properties_box);
     lay2->addWidget(properties_frame, 7, 0, 1, 3);
     annotation_cb = new FCCheckBox(nullptr);
+    annotation_cb->setChecked(true);
     annotation_cb->setText(QString::fromUtf8("Mostrar anotación"));
     annotation_cb->setToolTip(QString::fromUtf8("Esto selecciona si mostrar la anotación de texto en el gráfico.\nCuando está marcado, mostrará números en orden para cada final.\nde una linea de viaje."));
     lay2->addWidget(annotation_cb, 8, 0, 1, 3);
@@ -116,6 +121,7 @@ void CNCObjectUIBase::setupUi() {
     lay6->addWidget(cnc_tools_table_label, 0);
     lay6->addItem(new QSpacerItem(0, 0, QSizePolicy::Policy(7), QSizePolicy::Policy(1)));
     plot_cb = new FCCheckBox(nullptr);
+    plot_cb->setChecked(true);
     plot_cb->setProperty("layoutDirection", 1);
     plot_cb->setText(QString::fromUtf8("Trazar objeto"));
     plot_cb->setToolTip(QString::fromUtf8("Trazar (mostrar) este objeto."));
@@ -137,6 +143,7 @@ void CNCObjectUIBase::setupUi() {
     tooldia_entry->setProperty("decimals", 4);
     tooldia_entry->setProperty("maximum", 10000.0);
     tooldia_entry->setProperty("singleStep", 0.1);
+    tooldia_entry->setProperty("value", 1.0);
     custom_box->addWidget(tooldia_entry, 0);
     updateplot_button = new FCButton(nullptr);
     updateplot_button->setText(QString::fromUtf8("Actualizar Trama"));
@@ -157,6 +164,7 @@ void CNCObjectUIBase::setupUi() {
     sal_btn->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\t  QPushButton\n\t\t\t\t\t\t\t\t  {\n\t\t\t\t\t\t\t\t\t  font-weight: bold;\n\t\t\t\t\t\t\t\t  }\n\t\t\t\t\t\t\t\t  "));
     sal_btn->setText(QString::fromUtf8("Nivelación automática"));
     sal_btn->setToolTip(QString::fromUtf8("Habilite la función de nivelación automática."));
+    sal_btn->setHidden(true);
     custom_box->addWidget(sal_btn, 0);
     auto* w8 = new QFrame(nullptr);
     w8->setProperty("frameShadow", 48);
@@ -218,6 +226,7 @@ void CNCObjectUIBase::setupUi() {
     ptravelz_entry = new FCDoubleSpinner(nullptr);
     ptravelz_entry->setProperty("decimals", 4);
     ptravelz_entry->setProperty("maximum", 10000.0);
+    ptravelz_entry->setProperty("value", 2.0);
     lay9->addWidget(ptravelz_entry, 9, 1, 1, 1);
     pdepth_label = new FCLabel(nullptr);
     pdepth_label->setText(QString::fromUtf8("Profundidad de la sonda Z:"));
@@ -227,6 +236,7 @@ void CNCObjectUIBase::setupUi() {
     pdepth_entry->setProperty("decimals", 4);
     pdepth_entry->setProperty("maximum", 0.0);
     pdepth_entry->setProperty("minimum", -910000.0);
+    pdepth_entry->setProperty("value", -1.0);
     lay9->addWidget(pdepth_entry, 11, 1, 1, 1);
     feedrate_probe_label = new FCLabel(nullptr);
     feedrate_probe_label->setText(QString::fromUtf8("Avance de la Sonda:"));
@@ -235,6 +245,7 @@ void CNCObjectUIBase::setupUi() {
     feedrate_probe_entry = new FCDoubleSpinner(nullptr);
     feedrate_probe_entry->setProperty("decimals", 4);
     feedrate_probe_entry->setProperty("maximum", 910000.0);
+    feedrate_probe_entry->setProperty("value", 120.0);
     lay9->addWidget(feedrate_probe_entry, 13, 1, 1, 1);
     auto* w13 = new QFrame(nullptr);
     w13->setProperty("frameShadow", 48);
@@ -246,35 +257,30 @@ void CNCObjectUIBase::setupUi() {
     w14->setToolTip(QString::fromUtf8("Elija un modo para la generación de mapas de altura.\n- Manual: seleccionará una selección de puntos de sonda haciendo clic en el lienzo\n- Cuadrícula: generará automáticamente una cuadrícula de puntos de sonda"));
     lay9->addWidget(w14, 16, 0, 1, 1);
     al_mode_radio = new RadioSet({{QString::fromUtf8("Manual"), QVariant(QString::fromUtf8("manual"))}, {QString::fromUtf8("Cuadrícula"), QVariant(QString::fromUtf8("grid"))}}, Qt::Horizontal, true, nullptr);
+    al_mode_radio->setValue(QVariant(QString::fromUtf8("grid")));
     lay9->addWidget(al_mode_radio, 16, 1, 1, 1);
     al_method_lbl = new FCLabel(nullptr);
-    al_method_lbl->setEnabled(false);
     al_method_lbl->setText(QString::fromUtf8("Método:"));
     al_method_lbl->setToolTip(QString::fromUtf8("Elija un método para la aproximación de alturas a partir de datos de autonivelación.\n- Voronoi: generará un diagrama de Voronoi\n- Bilineal: utilizará interpolación bilineal. Solo se puede utilizar para el modo de cuadrícula."));
     lay9->addWidget(al_method_lbl, 17, 0, 1, 1);
     al_method_radio = new RadioSet({{QString::fromUtf8("Voronoi"), QVariant(QString::fromUtf8("v"))}, {QString::fromUtf8("Bilineal"), QVariant(QString::fromUtf8("b"))}}, Qt::Horizontal, true, nullptr);
-    al_method_radio->setEnabled(false);
     al_method_radio->setValue(QVariant(QString::fromUtf8("v")));
     lay9->addWidget(al_method_radio, 17, 1, 1, 1);
     al_columns_label = new FCLabel(nullptr);
-    al_columns_label->setEnabled(false);
     al_columns_label->setText(QString::fromUtf8("Columnas:"));
     al_columns_label->setToolTip(QString::fromUtf8("El número de columnas de la cuadrícula."));
     lay9->addWidget(al_columns_label, 19, 0, 1, 1);
     al_columns_entry = new FCSpinner(nullptr);
-    al_columns_entry->setEnabled(false);
-    al_columns_entry->setProperty("minimum", 2);
-    al_columns_entry->setProperty("value", 2);
+    al_columns_entry->setProperty("minimum", 1);
+    al_columns_entry->setProperty("value", 4);
     lay9->addWidget(al_columns_entry, 19, 1, 1, 1);
     al_rows_label = new FCLabel(nullptr);
-    al_rows_label->setEnabled(false);
     al_rows_label->setText(QString::fromUtf8("Filas:"));
     al_rows_label->setToolTip(QString::fromUtf8("El número de filas de la cuadrícula."));
     lay9->addWidget(al_rows_label, 21, 0, 1, 1);
     al_rows_entry = new FCSpinner(nullptr);
-    al_rows_entry->setEnabled(false);
-    al_rows_entry->setProperty("minimum", 2);
-    al_rows_entry->setProperty("value", 2);
+    al_rows_entry->setProperty("minimum", 1);
+    al_rows_entry->setProperty("value", 4);
     lay9->addWidget(al_rows_entry, 21, 1, 1, 1);
     al_add_button = new FCButton(nullptr);
     al_add_button->setText(QString::fromUtf8("Agregar puntos de sonda"));
@@ -502,6 +508,7 @@ void CNCObjectUIBase::setupUi() {
     auto* w40 = new QSlider(nullptr);
     w40->setProperty("maximum", 500000);
     w40->setProperty("singleStep", 1000);
+    w40->setProperty("value", 5000);
     lay39->addWidget(w40, 0);
     auto* w41 = new FCDoubleSpinner(nullptr);
     w41->setProperty("decimals", 4);
@@ -509,6 +516,7 @@ void CNCObjectUIBase::setupUi() {
     w41->setMinimumSize(QSize(70, 0));
     w41->setProperty("singleStep", 0.1);
     { QSizePolicy sp(QSizePolicy::Policy(5), QSizePolicy::Policy(5)); sp.setHorizontalStretch(0); sp.setVerticalStretch(0); w41->setSizePolicy(sp); }
+    w41->setProperty("value", 5.0);
     lay39->addWidget(w41, 0);
     jog_step_entry->setLayout(lay39);
     lay38->addWidget(jog_step_entry, 0, 1, 1, 1);
@@ -523,6 +531,7 @@ void CNCObjectUIBase::setupUi() {
     auto* w43 = new QSlider(nullptr);
     w43->setProperty("maximum", 10000000);
     w43->setProperty("singleStep", 1000);
+    w43->setProperty("value", 1500000);
     lay42->addWidget(w43, 0);
     auto* w44 = new FCDoubleSpinner(nullptr);
     w44->setProperty("decimals", 4);
@@ -530,6 +539,7 @@ void CNCObjectUIBase::setupUi() {
     w44->setMinimumSize(QSize(70, 0));
     w44->setProperty("singleStep", 10.0);
     { QSizePolicy sp(QSizePolicy::Policy(5), QSizePolicy::Policy(5)); sp.setHorizontalStretch(0); sp.setVerticalStretch(0); w44->setSizePolicy(sp); }
+    w44->setProperty("value", 1500.0);
     lay42->addWidget(w44, 0);
     jog_fr_entry->setLayout(lay42);
     lay38->addWidget(jog_fr_entry, 1, 1, 1, 1);
@@ -578,10 +588,12 @@ void CNCObjectUIBase::setupUi() {
     lay46->setContentsMargins(0, 0, 0, 0);
     lay46->setSpacing(6);
     grbl_get_heightmap_button = new FCButton(nullptr);
+    grbl_get_heightmap_button->setEnabled(false);
     grbl_get_heightmap_button->setText(QString::fromUtf8("Aplicar nivelación automática"));
     grbl_get_heightmap_button->setToolTip(QString::fromUtf8("Enviará el GCode de sondeo al controlador GRBL,\nespere los datos de sondeo Z y luego aplique estos datos\nsobre el GCode original, por lo que se realiza una autonivelación."));
     lay46->addWidget(grbl_get_heightmap_button, 1);
     grbl_save_height_map_button = new QToolButton(nullptr);
+    grbl_save_height_map_button->setEnabled(false);
     grbl_save_height_map_button->setIcon(QIcon(QString::fromUtf8(":/images/save_as.png")));
     grbl_save_height_map_button->setToolTip(QString::fromUtf8("Guardará el mapa de altura GRBL."));
     lay46->addWidget(grbl_save_height_map_button, 0, Qt::Alignment(2));
@@ -598,12 +610,13 @@ void CNCObjectUIBase::setupUi() {
     lay47->setContentsMargins(0, 0, 0, 0);
     lay47->setSpacing(6);
     h_gcode_button = new FCButton(nullptr);
+    h_gcode_button->setEnabled(false);
     { QSizePolicy sp(QSizePolicy::Policy(7), QSizePolicy::Policy(3)); sp.setHorizontalStretch(0); sp.setVerticalStretch(0); h_gcode_button->setSizePolicy(sp); }
     h_gcode_button->setText(QString::fromUtf8("Guardar GCode de sondeo"));
     h_gcode_button->setToolTip(QString::fromUtf8("Guardará el GCode de sondeo."));
-    h_gcode_button->setHidden(true);
     lay47->addWidget(h_gcode_button, 0);
     view_h_gcode_button = new QToolButton(nullptr);
+    view_h_gcode_button->setEnabled(false);
     view_h_gcode_button->setIcon(QIcon(QString::fromUtf8(":/images/edit_file32.png")));
     view_h_gcode_button->setToolTip(QString::fromUtf8("Ver / editar el GCode de sondeo."));
     lay47->addWidget(view_h_gcode_button, 0);
@@ -611,7 +624,6 @@ void CNCObjectUIBase::setupUi() {
     import_heights_button = new FCButton(nullptr);
     import_heights_button->setText(QString::fromUtf8("Importar mapa de altura"));
     import_heights_button->setToolTip(QString::fromUtf8("Importar el archivo que tiene las alturas Z\nobtenido mediante sondeo y luego aplicar estos datos\nsobre el GCode original por lo tanto\nhaciendo autonivelación."));
-    import_heights_button->setHidden(true);
     lay9->addWidget(import_heights_button, 33, 0, 1, 2);
     auto* w48 = new QFrame(nullptr);
     w48->setProperty("frameShadow", 48);

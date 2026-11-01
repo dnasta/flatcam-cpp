@@ -14,6 +14,4 @@ QStringList preprocessorNames() {
             "Toolchange_Manual", "Toolchange_Probe_MACH3", "Z_laser"};
 }
 
-ToolInfo CutOutTool::info() { return {tr_("Cutout PCB"), tr_("Cutout Tool")}; }
-
 }  // namespace flatcam::gui

@@ -13,6 +13,7 @@
 #include "gui/PlotCanvas.h"
 #include "gui/Translation.h"
 #include "gui/objects/CNCJobObject.h"
+#include "gui/objects/GeometryObject.h"
 #include "gui/objects/ObjectUIs.h"
 
 namespace flatcam::gui {
@@ -83,7 +84,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     nccTool = new NccTool(ui_.get());
     paintTool = new PaintTool(ui_.get());
     drillingTool = new DrillingTool(this, ui_.get());
-    cutoutTool = new CutOutTool(ui_.get());
+    cutoutTool = new CutOutTool(this, ui_.get());
     for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool}) w->hide();
     connectSignals();
 }
@@ -143,7 +144,10 @@ void App::connectSignals() {
             drillingTool->setToolUi();
         });
     for (QAction* a : {ui_->cutout_tool_menuAction, ui_->cutout_btn})
-        connect(a, &QAction::triggered, this, [this] { runTool(cutoutTool, CutOutTool::info()); });
+        connect(a, &QAction::triggered, this, [this] {
+            runTool(cutoutTool, CutOutTool::info());
+            cutoutTool->setToolUi();
+        });
     // ObjectCollection: elegir un objeto carga sus Propiedades; activarlo (doble clic o Enter) además abre la pestaña.
     connect(ui_->collection_view->selectionModel(), &QItemSelectionModel::currentChanged, this,
             [this](const QModelIndex& cur, const QModelIndex&) {
@@ -279,6 +283,18 @@ FlatCAMObj* App::addObject(std::unique_ptr<FlatCAMObj> o) {
     return obj;
 }
 
+FlatCAMObj* App::generateCncJob(GeometryObject* geo, const std::vector<int>& toolIds) {
+    QString error;
+    std::unique_ptr<CNCJobObject> job = geo->makeCncJob(toolIds, error);
+    if (!job) {
+        ui_->inform(error);
+        return nullptr;
+    }
+    FlatCAMObj* obj = addObject(std::move(job));
+    ui_->inform("[success] " + tr_("Finished G-Code processing") + "...");
+    return obj;
+}
+
 void App::onZoomFit() { ui_->plotCanvas()->fitView(); }
 
 void App::showProperties(FlatCAMObj* obj) {
@@ -288,6 +304,10 @@ void App::showProperties(FlatCAMObj* obj) {
     if (obj && obj->kind() == ObjectKind::CNCJob) {
         auto* job = static_cast<CNCJobObject*>(obj);
         static_cast<CNCObjectUI*>(panel)->onExport = [this, job] { exportGcode(job); };
+    } else if (obj && obj->kind() == ObjectKind::Geometry) {
+        auto* geo = static_cast<GeometryObject*>(obj);
+        auto* gui = static_cast<GeometryObjectUI*>(panel);
+        gui->onGenerateCnc = [this, geo, gui] { generateCncJob(geo, gui->toolsForCnc()); };
     }
     area->setWidget(panel);
 }

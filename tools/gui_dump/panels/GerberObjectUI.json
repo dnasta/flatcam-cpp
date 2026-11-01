@@ -3,17 +3,22 @@
   "qt": "QWidget",
   "py": "GerberObjectUI",
   "name": null,
-  "props": {},
+  "props": {
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
   "layout": {
    "qt": "QVBoxLayout",
    "py": "QVBoxLayout",
    "name": null,
    "props": {},
    "margins": [
-    11,
-    11,
-    11,
-    11
+    9,
+    9,
+    9,
+    9
    ],
    "spacing": 6,
    "items": [
@@ -74,6 +79,10 @@
           "toolTip": {
            "t": "str",
            "v": "BASIC es adecuado para un principiante. Muchos parámetros\nestán ocultos para el usuario en este modo.\nEl modo AVANZADO pondrá a disposición todos los parámetros.\n\nPara cambiar el NIVEL de la aplicación, vaya a:\nEditar -> Preferencias -> General y verificar:\n'APP. NIVEL 'botón de radio."
+          },
+          "text": {
+           "t": "str",
+           "v": "<span style=\"color:green;\"><b>BASIC</b></span>"
           },
           "alignment": {
            "t": "int",
@@ -193,6 +202,10 @@
              "text": {
               "t": "str",
               "v": "Sólido"
+             },
+             "checked": {
+              "t": "bool",
+              "v": true
              }
             }
            }
@@ -260,7 +273,12 @@
                "qt": "QLineEdit",
                "py": "FCEntry",
                "name": "name_entry",
-               "props": {}
+               "props": {
+                "text": {
+                 "t": "str",
+                 "v": "x"
+                }
+               }
               }
              }
             ]
@@ -298,7 +316,12 @@
             "qt": "QCheckBox",
             "py": "FCCheckBox",
             "name": "plot_cb",
-            "props": {}
+            "props": {
+             "checked": {
+              "t": "bool",
+              "v": true
+             }
+            }
            }
           },
           {
@@ -319,6 +342,10 @@
              "text": {
               "t": "str",
               "v": "Seguir"
+             },
+             "hidden": {
+              "t": "bool",
+              "v": true
              }
             }
            }
@@ -460,6 +487,10 @@
              "text": {
               "t": "str",
               "v": "Aberturas:"
+             },
+             "hidden": {
+              "t": "bool",
+              "v": true
              }
             }
            }
@@ -478,6 +509,10 @@
              "toolTip": {
               "t": "str",
               "v": "Alternar la visualización de la tabla de herramientas."
+             },
+             "hidden": {
+              "t": "bool",
+              "v": true
              }
             }
            }
@@ -530,6 +565,10 @@
                 "text": {
                  "t": "str",
                  "v": "Márc. todo"
+                },
+                "hidden": {
+                 "t": "bool",
+                 "v": true
                 }
                }
               }
@@ -600,6 +639,10 @@
              "text": {
               "t": "str",
               "v": "Buffer la Geometria solida"
+             },
+             "hidden": {
+              "t": "bool",
+              "v": true
              }
             }
            }
@@ -950,6 +993,10 @@
                     "singleStep": {
                      "t": "double",
                      "v": 0.1
+                    },
+                    "value": {
+                     "t": "double",
+                     "v": 0.1
                     }
                    }
                   }
@@ -1097,6 +1144,10 @@
                      "v": 10000.0
                     },
                     "singleStep": {
+                     "t": "double",
+                     "v": 0.1
+                    },
+                    "value": {
                      "t": "double",
                      "v": 0.1
                     }

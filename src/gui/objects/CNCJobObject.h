@@ -19,6 +19,9 @@ struct CncToolRow {
     int drills{0};        ///< Cantidad de agujeros.
     int slots{0};         ///< Cantidad de ranuras.
     double cutZ{0.0};     ///< Z de corte (con el desplazamiento aplicado).
+    QString offset{"Path"};    ///< Desplazamiento de la herramienta (trabajos de geometría).
+    QString type{"Rough"};     ///< Tipo de trabajo (trabajos de geometría).
+    QString toolType{"C1"};    ///< Forma de la herramienta (trabajos de geometría).
 };
 
 /**
