@@ -8,8 +8,9 @@ namespace flatcam::gui {
 
 void ExcellonObjectUIBase::setupUi() {
     // ---- acciones (compartidas entre menús y barras)
+    this->setAutoFillBackground(true);
     auto* lay1 = new QVBoxLayout();
-    lay1->setContentsMargins(11, 11, 11, 11);
+    lay1->setContentsMargins(9, 9, 9, 9);
     lay1->setSpacing(6);
     title_box = new QHBoxLayout();
     title_box->setContentsMargins(0, 0, 0, 0);
@@ -22,6 +23,7 @@ void ExcellonObjectUIBase::setupUi() {
     title_box->addWidget(title_label, 1);
     level = new FCLabel(nullptr);
     level->setProperty("alignment", 130);
+    level->setText(QString::fromUtf8("<span style=\"color:green;\"><b>BASIC</b></span>"));
     level->setToolTip(QString::fromUtf8("BASIC es adecuado para un principiante. Muchos parámetros\nestán ocultos para el usuario en este modo.\nEl modo AVANZADO pondrá a disposición todos los parámetros.\n\nPara cambiar el NIVEL de la aplicación, vaya a:\nEditar -> Preferencias -> General y verificar:\n'APP. NIVEL 'botón de radio."));
     title_box->addWidget(level, 0);
     lay1->addLayout(title_box, 0);
@@ -36,6 +38,7 @@ void ExcellonObjectUIBase::setupUi() {
     plot_options_label->setText(QString::fromUtf8("<b>Opciones de parcela:</b>"));
     lay2->addWidget(plot_options_label, 0, 0, 1, 1);
     solid_cb = new FCCheckBox(nullptr);
+    solid_cb->setChecked(true);
     solid_cb->setText(QString::fromUtf8("Sólido"));
     solid_cb->setToolTip(QString::fromUtf8("Círculos sólidos."));
     lay2->addWidget(solid_cb, 0, 1, 1, 1);
@@ -50,6 +53,7 @@ void ExcellonObjectUIBase::setupUi() {
     w3->setText(QString::fromUtf8("<b>Nombre:</b>"));
     name_hlay->addWidget(w3, 0);
     name_entry = new FCEntry(nullptr);
+    name_entry->setText(QString::fromUtf8("x"));
     name_hlay->addWidget(name_entry, 0);
     lay2->addLayout(name_hlay, 2, 0, 1, 3);
     editor_button = new FCButton(nullptr);
@@ -81,13 +85,16 @@ void ExcellonObjectUIBase::setupUi() {
     tools_table_label->setToolTip(QString::fromUtf8("Herramientas en este objeto Excellon.\nCuando se utilizan para la perforación."));
     lay2->addWidget(tools_table_label, 8, 0, 1, 1);
     table_visibility_cb = new FCCheckBox(nullptr);
+    table_visibility_cb->setChecked(true);
     table_visibility_cb->setToolTip(QString::fromUtf8("Alternar la visualización de la tabla de herramientas."));
+    table_visibility_cb->setHidden(true);
     lay2->addWidget(table_visibility_cb, 8, 1, 1, 1);
     auto* lay4 = new QHBoxLayout();
     lay4->setContentsMargins(0, 0, 0, 0);
     lay4->setSpacing(6);
     lay4->addItem(new QSpacerItem(0, 0, QSizePolicy::Policy(7), QSizePolicy::Policy(1)));
     plot_cb = new FCCheckBox(nullptr);
+    plot_cb->setChecked(true);
     plot_cb->setProperty("layoutDirection", 1);
     plot_cb->setText(QString::fromUtf8("Gráfico"));
     plot_cb->setToolTip(QString::fromUtf8("Trazar (mostrar) este objeto."));
@@ -104,10 +111,13 @@ void ExcellonObjectUIBase::setupUi() {
     tools_table->setProperty("selectionBehavior", 1);
     tools_table->setColumnCount(6);
     tools_table->setHorizontalHeaderLabels({QString::fromUtf8("#"), QString::fromUtf8("Diámetro"), QString::fromUtf8("Taladros"), QString::fromUtf8("Muesca"), QString::fromUtf8("C"), QString::fromUtf8("P")});
+    tools_table->setColumnHidden(4, true);
+    tools_table->setColumnHidden(5, true);
     tools_box->addWidget(tools_table, 0);
     autoload_db_cb = new FCCheckBox(nullptr);
     autoload_db_cb->setText(QString::fromUtf8("Carga auto. desde DB"));
     autoload_db_cb->setToolTip(QString::fromUtf8("Reemplazo automático de las herramientas de las herramientas de aplicación relacionadas\ncon herramientas de DB que tienen un valor de diámetro cercano."));
+    autoload_db_cb->setHidden(true);
     tools_box->addWidget(autoload_db_cb, 0);
     auto* lay5 = new QGridLayout();
     lay5->setContentsMargins(0, 0, 0, 0);
@@ -168,6 +178,7 @@ void ExcellonObjectUIBase::setupUi() {
     tooldia_entry->setProperty("decimals", 4);
     tooldia_entry->setProperty("maximum", 10000.0);
     tooldia_entry->setProperty("singleStep", 0.1);
+    tooldia_entry->setProperty("value", 0.8);
     lay8->addWidget(tooldia_entry, 4, 0, 1, 2);
     generate_milling_button = new FCButton(nullptr);
     { QFont f = generate_milling_button->font(); f.setBold(true); generate_milling_button->setFont(f); }
@@ -179,6 +190,7 @@ void ExcellonObjectUIBase::setupUi() {
     slot_tooldia_entry->setProperty("decimals", 4);
     slot_tooldia_entry->setProperty("maximum", 10000.0);
     slot_tooldia_entry->setProperty("singleStep", 0.1);
+    slot_tooldia_entry->setProperty("value", 1.8);
     lay8->addWidget(slot_tooldia_entry, 6, 0, 1, 2);
     generate_milling_slots_button = new FCButton(nullptr);
     { QFont f = generate_milling_slots_button->font(); f.setBold(true); generate_milling_slots_button->setFont(f); }

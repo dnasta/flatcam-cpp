@@ -65,14 +65,14 @@ logo) y **CutOut** → **CNC Job** con G-code. Taladros y alineación con **PCB 
 | 1 | CMake, Doxygen y núcleo de geometría | **Hecha**, verificada en macOS (arm64) y Linux |
 | 2 | Parsers de Gerber y Excellon con tests contra archivos reales | **Hecha** |
 | 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | **Hecha**: transformaciones de Gerber, postprocesadores, G-code de taladrado y de geometrías, CutOut, capa de láser, Paint, NCC, PCB a 2 caras e Isolation |
-| 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | **En curso**: ventana principal idéntica a la original (generada desde la interfaz Python real), widgets de `GUIElements`, canvas `QOpenGLWidget` (ejes, grilla, HUD, zoom, paneo y dibujo de objetos con buffers de vértices), abrir Gerber y Excellon (menú, barra, arrastrar y soltar, línea de comandos) con el árbol del Proyecto; Propiedades de Gerber y Excellon (paneles generados + `build_ui`); paneles de NCC, Paint, Perforación y Corte en la pestaña Herramienta (generados). **Perforación completa:** objeto → tabla de herramientas → parámetros por herramienta → CNC Job (objeto, dibujo y Propiedades) → "Guardar código CNC"; desde la interfaz reproduce el `.nc` de la 2024.4 del usuario (salvo fecha y orden de agujeros). **Agregado pedido por el usuario:** los objetos de cada grupo del Proyecto se reordenan arrastrándolos y ese orden es el de dibujo (el primero queda arriba). Faltan: la lógica de NCC, Paint y Corte, el objeto Geometría y las preferencias del usuario |
+| 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | **En curso**: ventana principal idéntica a la original (generada desde la interfaz Python real), widgets de `GUIElements`, canvas `QOpenGLWidget` (ejes, grilla, HUD, zoom, paneo y dibujo de objetos con buffers de vértices), abrir Gerber y Excellon (menú, barra, arrastrar y soltar, línea de comandos) con el árbol del Proyecto; Propiedades de Gerber y Excellon (paneles generados + `build_ui`); paneles de NCC, Paint, Perforación y Corte en la pestaña Herramienta (generados). **Perforación completa:** objeto → tabla de herramientas → parámetros por herramienta → CNC Job (objeto, dibujo y Propiedades) → "Guardar código CNC"; desde la interfaz reproduce el `.nc` de la 2024.4 del usuario (salvo fecha y orden de agujeros). **Corte completo:** Corte libre o rectangular → objeto Geometría (Propiedades con su tabla y parámetros por herramienta) → "Generar objeto CNCJob" → exportar; reproduce el `.nc` del contorno de la 2024.4 **línea por línea salvo la fecha**. **Agregado pedido por el usuario:** los objetos de cada grupo del Proyecto se reordenan arrastrándolos y ese orden es el de dibujo (el primero queda arriba). Faltan: la lógica de NCC y Paint, reflejar y las preferencias del usuario |
 | 5 | Herramientas secundarias y postprocesadores restantes | Pendiente |
 
 Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (AppleClang, GEOS 3.15). Doxygen genera
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 518 tests (502 del núcleo y 15 de la GUI pasan; 1, la lenta del NCC
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 519 tests (502 del núcleo y 16 de la GUI pasan; 1, la lenta del NCC
 del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -137,9 +137,14 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
                          evaluador propio de fórmulas en vez del eval de Python)
   generated/*UIBase.*    Paneles GENERADOS: GerberObjectUI, ExcellonObjectUI, GeometryObjectUI, CNCObjectUI (Propiedades)
                          y NccToolUI, PaintToolUI, DrillingToolUI, CutOutToolUI (pestaña Herramienta), desde
-                         tools/gui_dump/dump_panels.py + gen_cpp.py --panels (las herramientas después de su run() original)
-  objects/ObjectUIs.*    build_ui de Gerber (tabla de aperturas) y Excellon (tabla de herramientas con totales)
-  tools/ToolPanels.*     Paneles de NCC, Paint y Corte (por ahora solo interfaz); lista de postprocesadores del combo
+                         tools/gui_dump/dump_panels.py + gen_cpp.py --panels (las herramientas después de su run() original;
+                         los de Propiedades después del set_ui del objeto original: nivel Básico y valores de fábrica)
+  objects/ObjectUIs.*    build_ui de Gerber (tabla de aperturas), Excellon (tabla de herramientas con totales), Geometría
+                         (tabla, formulario por herramienta, parámetros comunes, postprocesador) y CNC Job
+  objects/GeometryObject.* Objeto Geometría (multigeo): herramientas con sus parámetros y su geometría; dibujo en #FFAAAA;
+                         makeCncJob = mtool_gen_cncjob (una herramienta por vez)
+  tools/ToolPanels.*     Paneles de NCC y Paint (por ahora solo interfaz); lista de postprocesadores del combo
+  tools/CutOutTool.*     Corte completo (port de ToolCutOut: libre y rectangular → `<objeto>_cutout`)
   tools/DrillingTool.*   Perforación completa (port de ToolDrilling: tabla, almacén de parámetros con el tipo de Python de
                          cada valor, formulario, postprocesador, generar el CNC Job)
   objects/CNCJobObject.* Objeto CNC Job: G-code, dibujo (viajes, cortes, agujeros), exportación con la cabecera de la 2024.4
@@ -532,10 +537,16 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     un grupo, el primero queda arriba (Silkscreen primero → se ve sobre B_Cu); entre grupos, los posteriores (Excellon,
     Geometría, CNC Job) quedan sobre los anteriores, porque se generan a partir de ellos. Soltar archivos sigue abriéndolos.
     Test: `GuiApp.ReorderingTheProjectTreeChangesTheDrawOrder` (incluye un soltado con eventos de mouse sobre la vista).
+    (i) El CNC Job de una geometría dibuja los cortes engrosados con el radio de la herramienta (como `plot2`) pero con 16
+    segmentos por cuarto de círculo en vez de 64, y los viajes como líneas (el original también los engrosa). Solo visual.
+    (j) Geometría: se genera el CNC Job de **una herramienta por vez** (el núcleo hace un trabajo por herramienta); los puentes
+    finos del Corte (herramienta 9999) se dibujan con el color general; los "mouse bites" no crean su Excellon todavía.
+    (k) Dos errores del original que se reproducen a propósito: `geometry_plot_line` y `get_fg_blue()` usan `is_theme_black`
+    sin llamarla, así que la geometría siempre se dibuja en `#FFAAAA` y el rótulo "Parámetros para" va en `#7777FF`.
 13. **GUI: pendientes, en orden:** ~~dibujar Gerber y Excellon~~, ~~abrir archivos y el árbol del Proyecto~~, ~~Propiedades de
     Gerber y Excellon~~ y ~~los paneles de las cuatro herramientas~~ (hechos; falta menú contextual del árbol, mostrar/ocultar y
-    borrar). ~~Perforación → CNC Job → exportar~~ (hecho). Sigue: Corte, Paint y NCC (crean objetos Geometría: falta el objeto
-    Geometría con sus Propiedades y su "Generar objeto CNCJob"), reflejar (Transformaciones o PCB a 2 caras), cargar las preferencias del usuario (hoy los paneles tienen los valores de fábrica:
+    borrar). ~~Perforación → CNC Job → exportar~~ (hecho). ~~Corte → Geometría → CNC Job~~ (hecho; varias herramientas en un
+    CNC Job, pendiente). Sigue: Paint y NCC (crean Geometrías con la herramienta del láser), reflejar (Transformaciones o PCB a 2 caras), cargar las preferencias del usuario (hoy los paneles tienen los valores de fábrica:
     por ejemplo NCC 40 % y "Semilla" en vez de sus 80 % y "Estándar"); pestaña Propiedades de cada objeto (`ObjectUI.py`, generada igual que la ventana); paneles de Perforación, Corte, Paint y NCC
     (generados desde `ToolDrilling`, `ToolCutOut`, `ToolPaint`, `ToolNCC` con sus valores de fábrica) y su lógica sobre el núcleo;
     CNC Job y exportar `.nc`; reflejar (herramienta PCB a 2 caras / Transformaciones).
@@ -547,7 +558,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **518 tests** (503 del núcleo y 15 de la GUI): 517 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
+- **519 tests** (503 del núcleo y 16 de la GUI): 518 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
   oráculos en Python (Shapely 1.8.4) y, donde existe, contra el `.nc` real del usuario (FlatCAM 8.994):
@@ -574,7 +585,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 518 tests, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 519 tests, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -609,6 +620,11 @@ trazados; taladro con los mismos agujeros (sección 7).
 - Para probar arrastrar y soltar en una vista sin `QDrag::exec`: mandar a `viewport()` un `QDragEnterEvent` (sin él la vista
   rechaza el `QDragMoveEvent`), luego el `QDragMoveEvent` y el `QDropEvent`. Los grupos del árbol necesitan
   `Qt::ItemIsDropEnabled` para que se pueda soltar entre filas de sus hijos.
+- El `.nc` del contorno de "luz de noche" es de **una sola pasada** (Z -1,8): el usuario desactivó "Profundidad múltiple" en el
+  Corte (de fábrica viene activada). El test de la GUI lo detectó: con pasadas de 0,6 salían 333 líneas en vez de 148.
+- Los paneles de Propiedades se vuelcan después del `set_ui` del objeto original (que esconde lo del nivel Básico); para eso el
+  objeto necesita sus opciones como en `AppObject.new_object` (`<tipo>_*` y las de herramientas) y vivir dentro del área de
+  Propiedades (cambia los márgenes a 9).
 - Un test que compara un texto consigo mismo siempre pasa: una vez se coló una aserción así; revisar que cada `EXPECT` pueda fallar.
 
 ### 12.4 Entorno para regenerar los goldens (solo hace falta si se agrega un oráculo)

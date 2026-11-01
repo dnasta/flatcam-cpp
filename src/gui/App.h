@@ -103,6 +103,14 @@ public:
      */
     bool exportGcode(class CNCJobObject* job, QString filename = QString());
 
+    /**
+     * @brief Genera el CNC Job de una Geometría (`on_generatecnc_button_click` → `mtool_gen_cncjob`) y lo agrega.
+     * @param geo Geometría.
+     * @param toolIds Herramientas elegidas.
+     * @return El objeto creado, o `nullptr` si falló (el motivo queda en la barra de estado).
+     */
+    FlatCAMObj* generateCncJob(class GeometryObject* geo, const std::vector<int>& toolIds);
+
     NccTool* nccTool;            ///< Panel de NCC.
     PaintTool* paintTool;        ///< Panel de pintura.
     DrillingTool* drillingTool;  ///< Panel de perforación.

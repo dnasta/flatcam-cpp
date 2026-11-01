@@ -51,6 +51,11 @@ PlotLayerData CNCJobObject::plotData() const {
         reDia(R"(Tool Dia = ([\d.]+))");
     double x = 0, y = 0, z = 1, dia = tools_.empty() ? 0.1 : tools_.front().dia;
     bool laserOn = false;
+    // Taladrado: cada bajada sin X,Y es un agujero. Geometría: lo que corta se dibuja como la trayectoria engrosada
+    // con el radio de la herramienta (plot2: buffer(tooldia / 1.99999999)), rellena.
+    const bool drilling = !tools_.empty() && (tools_.front().drills > 0 || tools_.front().slots > 0);
+    std::vector<std::vector<Point2D>> cuts;
+    std::vector<double> cutDia;
     double xmin = 1e300, ymin = 1e300, xmax = -1e300, ymax = -1e300;
     auto grow = [&](double px, double py) {
         xmin = std::min(xmin, px);
@@ -82,18 +87,36 @@ PlotLayerData CNCJobObject::plotData() const {
         const double ny = my.hasMatch() ? my.captured(1).toDouble() : y;
         if (mz.hasMatch()) {
             const double nz = mz.captured(1).toDouble();
-            if (feed && nz < 0 && z >= 0 && !mx.hasMatch() && !my.hasMatch()) addCircle(x, y, dia / 2);  // taladro
+            if (drilling && feed && nz < 0 && z >= 0 && !mx.hasMatch() && !my.hasMatch()) addCircle(x, y, dia / 2);
             z = nz;
         }
         if (mx.hasMatch() || my.hasMatch()) {
             // Con el láser (GRBL_laser) no hay Z: corta lo que se recorre con M03 encendido.
             const bool cutting = feed && (z < 0 || laserOn);
-            auto& dst = cutting ? d.lines : d.travel;
-            dst.insert(dst.end(), {float(x), float(y), float(nx), float(ny)});
+            if (cutting && !drilling) {
+                // Tramos seguidos forman una sola trayectoria.
+                if (cuts.empty() || cuts.back().back().x != x || cuts.back().back().y != y || cutDia.back() != dia) {
+                    cuts.push_back({{x, y}});
+                    cutDia.push_back(dia);
+                }
+                cuts.back().push_back({nx, ny});
+            } else {
+                auto& dst = cutting ? d.lines : d.travel;
+                dst.insert(dst.end(), {float(x), float(y), float(nx), float(ny)});
+            }
             grow(x, y);
             grow(nx, ny);
             x = nx;
             y = ny;
+        }
+    }
+    for (std::size_t i = 0; i < cuts.size(); ++i) {
+        // Desvío consciente (solo visual): 16 segmentos por cuarto de círculo en vez de cncjob_steps_per_circle (64).
+        const Shape path = Shape::lineString(cuts[i]).buffer(cutDia[i] / 1.99999999, 16).simplify(0.0005);
+        addShape(path, d, true);
+        if (const auto b = path.bounds()) {
+            grow(b->xmin, b->ymin);
+            grow(b->xmax, b->ymax);
         }
     }
     if (xmax >= xmin) d.bounds = QRectF(xmin, ymin, xmax - xmin, ymax - ymin);

@@ -19,6 +19,7 @@
 #include "gui/widgets/RadioSet.h"
 #include "gui/objects/ObjectUIs.h"
 #include "gui/objects/CNCJobObject.h"
+#include "gui/objects/GeometryObject.h"
 #include <QFile>
 #include <QMimeData>
 #include <QDropEvent>
@@ -411,4 +412,81 @@ TEST(GuiApp, ReorderingTheProjectTreeChangesTheDrawOrder) {
     QApplication::sendEvent(view->viewport(), &drop);
     EXPECT_EQ(col->indexOf(edge).row(), 0);
     EXPECT_EQ(c->layerOrder(), (std::vector<int>{cu->id(), logo->id(), edge->id(), drl->id()}));
+}
+
+TEST(GuiCutout, UserWorkflowReproducesTheRealFile) {
+    // Como lo hizo el usuario con su 2024.4: Edge_Cuts reflejado -> Corte libre (fresa 1,2, margen 0, 4 puentes de 0,6,
+    // Z -1,8 de una pasada: su archivo no tiene profundidad múltiple) -> Geometría (avance 20, husillo 10000, Z de cambio y final 19, X,Y final 0,0) -> CNC Job.
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    ASSERT_NE(edge, nullptr);
+    edge->gerber().mirror(flatcam::Axis::Y, {0, 0});
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(edge));
+    CutOutTool* t = app.cutoutTool;
+    app.ui()->cutout_btn->trigger();
+    EXPECT_EQ(app.ui()->tool_scroll_area->widget(), t);
+    EXPECT_EQ(t->obj_combo->currentText(), edge->name());
+    // Valores de fábrica del panel (tools_cutout_*).
+    EXPECT_DOUBLE_EQ(t->dia->value(), 2.4);
+    EXPECT_EQ(t->gaps->currentText(), "4");
+    EXPECT_DOUBLE_EQ(t->cutz_entry->value(), -1.8);
+    EXPECT_TRUE(t->mpass_cb->isChecked());
+    t->dia->setValue(1.2);
+    t->margin->setValue(0.0);
+    t->gapsize->setValue(0.6);
+    t->mpass_cb->setChecked(false);
+    t->ff_cutout_object_btn->click();
+    auto* geo = dynamic_cast<GeometryObject*>(app.collection()->byName("luz de noche Pascual-Edge_Cuts.gbr_cutout"));
+    ASSERT_NE(geo, nullptr);
+    ASSERT_EQ(geo->tools().size(), 1u);
+    EXPECT_DOUBLE_EQ(geo->tools().at(1).data.cutZ, -1.8);
+    EXPECT_EQ(geo->plotData().lineColor, colorFromFlatCam("#FFAAAA"));
+
+    // Propiedades de la Geometría: tabla con la herramienta y sus parámetros en el formulario.
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(geo));
+    auto* ui = qobject_cast<GeometryObjectUI*>(app.ui()->properties_scroll_area->widget());
+    ASSERT_NE(ui, nullptr);
+    ASSERT_EQ(ui->geo_tools_table->rowCount(), 1);
+    EXPECT_EQ(ui->geo_tools_table->item(0, 1)->text(), "1.2000");
+    EXPECT_TRUE(ui->geo_tools_table->isColumnHidden(2));  // nivel Básico
+    EXPECT_TRUE(ui->tool_data_label->text().contains(QString::fromUtf8("Herramienta 1")));
+    EXPECT_DOUBLE_EQ(ui->cutz_entry->value(), -1.8);
+    EXPECT_DOUBLE_EQ(ui->cncfeedrate_entry->value(), 120.0);  // geometry_feedrate de fábrica
+    ui->cncfeedrate_entry->setValue(20.0);
+    ui->cncspindlespeed_entry->setValue(10000);
+    ui->toolchangez_entry->setValue(19.0);
+    ui->endz_entry->setValue(19.0);
+    ui->endxy_entry->setText("0,0");
+    Q_EMIT ui->endxy_entry->editingFinished();
+    EXPECT_DOUBLE_EQ(geo->tools().at(1).data.feedrate, 20.0);
+    ui->generate_cnc_button->click();
+    auto* cnc = dynamic_cast<CNCJobObject*>(app.collection()->byName("luz de noche Pascual-Edge_Cuts.gbr_cutout_cnc"));
+    ASSERT_NE(cnc, nullptr);
+    EXPECT_GT(cnc->plotData().fill.size(), 100u);  // la trayectoria se dibuja engrosada con el radio de la fresa
+
+    QTemporaryDir tmp;
+    const QString out = tmp.filePath("luz de noche Pascual-Edge_Cuts.gbr_cutout_cnc.nc");
+    ASSERT_TRUE(app.exportGcode(cnc, out));
+    auto readLines = [](const QString& path) {
+        QFile f(path);
+        if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) return QStringList();
+        return QString::fromUtf8(f.readAll()).split('\n');
+    };
+    QStringList mine = readLines(out), real = readLines(QString::fromStdString(dir + "Edge_Cuts.gbr_cutout_cnc.nc"));
+    ASSERT_GT(real.size(), 100);
+    // Todo igual salvo la fecha.
+    auto noDate = [](QStringList l) {
+        for (QString& s : l)
+            if (s.startsWith("(Created on ")) s = "(Created on)";
+        return l;
+    };
+    const QStringList a = noDate(mine), b = noDate(real);
+    EXPECT_EQ(a.size(), b.size());
+    for (int i = 0; i < std::min(a.size(), b.size()); ++i) {
+        if (a[i] != b[i]) {
+            ADD_FAILURE() << "línea " << i + 1 << ": '" << a[i].toStdString() << "' != '" << b[i].toStdString() << "'";
+            break;
+        }
+    }
 }

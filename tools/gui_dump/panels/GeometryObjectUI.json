@@ -3,17 +3,22 @@
   "qt": "QWidget",
   "py": "GeometryObjectUI",
   "name": null,
-  "props": {},
+  "props": {
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
   "layout": {
    "qt": "QVBoxLayout",
    "py": "QVBoxLayout",
    "name": null,
    "props": {},
    "margins": [
-    11,
-    11,
-    11,
-    11
+    9,
+    9,
+    9,
+    9
    ],
    "spacing": 6,
    "items": [
@@ -74,6 +79,10 @@
           "toolTip": {
            "t": "str",
            "v": "BASIC es adecuado para un principiante. Muchos parámetros\nestán ocultos para el usuario en este modo.\nEl modo AVANZADO pondrá a disposición todos los parámetros.\n\nPara cambiar el NIVEL de la aplicación, vaya a:\nEditar -> Preferencias -> General y verificar:\n'APP. NIVEL 'botón de radio."
+          },
+          "text": {
+           "t": "str",
+           "v": "<span style=\"color:green;\"><b>BASIC</b></span>"
           },
           "alignment": {
            "t": "int",
@@ -234,7 +243,12 @@
                "qt": "QLineEdit",
                "py": "FCEntry",
                "name": "name_entry",
-               "props": {}
+               "props": {
+                "text": {
+                 "t": "str",
+                 "v": "x"
+                }
+               }
               }
              }
             ]
@@ -478,6 +492,10 @@
                      "text": {
                       "t": "str",
                       "v": "Trazar objeto"
+                     },
+                     "checked": {
+                      "t": "bool",
+                      "v": true
                      }
                     }
                    }
@@ -493,6 +511,10 @@
                     "py": "FCTable",
                     "name": "geo_tools_table",
                     "props": {
+                     "contextMenuPolicy": {
+                      "t": "int",
+                      "v": 2
+                     },
                      "acceptDrops": {
                       "t": "bool",
                       "v": true
@@ -546,6 +568,8 @@
                      ],
                      "stretchLast": false,
                      "hiddenCols": [
+                      2,
+                      3,
                       5
                      ]
                     }
@@ -610,6 +634,10 @@
                      "text": {
                       "t": "str",
                       "v": "Offset de Herram:"
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
                      }
                     }
                    }
@@ -640,6 +668,10 @@
                      "singleStep": {
                       "t": "double",
                       "v": 0.1
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
                      }
                     }
                    }
@@ -711,6 +743,10 @@
                      "text": {
                       "t": "str",
                       "v": "Diá. de Herram:"
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
                      }
                     }
                    }
@@ -737,6 +773,14 @@
                      "singleStep": {
                       "t": "double",
                       "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 2.4
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
                      }
                     }
                    }
@@ -779,6 +823,10 @@
                         "icon": {
                          "t": "QIcon",
                          "v": ":/images/plus16.png"
+                        },
+                        "hidden": {
+                         "t": "bool",
+                         "v": true
                         }
                        }
                       }
@@ -894,6 +942,10 @@
                      "icon": {
                       "t": "QIcon",
                       "v": ":/images/trash16.png"
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
                      }
                     }
                    }
@@ -1041,6 +1093,10 @@
                      "text": {
                       "t": "str",
                       "v": "V-Tipo Dia:"
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
                      }
                     }
                    }
@@ -1067,6 +1123,14 @@
                      "singleStep": {
                       "t": "double",
                       "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 0.1
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
                      }
                     }
                    }
@@ -1089,6 +1153,10 @@
                      "text": {
                       "t": "str",
                       "v": "V-Tipo Ángulo:"
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
                      }
                     }
                    }
@@ -1118,7 +1186,11 @@
                      },
                      "value": {
                       "t": "double",
-                      "v": 1.0
+                      "v": 30.0
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
                      }
                     }
                    }
@@ -1171,6 +1243,10 @@
                      "singleStep": {
                       "t": "double",
                       "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": -2.4
                      }
                     }
                    }
@@ -1227,6 +1303,10 @@
                      "singleStep": {
                       "t": "double",
                       "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 0.8
                      }
                     }
                    }
@@ -1275,6 +1355,10 @@
                      "singleStep": {
                       "t": "double",
                       "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 2.0
                      }
                     }
                    }
@@ -1323,6 +1407,10 @@
                      "singleStep": {
                       "t": "double",
                       "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 120.0
                      }
                     }
                    }
@@ -1371,6 +1459,10 @@
                      "singleStep": {
                       "t": "double",
                       "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 60.0
                      }
                     }
                    }
@@ -1424,6 +1516,10 @@
                       "t": "double",
                       "v": 0.1
                      },
+                     "value": {
+                      "t": "double",
+                      "v": 1500.0
+                     },
                      "hidden": {
                       "t": "bool",
                       "v": true
@@ -1449,6 +1545,10 @@
                      "text": {
                       "t": "str",
                       "v": "Recortar:"
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
                      }
                     }
                    }
@@ -1464,6 +1564,10 @@
                     "py": "FCDoubleSpinner",
                     "name": "e_cut_entry",
                     "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Para eliminar posibles\nsobras de cobre donde el primer corte\nNos reunimos con el último corte, generamos un\nCorte extendido sobre la primera sección de corte."
@@ -1483,6 +1587,14 @@
                      "singleStep": {
                       "t": "double",
                       "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 0.1
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
                      }
                     }
                    }
@@ -1583,6 +1695,10 @@
                      "singleStep": {
                       "t": "double",
                       "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 1.0
                      }
                     }
                    }
@@ -1640,6 +1756,10 @@
                       "t": "double",
                       "v": 0.1
                      },
+                     "value": {
+                      "t": "double",
+                      "v": -0.02
+                     },
                      "hidden": {
                       "t": "bool",
                       "v": true
@@ -1695,6 +1815,10 @@
                      "singleStep": {
                       "t": "double",
                       "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 75.0
                      },
                      "hidden": {
                       "t": "bool",
@@ -1935,6 +2059,10 @@
                      "singleStep": {
                       "t": "double",
                       "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 15.0
                      }
                     }
                    }
@@ -1983,6 +2111,10 @@
                      "singleStep": {
                       "t": "double",
                       "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 15.0
                      }
                     }
                    }
@@ -2023,6 +2155,10 @@
                      "styleSheet": {
                       "t": "str",
                       "v": "QLineEdit {border: 1px solid #0069A9;}"
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "None"
                      },
                      "placeholderText": {
                       "t": "str",
@@ -2239,7 +2375,7 @@
                            ],
                            "vertical": false,
                            "stretch": true,
-                           "value": null
+                           "value": "over"
                           }
                          },
                          {
@@ -2282,6 +2418,10 @@
                             "maximum": {
                              "t": "double",
                              "v": 10000.0
+                            },
+                            "value": {
+                             "t": "double",
+                             "v": 1.0
                             }
                            }
                           }
@@ -2336,7 +2476,7 @@
                            ],
                            "vertical": false,
                            "stretch": true,
-                           "value": null
+                           "value": "polygon"
                           }
                          }
                         ]
@@ -2470,6 +2610,10 @@
                       "t": "double",
                       "v": 10000.0
                      },
+                     "value": {
+                      "t": "double",
+                      "v": 10.0
+                     },
                      "hidden": {
                       "t": "bool",
                       "v": true
@@ -2526,6 +2670,10 @@
                       "t": "double",
                       "v": 0.1
                      },
+                     "value": {
+                      "t": "double",
+                      "v": 2.0
+                     },
                      "hidden": {
                       "t": "bool",
                       "v": true
@@ -2581,6 +2729,10 @@
                      "maximum": {
                       "t": "double",
                       "v": 10000.0
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": -1.0
                      },
                      "hidden": {
                       "t": "bool",
@@ -2701,6 +2853,10 @@
                      "singleStep": {
                       "t": "double",
                       "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 5.0
                      },
                      "hidden": {
                       "t": "bool",

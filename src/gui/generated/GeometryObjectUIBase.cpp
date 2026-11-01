@@ -8,8 +8,9 @@ namespace flatcam::gui {
 
 void GeometryObjectUIBase::setupUi() {
     // ---- acciones (compartidas entre menús y barras)
+    this->setAutoFillBackground(true);
     auto* lay1 = new QVBoxLayout();
-    lay1->setContentsMargins(11, 11, 11, 11);
+    lay1->setContentsMargins(9, 9, 9, 9);
     lay1->setSpacing(6);
     title_box = new QHBoxLayout();
     title_box->setContentsMargins(0, 0, 0, 0);
@@ -22,6 +23,7 @@ void GeometryObjectUIBase::setupUi() {
     title_box->addWidget(title_label, 1);
     level = new FCLabel(nullptr);
     level->setProperty("alignment", 130);
+    level->setText(QString::fromUtf8("<span style=\"color:green;\"><b>BASIC</b></span>"));
     level->setToolTip(QString::fromUtf8("BASIC es adecuado para un principiante. Muchos parámetros\nestán ocultos para el usuario en este modo.\nEl modo AVANZADO pondrá a disposición todos los parámetros.\n\nPara cambiar el NIVEL de la aplicación, vaya a:\nEditar -> Preferencias -> General y verificar:\n'APP. NIVEL 'botón de radio."));
     title_box->addWidget(level, 0);
     lay1->addLayout(title_box, 0);
@@ -48,6 +50,7 @@ void GeometryObjectUIBase::setupUi() {
     w3->setText(QString::fromUtf8("<b>Nombre:</b>"));
     name_hlay->addWidget(w3, 0);
     name_entry = new FCEntry(nullptr);
+    name_entry->setText(QString::fromUtf8("x"));
     name_hlay->addWidget(name_entry, 0);
     lay2->addLayout(name_hlay, 2, 0, 1, 3);
     editor_button = new FCButton(nullptr);
@@ -93,6 +96,7 @@ void GeometryObjectUIBase::setupUi() {
     tools_table_label->setToolTip(QString::fromUtf8("Herramientas en este objeto de geometría utilizadas para cortar.\nLa entrada 'Offset' establecerá un desplazamiento para el corte.\n'Offset' puede estar dentro, fuera, en la ruta (ninguno) y personalizado.\nLa entrada 'Tipo' es solo informativa y permite conocer el\nintención de usar la herramienta actual.\nPuede ser Desbaste Acabado o Aislamiento.\nEl 'Tipo de herramienta' (TT) puede ser circular con 1 a 4 dientes (C1..C4),\nbola (B) o en forma de V (V).\nCuando se selecciona la forma de V, la entrada 'Tipo' es automáticamente\nestablecido en Aislamiento, el parámetro CutZ en el formulario de IU es\natenuado y Cut Z se calcula automáticamente a partir de la nueva\nmostró entradas de formulario de IU denominadas V-Tipo Dia y V-Tipo ángulo."));
     lay4->addWidget(tools_table_label, 0, 0, 1, 1);
     plot_cb = new FCCheckBox(nullptr);
+    plot_cb->setChecked(true);
     plot_cb->setProperty("layoutDirection", 1);
     plot_cb->setText(QString::fromUtf8("Trazar objeto"));
     plot_cb->setToolTip(QString::fromUtf8("Trazar (mostrar) este objeto."));
@@ -100,6 +104,7 @@ void GeometryObjectUIBase::setupUi() {
     geo_tools_table = new FCTable(nullptr);
     geo_tools_table->setAcceptDrops(true);
     geo_tools_table->setProperty("columnCount", 7);
+    geo_tools_table->setProperty("contextMenuPolicy", 2);
     geo_tools_table->setProperty("dragDropMode", 4);
     geo_tools_table->setDragDropOverwriteMode(false);
     geo_tools_table->setDragEnabled(true);
@@ -107,6 +112,8 @@ void GeometryObjectUIBase::setupUi() {
     geo_tools_table->setProperty("sizeAdjustPolicy", 2);
     geo_tools_table->setColumnCount(7);
     geo_tools_table->setHorizontalHeaderLabels({QString::fromUtf8("#"), QString::fromUtf8("Dia"), QString::fromUtf8("Compensar"), QString::fromUtf8("Tipo"), QString::fromUtf8("TT"), QString::fromUtf8(""), QString::fromUtf8("P")});
+    geo_tools_table->setColumnHidden(2, true);
+    geo_tools_table->setColumnHidden(3, true);
     geo_tools_table->setColumnHidden(5, true);
     lay4->addWidget(geo_tools_table, 1, 0, 1, 2);
     lay4->setColumnStretch(1, 1);
@@ -118,12 +125,14 @@ void GeometryObjectUIBase::setupUi() {
     tool_offset_lbl = new FCLabel(nullptr);
     tool_offset_lbl->setText(QString::fromUtf8("Offset de Herram:"));
     tool_offset_lbl->setToolTip(QString::fromUtf8("El valor para compensar el corte cuando\nEl tipo de compensación seleccionado es 'Offset'.\nEl valor puede ser positivo para 'afuera'\ncorte y negativo para corte 'interior'."));
+    tool_offset_lbl->setHidden(true);
     lay5->addWidget(tool_offset_lbl, 0, 0, 1, 1);
     tool_offset_entry = new FCDoubleSpinner(nullptr);
     tool_offset_entry->setProperty("decimals", 4);
     tool_offset_entry->setProperty("maximum", 10000.0);
     tool_offset_entry->setProperty("minimum", -10000.0);
     tool_offset_entry->setProperty("singleStep", 0.1);
+    tool_offset_entry->setHidden(true);
     lay5->addWidget(tool_offset_entry, 0, 1, 1, 1);
     auto* w6 = new QFrame(nullptr);
     w6->setProperty("frameShadow", 48);
@@ -136,11 +145,14 @@ void GeometryObjectUIBase::setupUi() {
     addtool_entry_lbl = new FCLabel(nullptr);
     addtool_entry_lbl->setText(QString::fromUtf8("Diá. de Herram:"));
     addtool_entry_lbl->setToolTip(QString::fromUtf8("Diámetro para la nueva herramienta"));
+    addtool_entry_lbl->setHidden(true);
     lay5->addWidget(addtool_entry_lbl, 3, 0, 1, 1);
     addtool_entry = new FCDoubleSpinner(nullptr);
     addtool_entry->setProperty("decimals", 4);
     addtool_entry->setProperty("maximum", 10000.0);
     addtool_entry->setProperty("singleStep", 0.1);
+    addtool_entry->setProperty("value", 2.4);
+    addtool_entry->setHidden(true);
     lay5->addWidget(addtool_entry, 3, 1, 1, 1);
     auto* lay7 = new QHBoxLayout();
     lay7->setContentsMargins(0, 0, 0, 0);
@@ -149,6 +161,7 @@ void GeometryObjectUIBase::setupUi() {
     search_and_add_btn->setIcon(QIcon(QString::fromUtf8(":/images/plus16.png")));
     search_and_add_btn->setText(QString::fromUtf8("Buscar y agregar"));
     search_and_add_btn->setToolTip(QString::fromUtf8("Agregar una nueva herramienta a la tabla de herramientas\ncon el diámetro especificado anteriormente."));
+    search_and_add_btn->setHidden(true);
     lay7->addWidget(search_and_add_btn, 0);
     addtool_from_db_btn = new FCButton(nullptr);
     addtool_from_db_btn->setIcon(QIcon(QString::fromUtf8(":/images/search_db32.png")));
@@ -171,6 +184,7 @@ void GeometryObjectUIBase::setupUi() {
     deltool_btn->setIcon(QIcon(QString::fromUtf8(":/images/trash16.png")));
     deltool_btn->setText(QString::fromUtf8("Borrar"));
     deltool_btn->setToolTip(QString::fromUtf8("Eliminar una selección de herramientas en la tabla de herramientas\nseleccionando primero una fila en la Tabla de herramientas."));
+    deltool_btn->setHidden(true);
     lay9->addWidget(deltool_btn, 0, 0, 1, 2);
     geo_table_box->addLayout(lay9, 0);
     geo_table_frame->setLayout(geo_table_box);
@@ -195,21 +209,26 @@ void GeometryObjectUIBase::setupUi() {
     tipdialabel = new FCLabel(nullptr);
     tipdialabel->setText(QString::fromUtf8("V-Tipo Dia:"));
     tipdialabel->setToolTip(QString::fromUtf8("El diámetro de la punta para la herramienta en forma de V"));
+    tipdialabel->setHidden(true);
     grid3->addWidget(tipdialabel, 1, 0, 1, 1);
     tipdia_entry = new FCDoubleSpinner(nullptr);
     tipdia_entry->setProperty("decimals", 4);
     tipdia_entry->setProperty("maximum", 10000.0);
     tipdia_entry->setProperty("singleStep", 0.1);
+    tipdia_entry->setProperty("value", 0.1);
+    tipdia_entry->setHidden(true);
     grid3->addWidget(tipdia_entry, 1, 1, 1, 1);
     tipanglelabel = new FCLabel(nullptr);
     tipanglelabel->setText(QString::fromUtf8("V-Tipo Ángulo:"));
     tipanglelabel->setToolTip(QString::fromUtf8("El ángulo de punta para la herramienta en forma de V.\nEn grado."));
+    tipanglelabel->setHidden(true);
     grid3->addWidget(tipanglelabel, 2, 0, 1, 1);
     tipangle_entry = new FCDoubleSpinner(nullptr);
     tipangle_entry->setProperty("decimals", 4);
     tipangle_entry->setProperty("maximum", 180.0);
     tipangle_entry->setProperty("minimum", 1.0);
-    tipangle_entry->setProperty("value", 1.0);
+    tipangle_entry->setProperty("value", 30.0);
+    tipangle_entry->setHidden(true);
     grid3->addWidget(tipangle_entry, 2, 1, 1, 1);
     cutzlabel = new FCLabel(nullptr);
     cutzlabel->setText(QString::fromUtf8("Corte Z:"));
@@ -220,6 +239,7 @@ void GeometryObjectUIBase::setupUi() {
     cutz_entry->setProperty("maximum", 0.0);
     cutz_entry->setProperty("minimum", -10000.0);
     cutz_entry->setProperty("singleStep", 0.1);
+    cutz_entry->setProperty("value", -2.4);
     grid3->addWidget(cutz_entry, 3, 1, 1, 1);
     mpass_cb = new FCCheckBox(nullptr);
     mpass_cb->setText(QString::fromUtf8("Profund. Múlti:"));
@@ -231,6 +251,7 @@ void GeometryObjectUIBase::setupUi() {
     maxdepth_entry->setProperty("maximum", 10000.0);
     maxdepth_entry->setProperty("singleStep", 0.1);
     maxdepth_entry->setToolTip(QString::fromUtf8("Profundidad de cada pase (positivo)."));
+    maxdepth_entry->setProperty("value", 0.8);
     grid3->addWidget(maxdepth_entry, 4, 1, 1, 1);
     travelzlabel = new FCLabel(nullptr);
     travelzlabel->setText(QString::fromUtf8("Viaje Z:"));
@@ -240,6 +261,7 @@ void GeometryObjectUIBase::setupUi() {
     travelz_entry->setProperty("decimals", 4);
     travelz_entry->setProperty("maximum", 10000.0);
     travelz_entry->setProperty("singleStep", 0.1);
+    travelz_entry->setProperty("value", 2.0);
     grid3->addWidget(travelz_entry, 5, 1, 1, 1);
     frlabel = new FCLabel(nullptr);
     frlabel->setText(QString::fromUtf8("Avance X-Y:"));
@@ -249,6 +271,7 @@ void GeometryObjectUIBase::setupUi() {
     cncfeedrate_entry->setProperty("decimals", 4);
     cncfeedrate_entry->setProperty("maximum", 910000.0);
     cncfeedrate_entry->setProperty("singleStep", 0.1);
+    cncfeedrate_entry->setProperty("value", 120.0);
     grid3->addWidget(cncfeedrate_entry, 10, 1, 1, 1);
     frzlabel = new FCLabel(nullptr);
     frzlabel->setText(QString::fromUtf8("Avance Z:"));
@@ -258,6 +281,7 @@ void GeometryObjectUIBase::setupUi() {
     feedrate_z_entry->setProperty("decimals", 4);
     feedrate_z_entry->setProperty("maximum", 910000.0);
     feedrate_z_entry->setProperty("singleStep", 0.1);
+    feedrate_z_entry->setProperty("value", 60.0);
     grid3->addWidget(feedrate_z_entry, 11, 1, 1, 1);
     fr_rapidlabel = new FCLabel(nullptr);
     fr_rapidlabel->setText(QString::fromUtf8("Rápidos de avance:"));
@@ -268,18 +292,23 @@ void GeometryObjectUIBase::setupUi() {
     feedrate_rapid_entry->setProperty("decimals", 4);
     feedrate_rapid_entry->setProperty("maximum", 910000.0);
     feedrate_rapid_entry->setProperty("singleStep", 0.1);
+    feedrate_rapid_entry->setProperty("value", 1500.0);
     feedrate_rapid_entry->setHidden(true);
     grid3->addWidget(feedrate_rapid_entry, 12, 1, 1, 1);
     extracut_cb = new FCCheckBox(nullptr);
     extracut_cb->setText(QString::fromUtf8("Recortar:"));
     extracut_cb->setToolTip(QString::fromUtf8("Para eliminar posibles\nsobras de cobre donde el primer corte\nNos reunimos con el último corte, generamos un\nCorte extendido sobre la primera sección de corte."));
+    extracut_cb->setHidden(true);
     grid3->addWidget(extracut_cb, 13, 0, 1, 1);
     e_cut_entry = new FCDoubleSpinner(nullptr);
     e_cut_entry->setProperty("decimals", 4);
+    e_cut_entry->setEnabled(false);
     e_cut_entry->setProperty("maximum", 99999.0);
     e_cut_entry->setProperty("singleStep", 0.1);
     e_cut_entry->setToolTip(QString::fromUtf8("Para eliminar posibles\nsobras de cobre donde el primer corte\nNos reunimos con el último corte, generamos un\nCorte extendido sobre la primera sección de corte."));
+    e_cut_entry->setProperty("value", 0.1);
     e_cut_entry->setWrapping(true);
+    e_cut_entry->setHidden(true);
     grid3->addWidget(e_cut_entry, 13, 1, 1, 1);
     spindle_label = new FCLabel(nullptr);
     spindle_label->setText(QString::fromUtf8("Eje de velocidad:"));
@@ -299,6 +328,7 @@ void GeometryObjectUIBase::setupUi() {
     dwelltime_entry->setProperty("maximum", 10000.0);
     dwelltime_entry->setProperty("singleStep", 0.1);
     dwelltime_entry->setToolTip(QString::fromUtf8("Número de unidades de tiempo para que el husillo permanezca."));
+    dwelltime_entry->setProperty("value", 1.0);
     grid3->addWidget(dwelltime_entry, 15, 1, 1, 1);
     pdepth_label = new FCLabel(nullptr);
     pdepth_label->setText(QString::fromUtf8("Profundidad de la sonda Z:"));
@@ -310,6 +340,7 @@ void GeometryObjectUIBase::setupUi() {
     pdepth_entry->setProperty("maximum", 10000.0);
     pdepth_entry->setProperty("minimum", -10000.0);
     pdepth_entry->setProperty("singleStep", 0.1);
+    pdepth_entry->setProperty("value", -0.02);
     pdepth_entry->setHidden(true);
     grid3->addWidget(pdepth_entry, 17, 1, 1, 1);
     feedrate_probe_label = new FCLabel(nullptr);
@@ -321,6 +352,7 @@ void GeometryObjectUIBase::setupUi() {
     feedrate_probe_entry->setProperty("decimals", 4);
     feedrate_probe_entry->setProperty("maximum", 10000.0);
     feedrate_probe_entry->setProperty("singleStep", 0.1);
+    feedrate_probe_entry->setProperty("value", 75.0);
     feedrate_probe_entry->setHidden(true);
     grid3->addWidget(feedrate_probe_entry, 18, 1, 1, 1);
     grid3->setColumnStretch(1, 1);
@@ -358,6 +390,7 @@ void GeometryObjectUIBase::setupUi() {
     toolchangez_entry->setProperty("maximum", 10000.0);
     toolchangez_entry->setProperty("singleStep", 0.1);
     toolchangez_entry->setToolTip(QString::fromUtf8("Posición del eje Z (altura) para\ncambio de herramienta."));
+    toolchangez_entry->setProperty("value", 15.0);
     grid4->addWidget(toolchangez_entry, 6, 1, 1, 1);
     endz_label = new FCLabel(nullptr);
     endz_label->setText(QString::fromUtf8("Fin del movi. Z:"));
@@ -367,6 +400,7 @@ void GeometryObjectUIBase::setupUi() {
     endz_entry->setProperty("decimals", 4);
     endz_entry->setProperty("maximum", 10000.0);
     endz_entry->setProperty("singleStep", 0.1);
+    endz_entry->setProperty("value", 15.0);
     grid4->addWidget(endz_entry, 9, 1, 1, 1);
     auto* w13 = new FCLabel(nullptr);
     w13->setText(QString::fromUtf8("X, Y Fin del movimiento:"));
@@ -375,6 +409,7 @@ void GeometryObjectUIBase::setupUi() {
     endxy_entry = new NumericalEvalTupleEntry(nullptr);
     endxy_entry->setProperty("placeholderText", QString::fromUtf8("Coordenadas X, Y"));
     endxy_entry->setStyleSheet(QString::fromUtf8("QLineEdit {border: 1px solid #0069A9;}"));
+    endxy_entry->setText(QString::fromUtf8("None"));
     grid4->addWidget(endxy_entry, 10, 1, 1, 1);
     auto* w14 = new FCLabel(nullptr);
     w14->setText(QString::fromUtf8("Postprocesador:"));
@@ -407,6 +442,7 @@ void GeometryObjectUIBase::setupUi() {
     strategy_label->setToolTip(QString::fromUtf8("La estrategia seguida al encontrar un área de exclusión.\nPuede ser:\n- Sobre -> al encontrar el área, la herramienta irá a una altura establecida\n- Alrededor -> evitará el área de exclusión recorriendo el área"));
     lay15->addWidget(strategy_label, 1, 0, 1, 1);
     strategy_radio = new RadioSet({{QString::fromUtf8("Sobre"), QVariant(QString::fromUtf8("over"))}, {QString::fromUtf8("AlrededorRedondo"), QVariant(QString::fromUtf8("around"))}}, Qt::Horizontal, true, nullptr);
+    strategy_radio->setValue(QVariant(QString::fromUtf8("over")));
     lay15->addWidget(strategy_radio, 1, 1, 1, 1);
     over_z_label = new FCLabel(nullptr);
     over_z_label->setText(QString::fromUtf8("Sobre ZSuperposición:"));
@@ -415,6 +451,7 @@ void GeometryObjectUIBase::setupUi() {
     over_z_entry = new FCDoubleSpinner(nullptr);
     over_z_entry->setProperty("decimals", 4);
     over_z_entry->setProperty("maximum", 10000.0);
+    over_z_entry->setProperty("value", 1.0);
     lay15->addWidget(over_z_entry, 2, 1, 1, 1);
     add_area_button = new FCButton(nullptr);
     add_area_button->setText(QString::fromUtf8("Agregar Zona:"));
@@ -422,6 +459,7 @@ void GeometryObjectUIBase::setupUi() {
     lay15->addWidget(add_area_button, 4, 0, 1, 1);
     area_shape_radio = new RadioSet({{QString::fromUtf8("Cuadrado"), QVariant(QString::fromUtf8("square"))}, {QString::fromUtf8("Polígono"), QVariant(QString::fromUtf8("polygon"))}}, Qt::Horizontal, true, nullptr);
     area_shape_radio->setToolTip(QString::fromUtf8("El tipo de forma de selección utilizada para la selección de área."));
+    area_shape_radio->setValue(QVariant(QString::fromUtf8("polygon")));
     lay15->addWidget(area_shape_radio, 4, 1, 1, 1);
     lay15->setColumnStretch(1, 1);
     exclusion_box->addLayout(lay15, 0);
@@ -451,6 +489,7 @@ void GeometryObjectUIBase::setupUi() {
     polish_dia_entry = new FCDoubleSpinner(nullptr);
     polish_dia_entry->setProperty("decimals", 4);
     polish_dia_entry->setProperty("maximum", 10000.0);
+    polish_dia_entry->setProperty("value", 10.0);
     polish_dia_entry->setHidden(true);
     grid4->addWidget(polish_dia_entry, 16, 1, 1, 1);
     polish_travelz_lbl = new FCLabel(nullptr);
@@ -462,6 +501,7 @@ void GeometryObjectUIBase::setupUi() {
     polish_travelz_entry->setProperty("decimals", 4);
     polish_travelz_entry->setProperty("maximum", 10000.0);
     polish_travelz_entry->setProperty("singleStep", 0.1);
+    polish_travelz_entry->setProperty("value", 2.0);
     polish_travelz_entry->setHidden(true);
     grid4->addWidget(polish_travelz_entry, 17, 1, 1, 1);
     polish_pressure_lbl = new FCLabel(nullptr);
@@ -473,6 +513,7 @@ void GeometryObjectUIBase::setupUi() {
     polish_pressure_entry->setProperty("decimals", 4);
     polish_pressure_entry->setProperty("maximum", 10000.0);
     polish_pressure_entry->setProperty("minimum", -10000.0);
+    polish_pressure_entry->setProperty("value", -1.0);
     polish_pressure_entry->setHidden(true);
     grid4->addWidget(polish_pressure_entry, 18, 1, 1, 1);
     polish_margin_lbl = new FCLabel(nullptr);
@@ -496,6 +537,7 @@ void GeometryObjectUIBase::setupUi() {
     polish_over_entry->setProperty("maximum", 99.9999);
     polish_over_entry->setProperty("singleStep", 0.1);
     polish_over_entry->setProperty("suffix", QString::fromUtf8(" %"));
+    polish_over_entry->setProperty("value", 5.0);
     polish_over_entry->setWrapping(true);
     polish_over_entry->setHidden(true);
     grid4->addWidget(polish_over_entry, 22, 1, 1, 1);

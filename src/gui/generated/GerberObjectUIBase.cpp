@@ -8,8 +8,9 @@ namespace flatcam::gui {
 
 void GerberObjectUIBase::setupUi() {
     // ---- acciones (compartidas entre menús y barras)
+    this->setAutoFillBackground(true);
     auto* lay1 = new QVBoxLayout();
-    lay1->setContentsMargins(11, 11, 11, 11);
+    lay1->setContentsMargins(9, 9, 9, 9);
     lay1->setSpacing(6);
     title_box = new QHBoxLayout();
     title_box->setContentsMargins(0, 0, 0, 0);
@@ -22,6 +23,7 @@ void GerberObjectUIBase::setupUi() {
     title_box->addWidget(title_label, 1);
     level = new FCLabel(nullptr);
     level->setProperty("alignment", 130);
+    level->setText(QString::fromUtf8("<span style=\"color:green;\"><b>BASIC</b></span>"));
     level->setToolTip(QString::fromUtf8("BASIC es adecuado para un principiante. Muchos parámetros\nestán ocultos para el usuario en este modo.\nEl modo AVANZADO pondrá a disposición todos los parámetros.\n\nPara cambiar el NIVEL de la aplicación, vaya a:\nEditar -> Preferencias -> General y verificar:\n'APP. NIVEL 'botón de radio."));
     title_box->addWidget(level, 0);
     lay1->addLayout(title_box, 0);
@@ -36,6 +38,7 @@ void GerberObjectUIBase::setupUi() {
     plot_options_label->setText(QString::fromUtf8("<b>Opciones de parcela:</b>"));
     lay2->addWidget(plot_options_label, 0, 0, 1, 1);
     solid_cb = new FCCheckBox(nullptr);
+    solid_cb->setChecked(true);
     solid_cb->setText(QString::fromUtf8("Sólido"));
     solid_cb->setToolTip(QString::fromUtf8("Polígonos de color liso."));
     lay2->addWidget(solid_cb, 0, 1, 1, 1);
@@ -50,6 +53,7 @@ void GerberObjectUIBase::setupUi() {
     w3->setText(QString::fromUtf8("<b>Nombre:</b>"));
     name_hlay->addWidget(w3, 0);
     name_entry = new FCEntry(nullptr);
+    name_entry->setText(QString::fromUtf8("x"));
     name_hlay->addWidget(name_entry, 0);
     lay2->addLayout(name_hlay, 1, 0, 1, 3);
     plot_lbl = new FCLabel(nullptr);
@@ -57,10 +61,12 @@ void GerberObjectUIBase::setupUi() {
     plot_lbl->setToolTip(QString::fromUtf8("Trazar (mostrar) este objeto."));
     lay2->addWidget(plot_lbl, 2, 0, 1, 1);
     plot_cb = new FCCheckBox(nullptr);
+    plot_cb->setChecked(true);
     lay2->addWidget(plot_cb, 2, 1, 1, 1);
     follow_cb = new FCCheckBox(nullptr);
     follow_cb->setText(QString::fromUtf8("Seguir"));
     follow_cb->setToolTip(QString::fromUtf8("Generar una geometría 'Seguir'.\nEsto significa que cortará a través\nEl medio de la traza."));
+    follow_cb->setHidden(true);
     lay2->addWidget(follow_cb, 2, 2, 1, 1);
     editor_button = new FCButton(nullptr);
     { QFont f = editor_button->font(); f.setBold(true); editor_button->setFont(f); }
@@ -89,9 +95,11 @@ void GerberObjectUIBase::setupUi() {
     apertures_table_label = new FCLabel(nullptr);
     apertures_table_label->setText(QString::fromUtf8("Aberturas:"));
     apertures_table_label->setToolTip(QString::fromUtf8("Tabla de Aperturas para el Objeto Gerber."));
+    apertures_table_label->setHidden(true);
     lay2->addWidget(apertures_table_label, 8, 0, 1, 1);
     aperture_table_visibility_cb = new FCCheckBox(nullptr);
     aperture_table_visibility_cb->setToolTip(QString::fromUtf8("Alternar la visualización de la tabla de herramientas."));
+    aperture_table_visibility_cb->setHidden(true);
     lay2->addWidget(aperture_table_visibility_cb, 8, 1, 1, 1);
     auto* lay4 = new QHBoxLayout();
     lay4->setContentsMargins(0, 0, 0, 0);
@@ -101,6 +109,7 @@ void GerberObjectUIBase::setupUi() {
     mark_all_cb->setProperty("layoutDirection", 1);
     mark_all_cb->setText(QString::fromUtf8("Márc. todo"));
     mark_all_cb->setToolTip(QString::fromUtf8("Cuando está marcado, mostrará todas las aperturas.\nCuando no está marcada, eliminará todas las formas de las marcas.\nque se dibujan en lienzo."));
+    mark_all_cb->setHidden(true);
     lay4->addWidget(mark_all_cb, 0);
     lay2->addLayout(lay4, 8, 2, 1, 1);
     apertures_table = new FCTable(nullptr);
@@ -112,6 +121,7 @@ void GerberObjectUIBase::setupUi() {
     create_buffer_button = new FCButton(nullptr);
     create_buffer_button->setText(QString::fromUtf8("Buffer la Geometria solida"));
     create_buffer_button->setToolTip(QString::fromUtf8("Este botón se muestra solo cuando el archivo Gerber\nse carga sin almacenamiento en búfer.\nAl hacer clic en esto, se creará la geometría almacenada\nrequerido para el aislamiento."));
+    create_buffer_button->setHidden(true);
     lay2->addWidget(create_buffer_button, 12, 0, 1, 3);
     auto* w5 = new QFrame(nullptr);
     w5->setProperty("frameShadow", 48);
@@ -172,6 +182,7 @@ void GerberObjectUIBase::setupUi() {
     noncopper_margin_entry->setProperty("maximum", 10000.0);
     noncopper_margin_entry->setProperty("minimum", -10000.0);
     noncopper_margin_entry->setProperty("singleStep", 0.1);
+    noncopper_margin_entry->setProperty("value", 0.1);
     lay7->addWidget(noncopper_margin_entry, 2, 1, 1, 2);
     noncopper_rounded_cb = new FCCheckBox(nullptr);
     noncopper_rounded_cb->setText(QString::fromUtf8("Redondeado"));
@@ -199,6 +210,7 @@ void GerberObjectUIBase::setupUi() {
     bbmargin_entry->setProperty("maximum", 10000.0);
     bbmargin_entry->setProperty("minimum", -10000.0);
     bbmargin_entry->setProperty("singleStep", 0.1);
+    bbmargin_entry->setProperty("value", 0.1);
     lay7->addWidget(bbmargin_entry, 10, 1, 1, 2);
     bbrounded_cb = new FCCheckBox(nullptr);
     bbrounded_cb->setText(QString::fromUtf8("Redondeado"));
