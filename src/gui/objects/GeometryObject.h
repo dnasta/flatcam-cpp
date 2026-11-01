@@ -72,6 +72,11 @@ public:
     QRectF bounds() const override;
     /** @brief Panel `GeometryObjectUI` cargado. @return El panel. */
     QWidget* propertiesUi() override;
+    /**
+     * @brief Refleja la geometría del objeto y la de cada herramienta (`Geometry.mirror`).
+     * @param axis Eje. @param point Punto del eje. @return `true`.
+     */
+    bool mirror(Axis axis, const Point2D& point) override;
 
     /**
      * @brief Genera el CNC Job de las herramientas pedidas (`mtool_gen_cncjob`, rama multigeo).

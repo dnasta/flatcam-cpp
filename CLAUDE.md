@@ -15,7 +15,7 @@ máquina del usuario.
 
 **Lo que hay que saber para retomar (el detalle está en `AGENTS.md`, sección 12).**
 
-- **Tests:** 525 (505 del núcleo + 19 de la GUI corren siempre; 1 lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
+- **Tests:** 526 (505 del núcleo + 20 de la GUI corren siempre; 1 lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
   y Qt 6.12 en el Mac del usuario (M4, AppleClang). micromamba: `old` (Shapely 1.8.4, GEOS 3.11, PyQt5 5.15, para oráculos y para
   volcar la interfaz original), `sh2`, `geos312`, `geos311` (`AGENTS.md`, secciones 6 y 12.4).
 - **Hecho (fases 1, 2 y 3 completas):** parsers, transformaciones, postprocesadores, G-code de taladrado y de geometrías, CutOut,
@@ -49,5 +49,8 @@ máquina del usuario.
   viajes engrosados en el dibujo y "mouse bites" con su Excellon (el usuario preguntó si esas limitaciones quedaban: no).
   **Paint y NCC completos** (estándar, "Todos" / "Sí mismo"): el flujo del usuario con Logo y B_Cu da sus `.nc` de la 2024.4.
   Corregida la tolerancia de simplificación de la Geometría (era 0,0005; es 0,00025).
-  **Siguiente** (`AGENTS.md` 11.13): reflejar (PCB a 2 caras / Transformaciones), preferencias del usuario. Pendientes menores: Paint/NCC con semilla y líneas, resto de Paint/NCC, selección por área,
+  **Reflejar:** Opciones → Voltear en el eje X / Y y teclas X / Y (también en el árbol). **El alcance v1 acordado está
+  completo.** Corrección: las preferencias guardadas del usuario son las de fábrica (los 80 %, Estándar, etc. los escribe a
+  mano), así que "cargar sus preferencias" no hacía falta. **Siguiente:** PCB a 2 caras, Isolation y proyectos (`AGENTS.md`
+  12.2.4), a confirmar con el usuario. Pendientes menores: Paint/NCC con semilla y líneas, resto de Paint/NCC, selección por área,
   verificación de diámetro seguro (`AGENTS.md`, sección 11).

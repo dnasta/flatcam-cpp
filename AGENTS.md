@@ -65,14 +65,14 @@ logo) y **CutOut** → **CNC Job** con G-code. Taladros y alineación con **PCB 
 | 1 | CMake, Doxygen y núcleo de geometría | **Hecha**, verificada en macOS (arm64) y Linux |
 | 2 | Parsers de Gerber y Excellon con tests contra archivos reales | **Hecha** |
 | 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | **Hecha**: transformaciones de Gerber, postprocesadores, G-code de taladrado y de geometrías, CutOut, capa de láser, Paint, NCC, PCB a 2 caras e Isolation |
-| 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | **En curso**: ventana principal idéntica a la original (generada desde la interfaz Python real), widgets de `GUIElements`, canvas `QOpenGLWidget` (ejes, grilla, HUD, zoom, paneo y dibujo de objetos con buffers de vértices), abrir Gerber y Excellon (menú, barra, arrastrar y soltar, línea de comandos) con el árbol del Proyecto; Propiedades de Gerber y Excellon (paneles generados + `build_ui`); paneles de NCC, Paint, Perforación y Corte en la pestaña Herramienta (generados). **Perforación completa:** objeto → tabla de herramientas → parámetros por herramienta → CNC Job (objeto, dibujo y Propiedades) → "Guardar código CNC"; desde la interfaz reproduce el `.nc` de la 2024.4 del usuario (salvo fecha y orden de agujeros). **Corte completo:** Corte libre o rectangular → objeto Geometría (Propiedades con su tabla y parámetros por herramienta) → "Generar objeto CNCJob" → exportar; reproduce el `.nc` del contorno de la 2024.4 **línea por línea salvo la fecha**. **Agregado pedido por el usuario:** los objetos de cada grupo del Proyecto se reordenan arrastrándolos y ese orden es el de dibujo (el primero queda arriba). **Paint y NCC completos** (método estándar, "Todos" / "Sí mismo"): el flujo del usuario sobre Logo y B_Cu da sus `.nc` de la 2024.4 (Paint: mismas líneas salvo la variante del láser y últimas cifras de GEOS; NCC: misma cabecera y los mismos trazados ±2 %). Faltan: reflejar y las preferencias del usuario |
+| 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | **En curso**: ventana principal idéntica a la original (generada desde la interfaz Python real), widgets de `GUIElements`, canvas `QOpenGLWidget` (ejes, grilla, HUD, zoom, paneo y dibujo de objetos con buffers de vértices), abrir Gerber y Excellon (menú, barra, arrastrar y soltar, línea de comandos) con el árbol del Proyecto; Propiedades de Gerber y Excellon (paneles generados + `build_ui`); paneles de NCC, Paint, Perforación y Corte en la pestaña Herramienta (generados). **Perforación completa:** objeto → tabla de herramientas → parámetros por herramienta → CNC Job (objeto, dibujo y Propiedades) → "Guardar código CNC"; desde la interfaz reproduce el `.nc` de la 2024.4 del usuario (salvo fecha y orden de agujeros). **Corte completo:** Corte libre o rectangular → objeto Geometría (Propiedades con su tabla y parámetros por herramienta) → "Generar objeto CNCJob" → exportar; reproduce el `.nc` del contorno de la 2024.4 **línea por línea salvo la fecha**. **Agregado pedido por el usuario:** los objetos de cada grupo del Proyecto se reordenan arrastrándolos y ese orden es el de dibujo (el primero queda arriba). **Paint y NCC completos** (método estándar, "Todos" / "Sí mismo"): el flujo del usuario sobre Logo y B_Cu da sus `.nc` de la 2024.4 (Paint: mismas líneas salvo la variante del láser y últimas cifras de GEOS; NCC: misma cabecera y los mismos trazados ±2 %). **Reflejar:** Opciones → Voltear en el eje X / Y y las teclas X / Y (también desde el árbol), alrededor del centro de la caja de los objetos elegidos; con las cuatro capas de "luz de noche" elegidas da exactamente el reflejo en x = 0 de los `.nc` del usuario. Siguen: PCB a 2 caras, Isolation y proyectos |
 | 5 | Herramientas secundarias y postprocesadores restantes | Pendiente |
 
 Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (AppleClang, GEOS 3.15). Doxygen genera
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 525 tests (505 del núcleo y 19 de la GUI pasan; 1, la lenta del NCC
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 526 tests (505 del núcleo y 20 de la GUI pasan; 1, la lenta del NCC
 del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -558,7 +558,11 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
 13. **GUI: pendientes, en orden:** ~~dibujar Gerber y Excellon~~, ~~abrir archivos y el árbol del Proyecto~~, ~~Propiedades de
     Gerber y Excellon~~ y ~~los paneles de las cuatro herramientas~~ (hechos; falta menú contextual del árbol, mostrar/ocultar y
     borrar). ~~Perforación → CNC Job → exportar~~ (hecho). ~~Corte → Geometría → CNC Job~~ (hecho; varias herramientas en un
-    CNC Job, hecho). ~~Paint y NCC~~ (hechos). Sigue: reflejar (Transformaciones o PCB a 2 caras), cargar las preferencias del usuario (hoy los paneles tienen los valores de fábrica:
+    CNC Job, hecho). ~~Paint y NCC~~ (hechos). ~~Reflejar~~ (hecho: Opciones → Voltear y teclas X / Y). **Corrección:** se
+    decía que había que cargar "las preferencias del usuario" porque los paneles mostraban 40 % y "Semilla" en vez de sus 80 % y
+    "Estándar": es falso. Las opciones guardadas en su proyecto (`luz_de_noche.params.json`, `options`) son las de fábrica; los
+    valores de cada trabajo los escribe a mano. Un sistema de preferencias propio queda como mejora, no como requisito. Antes
+    decía: reflejar (Transformaciones o PCB a 2 caras), cargar las preferencias del usuario (hoy los paneles tienen los valores de fábrica:
     por ejemplo NCC 40 % y "Semilla" en vez de sus 80 % y "Estándar"); pestaña Propiedades de cada objeto (`ObjectUI.py`, generada igual que la ventana); paneles de Perforación, Corte, Paint y NCC
     (generados desde `ToolDrilling`, `ToolCutOut`, `ToolPaint`, `ToolNCC` con sus valores de fábrica) y su lógica sobre el núcleo;
     CNC Job y exportar `.nc`; reflejar (herramienta PCB a 2 caras / Transformaciones).
@@ -570,7 +574,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **525 tests** (506 del núcleo y 19 de la GUI): 524 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
+- **526 tests** (506 del núcleo y 20 de la GUI): 525 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
   oráculos en Python (Shapely 1.8.4) y, donde existe, contra el `.nc` real del usuario (FlatCAM 8.994):
@@ -597,7 +601,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 525 tests, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 526 tests, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -640,6 +644,8 @@ trazados; taladro con los mismos agujeros (sección 7).
 - **Error corregido:** la primera versión del objeto Geometría simplificaba con `0,01 / 20`; `global_tolerance` vale **0,005**,
   así que es `0,00025` (lo que ya decía la sección 7). En el contorno del Corte no cambiaba nada (por eso su test pasaba); en Paint
   y NCC faltaba el 25 % de las líneas. Lo detectó el test de la GUI contra el `.nc` real.
+- En "Voltear" el original llama `mirror('Y')` desde "Voltear en el eje X" (invierte las X) y `mirror('X')` desde "en el eje Y".
+  Las teclas del árbol del Proyecto van a los atajos de la ventana (`view.keyPressed → ui.keyPressEvent`).
 - Para mirar el canvas OpenGL desde un test: `QT_QPA_PLATFORM=cocoa build/tests/gui_tests --gtest_filter=...` (sin esa
   variable los tests corren en "offscreen", donde `QOpenGLWidget` no dibuja) y `ui()->grab().save(...)`.
 - Un test que compara un texto consigo mismo siempre pasa: una vez se coló una aserción así; revisar que cada `EXPECT` pueda fallar.

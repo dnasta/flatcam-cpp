@@ -79,6 +79,14 @@ public:
      */
     virtual QWidget* propertiesUi() = 0;
 
+    /**
+     * @brief Refleja el objeto alrededor de un eje (`mirror`).
+     * @param axis `Axis::X` invierte las Y; `Axis::Y` invierte las X.
+     * @param point Punto por el que pasa el eje.
+     * @return `false` si el tipo de objeto no se puede reflejar (en la base, ninguno).
+     */
+    virtual bool mirror(Axis axis, const Point2D& point);
+
     ~FlatCAMObj() override;
 
 protected:
@@ -127,6 +135,8 @@ public:
 
     /** @brief Panel `GerberObjectUI` cargado. @return El panel. */
     QWidget* propertiesUi() override;
+    /** @brief Refleja el Gerber. @param axis Eje. @param point Punto del eje. @return `true`. */
+    bool mirror(Axis axis, const Point2D& point) override;
 
 private:
     std::unique_ptr<Gerber> gerber_;
@@ -150,6 +160,8 @@ public:
 
     /** @brief Panel `ExcellonObjectUI` cargado. @return El panel. */
     QWidget* propertiesUi() override;
+    /** @brief Refleja agujeros y ranuras. @param axis Eje. @param point Punto del eje. @return `true`. */
+    bool mirror(Axis axis, const Point2D& point) override;
 
 private:
     std::unique_ptr<Excellon> excellon_;

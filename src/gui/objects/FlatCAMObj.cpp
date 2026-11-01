@@ -53,6 +53,18 @@ void FlatCAMObj::addShape(const Shape& s, PlotGroup& out, QRectF& bounds, bool f
     }
 }
 
+bool FlatCAMObj::mirror(Axis, const Point2D&) { return false; }
+
+bool GerberObject::mirror(Axis axis, const Point2D& point) {
+    gerber_->mirror(axis, point);
+    return true;
+}
+
+bool ExcellonObject::mirror(Axis axis, const Point2D& point) {
+    excellon_->mirror(axis, point);
+    return true;
+}
+
 GerberObject::GerberObject(QString name, std::unique_ptr<Gerber> gerber)
     : FlatCAMObj(ObjectKind::Gerber, std::move(name)), gerber_(std::move(gerber)) {
     outlineColor = colorFromFlatCam("#006E20BF");  // gerber_plot_line

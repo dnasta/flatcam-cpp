@@ -1,6 +1,7 @@
 #include "gui/App.h"
 
 #include <QApplication>
+#include <algorithm>
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QFileDialog>
@@ -154,6 +155,12 @@ void App::connectSignals() {
             runTool(cutoutTool, CutOutTool::info());
             cutoutTool->setToolUi();
         });
+    // Las teclas en el árbol del Proyecto van a los atajos de la ventana (view.keyPressed -> ui.keyPressEvent).
+    connect(ui_->collection_view, &KeySensitiveListView::keyPressed, this,
+            [this](int key) { handleKey(key, QApplication::keyboardModifiers()); });
+    // Opciones -> Voltear en el eje X / Y (on_flipx refleja con mirror('Y'), on_flipy con mirror('X')).
+    connect(ui_->menuoptions_transform_flipx, &QAction::triggered, this, [this] { flip(Axis::Y); });
+    connect(ui_->menuoptions_transform_flipy, &QAction::triggered, this, [this] { flip(Axis::X); });
     // ObjectCollection: elegir un objeto carga sus Propiedades; activarlo (doble clic o Enter) además abre la pestaña.
     connect(ui_->collection_view->selectionModel(), &QItemSelectionModel::currentChanged, this,
             [this](const QModelIndex& cur, const QModelIndex&) {
@@ -243,6 +250,39 @@ FlatCAMObj* App::openByExtension(const QString& filename) {
     return nullptr;
 }
 
+std::vector<FlatCAMObj*> App::selectedObjects() const {
+    std::vector<FlatCAMObj*> out;
+    QModelIndexList rows = ui_->collection_view->selectionModel()->selectedIndexes();
+    std::sort(rows.begin(), rows.end(), [](const QModelIndex& a, const QModelIndex& b) {
+        return a.parent().row() != b.parent().row() ? a.parent().row() < b.parent().row() : a.row() < b.row();
+    });
+    for (const QModelIndex& i : rows)
+        if (FlatCAMObj* o = collection_->objectAt(i)) out.push_back(o);
+    return out;
+}
+
+bool App::flip(Axis axis) {
+    const std::vector<FlatCAMObj*> objs = selectedObjects();
+    if (objs.empty()) {
+        ui_->inform("[WARNING_NOTCL] " + tr_("No object is selected."));
+        return false;
+    }
+    // Centro de la caja que contiene a todos los elegidos.
+    QRectF box;
+    for (FlatCAMObj* o : objs) box = box.isNull() ? o->bounds() : box.united(o->bounds());
+    const Point2D center{0.5 * (box.left() + box.right()), 0.5 * (box.top() + box.bottom())};
+    for (FlatCAMObj* o : objs) {
+        if (!o->mirror(axis, center)) {
+            ui_->inform(QString("[ERROR_NOTCL] %1: %2.").arg(tr_("Action was not executed"), o->name()));
+            return false;
+        }
+        ui_->plotCanvas()->setLayer(o->id(), o->plotData());
+    }
+    showProperties(activeObject());  // las tablas y los límites cambiaron
+    ui_->inform(QString("[success] %1.").arg(axis == Axis::Y ? tr_("Flip on X axis done") : tr_("Flip on Y axis done")));
+    return true;
+}
+
 FlatCAMObj* App::activeObject() const {
     return collection_->objectAt(ui_->collection_view->currentIndex());
 }
@@ -318,6 +358,20 @@ void App::showProperties(FlatCAMObj* obj) {
     area->setWidget(panel);
 }
 
+bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
+    // MainGUI.keyPressEvent sin modificadores: V encuadra; X e Y reflejan; 1, 2 y 3 eligen la pestaña del panel izquierdo.
+    if (modifiers != Qt::NoModifier) return false;
+    switch (key) {
+        case Qt::Key_V: onZoomFit(); return true;
+        case Qt::Key_X: flip(Axis::Y); return true;  // on_flipx
+        case Qt::Key_Y: flip(Axis::X); return true;  // on_flipy
+        case Qt::Key_1: ui_->notebook->setCurrentWidget(ui_->project_tab); return true;
+        case Qt::Key_2: ui_->notebook->setCurrentWidget(ui_->properties_tab); return true;
+        case Qt::Key_3: ui_->notebook->setCurrentWidget(ui_->tool_tab); return true;
+        default: return false;
+    }
+}
+
 bool App::eventFilter(QObject* obj, QEvent* ev) {
     if (obj == ui_.get()) {
         if (ev->type() == QEvent::DragEnter || ev->type() == QEvent::DragMove) {
@@ -335,15 +389,7 @@ bool App::eventFilter(QObject* obj, QEvent* ev) {
         } else if (ev->type() == QEvent::KeyPress) {
             // MainGUI.keyPressEvent sin modificadores: V encuadra; 1, 2 y 3 eligen la pestaña del panel izquierdo.
             auto* k = static_cast<QKeyEvent*>(ev);
-            if (k->modifiers() == Qt::NoModifier) {
-                switch (k->key()) {
-                    case Qt::Key_V: onZoomFit(); return true;
-                    case Qt::Key_1: ui_->notebook->setCurrentWidget(ui_->project_tab); return true;
-                    case Qt::Key_2: ui_->notebook->setCurrentWidget(ui_->properties_tab); return true;
-                    case Qt::Key_3: ui_->notebook->setCurrentWidget(ui_->tool_tab); return true;
-                    default: break;
-                }
-            }
+            if (handleKey(k->key(), k->modifiers())) return true;
         }
     }
     return QObject::eventFilter(obj, ev);
