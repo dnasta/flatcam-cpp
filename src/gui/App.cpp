@@ -7,6 +7,7 @@
 #include <QFileInfo>
 #include <QKeyEvent>
 #include <QMimeData>
+#include <QScrollArea>
 #include <QSplitter>
 
 #include "gui/PlotCanvas.h"
@@ -67,10 +68,45 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     ui_->collection_view->setMinimumWidth(290);
     ui_->setAcceptDrops(true);
     ui_->installEventFilter(this);
+    defaultProperties_ = ui_->properties_scroll_area->widget();
+    // Las herramientas (install_tools): sus paneles viven mientras viva la ventana.
+    nccTool = new NccTool(ui_.get());
+    paintTool = new PaintTool(ui_.get());
+    drillingTool = new DrillingTool(ui_.get());
+    cutoutTool = new CutOutTool(ui_.get());
+    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool}) w->hide();
     connectSignals();
 }
 
-App::~App() = default;
+App::~App() {
+    // Los paneles de Propiedades son de los objetos: se saca el que esté a la vista antes de destruir nada. El de la
+    // herramienta lo destruye la ventana (es su hijo o el de su área).
+    if (ui_) ui_->properties_scroll_area->takeWidget();
+}
+
+void App::runTool(QWidget* panel, const ToolInfo& info, bool toggle) {
+    QSplitter* sp = ui_->splitter;
+    if (toggle && sp->sizes().value(0) != 0) {
+        QWidget* cur = ui_->tool_scroll_area->widget();
+        if (cur && cur->objectName() == info.toolName) {
+            if (ui_->notebook->currentWidget() != ui_->tool_tab) ui_->notebook->setCurrentWidget(ui_->tool_tab);
+            else sp->setSizes({0, 1});
+            return;
+        }
+    }
+    if (sp->sizes().value(0) == 0) sp->setSizes({1, 1});
+    // AppTool.run: el panel anterior se saca (sigue siendo de la App) y se pone el nuevo.
+    QWidget* old = ui_->tool_scroll_area->takeWidget();
+    if (old && old != panel) {
+        old->hide();
+        old->setParent(ui_.get());
+    }
+    ui_->tool_scroll_area->setWidget(panel);
+    ui_->notebook->setCurrentWidget(ui_->tool_tab);
+    panel->setObjectName(info.toolName);
+    panel->show();
+    ui_->notebook->setTabText(2, info.tabText);
+}
 
 void App::connectSignals() {
     connect(ui_->menufileopengerber, &QAction::triggered, this, [this] { onFileOpenGerber(); });
@@ -86,6 +122,30 @@ void App::connectSignals() {
     for (QAction* a : {ui_->menuview_zoom_in, ui_->zoom_in_btn}) connect(a, &QAction::triggered, this, [zoomBy] { zoomBy(1.5); });
     for (QAction* a : {ui_->menuview_zoom_out, ui_->zoom_out_btn})
         connect(a, &QAction::triggered, this, [zoomBy] { zoomBy(1 / 1.5); });
+    // Herramientas: menú Herramienta y barra de herramientas.
+    for (QAction* a : {ui_->ncclear_tool_menuAction, ui_->ncc_btn})
+        connect(a, &QAction::triggered, this, [this] { runTool(nccTool, NccTool::info()); });
+    for (QAction* a : {ui_->paint_tool_menuAction, ui_->paint_btn})
+        connect(a, &QAction::triggered, this, [this] { runTool(paintTool, PaintTool::info()); });
+    for (QAction* a : {ui_->drilling_tool_menuAction, ui_->drill_btn})
+        connect(a, &QAction::triggered, this, [this] { runTool(drillingTool, DrillingTool::info()); });
+    for (QAction* a : {ui_->cutout_tool_menuAction, ui_->cutout_btn})
+        connect(a, &QAction::triggered, this, [this] { runTool(cutoutTool, CutOutTool::info()); });
+    // ObjectCollection: elegir un objeto carga sus Propiedades; activarlo (doble clic o Enter) además abre la pestaña.
+    connect(ui_->collection_view->selectionModel(), &QItemSelectionModel::currentChanged, this,
+            [this](const QModelIndex& cur, const QModelIndex&) {
+                FlatCAMObj* o = collection_->objectAt(cur);
+                showProperties(o);
+                if (o) {
+                    ui_->inform(QString("[selected]<span style=\"color:%1;\">%2</span> %3")
+                                    .arg(kindColor(o->kind()), o->name(), tr_("selected")));
+                } else {
+                    ui_->inform("");
+                }
+            });
+    connect(ui_->collection_view, &QAbstractItemView::activated, this, [this](const QModelIndex& idx) {
+        if (collection_->objectAt(idx)) ui_->notebook->setCurrentWidget(ui_->properties_tab);
+    });
     connect(collection_, &ObjectCollection::objectRenamed, this, [this](FlatCAMObj* o, const QString& old) {
         ui_->inform(tr_("Object renamed from <b>{old}</b> to <b>{new}</b>").replace("{old}", old).replace("{new}", o->name()));
     });
@@ -175,6 +235,12 @@ FlatCAMObj* App::onObjectCreated(std::unique_ptr<FlatCAMObj> o) {
 }
 
 void App::onZoomFit() { ui_->plotCanvas()->fitView(); }
+
+void App::showProperties(FlatCAMObj* obj) {
+    QScrollArea* area = ui_->properties_scroll_area;
+    area->takeWidget();  // no se destruye: es del objeto o el panel vacío
+    area->setWidget(obj ? obj->propertiesUi() : defaultProperties_);
+}
 
 bool App::eventFilter(QObject* obj, QEvent* ev) {
     if (obj == ui_.get()) {

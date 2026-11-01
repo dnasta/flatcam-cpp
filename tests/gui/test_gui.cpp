@@ -15,6 +15,9 @@
 #include "gui/widgets/FCDetachableTab.h"
 #include "gui/widgets/FCEntry.h"
 #include "gui/widgets/FlatCAMInfoBar.h"
+#include "gui/widgets/NumericalEval.h"
+#include "gui/widgets/RadioSet.h"
+#include "gui/objects/ObjectUIs.h"
 
 using namespace flatcam::gui;
 
@@ -201,6 +204,65 @@ TEST(GuiApp, OpensUserFilesPlotsAndFits) {
     // El panel izquierdo se abre al agregar un objeto (global_project_autohide).
     EXPECT_GT(app.ui()->splitter->sizes().value(0), 0);
     EXPECT_EQ(app.collection()->names(), (QStringList{"luz de noche Pascual-B_Cu.gbr", "luz de noche Pascual-PTH.drl"}));
+}
+
+TEST(GuiWidgets, NumericExpressionsLikePythonEval) {
+    EXPECT_DOUBLE_EQ(*NumericExpression::evaluate("1.5"), 1.5);
+    EXPECT_DOUBLE_EQ(*NumericExpression::evaluate("2*3+1"), 7.0);
+    EXPECT_DOUBLE_EQ(*NumericExpression::evaluate("-(1+2)/4"), -0.75);
+    EXPECT_DOUBLE_EQ(*NumericExpression::evaluate("7 % 3"), 1.0);
+    EXPECT_DOUBLE_EQ(*NumericExpression::evaluate("-7 % 3"), 2.0);  // como Python
+    EXPECT_FALSE(NumericExpression::evaluate("1/0"));
+    EXPECT_FALSE(NumericExpression::evaluate("2+"));
+    EXPECT_FALSE(NumericExpression::evaluate(""));
+    const auto t = NumericExpression::evaluateTuple("(0.0, 2*1.5)");
+    ASSERT_TRUE(t);
+    EXPECT_EQ(*t, (std::vector<double>{0.0, 3.0}));
+    EXPECT_FALSE(NumericExpression::evaluateTuple("(1, x)"));
+}
+
+TEST(GuiWidgets, RadioSetValues) {
+    RadioSet r({{"No", QVariant("no")}, {"Adelante", QVariant("fwd")}, {"Atras", QVariant("rev")}});
+    EXPECT_FALSE(r.value().isValid());
+    QString last;
+    QObject::connect(&r, &RadioSet::activatedCustom, [&](const QString& v) { last = v; });
+    r.setValue(QVariant("rev"));
+    EXPECT_EQ(r.value().toString(), "rev");
+    EXPECT_EQ(last, "rev");
+    EXPECT_TRUE(r.button(2)->isChecked());
+    r.setOptionsDisabled({"No"}, true);
+    EXPECT_FALSE(r.button(0)->isEnabled());
+}
+
+TEST(GuiApp, PropertiesAndToolPanelsLikeTheOriginal) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    FlatCAMObj* e = app.openByExtension(QString::fromStdString(dir + "PTH.drl"));
+    ASSERT_NE(e, nullptr);
+    // Al elegir el objeto, Propiedades muestra su panel con la tabla de herramientas y los totales.
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(e));
+    auto* ui = qobject_cast<ExcellonObjectUI*>(app.ui()->properties_scroll_area->widget());
+    ASSERT_NE(ui, nullptr);
+    EXPECT_EQ(ui->name_entry->text(), "luz de noche Pascual-PTH.drl");
+    ASSERT_EQ(ui->tools_table->rowCount(), 6);
+    EXPECT_EQ(ui->tools_table->item(0, 1)->text(), "0.8000");
+    EXPECT_EQ(ui->tools_table->item(0, 2)->text(), "84");
+    EXPECT_EQ(ui->tools_table->item(3, 1)->text(), "3.4000");
+    EXPECT_EQ(ui->tools_table->item(4, 1)->text(), QString::fromUtf8("Taladros totales"));
+    EXPECT_EQ(ui->tools_table->item(4, 2)->text(), "120");
+    // Sin selección vuelve el panel vacío.
+    app.showProperties(nullptr);
+    EXPECT_EQ(qobject_cast<ExcellonObjectUI*>(app.ui()->properties_scroll_area->widget()), nullptr);
+    // Las herramientas se abren en la pestaña Herramienta con su título; elegir la misma otra vez cierra el panel.
+    app.runTool(app.nccTool, NccTool::info());
+    EXPECT_EQ(app.ui()->tool_scroll_area->widget(), app.nccTool);
+    EXPECT_EQ(app.ui()->notebook->tabText(2), QString::fromUtf8("Herramienta NCC"));
+    EXPECT_EQ(app.ui()->notebook->currentWidget(), app.ui()->tool_tab);
+    app.runTool(app.drillingTool, DrillingTool::info());
+    EXPECT_EQ(app.ui()->tool_scroll_area->widget(), app.drillingTool);
+    EXPECT_EQ(app.ui()->notebook->tabText(2), QString::fromUtf8("Herramienta de Perforación"));
+    app.runTool(app.drillingTool, DrillingTool::info());
+    EXPECT_EQ(app.ui()->splitter->sizes().value(0), 0);
 }
 
 int main(int argc, char** argv) {

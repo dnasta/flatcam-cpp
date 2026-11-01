@@ -74,6 +74,14 @@ void ObjectCollection::remove(FlatCAMObj* obj) {
     }
 }
 
+QModelIndex ObjectCollection::indexOf(FlatCAMObj* obj) const {
+    if (!obj) return {};
+    const auto& v = groups_[kindIndex(obj->kind())];
+    for (int r = 0; r < static_cast<int>(v.size()); ++r)
+        if (v[r].get() == obj) return index(r, 0, groupIndex(obj->kind()));
+    return {};
+}
+
 QModelIndex ObjectCollection::groupIndex(ObjectKind kind) const { return index(kindIndex(kind), 0); }
 
 FlatCAMObj* ObjectCollection::objectAt(const QModelIndex& idx) const {

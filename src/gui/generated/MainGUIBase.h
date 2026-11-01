@@ -3,6 +3,15 @@
 
 #include <QAction>
 #include <QPixmap>
+#include <QFormLayout>
+#include <QHeaderView>
+#include <QTableWidget>
+#include <QDoubleSpinBox>
+#include <QSpinBox>
+#include <QRadioButton>
+#include <QTextEdit>
+#include <QPlainTextEdit>
+#include <QSlider>
 #include <QBoxLayout>
 #include <QCheckBox>
 #include <QComboBox>

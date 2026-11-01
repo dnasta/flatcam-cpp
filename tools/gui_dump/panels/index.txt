@@ -1,0 +1,8 @@
+GerberObjectUI
+ExcellonObjectUI
+GeometryObjectUI
+CNCObjectUI
+NccToolUI
+PaintToolUI
+DrillingToolUI
+CutOutToolUI
