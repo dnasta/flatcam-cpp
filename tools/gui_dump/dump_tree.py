@@ -55,7 +55,7 @@ def default_instance(cls):
     if cls not in _DEFAULTS:
         try:
             _DEFAULTS[cls] = cls()
-        except TypeError:
+        except Exception:  # noqa: BLE001  (constructores que piden argumentos o la aplicación)
             _DEFAULTS[cls] = None
     return _DEFAULTS[cls]
 
@@ -108,9 +108,15 @@ def same(a, b):
 
 
 def props_of(obj):
-    """Propiedades Qt escribibles que difieren de una instancia nueva de la clase base de Qt."""
+    """Propiedades Qt escribibles que difieren de una instancia nueva de la misma clase.
+
+    Se compara contra la clase de Python del objeto (por ejemplo `FCDetachableTab`, cuyo constructor ya cambia valores
+    de Qt) si se puede crear sin argumentos; si no, contra su clase base de Qt.
+    """
     _, cls = qt_class(obj)
-    base = default_instance(cls)
+    base = default_instance(type(obj)) if not type(obj).__module__.startswith("PyQt5") else None
+    if base is None:
+        base = default_instance(cls)
     out = {}
     mo = obj.metaObject()
     for i in range(mo.propertyCount()):
@@ -304,6 +310,10 @@ def collect_names(root_obj, prefix=""):
 def dump_main_window(gui, app=None):
     names = collect_names(gui)
     if app is not None:
+        # La vista del árbol del proyecto es de la colección (`app.collection.view`), no de la ventana.
+        coll = getattr(app, "collection", None)
+        if coll is not None and isinstance(getattr(coll, "view", None), QtCore.QObject):
+            names[id(coll.view)] = "collection_view"
         # Las acciones del menú Herramienta las crea cada herramienta (`appTool.install`): `ncc_tool.menuAction` -> ncc_tool_menuAction
         for k, v in list(vars(app).items()):
             act = getattr(v, "menuAction", None) if not isinstance(v, QtCore.QObject) or hasattr(v, "toolName") else None

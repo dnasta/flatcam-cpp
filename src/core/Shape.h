@@ -275,6 +275,16 @@ public:
     /** @brief Envolvente convexa. @return Figura convexa mínima que contiene a esta. */
     Shape convexHull() const;
 
+    /**
+     * @brief Triángulos que cubren exactamente la superficie de los polígonos (para rellenarlos al dibujar).
+     *
+     * Usa la triangulación de Delaunay restringida de GEOS, que respeta los bordes y los agujeros. Las líneas y los
+     * puntos no tienen superficie y no aportan triángulos. No existe en Shapely: la usa el canvas OpenGL del port.
+     * @return Vértices de a tres (cada terna es un triángulo).
+     * @throws GeometryError si GEOS falla.
+     */
+    std::vector<Point2D> triangulate() const;
+
     /** @brief Repara una figura inválida. @return Figura válida equivalente. */
     Shape makeValid() const;
 

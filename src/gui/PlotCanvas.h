@@ -4,11 +4,32 @@
  */
 #pragma once
 
+#include <QColor>
+#include <QOpenGLBuffer>
+#include <QOpenGLFunctions>
+#include <QOpenGLShaderProgram>
 #include <QOpenGLWidget>
 #include <QPointF>
 #include <QRectF>
+#include <map>
+#include <memory>
+#include <optional>
+#include <vector>
 
 namespace flatcam::gui {
+
+/**
+ * @brief Lo que se dibuja de un objeto: triángulos de relleno y segmentos de contorno, con sus colores.
+ *
+ * Equivale a las figuras que cada objeto agrega a la `ShapeCollection` de vispy (`add_shape` con `color` y `face_color`).
+ */
+struct PlotLayerData {
+    std::vector<float> fill;   ///< Triángulos de relleno: x, y por vértice, de a tres vértices.
+    std::vector<float> lines;  ///< Segmentos del contorno: x, y por vértice, de a dos vértices.
+    QColor fillColor;          ///< Color del relleno (con transparencia).
+    QColor lineColor;          ///< Color del contorno.
+    QRectF bounds;             ///< Límites de lo dibujado, en mm.
+};
 
 /**
  * @brief Canvas 2D con la misma apariencia y manejo que el de FlatCAM 2024.4 (tema claro).
@@ -20,7 +41,7 @@ namespace flatcam::gui {
  * (factor `1.007^30` por paso, alrededor del cursor) y se desplaza arrastrando con el botón derecho
  * (`global_pan_button` = 2).
  */
-class PlotCanvas : public QOpenGLWidget {
+class PlotCanvas : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
 public:
     /** @brief Crea el canvas. @param parent Widget padre. */
@@ -64,7 +85,28 @@ public:
     /** @brief Rectángulo de la vista (sin márgenes ni ejes), en píxeles del widget. @return El rectángulo. */
     QRectF viewRect() const;
 
-signals:
+    /**
+     * @brief Agrega o reemplaza lo que se dibuja de un objeto.
+     * @param id Identificador del objeto (lo elige quien llama).
+     * @param data Triángulos, segmentos y colores.
+     */
+    void setLayer(int id, PlotLayerData data);
+
+    /** @brief Muestra u oculta lo dibujado de un objeto. @param id Identificador. @param visible Mostrar. */
+    void setLayerVisible(int id, bool visible);
+
+    /** @brief Borra lo dibujado de un objeto. @param id Identificador. */
+    void removeLayer(int id);
+
+    /** @brief Límites de todo lo visible, o vacío si no hay nada. @return El rectángulo en mm. */
+    std::optional<QRectF> layersBounds() const;
+
+    /**
+     * @brief Encuadra todo lo visible con un 2 % de margen por lado (`fit_view`); sin objetos muestra (-1, -1, 20, 20).
+     */
+    void fitView();
+
+Q_SIGNALS:
     /** @brief El cursor se movió sobre la vista. @param world Posición en mm. */
     void mouseMoved(QPointF world);
     /** @brief Clic en la vista. @param world Posición en mm. @param button Botón. */
@@ -89,6 +131,15 @@ protected:
     void leaveEvent(QEvent* event) override;
 
 private:
+    /// Datos de un objeto ya cargados en la placa de video.
+    struct Layer {
+        PlotLayerData data;
+        bool visible{true};
+        bool dirty{true};
+        std::unique_ptr<QOpenGLBuffer> fillVbo;
+        std::unique_ptr<QOpenGLBuffer> lineVbo;
+    };
+    void drawLayers(const QRectF& vr);
     void drawGrid(class QPainter& p, const QRectF& vr) const;
     void drawAxesLabels(class QPainter& p, const QRectF& vr) const;
     void drawHud(class QPainter& p, const QRectF& vr) const;
@@ -105,6 +156,8 @@ private:
     bool cursorInside_{false};
     QPointF cursorWorld_{0, 0};
     QPointF lastClick_{0, 0};
+    std::map<int, Layer> layers_;
+    std::unique_ptr<QOpenGLShaderProgram> program_;
 };
 
 }  // namespace flatcam::gui

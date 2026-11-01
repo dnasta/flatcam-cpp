@@ -23,7 +23,7 @@ public:
     /** @brief Crea la barra. @param parent Widget padre. */
     explicit FCTabBar(QWidget* parent = nullptr);
 
-signals:
+Q_SIGNALS:
     /** @brief Doble clic sobre una pestaña. @param index Pestaña. @param globalPos Posición en pantalla. */
     void onDetachTabSignal(int index, QPoint globalPos);
     /** @brief Clic del medio sobre una pestaña. @param index Pestaña. */
@@ -70,11 +70,11 @@ public:
     /** @brief La barra de pestañas propia. @return La barra. */
     FCTabBar* fcTabBar() const { return bar_; }
 
-public slots:
+public Q_SLOTS:
     /** @brief Cierra una pestaña (`closeTab`). @param index Pestaña. */
     virtual void closeTab(int index);
 
-signals:
+Q_SIGNALS:
     /** @brief Se desprendió una pestaña. @param name Nombre de la pestaña. */
     void tabDetached(const QString& name);
     /** @brief Volvió una pestaña desprendida. @param name Nombre de la pestaña. */
@@ -99,11 +99,11 @@ public:
     /** @brief Crea las pestañas. @param parent Widget padre. @param protect Ninguna pestaña se puede cerrar. */
     explicit FCDetachableTab2(QWidget* parent = nullptr, bool protect = false) : FCDetachableTab(parent, protect) {}
 
-public slots:
+public Q_SLOTS:
     /** @brief Avisa con @ref tabClosed y cierra. @param index Pestaña. */
     void closeTab(int index) override;
 
-signals:
+Q_SIGNALS:
     /** @brief Se cerró una pestaña. @param objectName Nombre del widget de la pestaña. @param index Pestaña. */
     void tabClosed(const QString& objectName, int index);
 

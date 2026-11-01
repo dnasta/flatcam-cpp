@@ -25,7 +25,7 @@ protected:
             takeCentralWidget();
             owner_->addTab(content_, icon_, text_);
             owner_->setCurrentWidget(content_);
-            emit owner_->tabAttached(text_);
+            Q_EMIT owner_->tabAttached(text_);
         }
         event->accept();
         deleteLater();
@@ -48,12 +48,12 @@ FCTabBar::FCTabBar(QWidget* parent) : QTabBar(parent) {
 
 void FCTabBar::mouseDoubleClickEvent(QMouseEvent* event) {
     event->accept();
-    emit onDetachTabSignal(tabAt(event->pos()), event->globalPosition().toPoint());
+    Q_EMIT onDetachTabSignal(tabAt(event->pos()), event->globalPosition().toPoint());
 }
 
 void FCTabBar::mousePressEvent(QMouseEvent* event) {
-    if (event->button() == Qt::MiddleButton) emit onCloseTabSignal(tabAt(event->pos()));
-    else if (event->button() == Qt::RightButton) emit rightClick(tabAt(event->pos()));
+    if (event->button() == Qt::MiddleButton) Q_EMIT onCloseTabSignal(tabAt(event->pos()));
+    else if (event->button() == Qt::RightButton) Q_EMIT rightClick(tabAt(event->pos()));
     QTabBar::mousePressEvent(event);
 }
 
@@ -105,12 +105,12 @@ void FCDetachableTab::detachTab(int index, QPoint globalPos) {
     win->setWindowIcon(icon);
     win->setGeometry(QRect(globalPos, rect.size()));
     win->show();
-    emit tabDetached(text);
+    Q_EMIT tabDetached(text);
 }
 
 void FCDetachableTab2::closeTab(int index) {
     QWidget* w = widget(index);
-    emit tabClosed(w ? w->objectName() : QString(), index);
+    Q_EMIT tabClosed(w ? w->objectName() : QString(), index);
     removeTab(index);
 }
 

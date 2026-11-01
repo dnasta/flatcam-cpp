@@ -10,6 +10,6 @@ KeySensitiveListView::KeySensitiveListView(QWidget* parent) : QTreeView(parent) 
     setAcceptDrops(true);
 }
 
-void KeySensitiveListView::keyPressEvent(QKeyEvent* event) { emit keyPressed(event->key()); }
+void KeySensitiveListView::keyPressEvent(QKeyEvent* event) { Q_EMIT keyPressed(event->key()); }
 
 }  // namespace flatcam::gui
