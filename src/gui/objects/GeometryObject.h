@@ -35,7 +35,16 @@ struct GeometryTool {
     QString optimization{"R"};    ///< Optimización del recorrido (`data['optimization_type']`; `R` = rtree).
     QColor overrideColor;         ///< Color propio (`data['override_color']`, los puentes finos del corte).
     ShapeList solidGeometry;      ///< Geometría de la herramienta (`solid_geometry`).
+    JsonValue projectData;        ///< `data` tal como vino de un proyecto (claves que el port no usa), o nulo.
 };
+
+/**
+ * @brief Los parámetros de una herramienta como el diccionario `data` del original (para guardar el proyecto).
+ * @param t Herramienta.
+ * @param base Diccionario de partida (el que vino del proyecto, o vacío); se conservan las claves que el port no usa.
+ * @return El diccionario.
+ */
+JsonValue geometryToolDataJson(const GeometryTool& t, JsonValue base = JsonValue::object());
 
 /**
  * @brief Parámetros de fábrica de una herramienta nueva (`geometry_*` de `defaults.py`, como `default_data`).

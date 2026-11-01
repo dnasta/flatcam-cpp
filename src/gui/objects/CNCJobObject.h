@@ -23,6 +23,7 @@ struct CncToolRow {
     QString offset{"Path"};    ///< Desplazamiento de la herramienta (trabajos de geometría).
     QString type{"Rough"};     ///< Tipo de trabajo (trabajos de geometría).
     QString toolType{"C1"};    ///< Forma de la herramienta (trabajos de geometría).
+    JsonValue data;            ///< Parámetros con que se generó (`cnc_tools[..]['data']`), para guardar el proyecto.
 };
 
 /**
@@ -61,6 +62,15 @@ public:
      * @return `true` si se pudo escribir.
      */
     bool saveTo(const QString& filename) const;
+
+    /**
+     * @brief Cabecera del archivo (`gc_header`): la guardada en el proyecto o una nueva con la fecha actual.
+     * @return El texto.
+     */
+    std::string headerText() const;
+
+    /** @brief Si es un trabajo de taladrado (`origin_kind == 'excellon'`). @return `true` si lo es. */
+    bool isDrilling() const { return !tools_.empty() && (tools_.front().drills > 0 || tools_.front().slots > 0); }
 
     /** @brief Viajes, cortes y agujeros. @return Datos. */
     PlotLayerData plotData() const override;

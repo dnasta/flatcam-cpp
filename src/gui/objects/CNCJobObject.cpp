@@ -22,15 +22,19 @@ CNCJobObject::CNCJobObject(QString name, std::unique_ptr<CncJob> job, GcodeHeade
 
 QColor CNCJobObject::travelColor() { return colorFromFlatCam("#B5AB3A4c"); }  // cncjob_travel_line
 
-std::string CNCJobObject::exportText() const {
-    // export_gcode: gc_header + gc_start + '\n' + gcode + '\n' (un trabajo abierto de un proyecto trae su cabecera).
-    if (storedHeader_) return *storedHeader_ + job_->startGcode() + "\n" + job_->gcode() + "\n";
+std::string CNCJobObject::headerText() const {
+    if (storedHeader_) return *storedHeader_;
     GcodeHeaderInfo h = header_;
     h.name = name().toStdString();
     // gcode_header: "Created on Friday, 30 October 2026 at 16:59" (strftime en inglés).
     h.createdOn = QLocale(QLocale::English).toString(QDateTime::currentDateTime(), "dddd, dd MMMM yyyy 'at' HH:mm")
                       .toStdString();
-    return job_->exportGcode(h);
+    return CncJob::gcodeHeader(h);
+}
+
+std::string CNCJobObject::exportText() const {
+    // export_gcode: gc_header + gc_start + '\n' + gcode + '\n' (un trabajo abierto de un proyecto trae su cabecera).
+    return headerText() + job_->startGcode() + "\n" + job_->gcode() + "\n";
 }
 
 bool CNCJobObject::saveTo(const QString& filename) const {
@@ -55,7 +59,7 @@ PlotLayerData CNCJobObject::plotData() const {
     bool laserOn = false;
     // Taladrado: cada bajada sin X,Y es un agujero. Geometría: lo que corta se dibuja como la trayectoria engrosada
     // con el radio de la herramienta (plot2: buffer(tooldia / 1.99999999)), rellena.
-    const bool drilling = !tools_.empty() && (tools_.front().drills > 0 || tools_.front().slots > 0);
+    const bool drilling = isDrilling();
     std::vector<std::vector<Point2D>> cuts, travels;
     std::vector<double> cutDia, travelDia;
     // Tramos seguidos del mismo tipo forman una sola trayectoria (gcode_parse).

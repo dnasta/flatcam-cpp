@@ -20,6 +20,7 @@
 #include "gui/objects/ObjectUIs.h"
 #include "gui/objects/CNCJobObject.h"
 #include "gui/objects/GeometryObject.h"
+#include "gui/ProjectIO.h"
 #include "tools/CutOut.h"
 #include "tools/DoubleSided.h"
 #include "tools/Isolation.h"
@@ -975,4 +976,110 @@ TEST(GuiProject, OpensTheUsersProject) {
     ASSERT_EQ(drill->tools().size(), 4u);
     EXPECT_EQ(drill->tools()[0].drills, 84);
     EXPECT_GT(drill->plotData().fill.size(), 1000u);
+}
+
+TEST(GuiProject, SavesAndReopensWhatItOpened) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/";
+    ASSERT_TRUE(app.openProject(QString::fromStdString(dir + "luz_de_noche_reducido.FlatPrj")));
+    QTemporaryDir tmp;
+    const QString saved = tmp.filePath("copia.FlatPrj");
+    ASSERT_TRUE(app.saveProject(saved));
+    if (qEnvironmentVariableIsSet("FLATCAM_SAVE_COPY2")) QFile::copy(saved, qEnvironmentVariable("FLATCAM_SAVE_COPY2"));
+    EXPECT_TRUE(app.ui()->windowTitle().endsWith("copia.FlatPrj"));
+    // Comprimido con XZ (global_save_compressed) y legible otra vez.
+    QFile f(saved);
+    ASSERT_TRUE(f.open(QIODevice::ReadOnly));
+    EXPECT_TRUE(f.read(6) == QByteArray("\xFD" "7zXZ\0", 6));
+    f.close();
+    App again;
+    ASSERT_TRUE(again.openProject(saved));
+    EXPECT_EQ(again.collection()->names(), app.collection()->names());
+    // Mismas figuras, aperturas, agujeros y parámetros.
+    auto* a = dynamic_cast<GerberObject*>(app.collection()->byName("luz de noche Pascual-B_Cu.gbr"));
+    auto* b = dynamic_cast<GerberObject*>(again.collection()->byName("luz de noche Pascual-B_Cu.gbr"));
+    ASSERT_TRUE(a && b);
+    ASSERT_EQ(a->gerber().solidGeometry().size(), b->gerber().solidGeometry().size());
+    double areaA = 0, areaB = 0;
+    for (const auto& s : a->gerber().solidGeometry()) areaA += s.area();
+    for (const auto& s : b->gerber().solidGeometry()) areaB += s.area();
+    EXPECT_NEAR(areaA, areaB, 1e-9);
+    EXPECT_EQ(a->gerber().apertures().size(), b->gerber().apertures().size());
+    EXPECT_EQ(a->gerber().sourceFile(), b->gerber().sourceFile());
+    auto* ga = dynamic_cast<GeometryObject*>(again.collection()->byName("luz de noche Pascual-Edge_Cuts.gbr_cutout"));
+    ASSERT_NE(ga, nullptr);
+    EXPECT_DOUBLE_EQ(ga->tools().at(1).data.feedrate, 20.0);
+    // Lo que el port no usa del proyecto se conserva (por ejemplo, las opciones del corte en los datos de la herramienta).
+    EXPECT_EQ(ga->tools().at(1).projectData["tools_cutout_gapsize"].toDouble(), 4.0);
+    // El CNC Job se exporta igual que antes de guardar.
+    auto* ca = dynamic_cast<CNCJobObject*>(app.collection()->byName("luz de noche Pascual-PTH.drl_cnc"));
+    auto* cb = dynamic_cast<CNCJobObject*>(again.collection()->byName("luz de noche Pascual-PTH.drl_cnc"));
+    ASSERT_TRUE(ca && cb);
+    EXPECT_EQ(cb->exportText(), ca->exportText());
+    EXPECT_EQ(cb->tools().size(), 4u);
+}
+
+TEST(GuiProject, SavesObjectsCreatedInThePort) {
+    // Contorno -> Corte -> Geometría -> CNC Job, y el taladro: se guarda, se reabre y todo sigue igual.
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    auto* drl = static_cast<ExcellonObject*>(app.openByExtension(QString::fromStdString(dir + "PTH.drl")));
+    ASSERT_TRUE(edge && drl);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(edge));
+    app.ui()->cutout_btn->trigger();
+    app.cutoutTool->dia->setValue(1.2);
+    app.cutoutTool->mpass_cb->setChecked(false);
+    auto* geo = dynamic_cast<GeometryObject*>(app.cutoutTool->freeformCutout());
+    ASSERT_NE(geo, nullptr);
+    QString err;
+    FlatCAMObj* cnc = app.addObject(geo->makeCncJob({1}, err));
+    ASSERT_NE(cnc, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(drl));
+    app.ui()->drill_btn->trigger();
+    app.drillingTool->tools_table->selectAll();
+    FlatCAMObj* dcnc = app.drillingTool->generateCnc();
+    ASSERT_NE(dcnc, nullptr);
+
+    QTemporaryDir tmp;
+    const QString saved = tmp.filePath("nuevo.FlatPrj");
+    ASSERT_TRUE(app.saveProject(saved));
+    // Para verificarlo con el FlatCAM original: tests/tools/check_project_in_original.py.
+    if (qEnvironmentVariableIsSet("FLATCAM_SAVE_COPY")) QFile::copy(saved, qEnvironmentVariable("FLATCAM_SAVE_COPY"));
+    // Las opciones de cada objeto son las de fábrica de su tipo (new_object), con su nombre y sus límites.
+    flatcam::JsonValue root;
+    std::string e;
+    ASSERT_TRUE(flatcam::ProjectFile::read(saved.toStdString(), root, e)) << e;
+    EXPECT_EQ(root["version"].text(), "2024.4");
+    EXPECT_EQ(root["options"]["units"].text(), "MM");
+    const flatcam::JsonValue& g0 = root["objs"].items()[0];
+    EXPECT_EQ(g0["kind"].text(), "gerber");
+    EXPECT_EQ(g0["options"]["name"].text(), "luz de noche Pascual-Edge_Cuts.gbr");
+    EXPECT_TRUE(g0["options"].find("isotooldia") || g0["options"].find("tools_iso_passes"));
+    const flatcam::JsonValue& c = root["objs"].items()[3];  // orden del árbol: Gerber, Excellon, Geometría, CNC Job
+    EXPECT_EQ(c["options"]["name"].text(), "luz de noche Pascual-Edge_Cuts.gbr_cutout_cnc");
+    EXPECT_EQ(c["kind"].text(), "cncjob");
+    EXPECT_FALSE(c["cnc_tools"]["1"]["gcode_parsed"].items().empty());
+    EXPECT_EQ(c["cnc_tools"]["1"]["data"]["feedrate"].toDouble(), 120.0);
+    const flatcam::JsonValue& d = root["objs"].items()[4];
+    EXPECT_EQ(d["origin_kind"].text(), "excellon");
+    // Sin cambio de herramienta (lo de fábrica) es un solo trabajo con la primera herramienta y los 120 agujeros.
+    ASSERT_EQ(d["exc_cnc_tools"].members().size(), 1u);
+    EXPECT_EQ(d["exc_cnc_tools"].members().front().second["nr_drills"].toDouble(), 120.0);
+    EXPECT_FALSE(d["exc_cnc_tools"].members().front().second["solid_geometry"].items().empty());
+
+    App again;
+    ASSERT_TRUE(again.openProject(saved));
+    EXPECT_EQ(again.collection()->names(), app.collection()->names());
+    auto* g2 = dynamic_cast<GeometryObject*>(again.collection()->byName(geo->name()));
+    ASSERT_NE(g2, nullptr);
+    auto job2 = g2->makeCncJob({1}, err);
+    ASSERT_TRUE(job2);
+    auto job1 = geo->makeCncJob({1}, err);
+    auto skipDate = [](std::string s) { return QString::fromStdString(s).remove(QRegularExpression("\\(Created on [^)]*\\)")); };
+    EXPECT_EQ(skipDate(job2->exportText()), skipDate(job1->exportText()));
+    auto* d2 = dynamic_cast<CNCJobObject*>(again.collection()->byName(dcnc->name()));
+    ASSERT_NE(d2, nullptr);
+    EXPECT_EQ(skipDate(d2->exportText()), skipDate(static_cast<CNCJobObject*>(dcnc)->exportText()).replace(
+                                              QRegularExpression("\\n\\(This preprocessor[\\s\\S]*?G94\\n"), "\n"));
 }

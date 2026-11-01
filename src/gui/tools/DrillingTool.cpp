@@ -285,6 +285,43 @@ void DrillingTool::formToStorage(QObject* w) {
     }
 }
 
+JsonValue DrillingTool::drillDataJson(const ToolData& d, const std::string& pp) {
+    // excellon_tools[tool]['data'] con las claves tools_drill_* (con el tipo de Python de cada número).
+    auto num = [](const PyNumber& n) { return n.isInt() ? JsonValue::number(n.str()) : JsonValue::real(n.value()); };
+    auto pair = [](const std::optional<std::array<double, 2>>& p) {
+        if (!p) return JsonValue();
+        JsonValue a = JsonValue::array();
+        a.push(JsonValue::real((*p)[0]));
+        a.push(JsonValue::real((*p)[1]));
+        return a;
+    };
+    const DrillToolSettings& s = d.s;
+    JsonValue j = JsonValue::object();
+    j.set("tools_drill_cutz", num(s.cutZ));
+    j.set("tools_drill_multidepth", JsonValue::boolean(s.multidepth));
+    j.set("tools_drill_depthperpass", num(s.depthPerPass));
+    j.set("tools_drill_travelz", num(s.travelZ));
+    j.set("tools_drill_feedrate_z", num(s.feedrateZ));
+    j.set("tools_drill_feedrate_rapid", num(s.feedrateRapid));
+    j.set("tools_drill_spindlespeed", s.spindleSpeed ? num(*s.spindleSpeed) : JsonValue());
+    j.set("tools_drill_spindledir", JsonValue::string(s.spindleDir));
+    j.set("tools_drill_dwell", JsonValue::boolean(s.dwell));
+    j.set("tools_drill_dwelltime", num(s.dwellTime));
+    j.set("tools_drill_offset", num(s.offsetZ));
+    j.set("tools_drill_toolchangez", num(s.toolchangeZ));
+    j.set("tools_drill_toolchangexy", pair(s.toolchangeXY));
+    j.set("tools_drill_startz", s.startZ ? num(*s.startZ) : JsonValue());
+    j.set("tools_drill_endz", num(s.endZ));
+    j.set("tools_drill_endxy", pair(s.endXY));
+    j.set("tools_drill_f_plunge", JsonValue::boolean(s.fPlunge));
+    j.set("tools_drill_f_retract", JsonValue::boolean(s.fRetract));
+    j.set("tools_drill_drill_slots", JsonValue::boolean(d.drillSlots));
+    j.set("tools_drill_drill_overlap", JsonValue::real(d.drillOverlap));
+    j.set("tools_drill_last_drill", JsonValue::boolean(d.lastDrill));
+    j.set("tools_drill_ppname_e", JsonValue::string(pp));
+    return j;
+}
+
 FlatCAMObj* DrillingTool::generateCnc() {
     if (!excellon_) {
         app_->ui()->inform(QString("[ERROR_NOTCL] %1.").arg(tr_("Object not found")));
@@ -321,8 +358,14 @@ FlatCAMObj* DrillingTool::generateCnc() {
         js.toolOrder.push_back(id);
         js.tools[id] = storage_.at(id).s;
         const ExcellonTool& t = excellon_->excellon().drillTools().at(id);
-        rows.push_back({id, t.tooldia, static_cast<int>(t.drills.size()), static_cast<int>(t.slots.size()),
-                        storage_.at(id).s.cutZ.value() - storage_.at(id).s.offsetZ.value()});
+        CncToolRow row;
+        row.tool = id;
+        row.dia = t.tooldia;
+        row.drills = static_cast<int>(t.drills.size());
+        row.slots = static_cast<int>(t.slots.size());
+        row.cutZ = storage_.at(id).s.cutZ.value() - storage_.at(id).s.offsetZ.value();
+        row.data = drillDataJson(storage_.at(id), pp_excellon_name_cb->currentText().toStdString());
+        rows.push_back(std::move(row));
     }
     app_->ui()->inform(tr_("Creating a list of points to drill..."));
     auto job = std::make_unique<CncJob>(js);

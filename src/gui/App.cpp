@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <algorithm>
+#include <QDateTime>
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QFileDialog>
@@ -129,6 +130,9 @@ void App::runTool(QWidget* panel, const ToolInfo& info, bool toggle) {
 void App::connectSignals() {
     for (QAction* a : {ui_->menufileopenproject, ui_->file_open_btn})
         connect(a, &QAction::triggered, this, [this] { onFileOpenProject(); });
+    for (QAction* a : {ui_->menufilesaveproject, ui_->file_save_btn})
+        connect(a, &QAction::triggered, this, [this] { onFileSaveProject(); });
+    connect(ui_->menufilesaveprojectas, &QAction::triggered, this, [this] { onFileSaveProjectAs(); });
     connect(ui_->menufileopengerber, &QAction::triggered, this, [this] { onFileOpenGerber(); });
     connect(ui_->file_open_gerber_btn, &QAction::triggered, this, [this] { onFileOpenGerber(); });
     connect(ui_->menufileopenexcellon, &QAction::triggered, this, [this] { onFileOpenExcellon(); });
@@ -260,6 +264,45 @@ bool App::openProject(const QString& filename) {
     if (!failed.isEmpty()) ui_->inform("[WARNING_NOTCL] " + failed.join("; "));
     else ui_->inform(QString("[success] %1: %2").arg(tr_("Project loaded from"), filename));
     return true;
+}
+
+bool App::saveProject(const QString& filename) {
+    const JsonValue& options = projectOptions_.isObject() ? projectOptions_ : ProjectIO::factoryDefaults();
+    std::string error;
+    bool ok = false;
+    {
+        BusyScope busy(ui_.get());
+        const JsonValue root = ProjectIO::projectDict(collection_->objects(), options);
+        ok = ProjectFile::write(filename.toStdString(), root, options["global_save_compressed"].toBool(true),
+                                static_cast<int>(options["global_compression_level"].toDouble(3)), error);
+    }
+    if (!ok) {
+        ui_->inform(QString("[ERROR_NOTCL] %1").arg(tr_("The object is used by another application.")));
+        return false;
+    }
+    projectFilename_ = filename;
+    lastFolder_ = QFileInfo(filename).absolutePath();
+    ui_->setUiTitle(filename);
+    ui_->inform(QString("[success] %1: %2").arg(tr_("Project saved to"), filename));
+    return true;
+}
+
+void App::onFileSaveProject() {
+    if (projectFilename_.isEmpty()) onFileSaveProjectAs();
+    else saveProject(projectFilename_);
+}
+
+void App::onFileSaveProjectAs() {
+    // Nombre propuesto: "<carpeta>/Proyecto_AAAAMMDD_HHMMSS".
+    const QString date = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
+    const QString f = QFileDialog::getSaveFileName(ui_.get(), tr_("Save Project As ..."),
+                                                   QString("%1/%2_%3").arg(lastFolder(), tr_("Project"), date),
+                                                   "FlatCAM Project .FlatPrj (*.FlatPrj);; All Files (*.*)");
+    if (f.isEmpty()) {
+        ui_->inform(QString("[WARNING_NOTCL] %1").arg(tr_("Cancelled.")));
+        return;
+    }
+    saveProject(f.endsWith(".FlatPrj", Qt::CaseInsensitive) ? f : f + ".FlatPrj");
 }
 
 void App::onFileOpenGerber() {
