@@ -1,5 +1,7 @@
 #include "gui/objects/FlatCAMObj.h"
 
+#include "gui/objects/ObjectUIs.h"
+
 namespace flatcam::gui {
 
 QColor colorFromFlatCam(const QString& fc) {
@@ -12,6 +14,8 @@ FlatCAMObj::FlatCAMObj(ObjectKind kind, QString name) : kind_(kind), name_(std::
     static int next = 1;
     id_ = next++;
 }
+
+FlatCAMObj::~FlatCAMObj() = default;
 
 void FlatCAMObj::addShape(const Shape& s, PlotLayerData& out, bool fill) {
     if (s.isEmpty()) return;
@@ -60,6 +64,12 @@ QRectF GerberObject::bounds() const {
     return QRectF(b.xmin, b.ymin, b.xmax - b.xmin, b.ymax - b.ymin);
 }
 
+QWidget* GerberObject::propertiesUi() {
+    if (!ui_) ui_ = std::make_unique<GerberObjectUI>();
+    static_cast<GerberObjectUI*>(ui_.get())->build(*this);
+    return ui_.get();
+}
+
 ExcellonObject::ExcellonObject(QString name, std::unique_ptr<Excellon> excellon)
     : FlatCAMObj(ObjectKind::Excellon, std::move(name)), excellon_(std::move(excellon)) {
     outlineColor = colorFromFlatCam("#750000BF");  // excellon_plot_line
@@ -80,6 +90,16 @@ PlotLayerData ExcellonObject::plotData() const {
 QRectF ExcellonObject::bounds() const {
     const BoundingBox b = excellon_->bounds();
     return QRectF(b.xmin, b.ymin, b.xmax - b.xmin, b.ymax - b.ymin);
+}
+
+}  // namespace flatcam::gui
+
+namespace flatcam::gui {
+
+QWidget* ExcellonObject::propertiesUi() {
+    if (!ui_) ui_ = std::make_unique<ExcellonObjectUI>();
+    static_cast<ExcellonObjectUI*>(ui_.get())->build(*this);
+    return ui_.get();
 }
 
 }  // namespace flatcam::gui

@@ -1,0 +1,2358 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "ToolDrilling",
+  "name": null,
+  "props": {
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QFrame",
+      "py": "QFrame",
+      "name": "tools_frame",
+      "props": {},
+      "layout": {
+       "qt": "QVBoxLayout",
+       "py": "QVBoxLayout",
+       "name": "tools_box",
+       "props": {},
+       "margins": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spacing": 6,
+       "items": [
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QHBoxLayout",
+          "py": "QHBoxLayout",
+          "name": "title_box",
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "items": [
+           {
+            "align": 0,
+            "stretch": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": null,
+             "props": {
+              "font": {
+               "t": "QFont",
+               "v": {
+                "bold": true,
+                "pixelSize": 16
+               }
+              },
+              "toolTip": {
+               "t": "str",
+               "v": "Cree CNCJob con trayectorias de herramientas para taladrar o fresar agujeros."
+              },
+              "styleSheet": {
+               "t": "str",
+               "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+              },
+              "text": {
+               "t": "str",
+               "v": "Herramienta de Perforación"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "stretch": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "level",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "BASIC es adecuado para un principiante. Muchos parámetros\nestán ocultos para el usuario en este modo.\nEl modo AVANZADO pondrá a disposición todos los parámetros.\n\nPara cambiar el NIVEL de la aplicación, vaya a:\nEditar -> Preferencias -> General y verificar:\n'APP. NIVEL 'botón de radio."
+              },
+              "text": {
+               "t": "str",
+               "v": "<span style=\"color:green;\"><b>BASIC</b></span>"
+              },
+              "alignment": {
+               "t": "int",
+               "v": 130
+              }
+             }
+            }
+           }
+          ]
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QGridLayout",
+          "py": "QGridLayout",
+          "name": null,
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "hspacing": 6,
+          "vspacing": 6,
+          "rowStretch": [
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0
+          ],
+          "colStretch": [
+           0,
+           1
+          ],
+          "colMinWidth": [
+           0,
+           0
+          ],
+          "items": [
+           {
+            "align": 0,
+            "row": 0,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "obj_combo_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Objeto Excellon para operación de taladrado / fresado."
+              },
+              "text": {
+               "t": "str",
+               "v": "<b>EXCELLON</b>:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 1,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QComboBox",
+             "py": "FCComboBox",
+             "name": "object_combo",
+             "props": {},
+             "items": [],
+             "currentIndex": -1
+            }
+           },
+           {
+            "align": 0,
+            "row": 2,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QFrame",
+             "py": "QFrame",
+             "name": null,
+             "props": {
+              "sizePolicy": {
+               "t": "QSizePolicy",
+               "v": [
+                1,
+                0,
+                0,
+                0
+               ]
+              },
+              "frameShape": {
+               "t": "int",
+               "v": 4
+              },
+              "frameShadow": {
+               "t": "int",
+               "v": 48
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 3,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QTableWidget",
+             "py": "FCTable",
+             "name": "tools_table",
+             "props": {
+              "minimumSize": {
+               "t": "QSize",
+               "v": [
+                0,
+                72
+               ]
+              },
+              "maximumSize": {
+               "t": "QSize",
+               "v": [
+                16777215,
+                72
+               ]
+              },
+              "acceptDrops": {
+               "t": "bool",
+               "v": true
+              },
+              "verticalScrollBarPolicy": {
+               "t": "int",
+               "v": 1
+              },
+              "horizontalScrollBarPolicy": {
+               "t": "int",
+               "v": 1
+              },
+              "dragEnabled": {
+               "t": "bool",
+               "v": true
+              },
+              "dragDropOverwriteMode": {
+               "t": "bool",
+               "v": false
+              },
+              "dragDropMode": {
+               "t": "int",
+               "v": 4
+              },
+              "selectionBehavior": {
+               "t": "int",
+               "v": 1
+              },
+              "rowCount": {
+               "t": "int",
+               "v": 2
+              },
+              "columnCount": {
+               "t": "int",
+               "v": 5
+              }
+             },
+             "table": {
+              "cols": 5,
+              "labels": [
+               "#",
+               "Diámetro",
+               "Taladros",
+               "",
+               "Muesca"
+              ],
+              "hheader": true,
+              "vheader": false,
+              "resize": [
+               2,
+               1,
+               3,
+               0,
+               3
+              ],
+              "stretchLast": false
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 4,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "order_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Esto establece la forma en que se utilizan las herramientas en la tabla de herramientas.\n'No' -> significa que el orden utilizado es el de la tabla de herramientas\n'Adelante' -> significa que las herramientas se ordenarán de pequeño a grande\n'Atras' -> means que las herramientas ordenarán de grande a pequeño\n\nADVERTENCIA: el uso del mecanizado en reposo establecerá automáticamente el orden\nen reversa y deshabilitar este control."
+              },
+              "text": {
+               "t": "str",
+               "v": "Orden de la Herram:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 4,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QWidget",
+             "py": "RadioSet",
+             "name": "order_radio",
+             "props": {},
+             "choices": [
+              {
+               "label": "No",
+               "value": "no"
+              },
+              {
+               "label": "Adelante",
+               "value": "fwd"
+              },
+              {
+               "label": "Atras",
+               "value": "rev"
+              }
+             ],
+             "vertical": false,
+             "stretch": true,
+             "value": "no"
+            }
+           },
+           {
+            "align": 0,
+            "row": 5,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QPushButton",
+             "py": "FCButton",
+             "name": "search_load_db_btn",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Buscará e intentará reemplazar las herramientas de la Tabla de herramientas\ncon herramientas de DB que tienen un valor de diámetro cercano."
+              },
+              "text": {
+               "t": "str",
+               "v": "Buscar en la BD"
+              },
+              "icon": {
+               "t": "QIcon",
+               "v": ":/images/search_db32.png"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 6,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QFrame",
+             "py": "QFrame",
+             "name": null,
+             "props": {
+              "sizePolicy": {
+               "t": "QSizePolicy",
+               "v": [
+                1,
+                0,
+                0,
+                0
+               ]
+              },
+              "frameShape": {
+               "t": "int",
+               "v": 4
+              },
+              "frameShadow": {
+               "t": "int",
+               "v": 48
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 8,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "tool_data_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Los datos utilizados para crear GCode.\nCada herramienta almacena su propio conjunto de datos."
+              },
+              "text": {
+               "t": "str",
+               "v": "<b>Parámetros para: <font color='#0000FF'>Ninguna herramienta seleccionada</font></b>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 10,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QFrame",
+             "py": "QFrame",
+             "name": "exc_param_frame",
+             "props": {
+              "enabled": {
+               "t": "bool",
+               "v": false
+              }
+             },
+             "layout": {
+              "qt": "QVBoxLayout",
+              "py": "QVBoxLayout",
+              "name": "exc_tools_box",
+              "props": {},
+              "margins": [
+               0,
+               0,
+               0,
+               0
+              ],
+              "spacing": 6,
+              "items": [
+               {
+                "align": 0,
+                "stretch": 0,
+                "layout": {
+                 "qt": "QGridLayout",
+                 "py": "QGridLayout",
+                 "name": "grid1",
+                 "props": {},
+                 "margins": [
+                  0,
+                  0,
+                  0,
+                  0
+                 ],
+                 "spacing": 6,
+                 "hspacing": 6,
+                 "vspacing": 6,
+                 "rowStretch": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                 ],
+                 "colStretch": [
+                  0,
+                  1
+                 ],
+                 "colMinWidth": [
+                  0,
+                  0
+                 ],
+                 "items": [
+                  {
+                   "align": 0,
+                   "row": 4,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QLabel",
+                    "py": "QLabel",
+                    "name": "cutzlabel",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Profundidad de perforación (negativo)\ndebajo de la superficie de cobre."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Corte Z:"
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 4,
+                   "col": 1,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QDoubleSpinBox",
+                    "py": "FCDoubleSpinner",
+                    "name": "cutz_entry",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "decimals": {
+                      "t": "int",
+                      "v": 4
+                     },
+                     "minimum": {
+                      "t": "double",
+                      "v": -10000.0
+                     },
+                     "maximum": {
+                      "t": "double",
+                      "v": 0.0
+                     },
+                     "singleStep": {
+                      "t": "double",
+                      "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": -1.7
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 5,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QCheckBox",
+                    "py": "FCCheckBox",
+                    "name": "mpass_cb",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Usa múltiples pases para limitar\nLa profundidad de corte en cada pasada. Será\ncortar varias veces hasta que el Corte Z sea\nalcanzado."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Profund. Múlti:"
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 5,
+                   "col": 1,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QDoubleSpinBox",
+                    "py": "FCDoubleSpinner",
+                    "name": "maxdepth_entry",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Profundidad de cada pase (positivo)."
+                     },
+                     "decimals": {
+                      "t": "int",
+                      "v": 4
+                     },
+                     "maximum": {
+                      "t": "double",
+                      "v": 10000.0
+                     },
+                     "singleStep": {
+                      "t": "double",
+                      "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 0.7
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 6,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QLabel",
+                    "py": "QLabel",
+                    "name": "travelzlabel",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Altura de herramienta al viajar\nA través del plano XY."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Viaje Z:"
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 6,
+                   "col": 1,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QDoubleSpinBox",
+                    "py": "FCDoubleSpinner",
+                    "name": "travelz_entry",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "decimals": {
+                      "t": "int",
+                      "v": 4
+                     },
+                     "maximum": {
+                      "t": "double",
+                      "v": 10000.0
+                     },
+                     "singleStep": {
+                      "t": "double",
+                      "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 2.0
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 14,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QLabel",
+                    "py": "QLabel",
+                    "name": "frzlabel",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Velocidad de herramienta durante la perforación\n(en unidades por minuto).\nLa llamada velocidad de avance 'Plunge'.\nEsto es para el movimiento lineal G01."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Avance Z:"
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 14,
+                   "col": 1,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QDoubleSpinBox",
+                    "py": "FCDoubleSpinner",
+                    "name": "feedrate_z_entry",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "decimals": {
+                      "t": "int",
+                      "v": 4
+                     },
+                     "maximum": {
+                      "t": "double",
+                      "v": 910000.0
+                     },
+                     "singleStep": {
+                      "t": "double",
+                      "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 300.0
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 16,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QLabel",
+                    "py": "QLabel",
+                    "name": "feedrate_rapid_label",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Velocidad de la herramienta durante la perforación\n(en unidades por minuto).\nEsto es para el movimiento rápido G00.\nEs útil solo para Marlin,\nIgnorar para cualquier otro caso."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Rápidos de avance:"
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 16,
+                   "col": 1,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QDoubleSpinBox",
+                    "py": "FCDoubleSpinner",
+                    "name": "feedrate_rapid_entry",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "decimals": {
+                      "t": "int",
+                      "v": 4
+                     },
+                     "maximum": {
+                      "t": "double",
+                      "v": 910000.0
+                     },
+                     "singleStep": {
+                      "t": "double",
+                      "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 1500.0
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 19,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QLabel",
+                    "py": "QLabel",
+                    "name": "spindle_label",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Velocidad del husillo\nen RPM (opcional)"
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Eje de velocidad:"
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 19,
+                   "col": 1,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QSpinBox",
+                    "py": "FCSpinner",
+                    "name": "spindlespeed_entry",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "maximum": {
+                      "t": "int",
+                      "v": 1000000
+                     },
+                     "singleStep": {
+                      "t": "int",
+                      "v": 100
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 20,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QCheckBox",
+                    "py": "FCCheckBox",
+                    "name": "dwell_cb",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Pausa para permitir que el husillo alcance su\nVelocidad antes del corte."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Habitar:"
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 20,
+                   "col": 1,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QDoubleSpinBox",
+                    "py": "FCDoubleSpinner",
+                    "name": "dwelltime_entry",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Número de unidades de tiempo para que el husillo permanezca."
+                     },
+                     "decimals": {
+                      "t": "int",
+                      "v": 4
+                     },
+                     "maximum": {
+                      "t": "double",
+                      "v": 10000.0
+                     },
+                     "singleStep": {
+                      "t": "double",
+                      "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 1.0
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 25,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QLabel",
+                    "py": "QLabel",
+                    "name": "tool_offset_label",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Algunas brocas (las más grandes) necesitan profundizar más\npara crear el diámetro del orificio de salida deseado debido a la forma de la punta.\nEl valor aquí puede compensar el parámetro Z de corte."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Offset Z:"
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 25,
+                   "col": 1,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QDoubleSpinBox",
+                    "py": "FCDoubleSpinner",
+                    "name": "offset_entry",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "decimals": {
+                      "t": "int",
+                      "v": 4
+                     },
+                     "minimum": {
+                      "t": "double",
+                      "v": -10000.0
+                     },
+                     "maximum": {
+                      "t": "double",
+                      "v": 10000.0
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 27,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 2,
+                   "widget": {
+                    "qt": "QCheckBox",
+                    "py": "FCCheckBox",
+                    "name": "drill_slots_cb",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Si la herramienta seleccionada tiene ranuras, se perforarán."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Perforar las Ranuras"
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 28,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QLabel",
+                    "py": "QLabel",
+                    "name": "drill_overlap_label",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Cuánto (porcentaje) del diámetro de la herramienta debe superponerse al taladro anterior."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Superposición:"
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 28,
+                   "col": 1,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QDoubleSpinBox",
+                    "py": "FCDoubleSpinner",
+                    "name": "drill_overlap_entry",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "suffix": {
+                      "t": "str",
+                      "v": " %"
+                     },
+                     "decimals": {
+                      "t": "int",
+                      "v": 4
+                     },
+                     "maximum": {
+                      "t": "double",
+                      "v": 100.0
+                     },
+                     "singleStep": {
+                      "t": "double",
+                      "v": 0.1
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 30,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 2,
+                   "widget": {
+                    "qt": "QCheckBox",
+                    "py": "FCCheckBox",
+                    "name": "last_drill_cb",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Si la longitud de la ranura no está completamente cubierta por taladros,\nagregue un taladro en el punto final de la ranura."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Último ejercicio"
+                     },
+                     "checked": {
+                      "t": "bool",
+                      "v": true
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
+                     }
+                    }
+                   }
+                  }
+                 ]
+                }
+               },
+               {
+                "align": 0,
+                "stretch": 0,
+                "layout": {
+                 "qt": "QGridLayout",
+                 "py": "QGridLayout",
+                 "name": "grid3",
+                 "props": {},
+                 "margins": [
+                  0,
+                  0,
+                  0,
+                  0
+                 ],
+                 "spacing": 6,
+                 "hspacing": 6,
+                 "vspacing": 6,
+                 "rowStretch": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                 ],
+                 "colStretch": [
+                  0,
+                  1
+                 ],
+                 "colMinWidth": [
+                  0,
+                  0
+                 ],
+                 "items": [
+                  {
+                   "align": 0,
+                   "row": 0,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 2,
+                   "widget": {
+                    "qt": "QFrame",
+                    "py": "QFrame",
+                    "name": null,
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "sizePolicy": {
+                      "t": "QSizePolicy",
+                      "v": [
+                       1,
+                       0,
+                       0,
+                       0
+                      ]
+                     },
+                     "frameShape": {
+                      "t": "int",
+                      "v": 4
+                     },
+                     "frameShadow": {
+                      "t": "int",
+                      "v": 48
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 1,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 2,
+                   "widget": {
+                    "qt": "QPushButton",
+                    "py": "FCButton",
+                    "name": "apply_param_to_all",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Se aplicarán los parámetros en el formulario actual\nen todas las herramientas de la tabla de herramientas."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Aplicar Parám. a todas las herramientas"
+                     },
+                     "icon": {
+                      "t": "QIcon",
+                      "v": ":/images/param_all32.png"
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 2,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 2,
+                   "widget": {
+                    "qt": "QFrame",
+                    "py": "QFrame",
+                    "name": null,
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "sizePolicy": {
+                      "t": "QSizePolicy",
+                      "v": [
+                       1,
+                       0,
+                       0,
+                       0
+                      ]
+                     },
+                     "frameShape": {
+                      "t": "int",
+                      "v": 4
+                     },
+                     "frameShadow": {
+                      "t": "int",
+                      "v": 48
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 3,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 2,
+                   "widget": {
+                    "qt": "QLabel",
+                    "py": "QLabel",
+                    "name": "gen_param_label",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Parámetros que son comunes para todas las herramientas."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "<b>Parámetros comunes</b>"
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 5,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 2,
+                   "widget": {
+                    "qt": "QCheckBox",
+                    "py": "FCCheckBox",
+                    "name": "toolchange_cb",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Incluir secuencia de cambio de herramienta\nen G-Code (Pausa para cambio de herramienta)."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Cambio de herram"
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 7,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QLabel",
+                    "py": "QLabel",
+                    "name": "toolchangez_label",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Posición del eje Z (altura) para\ncambio de herramienta."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Cambio de herra. Z:"
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 7,
+                   "col": 1,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QDoubleSpinBox",
+                    "py": "FCDoubleSpinner",
+                    "name": "toolchangez_entry",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "decimals": {
+                      "t": "int",
+                      "v": 4
+                     },
+                     "maximum": {
+                      "t": "double",
+                      "v": 10000.0
+                     },
+                     "singleStep": {
+                      "t": "double",
+                      "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 15.0
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 9,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QLabel",
+                    "py": "QLabel",
+                    "name": "estartz_label",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Altura de la herramienta justo después de comenzar el trabajo.\nElimine el valor si no necesita esta característica."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Comience Z:"
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 9,
+                   "col": 1,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QLineEdit",
+                    "py": "NumericalEvalEntry",
+                    "name": "estartz_entry",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "styleSheet": {
+                      "t": "str",
+                      "v": "QLineEdit {border: 1px solid #0069A9;}"
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 11,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QLabel",
+                    "py": "QLabel",
+                    "name": "endz_label",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Altura de la herramienta después de\nEl último movimiento al final del trabajo."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Fin del movi. Z:"
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 11,
+                   "col": 1,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QDoubleSpinBox",
+                    "py": "FCDoubleSpinner",
+                    "name": "endz_entry",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "decimals": {
+                      "t": "int",
+                      "v": 4
+                     },
+                     "maximum": {
+                      "t": "double",
+                      "v": 10000.0
+                     },
+                     "singleStep": {
+                      "t": "double",
+                      "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 0.5
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 12,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QLabel",
+                    "py": "QLabel",
+                    "name": null,
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Fin movimiento X, Y posición. En formato (x, y).\nSi no se ingresa ningún valor, entonces no hay movimiento\nen el plano X, Y al final del trabajo."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "X, Y Fin del movimiento:"
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 12,
+                   "col": 1,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QLineEdit",
+                    "py": "NumericalEvalTupleEntry",
+                    "name": "endxy_entry",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "styleSheet": {
+                      "t": "str",
+                      "v": "QLineEdit {border: 1px solid #0069A9;}"
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "None"
+                     },
+                     "placeholderText": {
+                      "t": "str",
+                      "v": "Coordenadas X, Y"
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 13,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QLabel",
+                    "py": "QLabel",
+                    "name": "pdepth_label",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "The maximum depth that the probe is allowed\nto probe. Negative value, in current units."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Profundidad de la sonda Z:"
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 13,
+                   "col": 1,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QDoubleSpinBox",
+                    "py": "FCDoubleSpinner",
+                    "name": "pdepth_entry",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "decimals": {
+                      "t": "int",
+                      "v": 4
+                     },
+                     "minimum": {
+                      "t": "double",
+                      "v": -10000.0
+                     },
+                     "maximum": {
+                      "t": "double",
+                      "v": 10000.0
+                     },
+                     "singleStep": {
+                      "t": "double",
+                      "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": -0.02
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 14,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QLabel",
+                    "py": "QLabel",
+                    "name": "feedrate_probe_label",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "La velocidad de avance utilizada mientras la sonda está sondeando."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Sonda de avance:"
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 14,
+                   "col": 1,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QDoubleSpinBox",
+                    "py": "FCDoubleSpinner",
+                    "name": "feedrate_probe_entry",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "decimals": {
+                      "t": "int",
+                      "v": 4
+                     },
+                     "maximum": {
+                      "t": "double",
+                      "v": 10000.0
+                     },
+                     "singleStep": {
+                      "t": "double",
+                      "v": 0.1
+                     },
+                     "value": {
+                      "t": "double",
+                      "v": 75.0
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 15,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QLabel",
+                    "py": "QLabel",
+                    "name": null,
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "El archivo JSON del preprocesador que dicta\nSalida de Gcode para objetos Excellon."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Postprocesador:"
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 15,
+                   "col": 1,
+                   "rs": 1,
+                   "cs": 1,
+                   "widget": {
+                    "qt": "QComboBox",
+                    "py": "FCComboBox",
+                    "name": "pp_excellon_name_cb",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     }
+                    },
+                    "items": [],
+                    "currentIndex": -1
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 20,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 2,
+                   "widget": {
+                    "qt": "QCheckBox",
+                    "py": "FCCheckBox",
+                    "name": "exclusion_cb",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "toolTip": {
+                      "t": "str",
+                      "v": "Incluir áreas de exclusión.\nEn esas áreas el recorrido de las herramientas.\nestá prohibido."
+                     },
+                     "text": {
+                      "t": "str",
+                      "v": "Agregar Areas de Exclusión"
+                     }
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 22,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 2,
+                   "widget": {
+                    "qt": "QFrame",
+                    "py": "QFrame",
+                    "name": "exclusion_frame",
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "hidden": {
+                      "t": "bool",
+                      "v": true
+                     }
+                    },
+                    "layout": {
+                     "qt": "QVBoxLayout",
+                     "py": "QVBoxLayout",
+                     "name": "exclusion_box",
+                     "props": {},
+                     "margins": [
+                      0,
+                      0,
+                      0,
+                      0
+                     ],
+                     "spacing": 6,
+                     "items": [
+                      {
+                       "align": 0,
+                       "stretch": 0,
+                       "widget": {
+                        "qt": "QTableWidget",
+                        "py": "FCTable",
+                        "name": "exclusion_table",
+                        "props": {
+                         "enabled": {
+                          "t": "bool",
+                          "v": false
+                         },
+                         "minimumSize": {
+                          "t": "QSize",
+                          "v": [
+                           0,
+                           24
+                          ]
+                         },
+                         "maximumSize": {
+                          "t": "QSize",
+                          "v": [
+                           16777215,
+                           24
+                          ]
+                         },
+                         "verticalScrollBarPolicy": {
+                          "t": "int",
+                          "v": 1
+                         },
+                         "horizontalScrollBarPolicy": {
+                          "t": "int",
+                          "v": 1
+                         },
+                         "sizeAdjustPolicy": {
+                          "t": "int",
+                          "v": 2
+                         },
+                         "selectionBehavior": {
+                          "t": "int",
+                          "v": 1
+                         },
+                         "cornerButtonEnabled": {
+                          "t": "bool",
+                          "v": false
+                         },
+                         "columnCount": {
+                          "t": "int",
+                          "v": 4
+                         }
+                        },
+                        "table": {
+                         "cols": 4,
+                         "labels": [
+                          "#",
+                          "Objeto",
+                          "Estrategia",
+                          "Sobre ZSuperposición"
+                         ],
+                         "hheader": true,
+                         "vheader": false,
+                         "resize": [
+                          2,
+                          1,
+                          3,
+                          3
+                         ],
+                         "stretchLast": false
+                        }
+                       }
+                      },
+                      {
+                       "align": 0,
+                       "stretch": 0,
+                       "layout": {
+                        "qt": "QGridLayout",
+                        "py": "QGridLayout",
+                        "name": null,
+                        "props": {},
+                        "margins": [
+                         0,
+                         0,
+                         0,
+                         0
+                        ],
+                        "spacing": 6,
+                        "hspacing": 6,
+                        "vspacing": 6,
+                        "rowStretch": [
+                         0,
+                         0,
+                         0,
+                         0,
+                         0
+                        ],
+                        "colStretch": [
+                         0,
+                         1
+                        ],
+                        "colMinWidth": [
+                         0,
+                         0
+                        ],
+                        "items": [
+                         {
+                          "align": 0,
+                          "row": 1,
+                          "col": 0,
+                          "rs": 1,
+                          "cs": 1,
+                          "widget": {
+                           "qt": "QLabel",
+                           "py": "FCLabel",
+                           "name": "strategy_label",
+                           "props": {
+                            "enabled": {
+                             "t": "bool",
+                             "v": false
+                            },
+                            "toolTip": {
+                             "t": "str",
+                             "v": "La estrategia seguida al encontrar un área de exclusión.\nPuede ser:\n- Sobre -> al encontrar el área, la herramienta irá a una altura establecida\n- Alrededor -> evitará el área de exclusión recorriendo el área"
+                            },
+                            "text": {
+                             "t": "str",
+                             "v": "Estrategia:"
+                            }
+                           }
+                          }
+                         },
+                         {
+                          "align": 0,
+                          "row": 1,
+                          "col": 1,
+                          "rs": 1,
+                          "cs": 1,
+                          "widget": {
+                           "qt": "QWidget",
+                           "py": "RadioSet",
+                           "name": "strategy_radio",
+                           "props": {
+                            "enabled": {
+                             "t": "bool",
+                             "v": false
+                            }
+                           },
+                           "choices": [
+                            {
+                             "label": "Sobre",
+                             "value": "over"
+                            },
+                            {
+                             "label": "AlrededorRedondo",
+                             "value": "around"
+                            }
+                           ],
+                           "vertical": false,
+                           "stretch": true,
+                           "value": "over"
+                          }
+                         },
+                         {
+                          "align": 0,
+                          "row": 2,
+                          "col": 0,
+                          "rs": 1,
+                          "cs": 1,
+                          "widget": {
+                           "qt": "QLabel",
+                           "py": "FCLabel",
+                           "name": "over_z_label",
+                           "props": {
+                            "enabled": {
+                             "t": "bool",
+                             "v": false
+                            },
+                            "toolTip": {
+                             "t": "str",
+                             "v": "La altura Z a la que se elevará la herramienta para evitar\nUn área de interdicción."
+                            },
+                            "text": {
+                             "t": "str",
+                             "v": "Sobre ZSuperposición:"
+                            }
+                           }
+                          }
+                         },
+                         {
+                          "align": 0,
+                          "row": 2,
+                          "col": 1,
+                          "rs": 1,
+                          "cs": 1,
+                          "widget": {
+                           "qt": "QDoubleSpinBox",
+                           "py": "FCDoubleSpinner",
+                           "name": "over_z_entry",
+                           "props": {
+                            "enabled": {
+                             "t": "bool",
+                             "v": false
+                            },
+                            "decimals": {
+                             "t": "int",
+                             "v": 4
+                            },
+                            "maximum": {
+                             "t": "double",
+                             "v": 10000.0
+                            },
+                            "value": {
+                             "t": "double",
+                             "v": 1.0
+                            }
+                           }
+                          }
+                         },
+                         {
+                          "align": 0,
+                          "row": 4,
+                          "col": 0,
+                          "rs": 1,
+                          "cs": 1,
+                          "widget": {
+                           "qt": "QPushButton",
+                           "py": "QPushButton",
+                           "name": "add_area_button",
+                           "props": {
+                            "enabled": {
+                             "t": "bool",
+                             "v": false
+                            },
+                            "toolTip": {
+                             "t": "str",
+                             "v": "Agregar un área de exclusión."
+                            },
+                            "text": {
+                             "t": "str",
+                             "v": "Agregar Zona:"
+                            }
+                           }
+                          }
+                         },
+                         {
+                          "align": 0,
+                          "row": 4,
+                          "col": 1,
+                          "rs": 1,
+                          "cs": 1,
+                          "widget": {
+                           "qt": "QWidget",
+                           "py": "RadioSet",
+                           "name": "area_shape_radio",
+                           "props": {
+                            "enabled": {
+                             "t": "bool",
+                             "v": false
+                            },
+                            "toolTip": {
+                             "t": "str",
+                             "v": "El tipo de forma de selección utilizada para la selección de área."
+                            }
+                           },
+                           "choices": [
+                            {
+                             "label": "Cuadrado",
+                             "value": "square"
+                            },
+                            {
+                             "label": "Polígono",
+                             "value": "polygon"
+                            }
+                           ],
+                           "vertical": false,
+                           "stretch": true,
+                           "value": "polygon"
+                          }
+                         }
+                        ]
+                       }
+                      },
+                      {
+                       "align": 0,
+                       "stretch": 0,
+                       "layout": {
+                        "qt": "QHBoxLayout",
+                        "py": "QHBoxLayout",
+                        "name": null,
+                        "props": {},
+                        "margins": [
+                         0,
+                         0,
+                         0,
+                         0
+                        ],
+                        "spacing": 6,
+                        "items": [
+                         {
+                          "align": 0,
+                          "stretch": 0,
+                          "widget": {
+                           "qt": "QPushButton",
+                           "py": "QPushButton",
+                           "name": "delete_area_button",
+                           "props": {
+                            "enabled": {
+                             "t": "bool",
+                             "v": false
+                            },
+                            "toolTip": {
+                             "t": "str",
+                             "v": "Eliminar todas las áreas de exclusión."
+                            },
+                            "text": {
+                             "t": "str",
+                             "v": "Eliminar todosEliminar taladro"
+                            }
+                           }
+                          }
+                         },
+                         {
+                          "align": 0,
+                          "stretch": 0,
+                          "widget": {
+                           "qt": "QPushButton",
+                           "py": "QPushButton",
+                           "name": "delete_sel_area_button",
+                           "props": {
+                            "enabled": {
+                             "t": "bool",
+                             "v": false
+                            },
+                            "toolTip": {
+                             "t": "str",
+                             "v": "Elimine todas las áreas de exclusión que están seleccionadas en la tabla."
+                            },
+                            "text": {
+                             "t": "str",
+                             "v": "Eliminar seleccionado"
+                            }
+                           }
+                          }
+                         }
+                        ]
+                       }
+                      }
+                     ]
+                    }
+                   }
+                  },
+                  {
+                   "align": 0,
+                   "row": 25,
+                   "col": 0,
+                   "rs": 1,
+                   "cs": 2,
+                   "widget": {
+                    "qt": "QFrame",
+                    "py": "QFrame",
+                    "name": null,
+                    "props": {
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
+                     },
+                     "sizePolicy": {
+                      "t": "QSizePolicy",
+                      "v": [
+                       1,
+                       0,
+                       0,
+                       0
+                      ]
+                     },
+                     "frameShape": {
+                      "t": "int",
+                      "v": 4
+                     },
+                     "frameShadow": {
+                      "t": "int",
+                      "v": 48
+                     }
+                    }
+                   }
+                  }
+                 ]
+                }
+               }
+              ]
+             }
+            }
+           }
+          ]
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QGridLayout",
+          "py": "QGridLayout",
+          "name": "grid4",
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "hspacing": 6,
+          "vspacing": 6,
+          "rowStretch": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "colStretch": [
+           0,
+           1,
+           0
+          ],
+          "colMinWidth": [
+           0,
+           0,
+           0
+          ],
+          "items": [
+           {
+            "align": 0,
+            "row": 3,
+            "col": 0,
+            "rs": 1,
+            "cs": 3,
+            "widget": {
+             "qt": "QPushButton",
+             "py": "QPushButton",
+             "name": "generate_cnc_button",
+             "props": {
+              "enabled": {
+               "t": "bool",
+               "v": false
+              },
+              "font": {
+               "t": "QFont",
+               "v": {
+                "bold": true
+               }
+              },
+              "toolTip": {
+               "t": "str",
+               "v": "Genere el trabajo del CNC.\nSi está fresando, se creará un objeto Geometry adicional.\nAgregue / seleccione al menos una herramienta en la tabla de herramientas.\nHaga clic en el encabezado # para seleccionar todo, o Ctrl + LMB\npara la selección personalizada de herramientas."
+              },
+              "styleSheet": {
+               "t": "str",
+               "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+              },
+              "text": {
+               "t": "str",
+               "v": "Generar objeto CNCJob"
+              },
+              "icon": {
+               "t": "QIcon",
+               "v": ":/images/cnc16.png"
+              }
+             }
+            }
+           }
+          ]
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "spacer": [
+          0,
+          0,
+          1,
+          7
+         ]
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QPushButton",
+          "py": "QPushButton",
+          "name": "reset_button",
+          "props": {
+           "font": {
+            "t": "QFont",
+            "v": {
+             "bold": true
+            }
+           },
+           "toolTip": {
+            "t": "str",
+            "v": "Restablecerá los parámetros de la herramienta."
+           },
+           "styleSheet": {
+            "t": "str",
+            "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+           },
+           "text": {
+            "t": "str",
+            "v": "Restablecer la Herramienta"
+           },
+           "icon": {
+            "t": "QIcon",
+            "v": ":/images/reset32.png"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "DrillingToolUI"
+}

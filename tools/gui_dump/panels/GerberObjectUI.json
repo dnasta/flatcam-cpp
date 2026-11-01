@@ -1,0 +1,1407 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "GerberObjectUI",
+  "name": null,
+  "props": {},
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": null,
+   "props": {},
+   "margins": [
+    11,
+    11,
+    11,
+    11
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QHBoxLayout",
+      "py": "QHBoxLayout",
+      "name": "title_box",
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "icon",
+         "props": {
+          "pixmap": {
+           "t": "QPixmap",
+           "v": ":/images/flatcam_icon32.png"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "title_label",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "<font size=5><b>Objeto Gerber</b></font>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "level",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "BASIC es adecuado para un principiante. Muchos parámetros\nestán ocultos para el usuario en este modo.\nEl modo AVANZADO pondrá a disposición todos los parámetros.\n\nPara cambiar el NIVEL de la aplicación, vaya a:\nEditar -> Preferencias -> General y verificar:\n'APP. NIVEL 'botón de radio."
+          },
+          "alignment": {
+           "t": "int",
+           "v": 130
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QVBoxLayout",
+      "py": "QVBoxLayout",
+      "name": "custom_box",
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 129,
+        "stretch": 0,
+        "layout": {
+         "qt": "QGridLayout",
+         "py": "QGridLayout",
+         "name": null,
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "hspacing": 6,
+         "vspacing": 6,
+         "rowStretch": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+         ],
+         "colStretch": [
+          0,
+          1,
+          0
+         ],
+         "colMinWidth": [
+          0,
+          0,
+          0
+         ],
+         "items": [
+          {
+           "align": 0,
+           "row": 0,
+           "col": 0,
+           "rs": 1,
+           "cs": 1,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": "plot_options_label",
+            "props": {
+             "text": {
+              "t": "str",
+              "v": "<b>Opciones de parcela:</b>"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 0,
+           "col": 1,
+           "rs": 1,
+           "cs": 1,
+           "widget": {
+            "qt": "QCheckBox",
+            "py": "FCCheckBox",
+            "name": "solid_cb",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Polígonos de color liso."
+             },
+             "text": {
+              "t": "str",
+              "v": "Sólido"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 0,
+           "col": 2,
+           "rs": 1,
+           "cs": 1,
+           "widget": {
+            "qt": "QCheckBox",
+            "py": "FCCheckBox",
+            "name": "multicolored_cb",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Dibuja polígonos en diferentes colores."
+             },
+             "text": {
+              "t": "str",
+              "v": "Multicolor"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 1,
+           "col": 0,
+           "rs": 1,
+           "cs": 3,
+           "layout": {
+            "qt": "QHBoxLayout",
+            "py": "QHBoxLayout",
+            "name": "name_hlay",
+            "props": {},
+            "margins": [
+             0,
+             0,
+             0,
+             0
+            ],
+            "spacing": 6,
+            "items": [
+             {
+              "align": 0,
+              "stretch": 0,
+              "widget": {
+               "qt": "QLabel",
+               "py": "FCLabel",
+               "name": null,
+               "props": {
+                "text": {
+                 "t": "str",
+                 "v": "<b>Nombre:</b>"
+                }
+               }
+              }
+             },
+             {
+              "align": 0,
+              "stretch": 0,
+              "widget": {
+               "qt": "QLineEdit",
+               "py": "FCEntry",
+               "name": "name_entry",
+               "props": {}
+              }
+             }
+            ]
+           }
+          },
+          {
+           "align": 0,
+           "row": 2,
+           "col": 0,
+           "rs": 1,
+           "cs": 1,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": "plot_lbl",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Trazar (mostrar) este objeto."
+             },
+             "text": {
+              "t": "str",
+              "v": "Gráfico:"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 2,
+           "col": 1,
+           "rs": 1,
+           "cs": 1,
+           "widget": {
+            "qt": "QCheckBox",
+            "py": "FCCheckBox",
+            "name": "plot_cb",
+            "props": {}
+           }
+          },
+          {
+           "align": 0,
+           "row": 2,
+           "col": 2,
+           "rs": 1,
+           "cs": 1,
+           "widget": {
+            "qt": "QCheckBox",
+            "py": "FCCheckBox",
+            "name": "follow_cb",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Generar una geometría 'Seguir'.\nEsto significa que cortará a través\nEl medio de la traza."
+             },
+             "text": {
+              "t": "str",
+              "v": "Seguir"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 4,
+           "col": 0,
+           "rs": 1,
+           "cs": 3,
+           "widget": {
+            "qt": "QPushButton",
+            "py": "FCButton",
+            "name": "editor_button",
+            "props": {
+             "font": {
+              "t": "QFont",
+              "v": {
+               "bold": true
+              }
+             },
+             "toolTip": {
+              "t": "str",
+              "v": "Inicie el Editor de Objetos"
+             },
+             "styleSheet": {
+              "t": "str",
+              "v": "\n\t\t\t\t\t\t\t\t\t  QPushButton\n\t\t\t\t\t\t\t\t\t  {\n\t\t\t\t\t\t\t\t\t\t  font-weight: bold;\n\t\t\t\t\t\t\t\t\t  }\n\t\t\t\t\t\t\t\t\t  "
+             },
+             "text": {
+              "t": "str",
+              "v": "Gerber Editor"
+             },
+             "icon": {
+              "t": "QIcon",
+              "v": ":/images/edit_file32.png"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 6,
+           "col": 0,
+           "rs": 1,
+           "cs": 3,
+           "widget": {
+            "qt": "QPushButton",
+            "py": "FCButton",
+            "name": "properties_button",
+            "props": {
+             "font": {
+              "t": "QFont",
+              "v": {
+               "bold": true
+              }
+             },
+             "toolTip": {
+              "t": "str",
+              "v": "Muestre las propiedades."
+             },
+             "styleSheet": {
+              "t": "str",
+              "v": "\n\t\t\t\t\t\t\t\t\t  QPushButton\n\t\t\t\t\t\t\t\t\t  {\n\t\t\t\t\t\t\t\t\t\t  font-weight: bold;\n\t\t\t\t\t\t\t\t\t  }\n\t\t\t\t\t\t\t\t\t  "
+             },
+             "text": {
+              "t": "str",
+              "v": "PROPIEDADES"
+             },
+             "icon": {
+              "t": "QIcon",
+              "v": ":/images/properties32.png"
+             },
+             "checkable": {
+              "t": "bool",
+              "v": true
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 7,
+           "col": 0,
+           "rs": 1,
+           "cs": 3,
+           "widget": {
+            "qt": "QFrame",
+            "py": "QFrame",
+            "name": "properties_frame",
+            "props": {
+             "hidden": {
+              "t": "bool",
+              "v": true
+             }
+            },
+            "layout": {
+             "qt": "QVBoxLayout",
+             "py": "QVBoxLayout",
+             "name": "properties_box",
+             "props": {},
+             "margins": [
+              0,
+              0,
+              0,
+              0
+             ],
+             "spacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QTreeWidget",
+                "py": "FCTree",
+                "name": "treeWidget",
+                "props": {}
+               }
+              }
+             ]
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 8,
+           "col": 0,
+           "rs": 1,
+           "cs": 1,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": "apertures_table_label",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Tabla de Aperturas para el Objeto Gerber."
+             },
+             "text": {
+              "t": "str",
+              "v": "Aberturas:"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 8,
+           "col": 1,
+           "rs": 1,
+           "cs": 1,
+           "widget": {
+            "qt": "QCheckBox",
+            "py": "FCCheckBox",
+            "name": "aperture_table_visibility_cb",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Alternar la visualización de la tabla de herramientas."
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 8,
+           "col": 2,
+           "rs": 1,
+           "cs": 1,
+           "layout": {
+            "qt": "QHBoxLayout",
+            "py": "QHBoxLayout",
+            "name": null,
+            "props": {},
+            "margins": [
+             0,
+             0,
+             0,
+             0
+            ],
+            "spacing": 6,
+            "items": [
+             {
+              "align": 0,
+              "stretch": 0,
+              "spacer": [
+               0,
+               0,
+               7,
+               1
+              ]
+             },
+             {
+              "align": 0,
+              "stretch": 0,
+              "widget": {
+               "qt": "QCheckBox",
+               "py": "FCCheckBox",
+               "name": "mark_all_cb",
+               "props": {
+                "toolTip": {
+                 "t": "str",
+                 "v": "Cuando está marcado, mostrará todas las aperturas.\nCuando no está marcada, eliminará todas las formas de las marcas.\nque se dibujan en lienzo."
+                },
+                "layoutDirection": {
+                 "t": "int",
+                 "v": 1
+                },
+                "text": {
+                 "t": "str",
+                 "v": "Márc. todo"
+                }
+               }
+              }
+             }
+            ]
+           }
+          },
+          {
+           "align": 0,
+           "row": 10,
+           "col": 0,
+           "rs": 1,
+           "cs": 3,
+           "widget": {
+            "qt": "QTableWidget",
+            "py": "FCTable",
+            "name": "apertures_table",
+            "props": {
+             "columnCount": {
+              "t": "int",
+              "v": 6
+             },
+             "hidden": {
+              "t": "bool",
+              "v": true
+             }
+            },
+            "table": {
+             "cols": 6,
+             "labels": [
+              "#",
+              "Código",
+              "Tipo",
+              "Tamaño",
+              "Dim",
+              "M"
+             ],
+             "hheader": true,
+             "vheader": true,
+             "resize": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+             ],
+             "stretchLast": false
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 12,
+           "col": 0,
+           "rs": 1,
+           "cs": 3,
+           "widget": {
+            "qt": "QPushButton",
+            "py": "FCButton",
+            "name": "create_buffer_button",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Este botón se muestra solo cuando el archivo Gerber\nse carga sin almacenamiento en búfer.\nAl hacer clic en esto, se creará la geometría almacenada\nrequerido para el aislamiento."
+             },
+             "text": {
+              "t": "str",
+              "v": "Buffer la Geometria solida"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 13,
+           "col": 0,
+           "rs": 1,
+           "cs": 3,
+           "widget": {
+            "qt": "QFrame",
+            "py": "QFrame",
+            "name": null,
+            "props": {
+             "sizePolicy": {
+              "t": "QSizePolicy",
+              "v": [
+               1,
+               0,
+               0,
+               0
+              ]
+             },
+             "frameShape": {
+              "t": "int",
+              "v": 4
+             },
+             "frameShadow": {
+              "t": "int",
+              "v": 48
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 14,
+           "col": 0,
+           "rs": 1,
+           "cs": 3,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": "tool_lbl",
+            "props": {
+             "text": {
+              "t": "str",
+              "v": "<b>HERRAMIENTAS</b>"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 16,
+           "col": 0,
+           "rs": 1,
+           "cs": 3,
+           "widget": {
+            "qt": "QPushButton",
+            "py": "FCButton",
+            "name": "iso_button",
+            "props": {
+             "font": {
+              "t": "QFont",
+              "v": {
+               "bold": true
+              }
+             },
+             "toolTip": {
+              "t": "str",
+              "v": "Crear un objeto de geometría con\nTrayectorias para cortar alrededor de polígonos."
+             },
+             "styleSheet": {
+              "t": "str",
+              "v": "\n\t\t\t\t\t\t\t\t\t  QPushButton\n\t\t\t\t\t\t\t\t\t  {\n\t\t\t\t\t\t\t\t\t\t  font-weight: bold;\n\t\t\t\t\t\t\t\t\t  }\n\t\t\t\t\t\t\t\t\t  "
+             },
+             "text": {
+              "t": "str",
+              "v": "Enrutamiento de aislamiento"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 18,
+           "col": 0,
+           "rs": 1,
+           "cs": 3,
+           "widget": {
+            "qt": "QPushButton",
+            "py": "FCButton",
+            "name": "generate_ncc_button",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Crear el objeto de geometría\npara enrutamiento sin cobre."
+             },
+             "text": {
+              "t": "str",
+              "v": "Herramienta NCC"
+             },
+             "icon": {
+              "t": "QIcon",
+              "v": ":/images/eraser26.png"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 20,
+           "col": 0,
+           "rs": 1,
+           "cs": 3,
+           "widget": {
+            "qt": "QPushButton",
+            "py": "FCButton",
+            "name": "generate_cutout_button",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Generar la geometría para\nEl recorte del tablero."
+             },
+             "text": {
+              "t": "str",
+              "v": "Herramienta de Corte"
+             },
+             "icon": {
+              "t": "QIcon",
+              "v": ":/images/cut32_bis.png"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 22,
+           "col": 0,
+           "rs": 1,
+           "cs": 3,
+           "widget": {
+            "qt": "QFrame",
+            "py": "QFrame",
+            "name": null,
+            "props": {
+             "sizePolicy": {
+              "t": "QSizePolicy",
+              "v": [
+               1,
+               0,
+               0,
+               0
+              ]
+             },
+             "frameShape": {
+              "t": "int",
+              "v": 4
+             },
+             "frameShadow": {
+              "t": "int",
+              "v": 48
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 24,
+           "col": 0,
+           "rs": 1,
+           "cs": 3,
+           "widget": {
+            "qt": "QPushButton",
+            "py": "FCButton",
+            "name": "util_button",
+            "props": {
+             "font": {
+              "t": "QFont",
+              "v": {
+               "bold": true
+              }
+             },
+             "toolTip": {
+              "t": "str",
+              "v": "Muestre las utilidades."
+             },
+             "styleSheet": {
+              "t": "str",
+              "v": "\n\t\t\t\t\t\t\t\t\t  QPushButton\n\t\t\t\t\t\t\t\t\t  {\n\t\t\t\t\t\t\t\t\t\t  font-weight: bold;\n\t\t\t\t\t\t\t\t\t  }\n\t\t\t\t\t\t\t\t\t  "
+             },
+             "text": {
+              "t": "str",
+              "v": "UTILIDADES"
+             },
+             "icon": {
+              "t": "QIcon",
+              "v": ":/images/settings18.png"
+             },
+             "checkable": {
+              "t": "bool",
+              "v": true
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 25,
+           "col": 0,
+           "rs": 1,
+           "cs": 3,
+           "widget": {
+            "qt": "QFrame",
+            "py": "QFrame",
+            "name": "util_frame",
+            "props": {
+             "hidden": {
+              "t": "bool",
+              "v": true
+             }
+            },
+            "layout": {
+             "qt": "QVBoxLayout",
+             "py": "QVBoxLayout",
+             "name": "util_box",
+             "props": {},
+             "margins": [
+              0,
+              0,
+              0,
+              0
+             ],
+             "spacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "stretch": 0,
+               "layout": {
+                "qt": "QGridLayout",
+                "py": "QGridLayout",
+                "name": null,
+                "props": {},
+                "margins": [
+                 0,
+                 0,
+                 0,
+                 0
+                ],
+                "spacing": 6,
+                "hspacing": 6,
+                "vspacing": 6,
+                "rowStretch": [
+                 0,
+                 0,
+                 0,
+                 0,
+                 0,
+                 0,
+                 0,
+                 0,
+                 0,
+                 0,
+                 0,
+                 0,
+                 0
+                ],
+                "colStretch": [
+                 0,
+                 1,
+                 0
+                ],
+                "colMinWidth": [
+                 0,
+                 0,
+                 0
+                ],
+                "items": [
+                 {
+                  "align": 0,
+                  "row": 0,
+                  "col": 0,
+                  "rs": 1,
+                  "cs": 3,
+                  "widget": {
+                   "qt": "QLabel",
+                   "py": "FCLabel",
+                   "name": "noncopper_label",
+                   "props": {
+                    "toolTip": {
+                     "t": "str",
+                     "v": "Crear polígonos que cubran el\náreas sin cobre en el PCB.\nEquivalente al inverso de este\nobjeto. Se puede usar para eliminar todo\ncobre de una región específica."
+                    },
+                    "text": {
+                     "t": "str",
+                     "v": "<b>Regiones no cobre</b>"
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "align": 0,
+                  "row": 2,
+                  "col": 0,
+                  "rs": 1,
+                  "cs": 1,
+                  "widget": {
+                   "qt": "QLabel",
+                   "py": "FCLabel",
+                   "name": null,
+                   "props": {
+                    "toolTip": {
+                     "t": "str",
+                     "v": "Especifique el borde de la PCB\ndibujando una caja alrededor de todos\nobjetos con este mínimo\ndistancia."
+                    },
+                    "text": {
+                     "t": "str",
+                     "v": "Margen límite:"
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "align": 0,
+                  "row": 2,
+                  "col": 1,
+                  "rs": 1,
+                  "cs": 2,
+                  "widget": {
+                   "qt": "QDoubleSpinBox",
+                   "py": "FCDoubleSpinner",
+                   "name": "noncopper_margin_entry",
+                   "props": {
+                    "decimals": {
+                     "t": "int",
+                     "v": 4
+                    },
+                    "minimum": {
+                     "t": "double",
+                     "v": -10000.0
+                    },
+                    "maximum": {
+                     "t": "double",
+                     "v": 10000.0
+                    },
+                    "singleStep": {
+                     "t": "double",
+                     "v": 0.1
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "align": 0,
+                  "row": 4,
+                  "col": 0,
+                  "rs": 1,
+                  "cs": 1,
+                  "widget": {
+                   "qt": "QCheckBox",
+                   "py": "FCCheckBox",
+                   "name": "noncopper_rounded_cb",
+                   "props": {
+                    "toolTip": {
+                     "t": "str",
+                     "v": "La geometría resultante tendrá esquinas redondeadas."
+                    },
+                    "text": {
+                     "t": "str",
+                     "v": "Redondeado"
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "align": 0,
+                  "row": 4,
+                  "col": 1,
+                  "rs": 1,
+                  "cs": 2,
+                  "widget": {
+                   "qt": "QPushButton",
+                   "py": "FCButton",
+                   "name": "generate_noncopper_button",
+                   "props": {
+                    "text": {
+                     "t": "str",
+                     "v": "Generar Geometría"
+                    },
+                    "icon": {
+                     "t": "QIcon",
+                     "v": ":/images/geometry32.png"
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "align": 0,
+                  "row": 6,
+                  "col": 0,
+                  "rs": 1,
+                  "cs": 3,
+                  "widget": {
+                   "qt": "QFrame",
+                   "py": "QFrame",
+                   "name": null,
+                   "props": {
+                    "sizePolicy": {
+                     "t": "QSizePolicy",
+                     "v": [
+                      1,
+                      0,
+                      0,
+                      0
+                     ]
+                    },
+                    "frameShape": {
+                     "t": "int",
+                     "v": 4
+                    },
+                    "frameShadow": {
+                     "t": "int",
+                     "v": 48
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "align": 0,
+                  "row": 8,
+                  "col": 0,
+                  "rs": 1,
+                  "cs": 3,
+                  "widget": {
+                   "qt": "QLabel",
+                   "py": "FCLabel",
+                   "name": "boundingbox_label",
+                   "props": {
+                    "toolTip": {
+                     "t": "str",
+                     "v": "Crea una geometría que rodea el objeto Gerber.\nForma cuadrada."
+                    },
+                    "text": {
+                     "t": "str",
+                     "v": "<b>Cuadro delimitador</b>"
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "align": 0,
+                  "row": 10,
+                  "col": 0,
+                  "rs": 1,
+                  "cs": 1,
+                  "widget": {
+                   "qt": "QLabel",
+                   "py": "FCLabel",
+                   "name": null,
+                   "props": {
+                    "toolTip": {
+                     "t": "str",
+                     "v": "Distancia de los bordes de la caja.\nal polígono más cercano."
+                    },
+                    "text": {
+                     "t": "str",
+                     "v": "Margen límite:"
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "align": 0,
+                  "row": 10,
+                  "col": 1,
+                  "rs": 1,
+                  "cs": 2,
+                  "widget": {
+                   "qt": "QDoubleSpinBox",
+                   "py": "FCDoubleSpinner",
+                   "name": "bbmargin_entry",
+                   "props": {
+                    "decimals": {
+                     "t": "int",
+                     "v": 4
+                    },
+                    "minimum": {
+                     "t": "double",
+                     "v": -10000.0
+                    },
+                    "maximum": {
+                     "t": "double",
+                     "v": 10000.0
+                    },
+                    "singleStep": {
+                     "t": "double",
+                     "v": 0.1
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "align": 0,
+                  "row": 12,
+                  "col": 0,
+                  "rs": 1,
+                  "cs": 1,
+                  "widget": {
+                   "qt": "QCheckBox",
+                   "py": "FCCheckBox",
+                   "name": "bbrounded_cb",
+                   "props": {
+                    "toolTip": {
+                     "t": "str",
+                     "v": "Si el cuadro delimitador es\ntener esquinas redondeadas\nsu radio es igual a\nel margen."
+                    },
+                    "text": {
+                     "t": "str",
+                     "v": "Redondeado"
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "align": 0,
+                  "row": 12,
+                  "col": 1,
+                  "rs": 1,
+                  "cs": 2,
+                  "widget": {
+                   "qt": "QPushButton",
+                   "py": "FCButton",
+                   "name": "generate_bb_button",
+                   "props": {
+                    "toolTip": {
+                     "t": "str",
+                     "v": "Genera el objeto Geometry."
+                    },
+                    "text": {
+                     "t": "str",
+                     "v": "Generar Geometría"
+                    },
+                    "icon": {
+                     "t": "QIcon",
+                     "v": ":/images/geometry32.png"
+                    }
+                   }
+                  }
+                 }
+                ]
+               }
+              }
+             ]
+            }
+           }
+          }
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": "common_grid",
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       1,
+       0
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 1,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "transform_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Transformaciones geométricas del objeto actual."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Transformaciones</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "NumericalEvalEntry",
+         "name": "scale_entry",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Factor por el cual multiplicar\ncaracterísticas geométricas de este objeto.\nSe permiten expresiones. Por ejemplo: 1 / 25.4"
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "QLineEdit {border: 1px solid #0069A9;}"
+          },
+          "text": {
+           "t": "str",
+           "v": "1.0000"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "scale_button",
+         "props": {
+          "minimumSize": {
+           "t": "QSize",
+           "v": [
+            70,
+            0
+           ]
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Realizar la operación de escalado."
+          },
+          "text": {
+           "t": "str",
+           "v": "Escala"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "NumericalEvalTupleEntry",
+         "name": "offsetvector_entry",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Cantidad por la cual mover el objeto\nen los ejes x e y en formato (x, y).\nSe permiten expresiones. Por ejemplo: (1/3.2, 0.5*3)"
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "QLineEdit {border: 1px solid #0069A9;}"
+          },
+          "text": {
+           "t": "str",
+           "v": "(0.0, 0.0)"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "offset_button",
+         "props": {
+          "minimumSize": {
+           "t": "QSize",
+           "v": [
+            70,
+            0
+           ]
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Realice la operación de desplazamiento."
+          },
+          "text": {
+           "t": "str",
+           "v": "Compensar"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "transformations_button",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Transformaciones geométricas del objeto actual."
+          },
+          "text": {
+           "t": "str",
+           "v": "Transformaciones"
+          },
+          "icon": {
+           "t": "QIcon",
+           "v": ":/images/transform.png"
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "GerberObjectUI"
+}

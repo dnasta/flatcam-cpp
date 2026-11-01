@@ -31,12 +31,22 @@ CUSTOM = {
     "FCDetachableTab2": ("gui/widgets/FCDetachableTab.h", "new FCDetachableTab2({parent})"),
     "FlatCAMInfoBar": ("gui/widgets/FlatCAMInfoBar.h", "new FlatCAMInfoBar({parent})"),
     "FlatCAMActivityView": ("gui/widgets/FlatCAMActivityView.h", "new FlatCAMActivityView({parent})"),
+    "FCButton": ("gui/widgets/FCButton.h", "new FCButton({parent})"),
+    "FCSpinner": ("gui/widgets/FCSpinners.h", "new FCSpinner({parent})"),
+    "FCDoubleSpinner": ("gui/widgets/FCSpinners.h", "new FCDoubleSpinner({parent})"),
+    "FCComboBox": ("gui/widgets/FCComboBox.h", "new FCComboBox({parent})"),
+    "FCComboBox2": ("gui/widgets/FCComboBox.h", "new FCComboBox2({parent})"),
+    "FCTable": ("gui/widgets/FCTable.h", "new FCTable({parent})"),
+    "NumericalEvalEntry": ("gui/widgets/NumericalEval.h", "new NumericalEvalEntry({parent})"),
+    "NumericalEvalTupleEntry": ("gui/widgets/NumericalEval.h", "new NumericalEvalTupleEntry({parent})"),
+    "RadioSet": ("gui/widgets/RadioSet.h", None),  # se construye con sus opciones (ver Gen.construct)
 }
 # Clases cuyo contenido interno arma el propio constructor del port (no se generan sus hijos).
 SELF_BUILT = {"FlatCAMInfoBar", "FlatCAMActivityView", "FCDetachableTab", "FCDetachableTab2", "FCTree",
-              "KeySensitiveListView"}
+              "KeySensitiveListView", "RadioSet"}
 
-QT_HEADERS = ["QAction", "QPixmap", "QBoxLayout", "QCheckBox", "QComboBox", "QDockWidget", "QFont", "QFrame", "QGridLayout",
+QT_HEADERS = ["QAction", "QPixmap", "QFormLayout", "QHeaderView", "QTableWidget", "QDoubleSpinBox", "QSpinBox", "QRadioButton",
+              "QTextEdit", "QPlainTextEdit", "QSlider", "QBoxLayout", "QCheckBox", "QComboBox", "QDockWidget", "QFont", "QFrame", "QGridLayout",
               "QHBoxLayout", "QIcon", "QLabel", "QLineEdit", "QMainWindow", "QMenu", "QMenuBar", "QPushButton",
               "QScrollArea", "QSizePolicy", "QSplitter", "QStackedWidget", "QStatusBar", "QTabBar", "QTabWidget",
               "QToolBar", "QToolButton", "QTreeView", "QTreeWidget", "QVBoxLayout", "QWidget"]
@@ -97,6 +107,19 @@ class Gen:
 
     def construct(self, node, parent="nullptr"):
         py = node.get("py")
+        if py == "RadioSet":
+            self.includes.add(CUSTOM[py][0])
+            def val(x):
+                if isinstance(x, bool):
+                    return "QVariant(%s)" % ("true" if x else "false")
+                if isinstance(x, int):
+                    return "QVariant(%d)" % x
+                if isinstance(x, float):
+                    return "QVariant(%r)" % x
+                return "QVariant(%s)" % cstr(str(x))
+            choices = ", ".join("{%s, %s}" % (cstr(c["label"]), val(c["value"])) for c in node["choices"])
+            return "new RadioSet({%s}, %s, %s, %s)" % (choices, "Qt::Vertical" if node.get("vertical") else "Qt::Horizontal",
+                                                      "true" if node.get("stretch") else "false", parent)
         if py in CUSTOM:
             self.includes.add(CUSTOM[py][0])
             return CUSTOM[py][1].format(parent=parent)
@@ -134,7 +157,18 @@ class Gen:
             elif name == "enabled":
                 self.emit("%s->setEnabled(%s);" % (v, "true" if x else "false"))
             elif name == "font":
-                self.emit("{ QFont f; f.fromString(%s); %s->setFont(f); }" % (cstr(x), v))
+                parts = ["QFont f = %s->font();" % v]
+                if "family" in x:
+                    parts.append("f.setFamily(%s);" % cstr(x["family"]))
+                if "bold" in x:
+                    parts.append("f.setBold(%s);" % ("true" if x["bold"] else "false"))
+                if "italic" in x:
+                    parts.append("f.setItalic(%s);" % ("true" if x["italic"] else "false"))
+                if "pixelSize" in x:
+                    parts.append("f.setPixelSize(%d);" % x["pixelSize"])
+                if "pointSize" in x:
+                    parts.append("f.setPointSizeF(%r);" % x["pointSize"])
+                self.emit("{ %s %s->setFont(f); }" % (" ".join(parts), v))
             elif t == "QSize":
                 setter = "set" + name[0].upper() + name[1:]
                 self.emit("%s->%s(QSize(%d, %d));" % (v, setter, x[0], x[1]))
@@ -208,6 +242,26 @@ class Gen:
         qt = node["qt"]
         if py in SELF_BUILT and "tabs" not in node:
             self.props(v, node)
+            if py == "RadioSet" and node.get("value") is not None:
+                x = node["value"]
+                lit = ("true" if x else "false") if isinstance(x, bool) else (repr(x) if isinstance(x, (int, float)) else cstr(str(x)))
+                self.emit("%s->setValue(QVariant(%s));" % (v, lit))
+            return v
+        if "table" in node:
+            self.props(v, node)
+            t = node["table"]
+            self.emit("%s->setColumnCount(%d);" % (v, t["cols"]))
+            if any(t["labels"]):
+                self.emit("%s->setHorizontalHeaderLabels({%s});" % (v, ", ".join(cstr(x) for x in t["labels"])))
+            if not t["hheader"]:
+                self.emit("%s->horizontalHeader()->setVisible(false);" % v)
+            if not t["vheader"]:
+                self.emit("%s->verticalHeader()->setVisible(false);" % v)
+            for i, m in enumerate(t["resize"]):
+                if m:
+                    self.emit("%s->horizontalHeader()->setSectionResizeMode(%d, QHeaderView::ResizeMode(%d));" % (v, i, m))
+            if t["stretchLast"]:
+                self.emit("%s->horizontalHeader()->setStretchLastSection(true);" % v)
             return v
         self.props(v, node)
         if "tabs" in node:
@@ -263,7 +317,7 @@ class Gen:
         self.emit("%s = new %s();" % (decl, qt))
         m = node["margins"]
         self.emit("%s->setContentsMargins(%d, %d, %d, %d);" % (v, m[0], m[1], m[2], m[3]))
-        if qt == "QGridLayout":
+        if qt in ("QGridLayout", "QFormLayout") and "hspacing" in node:
             self.emit("%s->setHorizontalSpacing(%d);" % (v, node["hspacing"]))
             self.emit("%s->setVerticalSpacing(%d);" % (v, node["vspacing"]))
         else:
@@ -271,7 +325,13 @@ class Gen:
         self.props(v, node, kind="layout")
         for it in node["items"]:
             align = ", Qt::Alignment(%d)" % it["align"] if it.get("align") else ""
-            if "widget" in it:
+            if "widget" in it and qt == "QFormLayout":
+                c = self.widget(it["widget"])
+                self.emit("%s->setWidget(%d, QFormLayout::ItemRole(%d), %s);" % (v, it["row"], it["role"], c))
+            elif "layout" in it and qt == "QFormLayout":
+                c = self.layout(it["layout"])
+                self.emit("%s->setLayout(%d, QFormLayout::ItemRole(%d), %s);" % (v, it["row"], it["role"], c))
+            elif "widget" in it:
                 c = self.widget(it["widget"])
                 if qt == "QGridLayout":
                     self.emit("%s->addWidget(%s, %d, %d, %d, %d%s);" % (v, c, it["row"], it["col"], it["rs"], it["cs"], align))
@@ -377,6 +437,52 @@ class Gen:
         self.emit()
         self.props("this", w)
 
+    def panel(self):
+        """Arma un panel: las propiedades y el layout van sobre `this`."""
+        root = self.data["root"]
+        self.define_actions()
+        self.props("this", root)
+        if "layout" in root:
+            lv = self.layout(root["layout"])
+            self.emit("setLayout(%s);" % lv)
+
+    def write_panel(self, out_dir, cls):
+        self.panel()
+        base = cls + "Base"
+        os.makedirs(out_dir, exist_ok=True)
+        header = ["// ARCHIVO GENERADO por tools/gui_dump/gen_cpp.py a partir de la interfaz original - no editar a mano.",
+                  "#pragma once", ""]
+        header += ["#include <%s>" % h for h in QT_HEADERS]
+        header += ['#include "%s"' % h for h in sorted(self.includes)]
+        header += ["", "namespace flatcam::gui {", "",
+                   "/**",
+                   " * @brief Panel `%s` de FlatCAM 2024.4 (generado desde la interfaz original)." % self.data.get("class", cls),
+                   " *",
+                   " * `setupUi()` arma los mismos widgets, textos, valores de fábrica y layouts que el original. Los miembros tienen",
+                   " * el nombre del atributo del original; la lógica va en una clase derivada.",
+                   " */",
+                   "class %s : public QWidget {" % base,
+                   "public:",
+                   "    /** @brief Crea el panel vacío. @param parent Widget padre. */",
+                   "    explicit %s(QWidget* parent = nullptr) : QWidget(parent) {}" % base,
+                   "",
+                   "    /** @brief Construye el panel. */",
+                   "    void setupUi();",
+                   "", "    /** @name Objetos del panel (mismo nombre que en el original) */", "    ///@{"]
+        for name in sorted(self.members):
+            header.append("    %s* %s{nullptr};  ///< `%s` del original." % (self.members[name], name, name))
+        header += ["    ///@}", "};", "", "}  // namespace flatcam::gui", ""]
+        body = ["// ARCHIVO GENERADO por tools/gui_dump/gen_cpp.py a partir de la interfaz original - no editar a mano.",
+                '#include "gui/generated/%s.h"' % base, "", "#include <QKeySequence>", "#include <QSpacerItem>", "",
+                "namespace flatcam::gui {", "", "void %s::setupUi() {" % base]
+        body += self.lines
+        body += ["}", "", "}  // namespace flatcam::gui", ""]
+        with open(os.path.join(out_dir, base + ".h"), "w", encoding="utf-8") as f:
+            f.write("\n".join(header))
+        with open(os.path.join(out_dir, base + ".cpp"), "w", encoding="utf-8") as f:
+            f.write("\n".join(body))
+        print("Generado %s: %d miembros, %d líneas" % (base, len(self.members), len(self.lines)))
+
     def write(self, out_dir):
         self.main_window()
         os.makedirs(out_dir, exist_ok=True)
@@ -416,5 +522,10 @@ class Gen:
 
 
 if __name__ == "__main__":
-    src = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(__file__), "main_gui.json")
-    Gen(json.load(open(src, encoding="utf-8"))).write(OUT_DIR)
+    if len(sys.argv) > 1 and sys.argv[1] == "--panels":
+        pdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "panels")
+        for cls in open(os.path.join(pdir, "index.txt")).read().split():
+            Gen(json.load(open(os.path.join(pdir, cls + ".json"), encoding="utf-8"))).write_panel(OUT_DIR, cls)
+    else:
+        src = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(__file__), "main_gui.json")
+        Gen(json.load(open(src, encoding="utf-8"))).write(OUT_DIR)

@@ -9,7 +9,23 @@ add_library(flatcam_gui STATIC
     App.cpp
     objects/FlatCAMObj.cpp
     objects/ObjectCollection.cpp
+    objects/ObjectUIs.cpp
+    tools/ToolPanels.cpp
     generated/MainGUIBase.cpp
+    generated/GerberObjectUIBase.cpp
+    generated/ExcellonObjectUIBase.cpp
+    generated/GeometryObjectUIBase.cpp
+    generated/CNCObjectUIBase.cpp
+    generated/NccToolUIBase.cpp
+    generated/PaintToolUIBase.cpp
+    generated/DrillingToolUIBase.cpp
+    generated/CutOutToolUIBase.cpp
+    widgets/FCButton.h
+    widgets/FCSpinners.cpp
+    widgets/FCComboBox.cpp
+    widgets/RadioSet.cpp
+    widgets/FCTable.cpp
+    widgets/NumericalEval.cpp
     widgets/FCLabel.cpp
     widgets/FCEntry.cpp
     widgets/FCCheckBox.h

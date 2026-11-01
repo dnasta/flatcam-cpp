@@ -7,6 +7,8 @@
 
 #include <QColor>
 #include <QObject>
+#include <QPointer>
+#include <QWidget>
 #include <QRectF>
 #include <QString>
 #include <memory>
@@ -69,6 +71,19 @@ public:
     /** @brief Límites de la geometría (`bounds`). @return El rectángulo en mm (vacío si no hay geometría). */
     virtual QRectF bounds() const = 0;
 
+    /**
+     * @brief Panel de la pestaña Propiedades, ya cargado con este objeto (`set_ui` + `build_ui`).
+     *
+     * El objeto es dueño del panel; quien lo muestre en la pestaña debe sacarlo (`takeWidget`) antes de destruir el objeto.
+     * @return El panel.
+     */
+    virtual QWidget* propertiesUi() = 0;
+
+    ~FlatCAMObj() override;
+
+protected:
+    std::unique_ptr<QWidget> ui_;  ///< Panel de propiedades (se crea al pedirlo por primera vez).
+
 protected:
     /**
      * @brief Agrega una figura a lo dibujado: relleno (si tiene superficie) y contornos (`add_shape`).
@@ -101,6 +116,9 @@ public:
     /** @brief Límites. @return Rectángulo. */
     QRectF bounds() const override;
 
+    /** @brief Panel `GerberObjectUI` cargado. @return El panel. */
+    QWidget* propertiesUi() override;
+
 private:
     std::unique_ptr<Gerber> gerber_;
 };
@@ -120,6 +138,9 @@ public:
 
     /** @brief Límites. @return Rectángulo. */
     QRectF bounds() const override;
+
+    /** @brief Panel `ExcellonObjectUI` cargado. @return El panel. */
+    QWidget* propertiesUi() override;
 
 private:
     std::unique_ptr<Excellon> excellon_;

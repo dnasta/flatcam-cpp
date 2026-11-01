@@ -78,7 +78,20 @@ def ser(v):
         return {"t": "QSizePolicy", "v": [int(v.horizontalPolicy()), int(v.verticalPolicy()), v.horizontalStretch(),
                                           v.verticalStretch()]}
     if isinstance(v, QtGui.QFont):
-        return {"t": "QFont", "v": v.toString()}
+        # Solo lo que difiere de la fuente por defecto: la familia del sistema donde corre el volcado no sirve en otro.
+        base = QtWidgets.QApplication.font()
+        d = {}
+        if v.family() != base.family():
+            d["family"] = v.family()
+        if v.bold() != base.bold():
+            d["bold"] = v.bold()
+        if v.italic() != base.italic():
+            d["italic"] = v.italic()
+        if v.pixelSize() > 0 and v.pixelSize() != base.pixelSize():
+            d["pixelSize"] = v.pixelSize()
+        elif v.pointSizeF() > 0 and v.pointSizeF() != base.pointSizeF():
+            d["pointSize"] = v.pointSizeF()
+        return {"t": "QFont", "v": d} if d else None
     if isinstance(v, fr._QIcon):
         return {"t": "QIcon", "v": fr.icon_path(v)}
     if isinstance(v, fr._QPixmap):
@@ -184,6 +197,9 @@ class Dumper:
         m = lay.contentsMargins()
         node["margins"] = [m.left(), m.top(), m.right(), m.bottom()]
         node["spacing"] = lay.spacing()
+        if isinstance(lay, QtWidgets.QFormLayout):
+            node["hspacing"] = lay.horizontalSpacing()
+            node["vspacing"] = lay.verticalSpacing()
         if isinstance(lay, QtWidgets.QGridLayout):
             node["hspacing"] = lay.horizontalSpacing()
             node["vspacing"] = lay.verticalSpacing()
@@ -197,6 +213,9 @@ class Dumper:
             if isinstance(lay, QtWidgets.QGridLayout):
                 r, c, rs, cs = lay.getItemPosition(i)
                 entry.update(row=r, col=c, rs=rs, cs=cs)
+            elif isinstance(lay, QtWidgets.QFormLayout):
+                r, role = lay.getItemPosition(i)
+                entry.update(row=r, role=int(role))
             elif isinstance(lay, QtWidgets.QBoxLayout):
                 entry["stretch"] = lay.stretch(i)
             if it.widget() is not None:
@@ -259,6 +278,24 @@ class Dumper:
             if w.widget() is not None:
                 node["widget"] = self.widget(w.widget())
             return node
+        if py_class(w) == "RadioSet":
+            # Las opciones no son propiedades de Qt: se leen del objeto del original.
+            node["choices"] = [{"label": c["label"], "value": c["value"]} for c in w.choices]
+            node["vertical"] = isinstance(QtWidgets.QWidget.layout(w), QtWidgets.QVBoxLayout)
+            lay = QtWidgets.QWidget.layout(w)
+            node["stretch"] = lay.count() > 0 and lay.itemAt(lay.count() - 1).spacerItem() is not None
+            node["value"] = w.get_value()
+            return node
+        if isinstance(w, QtWidgets.QTableWidget):
+            hh, vh = w.horizontalHeader(), w.verticalHeader()
+            node["table"] = {
+                "cols": w.columnCount(),
+                "labels": [w.horizontalHeaderItem(i).text() if w.horizontalHeaderItem(i) else "" for i in range(w.columnCount())],
+                "hheader": not hh.isHidden(), "vheader": not vh.isHidden(),
+                "resize": [int(hh.sectionResizeMode(i)) for i in range(w.columnCount())],
+                "stretchLast": hh.stretchLastSection(),
+            }
+            return node
         if isinstance(w, (QtWidgets.QAbstractItemView, QtWidgets.QComboBox, QtWidgets.QAbstractSpinBox,
                           QtWidgets.QLineEdit, QtWidgets.QAbstractButton, QtWidgets.QLabel)):
             if isinstance(w, QtWidgets.QComboBox):
@@ -266,10 +303,10 @@ class Dumper:
                 node["currentIndex"] = w.currentIndex()
             if isinstance(w, QtWidgets.QPushButton) and QtWidgets.QPushButton.menu(w) is not None:
                 node["menu"] = self.menu(QtWidgets.QPushButton.menu(w))
-            if w.layout() is None:
+            if QtWidgets.QWidget.layout(w) is None:
                 return node
-        if w.layout() is not None:
-            node["layout"] = self.layout(w.layout())
+        if QtWidgets.QWidget.layout(w) is not None:
+            node["layout"] = self.layout(QtWidgets.QWidget.layout(w))
         # Widgets hijos que no están en el layout (los agrega el código con `setParent`, o son internos)
         return node
 
@@ -305,6 +342,19 @@ def collect_names(root_obj, prefix=""):
         if isinstance(v, (QtCore.QObject,)) and id(v) not in names:
             names[id(v)] = prefix + k
     return names
+
+
+def dump_widget(root, *name_sources):
+    """Vuelca un panel (por ejemplo `GerberObjectUI` o el de una herramienta) como raíz de una clase propia.
+
+    `name_sources` son los objetos de Python cuyos atributos dan nombre a los widgets (el primero tiene prioridad).
+    """
+    names = {}
+    for src in reversed(name_sources):
+        names.update(collect_names(src))
+    names.pop(id(root), None)
+    d = Dumper(names)
+    return {"root": d.widget(root), "actions": d.actions}
 
 
 def dump_main_window(gui, app=None):

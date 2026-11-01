@@ -1524,7 +1524,7 @@ void MainGUIBase::setupUi() {
     collection_view->setProperty("contextMenuPolicy", 3);
     collection_view->setProperty("dragDropMode", 2);
     collection_view->setProperty("editTriggers", 0);
-    { QFont f; f.fromString(QString::fromUtf8("Seagoe UI,-1,12,5,50,0,0,0,0,0")); collection_view->setFont(f); }
+    { QFont f = collection_view->font(); f.setFamily(QString::fromUtf8("Seagoe UI")); f.setPixelSize(12); collection_view->setFont(f); }
     collection_view->setHeaderHidden(true);
     collection_view->setMinimumSize(QSize(290, 0));
     collection_view->setProperty("selectionMode", 3);

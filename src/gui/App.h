@@ -11,6 +11,7 @@
 
 #include "gui/MainGUI.h"
 #include "gui/objects/ObjectCollection.h"
+#include "gui/tools/ToolPanels.h"
 
 namespace flatcam::gui {
 
@@ -65,6 +66,29 @@ public:
     /** @brief Encuadra todos los objetos (`on_zoom_fit`). */
     void onZoomFit();
 
+    /**
+     * @brief Muestra en la pestaña Propiedades el panel del objeto elegido, o el panel vacío si no hay ninguno
+     * (`on_list_selection_change` + `build_ui` / `setup_default_properties_tab`).
+     * @param obj Objeto, o `nullptr`.
+     */
+    void showProperties(FlatCAMObj* obj);
+
+    /**
+     * @brief Abre una herramienta en la pestaña Herramienta (`AppTool.run` y el `run` de cada herramienta).
+     *
+     * Si el panel izquierdo está cerrado lo abre; si la misma herramienta ya está a la vista en su pestaña, cierra el panel
+     * (como el original con `toggle`). Pone el panel, le da el nombre de la herramienta y cambia el título de la pestaña.
+     * @param panel Panel de la herramienta.
+     * @param info Nombre y título.
+     * @param toggle Si es `true` se comporta como el botón (abre o cierra).
+     */
+    void runTool(QWidget* panel, const ToolInfo& info, bool toggle = true);
+
+    NccTool* nccTool;            ///< Panel de NCC.
+    PaintTool* paintTool;        ///< Panel de pintura.
+    DrillingTool* drillingTool;  ///< Panel de perforación.
+    CutOutTool* cutoutTool;      ///< Panel de corte.
+
 protected:
     /** @brief Atajos de teclado de la ventana y arrastrar y soltar archivos. @param obj Objeto. @param ev Evento. @return Si se consumió. */
     bool eventFilter(QObject* obj, QEvent* ev) override;
@@ -75,6 +99,7 @@ private:
     QString lastFolder() const;
 
     std::unique_ptr<MainGUI> ui_;
+    QWidget* defaultProperties_{nullptr};  ///< Panel de Propiedades sin objeto (`setup_default_properties_tab`).
     ObjectCollection* collection_;
     QString lastFolder_;
     QString lastGerberFilter_;

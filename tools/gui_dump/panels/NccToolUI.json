@@ -1,0 +1,1794 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "NonCopperClear",
+  "name": null,
+  "props": {
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QFrame",
+      "py": "QFrame",
+      "name": "tools_frame",
+      "props": {},
+      "layout": {
+       "qt": "QVBoxLayout",
+       "py": "QVBoxLayout",
+       "name": "tools_box",
+       "props": {},
+       "margins": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spacing": 6,
+       "items": [
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QLabel",
+          "py": "FCLabel",
+          "name": null,
+          "props": {
+           "font": {
+            "t": "QFont",
+            "v": {
+             "bold": true,
+             "pixelSize": 16
+            }
+           },
+           "styleSheet": {
+            "t": "str",
+            "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+           },
+           "text": {
+            "t": "str",
+            "v": "Compensación sin cobre"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QFormLayout",
+          "py": "QFormLayout",
+          "name": null,
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "hspacing": 6,
+          "vspacing": 6,
+          "items": [
+           {
+            "align": 0,
+            "row": 0,
+            "role": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "type_obj_combo_label",
+             "props": {
+              "minimumSize": {
+               "t": "QSize",
+               "v": [
+                60,
+                0
+               ]
+              },
+              "toolTip": {
+               "t": "str",
+               "v": "Especifique el tipo de objeto que se eliminará del exceso de cobre.\nPuede ser de tipo: Gerber o Geometría.\nLo que se seleccione aquí dictará el tipo\nde objetos que llenarán el cuadro combinado 'Objeto'."
+              },
+              "text": {
+               "t": "str",
+               "v": "Tipo de obj:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 0,
+            "role": 1,
+            "widget": {
+             "qt": "QWidget",
+             "py": "RadioSet",
+             "name": "type_obj_radio",
+             "props": {},
+             "choices": [
+              {
+               "label": "Geometría",
+               "value": "geometry"
+              },
+              {
+               "label": "Gerber",
+               "value": "gerber"
+              }
+             ],
+             "vertical": false,
+             "stretch": true,
+             "value": "gerber"
+            }
+           },
+           {
+            "align": 0,
+            "row": 1,
+            "role": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "object_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Objeto a eliminar del exceso de cobre."
+              },
+              "text": {
+               "t": "str",
+               "v": "Objeto:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 1,
+            "role": 1,
+            "widget": {
+             "qt": "QComboBox",
+             "py": "FCComboBox",
+             "name": "object_combo",
+             "props": {},
+             "items": [],
+             "currentIndex": -1
+            }
+           }
+          ],
+          "formRows": true
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QFrame",
+          "py": "QFrame",
+          "name": null,
+          "props": {
+           "sizePolicy": {
+            "t": "QSizePolicy",
+            "v": [
+             1,
+             0,
+             0,
+             0
+            ]
+           },
+           "frameShape": {
+            "t": "int",
+            "v": 4
+           },
+           "frameShadow": {
+            "t": "int",
+            "v": 48
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QLabel",
+          "py": "FCLabel",
+          "name": "tools_table_label",
+          "props": {
+           "toolTip": {
+            "t": "str",
+            "v": "Conjunto de herramientas desde el cual el algoritmo\nelegirá los utilizados para la limpieza de cobre."
+           },
+           "text": {
+            "t": "str",
+            "v": "<b>Tabla de herramientas</b>"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QTableWidget",
+          "py": "FCTable",
+          "name": "tools_table",
+          "props": {
+           "minimumSize": {
+            "t": "QSize",
+            "v": [
+             0,
+             53
+            ]
+           },
+           "maximumSize": {
+            "t": "QSize",
+            "v": [
+             16777215,
+             53
+            ]
+           },
+           "contextMenuPolicy": {
+            "t": "int",
+            "v": 2
+           },
+           "acceptDrops": {
+            "t": "bool",
+            "v": true
+           },
+           "verticalScrollBarPolicy": {
+            "t": "int",
+            "v": 1
+           },
+           "dragEnabled": {
+            "t": "bool",
+            "v": true
+           },
+           "dragDropOverwriteMode": {
+            "t": "bool",
+            "v": false
+           },
+           "dragDropMode": {
+            "t": "int",
+            "v": 4
+           },
+           "selectionBehavior": {
+            "t": "int",
+            "v": 1
+           },
+           "rowCount": {
+            "t": "int",
+            "v": 1
+           },
+           "columnCount": {
+            "t": "int",
+            "v": 4
+           }
+          },
+          "table": {
+           "cols": 4,
+           "labels": [
+            "#",
+            "Diámetro",
+            "TT",
+            ""
+           ],
+           "hheader": true,
+           "vheader": false,
+           "resize": [
+            2,
+            1,
+            0,
+            0
+           ],
+           "stretchLast": false
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QGridLayout",
+          "py": "QGridLayout",
+          "name": null,
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "hspacing": 6,
+          "vspacing": 6,
+          "rowStretch": [
+           0,
+           0,
+           0
+          ],
+          "colStretch": [
+           0,
+           1
+          ],
+          "colMinWidth": [
+           0,
+           0
+          ],
+          "items": [
+           {
+            "align": 0,
+            "row": 1,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "ncc_order_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Esto establece la forma en que se utilizan las herramientas en la tabla de herramientas.\n'No' -> significa que el orden utilizado es el de la tabla de herramientas\n'Adelante' -> significa que las herramientas se ordenarán de pequeño a grande\n'Atras' -> means que las herramientas ordenarán de grande a pequeño\n\nADVERTENCIA: el uso del mecanizado en reposo establecerá automáticamente el orden\nen reversa y deshabilitar este control."
+              },
+              "text": {
+               "t": "str",
+               "v": "Orden de la Herram:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 1,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QWidget",
+             "py": "RadioSet",
+             "name": "ncc_order_radio",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Esto establece la forma en que se utilizan las herramientas en la tabla de herramientas.\n'No' -> significa que el orden utilizado es el de la tabla de herramientas\n'Adelante' -> significa que las herramientas se ordenarán de pequeño a grande\n'Atras' -> means que las herramientas ordenarán de grande a pequeño\n\nADVERTENCIA: el uso del mecanizado en reposo establecerá automáticamente el orden\nen reversa y deshabilitar este control."
+              }
+             },
+             "choices": [
+              {
+               "label": "No",
+               "value": "no"
+              },
+              {
+               "label": "Adelante",
+               "value": "fwd"
+              },
+              {
+               "label": "Atras",
+               "value": "rev"
+              }
+             ],
+             "vertical": false,
+             "stretch": true,
+             "value": "rev"
+            }
+           },
+           {
+            "align": 0,
+            "row": 2,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QFrame",
+             "py": "QFrame",
+             "name": null,
+             "props": {
+              "sizePolicy": {
+               "t": "QSizePolicy",
+               "v": [
+                1,
+                0,
+                0,
+                0
+               ]
+              },
+              "frameShape": {
+               "t": "int",
+               "v": 4
+              },
+              "frameShadow": {
+               "t": "int",
+               "v": 48
+              }
+             }
+            }
+           }
+          ]
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QGridLayout",
+          "py": "QGridLayout",
+          "name": "grid3",
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "hspacing": 6,
+          "vspacing": 6,
+          "rowStretch": [
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0
+          ],
+          "colStretch": [
+           0,
+           1
+          ],
+          "colMinWidth": [
+           0,
+           0
+          ],
+          "items": [
+           {
+            "align": 0,
+            "row": 0,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "tool_sel_label",
+             "props": {
+              "text": {
+               "t": "str",
+               "v": "<b>Agregar desde DB</b>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 2,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "new_tooldia_lbl",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Diámetro para la nueva herramienta"
+              },
+              "text": {
+               "t": "str",
+               "v": "Diá. de Herram:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 2,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "layout": {
+             "qt": "QHBoxLayout",
+             "py": "QHBoxLayout",
+             "name": null,
+             "props": {},
+             "margins": [
+              0,
+              0,
+              0,
+              0
+             ],
+             "spacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QDoubleSpinBox",
+                "py": "FCDoubleSpinner",
+                "name": "new_tooldia_entry",
+                "props": {
+                 "decimals": {
+                  "t": "int",
+                  "v": 4
+                 },
+                 "maximum": {
+                  "t": "double",
+                  "v": 10000.0
+                 },
+                 "value": {
+                  "t": "double",
+                  "v": 0.1
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QToolButton",
+                "py": "QToolButton",
+                "name": "find_optimal_button",
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Encuentre un diámetro de herramienta garantizado\npara hacer un aislamiento completo."
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Óptimo"
+                 },
+                 "icon": {
+                  "t": "QIcon",
+                  "v": ":/images/open_excellon32.png"
+                 },
+                 "toolButtonStyle": {
+                  "t": "int",
+                  "v": 2
+                 }
+                }
+               }
+              }
+             ]
+            }
+           },
+           {
+            "align": 0,
+            "row": 7,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "layout": {
+             "qt": "QHBoxLayout",
+             "py": "QHBoxLayout",
+             "name": null,
+             "props": {},
+             "margins": [
+              0,
+              0,
+              0,
+              0
+             ],
+             "spacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QPushButton",
+                "py": "FCButton",
+                "name": "add_newtool_button",
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Agregar una nueva herramienta a la tabla de herramientas\ncon el diámetro especificado arriba.\nEsto se hace mediante una búsqueda en segundo plano.\nen la base de datos de herramientas. Si no se encuentra nada\nen la base de datos de herramientas, se agrega una herramienta predeterminada."
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Buscar y agregar"
+                 },
+                 "icon": {
+                  "t": "QIcon",
+                  "v": ":/images/plus16.png"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QPushButton",
+                "py": "FCButton",
+                "name": "addtool_from_db_btn",
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Agregar una nueva herramienta a la tabla de herramientas\nde la base de datos de herramientas.\nHerramientas de administración de bases de datos en:\nMenú: Opciones -> Base de datos de herramientas"
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Elija de DB"
+                 },
+                 "icon": {
+                  "t": "QIcon",
+                  "v": ":/images/search_db32.png"
+                 }
+                }
+               }
+              }
+             ]
+            }
+           },
+           {
+            "align": 0,
+            "row": 8,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QFrame",
+             "py": "QFrame",
+             "name": null,
+             "props": {
+              "sizePolicy": {
+               "t": "QSizePolicy",
+               "v": [
+                1,
+                0,
+                0,
+                0
+               ]
+              },
+              "frameShape": {
+               "t": "int",
+               "v": 4
+              },
+              "frameShadow": {
+               "t": "int",
+               "v": 48
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 9,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QPushButton",
+             "py": "FCButton",
+             "name": "deltool_btn",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Eliminar una selección de herramientas en la tabla de herramientas\nseleccionando primero una fila en la Tabla de herramientas."
+              },
+              "text": {
+               "t": "str",
+               "v": "Borrar"
+              },
+              "icon": {
+               "t": "QIcon",
+               "v": ":/images/trash16.png"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 11,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QFrame",
+             "py": "QFrame",
+             "name": null,
+             "props": {
+              "sizePolicy": {
+               "t": "QSizePolicy",
+               "v": [
+                1,
+                0,
+                0,
+                0
+               ]
+              },
+              "frameShape": {
+               "t": "int",
+               "v": 4
+              },
+              "frameShadow": {
+               "t": "int",
+               "v": 48
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 12,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "tool_data_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Los datos utilizados para crear GCode.\nCada herramienta almacena su propio conjunto de datos."
+              },
+              "text": {
+               "t": "str",
+               "v": "<b>Parámetros para: <font color=\"#7777FF\">Herramienta 1</font></b>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 13,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": null,
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "La 'Operación' puede ser:\n- Aislamiento -> asegurará que la limpieza sin cobre esté siempre completa.\nSi no tiene éxito, la limpieza sin cobre también fallará.\n- Borrar -> la limpieza regular sin cobre."
+              },
+              "text": {
+               "t": "str",
+               "v": "Operación:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 13,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QWidget",
+             "py": "RadioSet",
+             "name": "op_radio",
+             "props": {},
+             "choices": [
+              {
+               "label": "Limpiar",
+               "value": "clear"
+              },
+              {
+               "label": "Aislamiento",
+               "value": "iso"
+              }
+             ],
+             "vertical": false,
+             "stretch": false,
+             "value": "clear"
+            }
+           },
+           {
+            "align": 0,
+            "row": 14,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "milling_type_label",
+             "props": {
+              "enabled": {
+               "t": "bool",
+               "v": false
+              },
+              "toolTip": {
+               "t": "str",
+               "v": "Tipo de fresado:\n- subir / mejor para fresado de precisión y para reducir el uso de la herramienta\n- convencional / útil cuando no hay compensación de contragolpe"
+              },
+              "text": {
+               "t": "str",
+               "v": "Tipo de fresado:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 14,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QWidget",
+             "py": "RadioSet",
+             "name": "milling_type_radio",
+             "props": {
+              "enabled": {
+               "t": "bool",
+               "v": false
+              },
+              "toolTip": {
+               "t": "str",
+               "v": "Tipo de fresado:\n- subir / mejor para fresado de precisión y para reducir el uso de la herramienta\n- convencional / útil cuando no hay compensación de contragolpe"
+              }
+             },
+             "choices": [
+              {
+               "label": "Subida",
+               "value": "cl"
+              },
+              {
+               "label": "Convencional",
+               "value": "cv"
+              }
+             ],
+             "vertical": false,
+             "stretch": true,
+             "value": "cl"
+            }
+           },
+           {
+            "align": 0,
+            "row": 15,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "nccoverlabel",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Cuánto (porcentaje) del ancho de la herramienta para superponer cada pasada de herramienta.\nAjustar el valor comenzando con valores más bajos\ny aumentarlo si las áreas que deben procesarse aún están\nno procesado.Valores más bajos = procesamiento más rápido, ejecución más rápida en CNC.\nValores más altos = procesamiento lento y ejecución lenta en CNC\ndebido a demasiados caminos."
+              },
+              "text": {
+               "t": "str",
+               "v": "Superposición:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 15,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "ncc_overlap_entry",
+             "props": {
+              "wrapping": {
+               "t": "bool",
+               "v": true
+              },
+              "suffix": {
+               "t": "str",
+               "v": " %"
+              },
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 99.9999
+              },
+              "singleStep": {
+               "t": "double",
+               "v": 0.1
+              },
+              "value": {
+               "t": "double",
+               "v": 40.0
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 16,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "methodlabel",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Algoritmo para la limpieza de cobre:\n- Estándar: paso fijo hacia adentro.\n- Basado en semillas: hacia afuera de la semilla.\n- Basado en líneas: líneas paralelas."
+              },
+              "text": {
+               "t": "str",
+               "v": "Método:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 16,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QComboBox",
+             "py": "FCComboBox2",
+             "name": "ncc_method_combo",
+             "props": {
+              "currentText": {
+               "t": "str",
+               "v": "Semilla"
+              }
+             },
+             "items": [
+              "Estándar",
+              "Semilla",
+              "Líneas",
+              "Combo"
+             ],
+             "currentIndex": 1
+            }
+           },
+           {
+            "align": 0,
+            "row": 17,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "nccmarginlabel",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Margen de cuadro delimitador."
+              },
+              "text": {
+               "t": "str",
+               "v": "Margen:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 17,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "ncc_margin_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "minimum": {
+               "t": "double",
+               "v": -10000.0
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10000.0
+              },
+              "value": {
+               "t": "double",
+               "v": 1.0
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 18,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QCheckBox",
+             "py": "FCCheckBox",
+             "name": "ncc_connect_cb",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Dibuja líneas entre el resultado\nSegmentos para minimizar elevaciones de herramientas."
+              },
+              "text": {
+               "t": "str",
+               "v": "Conectar"
+              },
+              "checked": {
+               "t": "bool",
+               "v": true
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 18,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QCheckBox",
+             "py": "FCCheckBox",
+             "name": "ncc_contour_cb",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Corta todo el perímetro del polígono.\nPara recortar los bordes ásperos."
+              },
+              "text": {
+               "t": "str",
+               "v": "Contorno"
+              },
+              "checked": {
+               "t": "bool",
+               "v": true
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 19,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QCheckBox",
+             "py": "FCCheckBox",
+             "name": "ncc_choice_offset_cb",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Si se usa, agregará una compensación a las características de cobre.\nEl claro de cobre terminará a distancia\nde las características de cobre."
+              },
+              "text": {
+               "t": "str",
+               "v": "Compensar"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 19,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "ncc_offset_spinner",
+             "props": {
+              "wrapping": {
+               "t": "bool",
+               "v": true
+              },
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10.0
+              },
+              "singleStep": {
+               "t": "double",
+               "v": 0.1
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 21,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QFrame",
+             "py": "QFrame",
+             "name": null,
+             "props": {
+              "sizePolicy": {
+               "t": "QSizePolicy",
+               "v": [
+                1,
+                0,
+                0,
+                0
+               ]
+              },
+              "frameShape": {
+               "t": "int",
+               "v": 4
+              },
+              "frameShadow": {
+               "t": "int",
+               "v": 48
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 22,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QPushButton",
+             "py": "FCButton",
+             "name": "apply_param_to_all",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Se aplicarán los parámetros en el formulario actual\nen todas las herramientas de la tabla de herramientas."
+              },
+              "text": {
+               "t": "str",
+               "v": "Aplicar Parám. a todas las herramientas"
+              },
+              "icon": {
+               "t": "QIcon",
+               "v": ":/images/param_all32.png"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 23,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QFrame",
+             "py": "QFrame",
+             "name": null,
+             "props": {
+              "sizePolicy": {
+               "t": "QSizePolicy",
+               "v": [
+                1,
+                0,
+                0,
+                0
+               ]
+              },
+              "frameShape": {
+               "t": "int",
+               "v": 4
+              },
+              "frameShadow": {
+               "t": "int",
+               "v": 48
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 24,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "gen_param_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Parámetros que son comunes para todas las herramientas."
+              },
+              "text": {
+               "t": "str",
+               "v": "<b>Parámetros comunes</b>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 25,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QCheckBox",
+             "py": "FCCheckBox",
+             "name": "ncc_rest_cb",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Si está marcado, use 'mecanizado en resto'.\nBásicamente procesará cobre fuera de las características de la PCB,\nusando la herramienta más grande y continúe con las siguientes herramientas,\nde mayor a menor, para procesar las características de cobre que\nno pudo ser procesado por la herramienta anterior, hasta que haya\nno queda nada por procesar o no hay más herramientas.\n\nSi no está marcado, use el algoritmo estándar."
+              },
+              "text": {
+               "t": "str",
+               "v": "Resto"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 26,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "rest_nccmarginlabel",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Margen de cuadro delimitador."
+              },
+              "text": {
+               "t": "str",
+               "v": "Margen:"
+              },
+              "hidden": {
+               "t": "bool",
+               "v": true
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 26,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "rest_ncc_margin_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "minimum": {
+               "t": "double",
+               "v": -10000.0
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10000.0
+              },
+              "value": {
+               "t": "double",
+               "v": 1.0
+              },
+              "hidden": {
+               "t": "bool",
+               "v": true
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 27,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QCheckBox",
+             "py": "FCCheckBox",
+             "name": "rest_ncc_connect_cb",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Dibuja líneas entre el resultado\nSegmentos para minimizar elevaciones de herramientas."
+              },
+              "text": {
+               "t": "str",
+               "v": "Conectar"
+              },
+              "checked": {
+               "t": "bool",
+               "v": true
+              },
+              "hidden": {
+               "t": "bool",
+               "v": true
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 27,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QCheckBox",
+             "py": "FCCheckBox",
+             "name": "rest_ncc_contour_cb",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Corta todo el perímetro del polígono.\nPara recortar los bordes ásperos."
+              },
+              "text": {
+               "t": "str",
+               "v": "Contorno"
+              },
+              "checked": {
+               "t": "bool",
+               "v": true
+              },
+              "hidden": {
+               "t": "bool",
+               "v": true
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 28,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QCheckBox",
+             "py": "FCCheckBox",
+             "name": "rest_ncc_choice_offset_cb",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Si se usa, agregará una compensación a las características de cobre.\nEl claro de cobre terminará a distancia\nde las características de cobre."
+              },
+              "text": {
+               "t": "str",
+               "v": "Compensar"
+              },
+              "hidden": {
+               "t": "bool",
+               "v": true
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 28,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "rest_ncc_offset_spinner",
+             "props": {
+              "enabled": {
+               "t": "bool",
+               "v": false
+              },
+              "wrapping": {
+               "t": "bool",
+               "v": true
+              },
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10.0
+              },
+              "singleStep": {
+               "t": "double",
+               "v": 0.1
+              },
+              "hidden": {
+               "t": "bool",
+               "v": true
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 29,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "select_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Selección del área a procesar.\n- 'Sí mismo': la extensión del procesamiento se basa en el objeto que se procesa.\n- 'Selección de área': haga clic con el botón izquierdo del mouse para iniciar la selección del área a procesar.\n- 'Objeto de referencia': procesará el área especificada por otro objeto."
+              },
+              "text": {
+               "t": "str",
+               "v": "Selección:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 29,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QComboBox",
+             "py": "FCComboBox2",
+             "name": "select_combo",
+             "props": {
+              "currentText": {
+               "t": "str",
+               "v": "Sí mismo"
+              }
+             },
+             "items": [
+              "Sí mismo",
+              "Selección de área",
+              "Objeto de referencia"
+             ],
+             "currentIndex": 0
+            }
+           },
+           {
+            "align": 0,
+            "row": 31,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "reference_combo_type_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "El tipo de objeto FlatCAM que se utilizará como referencia de compensación sin cobre.\nPuede ser Gerber, Excellon o Geometry."
+              },
+              "text": {
+               "t": "str",
+               "v": "Tipo:"
+              },
+              "hidden": {
+               "t": "bool",
+               "v": true
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 31,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QComboBox",
+             "py": "FCComboBox2",
+             "name": "reference_combo_type",
+             "props": {
+              "currentText": {
+               "t": "str",
+               "v": "Gerber"
+              },
+              "hidden": {
+               "t": "bool",
+               "v": true
+              }
+             },
+             "items": [
+              "Gerber",
+              "Excellon",
+              "Geometría"
+             ],
+             "currentIndex": 0
+            }
+           },
+           {
+            "align": 0,
+            "row": 33,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QComboBox",
+             "py": "FCComboBox",
+             "name": "reference_combo",
+             "props": {
+              "hidden": {
+               "t": "bool",
+               "v": true
+              }
+             },
+             "items": [],
+             "currentIndex": -1
+            }
+           },
+           {
+            "align": 0,
+            "row": 35,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "area_shape_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "El tipo de forma de selección utilizada para la selección de área."
+              },
+              "text": {
+               "t": "str",
+               "v": "Forma:"
+              },
+              "hidden": {
+               "t": "bool",
+               "v": true
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 35,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QWidget",
+             "py": "RadioSet",
+             "name": "area_shape_radio",
+             "props": {
+              "hidden": {
+               "t": "bool",
+               "v": true
+              }
+             },
+             "choices": [
+              {
+               "label": "Cuadrado",
+               "value": "square"
+              },
+              {
+               "label": "Polígono",
+               "value": "polygon"
+              }
+             ],
+             "vertical": false,
+             "stretch": true,
+             "value": "square"
+            }
+           },
+           {
+            "align": 0,
+            "row": 37,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QCheckBox",
+             "py": "FCCheckBox",
+             "name": "valid_cb",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Si se marca, se verifican los diámetros de las herramientas.\nsi proporcionarán un aislamiento completo."
+              },
+              "text": {
+               "t": "str",
+               "v": "Verificar validez"
+              },
+              "checked": {
+               "t": "bool",
+               "v": true
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 39,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QFrame",
+             "py": "QFrame",
+             "name": null,
+             "props": {
+              "sizePolicy": {
+               "t": "QSizePolicy",
+               "v": [
+                1,
+                0,
+                0,
+                0
+               ]
+              },
+              "frameShape": {
+               "t": "int",
+               "v": 4
+              },
+              "frameShadow": {
+               "t": "int",
+               "v": 48
+              }
+             }
+            }
+           }
+          ]
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QPushButton",
+          "py": "FCButton",
+          "name": "generate_ncc_button",
+          "props": {
+           "font": {
+            "t": "QFont",
+            "v": {
+             "bold": true
+            }
+           },
+           "toolTip": {
+            "t": "str",
+            "v": "Crear el objeto de geometría\npara enrutamiento sin cobre."
+           },
+           "styleSheet": {
+            "t": "str",
+            "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+           },
+           "text": {
+            "t": "str",
+            "v": "Generar Geometría"
+           },
+           "icon": {
+            "t": "QIcon",
+            "v": ":/images/geometry32.png"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "spacer": [
+          0,
+          0,
+          1,
+          7
+         ]
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QPushButton",
+          "py": "FCButton",
+          "name": "reset_button",
+          "props": {
+           "font": {
+            "t": "QFont",
+            "v": {
+             "bold": true
+            }
+           },
+           "toolTip": {
+            "t": "str",
+            "v": "Restablecerá los parámetros de la herramienta."
+           },
+           "styleSheet": {
+            "t": "str",
+            "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+           },
+           "text": {
+            "t": "str",
+            "v": "Restablecer la Herramienta"
+           },
+           "icon": {
+            "t": "QIcon",
+            "v": ":/images/reset32.png"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "NccToolUI"
+}

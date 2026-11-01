@@ -3,6 +3,8 @@
 // Uso: FlatCAM [archivos...]                       abre los Gerber y Excellon indicados (según la extensión)
 //      FlatCAM --screenshot <png> [ancho alto] [archivos...]
 //                                                  abre la ventana (y los archivos), guarda una captura y sale
+//      --select <nombre>   elige ese objeto en el árbol (muestra sus Propiedades)
+//      --tool <ncc|paint|drill|cutout>   abre esa herramienta
 #include <QApplication>
 #include <QTimer>
 #include <cstring>
@@ -39,8 +41,26 @@ int main(int argc, char* argv[]) {
         }
         args.erase(args.begin() + shot, args.begin() + shot + take);
     }
+    auto takeOption = [&args](const QString& name) {
+        const int i = args.indexOf(name);
+        if (i < 0 || i + 1 >= args.size()) return QString();
+        const QString v = args[i + 1];
+        args.erase(args.begin() + i, args.begin() + i + 2);
+        return v;
+    };
+    const QString select = takeOption("--select"), tool = takeOption("--tool");
     app.ui()->show();
     for (const QString& f : args) app.openByExtension(f);
+    if (!select.isEmpty()) {
+        if (auto* o = app.collection()->byName(select)) {
+            app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(o));
+            app.ui()->notebook->setCurrentWidget(app.ui()->properties_tab);
+        }
+    }
+    if (tool == "ncc") app.runTool(app.nccTool, flatcam::gui::NccTool::info());
+    else if (tool == "paint") app.runTool(app.paintTool, flatcam::gui::PaintTool::info());
+    else if (tool == "drill") app.runTool(app.drillingTool, flatcam::gui::DrillingTool::info());
+    else if (tool == "cutout") app.runTool(app.cutoutTool, flatcam::gui::CutOutTool::info());
     if (!shotPath.isEmpty()) {
         QTimer::singleShot(1500, app.ui(), [&app, shotPath] {
             app.onZoomFit();

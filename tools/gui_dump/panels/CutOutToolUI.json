@@ -1,0 +1,1397 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "CutOut",
+  "name": null,
+  "props": {
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "PCB de corte"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": null,
+      "props": {}
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "object_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Objeto a recortar."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Objeto fuente:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "kindlabel",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Elección del tipo de objeto que queremos recortar.\n- Único: contiene un único objeto de contorno de PCB Gerber.\n- Panel: un objeto de panel PCB Gerber, que se hace\nde muchos esquemas de PCB individuales."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tipo:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "obj_kind_combo",
+         "props": {},
+         "choices": [
+          {
+           "label": "Soltero",
+           "value": "single"
+          },
+          {
+           "label": "Panel",
+           "value": "panel"
+          }
+         ],
+         "vertical": false,
+         "stretch": true,
+         "value": "single"
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "type_obj_combo_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Especifique el tipo de objeto a recortar.\nPuede ser de tipo: Gerber o Geometría.\nLo que se seleccione aquí dictará el tipo\nde objetos que llenarán el cuadro combinado 'Objeto'."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tipo:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "type_obj_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Gerber",
+           "value": "grb"
+          },
+          {
+           "label": "Geometría",
+           "value": "geo"
+          }
+         ],
+         "vertical": false,
+         "stretch": true,
+         "value": "grb"
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "obj_combo",
+         "props": {},
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "convex_box_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Crea una forma convexa que rodea toda la PCB.\nSe usa solo si el tipo de objeto de origen es Gerber."
+          },
+          "text": {
+           "t": "str",
+           "v": "Forma convexa:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "convex_box_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Crea una forma convexa que rodea toda la PCB.\nSe usa solo si el tipo de objeto de origen es Gerber."
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "tool_sel_label",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "<b>Herramienta de Corte</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 14,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "dia_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Diámetro de la herramienta utilizada para cortar\nLa forma de PCB fuera del material circundante."
+          },
+          "text": {
+           "t": "str",
+           "v": "Diá. de Herram:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 14,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "dia",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "value": {
+           "t": "double",
+           "v": 2.4
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 16,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "layout": {
+         "qt": "QHBoxLayout",
+         "py": "QHBoxLayout",
+         "name": null,
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "items": [
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QPushButton",
+            "py": "FCButton",
+            "name": "add_newtool_button",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Agregar una nueva herramienta a la tabla de herramientas\ncon el diámetro especificado arriba.\nEsto se hace mediante una búsqueda en segundo plano.\nen la base de datos de herramientas. Si no se encuentra nada\nen la base de datos de herramientas, se agrega una herramienta predeterminada."
+             },
+             "text": {
+              "t": "str",
+              "v": "Buscar y agregar"
+             },
+             "icon": {
+              "t": "QIcon",
+              "v": ":/images/plus16.png"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QPushButton",
+            "py": "FCButton",
+            "name": "addtool_from_db_btn",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Agregar una nueva herramienta a la tabla de herramientas\nde la base de datos de herramientas.\nHerramientas de administración de bases de datos en:\nMenú: Opciones -> Base de datos de herramientas"
+             },
+             "text": {
+              "t": "str",
+              "v": "Elija de DB"
+             },
+             "icon": {
+              "t": "QIcon",
+              "v": ":/images/search_db32.png"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "align": 0,
+        "row": 18,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 20,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "param_label",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "<b>Parámetros de Herramienta:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 22,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Profundidad de corte (negativo)\ndebajo de la superficie de cobre."
+          },
+          "text": {
+           "t": "str",
+           "v": "Corte Z:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 22,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "cutz_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -10000.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": -0.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": -1.8
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 24,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "mpass_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Usa múltiples pases para limitar\nLa profundidad de corte en cada pasada. Será\ncortar varias veces hasta que el Corte Z sea\nalcanzado."
+          },
+          "text": {
+           "t": "str",
+           "v": "Profund. Múlti:"
+          },
+          "checked": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 24,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "maxdepth_entry",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Profundidad de cada pase (positivo)."
+          },
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 0.6
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 26,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "margin_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Margen sobre los límites. Un valor positivo aquí\nhará que el corte de la PCB esté más alejado de\nel borde real de PCB"
+          },
+          "text": {
+           "t": "str",
+           "v": "Margen:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 26,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "margin",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -10000.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 0.1
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 28,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "gapsize_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El tamaño de los huecos del puente en el recorte\nsolía mantener la placa conectada a\nel material circundante (el\nde la cual se corta el PCB)."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tamaño de la brecha:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 28,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "gapsize",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "value": {
+           "t": "double",
+           "v": 4.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 30,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "gaptype_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El tipo de brecha:\n- Puente -> el corte será interrumpido por puentes\n- Delgado -> igual que 'puente' pero será más delgado al fresar parcialmente el espacio\n- M-Bites -> 'Mouse Bites' - igual que el 'puente' pero cubierto con agujeros"
+          },
+          "text": {
+           "t": "str",
+           "v": "Tipo de brecha:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 30,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "gaptype_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Puente",
+           "value": "b"
+          },
+          {
+           "label": "Delgado",
+           "value": "bt"
+          },
+          {
+           "label": "M-Bites",
+           "value": "mb"
+          }
+         ],
+         "vertical": false,
+         "stretch": true,
+         "value": "b"
+        }
+       },
+       {
+        "align": 0,
+        "row": 32,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "thin_depth_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "La profundidad hasta que se hace el fresado\npara adelgazar los huecos."
+          },
+          "text": {
+           "t": "str",
+           "v": "Profundidad:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 32,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "thin_depth_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -10000.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": -0.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": -1.0
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 34,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "mb_dia_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El diámetro del taladro al hacer 'mouse bytes'."
+          },
+          "text": {
+           "t": "str",
+           "v": "Diá. de Herram:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 34,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "mb_dia_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 100.0
+          },
+          "value": {
+           "t": "double",
+           "v": 0.6
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 36,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "mb_spacing_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El espacio entre los taladros al hacer 'mouse bites'."
+          },
+          "text": {
+           "t": "str",
+           "v": "Spacing:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 36,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "mb_spacing_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 100.0
+          },
+          "value": {
+           "t": "double",
+           "v": 0.3
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 38,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 40,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esta sección maneja la creación de espacios de puente automáticos."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Auto Huecos de puentes</b>:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 42,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Número de huecos utilizados para el recorte automático.\nPuede haber un máximo de 8 puentes / huecos.\nLas opciones son:\n- Ninguno - sin espacios\n- lr - izquierda + derecha\n- tb - arriba + abajo\n- 4 - izquierda + derecha + arriba + abajo\n- 2lr - 2 * izquierda + 2 * derecha\n- 2tb - 2 * arriba + 2 * abajo\n- 8 - 2 * izquierda + 2 * derecha + 2 * arriba + 2 * abajo"
+          },
+          "text": {
+           "t": "str",
+           "v": "Brechas:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 42,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "gaps",
+         "props": {
+          "currentText": {
+           "t": "str",
+           "v": "4"
+          }
+         },
+         "items": [
+          "None",
+          "LR",
+          "TB",
+          "4",
+          "2LR",
+          "2TB",
+          "8"
+         ],
+         "currentIndex": 3
+        }
+       },
+       {
+        "align": 0,
+        "row": 44,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "ff_cutout_object_btn",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Recorta el objeto seleccionado.\nLa forma recortada puede ser de cualquier forma.\nÚtil cuando la PCB tiene una forma no rectangular."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+          },
+          "text": {
+           "t": "str",
+           "v": "Generar Geometría"
+          },
+          "icon": {
+           "t": "QIcon",
+           "v": ":/images/irregular32.png"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 46,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "rect_cutout_object_btn",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Recorta el objeto seleccionado.\nLa forma de corte resultante es\nsiempre una forma rectangular y será\nEl cuadro delimitador del objeto."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+          },
+          "text": {
+           "t": "str",
+           "v": "Generar Geometría"
+          },
+          "icon": {
+           "t": "QIcon",
+           "v": ":/images/rectangle32.png"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 48,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 50,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esta sección maneja la creación de espacios de puente manuales.\nEsto se hace haciendo clic con el mouse en el perímetro del\nObjeto de geometría que se utiliza como objeto recortado. "
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Manual Huecos de puentes</b>:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 52,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Use un cursor grande cuando agregue espacios manuales."
+          },
+          "text": {
+           "t": "str",
+           "v": "Cursor grande:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 52,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "big_cursor_cb",
+         "props": {
+          "checked": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 54,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "man_geo_creation_btn",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Si el objeto a recortar es un Gerber\nprimero crea una Geometría que lo rodea,\npara ser utilizado como recorte, si aún no existe.\nSeleccione el archivo fuente de Gerber en el cuadro combinado de objeto superior."
+          },
+          "text": {
+           "t": "str",
+           "v": "Generar geometría manual"
+          },
+          "icon": {
+           "t": "QIcon",
+           "v": ":/images/rectangle32.png"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 56,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "man_object_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Objeto de geometría utilizado para crear el recorte manual."
+          },
+          "text": {
+           "t": "str",
+           "v": "Geometría de corte manual:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 56,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "man_object_combo",
+         "props": {},
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 58,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "man_gaps_creation_btn",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Haga clic con el botón izquierdo del mouse (LMB)\npara crear un espacio de puente para separar la PCB de\nEl material circundante.\nEl clic LMB debe hacerse en el perímetro de\nEl objeto Geometry utilizado como geometría de recorte."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+          },
+          "text": {
+           "t": "str",
+           "v": "Agregar huecos de puente manuales"
+          },
+          "icon": {
+           "t": "QIcon",
+           "v": ":/images/gaps32.png"
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "reset_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Restablecerá los parámetros de la herramienta."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Restablecer la Herramienta"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/reset32.png"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "CutOutToolUI"
+}

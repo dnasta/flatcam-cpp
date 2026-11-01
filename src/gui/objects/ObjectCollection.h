@@ -51,6 +51,9 @@ public:
     /** @brief El objeto de un índice del modelo, o `nullptr` si es un grupo. @param index Índice. @return El objeto. */
     FlatCAMObj* objectAt(const QModelIndex& index) const;
 
+    /** @brief Índice de un objeto en el modelo. @param obj Objeto. @return El índice (inválido si no está). */
+    QModelIndex indexOf(FlatCAMObj* obj) const;
+
     /** @brief Índice del grupo de un tipo (para expandirlo). @param kind Tipo. @return El índice. */
     QModelIndex groupIndex(ObjectKind kind) const;
 
