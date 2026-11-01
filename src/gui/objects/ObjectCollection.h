@@ -57,6 +57,23 @@ public:
     /** @brief Índice del grupo de un tipo (para expandirlo). @param kind Tipo. @return El índice. */
     QModelIndex groupIndex(ObjectKind kind) const;
 
+    /**
+     * @brief Mueve un objeto dentro de su grupo (reordenar con arrastrar y soltar; agregado del port).
+     * @param obj Objeto.
+     * @param row Fila de destino, contada antes de quitarlo (como en `beginMoveRows`); fuera de rango va al final.
+     * @return Si cambió el orden.
+     */
+    bool moveObject(FlatCAMObj* obj, int row);
+
+    /**
+     * @brief Orden de dibujo: identificadores de los objetos desde el de más abajo hasta el de más arriba.
+     *
+     * Dentro de un grupo, el primero del árbol queda arriba; entre grupos, los posteriores (Geometría, CNC Job) quedan
+     * sobre los anteriores (Gerber, Excellon), porque se crean a partir de ellos.
+     * @return Los identificadores.
+     */
+    std::vector<int> drawOrder() const;
+
     /** @name Interfaz de QAbstractItemModel */
     ///@{
     /** @brief Índice hijo. @param row Fila. @param column Columna. @param parent Padre. @return El índice. */
@@ -73,13 +90,38 @@ public:
     bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole) override;
     /** @brief Banderas: los grupos no se seleccionan. @param index Índice. @return Banderas. */
     Qt::ItemFlags flags(const QModelIndex& index) const override;
+    /** @brief Solo se mueve. @return `Qt::MoveAction`. */
+    Qt::DropActions supportedDropActions() const override;
+    /** @brief Tipo MIME de los objetos arrastrados. @return La lista. */
+    QStringList mimeTypes() const override;
+    /** @brief Codifica los objetos arrastrados. @param indexes Índices. @return Los datos. */
+    QMimeData* mimeData(const QModelIndexList& indexes) const override;
+    /**
+     * @brief Acepta soltar un objeto solo dentro de su propio grupo.
+     * @param data Datos. @param action Acción. @param row Fila. @param column Columna. @param parent Padre.
+     * @return Si se puede.
+     */
+    bool canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
+                         const QModelIndex& parent) const override;
+    /**
+     * @brief Reordena al soltar (@ref moveObject).
+     * @param data Datos. @param action Acción. @param row Fila. @param column Columna. @param parent Padre.
+     * @return Si se movió.
+     */
+    bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
+                      const QModelIndex& parent) override;
     ///@}
 
 Q_SIGNALS:
     /** @brief Se renombró un objeto. @param obj Objeto. @param oldName Nombre anterior. */
     void objectRenamed(FlatCAMObj* obj, const QString& oldName);
+    /** @brief Cambió el orden de los objetos (hay que redibujar en el nuevo orden). */
+    void orderChanged();
 
 private:
+    /// Objeto y fila de destino de un soltado, o `{nullptr, -1}` si no corresponde.
+    std::pair<FlatCAMObj*, int> dropTarget(const QMimeData* data, int row, const QModelIndex& parent) const;
+
     static constexpr int kGroups = 6;
     std::array<std::vector<std::unique_ptr<FlatCAMObj>>, kGroups> groups_;
     std::array<QString, kGroups> titles_;

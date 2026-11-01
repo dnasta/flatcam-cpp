@@ -100,6 +100,16 @@ public:
     /** @brief Borra lo dibujado de un objeto. @param id Identificador. */
     void removeLayer(int id);
 
+    /**
+     * @brief Fija el orden de dibujo (cada capa tapa a las anteriores); las capas que no estén en la lista se dibujan
+     * antes, por identificador.
+     * @param idsBottomFirst Identificadores desde el de más abajo.
+     */
+    void setLayerOrder(std::vector<int> idsBottomFirst);
+
+    /** @brief Orden de dibujo vigente. @return Identificadores desde el de más abajo. */
+    const std::vector<int>& layerOrder() const { return order_; }
+
     /** @brief Límites de todo lo visible, o vacío si no hay nada. @return El rectángulo en mm. */
     std::optional<QRectF> layersBounds() const;
 
@@ -160,6 +170,7 @@ private:
     QPointF cursorWorld_{0, 0};
     QPointF lastClick_{0, 0};
     std::map<int, Layer> layers_;
+    std::vector<int> order_;  ///< Orden de dibujo, desde abajo.
     std::unique_ptr<QOpenGLShaderProgram> program_;
 };
 
