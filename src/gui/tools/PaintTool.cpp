@@ -1,0 +1,222 @@
+#include "gui/tools/PaintTool.h"
+
+#include "gui/App.h"
+#include "gui/Translation.h"
+#include "gui/tools/ClearingTools.h"
+#include "tools/Paint.h"
+
+namespace flatcam::gui {
+
+PaintTool::PaintTool(App* app, QWidget* parent) : PaintToolUIBase(parent), app_(app) {
+    setupUi();
+    connect(generate_paint_button, &QPushButton::clicked, this, [this] { paint(); });
+    connect(type_obj_radio, &RadioSet::activatedCustom, this, [this] { onTypeObjChanged(); });
+    connect(reset_button, &QPushButton::clicked, this, [this] { setToolUi(); });
+    connect(order_radio, &RadioSet::activatedCustom, this, [this] { rebuild(); });
+    connect(tools_table, &QTableWidget::itemSelectionChanged, this, [this] {
+        if (!muted_) updateUi();
+    });
+    connect(add_newtool_button, &QPushButton::clicked, this, [this] {
+        if (addTool(new_tooldia_entry->value())) app_->ui()->inform("[success] " + tr_("Default tool added to Tool Table."));
+    });
+    connect(deltool_btn, &QPushButton::clicked, this, [this] {
+        const std::vector<int> ids = selectedClearingTools(tools_table);
+        if (ids.empty()) {
+            app_->ui()->inform("[WARNING_NOTCL] " + tr_("Delete failed. Select a tool to delete."));
+            return;
+        }
+        for (int id : ids) tools_.erase(id);
+        rebuild();
+        app_->ui()->inform("[success] " + tr_("Tool(s) deleted from Tool Table."));
+    });
+    // form_to_storage: lo que se cambia va a las herramientas elegidas.
+    for (FCDoubleSpinner* w : {paintoverlap_entry, offset_entry})
+        connect(w, &QDoubleSpinBox::valueChanged, this, [this] { formToStorage(); });
+    connect(paintmethod_combo, &QComboBox::currentIndexChanged, this, [this] { formToStorage(); });
+    for (FCCheckBox* w : {pathconnect_cb, paintcontour_cb})
+        connect(w, &QCheckBox::toggled, this, [this] { formToStorage(); });
+}
+
+ToolInfo PaintTool::info() { return {tr_("Paint Tool"), tr_("Paint Tool")}; }
+
+void PaintTool::onTypeObjChanged() {
+    const bool gerber = type_obj_radio->value().toString() == "gerber";
+    obj_combo->clear();
+    for (FlatCAMObj* o : app_->collection()->objects())
+        if (o->kind() == (gerber ? ObjectKind::Gerber : ObjectKind::Geometry)) obj_combo->addItem(o->name());
+    obj_combo->setCurrentIndex(0);
+}
+
+void PaintTool::setToolUi() {
+    muted_ = true;
+    // tools_paint_* de fábrica.
+    order_radio->setValue("rev");
+    offset_entry->setValue(0.0);
+    paintmethod_combo->setIndexValue(0);
+    selectmethod_combo->setIndexValue(0);
+    area_shape_radio->setValue("square");
+    pathconnect_cb->setChecked(true);
+    paintcontour_cb->setChecked(true);
+    paintoverlap_entry->setValue(20.0);
+    new_tooldia_entry->setValue(0.1);
+    rest_cb->setChecked(false);
+    // El objeto activo, si es Gerber o Geometría; si no, Geometría.
+    FlatCAMObj* active = app_->activeObject();
+    const bool gerber = active && active->kind() == ObjectKind::Gerber;
+    type_obj_radio->setValue(gerber ? "gerber" : "geometry");
+    onTypeObjChanged();
+    if (active && (active->kind() == ObjectKind::Gerber || active->kind() == ObjectKind::Geometry))
+        obj_combo->setValue(active->name());
+    tools_.clear();
+    muted_ = false;
+    addTool(0.3);  // tools_paint_tooldia
+}
+
+bool PaintTool::addTool(double dia) {
+    // on_tool_add → sin base de datos de herramientas → on_tool_default_add.
+    const double d = QString::number(dia, 'f', 4).toDouble();
+    if (d == 0.0) {
+        app_->ui()->inform("[WARNING_NOTCL] " + tr_("Please enter a tool diameter with non-zero value, in Float format."));
+        return false;
+    }
+    for (const auto& [id, t] : tools_) {
+        if (QString::number(t.geo.tooldia, 'f', 4).toDouble() == d) {
+            app_->ui()->inform("[WARNING_NOTCL] " + tr_("Cancelled. Tool already in Tool Table."));
+            return false;
+        }
+    }
+    const int uid = tools_.empty() ? 1 : tools_.rbegin()->first + 1;
+    ClearingTool t;
+    t.geo = defaultGeometryTool();
+    t.geo.tooldia = d;
+    t.geo.offset = "Path";
+    t.geo.type = "Iso";
+    t.geo.toolType = "V";  // así lo pone on_tool_default_add de Paint
+    t.geo.data.cutZ = -0.05;  // tools_paint_cutz
+    // data = default_data: los tools_paint_* de fábrica (no lo que tenga el formulario).
+    t.overlap = 20.0;
+    t.offset = 0.0;
+    t.method = 0;
+    t.connect = true;
+    t.contour = true;
+    tools_[uid] = t;
+    rebuild();
+    // Queda elegida la herramienta nueva.
+    for (int r = 0; r < tools_table->rowCount(); ++r)
+        if (tools_table->item(r, 3)->text().toInt() == uid) tools_table->selectRow(r);
+    updateUi();
+    return true;
+}
+
+void PaintTool::rebuild() {
+    muted_ = true;
+    buildClearingTable(tools_table, tools_, order_radio->value().toString());
+    muted_ = false;
+}
+
+void PaintTool::updateUi() {
+    const std::vector<int> ids = selectedClearingTools(tools_table);
+    // En Paint el color está fijo en el código ('#0000FF', con comillas simples).
+    auto label = [this](const QString& what) {
+        tool_data_label->setText(QString("<b>%1: <font color='#0000FF'>%2</font></b>").arg(tr_("Parameters for"), what));
+    };
+    if (ids.empty()) {
+        generate_paint_button->setDisabled(true);
+        label(tr_("No Tool Selected"));
+        return;
+    }
+    generate_paint_button->setDisabled(false);
+    if (ids.size() > 1) {
+        label(tr_("Multiple Tools"));
+        return;
+    }
+    int row = 0;
+    for (int r = 0; r < tools_table->rowCount(); ++r)
+        if (tools_table->item(r, 3)->text().toInt() == ids.front()) row = r;
+    label(QString("%1 %2").arg(tr_("Tool"), tools_table->item(row, 0)->text()));
+    const ClearingTool& t = tools_.at(ids.front());
+    muted_ = true;
+    paintoverlap_entry->setValue(t.overlap);
+    offset_entry->setValue(t.offset);
+    paintmethod_combo->setIndexValue(t.method);
+    pathconnect_cb->setChecked(t.connect);
+    paintcontour_cb->setChecked(t.contour);
+    muted_ = false;
+}
+
+void PaintTool::formToStorage() {
+    if (muted_) return;
+    for (int id : selectedClearingTools(tools_table)) {
+        ClearingTool& t = tools_.at(id);
+        t.overlap = paintoverlap_entry->value();
+        t.offset = offset_entry->value();
+        t.method = paintmethod_combo->indexValue();
+        t.connect = pathconnect_cb->isChecked();
+        t.contour = paintcontour_cb->isChecked();
+    }
+}
+
+FlatCAMObj* PaintTool::paint() {
+    const QString name = obj_combo->currentText();
+    FlatCAMObj* src = app_->collection()->byName(name);
+    if (!src) {
+        app_->ui()->inform(QString("[ERROR_NOTCL] %1: %2").arg(tr_("Object not found"), name));
+        return nullptr;
+    }
+    if (src->kind() == ObjectKind::Geometry && static_cast<GeometryObject*>(src)->tools().size() > 1) {
+        app_->ui()->inform("[ERROR_NOTCL] " + tr_("Can't do Paint on MultiGeo geometries") + "...");
+        return nullptr;
+    }
+    const std::vector<int> ids = selectedClearingTools(tools_table);
+    if (ids.empty()) {
+        app_->ui()->inform("[ERROR_NOTCL] " + tr_("There are no tools selected in the Tool Table."));
+        return nullptr;
+    }
+    if (selectmethod_combo->indexValue() != 0) {
+        app_->ui()->inform("[WARNING_NOTCL] Todavía solo está la selección \"Todos\".");
+        return nullptr;
+    }
+    // Fuente: la geometría sólida del Gerber, o la de la (única) herramienta de la Geometría.
+    ShapeList geometry;
+    if (src->kind() == ObjectKind::Gerber) {
+        geometry = static_cast<GerberObject*>(src)->gerber().solidGeometry();
+    } else {
+        auto* g = static_cast<GeometryObject*>(src);
+        geometry = g->tools().empty() ? g->solidGeometry() : g->tools().begin()->second.solidGeometry;
+    }
+    app_->ui()->inform(QString("%1 %2").arg(tr_("Paint Tool."), tr_("Paint all polygons task started.")));
+    // El original calcula en un hilo de trabajo; acá se calcula en el de la interfaz con el indicador de actividad.
+    BusyScope busy(app_->ui());
+    // job_normal_clear: cada herramienta pinta todos los polígonos, en el orden de la tabla.
+    auto obj = std::make_unique<GeometryObject>(src->name() + "_mt_paint");
+    for (int id : orderedClearingTools(tools_, ids, order_radio->value().toString())) {
+        const ClearingTool& t = tools_.at(id);
+        if (t.method != 0) {
+            app_->ui()->inform("[WARNING_NOTCL] Todavía solo está el método estándar de Paint.");
+            return nullptr;
+        }
+        PaintOptions o;
+        o.toolDia = t.geo.tooldia;
+        o.overlap = t.overlap / 100.0;
+        o.connect = t.connect;
+        o.offset = t.offset;
+        ShapeList paths;
+        std::string error;
+        if (!Paint::paintAll(geometry, o, paths, error) || paths.empty()) continue;
+        GeometryTool gt = t.geo;
+        gt.solidGeometry = paths;
+        obj->tools()[id] = gt;
+        obj->solidGeometry().insert(obj->solidGeometry().end(), paths.begin(), paths.end());
+    }
+    if (obj->tools().empty()) {
+        app_->ui()->inform("[ERROR] " + tr_("There is no Painting Geometry in the file.\n"
+                                            "Usually it means that the tool diameter is too big for the painted geometry.\n"
+                                            "Change the painting parameters and try again."));
+        return nullptr;
+    }
+    FlatCAMObj* added = app_->addObject(std::move(obj));
+    app_->ui()->inform("[success] " + tr_("Done."));
+    return added;
+}
+
+}  // namespace flatcam::gui

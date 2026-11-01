@@ -570,3 +570,132 @@ TEST(GuiCutout, ThinGapsAndMouseBites) {
     ASSERT_FALSE(r.mouseBiteHoles.empty());
     EXPECT_EQ(holes.drills.size(), r.mouseBiteHoles.size());
 }
+
+namespace {
+
+QStringList readTextLines(const QString& path) {
+    QFile f(path);
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) return {};
+    return QString::fromUtf8(f.readAll()).split('\n');
+}
+
+/// Líneas de G-code sin la fecha, sin líneas vacías y sin lo que cambia entre la variante 8.994 (la del port) y el
+/// ejecutable 2024.4 en el láser: `G00 Z0` al principio y `G00 Z..` al final.
+QStringList comparableLaser(QStringList l) {
+    QStringList out;
+    for (QString s : l) {
+        if (s.startsWith("(Created on ")) continue;
+        if (s.trimmed().isEmpty() || s == "G00 Z0" || s.startsWith("G00 Z15") || s.startsWith("G00 Z19")) continue;
+        if (s == "G21f") s = "G21";  // errata que el usuario escribió a mano en su archivo del NCC
+        out << s;
+    }
+    return out;
+}
+
+/// Genera el CNC Job de láser de una Geometría desde su panel, como el usuario: GRBL_laser, avance 500, potencia 300.
+CNCJobObject* laserJob(App& app, GeometryObject* geo, bool endAtOrigin) {
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(geo));
+    auto* ui = qobject_cast<GeometryObjectUI*>(app.ui()->properties_scroll_area->widget());
+    if (!ui) return nullptr;
+    ui->pp_geometry_name_cb->setValue("GRBL_laser");
+    ui->cncfeedrate_entry->setValue(500.0);
+    ui->cncspindlespeed_entry->setValue(300);
+    if (endAtOrigin) {
+        ui->endxy_entry->setText("0,0");
+        Q_EMIT ui->endxy_entry->editingFinished();
+    }
+    ui->generate_cnc_button->click();
+    return dynamic_cast<CNCJobObject*>(app.collection()->byName(geo->name() + "_cnc"));
+}
+
+}  // namespace
+
+TEST(GuiPaint, UserWorkflowMatchesTheRealFile) {
+    // Logo reflejado -> Paint (Gerber, herramienta 0,1, solape 80 %, estándar, "Todos") -> Geometría -> láser.
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* logo = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Logo.gbr")));
+    ASSERT_NE(logo, nullptr);
+    logo->gerber().mirror(flatcam::Axis::Y, {0, 0});
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(logo));
+    PaintTool* t = app.paintTool;
+    app.ui()->paint_btn->trigger();
+    EXPECT_EQ(app.ui()->tool_scroll_area->widget(), t);
+    EXPECT_EQ(t->type_obj_radio->value().toString(), "gerber");
+    EXPECT_EQ(t->obj_combo->currentText(), logo->name());
+    // De fábrica: una herramienta de 0,3 con solape 20 %.
+    ASSERT_EQ(t->tools_table->rowCount(), 1);
+    EXPECT_EQ(t->tools_table->item(0, 1)->text(), "0.3000");
+    EXPECT_DOUBLE_EQ(t->paintoverlap_entry->value(), 20.0);
+    EXPECT_TRUE(t->tool_data_label->text().contains("Herramienta 1"));
+    // Como el usuario: quitar la de 0,3, agregar la de 0,1 y ponerle 80 %.
+    t->deltool_btn->click();
+    EXPECT_EQ(t->tools_table->rowCount(), 0);
+    t->new_tooldia_entry->setValue(0.1);
+    t->add_newtool_button->click();
+    ASSERT_EQ(t->tools_table->rowCount(), 1);
+    t->paintoverlap_entry->setValue(80.0);
+    EXPECT_DOUBLE_EQ(t->tools().begin()->second.overlap, 80.0);
+    t->generate_paint_button->click();
+    auto* geo = dynamic_cast<GeometryObject*>(app.collection()->byName("luz de noche Pascual-Logo.gbr_mt_paint"));
+    ASSERT_NE(geo, nullptr);
+    CNCJobObject* cnc = laserJob(app, geo, false);
+    ASSERT_NE(cnc, nullptr);
+
+    QTemporaryDir tmp;
+    const QString out = tmp.filePath("luz de noche Pascual-Logo.gbr_mt_paint_cnc.nc");
+    ASSERT_TRUE(app.exportGcode(cnc, out));
+    const QStringList mine = comparableLaser(readTextLines(out));
+    const QStringList real = comparableLaser(readTextLines(QString::fromStdString(dir + "Logo.gbr_mt_paint_cnc.nc")));
+    ASSERT_EQ(mine.size(), real.size());
+    // Con GEOS 3.11 es idéntico; con 3.12 y 3.15 cambian 17 líneas en las últimas cifras (test del núcleo).
+    int differing = 0;
+    for (int i = 0; i < real.size(); ++i) differing += mine[i] != real[i];
+    EXPECT_LE(differing, real.size() / 200);
+    EXPECT_EQ(mine.mid(0, 30), real.mid(0, 30));  // cabecera y comienzo
+}
+
+TEST(GuiNcc, UserWorkflowMatchesTheRealFile) {
+    // B_Cu reflejado -> NCC (Gerber, herramienta 0,1, solape 80 %, margen 0, estándar, "Sí mismo") -> láser con X,Y
+    // final 0,0. El archivo real está editado a mano por el usuario (variante 8.994, la del port).
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* cu = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "B_Cu.gbr")));
+    ASSERT_NE(cu, nullptr);
+    cu->gerber().mirror(flatcam::Axis::Y, {0, 0});
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(cu));
+    NccTool* t = app.nccTool;
+    app.ui()->ncc_btn->trigger();
+    EXPECT_EQ(t->object_combo->currentText(), cu->name());
+    // De fábrica: 1,0 y 0,5 (orden "Atrás": la más grande primero), 40 %, margen 1, método "Semilla".
+    ASSERT_EQ(t->tools_table->rowCount(), 2);
+    EXPECT_EQ(t->tools_table->item(0, 1)->text(), "1.0000");
+    EXPECT_EQ(t->tools_table->item(1, 1)->text(), "0.5000");
+    EXPECT_EQ(t->ncc_method_combo->indexValue(), 1);
+    EXPECT_TRUE(t->tool_data_label->text().contains("Herramienta 2"));  // la última agregada queda elegida
+    // Como el usuario: solo la de 0,1 con 80 %, margen 0 y método estándar.
+    t->tools_table->selectAll();
+    t->deltool_btn->click();
+    t->new_tooldia_entry->setValue(0.1);
+    t->add_newtool_button->click();
+    ASSERT_EQ(t->tools_table->rowCount(), 1);
+    t->ncc_overlap_entry->setValue(80.0);
+    t->ncc_margin_entry->setValue(0.0);
+    t->ncc_method_combo->setIndexValue(0);
+    t->generate_ncc_button->click();
+    auto* geo = dynamic_cast<GeometryObject*>(app.collection()->byName("luz de noche Pascual-B_Cu.gbr_ncc"));
+    ASSERT_NE(geo, nullptr);
+    CNCJobObject* cnc = laserJob(app, geo, true);
+    ASSERT_NE(cnc, nullptr);
+
+    QTemporaryDir tmp;
+    const QString out = tmp.filePath("luz de noche Pascual-B_Cu.gbr_ncc_cnc.nc");
+    ASSERT_TRUE(app.exportGcode(cnc, out));
+    const QStringList mineAll = readTextLines(out);
+    const QStringList realAll = readTextLines(QString::fromStdString(dir + "B_Cu.gbr_ncc_cnc.nc"));
+    const QStringList mine = comparableLaser(mineAll), real = comparableLaser(realAll);
+    EXPECT_EQ(mine.mid(0, 25), real.mid(0, 25));  // cabecera y comienzo
+    // Cantidad de trazados: 272 en el real; empates de rtree y GEOS cambian unos pocos (test del núcleo).
+    EXPECT_NEAR(static_cast<double>(mine.count("M03 S300.0")), static_cast<double>(real.count("M03 S300.0")), 272 * 0.02);
+    EXPECT_NEAR(static_cast<double>(mine.size()), static_cast<double>(real.size()), real.size() * 0.003);
+}

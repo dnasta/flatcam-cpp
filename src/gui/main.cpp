@@ -57,8 +57,13 @@ int main(int argc, char* argv[]) {
             app.ui()->notebook->setCurrentWidget(app.ui()->properties_tab);
         }
     }
-    if (tool == "ncc") app.runTool(app.nccTool, flatcam::gui::NccTool::info());
-    else if (tool == "paint") app.runTool(app.paintTool, flatcam::gui::PaintTool::info());
+    if (tool == "ncc") {
+        app.runTool(app.nccTool, flatcam::gui::NccTool::info());
+        app.nccTool->setToolUi();
+    } else if (tool == "paint") {
+        app.runTool(app.paintTool, flatcam::gui::PaintTool::info());
+        app.paintTool->setToolUi();
+    }
     else if (tool == "drill") {
         app.runTool(app.drillingTool, flatcam::gui::DrillingTool::info());
         app.drillingTool->setToolUi();
