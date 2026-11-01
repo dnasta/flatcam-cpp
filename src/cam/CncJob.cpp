@@ -483,11 +483,34 @@ std::string multiPass(GeoContext& c, PathItem& item, const Point2D& oldPoint) {
 
 }  // namespace
 
-bool CncJob::generateFromGeometry(const ShapeList& geometry, const GeometryJobSettings& js) {
+bool CncJob::generateFromGeometry(const ShapeList& geometry, const GeometryJobSettings& settings) {
+    return generateFromGeometryTools({GeometryToolJob{geometry, settings}});
+}
+
+bool CncJob::generateFromGeometryTools(const std::vector<GeometryToolJob>& tools) {
     lastError_.clear();
     startGcode_.clear();
     gcode_.clear();
     toolGcodes_.clear();
+    if (tools.empty()) {
+        lastError_ = "No hay herramientas";
+        return false;
+    }
+    // mtool_gen_cncjob (multigeo): cada herramienta con su geometría y sus parámetros, en el mismo trabajo; el código de
+    // inicio sale de la primera y el de cierre, de la última.
+    for (std::size_t i = 0; i < tools.size(); ++i) {
+        std::string t, start;
+        if (!geometryToolGcode(tools[i].geometry, tools[i].settings, i == 0, i + 1 == tools.size(), t, start))
+            return false;
+        if (i == 0) startGcode_ = start;
+        gcode_ += t;
+        toolGcodes_.push_back(t);
+    }
+    return true;
+}
+
+bool CncJob::geometryToolGcode(const ShapeList& geometry, const GeometryJobSettings& js, bool isFirst, bool isLast,
+                               std::string& tGcode, std::string& startGcode) {
     const GeometryToolSettings& ts = js.toolSettings;
 
     const auto pp = makePreprocessor(js.preprocessor, js.flavor);
@@ -609,7 +632,7 @@ bool CncJob::generateFromGeometry(const ShapeList& geometry, const GeometryJobSe
         // ---- G-code
         const bool laser = js.preprocessor.find("laser") != std::string::npos;
         std::string g;
-        startGcode_ = pp->startCode(p) + "\n";
+        if (isFirst) startGcode = pp->startCode(p) + "\n";
         g += pp->feedrateCode(p) + "\n";
         if (js.toolchange) {
             g += pp->toolchangeCode(p) + "\n";
@@ -648,14 +671,14 @@ bool CncJob::generateFromGeometry(const ShapeList& geometry, const GeometryJobSe
             }
             current = item.coords.back();
         }
-        g += pp->spindleStopCode(p) + "\n";
-        g += lift(ctx, current.x, current.y);
-        p.x = 0;
-        p.y = 0;
-        g += pp->endCode(p) + "\n";
-
-        gcode_ = g;
-        toolGcodes_.push_back(g);
+        if (isLast) {
+            g += pp->spindleStopCode(p) + "\n";
+            g += lift(ctx, current.x, current.y);
+            p.x = 0;
+            p.y = 0;
+            g += pp->endCode(p) + "\n";
+        }
+        tGcode = g;
     } catch (const std::exception& e) {
         lastError_ = std::string("Error al generar el G-code de la geometría: ") + e.what();
         Logger::error(lastError_);

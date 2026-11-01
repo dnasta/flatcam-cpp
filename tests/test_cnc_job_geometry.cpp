@@ -6,6 +6,7 @@
 #include "cam/CncJob.h"
 #include "golden_geometry.h"
 #include "golden_geometry_modes.h"
+#include "golden_geometry_multitool.h"
 
 using namespace flatcam;
 
@@ -128,3 +129,24 @@ TEST(CncJobGeometry, MultidepthUsesExactDecimalArithmetic) {
     EXPECT_NE(job.gcode().find("G01 Z-1.8000"), std::string::npos);
     EXPECT_EQ(job.gcode().find("G01 Z-2.4000"), std::string::npos);
 }
+
+// ------------------------------------------- varias herramientas en un mismo trabajo (mtool_gen_cncjob)
+
+class GeometryMultiTool : public ::testing::TestWithParam<std::size_t> {};
+
+TEST_P(GeometryMultiTool, MatchesOriginalGenerator) {
+    const auto& sc = golden_geometry_multitool::kScenarios.at(GetParam());
+    SCOPED_TRACE(sc.name);
+    std::vector<GeometryToolJob> jobs = sc.jobs();
+    for (auto& j : jobs) j.settings.flavor = GcodeFlavor::FlatCAM2024_4;
+    CncJob job;
+    ASSERT_TRUE(job.generateFromGeometryTools(jobs)) << job.lastError();
+    EXPECT_EQ(job.toolGcodes().size(), jobs.size());
+    EXPECT_EQ(job.startGcode() + "\n" + job.gcode(), sc.expected);
+}
+
+INSTANTIATE_TEST_SUITE_P(Original, GeometryMultiTool,
+                         ::testing::Range<std::size_t>(0, golden_geometry_multitool::kScenarios.size()),
+                         [](const ::testing::TestParamInfo<std::size_t>& info) {
+                             return std::string(golden_geometry_multitool::kScenarios.at(info.param).name);
+                         });

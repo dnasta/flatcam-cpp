@@ -113,6 +113,12 @@ struct GeometryJobSettings {
     std::optional<BoundingBox> headerBounds;
 };
 
+/** @brief Una herramienta de un trabajo de geometría con varias herramientas: su geometría y sus parámetros. */
+struct GeometryToolJob {
+    ShapeList geometry;            ///< Figuras que recorre esta herramienta (`tools[uid]['solid_geometry']`).
+    GeometryJobSettings settings;  ///< Parámetros (`tools[uid]['data']`); `tool` es el número que imprime el cambio.
+};
+
 /** @brief Datos de la cabecera de comentarios del archivo de G-code (`gcode_header`). */
 struct GcodeHeaderInfo {
     std::string version{"8.994"};          ///< Versión de FlatCAM que se declara.
@@ -170,6 +176,18 @@ public:
      */
     bool generateFromGeometry(const ShapeList& geometry, const GeometryJobSettings& settings);
 
+    /**
+     * @brief Genera el G-code de varias herramientas de una Geometría en un solo trabajo (`mtool_gen_cncjob` con
+     * `geometry_tool_gcode_gen(..., is_first, is_last, toolchange=True)`).
+     *
+     * Cada herramienta emite su cambio de herramienta y sus trazados con sus propios parámetros; el código de inicio sale
+     * de la primera y el apagado, la subida y el código de cierre solo van después de la última. Con una sola herramienta
+     * es lo mismo que @ref generateFromGeometry.
+     * @param tools Herramientas, en el orden de la tabla.
+     * @return `true` si se generó; `false` si falló (ver @ref lastError).
+     */
+    bool generateFromGeometryTools(const std::vector<GeometryToolJob>& tools);
+
     /** @brief Código de inicio (cabecera del postprocesador), terminado en salto de línea. @return El texto. */
     const std::string& startGcode() const { return startGcode_; }
 
@@ -197,6 +215,10 @@ public:
     std::string exportGcode(const GcodeHeaderInfo& info) const;
 
 private:
+    /** @brief G-code de una herramienta de geometría (`geometry_tool_gcode_gen`). @return `false` si falla. */
+    bool geometryToolGcode(const ShapeList& geometry, const GeometryJobSettings& js, bool isFirst, bool isLast,
+                           std::string& tGcode, std::string& startGcode);
+
     /** @brief Genera el G-code de una herramienta. @return `false` si falla. */
     bool toolGcode(int tool, const std::vector<Point2D>& points, const Excellon& ex, std::array<double, 2>& firstPoint,
                    bool isFirst, bool isLast, std::string& tGcode, std::string& startGcode);

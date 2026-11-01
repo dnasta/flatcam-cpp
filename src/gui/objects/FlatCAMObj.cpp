@@ -18,10 +18,19 @@ FlatCAMObj::FlatCAMObj(ObjectKind kind, QString name) : kind_(kind), name_(std::
 FlatCAMObj::~FlatCAMObj() = default;
 
 void FlatCAMObj::addShape(const Shape& s, PlotLayerData& out, bool fill) {
+    PlotGroup g;
+    g.fill = std::move(out.fill);
+    g.lines = std::move(out.lines);
+    addShape(s, g, out.bounds, fill);
+    out.fill = std::move(g.fill);
+    out.lines = std::move(g.lines);
+}
+
+void FlatCAMObj::addShape(const Shape& s, PlotGroup& out, QRectF& bounds, bool fill) {
     if (s.isEmpty()) return;
     const ShapeType t = s.type();
     if (t == ShapeType::MultiPolygon || t == ShapeType::MultiLineString || t == ShapeType::GeometryCollection) {
-        for (const Shape& p : s.parts()) addShape(p, out, fill);
+        for (const Shape& p : s.parts()) addShape(p, out, bounds, fill);
         return;
     }
     auto addLine = [&out](const std::vector<Point2D>& c) {
@@ -40,7 +49,7 @@ void FlatCAMObj::addShape(const Shape& s, PlotLayerData& out, bool fill) {
     }
     if (const auto b = s.bounds()) {
         const QRectF r(b->xmin, b->ymin, b->xmax - b->xmin, b->ymax - b->ymin);
-        out.bounds = out.bounds.isNull() ? r : out.bounds.united(r);
+        bounds = bounds.isNull() ? r : bounds.united(r);
     }
 }
 

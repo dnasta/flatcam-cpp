@@ -108,6 +108,18 @@ FlatCAMObj* CutOutTool::cutout(bool rectangular) {
         app_->ui()->inform("[ERROR_NOTCL] " + tr_("Failed.") + (error.empty() ? QString() : " " + QString::fromStdString(error)));
         return nullptr;
     }
+    // excellon_init (puentes con "mouse bites"): un Excellon `<objeto>_mouse_bites` con los agujeros, antes que la
+    // Geometría, como el original.
+    if (o.mouseBites) {
+        if (r.mouseBiteHoles.empty()) {
+            app_->ui()->inform("[ERROR_NOTCL] " + tr_("Mouse bites failed."));
+        } else {
+            auto exc = std::make_unique<Excellon>();
+            exc->addDrillTool(1, o.mbDia, r.mouseBiteHoles);
+            exc->createGeometry();
+            app_->addObject(std::make_unique<ExcellonObject>(src->name() + "_mouse_bites", std::move(exc)));
+        }
+    }
     // geo_init: una herramienta con cut_tool_dict (geometry_* de fábrica) y la Z del panel.
     auto obj = std::make_unique<GeometryObject>(src->name() + "_cutout");
     obj->solidGeometry() = {r.solidGeometry};
@@ -124,9 +136,6 @@ FlatCAMObj* CutOutTool::cutout(bool rectangular) {
         thin.overrideColor = colorFromFlatCam("#29a3a3fa");
         thin.solidGeometry = r.gapsSolidGeometry;
         obj->tools()[9999] = thin;
-    }
-    if (o.mouseBites) {
-        app_->ui()->inform("[WARNING_NOTCL] Los agujeros de los \"mouse bites\" todavía no se generan.");
     }
     FlatCAMObj* added = app_->addObject(std::move(obj));
     app_->ui()->inform("[success] " + (rectangular ? tr_("Rectangular CutOut operation finished.")

@@ -20,6 +20,7 @@
 #include "gui/objects/ObjectUIs.h"
 #include "gui/objects/CNCJobObject.h"
 #include "gui/objects/GeometryObject.h"
+#include "tools/CutOut.h"
 #include <QFile>
 #include <QMimeData>
 #include <QDropEvent>
@@ -349,7 +350,8 @@ TEST(GuiDrilling, UserWorkflowReproducesTheRealFile) {
 }
 
 int main(int argc, char** argv) {
-    qputenv("QT_QPA_PLATFORM", "offscreen");
+    // Sin pantalla salvo que se pida otra plataforma (QT_QPA_PLATFORM=cocoa para mirar el canvas OpenGL).
+    if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")) qputenv("QT_QPA_PLATFORM", "offscreen");
     QApplication app(argc, argv);
     Q_INIT_RESOURCE(flatcam);
     ::testing::InitGoogleTest(&argc, argv);
@@ -489,4 +491,82 @@ TEST(GuiCutout, UserWorkflowReproducesTheRealFile) {
             break;
         }
     }
+}
+
+
+TEST(GuiCutout, ThinGapsAndMouseBites) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    ASSERT_NE(edge, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(edge));
+    app.ui()->cutout_btn->trigger();
+    CutOutTool* t = app.cutoutTool;
+    t->dia->setValue(1.2);
+    t->margin->setValue(0.0);
+    t->gapsize->setValue(0.6);
+
+    // Puentes delgados: herramienta 9999 con la Z de los puentes y su color propio.
+    t->gaptype_radio->setValue("bt");
+    t->thin_depth_entry->setValue(-1.0);
+    auto* geo = dynamic_cast<GeometryObject*>(t->freeformCutout());
+    ASSERT_NE(geo, nullptr);
+    ASSERT_EQ(geo->tools().size(), 2u);
+    EXPECT_DOUBLE_EQ(geo->tools().at(9999).data.cutZ, -1.0);
+    const PlotLayerData pd = geo->plotData();
+    ASSERT_EQ(pd.groups.size(), 1u);
+    EXPECT_EQ(pd.groups[0].lineColor, colorFromFlatCam("#29a3a3fa"));
+    EXPECT_FALSE(pd.groups[0].lines.empty());
+    // Las dos herramientas en un CNC Job: cada una con su cambio de herramienta (T1 y T9999) y un solo cierre.
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(geo));
+    auto* ui = qobject_cast<GeometryObjectUI*>(app.ui()->properties_scroll_area->widget());
+    ASSERT_NE(ui, nullptr);
+    ASSERT_EQ(ui->geo_tools_table->rowCount(), 2);
+    ui->geo_tools_table->selectAll();
+    EXPECT_EQ(ui->toolsForCnc(), (std::vector<int>{1, 9999}));
+    EXPECT_TRUE(ui->tool_data_label->text().contains(QString::fromUtf8("Herramientas múltiples")));
+    ui->generate_cnc_button->click();
+    auto* cnc = dynamic_cast<CNCJobObject*>(app.collection()->byName("luz de noche Pascual-Edge_Cuts.gbr_cutout_cnc"));
+    ASSERT_NE(cnc, nullptr);
+    EXPECT_EQ(cnc->tools().size(), 2u);
+    const QString text = QString::fromStdString(cnc->exportText());
+    EXPECT_EQ(text.count("\nT1\n"), 1);
+    EXPECT_EQ(text.count("\nT9999\n"), 1);
+    // `default` apaga el husillo en el cambio de cada herramienta ("M5", 2 veces) y una sola vez al final ("M05").
+    EXPECT_EQ(text.count("\nM5\n"), 2);
+    EXPECT_EQ(text.count("\nM05\n"), 1);
+    EXPECT_EQ(cnc->job().toolGcodes().size(), 2u);
+    // Los viajes van en un grupo amarillo translúcido, engrosados.
+    const PlotLayerData cd = cnc->plotData();
+    ASSERT_FALSE(cd.groups.empty());
+    EXPECT_EQ(cd.groups.back().fillColor, colorFromFlatCam("#F0E24D4C"));
+    EXPECT_GT(cd.groups.back().fill.size(), 100u);
+
+    // Mouse bites: además de la Geometría, un Excellon con los agujeros de los puentes.
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(edge));
+    t->setToolUi();
+    t->dia->setValue(1.2);
+    t->margin->setValue(0.0);
+    t->gapsize->setValue(0.6);
+    t->gaptype_radio->setValue("mb");
+    ASSERT_NE(t->freeformCutout(), nullptr);
+    auto* bites = dynamic_cast<ExcellonObject*>(app.collection()->byName("luz de noche Pascual-Edge_Cuts.gbr_mouse_bites"));
+    ASSERT_NE(bites, nullptr);
+    ASSERT_EQ(bites->excellon().drillTools().size(), 1u);
+    const flatcam::ExcellonTool& holes = bites->excellon().drillTools().at(1);
+    EXPECT_DOUBLE_EQ(holes.tooldia, 0.6);  // tools_cutout_mb_dia
+    // Los mismos agujeros que calcula el núcleo con las mismas opciones.
+    flatcam::CutoutOptions o;
+    o.toolDia = 1.2;
+    o.margin = 0.0;
+    o.gaps = flatcam::CutoutGaps::Four;
+    o.gapSize = 0.6;
+    o.mouseBites = true;
+    o.mbDia = 0.6;
+    o.mbSpacing = 0.3;
+    flatcam::CutoutResult r;
+    std::string err;
+    ASSERT_TRUE(flatcam::CutOut::freeform(edge->gerber().solidGeometry(), true, o, r, err)) << err;
+    ASSERT_FALSE(r.mouseBiteHoles.empty());
+    EXPECT_EQ(holes.drills.size(), r.mouseBiteHoles.size());
 }

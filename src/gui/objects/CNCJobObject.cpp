@@ -54,8 +54,17 @@ PlotLayerData CNCJobObject::plotData() const {
     // Taladrado: cada bajada sin X,Y es un agujero. Geometría: lo que corta se dibuja como la trayectoria engrosada
     // con el radio de la herramienta (plot2: buffer(tooldia / 1.99999999)), rellena.
     const bool drilling = !tools_.empty() && (tools_.front().drills > 0 || tools_.front().slots > 0);
-    std::vector<std::vector<Point2D>> cuts;
-    std::vector<double> cutDia;
+    std::vector<std::vector<Point2D>> cuts, travels;
+    std::vector<double> cutDia, travelDia;
+    // Tramos seguidos del mismo tipo forman una sola trayectoria (gcode_parse).
+    auto extend = [](std::vector<std::vector<Point2D>>& paths, std::vector<double>& dias, double x0, double y0,
+                     double x1, double y1, double di) {
+        if (paths.empty() || paths.back().back().x != x0 || paths.back().back().y != y0 || dias.back() != di) {
+            paths.push_back({{x0, y0}});
+            dias.push_back(di);
+        }
+        paths.back().push_back({x1, y1});
+    };
     double xmin = 1e300, ymin = 1e300, xmax = -1e300, ymax = -1e300;
     auto grow = [&](double px, double py) {
         xmin = std::min(xmin, px);
@@ -75,7 +84,16 @@ PlotLayerData CNCJobObject::plotData() const {
         grow(cx - r, cy - r);
         grow(cx + r, cy + r);
     };
-    const QStringList lines = QString::fromStdString(job_->gcode()).split('\n');
+    // En un trabajo de geometría cada herramienta tiene su propio G-code y su diámetro (el láser no lo escribe).
+    std::vector<std::pair<std::string, double>> chunks;
+    if (!drilling && job_->toolGcodes().size() == tools_.size()) {
+        for (std::size_t i = 0; i < tools_.size(); ++i) chunks.push_back({job_->toolGcodes()[i], tools_[i].dia});
+    } else {
+        chunks.push_back({job_->gcode(), dia});
+    }
+    for (const auto& [text, chunkDia] : chunks) {
+    dia = chunkDia;
+    const QStringList lines = QString::fromStdString(text).split('\n');
     for (const QString& l : lines) {
         if (const auto m = reDia.match(l); m.hasMatch()) dia = m.captured(1).toDouble();
         if (l.startsWith("M03")) laserOn = true;
@@ -93,32 +111,34 @@ PlotLayerData CNCJobObject::plotData() const {
         if (mx.hasMatch() || my.hasMatch()) {
             // Con el láser (GRBL_laser) no hay Z: corta lo que se recorre con M03 encendido.
             const bool cutting = feed && (z < 0 || laserOn);
-            if (cutting && !drilling) {
-                // Tramos seguidos forman una sola trayectoria.
-                if (cuts.empty() || cuts.back().back().x != x || cuts.back().back().y != y || cutDia.back() != dia) {
-                    cuts.push_back({{x, y}});
-                    cutDia.push_back(dia);
-                }
-                cuts.back().push_back({nx, ny});
-            } else {
-                auto& dst = cutting ? d.lines : d.travel;
-                dst.insert(dst.end(), {float(x), float(y), float(nx), float(ny)});
-            }
+            if (cutting && !drilling) extend(cuts, cutDia, x, y, nx, ny, dia);
+            else if (cutting) d.lines.insert(d.lines.end(), {float(x), float(y), float(nx), float(ny)});
+            else extend(travels, travelDia, x, y, nx, ny, dia);
             grow(x, y);
             grow(nx, ny);
             x = nx;
             y = ny;
         }
     }
-    for (std::size_t i = 0; i < cuts.size(); ++i) {
-        // Desvío consciente (solo visual): 16 segmentos por cuarto de círculo en vez de cncjob_steps_per_circle (64).
-        const Shape path = Shape::lineString(cuts[i]).buffer(cutDia[i] / 1.99999999, 16).simplify(0.0005);
-        addShape(path, d, true);
+    }
+    // plot2: cada trayectoria engrosada con el radio de la herramienta y simplificada (tool_tolerance 0,0005); lo que
+    // corta en azul y los viajes encima, en amarillo translúcido. Desvío consciente (solo visual): 16 segmentos por
+    // cuarto de círculo en vez de cncjob_steps_per_circle (64).
+    auto thick = [&](const std::vector<Point2D>& pts, double di) {
+        Shape path = Shape::lineString(pts).buffer(di / 1.99999999, 16).simplify(0.0005);
         if (const auto b = path.bounds()) {
             grow(b->xmin, b->ymin);
             grow(b->xmax, b->ymax);
         }
-    }
+        return path;
+    };
+    for (std::size_t i = 0; i < cuts.size(); ++i) addShape(thick(cuts[i], cutDia[i]), d, true);
+    PlotGroup tr;
+    tr.fillColor = colorFromFlatCam("#F0E24D4C");  // cncjob_travel_fill
+    tr.lineColor = travelColor();                  // cncjob_travel_line
+    QRectF ignored;
+    for (std::size_t i = 0; i < travels.size(); ++i) addShape(thick(travels[i], travelDia[i]), tr, ignored, true);
+    if (!tr.lines.empty()) d.groups.push_back(std::move(tr));
     if (xmax >= xmin) d.bounds = QRectF(xmin, ymin, xmax - xmin, ymax - ymin);
     return d;
 }
