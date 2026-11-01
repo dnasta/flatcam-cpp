@@ -1,6 +1,7 @@
 #include "gui/objects/GeometryObject.h"
 
 #include "cam/Preprocessor.h"
+#include "core/AffineTransform.h"
 #include "gui/Translation.h"
 #include "gui/objects/CNCJobObject.h"
 #include "gui/objects/ObjectUIs.h"
@@ -59,6 +60,14 @@ PlotLayerData GeometryObject::plotData() const {
 }
 
 QRectF GeometryObject::bounds() const { return plotData().bounds; }
+
+bool GeometryObject::mirror(Axis axis, const Point2D& point) {
+    const AffineTransform m = AffineTransform::mirror(axis, point);
+    for (Shape& s : solid_) s = s.transform(m);
+    for (auto& [uid, t] : tools_)
+        for (Shape& s : t.solidGeometry) s = s.transform(m);
+    return true;
+}
 
 QWidget* GeometryObject::propertiesUi() {
     if (!ui_) ui_ = std::make_unique<GeometryObjectUI>();

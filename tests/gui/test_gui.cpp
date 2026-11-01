@@ -699,3 +699,58 @@ TEST(GuiNcc, UserWorkflowMatchesTheRealFile) {
     EXPECT_NEAR(static_cast<double>(mine.count("M03 S300.0")), static_cast<double>(real.count("M03 S300.0")), 272 * 0.02);
     EXPECT_NEAR(static_cast<double>(mine.size()), static_cast<double>(real.size()), real.size() * 0.003);
 }
+
+TEST(GuiApp, FlipSelectedObjectsAroundTheirCommonCenter) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    QStringList names;
+    for (const char* f : {"Edge_Cuts.gbr", "B_Cu.gbr", "Logo.gbr", "PTH.drl"})
+        ASSERT_NE(app.openByExtension(QString::fromStdString(dir + f)), nullptr);
+    auto* cu = static_cast<GerberObject*>(app.collection()->byName("luz de noche Pascual-B_Cu.gbr"));
+    auto* drl = static_cast<ExcellonObject*>(app.collection()->byName("luz de noche Pascual-PTH.drl"));
+    // Lo esperado: el reflejo en x = 0 que dan los .nc del usuario.
+    flatcam::Gerber refCu;
+    ASSERT_TRUE(refCu.parseFile(dir + "B_Cu.gbr"));
+    refCu.mirror(flatcam::Axis::Y, {0, 0});
+    flatcam::Excellon refDrl;
+    ASSERT_TRUE(refDrl.parseFile(dir + "PTH.drl"));
+    refDrl.mirror(flatcam::Axis::Y, {0, 0});
+
+    // Sin nada elegido: aviso.
+    app.ui()->collection_view->clearSelection();
+    EXPECT_FALSE(app.flip(flatcam::Axis::Y));
+    EXPECT_EQ(app.ui()->fcinfo->text->text(), QString::fromUtf8("No se selecciona ningún objeto."));
+
+    // Las cuatro elegidas y la tecla X en el árbol del Proyecto (on_flipx): el contorno es simétrico, así que el
+    // centro común es x = 0.
+    app.ui()->collection_view->expandAll();
+    app.ui()->collection_view->selectAll();
+    EXPECT_EQ(app.selectedObjects().size(), 4u);
+    Q_EMIT app.ui()->collection_view->keyPressed(Qt::Key_X);
+    const flatcam::BoundingBox a = cu->gerber().bounds(), b = refCu.bounds();
+    EXPECT_NEAR(a.xmin, b.xmin, 1e-9);
+    EXPECT_NEAR(a.xmax, b.xmax, 1e-9);
+    EXPECT_NEAR(a.ymin, b.ymin, 1e-9);
+    EXPECT_NEAR(a.ymax, b.ymax, 1e-9);
+    const auto& mine = drl->excellon().drillTools();
+    const auto& ref = refDrl.drillTools();
+    ASSERT_EQ(mine.size(), ref.size());
+    for (const auto& [id, t] : ref) {
+        ASSERT_EQ(mine.at(id).drills.size(), t.drills.size());
+        for (std::size_t i = 0; i < t.drills.size(); ++i) {
+            EXPECT_NEAR(mine.at(id).drills[i].x, t.drills[i].x, 1e-9);
+            EXPECT_NEAR(mine.at(id).drills[i].y, t.drills[i].y, 1e-9);
+        }
+    }
+    // Lo dibujado también se reflejó.
+    EXPECT_NEAR(drl->plotData().bounds.left(), drl->bounds().left(), 1e-6);
+
+    // Un solo objeto se refleja alrededor de su propio centro: con Y (on_flipy) se invierten las Y y la caja no se mueve.
+    app.ui()->collection_view->clearSelection();
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(cu));
+    const flatcam::BoundingBox before = cu->gerber().bounds();
+    app.ui()->menuoptions_transform_flipy->trigger();
+    const flatcam::BoundingBox after = cu->gerber().bounds();
+    EXPECT_NEAR(after.ymin, before.ymin, 1e-9);
+    EXPECT_NEAR(after.ymax, before.ymax, 1e-9);
+}

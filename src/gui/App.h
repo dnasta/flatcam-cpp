@@ -92,6 +92,17 @@ public:
      */
     FlatCAMObj* addObject(std::unique_ptr<FlatCAMObj> obj);
 
+    /** @brief Objetos elegidos en el árbol, en su orden (`collection.get_selected`). @return Los objetos. */
+    std::vector<FlatCAMObj*> selectedObjects() const;
+
+    /**
+     * @brief Refleja los objetos elegidos alrededor del centro de la caja que los contiene a todos (`on_flipx` con
+     * `Axis::Y`: invierte las X; `on_flipy` con `Axis::X`: invierte las Y).
+     * @param axis Eje del reflejo.
+     * @return `true` si había objetos y se reflejaron.
+     */
+    bool flip(Axis axis);
+
     /** @brief Objeto elegido en el árbol (`collection.get_active`). @return El objeto, o `nullptr`. */
     FlatCAMObj* activeObject() const;
 
@@ -122,6 +133,7 @@ protected:
 
 private:
     void connectSignals();
+    bool handleKey(int key, Qt::KeyboardModifiers modifiers);
     QString lastFolder() const;
 
     std::unique_ptr<MainGUI> ui_;
