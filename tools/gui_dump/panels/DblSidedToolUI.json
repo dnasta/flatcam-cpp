@@ -1,0 +1,1543 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "DblSidedTool",
+  "name": null,
+  "props": {
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "PCB a 2 caras"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {}
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       1,
+       0
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "m_objects_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Objetos a ser reflejados."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Objeto fuente:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "type_obj_combo_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Seleccione el tipo de objeto de aplicación que se procesará en esta herramienta."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tipo:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "object_type_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Gerber",
+           "value": "grb"
+          },
+          {
+           "label": "Geometría",
+           "value": "geo"
+          },
+          {
+           "label": "Excellon",
+           "value": "exc"
+          }
+         ],
+         "vertical": false,
+         "stretch": true,
+         "value": "grb"
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "object_combo",
+         "props": {},
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 6,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "bv_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Seleccione en lienzo los objetos\npara el cual calcular valores de límites."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Valores de límites:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "xmin_btn",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Ubicacion minima."
+          },
+          "text": {
+           "t": "str",
+           "v": "X min:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "xmin_entry",
+         "props": {
+          "readOnly": {
+           "t": "bool",
+           "v": true
+          },
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -10000.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "ymin_btn",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Ubicacion minima."
+          },
+          "text": {
+           "t": "str",
+           "v": "Y min:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "ymin_entry",
+         "props": {
+          "readOnly": {
+           "t": "bool",
+           "v": true
+          },
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -10000.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 9,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "xmax_btn",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Máxima ubicación."
+          },
+          "text": {
+           "t": "str",
+           "v": "X max:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 9,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "xmax_entry",
+         "props": {
+          "readOnly": {
+           "t": "bool",
+           "v": true
+          },
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -10000.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "ymax_btn",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Máxima ubicación."
+          },
+          "text": {
+           "t": "str",
+           "v": "Y max:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "ymax_entry",
+         "props": {
+          "readOnly": {
+           "t": "bool",
+           "v": true
+          },
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -10000.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "center_btn",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "La ubicación del punto central para el rectangular\nforma delimitadora. Centroide. El formato es (x, y)."
+          },
+          "text": {
+           "t": "str",
+           "v": "Centroide:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "NumericalEvalTupleEntry",
+         "name": "center_entry",
+         "props": {
+          "styleSheet": {
+           "t": "str",
+           "v": "QLineEdit {border: 1px solid #0069A9;}"
+          },
+          "readOnly": {
+           "t": "bool",
+           "v": true
+          },
+          "placeholderText": {
+           "t": "str",
+           "v": "Coords del punto central"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 13,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "calculate_bb_button",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Calcule las coordenadas de forma rectangular envolvente,\npara la selección de objetos.\nLa forma de la envoltura es paralela al eje X, Y."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t\t\t\t\t   "
+          },
+          "text": {
+           "t": "str",
+           "v": "Calcular valores de límites"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 14,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1,
+       0
+      ],
+      "colMinWidth": [
+       0,
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "param_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Parámetros para la operación Reflejar."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Operación Espejo:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "mirax_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Espejo verticalmente (X) u horizontal (Y)."
+          },
+          "text": {
+           "t": "str",
+           "v": "Eje:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "mirror_axis",
+         "props": {},
+         "choices": [
+          {
+           "label": "X",
+           "value": "X"
+          },
+          {
+           "label": "Y",
+           "value": "Y"
+          }
+         ],
+         "vertical": true,
+         "stretch": false,
+         "value": "X"
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "axloc_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Las coordenadas utilizadas como referencia para la operación de espejo.\nPuede ser:\n- Punto -> un conjunto de coordenadas (x, y) alrededor del cual se refleja el objeto\n- Caja -> un conjunto de coordenadas (x, y) obtenidas del centro del\ncuadro delimitador de otro objeto seleccionado a continuación\n- Ajuste de agujero -> un punto definido por el centro de un agujero en un objeto Excellon"
+          },
+          "text": {
+           "t": "str",
+           "v": "Referencia:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "axis_location",
+         "props": {},
+         "choices": [
+          {
+           "label": "Punto",
+           "value": "point"
+          },
+          {
+           "label": "Caja",
+           "value": "box"
+          },
+          {
+           "label": "Encajar en el agujero",
+           "value": "hole"
+          }
+         ],
+         "vertical": false,
+         "stretch": true,
+         "value": "point"
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "NumericalEvalTupleEntry",
+         "name": "point_entry",
+         "props": {
+          "styleSheet": {
+           "t": "str",
+           "v": "QLineEdit {border: 1px solid #0069A9;}"
+          },
+          "placeholderText": {
+           "t": "str",
+           "v": "Coordenadas de puntos"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "add_point_button",
+         "props": {
+          "minimumSize": {
+           "t": "QSize",
+           "v": [
+            60,
+            0
+           ]
+          },
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Agregue las coordenadas en formato <b> (x, y) </b> a través del cual el eje de reflejo\nseleccionado en el pase 'EJE DE ESPEJO'.\nLas coordenadas (x, y) se capturan presionando la tecla MAYÚS\ny haga clic con el botón izquierdo del mouse en el lienzo o puede ingresar las coordenadas manualmente."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t\t\t"
+          },
+          "text": {
+           "t": "str",
+           "v": "Añadir"
+          },
+          "icon": {
+           "t": "QIcon",
+           "v": ":/images/plus16.png"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "exc_hole_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Objeto que contiene agujeros que se pueden seleccionar como referencia para la creación de reflejos."
+          },
+          "text": {
+           "t": "str",
+           "v": "Excellon:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "exc_combo",
+         "props": {
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         },
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "pick_hole_button",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Haga clic dentro de un taladro que pertenezca al objeto Excellon seleccionado,\ny las coordenadas del centro del agujero se copiarán en el campo Punto."
+          },
+          "text": {
+           "t": "str",
+           "v": "Escoge un hoyo"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 14,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "layout": {
+         "qt": "QGridLayout",
+         "py": "QGridLayout",
+         "name": null,
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "hspacing": 6,
+         "vspacing": 6,
+         "rowStretch": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "colStretch": [
+          0,
+          1
+         ],
+         "colMinWidth": [
+          0,
+          0
+         ],
+         "items": [
+          {
+           "align": 0,
+           "row": 0,
+           "col": 0,
+           "rs": 1,
+           "cs": 2,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": "box_type_label",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Puede ser de tipo: Gerber o Excellon o Geometry.\nSe utilizan las coordenadas del centro del cuadro delimitador.\ncomo referencia para la operación del espejo."
+             },
+             "text": {
+              "t": "str",
+              "v": "Objeto de referencia:"
+             },
+             "hidden": {
+              "t": "bool",
+              "v": true
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 1,
+           "col": 0,
+           "rs": 1,
+           "cs": 2,
+           "widget": {
+            "qt": "QWidget",
+            "py": "RadioSet",
+            "name": "box_type_radio",
+            "props": {
+             "hidden": {
+              "t": "bool",
+              "v": true
+             }
+            },
+            "choices": [
+             {
+              "label": "Gerber",
+              "value": "grb"
+             },
+             {
+              "label": "Excellon",
+              "value": "exc"
+             },
+             {
+              "label": "Geometría",
+              "value": "geo"
+             }
+            ],
+            "vertical": false,
+            "stretch": true,
+            "value": "grb"
+           }
+          },
+          {
+           "align": 0,
+           "row": 3,
+           "col": 0,
+           "rs": 1,
+           "cs": 2,
+           "widget": {
+            "qt": "QComboBox",
+            "py": "FCComboBox",
+            "name": "box_combo",
+            "props": {
+             "hidden": {
+              "t": "bool",
+              "v": true
+             }
+            },
+            "items": [],
+            "currentIndex": -1
+           }
+          }
+         ]
+        }
+       },
+       {
+        "align": 0,
+        "row": 16,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "mirror_button",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Refleja (voltea) el objeto especificado alrededor\nEl eje especificado. No crea un nuevo\nobjeto, pero lo modifica."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+          },
+          "text": {
+           "t": "str",
+           "v": "Espejo"
+          },
+          "icon": {
+           "t": "QIcon",
+           "v": ":/images/doubleside16.png"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 18,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "alignment_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Crea un objeto Excellon que contiene el\nagujeros de alineación especificados y su espejo\nimágenes."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Alineación de PCB:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "dt_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Diámetro del taladro para los orificios de alineación."
+          },
+          "text": {
+           "t": "str",
+           "v": "Diá. del Taladro:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "drill_dia",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Diámetro del taladro para los orificios de alineación."
+          },
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "value": {
+           "t": "double",
+           "v": 3.125
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "align_ax_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Espejo verticalmente (X) u horizontal (Y)."
+          },
+          "text": {
+           "t": "str",
+           "v": "Eje:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "align_axis_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "X",
+           "value": "X"
+          },
+          {
+           "label": "Y",
+           "value": "Y"
+          }
+         ],
+         "vertical": true,
+         "stretch": false,
+         "value": "X"
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "align_ref_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El punto de referencia utilizado para crear el segundo ejercicio de alineación.\ndesde el primer ejercicio de alineación, haciendo espejo.\nSe puede modificar en la sección Parámetros Espejo -> Referencia"
+          },
+          "text": {
+           "t": "str",
+           "v": "Referencia:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "NumericalEvalTupleEntry",
+         "name": "align_ref_label_val",
+         "props": {
+          "enabled": {
+           "t": "bool",
+           "v": false
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "El punto de referencia utilizado para crear el segundo ejercicio de alineación.\ndesde el primer ejercicio de alineación, haciendo espejo.\nSe puede modificar en la sección Parámetros Espejo -> Referencia"
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "QLineEdit {border: 1px solid #0069A9;}"
+          },
+          "text": {
+           "t": "str",
+           "v": "0.0000"
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       0
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "ah_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Agujeros de alineación (x1, y1), (x2, y2), ... en un lado del eje del espejo. Para cada conjunto de coordenadas (x, y)\ningresado aquí, se crearán un par de simulacros:\n\n- un ejercicio en las coordenadas del campo\n- un taladro en posición de espejo sobre el eje seleccionado arriba en 'Alinear eje'."
+          },
+          "text": {
+           "t": "str",
+           "v": "Taladro de alineación Coords:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "NumericalEvalTupleEntry",
+         "name": "alignment_holes",
+         "props": {
+          "styleSheet": {
+           "t": "str",
+           "v": "QLineEdit {border: 1px solid #0069A9;}"
+          },
+          "placeholderText": {
+           "t": "str",
+           "v": "Coords de Perforación"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "layout": {
+         "qt": "QHBoxLayout",
+         "py": "QHBoxLayout",
+         "name": null,
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "items": [
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QPushButton",
+            "py": "FCButton",
+            "name": "add_drill_point_button",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Agregue coordenadas de taladros de alineación en el formato: (x1, y1), (x2, y2), ...\nen un lado del eje de alineación.\n\nEl conjunto de coordenadas se puede obtener:\n- presione la tecla SHIFT y haga clic con el botón izquierdo del mouse en el lienzo. Luego haga clic en Agregar.\n- presione la tecla SHIFT y haga clic con el botón izquierdo en el lienzo Luego Ctrl + V en el campo.\n- presione la tecla SHIFT y haga clic con el botón izquierdo del mouse en el lienzo. Luego, haga clic en RMB en el campo y haga clic en Pegar.\n- ingresando las coordenadas manualmente en el formato: (x1, y1), (x2, y2), ..."
+             },
+             "text": {
+              "t": "str",
+              "v": "Añadir"
+             },
+             "icon": {
+              "t": "QIcon",
+              "v": ":/images/plus16.png"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QPushButton",
+            "py": "FCButton",
+            "name": "delete_drill_point_button",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Eliminar la última tupla de coordenadas en la lista."
+             },
+             "text": {
+              "t": "str",
+              "v": "Eliminar último"
+             },
+             "icon": {
+              "t": "QIcon",
+              "v": ":/images/trash32.png"
+             }
+            }
+           }
+          }
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "create_alignment_hole_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Crea un objeto Excellon que contiene el\nagujeros de alineación especificados y su espejo\nimágenes."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Crear objeto Excellon"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/drill32.png"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "reset_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Restablecerá los parámetros de la herramienta."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Restablecer la Herramienta"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/reset32.png"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "DblSidedToolUI"
+}

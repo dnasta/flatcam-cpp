@@ -16,6 +16,8 @@ add_library(flatcam_gui STATIC
     tools/ClearingTools.cpp
     tools/PaintTool.cpp
     tools/NccTool.cpp
+    tools/DblSidedTool.cpp
+    generated/DblSidedToolUIBase.cpp
     objects/GeometryObject.cpp
     objects/CNCJobObject.cpp
     generated/MainGUIBase.cpp

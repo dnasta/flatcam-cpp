@@ -21,6 +21,7 @@
 #include "gui/objects/CNCJobObject.h"
 #include "gui/objects/GeometryObject.h"
 #include "tools/CutOut.h"
+#include "tools/DoubleSided.h"
 #include <QFile>
 #include <QMimeData>
 #include <QDropEvent>
@@ -753,4 +754,89 @@ TEST(GuiApp, FlipSelectedObjectsAroundTheirCommonCenter) {
     const flatcam::BoundingBox after = cu->gerber().bounds();
     EXPECT_NEAR(after.ymin, before.ymin, 1e-9);
     EXPECT_NEAR(after.ymax, before.ymax, 1e-9);
+}
+
+TEST(GuiDblSided, MirrorAndAlignmentDrills) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    auto* cu = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "B_Cu.gbr")));
+    auto* drl = static_cast<ExcellonObject*>(app.openByExtension(QString::fromStdString(dir + "PTH.drl")));
+    ASSERT_TRUE(edge && cu && drl);
+    DblSidedTool* t = app.dblsidedTool;
+    app.ui()->dblsided_btn->trigger();
+    EXPECT_EQ(app.ui()->tool_scroll_area->widget(), t);
+    // De fábrica: eje X, ubicación "Punto", diámetro 3,125; el combo muestra los Gerber.
+    EXPECT_EQ(t->mirror_axis->value().toString(), "X");
+    EXPECT_EQ(t->axis_location->value().toString(), "point");
+    EXPECT_DOUBLE_EQ(t->drill_dia->value(), 3.125);
+    EXPECT_EQ(t->object_combo->count(), 2);
+    EXPECT_FALSE(t->box_combo->isVisibleTo(t));  // solo con la ubicación "Caja"
+    EXPECT_TRUE(t->point_entry->isVisibleTo(t));
+
+    // Sin punto: aviso. Con (0, 0) y eje Y se refleja B_Cu como en los .nc del usuario.
+    t->object_combo->setValue(cu->name());
+    EXPECT_FALSE(t->mirrorObject());
+    t->point_entry->setText("(0, 0)");
+    EXPECT_EQ(t->align_ref_label_val->text(), "(0, 0)");
+    t->mirror_axis->setValue("Y");
+    t->mirror_button->click();
+    flatcam::Gerber ref;
+    ASSERT_TRUE(ref.parseFile(dir + "B_Cu.gbr"));
+    ref.mirror(flatcam::Axis::Y, {0, 0});
+    EXPECT_NEAR(cu->gerber().bounds().xmin, ref.bounds().xmin, 1e-9);
+    EXPECT_NEAR(cu->gerber().bounds().xmax, ref.bounds().xmax, 1e-9);
+
+    // Ubicación "Caja": el centro del contorno (x = 0), así que reflejar de nuevo deja B_Cu como estaba.
+    t->axis_location->setValue("box");
+    EXPECT_TRUE(t->box_combo->isVisibleTo(t));
+    EXPECT_FALSE(t->point_entry->isVisibleTo(t));
+    EXPECT_EQ(t->align_ref_label_val->text(), "Box centroid");
+    t->box_combo->setValue(edge->name());
+    ASSERT_TRUE(t->mirrorObject());
+    flatcam::Gerber orig;
+    ASSERT_TRUE(orig.parseFile(dir + "B_Cu.gbr"));
+    EXPECT_NEAR(cu->gerber().bounds().xmin, orig.bounds().xmin, 1e-6);
+
+    // Límites de lo elegido -> centro -> punto.
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(edge));
+    t->calculate_bb_button->click();
+    EXPECT_EQ(t->axis_location->value().toString(), "point");
+    EXPECT_NEAR(t->xmin_entry->value(), edge->bounds().left(), 1e-4);
+    EXPECT_EQ(t->point_entry->text(), t->center_entry->text());
+    t->xmax_btn->click();
+    EXPECT_TRUE(t->point_entry->text().startsWith(QString("(%1,").arg(QString::number(edge->bounds().right(), 'f', 4))));
+
+    // "Encajar en el agujero": un clic dentro de un taladro pone su centro como punto.
+    t->axis_location->setValue("hole");
+    t->exc_combo->setValue(drl->name());
+    t->pick_hole_button->click();
+    const flatcam::Point2D hole = drl->excellon().drillTools().begin()->second.drills.front();
+    Q_EMIT app.ui()->plotCanvas()->mouseClicked(QPointF(hole.x + 0.05, hole.y - 0.05), Qt::LeftButton);
+    EXPECT_EQ(t->axis_location->value().toString(), "point");
+    EXPECT_EQ(t->point_entry->text(), QString("(%1, %2)").arg(QString::number(hole.x, 'f', 4), QString::number(hole.y, 'f', 4)));
+    Q_EMIT app.ui()->plotCanvas()->mouseClicked(QPointF(0, 0), Qt::RightButton);  // cancela la elección
+
+    // Agujeros de alineación del Alinea del usuario: (-38, 39.5) y (38, 39.5) con eje X por el origen -> 4 agujeros,
+    // cada uno seguido de su reflejo, iguales a los del núcleo.
+    t->setToolUi();
+    t->point_entry->setText("(0, 0)");
+    t->alignment_holes->setText("(-38, 39.5), (38, 39.5)");
+    t->drill_dia->setValue(3.0);
+    auto* al = dynamic_cast<ExcellonObject*>(t->createAlignmentHoles());
+    ASSERT_NE(al, nullptr);
+    EXPECT_EQ(al->name(), tr_("Alignment Drills"));
+    const flatcam::Excellon expected =
+        flatcam::DoubleSided::alignmentExcellon({{-38, 39.5}, {38, 39.5}}, flatcam::Axis::X, {0, 0}, 3.0);
+    ASSERT_EQ(al->excellon().drillTools().size(), 1u);
+    EXPECT_EQ(al->excellon().drillTools().at(1).drills, expected.drillTools().at(1).drills);
+    EXPECT_EQ(al->excellon().drillTools().at(1).drills.size(), 4u);
+    EXPECT_DOUBLE_EQ(al->excellon().drillTools().at(1).tooldia, 3.0);
+    // Los botones de agregar usan el último clic en el canvas.
+    Q_EMIT app.ui()->plotCanvas()->mouseClicked(QPointF(1.5, -2.25), Qt::LeftButton);
+    t->add_drill_point_button->click();
+    t->add_drill_point_button->click();
+    EXPECT_EQ(t->alignment_holes->text(), "(1.5000, -2.2500),(1.5000, -2.2500),");
+    t->delete_drill_point_button->click();
+    EXPECT_EQ(t->alignment_holes->text(), "(1.5000, -2.2500),");
 }

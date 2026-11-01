@@ -126,6 +126,17 @@ public:
     PaintTool* paintTool;        ///< Panel de pintura.
     DrillingTool* drillingTool;  ///< Panel de perforación.
     CutOutTool* cutoutTool;      ///< Panel de corte.
+    DblSidedTool* dblsidedTool;  ///< Panel de PCB a 2 caras.
+
+    /** @brief Posición del último clic izquierdo en el canvas (`app.pos`). @return La posición en mm. */
+    QPointF lastClickPosition() const { return lastClick_; }
+
+    /**
+     * @brief Un objeto cambió su geometría (`object_changed` + `plot`): se vuelve a dibujar y, si está a la vista, se
+     * recargan sus Propiedades.
+     * @param obj Objeto.
+     */
+    void objectChanged(FlatCAMObj* obj);
 
 protected:
     /** @brief Atajos de teclado de la ventana y arrastrar y soltar archivos. @param obj Objeto. @param ev Evento. @return Si se consumió. */
@@ -140,6 +151,7 @@ private:
     QWidget* defaultProperties_{nullptr};  ///< Panel de Propiedades sin objeto (`setup_default_properties_tab`).
     ObjectCollection* collection_;
     QString lastFolder_;
+    QPointF lastClick_{0.0, 0.0};
     QString lastGerberFilter_;
     QString lastExcellonFilter_;
 };

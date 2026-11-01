@@ -86,7 +86,8 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     paintTool = new PaintTool(this, ui_.get());
     drillingTool = new DrillingTool(this, ui_.get());
     cutoutTool = new CutOutTool(this, ui_.get());
-    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool}) w->hide();
+    dblsidedTool = new DblSidedTool(this, ui_.get());
+    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool}) w->hide();
     connectSignals();
 }
 
@@ -158,6 +159,15 @@ void App::connectSignals() {
     // Las teclas en el árbol del Proyecto van a los atajos de la ventana (view.keyPressed -> ui.keyPressEvent).
     connect(ui_->collection_view, &KeySensitiveListView::keyPressed, this,
             [this](int key) { handleKey(key, QApplication::keyboardModifiers()); });
+    for (QAction* a : {ui_->dblsidedtool_menuAction, ui_->dblsided_btn})
+        connect(a, &QAction::triggered, this, [this] {
+            runTool(dblsidedTool, DblSidedTool::info());
+            dblsidedTool->setToolUi();
+        });
+    // app.pos: el último clic izquierdo en el canvas.
+    connect(ui_->plotCanvas(), &PlotCanvas::mouseClicked, this, [this](QPointF w, Qt::MouseButton b) {
+        if (b == Qt::LeftButton) lastClick_ = w;
+    });
     // Opciones -> Voltear en el eje X / Y (on_flipx refleja con mirror('Y'), on_flipy con mirror('X')).
     connect(ui_->menuoptions_transform_flipx, &QAction::triggered, this, [this] { flip(Axis::Y); });
     connect(ui_->menuoptions_transform_flipy, &QAction::triggered, this, [this] { flip(Axis::X); });
@@ -250,6 +260,11 @@ FlatCAMObj* App::openByExtension(const QString& filename) {
     return nullptr;
 }
 
+void App::objectChanged(FlatCAMObj* obj) {
+    ui_->plotCanvas()->setLayer(obj->id(), obj->plotData());
+    if (obj == activeObject()) showProperties(obj);  // las tablas y los límites cambiaron
+}
+
 std::vector<FlatCAMObj*> App::selectedObjects() const {
     std::vector<FlatCAMObj*> out;
     QModelIndexList rows = ui_->collection_view->selectionModel()->selectedIndexes();
@@ -276,9 +291,8 @@ bool App::flip(Axis axis) {
             ui_->inform(QString("[ERROR_NOTCL] %1: %2.").arg(tr_("Action was not executed"), o->name()));
             return false;
         }
-        ui_->plotCanvas()->setLayer(o->id(), o->plotData());
+        objectChanged(o);
     }
-    showProperties(activeObject());  // las tablas y los límites cambiaron
     ui_->inform(QString("[success] %1.").arg(axis == Axis::Y ? tr_("Flip on X axis done") : tr_("Flip on Y axis done")));
     return true;
 }

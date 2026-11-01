@@ -6,3 +6,4 @@ NccToolUI
 PaintToolUI
 DrillingToolUI
 CutOutToolUI
+DblSidedToolUI
