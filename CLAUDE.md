@@ -15,7 +15,7 @@ máquina del usuario.
 
 **Lo que hay que saber para retomar (el detalle está en `AGENTS.md`, sección 12).**
 
-- **Tests:** 535 (509 del núcleo + 25 de la GUI corren siempre; 1 lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
+- **Tests:** 536 (509 del núcleo + 26 de la GUI corren siempre; 1 lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
   y Qt 6.12 en el Mac del usuario (M4, AppleClang). micromamba: `old` (Shapely 1.8.4, GEOS 3.11, PyQt5 5.15, para oráculos y para
   volcar la interfaz original), `sh2`, `geos312`, `geos311` (`AGENTS.md`, secciones 6 y 12.4).
 - **Hecho (fases 1, 2 y 3 completas):** parsers, transformaciones, postprocesadores, G-code de taladrado y de geometrías, CutOut,
@@ -57,5 +57,7 @@ máquina del usuario.
   liblzma pasa a ser dependencia. **Guardar proyectos** hecho; el FlatCAM original abre lo que guarda el port
   (`tests/tools/check_project_in_original.py`). **Todo lo acordado para la fase 4 está hecho.** Decisión del usuario:
   al reabrir un proyecto el port **reconstruye el código de inicio** de los CNC Job (el original lo pierde); los dos CNC Job
-  del proyecto real se exportan idénticos a sus `.nc` (`AGENTS.md` 11.13). Pendientes menores: Paint/NCC con semilla y líneas, resto de Paint/NCC, selección por área,
+  del proyecto real se exportan idénticos a sus `.nc` (`AGENTS.md` 11.13). **En curso (pedido del usuario, en orden):**
+  (1) ~~menú contextual del árbol del Proyecto~~ (hecho); (2) proyectos recientes; (3) Paint/NCC/Isolation: área y polígono
+  con el mouse, métodos Semilla y Líneas, mecanizado de resto. Pendientes menores: Paint/NCC con semilla y líneas, resto de Paint/NCC, selección por área,
   verificación de diámetro seguro (`AGENTS.md`, sección 11).

@@ -7,6 +7,7 @@ add_library(flatcam_gui STATIC
     PlotCanvas.cpp
     MainGUI.cpp
     App.cpp
+    AppProjectMenu.cpp
     ProjectIO.cpp
     objects/FlatCAMObj.cpp
     objects/ObjectCollection.cpp

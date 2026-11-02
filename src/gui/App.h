@@ -81,6 +81,45 @@ public:
     /** @brief Pregunta dónde guardar el proyecto (`on_file_saveprojectas`). */
     void onFileSaveProjectAs();
 
+    /**
+     * @brief Borra los objetos elegidos (`on_delete`).
+     * @param force Si es `false`, pregunta antes (`global_delete_confirmation`).
+     * @return `true` si se borró algo.
+     */
+    bool deleteSelected(bool force = false);
+
+    /** @brief Copia los Gerber, Excellon y Geometrías elegidos como `<nombre>_copy` (`on_copy_command`). @return Las copias. */
+    std::vector<FlatCAMObj*> copySelected();
+
+    /** @brief Muestra u oculta los objetos elegidos (`on_enable_sel_plots` / `on_disable_sel_plots`). @param on Mostrar. */
+    void setSelectedPlots(bool on);
+
+    /**
+     * @brief Cambia el color de los objetos elegidos (`on_set_color_action_triggered`).
+     * @param action `Red`, `Blue`, `Yellow`, `Green`, `Purple`, `Brown`, `White`, `Black`, `Custom`, `Opacity` o `Default`.
+     */
+    void setSelectedColor(const QString& action);
+
+    /** @brief Muestra el texto fuente del objeto en una pestaña del área de dibujo (`on_view_source`). @param obj Objeto. */
+    void viewSource(FlatCAMObj* obj);
+
+    /** @brief Guarda el objeto activo según su tipo (`on_project_context_save`). */
+    void saveSelected();
+
+    /** @brief Ajusta las acciones del menú contextual a lo elegido (`on_menu_request`). */
+    void updateProjectMenu();
+
+    QAction* menuProjectEnable{nullptr};       ///< "Habilitar Parcela".
+    QAction* menuProjectDisable{nullptr};      ///< "Desactivar parcela".
+    QMenu* menuProjectColor{nullptr};          ///< Submenú "Establecer color".
+    QAction* menuProjectGenerateCnc{nullptr};  ///< "Crear CNCJob".
+    QAction* menuProjectViewSource{nullptr};   ///< "Ver fuente".
+    QAction* menuProjectEdit{nullptr};         ///< "Editar" (los editores no están en el port).
+    QAction* menuProjectCopy{nullptr};         ///< "Copiar".
+    QAction* menuProjectDelete{nullptr};       ///< "Borrar".
+    QAction* menuProjectSave{nullptr};         ///< "Guardar".
+    QAction* menuProjectProperties{nullptr};   ///< "Propiedades".
+
     /** @brief Quita todos los objetos (`on_file_new` sin preguntar). */
     void clearProject();
 
@@ -175,6 +214,7 @@ protected:
 
 private:
     void connectSignals();
+    void setupProjectMenu();
     bool handleKey(int key, Qt::KeyboardModifiers modifiers);
     QString lastFolder() const;
 
@@ -183,6 +223,7 @@ private:
     ObjectCollection* collection_;
     QString lastFolder_;
     QString projectFilename_;
+    class QMenu* menuProject_{nullptr};  ///< `menuproject`: menú contextual de la pestaña Proyecto.
     JsonValue projectOptions_;  ///< Opciones del proyecto abierto (`options`), para volver a guardarlas.
     QPointF lastClick_{0.0, 0.0};
     QString lastGerberFilter_;

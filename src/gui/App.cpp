@@ -95,6 +95,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
                                                       isolationTool})
         w->hide();
     connectSignals();
+    setupProjectMenu();
 }
 
 App::~App() {
@@ -493,6 +494,18 @@ void App::showProperties(FlatCAMObj* obj) {
         gui->onGenerateCnc = [this, geo, gui] { generateCncJob(geo, gui->toolsForCnc()); };
     }
     area->setWidget(panel);
+    // FlatCAMObj.set_ui: Enter en el campo Nombre renombra el objeto (on_name_activate, sin mensaje).
+    if (obj && !panel->property("nameConnected").toBool()) {
+        FCEntry* entry = nullptr;
+        if (auto* p = qobject_cast<GerberObjectUI*>(panel)) entry = p->name_entry;
+        else if (auto* p2 = qobject_cast<ExcellonObjectUI*>(panel)) entry = p2->name_entry;
+        else if (auto* p3 = qobject_cast<GeometryObjectUI*>(panel)) entry = p3->name_entry;
+        else if (auto* p4 = qobject_cast<CNCObjectUI*>(panel)) entry = p4->name_entry;
+        if (entry) {
+            connect(entry, &QLineEdit::returnPressed, this, [this, obj, entry] { collection_->rename(obj, entry->text()); });
+            panel->setProperty("nameConnected", true);
+        }
+    }
 }
 
 bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
@@ -505,6 +518,7 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
         case Qt::Key_1: ui_->notebook->setCurrentWidget(ui_->project_tab); return true;
         case Qt::Key_2: ui_->notebook->setCurrentWidget(ui_->properties_tab); return true;
         case Qt::Key_3: ui_->notebook->setCurrentWidget(ui_->tool_tab); return true;
+        case Qt::Key_Delete: deleteSelected(); return true;  // on_delete_keypress
         default: return false;
     }
 }
