@@ -42,6 +42,15 @@ public:
      */
     void inform(const QString& msg);
 
+    /**
+     * @brief Ajusta una posición a la grilla si está activo "Ajustar a la grilla" (`App.grid_status` y
+     * `AppGeoEditor.snap` con solo la grilla): `round(x / gx) * gx` con el redondeo de Python (al par en los empates);
+     * con "enlazar" la Y usa la grilla X; una grilla 0 no ajusta.
+     * @param p Posición.
+     * @return La posición ajustada.
+     */
+    QPointF snapToGrid(const QPointF& p) const;
+
 private:
     void updateCoordinates(QPointF world);
     void connectSignals();

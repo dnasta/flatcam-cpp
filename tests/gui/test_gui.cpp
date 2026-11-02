@@ -1574,3 +1574,47 @@ TEST(GuiNcc, OptimalToolDiameter) {
     iso->find_optimal_button->click();
     EXPECT_DOUBLE_EQ(iso->new_tooldia_entry->value(), 0.1994);
 }
+
+TEST(GuiCanvas, GridSnapLikeTheOriginal) {
+    App app;
+    MainGUI* ui = app.ui();
+    // De fábrica: ajuste activo, grilla de 1,0 enlazada.
+    ASSERT_TRUE(ui->grid_snap_btn->isChecked());
+    EXPECT_EQ(ui->snapToGrid({1.4, -2.6}), QPointF(1.0, -3.0));
+    EXPECT_EQ(ui->snapToGrid({2.5, 0.5}), QPointF(2.0, 0.0));  // round() de Python: al par en los empates
+    // Con "enlazar", la Y copia la X; sin enlace cada una la suya.
+    ui->grid_gap_x_entry->setText("0.25");
+    EXPECT_EQ(ui->grid_gap_y_entry->text(), "0.2500");
+    EXPECT_EQ(ui->snapToGrid({1.13, 1.13}), QPointF(1.25, 1.25));
+    ui->grid_gap_link_cb->setChecked(false);
+    ui->grid_gap_y_entry->setText("0");
+    EXPECT_EQ(ui->snapToGrid({1.13, 1.13}), QPointF(1.25, 1.13));  // grilla 0: no ajusta
+    // Las señales del canvas salen ajustadas.
+    ui->grid_gap_link_cb->setChecked(true);
+    ui->grid_gap_x_entry->setText("1.0");
+    PlotCanvas* canvas = ui->plotCanvas();
+    canvas->resize(400, 300);
+    QPointF released;
+    QObject::connect(canvas, &PlotCanvas::mouseReleased, [&](QPointF w, Qt::MouseButton, bool) { released = w; });
+    const QPointF pixel = canvas->toPixel({3.3, 4.6});
+    QMouseEvent press(QEvent::MouseButtonPress, pixel, canvas->mapToGlobal(pixel), Qt::LeftButton, Qt::LeftButton,
+                      Qt::NoModifier);
+    QMouseEvent release(QEvent::MouseButtonRelease, pixel, canvas->mapToGlobal(pixel), Qt::LeftButton, Qt::NoButton,
+                        Qt::NoModifier);
+    QApplication::sendEvent(canvas, &press);
+    QApplication::sendEvent(canvas, &release);
+    EXPECT_NEAR(released.x(), 3.0, 1e-12);
+    EXPECT_NEAR(released.y(), 5.0, 1e-12);
+    // Sin ajuste, la posición tal cual.
+    ui->grid_snap_btn->trigger();
+    QApplication::sendEvent(canvas, &press);
+    QApplication::sendEvent(canvas, &release);
+    EXPECT_NEAR(released.x(), 3.3, 1e-6);
+    // Elegir polígonos apaga el ajuste y lo restaura al terminar.
+    ui->grid_snap_btn->trigger();
+    ASSERT_TRUE(ui->grid_snap_btn->isChecked());
+    app.picker()->start(CanvasPicker::Mode::PickPolygons, {}, [](const flatcam::ShapeList&) {});
+    EXPECT_FALSE(ui->grid_snap_btn->isChecked());
+    app.picker()->cancel();
+    EXPECT_TRUE(ui->grid_snap_btn->isChecked());
+}
