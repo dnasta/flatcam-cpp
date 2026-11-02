@@ -4,6 +4,7 @@
  */
 #pragma once
 
+#include <optional>
 #include <string>
 
 #include "cam/PolygonClearing.h"
@@ -21,6 +22,9 @@ struct NccOptions {
     int stepsPerCircle{64};   ///< Segmentos por circunferencia (`gerber_circle_steps`).
     PolygonClearing::Method method{PolygonClearing::Method::Standard};  ///< Método (`tools_ncc_method`).
     bool contour{true};       ///< Recorrer el contorno en Semilla y Líneas (`tools_ncc_contour`).
+    /// Región a limpiar ya con el margen (selección por área o por objeto de referencia; ver @ref Ncc::areaRegion y
+    /// @ref Ncc::referenceRegion). Si falta, se usa la envolvente del cobre agrandada el margen ("Sí mismo").
+    std::optional<Shape> region;
 };
 
 /** @brief Una herramienta de la limpieza de resto (`tools_ncc_*` de su `data`). */
@@ -48,6 +52,28 @@ public:
      * @throws GeometryError si GEOS falla.
      */
     static ShapeList emptyArea(const ShapeList& solidGeometry, const NccOptions& options);
+
+    /**
+     * @brief Región de la selección por área (`calculate_bounding_box` y `apply_margin_to_bounding_box` con
+     * `ncc_select = 1`): cada zona agrandada el margen con esquinas en ingletes, y todo unido.
+     * @param areas Zonas elegidas.
+     * @param margin Margen.
+     * @return La región.
+     */
+    static Shape areaRegion(const ShapeList& areas, double margin);
+
+    /**
+     * @brief Región de la selección por objeto de referencia (`ncc_select = 2`): con un Gerber, la intersección de las
+     * envolventes convexas del cobre y de la referencia, agrandada el margen; con una Geometría, cada figura de la
+     * referencia agrandada el margen y todo unido.
+     * @param copper Cobre del objeto a limpiar.
+     * @param reference Figuras del objeto de referencia.
+     * @param referenceIsGerber Si la referencia es un Gerber (si no, una Geometría).
+     * @param margin Margen.
+     * @return La región.
+     */
+    static Shape referenceRegion(const ShapeList& copper, const ShapeList& reference, bool referenceIsGerber,
+                                 double margin);
 
     /**
      * @brief Limpia todo el cobre sobrante.

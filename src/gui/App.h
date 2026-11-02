@@ -218,6 +218,9 @@ public:
     DblSidedTool* dblsidedTool;  ///< Panel de PCB a 2 caras.
     IsolationTool* isolationTool;  ///< Panel de aislamiento.
 
+    /** @brief Selección interactiva de zonas y polígonos en el canvas. @return El selector. */
+    class CanvasPicker* picker() const { return picker_; }
+
     /** @brief Posición del último clic izquierdo en el canvas (`app.pos`). @return La posición en mm. */
     QPointF lastClickPosition() const { return lastClick_; }
 
@@ -243,7 +246,8 @@ private:
     ObjectCollection* collection_;
     QString lastFolder_;
     QString projectFilename_;
-    QString dataPath_;  ///< Carpeta de datos elegida (vacía: la de la aplicación).
+    QString dataPath_;
+    class CanvasPicker* picker_{nullptr};  ///< Carpeta de datos elegida (vacía: la de la aplicación).
     class QMenu* menuProject_{nullptr};  ///< `menuproject`: menú contextual de la pestaña Proyecto.
     JsonValue projectOptions_;  ///< Opciones del proyecto abierto (`options`), para volver a guardarlas.
     QPointF lastClick_{0.0, 0.0};

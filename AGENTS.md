@@ -72,7 +72,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 558 tests (529 del núcleo y 28 de la GUI pasan; 1, la lenta del NCC
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 559 tests (529 del núcleo y 29 de la GUI pasan; 1, la lenta del NCC
 del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -135,6 +135,8 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   resources/factory_defaults.json  Opciones de fábrica de FlatCAM 2024.4 (tools/gui_dump/extract_defaults.py)
   AppRecent.cpp          Archivos y proyectos recientes (register_recent / setup_recent_items): recent.json y
                          recent_projects.json en la carpeta de datos (QStandardPaths AppDataLocation; en los tests, test mode)
+  CanvasPicker.*         Elegir con el mouse: zonas (rectángulos de dos clics o polígonos punto a punto) o polígonos
+                         (marcar/desmarcar); clic derecho termina, Escape cancela; capa auxiliar de selección encima de todo
   AppProjectMenu.cpp     Menú contextual del árbol del Proyecto (menuproject): mostrar/ocultar, color, crear CNC Job, ver
                          fuente, copiar, borrar (también Supr), guardar el objeto, propiedades
   App.*                  La aplicación (partes de app_Main.App, AppIO y AppObject): abrir Gerber/Excellon, crear, dibujar, encuadrar
@@ -533,8 +535,8 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
 8. **Empates de `rtree.nearest`**: ~15 empates exactos en 5.509 consultas del NCC; el `rtree` real elige a veces la línea insertada
    antes y a veces la de después (depende de la estructura de su árbol). `EndpointStorage` elige la primera insertada. Cambia 1 o 2
    uniones de ~670. Emularlo exigiría portar el R*-tree de libspatialindex: no vale la pena salvo que el usuario lo pida.
-9. **Métodos que faltan en Paint y NCC**: ~~semilla, líneas, combinado, mecanizado de resto~~ (hechos); faltan selección por área
-   y por objeto de referencia, aislamiento previo (`isotooldia`), "Líneas láser" de Paint. El usuario solo
+9. **Métodos que faltan en Paint y NCC**: ~~semilla, líneas, combinado, mecanizado de resto, selección por área y por objeto de
+   referencia~~ (hechos); faltan aislamiento previo (`isotooldia`, operación "Aislamiento" de NCC) y "Líneas láser" de Paint. El usuario solo
    usa el método estándar, "Él mismo" y una herramienta.
 10. **Variante del G-code**: por defecto `GcodeFlavor::FlatCAM8_994` (decisión del usuario, y es lo que el usuario hace a mano con
     los archivos de láser de la 2024.4). Hay tres: `FlatCAM2024_4` (fuente), `FlatCAM2024_4Release` (ejecutable) y `FlatCAM8_994`. El `Alinea.nc` de la 8.994 tiene además
@@ -597,8 +599,12 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     Paint/NCC/Isolation: ~~métodos Semilla, Líneas y Combo~~ y ~~mecanizado de resto de Paint y NCC~~ (hechos:
     `PolygonClearing::clearPolygonSeed/Lines/clear`, `Paint::paintRest`, `Ncc::clearCopperRest`; oráculos
     `oracle_clearing_methods.py` y `oracle_rest_machining.py`: exactos con GEOS 3.11 y 3.12; con 3.15 la semilla parte los
-    círculos en otros puntos y el resto de NCC cambia alguna unión, con los vértices a menos de 1 micra). Falta: área y
-    polígono con el mouse. "Líneas láser" de Paint y la operación "Aislamiento" de NCC siguen sin portar. **Corrección:** se
+    círculos en otros puntos y el resto de NCC cambia alguna unión, con los vértices a menos de 1 micra). ~~Área y
+    polígono con el mouse~~ (hecho, `CanvasPicker`, con `PlotCanvas::mouseReleased` que indica si hubo arrastre): Paint
+    (polígono, área, objeto de referencia como `paint_poly_ref`), NCC (área y objeto de referencia: `Ncc::areaRegion`,
+    `referenceRegion`), Isolation (área → `limitedArea`; polígono y, con "Interiores", los agujeros con diámetro negativo).
+    **Los tres puntos pedidos están hechos.** Siguen sin portar: "Líneas láser" de Paint, la operación "Aislamiento" de NCC,
+    la base de datos de herramientas, la verificación del diámetro seguro y el ajuste a la grilla de los clics. **Corrección:** se
     decía que había que cargar "las preferencias del usuario" porque los paneles mostraban 40 % y "Semilla" en vez de sus 80 % y
     "Estándar": es falso. Las opciones guardadas en su proyecto (`luz_de_noche.params.json`, `options`) son las de fábrica; los
     valores de cada trabajo los escribe a mano. Un sistema de preferencias propio queda como mejora, no como requisito. Antes
@@ -614,7 +620,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **558 tests** (530 del núcleo y 28 de la GUI): 557 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
+- **559 tests** (530 del núcleo y 29 de la GUI): 558 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
   oráculos en Python (Shapely 1.8.4) y, donde existe, contra el `.nc` real del usuario (FlatCAM 8.994):
@@ -641,7 +647,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 558 tests, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 559 tests, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.

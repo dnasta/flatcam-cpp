@@ -98,7 +98,8 @@ public:
 
     /**
      * @brief Agrega o reemplaza lo que se dibuja de un objeto.
-     * @param id Identificador del objeto (lo elige quien llama).
+     * @param id Identificador del objeto (lo elige quien llama). Los negativos son capas auxiliares (por ejemplo, la
+     *        selección de zonas): se dibujan encima de todo y no cuentan para encuadrar.
      * @param data Triángulos, segmentos y colores.
      */
     void setLayer(int id, PlotLayerData data);
@@ -132,6 +133,13 @@ Q_SIGNALS:
     void mouseMoved(QPointF world);
     /** @brief Clic en la vista. @param world Posición en mm. @param button Botón. */
     void mouseClicked(QPointF world, Qt::MouseButton button);
+    /**
+     * @brief Se soltó un botón (`mouse_release` de vispy).
+     * @param world Posición en mm.
+     * @param button Botón.
+     * @param dragged Si hubo arrastre (con el botón derecho, para desplazar la vista) desde que se presionó.
+     */
+    void mouseReleased(QPointF world, Qt::MouseButton button, bool dragged);
 
 protected:
     /** @brief Prepara OpenGL. */
@@ -176,6 +184,7 @@ private:
     bool gridEnabled_{true};      // global_grid_lines
     bool panning_{false};
     QPointF lastPan_;
+    QPointF pressPos_;
     bool cursorInside_{false};
     QPointF cursorWorld_{0, 0};
     QPointF lastClick_{0, 0};

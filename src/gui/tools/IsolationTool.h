@@ -14,6 +14,7 @@ namespace flatcam::gui {
 
 class App;
 class FlatCAMObj;
+class GerberObject;
 
 /**
  * @brief Panel y lógica de Isolation, sobre el núcleo `flatcam::Isolation`.
@@ -23,8 +24,11 @@ class FlatCAMObj;
  * mecanizado de resto), con una herramienta por diámetro; sin combinar, un objeto por pasada
  * (`<objeto>_<diámetro>[_ext|_int]_iso[N]`). En el nivel Básico se ven las mismas opciones que en el original.
  *
- * Desvíos conscientes: la selección por área y por polígono (que se hacen con el mouse en el canvas), la verificación
- * del diámetro seguro (solo informa), la base de datos de herramientas y el botón de buffer todavía no están.
+ * Selección "Todos", "Selección de área" y "Selección de polígono" (con el mouse en el canvas; con "Interiores", los
+ * agujeros) u "Objeto de referencia".
+ *
+ * Desvíos conscientes: la verificación del diámetro seguro (solo informa), la base de datos de herramientas y el botón de
+ * buffer todavía no están.
  */
 class IsolationTool : public IsolationToolUIBase {
     Q_OBJECT
@@ -41,6 +45,18 @@ public:
     /** @brief Aísla el objeto elegido (`on_iso_button_click` → `isolate`). @return Los objetos creados. */
     std::vector<FlatCAMObj*> isolate();
 
+    /**
+     * @brief Aísla con la selección ya resuelta (`isolate`).
+     * @param grb Gerber.
+     * @param ids Herramientas elegidas.
+     * @param geometry Figuras a aislar en lugar del cobre (polígonos elegidos u objeto de referencia), o nulo.
+     * @param limitedArea Zona a la que se recortan los recorridos (selección de área), o vacía.
+     * @param negativeDia Aislar hacia adentro (agujeros elegidos con "Interiores").
+     * @return Los objetos creados.
+     */
+    std::vector<FlatCAMObj*> runIsolation(GerberObject* grb, const std::vector<int>& ids, const ShapeList* geometry,
+                                          const ShapeList& limitedArea, bool negativeDia);
+
     /** @brief Herramientas de la tabla (`iso_tools`). @return El almacén. */
     const std::map<int, ClearingTool>& tools() const { return tools_; }
 
@@ -56,6 +72,7 @@ private:
     void formToStorage();
     void rebuild();
     void onRestMachiningCheck(bool state);
+    void onToggleReference();
 
     App* app_;
     std::map<int, ClearingTool> tools_;

@@ -21,6 +21,7 @@
 #include "gui/objects/CNCJobObject.h"
 #include "gui/objects/GeometryObject.h"
 #include "gui/ProjectIO.h"
+#include "gui/CanvasPicker.h"
 #include "tools/CutOut.h"
 #include "tools/DoubleSided.h"
 #include "tools/Isolation.h"
@@ -28,6 +29,7 @@
 #include "tools/Paint.h"
 #include <QFile>
 #include <QMimeData>
+#include <QKeyEvent>
 #include <QStandardPaths>
 #include <QPlainTextEdit>
 #include <QRegularExpression>
@@ -1297,4 +1299,136 @@ TEST(GuiClearingMethods, PaintAndNccMethodsAndRest) {
                                               common, nPerTool, left, err))
         << err;
     ASSERT_EQ(nrest->tools().size(), nPerTool.size());
+}
+
+TEST(GuiCanvasSelection, AreaPolygonAndReferenceSelections) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* logo = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Logo.gbr")));
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    ASSERT_TRUE(logo && edge);
+    PlotCanvas* canvas = app.ui()->plotCanvas();
+    auto click = [&](double x, double y, Qt::MouseButton b = Qt::LeftButton, bool dragged = false) {
+        Q_EMIT canvas->mouseReleased(QPointF(x, y), b, dragged);
+    };
+    const flatcam::ShapeList logoPolys = flatcam::Paint::flattenToPolygons(logo->gerber().solidGeometry());
+    ASSERT_GT(logoPolys.size(), 3u);
+    const flatcam::Point2D inside = logoPolys[0].representativePoint();
+
+    // ---- Paint, "Selección de polígono": marcar, desmarcar, marcar otra vez; el derecho pinta solo ese polígono.
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(logo));
+    app.ui()->paint_btn->trigger();
+    PaintTool* p = app.paintTool;
+    p->deltool_btn->click();
+    p->new_tooldia_entry->setValue(0.1);
+    p->add_newtool_button->click();
+    p->selectmethod_combo->setIndexValue(1);
+    EXPECT_FALSE(p->area_shape_radio->isVisibleTo(p));
+    EXPECT_EQ(p->paint(), nullptr);  // empieza a elegir
+    EXPECT_TRUE(app.picker()->active());
+    click(inside.x, inside.y);
+    click(inside.x, inside.y);                        // desmarca
+    click(-1000, -1000);                              // nada debajo
+    click(inside.x, inside.y);
+    click(inside.x, inside.y, Qt::RightButton, true);  // arrastre para desplazar: no termina
+    EXPECT_TRUE(app.picker()->active());
+    click(inside.x, inside.y, Qt::RightButton);
+    EXPECT_FALSE(app.picker()->active());
+    auto* one = dynamic_cast<GeometryObject*>(app.collection()->byName("luz de noche Pascual-Logo.gbr_mt_paint"));
+    ASSERT_NE(one, nullptr);
+    flatcam::PaintOptions po;
+    po.toolDia = 0.1;
+    po.overlap = 0.2;
+    flatcam::ShapeList expected;
+    std::string err;
+    ASSERT_TRUE(flatcam::Paint::paintAll({logoPolys[0]}, po, expected, err)) << err;
+    EXPECT_EQ(one->tools().begin()->second.solidGeometry.size(), expected.size());
+
+    // ---- Paint, "Selección de área" con rectángulos: dos clics por zona y el derecho termina.
+    p->selectmethod_combo->setIndexValue(2);
+    EXPECT_TRUE(p->area_shape_radio->isVisibleTo(p));
+    p->area_shape_radio->setValue("square");
+    p->paint();
+    const QRectF lb = logo->bounds();
+    click(lb.left() - 1, lb.top() - 1);
+    click(lb.center().x(), lb.bottom() + 1);
+    click(0, 0, Qt::RightButton);
+    auto* half = dynamic_cast<GeometryObject*>(app.collection()->byName("luz de noche Pascual-Logo.gbr_mt_paint_1"));
+    ASSERT_NE(half, nullptr);
+    EXPECT_LE(half->bounds().right(), lb.center().x() + 1e-6);
+
+    // ---- Escape cancela una selección en curso.
+    p->paint();
+    click(1, 1);
+    QKeyEvent esc(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+    QApplication::sendEvent(app.ui(), &esc);
+    EXPECT_FALSE(app.picker()->active());
+
+    // ---- NCC, "Selección de área" con un polígono dibujado punto por punto.
+    app.ui()->ncc_btn->trigger();
+    NccTool* n = app.nccTool;
+    n->tools_table->selectAll();
+    n->deltool_btn->click();
+    n->new_tooldia_entry->setValue(0.3);
+    n->add_newtool_button->click();
+    n->ncc_method_combo->setIndexValue(0);
+    n->select_combo->setIndexValue(1);
+    EXPECT_TRUE(n->area_shape_radio->isVisibleTo(n));
+    n->area_shape_radio->setValue("polygon");
+    n->object_combo->setValue(logo->name());
+    n->clearCopper();
+    const double cx = lb.center().x(), cy = lb.center().y();
+    click(cx - 4, cy - 4);
+    click(cx + 4, cy - 4);
+    click(cx + 4, cy + 4);
+    click(cx - 4, cy + 4, Qt::RightButton);  // cierra el polígono (con este punto)
+    EXPECT_TRUE(app.picker()->active());
+    click(0, 0, Qt::RightButton);  // termina
+    auto* ncc = dynamic_cast<GeometryObject*>(app.collection()->byName("luz de noche Pascual-Logo.gbr_ncc"));
+    ASSERT_NE(ncc, nullptr);
+    flatcam::NccOptions no;
+    no.toolDia = 0.3;
+    no.overlap = 0.4;
+    no.margin = 1.0;
+    no.region = flatcam::Ncc::areaRegion(
+        {flatcam::Shape::polygon({{cx - 4, cy - 4}, {cx + 4, cy - 4}, {cx + 4, cy + 4}, {cx - 4, cy + 4}})}, 1.0);
+    flatcam::ShapeList nccExpected;
+    ASSERT_TRUE(flatcam::Ncc::clearCopper(logo->gerber().solidGeometry(), no, nccExpected, err)) << err;
+    EXPECT_EQ(ncc->tools().begin()->second.solidGeometry.size(), nccExpected.size());
+
+    // ---- NCC, "Objeto de referencia": el contorno (Gerber) limita la región.
+    n->select_combo->setIndexValue(2);
+    EXPECT_TRUE(n->reference_combo->isVisibleTo(n));
+    n->reference_combo->setValue(edge->name());
+    EXPECT_NE(n->clearCopper(), nullptr);
+
+    // ---- Isolation, "Selección de polígono" y "Selección de área" sobre el Logo.
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(logo));
+    app.ui()->isolation_btn->trigger();
+    IsolationTool* iso = app.isolationTool;
+    iso->select_combo->setCurrentIndex(2);
+    EXPECT_TRUE(iso->poly_int_cb->isVisibleTo(iso));
+    iso->isolate();
+    click(inside.x, inside.y);
+    click(0, 0, Qt::RightButton);
+    auto* isoOne = dynamic_cast<GeometryObject*>(app.collection()->byName("luz de noche Pascual-Logo.gbr_iso_combined"));
+    ASSERT_NE(isoOne, nullptr);
+    flatcam::IsolationTool it;
+    it.toolDia = 0.1;
+    flatcam::IsolationOptions io;
+    flatcam::IsolationOutcome out;
+    const flatcam::ShapeList chosen{logoPolys[0]};
+    ASSERT_TRUE(flatcam::Isolation::isolate(logo->gerber().solidGeometry(), logo->gerber().followGeometry(), {it}, io, out,
+                                            err, &chosen));
+    EXPECT_EQ(isoOne->tools().begin()->second.solidGeometry.size(), out.sets.at(0).geometry.size());
+    iso->select_combo->setCurrentIndex(1);
+    EXPECT_FALSE(iso->rest_cb->isEnabled());
+    iso->area_shape_radio->setValue("square");
+    iso->isolate();
+    click(lb.left() - 1, lb.top() - 1);
+    click(lb.center().x(), lb.bottom() + 1);
+    click(0, 0, Qt::RightButton);
+    auto* isoArea = dynamic_cast<GeometryObject*>(app.collection()->byName("luz de noche Pascual-Logo.gbr_iso_combined_1"));
+    ASSERT_NE(isoArea, nullptr);
+    EXPECT_LE(isoArea->bounds().right(), lb.center().x() + 1e-6);
 }

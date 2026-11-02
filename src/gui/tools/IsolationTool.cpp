@@ -1,6 +1,7 @@
 #include "gui/tools/IsolationTool.h"
 
 #include "gui/App.h"
+#include "gui/CanvasPicker.h"
 #include "gui/Translation.h"
 #include "tools/Isolation.h"
 
@@ -22,6 +23,8 @@ IsolationTool::IsolationTool(App* app, QWidget* parent) : IsolationToolUIBase(pa
     connect(reset_button, &QPushButton::clicked, this, [this] { setToolUi(); });
     connect(order_radio, &RadioSet::activatedCustom, this, [this] { rebuild(); });
     connect(rest_cb, &QCheckBox::toggled, this, [this](bool on) { onRestMachiningCheck(on); });
+    connect(select_combo, &QComboBox::currentIndexChanged, this, [this] { onToggleReference(); });
+    connect(reference_combo_type, &QComboBox::currentIndexChanged, this, [this] { onToggleReference(); });
     connect(tools_table, &QTableWidget::itemSelectionChanged, this, [this] {
         if (!muted_) updateUi();
     });
@@ -78,6 +81,28 @@ void IsolationTool::setToolUi() {
     oldCombineState_ = true;
     addTool(0.1);  // tools_iso_tooldia
     onRestMachiningCheck(false);
+    onToggleReference();
+}
+
+void IsolationTool::onToggleReference() {
+    // on_toggle_reference: Todos, Selección de área, Selección de polígono u Objeto de referencia.
+    const int sel = select_combo->currentIndex();
+    for (QWidget* w : std::initializer_list<QWidget*>{reference_combo, reference_combo_type, reference_combo_type_label})
+        w->setVisible(sel == 3);
+    area_shape_label->setVisible(sel == 1);
+    area_shape_radio->setVisible(sel == 1);
+    poly_int_cb->setVisible(sel == 2);
+    if (sel == 1) {
+        rest_cb->setChecked(false);
+        rest_cb->setDisabled(true);
+    } else if (sel != 2) {
+        rest_cb->setDisabled(false);
+    }
+    const int t = reference_combo_type->indexValue();
+    const ObjectKind kind = t == 1 ? ObjectKind::Excellon : t == 2 ? ObjectKind::Geometry : ObjectKind::Gerber;
+    reference_combo->clear();
+    for (FlatCAMObj* o : app_->collection()->objects())
+        if (o->kind() == kind) reference_combo->addItem(o->name());
 }
 
 void IsolationTool::onRestMachiningCheck(bool state) {
@@ -192,10 +217,54 @@ std::vector<FlatCAMObj*> IsolationTool::isolate() {
         return created;
     }
     const int selection = select_combo->currentIndex();
-    if (selection == 1 || selection == 2) {
-        app_->ui()->inform("[WARNING_NOTCL] Todavía no están la selección por área ni por polígono.");
+    const QString grbName = grb->name();
+    if (selection == 1) {  // Selección de área: on_mouse_release -> isolate(limited_area=...)
+        app_->ui()->inform("[WARNING_NOTCL] " + tr_("Click the start point of the area."));
+        const auto mode = area_shape_radio->value().toString() == "square" ? CanvasPicker::Mode::Rectangles
+                                                                             : CanvasPicker::Mode::Polygons;
+        app_->picker()->start(mode, {}, [this, grbName, ids](const ShapeList& zones) {
+            if (auto* g = dynamic_cast<GerberObject*>(app_->collection()->byName(grbName)))
+                runIsolation(g, ids, nullptr, {Shape::unaryUnion(zones)}, false);
+        });
         return created;
     }
+    if (selection == 2) {  // Selección de polígono: on_poly_mouse_click_release -> isolate(geometry=...)
+        // Con "Interiores" se eligen los agujeros de los polígonos y se aíslan hacia adentro (negative_dia).
+        const bool interiors = poly_int_cb->isChecked();
+        ShapeList candidates;
+        for (const Shape& s : grb->gerber().solidGeometry()) {
+            for (const Shape& p : s.numParts() > 1 ? s.parts() : ShapeList{s}) {
+                if (p.type() != ShapeType::Polygon) continue;
+                if (!interiors) candidates.push_back(p);
+                else
+                    for (const Shape& h : p.interiors()) candidates.push_back(Shape::polygon(h.coordinates()));
+            }
+        }
+        app_->ui()->inform("[WARNING_NOTCL] " + tr_("Click on a polygon to isolate it."));
+        app_->picker()->start(CanvasPicker::Mode::PickPolygons, candidates,
+                              [this, grbName, ids, interiors](const ShapeList& polys) {
+                                  if (auto* g = dynamic_cast<GerberObject*>(app_->collection()->byName(grbName)))
+                                      runIsolation(g, ids, &polys, {}, interiors);
+                              });
+        return created;
+    }
+    ShapeList refGeometry;
+    const ShapeList* geometry = nullptr;
+    if (selection == 3) {  // objeto de referencia: el cobre menos la referencia
+        FlatCAMObj* ref = app_->collection()->byName(reference_combo->currentText());
+        ShapeList refShapes;
+        if (auto* g = dynamic_cast<GerberObject*>(ref)) refShapes = g->gerber().solidGeometry();
+        else if (auto* geo = dynamic_cast<GeometryObject*>(ref)) refShapes = geo->solidGeometry();
+        refGeometry = flatcam::Isolation::referenceGeometry(grb->gerber().solidGeometry(), refShapes);
+        geometry = &refGeometry;
+    }
+    return runIsolation(grb, ids, geometry, {}, false);
+}
+
+std::vector<FlatCAMObj*> IsolationTool::runIsolation(GerberObject* grb, const std::vector<int>& ids,
+                                                     const ShapeList* geometry, const ShapeList& limitedArea,
+                                                     bool negativeDia) {
+    std::vector<FlatCAMObj*> created;
     std::vector<flatcam::IsolationTool> isoTools;
     for (int id : ids) {
         const ClearingTool& t = tools_.at(id);
@@ -222,16 +291,8 @@ std::vector<FlatCAMObj*> IsolationTool::isolate() {
             else if (auto* geo = dynamic_cast<GeometryObject*>(ex)) o.exceptGeometry = geo->solidGeometry();
         }
     }
-    ShapeList refGeometry;
-    const ShapeList* geometry = nullptr;
-    if (selection == 3) {  // objeto de referencia: el cobre menos la referencia
-        FlatCAMObj* ref = app_->collection()->byName(reference_combo->currentText());
-        ShapeList refShapes;
-        if (auto* g = dynamic_cast<GerberObject*>(ref)) refShapes = g->gerber().solidGeometry();
-        else if (auto* geo = dynamic_cast<GeometryObject*>(ref)) refShapes = geo->solidGeometry();
-        refGeometry = flatcam::Isolation::referenceGeometry(grb->gerber().solidGeometry(), refShapes);
-        geometry = &refGeometry;
-    }
+    o.limitedArea = limitedArea;
+    o.negativeDia = negativeDia;
     IsolationOutcome out;
     std::string error;
     {

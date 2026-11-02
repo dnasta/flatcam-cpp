@@ -16,6 +16,7 @@
 #include "gui/Translation.h"
 #include "gui/objects/CNCJobObject.h"
 #include "gui/objects/GeometryObject.h"
+#include "gui/CanvasPicker.h"
 #include "gui/ProjectIO.h"
 #include "gui/tools/ClearingTools.h"
 #include "gui/objects/ObjectUIs.h"
@@ -94,6 +95,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool,
                                                       isolationTool})
         w->hide();
+    picker_ = new CanvasPicker(ui_.get(), this);
     connectSignals();
     setupProjectMenu();
     setupRecentItems();
@@ -524,6 +526,13 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
         case Qt::Key_2: ui_->notebook->setCurrentWidget(ui_->properties_tab); return true;
         case Qt::Key_3: ui_->notebook->setCurrentWidget(ui_->tool_tab); return true;
         case Qt::Key_Delete: deleteSelected(); return true;  // on_delete_keypress
+        case Qt::Key_Escape:
+            // on_key_press de las herramientas: Escape cancela la selección de zonas o polígonos.
+            if (picker_->cancel()) {
+                ui_->inform("[WARNING_NOTCL] " + tr_("Cancelled by user request."));
+                return true;
+            }
+            return false;
         default: return false;
     }
 }

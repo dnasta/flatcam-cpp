@@ -150,7 +150,7 @@ void PlotCanvas::removeLayer(int id) {
 std::optional<QRectF> PlotCanvas::layersBounds() const {
     std::optional<QRectF> b;
     for (const auto& [id, l] : layers_) {
-        if (!l.visible || l.data.bounds.isNull()) continue;
+        if (id < 0 || !l.visible || l.data.bounds.isNull()) continue;
         b = b ? b->united(l.data.bounds) : l.data.bounds;
     }
     return b;
@@ -203,9 +203,11 @@ void PlotCanvas::drawLayers(const QRectF& vr) {
     };
     std::vector<Layer*> seq;
     for (auto& [id, l] : layers_)
-        if (std::find(order_.begin(), order_.end(), id) == order_.end()) seq.push_back(&l);
+        if (id >= 0 && std::find(order_.begin(), order_.end(), id) == order_.end()) seq.push_back(&l);
     for (int id : order_)
         if (auto it = layers_.find(id); it != layers_.end()) seq.push_back(&it->second);
+    for (auto& [id, l] : layers_)
+        if (id < 0) seq.push_back(&l);  // capas auxiliares, encima de todo
     for (Layer* lp : seq) {
         Layer& l = *lp;
         if (l.dirty) {
@@ -353,6 +355,7 @@ void PlotCanvas::wheelEvent(QWheelEvent* event) {
 }
 
 void PlotCanvas::mousePressEvent(QMouseEvent* event) {
+    pressPos_ = event->position();
     if (event->button() == Qt::RightButton) {  // global_pan_button = 2 (botón derecho en vispy)
         panning_ = true;
         lastPan_ = event->position();
@@ -377,6 +380,8 @@ void PlotCanvas::mouseMoveEvent(QMouseEvent* event) {
 
 void PlotCanvas::mouseReleaseEvent(QMouseEvent* event) {
     if (event->button() == Qt::RightButton) panning_ = false;
+    const QPointF d = event->position() - pressPos_;
+    Q_EMIT mouseReleased(toWorld(event->position()), event->button(), std::hypot(d.x(), d.y()) > 3.0);
 }
 
 void PlotCanvas::leaveEvent(QEvent*) {
