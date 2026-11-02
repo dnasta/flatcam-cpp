@@ -26,6 +26,7 @@
 #include "tools/Isolation.h"
 #include <QFile>
 #include <QMimeData>
+#include <QStandardPaths>
 #include <QPlainTextEdit>
 #include <QRegularExpression>
 #include <QDropEvent>
@@ -358,6 +359,8 @@ int main(int argc, char** argv) {
     // Sin pantalla salvo que se pida otra plataforma (QT_QPA_PLATFORM=cocoa para mirar el canvas OpenGL).
     if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")) qputenv("QT_QPA_PLATFORM", "offscreen");
     QApplication app(argc, argv);
+    // Los recientes y demás datos de la aplicación van a una carpeta de prueba, no a la del usuario.
+    QStandardPaths::setTestModeEnabled(true);
     Q_INIT_RESOURCE(flatcam);
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
@@ -1178,4 +1181,47 @@ TEST(GuiProjectMenu, ContextMenuActions) {
     EXPECT_EQ(app.ui()->properties_scroll_area->widget()->objectName(), QString());  // panel vacío
     view->clearSelection();
     EXPECT_FALSE(app.deleteSelected(true));
+}
+
+TEST(GuiRecent, RecentProjectsAndFiles) {
+    QTemporaryDir data;
+    App app;
+    app.setDataPath(data.path());
+    // Vacíos: solo "Borrar ...".
+    ASSERT_EQ(app.ui()->recent_projects->actions().size(), 2);  // separador + borrar
+    EXPECT_EQ(app.ui()->recent_projects->actions().last()->text(), QString::fromUtf8("Borrar proyectos recientes"));
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/";
+    ASSERT_NE(app.openByExtension(QString::fromStdString(dir + "luz de noche Pascual-Logo.gbr")), nullptr);
+    ASSERT_NE(app.openByExtension(QString::fromStdString(dir + "luz de noche Pascual-PTH.drl")), nullptr);
+    ASSERT_TRUE(app.openProject(QString::fromStdString(dir + "luz_de_noche_reducido.FlatPrj")));
+    // Proyectos: el abierto; archivos: el último primero.
+    QList<QAction*> p = app.ui()->recent_projects->actions();
+    ASSERT_EQ(p.size(), 3);
+    EXPECT_EQ(p[0]->text(), "luz_de_noche_reducido.FlatPrj");
+    QList<QAction*> f = app.ui()->recent->actions();
+    ASSERT_EQ(f.size(), 4);
+    EXPECT_EQ(f[0]->text(), "luz de noche Pascual-PTH.drl");
+    EXPECT_EQ(f[1]->text(), "luz de noche Pascual-Logo.gbr");
+    // El archivo es el mismo JSON que escribe el original.
+    QFile json(data.filePath("recent.json"));
+    ASSERT_TRUE(json.open(QIODevice::ReadOnly));
+    EXPECT_TRUE(json.readAll().startsWith("[\n  {\n    \"filename\": "));
+    json.close();
+    // Repetir no duplica; elegir uno del menú lo abre.
+    app.openByExtension(QString::fromStdString(dir + "luz de noche Pascual-Logo.gbr"));
+    EXPECT_EQ(app.ui()->recent->actions().size(), 4);
+    app.clearProject();
+    app.ui()->recent->actions()[1]->trigger();
+    EXPECT_NE(app.collection()->byName("luz de noche Pascual-Logo.gbr"), nullptr);
+    app.ui()->recent_projects->actions()[0]->trigger();
+    EXPECT_EQ(app.collection()->objects().size(), 7u);
+    // Otra ventana (otra sesión) ve los mismos recientes.
+    App other;
+    other.setDataPath(data.path());
+    EXPECT_EQ(other.ui()->recent_projects->actions().size(), 3);
+    // Borrar.
+    app.ui()->recent_projects->actions().last()->trigger();
+    EXPECT_EQ(app.ui()->recent_projects->actions().size(), 2);
+    app.ui()->recent->actions().last()->trigger();
+    EXPECT_EQ(app.ui()->recent->actions().size(), 2);
 }

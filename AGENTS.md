@@ -72,7 +72,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 536 tests (509 del núcleo y 26 de la GUI pasan; 1, la lenta del NCC
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 537 tests (509 del núcleo y 27 de la GUI pasan; 1, la lenta del NCC
 del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -132,6 +132,8 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   ProjectIO.*            .FlatPrj: objetos desde su from_dict y hacia su to_dict (Gerber, Excellon, Geometría, CNC Job), qué
                          se descarta al leer, gcode_parse portado (sin arcos) para el gcode_parsed que dibuja el original
   resources/factory_defaults.json  Opciones de fábrica de FlatCAM 2024.4 (tools/gui_dump/extract_defaults.py)
+  AppRecent.cpp          Archivos y proyectos recientes (register_recent / setup_recent_items): recent.json y
+                         recent_projects.json en la carpeta de datos (QStandardPaths AppDataLocation; en los tests, test mode)
   AppProjectMenu.cpp     Menú contextual del árbol del Proyecto (menuproject): mostrar/ocultar, color, crear CNC Job, ver
                          fuente, copiar, borrar (también Supr), guardar el objeto, propiedades
   App.*                  La aplicación (partes de app_Main.App, AppIO y AppObject): abrir Gerber/Excellon, crear, dibujar, encuadrar
@@ -589,7 +591,9 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     están en el port; "Propiedades" muestra la pestaña Propiedades (la herramienta Propiedades no está); "Ver fuente" abre
     el texto en solo lectura (el original abre su editor de texto); "Guardar" de una Geometría (DXF) avisa que falta.
     Renombrar: Enter en el campo Nombre de Propiedades, como el original (sin mensaje). Siguen (en este orden, pedido del
-    usuario): proyectos recientes y lo que falta de Paint/NCC/Isolation (área/polígono con el mouse, Semilla, Líneas, resto). **Corrección:** se
+    usuario): ~~proyectos recientes~~ (hecho: Archivo → Proyectos recientes y Archivos recientes, los últimos 10, en
+    `~/Library/Application Support/Open Source/FlatCAM/` en el Mac; el original usa `~/.FlatCAM`, no se pisan) y lo que falta de
+    Paint/NCC/Isolation (área/polígono con el mouse, Semilla, Líneas, resto). **Corrección:** se
     decía que había que cargar "las preferencias del usuario" porque los paneles mostraban 40 % y "Semilla" en vez de sus 80 % y
     "Estándar": es falso. Las opciones guardadas en su proyecto (`luz_de_noche.params.json`, `options`) son las de fábrica; los
     valores de cada trabajo los escribe a mano. Un sistema de preferencias propio queda como mejora, no como requisito. Antes
@@ -605,7 +609,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **536 tests** (510 del núcleo y 26 de la GUI): 535 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
+- **537 tests** (510 del núcleo y 27 de la GUI): 536 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
   oráculos en Python (Shapely 1.8.4) y, donde existe, contra el `.nc` real del usuario (FlatCAM 8.994):
@@ -632,7 +636,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 536 tests, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 537 tests, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
