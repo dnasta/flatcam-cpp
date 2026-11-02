@@ -35,12 +35,22 @@ NccTool::NccTool(App* app, QWidget* parent) : NccToolUIBase(parent), app_(app) {
     });
     // form_to_storage: lo que se cambia va a las herramientas elegidas.
     for (FCDoubleSpinner* w : {ncc_overlap_entry, ncc_margin_entry, ncc_offset_spinner})
-        connect(w, &QDoubleSpinBox::valueChanged, this, [this] { formToStorage(); });
-    connect(ncc_method_combo, &QComboBox::currentIndexChanged, this, [this] { formToStorage(); });
+        connect(w, &QDoubleSpinBox::valueChanged, this, [this, w] { formToStorage(w); });
+    connect(ncc_method_combo, &QComboBox::currentIndexChanged, this, [this] { formToStorage(ncc_method_combo); });
     for (FCCheckBox* w : {ncc_connect_cb, ncc_contour_cb, ncc_choice_offset_cb, valid_cb})
-        connect(w, &QCheckBox::toggled, this, [this] { formToStorage(); });
+        connect(w, &QCheckBox::toggled, this, [this, w] { formToStorage(w); });
     for (RadioSet* w : {op_radio, milling_type_radio})
-        connect(w, &RadioSet::activatedCustom, this, [this] { formToStorage(); });
+        connect(w, &RadioSet::activatedCustom, this, [this, w] { formToStorage(w); });
+    // on_operation_change -> NccUI.parameters_ui: con "Aislamiento" solo se edita el tipo de fresado.
+    connect(op_radio, &RadioSet::activatedCustom, this, [this](const QString& val) {
+        const bool iso = val == "iso";
+        milling_type_label->setEnabled(iso);
+        milling_type_radio->setEnabled(iso);
+        for (QWidget* w : std::initializer_list<QWidget*>{nccoverlabel, ncc_overlap_entry, methodlabel, ncc_method_combo,
+                                                          nccmarginlabel, ncc_margin_entry, ncc_connect_cb,
+                                                          ncc_contour_cb, ncc_choice_offset_cb, ncc_offset_spinner})
+            w->setEnabled(!iso);
+    });
 }
 
 ToolInfo NccTool::info() { return {tr_("Non-Copper Clearing"), tr_("NCC Tool")}; }
@@ -197,20 +207,20 @@ void NccTool::updateUi() {
     muted_ = false;
 }
 
-void NccTool::formToStorage() {
+void NccTool::formToStorage(QObject* w) {
     if (muted_) return;
     for (int id : selectedClearingTools(tools_table)) {
         ClearingTool& t = tools_.at(id);
-        t.operation = op_radio->value().toString();
-        t.overlap = ncc_overlap_entry->value();
-        t.margin = ncc_margin_entry->value();
-        t.method = ncc_method_combo->indexValue();
-        t.connect = ncc_connect_cb->isChecked();
-        t.contour = ncc_contour_cb->isChecked();
-        t.offsetChoice = ncc_choice_offset_cb->isChecked();
-        t.offset = ncc_offset_spinner->value();
-        t.millingType = milling_type_radio->value().toString();
-        t.checkValid = valid_cb->isChecked();
+        if (w == op_radio) t.operation = op_radio->value().toString();
+        else if (w == ncc_overlap_entry) t.overlap = ncc_overlap_entry->value();
+        else if (w == ncc_margin_entry) t.margin = ncc_margin_entry->value();
+        else if (w == ncc_method_combo) t.method = ncc_method_combo->indexValue();
+        else if (w == ncc_connect_cb) t.connect = ncc_connect_cb->isChecked();
+        else if (w == ncc_contour_cb) t.contour = ncc_contour_cb->isChecked();
+        else if (w == ncc_choice_offset_cb) t.offsetChoice = ncc_choice_offset_cb->isChecked();
+        else if (w == ncc_offset_spinner) t.offset = ncc_offset_spinner->value();
+        else if (w == milling_type_radio) t.millingType = milling_type_radio->value().toString();
+        else if (w == valid_cb) t.checkValid = valid_cb->isChecked();
     }
 }
 
@@ -276,6 +286,53 @@ FlatCAMObj* NccTool::clearRegion(FlatCAMObj* src, const ShapeList& geometry, con
              : m == 3 ? PolygonClearing::Method::Combo
                       : PolygonClearing::Method::Standard;
     };
+    // on_ncc_click: las herramientas de "Aislamiento" (iso_dia_list) y las de "Limpiar" (ncc_dia_list), en el orden de
+    // la tabla. Hace falta al menos una de limpieza.
+    std::vector<int> isoIds, clearIds;
+    std::vector<double> isoDias;
+    for (int id : ids) {
+        if (tools_.at(id).operation == "iso") {
+            isoIds.push_back(id);
+            isoDias.push_back(tools_.at(id).geo.tooldia);
+        } else {
+            clearIds.push_back(id);
+        }
+    }
+    if (clearIds.empty()) {
+        app_->ui()->inform("[ERROR_NOTCL] " + tr_("There is no copper clearing tool in the selection "
+                                                  "and at least one is needed."));
+        return nullptr;
+    }
+    const bool climb = milling_type_radio->value().toString() == "cl";
+    // get_tool_empty_area: el recorrido de cada herramienta de aislamiento (solo con un Gerber).
+    int brokenTools = 0;
+    auto addIsolation = [&](GeometryObject& o, const NccOptions& opt) {
+        if (isoIds.empty() || src->kind() != ObjectKind::Gerber) return;
+        const Shape box = Ncc::clearingBox(geometry, opt);
+        for (int id : isoIds) {
+            bool broken = false;
+            ShapeList paths = Ncc::isolationPaths(geometry, tools_.at(id).geo.tooldia, climb, box, 64, broken);
+            if (paths.empty()) {
+                app_->ui()->inform(QString("[ERROR_NOTCL] %1 %2")
+                                       .arg(tr_("Isolation geometry could not be generated."))
+                                       .arg(tools_.at(id).geo.tooldia));
+                continue;
+            }
+            if (opt.margin < tools_.at(id).geo.tooldia)
+                app_->ui()->inform("[WARNING_NOTCL] " + tr_("Isolation geometry is broken. Margin is less "
+                                                            "than isolation tool diameter."));
+            if (broken) ++brokenTools;
+            GeometryTool gt = tools_.at(id).geo;
+            gt.solidGeometry = std::move(paths);
+            o.tools()[id] = gt;
+        }
+    };
+    // geo_obj.solid_geometry: la de todas las herramientas, en el orden de sus identificadores.
+    auto rebuildSolid = [](GeometryObject& o) {
+        o.solidGeometry().clear();
+        for (const auto& [id, t] : o.tools())
+            o.solidGeometry().insert(o.solidGeometry().end(), t.solidGeometry.begin(), t.solidGeometry.end());
+    };
     if (ncc_rest_cb->isChecked()) {
         // gen_clear_area_rest: margen de ncc_margin_entry (así en el original, aunque esté oculto); unir, contorno y
         // agrandado de los campos rest_*; solape y método de cada herramienta.
@@ -286,13 +343,11 @@ FlatCAMObj* NccTool::clearRegion(FlatCAMObj* src, const ShapeList& geometry, con
         common.contour = rest_ncc_contour_cb->isChecked();
         common.hasOffset = rest_ncc_choice_offset_cb->isChecked();
         common.offset = rest_ncc_offset_spinner->value();
+        if (src->kind() == ObjectKind::Gerber) common.isoToolDias = isoDias;
+        common.climb = climb;
         std::vector<NccRestTool> rt;
-        for (int id : ids) {
+        for (int id : clearIds) {
             const ClearingTool& t = tools_.at(id);
-            if (t.operation != "clear") {
-                app_->ui()->inform("[WARNING_NOTCL] Todavía solo está la operación \"Limpiar\".");
-                return nullptr;
-            }
             rt.push_back({t.geo.tooldia, t.overlap / 100.0, methodOf(t.method)});
         }
         std::vector<std::pair<std::size_t, ShapeList>> perTool;
@@ -305,21 +360,26 @@ FlatCAMObj* NccTool::clearRegion(FlatCAMObj* src, const ShapeList& geometry, con
             return nullptr;
         }
         for (const auto& [idx, paths] : perTool) {
-            GeometryTool gt = tools_.at(ids[idx]).geo;
+            GeometryTool gt = tools_.at(clearIds[idx]).geo;
             gt.solidGeometry = paths;
-            obj->tools()[ids[idx]] = gt;
-            obj->solidGeometry().insert(obj->solidGeometry().end(), paths.begin(), paths.end());
+            obj->tools()[clearIds[idx]] = gt;
         }
+        addIsolation(*obj, common);
+        rebuildSolid(*obj);
         FlatCAMObj* added = app_->addObject(std::move(obj));
-        app_->ui()->inform("[success] " + tr_("NCC Tool Rest Machining clear all done."));
+        if (brokenTools == 0)
+            app_->ui()->inform("[success] " + tr_("NCC Tool Rest Machining clear all done."));
+        else
+            app_->ui()->inform(QString("[WARNING] %1: %2 %3.")
+                                   .arg(tr_("NCC Tool Rest Machining clear all done but the copper features "
+                                            "isolation is broken for"))
+                                   .arg(brokenTools)
+                                   .arg(tr_("tools")));
         return added;
     }
-    for (int id : orderedClearingTools(tools_, ids, ncc_order_radio->value().toString())) {
+    bool isolationDone = false;
+    for (int id : orderedClearingTools(tools_, clearIds, ncc_order_radio->value().toString())) {
         const ClearingTool& t = tools_.at(id);
-        if (t.operation != "clear") {
-            app_->ui()->inform("[WARNING_NOTCL] Todavía solo está la operación \"Limpiar\".");
-            return nullptr;
-        }
         app_->ui()->inform(QString("[success] %1 = %2%3 %4")
                                .arg(tr_("NCC Tool clearing with tool diameter"), QString::number(t.geo.tooldia), "mm",
                                     tr_("started.")));
@@ -334,6 +394,13 @@ FlatCAMObj* NccTool::clearRegion(FlatCAMObj* src, const ShapeList& geometry, con
         o.contour = t.contour;
         // ncc_method_combo: Estándar, Semilla, Líneas, Combo.
         o.method = methodOf(t.method);
+        if (src->kind() == ObjectKind::Gerber) o.isoToolDias = isoDias;
+        o.climb = climb;
+        // El original recalcula el aislamiento con cada herramienta de limpieza (da lo mismo): se hace una vez.
+        if (!isolationDone) {
+            addIsolation(*obj, o);
+            isolationDone = true;
+        }
         ShapeList paths;
         std::string error;
         if (!Ncc::clearCopper(geometry, o, paths, error) || paths.empty()) {
@@ -347,8 +414,8 @@ FlatCAMObj* NccTool::clearRegion(FlatCAMObj* src, const ShapeList& geometry, con
         GeometryTool gt = t.geo;
         gt.solidGeometry = paths;
         obj->tools()[id] = gt;
-        obj->solidGeometry().insert(obj->solidGeometry().end(), paths.begin(), paths.end());
     }
+    rebuildSolid(*obj);
     if (obj->tools().empty()) {
         app_->ui()->inform("[ERROR] " + tr_("There is no NCC Geometry in the file.\n"
                                             "Usually it means that the tool diameter is too big for the painted geometry.\n"
@@ -356,7 +423,13 @@ FlatCAMObj* NccTool::clearRegion(FlatCAMObj* src, const ShapeList& geometry, con
         return nullptr;
     }
     FlatCAMObj* added = app_->addObject(std::move(obj));
-    app_->ui()->inform("[success] " + tr_("NCC Tool clear all done."));
+    if (brokenTools == 0)
+        app_->ui()->inform("[success] " + tr_("NCC Tool clear all done."));
+    else
+        app_->ui()->inform(QString("[WARNING] %1: %2 %3.")
+                               .arg(tr_("NCC Tool clear all done but the copper features isolation is broken for"))
+                               .arg(brokenTools)
+                               .arg(tr_("tools")));
     return added;
 }
 

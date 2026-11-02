@@ -72,7 +72,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.636 casos de `ctest` (2.604 del núcleo y 31 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.643 casos de `ctest` (2.610 del núcleo y 32 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -111,7 +111,8 @@ src/parsers/           Lectores de archivos (sin Qt, derivan de Geometry)
 src/tools/              Herramientas de FlatCAM (sin Qt)
   Paint.*                Pintado de polígonos (`ToolPaint.py`): todos los polígonos, resto y "Líneas láser" (`fill_with_lines`
                          sobre las líneas centrales de los trazos del Gerber; necesita sus aperturas)
-  Ncc.*                  Limpieza de cobre de toda la placa, método estándar (`ToolNCC.py`)
+  Ncc.*                  Limpieza de cobre (`ToolNCC.py`): toda la placa, zona o referencia, resto y la operación
+                         "Aislamiento" (recorrido de aislamiento y limpieza afuera de su envolvente)
   DoubleSided.*          PCB a 2 caras: agujeros de alineación con sus reflejos (`ToolDblSided.py`)
   CutOut.*               Corte de contorno con puentes: libre, rectangular y puente manual (`ToolCutOut.py`)
   Isolation.*            Aislamiento: pasadas separadas, combinadas y mecanizado de resto (`ToolIsolation.py`)
@@ -324,6 +325,13 @@ fijan con sentido físico (micras), no en el último bit.
   Coinciden vértice por vértice con GEOS 3.12; con 3.15 la Semilla de los pads une distinto (largo a menos del 1 %). **GEOS 3.11.0
   (la del oráculo) tiene un error**: el desplazamiento 0 de una línea de más de dos puntos da vacío (desde 3.12 da la línea), y
   `fill_with_lines` pierde la pasada central del trazo; el oráculo emula la GEOS corregida y el port se queda con la pasada central.
+- `tests/tools/oracle_ncc_isolation.py` genera `tests/golden_ncc_isolation.h`: toma de `ToolNCC` con `ast` `get_tool_empty_area`,
+  `generate_envelope`, `poly2rings`, `get_ncc_empty_area`, `calculate_bounding_box` y `apply_margin_to_bounding_box` y los ejecuta
+  sobre una clase derivada del `Gerber` original (ToolNCC deriva de Gerber). 6 casos (una y dos herramientas de aislamiento,
+  concordancia y convencional, agrandado del cobre, margen chico que rompe el aislamiento, y el Logo del usuario): el recorrido de
+  cada herramienta y el área a limpiar coinciden con GEOS 3.12 (también el inicio de cada recorrido); con 3.15 algunos anillos
+  empiezan en otro vértice y un anillo cortado por la caja sale como una sola línea en vez de dos: el test comprueba entonces la
+  misma geometría y el mismo sentido (el primer tramo de cada parte aparece igual en el original).
 - `tests/tools/oracle_isolation.py` genera `tests/golden_isolation.h` (0,7 MB): **no transcribe nada**; toma del fuente original con
   `ast` los métodos `isolate`, `combined_normal`, `combined_rest`, `generate_envelope`, `generate_rest_geometry`, `area_subtraction`,
   `area_intersection` y `poly2rings` de `ToolIsolation` y los ejecuta con una interfaz simulada (tabla, casillas, `new_object`), con el
@@ -554,7 +562,12 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
    antes y a veces la de después (depende de la estructura de su árbol). `EndpointStorage` elige la primera insertada. Cambia 1 o 2
    uniones de ~670. Emularlo exigiría portar el R*-tree de libspatialindex: no vale la pena salvo que el usuario lo pida.
 9. **Métodos que faltan en Paint y NCC**: ~~semilla, líneas, combinado, mecanizado de resto, selección por área y por objeto de
-   referencia, "Líneas láser" de Paint~~ (hechos); falta el aislamiento previo (`isotooldia`, operación "Aislamiento" de NCC).
+   referencia, "Líneas láser" de Paint, operación "Aislamiento" de NCC (`isotooldia`)~~ (hechos). En "Aislamiento", como el
+   original: hace falta al menos una herramienta de "Limpiar"; el área a limpiar excluye la envolvente de la **última**
+   herramienta de aislamiento; el tipo de fresado es el que muestra el formulario (no el de cada herramienta); con un margen
+   menor que la herramienta avisa que el aislamiento está roto. **Error del port corregido:** al cambiar un campo de Paint, NCC
+   o Isolation se copiaban todos los campos del formulario a las herramientas elegidas (también la operación); el original solo
+   copia el que cambió (`form_to_storage` con `sender()`).
    **Rarezas de "Líneas láser" que se reproducen:** las aperturas de tamaño 0 (regiones) se agregan a los trazos de **todos** los
    polígonos y la unión vacía de sus líneas hace fallar a `fill_with_lines` (IndexError): en un Gerber con regiones solo se pintan
    los pads (ya estaban en el almacén cuando falla); una macro (sin `size`) hace fallar todo el polígono; si la unión de las
@@ -643,7 +656,7 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     polígono con el mouse~~ (hecho, `CanvasPicker`, con `PlotCanvas::mouseReleased` que indica si hubo arrastre): Paint
     (polígono, área, objeto de referencia como `paint_poly_ref`), NCC (área y objeto de referencia: `Ncc::areaRegion`,
     `referenceRegion`), Isolation (área → `limitedArea`; polígono y, con "Interiores", los agujeros con diámetro negativo).
-    **Los tres puntos pedidos están hechos.** Siguen sin portar: "Líneas láser" de Paint, la operación "Aislamiento" de NCC,
+    **Los tres puntos pedidos están hechos.** Siguen sin portar (fase 5, sección 13; ya hechos "Líneas láser" de Paint y la operación "Aislamiento" de NCC):
     la base de datos de herramientas, la verificación del diámetro seguro y el ajuste a la grilla de los clics. **Corrección:** se
     decía que había que cargar "las preferencias del usuario" porque los paneles mostraban 40 % y "Semilla" en vez de sus 80 % y
     "Estándar": es falso. Las opciones guardadas en su proyecto (`luz_de_noche.params.json`, `options`) son las de fábrica; los
@@ -660,7 +673,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.636 casos de test** (`ctest`): 2.605 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 31 de la GUI;
+- **2.643 casos de test** (`ctest`): 2.611 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 32 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -688,7 +701,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.636 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.643 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -809,8 +822,8 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
 1. ~~**Postprocesadores restantes**~~ **Hecho:** los 18 que faltaban (20 en total). Verificado: cada método idéntico al original
    (`oracle_preprocessors.py`, 2.251 casos), y de punta a punta en geometrías y taladrado (`oracle_geometry_modes.py`,
    `oracle_drill.py`); desvíos en la sección 11.14. La interfaz de Paste_1 se usará con la herramienta de pasta de soldar (ítem 5).
-2. **Pendientes de las herramientas ya portadas:** ~~"Líneas láser" de Paint (`fill_with_lines`)~~ (hecho, `oracle_laser_lines.py`), operación "Aislamiento" de NCC
-   (`isotooldia`), base de datos de herramientas (`appDatabase.py`), verificación del diámetro seguro (NCC e Isolation), ajuste a la
+2. **Pendientes de las herramientas ya portadas:** ~~"Líneas láser" de Paint (`fill_with_lines`)~~ (hecho, `oracle_laser_lines.py`), ~~operación "Aislamiento" de NCC
+   (`isotooldia`)~~ (hecho, `oracle_ncc_isolation.py`), base de datos de herramientas (`appDatabase.py`), verificación del diámetro seguro (NCC e Isolation), ajuste a la
    grilla de los clics, áreas de exclusión (Perforación y Geometría), pulido (`polish`) y fresado de ranuras/agujeros (Excellon).
 3. **Transformaciones** (`ToolTransform`, `ToolMove`, offset/escala de Propiedades), **Distancia** (`ToolDistance`,
    `ToolDistanceMin`), **Propiedades** (`ToolProperties`).

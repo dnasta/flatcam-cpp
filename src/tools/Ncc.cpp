@@ -1,6 +1,7 @@
 #include "tools/Ncc.h"
 
 #include "core/GeometryError.h"
+#include "tools/Isolation.h"
 
 namespace flatcam {
 
@@ -10,24 +11,70 @@ bool isMulti(ShapeType t) { return static_cast<int>(t) >= static_cast<int>(Shape
 
 }  // namespace
 
-ShapeList Ncc::emptyArea(const ShapeList& solidGeometry, const NccOptions& o) {
+Shape Ncc::clearingBox(const ShapeList& solidGeometry, const NccOptions& o) {
+    if (o.region) return *o.region;
     // calculate_bounding_box, selección "Él mismo": una lista de un solo polígono se une tal cual; en otro caso, la
     // envolvente convexa de la unión.
-    Shape bbox;
-    if (o.region) {
-        bbox = *o.region;
-    } else {
-        Shape env;
-        if (solidGeometry.size() == 1 && solidGeometry[0].type() == ShapeType::Polygon)
-            env = Shape::unaryUnion(solidGeometry);
-        else
-            env = Shape::unaryUnion(solidGeometry).convexHull();
-        // apply_margin_to_bounding_box: buffer con esquinas en ingletes.
-        bbox = env.buffer(o.margin, 16, JoinStyle::Mitre);
-    }
+    Shape env;
+    if (solidGeometry.size() == 1 && solidGeometry[0].type() == ShapeType::Polygon)
+        env = Shape::unaryUnion(solidGeometry);
+    else
+        env = Shape::unaryUnion(solidGeometry).convexHull();
+    // apply_margin_to_bounding_box: buffer con esquinas en ingletes.
+    return env.buffer(o.margin, 16, JoinStyle::Mitre);
+}
 
-    // get_tool_empty_area para un Gerber sin herramientas de aislamiento.
+namespace {
+
+/// `generate_envelope(tool_iso / 2, invert)` de ToolNCC: `isolation_geometry` completa sobre el cobre.
+ShapeList nccEnvelope(const ShapeList& solid, double isoDia, bool climb, int steps) {
+    return Isolation::generateEnvelope(solid, isoDia / 2, climb, IsolationType::Full, false, steps);
+}
+
+}  // namespace
+
+ShapeList Ncc::isolationPaths(const ShapeList& solidGeometry, double isoDia, bool climb, const Shape& box, int steps,
+                              bool& broken) {
+    broken = false;
+    ShapeList out;
+    ShapeList env;
+    try {
+        env = nccEnvelope(solidGeometry, isoDia, climb, steps);
+    } catch (const std::exception&) {
+        return out;  // 'fail': "Isolation geometry could not be generated."
+    }
+    auto keep = [&](const Shape& g) {
+        const Shape r = g.intersection(box);
+        if (!r.isEmpty()) out.push_back(r);
+    };
+    for (const Shape& e : env) {
+        for (const Shape& part : isMulti(e.type()) ? e.parts() : ShapeList{e}) {
+            if (part.type() == ShapeType::Polygon) {
+                // poly2rings: el exterior y los agujeros.
+                keep(part.exterior());
+                for (const Shape& in : part.interiors()) keep(in);
+            } else if (part.type() == ShapeType::LineString || part.type() == ShapeType::LinearRing) {
+                keep(part);
+            }
+        }
+    }
+    for (const Shape& g : out)
+        if (g.type() == ShapeType::MultiLineString) broken = true;
+    return out;
+}
+
+ShapeList Ncc::emptyArea(const ShapeList& solidGeometry, const NccOptions& o) {
+    const Shape bbox = clearingBox(solidGeometry, o);
+
+    // get_tool_empty_area: sin herramientas de aislamiento, el cobre; con ellas, la envolvente de la última.
     Shape target = Shape::collection(solidGeometry);
+    if (!o.isoToolDias.empty()) {
+        try {
+            target = Shape::unaryUnion(nccEnvelope(solidGeometry, o.isoToolDias.back(), o.climb, o.stepsPerCircle));
+        } catch (const std::exception&) {
+            target = Shape();
+        }
+    }
     if (o.hasOffset) target = target.buffer(o.offset);
 
     // get_ncc_empty_area: la diferencia de golpe; si GEOS falla, de a una figura por vez.

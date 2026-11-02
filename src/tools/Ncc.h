@@ -6,6 +6,7 @@
 
 #include <optional>
 #include <string>
+#include <vector>
 
 #include "cam/PolygonClearing.h"
 
@@ -25,6 +26,10 @@ struct NccOptions {
     /// Región a limpiar ya con el margen (selección por área o por objeto de referencia; ver @ref Ncc::areaRegion y
     /// @ref Ncc::referenceRegion). Si falta, se usa la envolvente del cobre agrandada el margen ("Sí mismo").
     std::optional<Shape> region;
+    /// Diámetros de las herramientas con la operación "Aislamiento" (`isotooldia`, en el orden de la tabla). Si hay
+    /// alguna, el área a limpiar excluye la envolvente de aislamiento de la última (ver @ref Ncc::isolationPaths).
+    std::vector<double> isoToolDias;
+    bool climb{true};         ///< Fresado en concordancia en el aislamiento (`milling_type_radio` = `cl`).
 };
 
 /** @brief Una herramienta de la limpieza de resto (`tools_ncc_*` de su `data`). */
@@ -35,12 +40,11 @@ struct NccRestTool {
 };
 
 /**
- * @brief Limpieza de cobre de todo un Gerber, con el método estándar y una herramienta.
+ * @brief Limpieza de cobre (`clear_copper` y `gen_clear_area_rest` de FlatCAM).
  *
- * Reproduce `clear_copper` de FlatCAM para la selección "Él mismo" (toda la placa) sobre un Gerber. La región a
- * limpiar es la envolvente convexa del cobre, agrandada el margen, menos el cobre; cada polígono de esa región se
- * cubre con @ref PolygonClearing::clearPolygon. No están portados todavía la selección por área ni por objeto de
- * referencia, el mecanizado de resto, el aislamiento previo (`isotooldia`) ni los métodos de semilla, líneas y combinado.
+ * La región a limpiar es la caja (la envolvente convexa del cobre en "Sí mismo", o la zona o el objeto de referencia),
+ * agrandada el margen, menos el cobre (o, con herramientas de aislamiento, menos su envolvente); cada polígono de esa
+ * región se cubre con el método elegido de @ref PolygonClearing.
  */
 class Ncc {
 public:
@@ -52,6 +56,30 @@ public:
      * @throws GeometryError si GEOS falla.
      */
     static ShapeList emptyArea(const ShapeList& solidGeometry, const NccOptions& options);
+
+    /**
+     * @brief Caja a limpiar con el margen (`calculate_bounding_box` y `apply_margin_to_bounding_box`).
+     * @param solidGeometry Figuras del Gerber.
+     * @param options Opciones (`region` si la selección es por área o por referencia; si no, "Sí mismo").
+     * @return La caja.
+     */
+    static Shape clearingBox(const ShapeList& solidGeometry, const NccOptions& options);
+
+    /**
+     * @brief Recorrido de una herramienta con la operación "Aislamiento" (`get_tool_empty_area` con `isotooldia`): la
+     * envolvente del cobre a medio diámetro (`generate_envelope`, invertida si es en concordancia), sus anillos
+     * recortados a la caja.
+     * @param solidGeometry Figuras del Gerber.
+     * @param isoDia Diámetro de la herramienta de aislamiento.
+     * @param climb Fresado en concordancia.
+     * @param box Caja a limpiar (@ref clearingBox).
+     * @param stepsPerCircle Segmentos por cuarto de círculo (`gerber_circle_steps`).
+     * @param[out] broken `true` si algún recorrido quedó partido (una `MultiLineString`): el original avisa que el
+     *        aislamiento está roto.
+     * @return Los recorridos (vacío si no se pudo generar la envolvente).
+     */
+    static ShapeList isolationPaths(const ShapeList& solidGeometry, double isoDia, bool climb, const Shape& box,
+                                    int stepsPerCircle, bool& broken);
 
     /**
      * @brief Región de la selección por área (`calculate_bounding_box` y `apply_margin_to_bounding_box` con

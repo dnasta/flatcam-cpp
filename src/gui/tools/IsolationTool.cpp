@@ -42,11 +42,11 @@ IsolationTool::IsolationTool(App* app, QWidget* parent) : IsolationToolUIBase(pa
         app_->ui()->inform("[success] " + tr_("Tool(s) deleted from Tool Table."));
     });
     // form_to_storage: lo que se cambia va a las herramientas elegidas.
-    connect(passes_entry, &QSpinBox::valueChanged, this, [this] { formToStorage(); });
-    connect(iso_overlap_entry, &QDoubleSpinBox::valueChanged, this, [this] { formToStorage(); });
-    for (FCCheckBox* w : {combine_passes_cb, follow_cb}) connect(w, &QCheckBox::toggled, this, [this] { formToStorage(); });
+    connect(passes_entry, &QSpinBox::valueChanged, this, [this] { formToStorage(passes_entry); });
+    connect(iso_overlap_entry, &QDoubleSpinBox::valueChanged, this, [this] { formToStorage(iso_overlap_entry); });
+    for (FCCheckBox* w : {combine_passes_cb, follow_cb}) connect(w, &QCheckBox::toggled, this, [this, w] { formToStorage(w); });
     for (RadioSet* w : {milling_type_radio, iso_type_radio})
-        connect(w, &RadioSet::activatedCustom, this, [this] { formToStorage(); });
+        connect(w, &RadioSet::activatedCustom, this, [this, w] { formToStorage(w); });
 }
 
 ToolInfo IsolationTool::info() { return {tr_("Isolation Tool"), tr_("Isolation Tool")}; }
@@ -190,15 +190,16 @@ void IsolationTool::updateUi() {
     muted_ = false;
 }
 
-void IsolationTool::formToStorage() {
+void IsolationTool::formToStorage(QObject* w) {
     if (muted_) return;
+    // form_to_storage: solo el campo que cambió, en las herramientas elegidas.
     for (int id : selectedClearingTools(tools_table)) {
         ClearingTool& t = tools_.at(id);
-        t.passes = passes_entry->value();
-        t.overlap = iso_overlap_entry->value();
-        t.millingType = milling_type_radio->value().toString();
-        t.follow = follow_cb->isChecked();
-        t.isoType = iso_type_radio->value().toString();
+        if (w == passes_entry) t.passes = passes_entry->value();
+        else if (w == iso_overlap_entry) t.overlap = iso_overlap_entry->value();
+        else if (w == milling_type_radio) t.millingType = milling_type_radio->value().toString();
+        else if (w == follow_cb) t.follow = follow_cb->isChecked();
+        else if (w == iso_type_radio) t.isoType = iso_type_radio->value().toString();
     }
 }
 

@@ -37,10 +37,10 @@ PaintTool::PaintTool(App* app, QWidget* parent) : PaintToolUIBase(parent), app_(
     });
     // form_to_storage: lo que se cambia va a las herramientas elegidas.
     for (FCDoubleSpinner* w : {paintoverlap_entry, offset_entry})
-        connect(w, &QDoubleSpinBox::valueChanged, this, [this] { formToStorage(); });
-    connect(paintmethod_combo, &QComboBox::currentIndexChanged, this, [this] { formToStorage(); });
+        connect(w, &QDoubleSpinBox::valueChanged, this, [this, w] { formToStorage(w); });
+    connect(paintmethod_combo, &QComboBox::currentIndexChanged, this, [this] { formToStorage(paintmethod_combo); });
     for (FCCheckBox* w : {pathconnect_cb, paintcontour_cb})
-        connect(w, &QCheckBox::toggled, this, [this] { formToStorage(); });
+        connect(w, &QCheckBox::toggled, this, [this, w] { formToStorage(w); });
 }
 
 ToolInfo PaintTool::info() { return {tr_("Paint Tool"), tr_("Paint Tool")}; }
@@ -187,15 +187,15 @@ void PaintTool::updateUi() {
     muted_ = false;
 }
 
-void PaintTool::formToStorage() {
+void PaintTool::formToStorage(QObject* w) {
     if (muted_) return;
     for (int id : selectedClearingTools(tools_table)) {
         ClearingTool& t = tools_.at(id);
-        t.overlap = paintoverlap_entry->value();
-        t.offset = offset_entry->value();
-        t.method = paintmethod_combo->indexValue();
-        t.connect = pathconnect_cb->isChecked();
-        t.contour = paintcontour_cb->isChecked();
+        if (w == paintoverlap_entry) t.overlap = paintoverlap_entry->value();
+        else if (w == offset_entry) t.offset = offset_entry->value();
+        else if (w == paintmethod_combo) t.method = paintmethod_combo->indexValue();
+        else if (w == pathconnect_cb) t.connect = pathconnect_cb->isChecked();
+        else if (w == paintcontour_cb) t.contour = paintcontour_cb->isChecked();
     }
 }
 
