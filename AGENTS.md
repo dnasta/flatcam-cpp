@@ -72,7 +72,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.653 casos de `ctest` (2.617 del núcleo y 35 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.654 casos de `ctest` (2.617 del núcleo y 36 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -694,7 +694,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.653 casos de test** (`ctest`): 2.618 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 35 de la GUI;
+- **2.654 casos de test** (`ctest`): 2.618 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 36 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -722,7 +722,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.653 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.654 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -848,7 +848,8 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    "Comprobar validez" de NCC e Isolation, `Isolation::safeToolDiameter`, `oracle_safe_tooldia.py`), ~~ajuste a la grilla de los clics~~ (hecho: `MainGUI::snapToGrid`,
    las señales del canvas salen ajustadas, la cruz del cursor solo con la grilla; elegir polígonos la apaga y la restaura; elegir
    el agujero en PCB a 2 caras la apaga y, como el original, no la restaura), ~~áreas de exclusión~~ (hechas: núcleo, CNC Job de
-   Perforación y Geometría, y la GUI de los dos paneles), base de datos de herramientas (`appDatabase.py`), verificación del diámetro seguro (NCC e Isolation), ajuste a la
+   Perforación y Geometría, y la GUI de los dos paneles), ~~pulido~~ (hecho: "Agregar acabado" de la Geometría agrega la
+   herramienta "Pulir" sobre la caja del objeto más el margen, como `on_polish`), base de datos de herramientas (`appDatabase.py`), verificación del diámetro seguro (NCC e Isolation), ajuste a la
    grilla de los clics, áreas de exclusión (Perforación y Geometría), pulido (`polish`) y fresado de ranuras/agujeros (Excellon).
 3. **Transformaciones** (`ToolTransform`, `ToolMove`, offset/escala de Propiedades), **Distancia** (`ToolDistance`,
    `ToolDistanceMin`), **Propiedades** (`ToolProperties`).

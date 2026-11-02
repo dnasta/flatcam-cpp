@@ -207,9 +207,11 @@ public:
      * @brief Genera el CNC Job de una Geometría (`on_generatecnc_button_click` → `mtool_gen_cncjob`) y lo agrega.
      * @param geo Geometría.
      * @param toolIds Herramientas elegidas.
+     * @param polish Panel de la Geometría si hay que agregar el pulido ("Agregar acabado"), o nulo.
      * @return El objeto creado, o `nullptr` si falló (el motivo queda en la barra de estado).
      */
-    FlatCAMObj* generateCncJob(class GeometryObject* geo, const std::vector<int>& toolIds);
+    FlatCAMObj* generateCncJob(class GeometryObject* geo, const std::vector<int>& toolIds,
+                               class GeometryObjectUI* polish = nullptr);
 
     NccTool* nccTool;            ///< Panel de NCC.
     PaintTool* paintTool;        ///< Panel de pintura.

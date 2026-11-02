@@ -1674,3 +1674,37 @@ TEST(GuiDrilling, ExclusionAreas) {
     EXPECT_TRUE(app.excAreas()->areas().empty());
     EXPECT_TRUE(app.ui()->fcinfo->text->text().contains("Exclus") || app.ui()->fcinfo->text->text().contains("exclus"));
 }
+
+TEST(GuiGeometry, PolishAddsAToolOverTheObjectBox) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    ASSERT_NE(edge, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(edge));
+    app.ui()->cutout_btn->trigger();
+    auto* geo = dynamic_cast<GeometryObject*>(app.cutoutTool->freeformCutout());
+    ASSERT_NE(geo, nullptr);
+    ASSERT_EQ(geo->tools().size(), 1u);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(geo));
+    auto* ui = qobject_cast<GeometryObjectUI*>(app.ui()->properties_scroll_area->widget());
+    ASSERT_NE(ui, nullptr);
+    // La casilla muestra los parámetros del pulido.
+    EXPECT_TRUE(ui->polish_dia_entry->isHidden());
+    ui->polish_cb->setChecked(true);
+    EXPECT_FALSE(ui->polish_dia_entry->isHidden());
+    ui->polish_dia_entry->setValue(10.0);
+    ui->polish_over_entry->setValue(5.0);
+    ui->polish_margin_entry->setValue(1.0);
+    ui->generate_cnc_button->click();
+    // Se agrega la herramienta "Pulir" (2) y el CNC Job lleva las dos.
+    ASSERT_EQ(geo->tools().size(), 2u);
+    const GeometryTool& polish = geo->tools().at(2);
+    EXPECT_DOUBLE_EQ(polish.tooldia, 10.0);
+    EXPECT_EQ(polish.type, QString::fromUtf8("Limpiar"));  // tr_("Polish")
+    EXPECT_DOUBLE_EQ(polish.data.cutZ, -1.0);              // geometry_polish_pressure
+    EXPECT_FALSE(polish.solidGeometry.empty());
+    auto* cnc = dynamic_cast<CNCJobObject*>(app.collection()->byName(geo->name() + "_cnc"));
+    ASSERT_NE(cnc, nullptr);
+    EXPECT_EQ(cnc->tools().size(), 2u);
+    EXPECT_NE(cnc->job().gcode().find("T2"), std::string::npos);
+}
