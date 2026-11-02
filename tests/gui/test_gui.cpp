@@ -1512,3 +1512,46 @@ TEST(GuiPaint, LaserLinesOnlyForGerber) {
     EXPECT_FALSE(model->item(3)->isEnabled());
     EXPECT_EQ(t->paintmethod_combo->indexValue(), 4);
 }
+
+TEST(GuiNcc, IsolationOperation) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* logo = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Logo.gbr")));
+    ASSERT_NE(logo, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(logo));
+    NccTool* t = app.nccTool;
+    app.ui()->ncc_btn->trigger();
+    ASSERT_EQ(t->tools_table->rowCount(), 2);  // 1,0 y 0,5 de fábrica
+    // La de 0,5 (segunda fila) pasa a "Aislamiento": solo queda habilitado el tipo de fresado.
+    t->tools_table->clearSelection();
+    t->tools_table->selectRow(1);
+    t->op_radio->setValue("iso");
+    Q_EMIT t->op_radio->activatedCustom("iso");
+    EXPECT_TRUE(t->milling_type_radio->isEnabled());
+    EXPECT_FALSE(t->ncc_overlap_entry->isEnabled());
+    // Solo con la de aislamiento no se puede: hace falta una de limpieza.
+    t->generate_ncc_button->click();
+    EXPECT_EQ(app.collection()->byName("luz de noche Pascual-Logo.gbr_ncc"), nullptr);
+    EXPECT_TRUE(app.ui()->fcinfo->text->text().contains(QString::fromUtf8("limpieza")) ||
+                app.ui()->fcinfo->text->text().contains("clearing"));
+    // Con las dos: la de 1,0 limpia afuera de la envolvente de la de 0,5, que recorre el contorno del cobre.
+    t->tools_table->selectAll();
+    t->ncc_method_combo->setIndexValue(0);
+    t->generate_ncc_button->click();
+    auto* geo = dynamic_cast<GeometryObject*>(app.collection()->byName("luz de noche Pascual-Logo.gbr_ncc"));
+    ASSERT_NE(geo, nullptr) << app.ui()->fcinfo->text->text().toStdString();
+    ASSERT_EQ(geo->tools().size(), 2u);
+    const GeometryTool* iso = nullptr;
+    for (const auto& [id, tool] : geo->tools())
+        if (std::abs(tool.tooldia - 0.5) < 1e-9) iso = &tool;
+    ASSERT_NE(iso, nullptr);
+    // Los mismos recorridos que el núcleo (verificado contra el original en test_ncc_isolation.cpp), con el margen de
+    // fábrica (1,0) y en concordancia.
+    flatcam::NccOptions o;
+    o.margin = t->ncc_margin_entry->value();
+    bool broken = false;
+    const flatcam::ShapeList expected = flatcam::Ncc::isolationPaths(logo->gerber().solidGeometry(), 0.5, true,
+                                                   flatcam::Ncc::clearingBox(logo->gerber().solidGeometry(), o), 64, broken);
+    EXPECT_FALSE(expected.empty());
+    EXPECT_EQ(iso->solidGeometry.size(), expected.size());
+}

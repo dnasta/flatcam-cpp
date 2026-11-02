@@ -69,7 +69,8 @@ public:
 
 private:
     void updateUi();
-    void formToStorage();
+    /// form_to_storage: el campo @p w que cambió pasa a las herramientas elegidas (solo ese, como el original).
+    void formToStorage(QObject* w);
     void rebuild();
     void onRestMachiningCheck(bool state);
     void onToggleReference();

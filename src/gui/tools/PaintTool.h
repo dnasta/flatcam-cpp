@@ -73,7 +73,8 @@ private:
     void fillReferenceCombo();
     void onSelection();
     void updateUi();
-    void formToStorage();
+    /// form_to_storage: el campo @p w que cambió pasa a las herramientas elegidas (solo ese, como el original).
+    void formToStorage(QObject* w);
     void rebuild();
 
     App* app_;
