@@ -6,9 +6,12 @@
 #pragma once
 
 #include <QStringList>
+#include <functional>
 #include <memory>
+#include <optional>
 #include <vector>
 
+#include "core/Types.h"
 #include "io/ProjectFile.h"
 
 namespace flatcam::gui {
@@ -28,11 +31,24 @@ public:
 
     /**
      * @brief Crea un objeto a partir de su diccionario (`new_object(kind, name, from_dict)`).
+     * Desvío consciente (pedido por el usuario): el original no guarda el código de inicio de los CNC Job (`gc_start`)
+     * y al reabrir el proyecto los exporta sin él; acá se reconstruye con el postprocesador y los parámetros guardados.
      * @param d Diccionario del objeto.
      * @param[out] warning Motivo si no se pudo (tipo no soportado o datos dañados).
+     * @param boundsOf Límites de otro objeto del proyecto por su nombre (el Excellon de origen de un taladrado).
      * @return El objeto, o `nullptr`.
      */
-    static std::unique_ptr<FlatCAMObj> objectFrom(const JsonValue& d, QString& warning);
+    static std::unique_ptr<FlatCAMObj> objectFrom(
+        const JsonValue& d, QString& warning,
+        const std::function<std::optional<BoundingBox>(const QString&)>& boundsOf = {});
+
+    /**
+     * @brief Código de inicio de un CNC Job guardado en un proyecto (ver @ref objectFrom).
+     * @param d Diccionario del CNC Job.
+     * @param sourceBounds Límites del Excellon de origen, si es un taladrado y se encontró.
+     * @return El código, o vacío si no se pudo reconstruir.
+     */
+    static std::string rebuildStartGcode(const JsonValue& d, const std::optional<BoundingBox>& sourceBounds);
 
     /** @brief Opciones de fábrica de FlatCAM 2024.4 (`factory_defaults`, de `resources/factory_defaults.json`). @return Las opciones. */
     static const JsonValue& factoryDefaults();

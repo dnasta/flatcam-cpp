@@ -250,7 +250,13 @@ bool App::openProject(const QString& filename) {
         BusyScope busy(ui_.get());
         for (const JsonValue& d : root["objs"].items()) {
             QString warning;
-            std::unique_ptr<FlatCAMObj> obj = ProjectIO::objectFrom(d, warning);
+            std::unique_ptr<FlatCAMObj> obj =
+                ProjectIO::objectFrom(d, warning, [this](const QString& n) -> std::optional<BoundingBox> {
+                    FlatCAMObj* o = collection_->byName(n);
+                    if (!o) return std::nullopt;
+                    const QRectF b = o->bounds();
+                    return BoundingBox{b.left(), b.top(), b.right(), b.bottom()};
+                });
             if (!obj) {
                 failed << warning;
                 continue;
