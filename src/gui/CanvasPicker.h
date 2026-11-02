@@ -40,7 +40,7 @@ public:
     /**
      * @brief Empieza a elegir.
      * @param mode Qué se elige.
-     * @param candidates Polígonos que se pueden marcar (modo @ref Mode::PickPolygons).
+     * @param candidates Polígonos que se pueden marcar (modo `PickPolygons`).
      * @param done Qué hacer con lo elegido al terminar (no se llama si se cancela o no se eligió nada).
      */
     void start(Mode mode, ShapeList candidates, std::function<void(const ShapeList&)> done);
