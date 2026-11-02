@@ -113,6 +113,14 @@ struct GeometryJobSettings {
     std::optional<BoundingBox> headerBounds;
 };
 
+/** @brief Resumen de una herramienta de un Excellon para la cabecera del postprocesador. */
+struct DrillToolSummary {
+    int id{0};       ///< Número de herramienta.
+    double dia{0.0}; ///< Diámetro.
+    int drills{0};   ///< Cantidad de agujeros.
+    int slots{0};    ///< Cantidad de ranuras.
+};
+
 /** @brief Una herramienta de un trabajo de geometría con varias herramientas: su geometría y sus parámetros. */
 struct GeometryToolJob {
     ShapeList geometry;            ///< Figuras que recorre esta herramienta (`tools[uid]['solid_geometry']`).
@@ -195,6 +203,26 @@ public:
      */
     void restore(std::string startGcode, std::vector<std::string> toolGcodes);
 
+    /**
+     * @brief Código de inicio de un trabajo de geometría (lo que genera @ref generateFromGeometry para la primera
+     * herramienta), sin generar el resto: sirve para reconstruirlo al abrir un proyecto.
+     * @param settings Parámetros de la primera herramienta (con @ref GeometryJobSettings::headerBounds).
+     * @return El texto, terminado en salto de línea (vacío si el postprocesador no existe).
+     */
+    static std::string geometryStartGcode(const GeometryJobSettings& settings);
+
+    /**
+     * @brief Código de inicio de un taladrado (lo que genera @ref generateFromExcellon), sin generar el resto.
+     * @param settings Parámetros (`tools` con los de cada herramienta).
+     * @param firstTool Primera herramienta del trabajo.
+     * @param tools Herramientas del Excellon con su diámetro y sus cantidades.
+     * @param bounds Límites del Excellon (`options['xmin']`...).
+     * @return El texto, terminado en salto de línea (vacío si el postprocesador no existe).
+     */
+    static std::string drillStartGcode(const DrillJobSettings& settings, int firstTool,
+                                       const std::vector<DrillToolSummary>& tools,
+                                       const std::optional<BoundingBox>& bounds);
+
     /** @brief Código de inicio (cabecera del postprocesador), terminado en salto de línea. @return El texto. */
     const std::string& startGcode() const { return startGcode_; }
 
@@ -222,6 +250,12 @@ public:
     std::string exportGcode(const GcodeHeaderInfo& info) const;
 
 private:
+    /** @brief Parámetros del postprocesador de un trabajo de geometría. */
+    static PreprocessorParams geometryParams(const GeometryJobSettings& js, const ShapeList& geometry);
+    /** @brief Parámetros del postprocesador de una herramienta de taladrado. */
+    static PreprocessorParams drillParams(const DrillJobSettings& s, int tool, const std::vector<DrillToolSummary>& tools,
+                                          const std::optional<BoundingBox>& bounds);
+
     /** @brief G-code de una herramienta de geometría (`geometry_tool_gcode_gen`). @return `false` si falla. */
     bool geometryToolGcode(const ShapeList& geometry, const GeometryJobSettings& js, bool isFirst, bool isLast,
                            std::string& tGcode, std::string& startGcode);

@@ -572,11 +572,16 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     borrar). ~~Perforación → CNC Job → exportar~~ (hecho). ~~Corte → Geometría → CNC Job~~ (hecho; varias herramientas en un
     CNC Job, hecho). ~~Paint y NCC~~ (hechos). ~~Reflejar~~ (hecho: Opciones → Voltear y teclas X / Y). ~~PCB a 2 caras~~ (hecho). ~~Isolation~~ (hecho, salvo la selección por área y por polígono con el mouse). ~~Abrir
     proyectos~~ y ~~guardarlos~~ (hechos; el original abre lo que guarda el port: `check_project_in_original.py`).
-    Desvío: un taladrado sin cambio de herramienta se guarda como un trabajo con la primera herramienta (el port lo genera
-    así; no se verificó contra el original). Al reabrir, las Geometrías multiherramienta arman su geometría general desde las
-    herramientas (la copia general se descarta al leer). **A consultar con el usuario:** en el original, al reabrir un proyecto el
-    CNC Job pierde su código de inicio (`gc_start` no está en `ser_attrs`), así que exporta sin `G21/G90/G94` ni los comentarios
-    del postprocesador; el port lo reproduce igual (y regenerar el CNC desde la Geometría sí da el archivo completo). **Corrección:** se
+    Desvíos: un taladrado sin cambio de herramienta (un solo G-code) se guarda con el G-code en la primera herramienta y
+    los agujeros en todas. Al reabrir, las Geometrías multiherramienta arman su geometría general desde las herramientas
+    (la copia general se descarta al leer). **Decisión del usuario (opción 2):** en el original, al reabrir un proyecto el CNC
+    Job pierde su código de inicio (`gc_start` no está en `ser_attrs`) y exporta sin `G21/G90/G94`; **el port lo reconstruye**
+    (`ProjectIO::rebuildStartGcode`, `CncJob::geometryStartGcode` / `drillStartGcode`). En una geometría los `data` de
+    `cnc_tools` son los usados; en un taladrado el `data` de cada herramienta queda con valores viejos y lo usado está en los
+    atributos del trabajo (`z_feedrate`, `spindlespeed`, `z_toolchange`, `z_move`...), la Z de corte en cada herramienta, la Z
+    y X,Y finales en el cierre del G-code y los límites en el Excellon de origen (`<nombre>` sin `_cnc`). Con eso los dos CNC
+    Job del proyecto real del usuario se exportan **idénticos** a sus `.nc` (fecha incluida). Con láser se usa la variante
+    8.994 (la predeterminada del port). **Corrección:** se
     decía que había que cargar "las preferencias del usuario" porque los paneles mostraban 40 % y "Semilla" en vez de sus 80 % y
     "Estándar": es falso. Las opciones guardadas en su proyecto (`luz_de_noche.params.json`, `options`) son las de fábrica; los
     valores de cada trabajo los escribe a mano. Un sistema de preferencias propio queda como mejora, no como requisito. Antes

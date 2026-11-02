@@ -962,14 +962,21 @@ TEST(GuiProject, OpensTheUsersProject) {
         return l;
     };
     EXPECT_EQ(noDate(mine), noDate(real));
-    // El CNC Job guardado se exporta como en el original después de abrir el proyecto: su cabecera guardada y el G-code,
-    // sin el código de inicio (gc_start no se guarda en el proyecto).
+    // Los CNC Job guardados se exportan iguales a los archivos reales, con fecha y todo: la cabecera viene del proyecto y
+    // el código de inicio, que el original no guarda (y al reabrir exporta sin él), se reconstruye (pedido del usuario).
+    auto firstDiff = [](const QStringList& a, const QStringList& b) {
+        for (int i = 0; i < std::min(a.size(), b.size()); ++i)
+            if (a[i] != b[i]) return QString("línea %1: '%2' != '%3'").arg(i + 1).arg(a[i], b[i]);
+        return a.size() == b.size() ? QString() : QString("largo %1 != %2").arg(a.size()).arg(b.size());
+    };
     auto* cnc = dynamic_cast<CNCJobObject*>(app.collection()->byName("luz de noche Pascual-Edge_Cuts.gbr_cutout_cnc"));
     ASSERT_NE(cnc, nullptr);
     const QStringList restored = QString::fromStdString(cnc->exportText()).split('\n');
-    EXPECT_TRUE(restored.contains("G00 X0.0000 Y0.0000"));
-    EXPECT_FALSE(restored.contains("G21"));
-    EXPECT_EQ(restored.first(), real.first());
+    EXPECT_EQ(firstDiff(restored, real), QString());
+    const QStringList realDrill = readTextLines(QString::fromStdString(dir + "luz de noche Pascual-PTH.drl_cnc.nc"));
+    auto* drillJob = dynamic_cast<CNCJobObject*>(app.collection()->byName("luz de noche Pascual-PTH.drl_cnc"));
+    ASSERT_NE(drillJob, nullptr);
+    EXPECT_EQ(firstDiff(QString::fromStdString(drillJob->exportText()).split('\n'), realDrill), QString());
     // El taladro guardado muestra su tabla de herramientas de Excellon.
     auto* drill = dynamic_cast<CNCJobObject*>(app.collection()->byName("luz de noche Pascual-PTH.drl_cnc"));
     ASSERT_NE(drill, nullptr);
@@ -1063,10 +1070,11 @@ TEST(GuiProject, SavesObjectsCreatedInThePort) {
     EXPECT_EQ(c["cnc_tools"]["1"]["data"]["feedrate"].toDouble(), 120.0);
     const flatcam::JsonValue& d = root["objs"].items()[4];
     EXPECT_EQ(d["origin_kind"].text(), "excellon");
-    // Sin cambio de herramienta (lo de fábrica) es un solo trabajo con la primera herramienta y los 120 agujeros.
-    ASSERT_EQ(d["exc_cnc_tools"].members().size(), 1u);
-    EXPECT_EQ(d["exc_cnc_tools"].members().front().second["nr_drills"].toDouble(), 120.0);
-    EXPECT_FALSE(d["exc_cnc_tools"].members().front().second["solid_geometry"].items().empty());
+    // Sin cambio de herramienta (lo de fábrica) hay un solo G-code: va en la primera herramienta; todas llevan los agujeros.
+    ASSERT_EQ(d["exc_cnc_tools"].members().size(), 4u);
+    EXPECT_FALSE(d["exc_cnc_tools"].members().front().second["gcode"].text().empty());
+    EXPECT_TRUE(d["exc_cnc_tools"].members().back().second["gcode"].text().empty());
+    EXPECT_FALSE(d["exc_cnc_tools"].members().back().second["solid_geometry"].items().empty());
 
     App again;
     ASSERT_TRUE(again.openProject(saved));
@@ -1080,6 +1088,8 @@ TEST(GuiProject, SavesObjectsCreatedInThePort) {
     EXPECT_EQ(skipDate(job2->exportText()), skipDate(job1->exportText()));
     auto* d2 = dynamic_cast<CNCJobObject*>(again.collection()->byName(dcnc->name()));
     ASSERT_NE(d2, nullptr);
-    EXPECT_EQ(skipDate(d2->exportText()), skipDate(static_cast<CNCJobObject*>(dcnc)->exportText()).replace(
-                                              QRegularExpression("\\n\\(This preprocessor[\\s\\S]*?G94\\n"), "\n"));
+    // Con el código de inicio reconstruido, el taladro reabierto se exporta igual que antes de guardar.
+    const QStringList x = skipDate(d2->exportText()).split('\n'), y = skipDate(static_cast<CNCJobObject*>(dcnc)->exportText()).split('\n');
+    ASSERT_EQ(x.size(), y.size());
+    for (int i = 0; i < x.size(); ++i) ASSERT_EQ(x[i], y[i]) << "línea " << i + 1;
 }

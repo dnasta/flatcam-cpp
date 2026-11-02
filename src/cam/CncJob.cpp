@@ -121,6 +121,113 @@ bool CncJob::generateFromExcellon(const Excellon& excellon) {
     return true;
 }
 
+PreprocessorParams CncJob::geometryParams(const GeometryJobSettings& js, const ShapeList& geometry) {
+    const GeometryToolSettings& ts = js.toolSettings;
+    PreprocessorParams p;
+    p.units = js.units;
+    p.coordsDecimals = js.coordsDecimals;
+    p.decimals = js.decimals;
+    p.frDecimals = js.frDecimals;
+    p.feedrate = PyNumber(ts.feedrate);
+    p.zFeedrate = PyNumber(ts.feedrateZ);
+    p.feedrateRapid = PyNumber(ts.feedrateRapid);
+    p.zCut = PyNumber(ts.cutZ);
+    p.multidepth = ts.multidepth;
+    p.zDepthPerCut = PyNumber(ts.depthPerPass);
+    p.zMove = PyNumber(ts.travelZ);
+    p.useUi = true;
+    p.toolchange = false;  // el original no actualiza este atributo: la cabecera no imprime el cambio de herramienta
+    p.zToolchange = PyNumber(ts.toolchangeZ);
+    p.xyToolchange = toPyPair(ts.toolchangeXY);
+    if (ts.startZ) p.startZ = PyNumber(*ts.startZ);
+    p.zEnd = PyNumber(ts.endZ);
+    p.xyEnd = toPyPair(ts.endXY);
+    p.stepsPerCircle = js.stepsPerCircle;
+    p.ppGeometryName = js.preprocessor;
+    p.spindleSpeed = PyNumber(ts.spindleSpeed);
+    p.spindleDir = ts.spindleDir;
+    p.dwellTime = PyNumber(ts.dwellTime);
+    p.tool = js.tool;
+    p.toolC = PyNumber(ts.toolDia);
+    p.options.type = "Geometry";
+    p.options.toolDia = PyNumber(ts.toolDia);
+    // Igual que el original: la cabecera imprime los límites del objeto de geometría de origen (`options['xmin']`),
+    // no los del recorrido ya desplazado por el offset de la herramienta.
+    std::optional<BoundingBox> bb = js.headerBounds ? js.headerBounds : boundsOf(geometry);
+    if (bb) {
+        p.options.xmin = PyNumber(bb->xmin);
+        p.options.ymin = PyNumber(bb->ymin);
+        p.options.xmax = PyNumber(bb->xmax);
+        p.options.ymax = PyNumber(bb->ymax);
+    }
+    return p;
+}
+
+std::string CncJob::geometryStartGcode(const GeometryJobSettings& js) {
+    const auto pp = makePreprocessor(js.preprocessor, js.flavor);
+    return pp ? pp->startCode(geometryParams(js, {})) + "\n" : std::string();
+}
+
+PreprocessorParams CncJob::drillParams(const DrillJobSettings& s, int tool, const std::vector<DrillToolSummary>& tools,
+                                       const std::optional<BoundingBox>& bounds) {
+    const DrillToolSettings& ts = s.tools.at(tool);
+    PreprocessorParams p;
+    p.units = s.units;
+    p.coordsDecimals = s.coordsDecimals;
+    p.decimals = s.decimals;
+    p.frDecimals = s.frDecimals;
+    p.feedrate = ts.feedrateZ;
+    p.zFeedrate = ts.feedrateZ;
+    p.feedrateRapid = ts.feedrateRapid;
+    p.zCut = ts.cutZ;
+    p.multidepth = ts.multidepth;
+    p.zDepthPerCut = ts.depthPerPass;
+    p.zMove = ts.travelZ;
+    p.useUi = true;
+    p.toolchange = s.toolchange;
+    p.zToolchange = ts.toolchangeZ;
+    p.xyToolchange = toPyPair(ts.toolchangeXY);
+    p.startZ = ts.startZ;
+    p.zEnd = ts.endZ;
+    p.xyEnd = toPyPair(ts.endXY);
+    p.stepsPerCircle = s.stepsPerCircle;
+    p.ppExcellonName = s.preprocessor;
+    p.spindleSpeed = ts.spindleSpeed;
+    p.spindleDir = ts.spindleDir;
+    p.dwellTime = ts.dwellTime;
+    p.tool = tool;
+    for (const DrillToolSummary& t : tools)
+        if (t.id == tool) p.toolC = PyNumber(t.dia);
+    p.fPlunge = ts.fPlunge;
+    if (bounds) {
+        p.options.xmin = PyNumber(bounds->xmin);
+        p.options.ymin = PyNumber(bounds->ymin);
+        p.options.xmax = PyNumber(bounds->xmax);
+        p.options.ymax = PyNumber(bounds->ymax);
+    }
+    p.options.type = "Excellon";
+    for (const DrillToolSummary& t : tools) {
+        if (!s.tools.count(t.id)) continue;
+        const DrillToolSettings& st = s.tools.at(t.id);
+        if (t.drills > 0) p.options.toolsInUse.push_back(ToolInUse{t.id, PyNumber(t.dia), t.drills, t.slots});
+        p.excTools.push_back(ExcToolInfo{t.id, PyNumber(t.dia), st.feedrateZ, st.feedrateRapid, st.cutZ, st.offsetZ,
+                                         st.depthPerPass, st.travelZ});
+        if (t.drills > 0) {
+            ExcToolInfo cnc;
+            cnc.tool = t.id;
+            cnc.offsetZ = st.offsetZ;
+            p.excCncTools.push_back(cnc);
+        }
+    }
+    return p;
+}
+
+std::string CncJob::drillStartGcode(const DrillJobSettings& s, int firstTool, const std::vector<DrillToolSummary>& tools,
+                                    const std::optional<BoundingBox>& bounds) {
+    const auto pp = makePreprocessor(s.preprocessor);
+    return pp ? pp->startCode(drillParams(s, firstTool, tools, bounds)) + "\n" : std::string();
+}
+
 bool CncJob::toolGcode(int tool, const std::vector<Point2D>& points, const Excellon& ex,
                        std::array<double, 2>& firstPoint, bool isFirst, bool isLast, std::string& tGcode,
                        std::string& startGcode) {
@@ -136,58 +243,10 @@ bool CncJob::toolGcode(int tool, const std::vector<Point2D>& points, const Excel
     }
 
     // ---- parámetros comunes del postprocesador
-    PreprocessorParams p;
-    p.units = settings_.units;
-    p.coordsDecimals = settings_.coordsDecimals;
-    p.decimals = settings_.decimals;
-    p.frDecimals = settings_.frDecimals;
-    p.feedrate = ts.feedrateZ;
-    p.zFeedrate = ts.feedrateZ;
-    p.feedrateRapid = ts.feedrateRapid;
-    p.zCut = ts.cutZ;
-    p.multidepth = ts.multidepth;
-    p.zDepthPerCut = ts.depthPerPass;
-    p.zMove = ts.travelZ;
-    p.useUi = true;
-    p.toolchange = settings_.toolchange;
-    p.zToolchange = ts.toolchangeZ;
-    p.xyToolchange = toPyPair(ts.toolchangeXY);
-    p.startZ = ts.startZ;
-    p.zEnd = ts.endZ;
-    p.xyEnd = toPyPair(ts.endXY);
-    p.stepsPerCircle = settings_.stepsPerCircle;
-    p.ppExcellonName = settings_.preprocessor;
-    p.spindleSpeed = ts.spindleSpeed;
-    p.spindleDir = ts.spindleDir;
-    p.dwellTime = ts.dwellTime;
-    p.tool = tool;
-    p.toolC = PyNumber(ex.drillTools().at(tool).tooldia);
-    p.fPlunge = ts.fPlunge;
-
-    const auto b = boundsOf(ex.solidGeometry());
-    if (b) {
-        p.options.xmin = PyNumber(b->xmin);
-        p.options.ymin = PyNumber(b->ymin);
-        p.options.xmax = PyNumber(b->xmax);
-        p.options.ymax = PyNumber(b->ymax);
-    }
-    p.options.type = "Excellon";
-    for (const auto& [id, t] : ex.drillTools()) {
-        if (!settings_.tools.count(id)) continue;
-        const DrillToolSettings& s = settings_.tools.at(id);
-        if (!t.drills.empty()) {
-            p.options.toolsInUse.push_back(ToolInUse{id, PyNumber(t.tooldia), static_cast<int>(t.drills.size()),
-                                                     static_cast<int>(t.slots.size())});
-        }
-        p.excTools.push_back(ExcToolInfo{id, PyNumber(t.tooldia), s.feedrateZ, s.feedrateRapid, s.cutZ, s.offsetZ,
-                                         s.depthPerPass, s.travelZ});
-        if (!t.drills.empty()) {
-            ExcToolInfo cnc;
-            cnc.tool = id;
-            cnc.offsetZ = s.offsetZ;
-            p.excCncTools.push_back(cnc);
-        }
-    }
+    std::vector<DrillToolSummary> summary;
+    for (const auto& [id, t] : ex.drillTools())
+        summary.push_back({id, t.tooldia, static_cast<int>(t.drills.size()), static_cast<int>(t.slots.size())});
+    PreprocessorParams p = drillParams(settings_, tool, summary, boundsOf(ex.solidGeometry()));
 
     // ---- orden de los agujeros
     std::vector<Point2D> ordered;
@@ -599,43 +658,7 @@ bool CncJob::geometryToolGcode(const ShapeList& geometry, const GeometryJobSetti
         }
 
         // ---- parámetros del postprocesador
-        PreprocessorParams p;
-        p.units = js.units;
-        p.coordsDecimals = js.coordsDecimals;
-        p.decimals = js.decimals;
-        p.frDecimals = js.frDecimals;
-        p.feedrate = PyNumber(ts.feedrate);
-        p.zFeedrate = PyNumber(ts.feedrateZ);
-        p.feedrateRapid = PyNumber(ts.feedrateRapid);
-        p.zCut = PyNumber(ts.cutZ);
-        p.multidepth = ts.multidepth;
-        p.zDepthPerCut = PyNumber(ts.depthPerPass);
-        p.zMove = PyNumber(ts.travelZ);
-        p.useUi = true;
-        p.toolchange = false;  // el original no actualiza este atributo: la cabecera no imprime el cambio de herramienta
-        p.zToolchange = PyNumber(ts.toolchangeZ);
-        p.xyToolchange = toPyPair(ts.toolchangeXY);
-        if (ts.startZ) p.startZ = PyNumber(*ts.startZ);
-        p.zEnd = PyNumber(ts.endZ);
-        p.xyEnd = toPyPair(ts.endXY);
-        p.stepsPerCircle = js.stepsPerCircle;
-        p.ppGeometryName = js.preprocessor;
-        p.spindleSpeed = PyNumber(ts.spindleSpeed);
-        p.spindleDir = ts.spindleDir;
-        p.dwellTime = PyNumber(ts.dwellTime);
-        p.tool = js.tool;
-        p.toolC = PyNumber(ts.toolDia);
-        p.options.type = "Geometry";
-        p.options.toolDia = PyNumber(ts.toolDia);
-        // Igual que el original: la cabecera imprime los límites del objeto de geometría de origen (`options['xmin']`),
-        // no los del recorrido ya desplazado por el offset de la herramienta.
-        std::optional<BoundingBox> bb = js.headerBounds ? js.headerBounds : boundsOf(geometry);
-        if (bb) {
-            p.options.xmin = PyNumber(bb->xmin);
-            p.options.ymin = PyNumber(bb->ymin);
-            p.options.xmax = PyNumber(bb->xmax);
-            p.options.ymax = PyNumber(bb->ymax);
-        }
+        PreprocessorParams p = geometryParams(js, geometry);
 
         // ---- G-code
         const bool laser = js.preprocessor.find("laser") != std::string::npos;

@@ -179,13 +179,13 @@ std::unique_ptr<FlatCAMObj> geometryFrom(const JsonValue& d, const QString& name
     return obj;
 }
 
-std::unique_ptr<FlatCAMObj> cncFrom(const JsonValue& d, const QString& name) {
+std::unique_ptr<FlatCAMObj> cncFrom(const JsonValue& d, const QString& name, const std::string& start) {
     std::vector<std::string> gcodes;
     std::vector<CncToolRow> rows;
     const bool excellon = d["origin_kind"].text() == "excellon" && !d["exc_cnc_tools"].members().empty();
     if (excellon) {
         for (const auto& [dia, t] : d["exc_cnc_tools"].members()) {
-            if (t["gcode"].isString()) gcodes.push_back(t["gcode"].text());
+            if (t["gcode"].isString() && !t["gcode"].text().empty()) gcodes.push_back(t["gcode"].text());
             CncToolRow r;
             r.tool = static_cast<int>(t["tool"].toDouble());
             r.dia = std::stod(dia);
@@ -197,7 +197,7 @@ std::unique_ptr<FlatCAMObj> cncFrom(const JsonValue& d, const QString& name) {
         }
     } else {
         for (const auto& [uid, t] : d["cnc_tools"].members()) {
-            if (t["gcode"].isString()) gcodes.push_back(t["gcode"].text());
+            if (t["gcode"].isString() && !t["gcode"].text().empty()) gcodes.push_back(t["gcode"].text());
             CncToolRow r;
             r.tool = std::stoi(uid);
             r.dia = t["tooldia"].toDouble();
@@ -212,7 +212,7 @@ std::unique_ptr<FlatCAMObj> cncFrom(const JsonValue& d, const QString& name) {
     // Sin herramientas (multitool falso): el G-code general.
     if (!d["multitool"].toBool(false) || gcodes.empty()) gcodes = {d["gcode"].text()};
     auto job = std::make_unique<CncJob>();
-    job->restore("", gcodes);  // gc_start no se guarda en el proyecto (tampoco lo recupera el original)
+    job->restore(start, gcodes);  // gc_start no se guarda en el proyecto: se reconstruye (ProjectIO::rebuildStartGcode)
     auto obj = std::make_unique<CNCJobObject>(name, std::move(job), GcodeHeaderInfo{}, std::move(rows));
     obj->setStoredHeader(d["gc_header"].text());
     return obj;
@@ -239,7 +239,100 @@ JsonSkipFn ProjectIO::skipFn() {
     };
 }
 
-std::unique_ptr<FlatCAMObj> ProjectIO::objectFrom(const JsonValue& d, QString& warning) {
+namespace {
+
+PyNumber pyNum(const JsonValue& v, double def = 0.0) {
+    if (!v.isNumber()) return PyNumber(def);
+    if (v.isInteger()) return PyNumber(static_cast<int>(v.toDouble()));
+    return PyNumber(v.toDouble());
+}
+
+/// Z y X,Y finales del código de cierre (`end_code`): el último "G00 Z.." después del apagado y el "G00 X.. Y.." que sigue.
+void endOf(const std::string& gcode, std::optional<double>& z, std::optional<std::array<double, 2>>& xy) {
+    static const QRegularExpression reZ(R"(^G00 Z(-?[\d.]+)\s*$)"), reXY(R"(^G00 X(-?[\d.]+) Y(-?[\d.]+)\s*$)");
+    const QStringList lines = QString::fromStdString(gcode).split('\n');
+    int i = static_cast<int>(lines.size()) - 1;
+    for (; i >= 0; --i)
+        if (lines[i].startsWith("M05") || lines[i] == "M5") break;
+    for (int k = i + 1; k >= 1 && k < lines.size(); ++k) {
+        if (const auto m = reZ.match(lines[k]); m.hasMatch()) z = m.captured(1).toDouble();
+        else if (const auto m2 = reXY.match(lines[k]); m2.hasMatch())
+            xy = std::array<double, 2>{m2.captured(1).toDouble(), m2.captured(2).toDouble()};
+    }
+}
+
+}  // namespace
+
+std::string ProjectIO::rebuildStartGcode(const JsonValue& d, const std::optional<BoundingBox>& sourceBounds) {
+    const JsonValue& o = d["options"];
+    std::optional<BoundingBox> optionBounds;
+    if (o["xmin"].isNumber())
+        optionBounds = BoundingBox{o["xmin"].toDouble(), o["ymin"].toDouble(), o["xmax"].toDouble(), o["ymax"].toDouble()};
+    const bool excellon = d["origin_kind"].text() == "excellon" && !d["exc_cnc_tools"].members().empty();
+    if (!excellon) {
+        if (d["cnc_tools"].members().empty()) return {};
+        // Geometría: los datos de la primera herramienta son los que se usaron (cnc_tools copia los de la Geometría).
+        const auto& [uid, t] = d["cnc_tools"].members().front();
+        const GeometryTool g = geometryToolFrom(t);
+        GeometryJobSettings js;
+        js.preprocessor = g.ppname.toStdString();
+        js.tool = std::stoi(uid);
+        js.toolSettings = g.data;
+        js.toolSettings.toolDia = g.tooldia;
+        js.headerBounds = optionBounds;
+        return CncJob::geometryStartGcode(js);
+    }
+    // Taladrado: el `data` de cada herramienta queda con valores viejos; los que se usaron están en los atributos del
+    // trabajo (z_feedrate, spindlespeed...). La Z de corte sí es la de cada herramienta; la Z y el X,Y finales salen
+    // del cierre del G-code; los límites, del Excellon de origen.
+    DrillJobSettings s;
+    std::vector<DrillToolSummary> summary;
+    std::optional<double> endZ;
+    std::optional<std::array<double, 2>> endXY;
+    std::string lastGcode;
+    int firstTool = -1, withGcode = 0;
+    for (const auto& [dia, t] : d["exc_cnc_tools"].members()) {
+        const int id = static_cast<int>(t["tool"].toDouble());
+        const JsonValue& data = t["data"];
+        if (firstTool < 0) {
+            firstTool = id;
+            s.preprocessor = data["tools_drill_ppname_e"].isString() ? data["tools_drill_ppname_e"].text() : "default";
+        }
+        DrillToolSettings ts;
+        ts.cutZ = pyNum(data["tools_drill_cutz"]);
+        ts.offsetZ = pyNum(data["tools_drill_offset"]);
+        ts.feedrateZ = pyNum(d["z_feedrate"]);
+        ts.feedrateRapid = pyNum(d["feedrate_rapid"]);
+        ts.travelZ = pyNum(d["z_move"]);
+        ts.depthPerPass = pyNum(d["z_depthpercut"]);
+        ts.multidepth = data["tools_drill_multidepth"].toBool(false);
+        ts.dwell = d["dwell"].toBool(false);
+        ts.dwellTime = pyNum(d["dwelltime"]);
+        if (d["spindlespeed"].isNumber()) ts.spindleSpeed = pyNum(d["spindlespeed"]);
+        if (data["tools_drill_spindledir"].isString()) ts.spindleDir = data["tools_drill_spindledir"].text();
+        ts.toolchangeZ = pyNum(d["z_toolchange"]);
+        ts.toolchangeXY = pairOf(data["tools_drill_toolchangexy"]);
+        if (data["tools_drill_startz"].isNumber()) ts.startZ = pyNum(data["tools_drill_startz"]);
+        ts.fPlunge = data["tools_drill_f_plunge"].toBool(false);
+        s.tools[id] = ts;
+        summary.push_back({id, std::stod(dia), static_cast<int>(t["nr_drills"].toDouble()),
+                           static_cast<int>(t["nr_slots"].toDouble())});
+        if (t["gcode"].isString() && !t["gcode"].text().empty()) {
+            ++withGcode;
+            lastGcode = t["gcode"].text();
+        }
+    }
+    endOf(lastGcode.empty() ? d["gcode"].text() : lastGcode, endZ, endXY);
+    for (auto& [id, ts] : s.tools) {
+        ts.endZ = PyNumber(endZ.value_or(ts.toolchangeZ.value()));
+        ts.endXY = endXY;
+    }
+    s.toolchange = withGcode > 1;  // sin cambio de herramienta el original junta todo en un trabajo
+    return CncJob::drillStartGcode(s, firstTool, summary, sourceBounds ? sourceBounds : optionBounds);
+}
+
+std::unique_ptr<FlatCAMObj> ProjectIO::objectFrom(const JsonValue& d, QString& warning,
+                                                  const std::function<std::optional<BoundingBox>(const QString&)>& boundsOf) {
     const std::string kind = d["kind"].text();
     const QString name = str(d["options"]["name"], "objeto");
     std::unique_ptr<FlatCAMObj> obj;
@@ -247,7 +340,12 @@ std::unique_ptr<FlatCAMObj> ProjectIO::objectFrom(const JsonValue& d, QString& w
         if (kind == "gerber") obj = gerberFrom(d, name);
         else if (kind == "excellon") obj = excellonFrom(d, name);
         else if (kind == "geometry") obj = geometryFrom(d, name);
-        else if (kind == "cncjob") obj = cncFrom(d, name);
+        else if (kind == "cncjob") {
+            // Excellon de origen de un taladrado: el nombre del trabajo sin "_cnc" (`<objeto>_cnc`).
+            std::optional<BoundingBox> src;
+            if (boundsOf && name.endsWith("_cnc")) src = boundsOf(name.chopped(4));
+            obj = cncFrom(d, name, rebuildStartGcode(d, src));
+        }
     } catch (const std::exception& e) {
         warning = QString("%1: %2").arg(name, QString::fromUtf8(e.what()));
         return nullptr;
@@ -473,15 +571,10 @@ JsonValue cncDict(const CNCJobObject& obj, const JsonValue& app) {
     JsonValue d = base(obj);
     const bool drilling = obj.isDrilling();
     const std::vector<std::string>& gcodes = obj.job().toolGcodes();
-    std::vector<CncToolRow> rows = obj.tools();
-    if (drilling && gcodes.size() == 1 && rows.size() > 1) {
-        // Taladrado sin cambio de herramienta: un solo trabajo, con la primera herramienta y todos los agujeros.
-        for (std::size_t i = 1; i < rows.size(); ++i) {
-            rows.front().drills += rows[i].drills;
-            rows.front().slots += rows[i].slots;
-        }
-        rows.resize(1);
-    }
+    const std::vector<CncToolRow>& rows = obj.tools();
+    // Taladrado sin cambio de herramienta: un solo G-code para todas. Se guarda en la primera herramienta y las demás
+    // quedan sin G-code pero con los agujeros (el original toma los límites de la última herramienta).
+    const bool merged = drilling && gcodes.size() == 1 && rows.size() > 1;
     const JsonValue first = rows.empty() ? JsonValue::object() : rows.front().data;
     auto pick = [&](const char* geoKey, const char* drillKey, JsonValue def) {
         const JsonValue& v = first[drilling ? drillKey : geoKey];
@@ -515,19 +608,19 @@ JsonValue cncDict(const CNCJobObject& obj, const JsonValue& app) {
         const CncToolRow& r = rows[i];
         const std::string g = i < gcodes.size() ? gcodes[i] : std::string();
         const bool laser = r.data[drilling ? "tools_drill_ppname_e" : "ppname_g"].text().find("laser") != std::string::npos;
-        JsonValue parsed = ProjectIO::gcodeParse(g, laser, drilling ? r.dia : 0.0);
+        JsonValue parsed = ProjectIO::gcodeParse(merged ? gcodes.front() : g, laser, drilling ? r.dia : 0.0);
         if (drilling) {
             const std::string key = JsonValue::real(r.dia).text();
             JsonValue tv = d["exc_cnc_tools"][key].isObject() ? d["exc_cnc_tools"][key] : JsonValue::object();
             tv.set("data", r.data.isObject() ? r.data : JsonValue::object());
             tv.set("gcode", JsonValue::string(g));
-            tv.set("gcode_parsed", parsed);
+            tv.set("gcode_parsed", merged && i > 0 ? JsonValue::array() : parsed);
             tv.set("nr_drills", JsonValue::integer(r.drills));
             tv.set("nr_slots", JsonValue::integer(r.slots));
             setIfMissing(tv, "offset", JsonValue::integer(0));
             const ShapeList circles = cutPaths(parsed);
             tv.set("solid_geometry", shpList(circles));
-            drillCircles.insert(drillCircles.end(), circles.begin(), circles.end());
+            if (!merged || i == 0) drillCircles.insert(drillCircles.end(), circles.begin(), circles.end());
             tv.set("tool", JsonValue::integer(r.tool));
             exc.set(key, tv);
         } else {
@@ -545,7 +638,7 @@ JsonValue cncDict(const CNCJobObject& obj, const JsonValue& app) {
             tv.set("type", JsonValue::string(r.type.toStdString()));
             cnc.set(key, tv);
         }
-        lastParsed = parsed;
+        if (!merged || i == 0) lastParsed = parsed;
     }
     d.set("cnc_tools", cnc);
     d.set("exc_cnc_tools", exc);
