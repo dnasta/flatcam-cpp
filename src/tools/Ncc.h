@@ -19,6 +19,15 @@ struct NccOptions {
     bool hasOffset{false};    ///< Agrandar el cobre antes de restarlo (`tools_ncc_offset_choice`).
     double offset{0.0};       ///< Cuánto se agranda el cobre (`tools_ncc_offset_value`).
     int stepsPerCircle{64};   ///< Segmentos por circunferencia (`gerber_circle_steps`).
+    PolygonClearing::Method method{PolygonClearing::Method::Standard};  ///< Método (`tools_ncc_method`).
+    bool contour{true};       ///< Recorrer el contorno en Semilla y Líneas (`tools_ncc_contour`).
+};
+
+/** @brief Una herramienta de la limpieza de resto (`tools_ncc_*` de su `data`). */
+struct NccRestTool {
+    double toolDia{0.1};  ///< Diámetro.
+    double overlap{0.4};  ///< Solape, de 0 a 1.
+    PolygonClearing::Method method{PolygonClearing::Method::Standard};  ///< Método.
 };
 
 /**
@@ -50,6 +59,21 @@ public:
      */
     static bool clearCopper(const ShapeList& solidGeometry, const NccOptions& options, ShapeList& paths,
                             std::string& error);
+
+    /**
+     * @brief Limpieza con mecanizado de resto (`gen_clear_area_rest`): las herramientas, de la más grande a la más chica,
+     * limpian lo que quedó; a la región se le resta lo limpiado (cada trazado engrosado `tool / 1.9999999`).
+     * @param solidGeometry Figuras del Gerber.
+     * @param tools Herramientas (se ordenan de mayor a menor).
+     * @param common Margen, unir, contorno y agrandado del cobre (`ncc_margin_entry` y los campos `rest_*`).
+     * @param[out] perTool Trayectorias de cada herramienta que limpió algo, con su índice en @p tools.
+     * @param[out] notCleared Región que quedó sin limpiar.
+     * @param[out] error Mensaje si falla.
+     * @return `true` si alguna herramienta limpió algo.
+     */
+    static bool clearCopperRest(const ShapeList& solidGeometry, const std::vector<NccRestTool>& tools,
+                                const NccOptions& common, std::vector<std::pair<std::size_t, ShapeList>>& perTool,
+                                ShapeList& notCleared, std::string& error);
 };
 
 }  // namespace flatcam

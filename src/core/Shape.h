@@ -184,6 +184,9 @@ public:
     /** @brief Centroide de la figura. @return El centroide. */
     Point2D centroid() const;
 
+    /** @brief Un punto que seguro está dentro de la figura (`representative_point`, GEOS PointOnSurface). @return El punto. */
+    Point2D representativePoint() const;
+
     /** @brief Cantidad de componentes de una figura múltiple (1 para figuras simples). @return Número de componentes. */
     std::size_t numParts() const;
 

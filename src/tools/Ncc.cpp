@@ -63,7 +63,8 @@ bool Ncc::clearCopper(const ShapeList& solidGeometry, const NccOptions& o, Shape
             else pols.push_back(p);
             for (const Shape& pol : pols) {
                 if (pol.type() != ShapeType::Polygon) continue;
-                const auto lines = PolygonClearing::clearPolygon(pol, o.toolDia, o.stepsPerCircle, o.overlap, o.connect);
+                const auto lines =
+                    PolygonClearing::clear(pol, o.toolDia, o.stepsPerCircle, o.overlap, o.connect, o.contour, o.method);
                 if (!lines) continue;  // "Polygon could not be cleared" en el original
                 for (const auto& l : *lines) paths.push_back(PolygonClearing::toShape(l));
             }
@@ -74,6 +75,57 @@ bool Ncc::clearCopper(const ShapeList& solidGeometry, const NccOptions& o, Shape
     }
     if (paths.empty()) {
         error = "No hay geometría de NCC: la herramienta es demasiado grande para el área a limpiar";
+        return false;
+    }
+    return true;
+}
+
+bool Ncc::clearCopperRest(const ShapeList& solidGeometry, const std::vector<NccRestTool>& tools,
+                          const NccOptions& common, std::vector<std::pair<std::size_t, ShapeList>>& perTool,
+                          ShapeList& notCleared, std::string& error) {
+    error.clear();
+    perTool.clear();
+    notCleared.clear();
+    try {
+        ShapeList area = emptyArea(solidGeometry, common);
+        if (area.empty()) {
+            error = "No se pudo obtener la extensión del área a limpiar";
+            return false;
+        }
+        std::vector<std::size_t> order(tools.size());
+        for (std::size_t i = 0; i < order.size(); ++i) order[i] = i;
+        std::stable_sort(order.begin(), order.end(),
+                         [&](std::size_t a, std::size_t b) { return tools[a].toolDia > tools[b].toolDia; });
+        for (std::size_t idx : order) {
+            const NccRestTool& t = tools[idx];
+            ShapeList cleared;
+            for (const Shape& p : area) {
+                if (p.isEmpty() || !p.isValid()) continue;
+                if (p.buffer(-t.toolDia / 2, common.stepsPerCircle).isEmpty()) continue;
+                if (p.type() != ShapeType::Polygon) continue;
+                const auto res = PolygonClearing::clear(p, t.toolDia, common.stepsPerCircle, t.overlap, common.connect,
+                                                        common.contour, t.method);
+                if (!res) continue;  // "Polygon could not be cleared"
+                for (const auto& l : *res) cleared.push_back(PolygonClearing::toShape(l));
+            }
+            if (!cleared.empty()) perTool.push_back({idx, cleared});
+            // new_area = MultiPolygon([line.buffer(tool / 1.9999999) ...]).buffer(0.0000001)
+            ShapeList swept;
+            for (const Shape& l : cleared) swept.push_back(l.buffer(t.toolDia / 1.9999999));
+            Shape remaining = Shape::collection(area);
+            if (!swept.empty()) remaining = remaining.difference(Shape::collection(swept).buffer(0.0000001));
+            area.clear();
+            for (const Shape& pol : isMulti(remaining.type()) ? remaining.parts() : ShapeList{remaining})
+                if (pol.isValid() && !pol.isEmpty()) area.push_back(pol);
+            if (area.empty()) break;
+        }
+        notCleared = area;
+    } catch (const std::exception& e) {
+        error = std::string("Error al limpiar el cobre: ") + e.what();
+        return false;
+    }
+    if (perTool.empty()) {
+        error = "No hay geometría de NCC: las herramientas son demasiado grandes para el área a limpiar";
         return false;
     }
     return true;

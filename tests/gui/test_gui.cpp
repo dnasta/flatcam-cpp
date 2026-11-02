@@ -24,6 +24,8 @@
 #include "tools/CutOut.h"
 #include "tools/DoubleSided.h"
 #include "tools/Isolation.h"
+#include "tools/Ncc.h"
+#include "tools/Paint.h"
 #include <QFile>
 #include <QMimeData>
 #include <QStandardPaths>
@@ -1224,4 +1226,75 @@ TEST(GuiRecent, RecentProjectsAndFiles) {
     EXPECT_EQ(app.ui()->recent_projects->actions().size(), 2);
     app.ui()->recent->actions().last()->trigger();
     EXPECT_EQ(app.ui()->recent->actions().size(), 2);
+}
+
+TEST(GuiClearingMethods, PaintAndNccMethodsAndRest) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* logo = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Logo.gbr")));
+    ASSERT_NE(logo, nullptr);
+    const flatcam::ShapeList logoGeo = logo->gerber().solidGeometry();
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(logo));
+
+    // Paint con Semilla: lo mismo que el núcleo.
+    app.ui()->paint_btn->trigger();
+    PaintTool* p = app.paintTool;
+    p->paintmethod_combo->setIndexValue(1);
+    auto* seed = dynamic_cast<GeometryObject*>(p->paint());
+    ASSERT_NE(seed, nullptr);
+    flatcam::PaintOptions po;
+    po.toolDia = 0.3;
+    po.overlap = 0.2;
+    po.method = flatcam::PolygonClearing::Method::Seed;
+    flatcam::ShapeList expected;
+    std::string err;
+    ASSERT_TRUE(flatcam::Paint::paintAll(logoGeo, po, expected, err)) << err;
+    EXPECT_EQ(seed->tools().begin()->second.solidGeometry.size(), expected.size());
+
+    // Paint con resto: 0,3 y 0,1 (la más grande primero), método Líneas del formulario.
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(logo));
+    app.ui()->paint_btn->trigger();
+    app.ui()->paint_btn->trigger();  // abre/cierra/abre: queda abierta y preparada
+    p->setToolUi();
+    p->new_tooldia_entry->setValue(0.1);
+    p->add_newtool_button->click();
+    p->tools_table->selectAll();
+    p->rest_cb->setChecked(true);
+    EXPECT_FALSE(p->offset_entry->isVisibleTo(p));
+    EXPECT_TRUE(p->rest_offset_entry->isVisibleTo(p));
+    EXPECT_FALSE(p->order_radio->isEnabled());
+    p->paintmethod_combo->setIndexValue(2);
+    auto* rest = dynamic_cast<GeometryObject*>(p->paint());
+    ASSERT_NE(rest, nullptr);
+    std::vector<std::pair<std::size_t, flatcam::ShapeList>> perTool;
+    ASSERT_TRUE(flatcam::Paint::paintRest(logoGeo, {{0.3, 0.2, true, true}, {0.1, 0.2, true, true}}, 0.0,
+                                          flatcam::PolygonClearing::Method::Lines, 64, perTool, err))
+        << err;
+    ASSERT_EQ(rest->tools().size(), perTool.size());
+    std::size_t lines = 0, expectedLines = 0;
+    for (const auto& [uid, t] : rest->tools()) lines += t.solidGeometry.size();
+    for (const auto& [i, l] : perTool) expectedLines += l.size();
+    EXPECT_EQ(lines, expectedLines);
+
+    // NCC con Líneas y con resto (1,0 y 0,5 de fábrica, margen 1).
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(logo));
+    app.ui()->ncc_btn->trigger();
+    NccTool* n = app.nccTool;
+    n->tools_table->selectAll();
+    n->ncc_method_combo->setIndexValue(2);  // queda guardado en las dos herramientas elegidas
+    n->ncc_rest_cb->setChecked(true);
+    EXPECT_TRUE(n->rest_ncc_connect_cb->isVisibleTo(n));
+    EXPECT_FALSE(n->ncc_connect_cb->isVisibleTo(n));
+    auto* nrest = dynamic_cast<GeometryObject*>(n->clearCopper());
+    ASSERT_NE(nrest, nullptr);
+    flatcam::NccOptions common;
+    common.margin = 1.0;
+    std::vector<std::pair<std::size_t, flatcam::ShapeList>> nPerTool;
+    flatcam::ShapeList left;
+    ASSERT_TRUE(flatcam::Ncc::clearCopperRest(logoGeo,
+                                              {{1.0, 0.4, flatcam::PolygonClearing::Method::Lines},
+                                               {0.5, 0.4, flatcam::PolygonClearing::Method::Lines}},
+                                              common, nPerTool, left, err))
+        << err;
+    ASSERT_EQ(nrest->tools().size(), nPerTool.size());
 }

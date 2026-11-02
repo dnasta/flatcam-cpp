@@ -83,4 +83,115 @@ std::optional<std::vector<EndpointStorage::Line>> PolygonClearing::clearPolygon(
     return geoms.objects();
 }
 
+namespace {
+
+/// Inserta una figura del resultado de una intersección: líneas sueltas o cada parte de una figura múltiple
+/// (`for p in path: geoms.insert(p)`; si no es iterable, la figura entera).
+void insertParts(EndpointStorage& storage, const Shape& s) {
+    if (s.isEmpty()) return;
+    if (isMulti(s.type())) {
+        for (const Shape& p : s.parts()) insertParts(storage, p);
+        return;
+    }
+    if (s.type() == ShapeType::Polygon) return;  // no aparece al cortar una línea con un polígono
+    storage.insert(s.coordinates(), s.type() == ShapeType::LinearRing);
+}
+
+}  // namespace
+
+std::optional<std::vector<EndpointStorage::Line>> PolygonClearing::clearPolygonSeed(const Shape& polygon, double tooldia,
+                                                                                     int stepsPerCircle, double overlap,
+                                                                                     bool connect, bool contour,
+                                                                                     std::optional<Point2D> seed) {
+    EndpointStorage geoms;
+    double radius = tooldia / 2 * (1 - overlap);
+    const Shape pathMargin = polygon.buffer(-tooldia / 2, stepsPerCircle);
+    if (pathMargin.isEmpty()) return std::nullopt;
+    const Point2D seedPoint = seed ? *seed : pathMargin.representativePoint();
+    while (true) {
+        const Shape ring = Shape::point(seedPoint).buffer(radius, stepsPerCircle).exterior();
+        const Shape path = ring.intersection(pathMargin);
+        if (path.isEmpty()) break;
+        insertParts(geoms, path);
+        radius += tooldia * (1 - overlap);
+    }
+    if (contour) {
+        // Primero todos los contornos exteriores y después todos los agujeros.
+        std::vector<Shape> polys = isMulti(pathMargin.type()) ? pathMargin.parts() : std::vector<Shape>{pathMargin};
+        for (const Shape& x : polys)
+            if (x.type() == ShapeType::Polygon && !x.isEmpty()) geoms.insert(x.exterior().coordinates(), true);
+        for (const Shape& x : polys)
+            if (x.type() == ShapeType::Polygon && !x.isEmpty())
+                for (const Shape& h : x.interiors()) geoms.insert(h.coordinates(), true);
+    }
+    if (connect) {
+        if (auto c = paintConnect(geoms, polygon, tooldia, stepsPerCircle)) return c;
+    }
+    return geoms.objects();
+}
+
+std::optional<std::vector<EndpointStorage::Line>> PolygonClearing::clearPolygonLines(const Shape& polygon,
+                                                                                      double tooldia, int stepsPerCircle,
+                                                                                      double overlap, bool connect,
+                                                                                      bool contour) {
+    if (polygon.type() != ShapeType::Polygon) return std::nullopt;
+    EndpointStorage geoms;
+    std::vector<Shape> trimmed;
+    const auto b = polygon.bounds();
+    if (!b) return std::nullopt;
+    const double left = b->xmin, bot = b->ymin, right = b->xmax, top = b->ymax;
+    const Shape margin = polygon.buffer(-tooldia / 1.99999999, stepsPerCircle);
+    auto cut = [&](const Point2D& a, const Point2D& c) { return Shape::lineString({a, c}).intersection(margin); };
+    if (std::abs(left - right) >= std::abs(top - bot)) {
+        double y = top - tooldia / 1.99999999;
+        while (y > bot + tooldia / 1.999999999) {
+            trimmed.push_back(cut({left, y}, {right, y}));
+            y -= tooldia * (1 - overlap);
+        }
+        y = bot + tooldia / 2;
+        trimmed.push_back(cut({left, y}, {right, y}));
+    } else {
+        double x = left + tooldia / 1.99999999;
+        while (x < right - tooldia / 1.999999999) {
+            trimmed.push_back(cut({x, top}, {x, bot}));
+            x += tooldia * (1 - overlap);
+        }
+        x = right + tooldia / 2;  // así en el original (queda fuera del polígono)
+        trimmed.push_back(cut({x, top}, {x, bot}));
+    }
+    const Shape lines = Shape::unaryUnion(trimmed);
+    if (isMulti(lines.type())) {
+        for (const Shape& l : lines.parts())
+            if ((l.type() == ShapeType::LineString || l.type() == ShapeType::LinearRing) && !l.isEmpty())
+                geoms.insert(l.coordinates(), l.type() == ShapeType::LinearRing);
+    } else if (!lines.isEmpty()) {
+        geoms.insert(lines.coordinates(), lines.type() == ShapeType::LinearRing);
+    }
+    if (contour) insertRings(geoms, margin);
+    if (connect) {
+        if (auto c = paintConnect(geoms, polygon, tooldia, stepsPerCircle)) return c;
+    }
+    return geoms.objects();
+}
+
+std::optional<std::vector<EndpointStorage::Line>> PolygonClearing::clear(const Shape& polygon, double tooldia,
+                                                                          int stepsPerCircle, double overlap,
+                                                                          bool connect, bool contour, Method method) {
+    using Result = std::optional<std::vector<EndpointStorage::Line>>;
+    auto ok = [](const Result& r) { return r && !r->empty(); };  // `cp and cp.objects`
+    Result r;
+    switch (method) {
+        case Method::Standard: r = clearPolygon(polygon, tooldia, stepsPerCircle, overlap, connect); break;
+        case Method::Seed: r = clearPolygonSeed(polygon, tooldia, stepsPerCircle, overlap, connect, contour); break;
+        case Method::Lines: r = clearPolygonLines(polygon, tooldia, stepsPerCircle, overlap, connect, contour); break;
+        case Method::Combo:
+            r = clearPolygonLines(polygon, tooldia, stepsPerCircle, overlap, connect, contour);
+            if (!ok(r)) r = clearPolygonSeed(polygon, tooldia, stepsPerCircle, overlap, connect, contour);
+            if (!ok(r)) r = clearPolygon(polygon, tooldia, stepsPerCircle, overlap, connect);
+            break;
+    }
+    if (!ok(r)) return std::nullopt;
+    return r;
+}
+
 }  // namespace flatcam
