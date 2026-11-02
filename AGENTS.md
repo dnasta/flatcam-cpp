@@ -72,7 +72,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.645 casos de `ctest` (2.611 del núcleo y 34 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.653 casos de `ctest` (2.617 del núcleo y 35 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -128,6 +128,7 @@ src/cam/                Generación de G-code (sin Qt)
                          Toolchange_Manual, Toolchange_Probe_MACH3, Z_laser) y la cabecera/cambio de herramienta comunes
   internal/PpCommon.h    Ayudantes (formato como Python, `StartStyle` de la cabecera, `pyFormat` de las plantillas)
   generated/PreprocessorTemplates.h  Plantillas multilínea originales tal cual (GENERADO por tools/gen_pp_templates.py)
+  ExclusionAreas.*       Áreas de exclusión: `travel_coordinates` (rodear o pasar por encima), usado en los viajes del CNC Job
   PathOptimizer.*        Orden de los agujeros (vecino más cercano + 2-opt; reemplaza a OR-Tools)
   EndpointStorage.*      Almacén de líneas por extremos con `nearest` y borrado (`FlatCAMRTreeStorage`, con una grilla)
   PolygonClearing.*      `clear_polygon` (estándar), `clear_polygon2` (semilla), `clear_polygon3` (líneas), combinado y
@@ -142,6 +143,8 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   resources/factory_defaults.json  Opciones de fábrica de FlatCAM 2024.4 (tools/gui_dump/extract_defaults.py)
   AppRecent.cpp          Archivos y proyectos recientes (register_recent / setup_recent_items): recent.json y
                          recent_projects.json en la carpeta de datos (QStandardPaths AppDataLocation; en los tests, test mode)
+  ExclusionAreasManager.* Áreas de exclusión de la aplicación (`app.exc_areas`): agregarlas con el mouse, tabla, borrar; las
+                         usan todos los CNC Job de Perforación y Geometría
   CanvasPicker.*         Elegir con el mouse: zonas (rectángulos de dos clics o polígonos punto a punto) o polígonos
                          (marcar/desmarcar); clic derecho termina, Escape cancela; capa auxiliar de selección encima de todo
   AppProjectMenu.cpp     Menú contextual del árbol del Proyecto (menuproject): mostrar/ocultar, color, crear CNC Job, ver
@@ -335,6 +338,9 @@ fijan con sentido físico (micras), no en el último bit.
 - `tests/tools/oracle_safe_tooldia.py` genera `tests/golden_safe_tooldia.h`: ejecuta `ToolNCC.find_optim_mp` original (el
   diámetro seguro, igual en Isolation) sobre un Gerber sintético, uno de un solo polígono (el original avisa y no sigue), el Logo
   (0,0285) y `B_Cu` (0,1994) del usuario: idéntico.
+- **Áreas de exclusión:** `tests/tools/oracle_exclusion.py` toma `ExclusionAreas.travel_coordinates`, `nearest_point` y
+  `farthest_point` de `appCommon/Common.py` con `ast`; `oracle_geometry_modes.py` suma 5 escenarios (por encima, alrededor, dos
+  áreas, profundidad múltiple, sin cruce) y `oracle_drill.py` 3 corridas del taladro del usuario con áreas: idénticos.
 - `tests/tools/oracle_isolation.py` genera `tests/golden_isolation.h` (0,7 MB): **no transcribe nada**; toma del fuente original con
   `ast` los métodos `isolate`, `combined_normal`, `combined_rest`, `generate_envelope`, `generate_rest_geometry`, `area_subtraction`,
   `area_intersection` y `poly2rings` de `ToolIsolation` y los ejecuta con una interfaz simulada (tabla, casillas, `new_object`), con el
@@ -617,6 +623,13 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     movimiento (barra de estado, HUD, cruz) y de las zonas elegidas salen ajustadas con `round(x / g) * g` (al par en los
     empates); el zoom y el paneo no. Error del original que se reproduce: "Elegir agujero" de PCB a 2 caras apaga la grilla y no la
     vuelve a encender.
+    (o) **Áreas de exclusión:** un solo almacén en la aplicación, como `app.exc_areas`; las usan **todos** los CNC Job aunque se
+    hayan agregado desde otro panel y aunque la casilla esté apagada (la casilla solo muestra la sección). La estrategia y la Z
+    se leen del panel al terminar de dibujar (el original las lee en cada zona). Un tramo del viaje que corre sobre el contorno
+    de un área hace fallar al original (itera un `LineString`); el port lo ignora. **Error del volcador corregido:** guardaba la
+    propiedad `enabled` efectiva de los widgets (falsa si el padre estaba deshabilitado: la lista de exclusión decía
+    `"enabled_"`), y en Perforación los parámetros quedaban deshabilitados para siempre aunque el marco se habilitara; ahora
+    solo se guarda el `enabled` propio (en acciones y menús, la propiedad).
     (m) Errores del original que se reproducen a propósito en Isolation: la herramienta nueva tiene tipo `"           Iso"`
     (con espacios) y forma "V", y el rótulo "Ninguna herramienta seleccionada" lleva `color=#7777FF""`.
 14. **Postprocesadores: desvíos y rarezas del original.** (a) `line_xyz` lee `p['end_xy']`, que `CNCjob` no define: en el
@@ -681,7 +694,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.646 casos de test** (`ctest`): 2.612 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 34 de la GUI;
+- **2.653 casos de test** (`ctest`): 2.618 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 35 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -709,7 +722,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.646 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.653 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -834,7 +847,8 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    (`isotooldia`)~~ (hecho, `oracle_ncc_isolation.py`), ~~verificación del diámetro seguro~~ (hecha: botón "Óptimo" y casilla
    "Comprobar validez" de NCC e Isolation, `Isolation::safeToolDiameter`, `oracle_safe_tooldia.py`), ~~ajuste a la grilla de los clics~~ (hecho: `MainGUI::snapToGrid`,
    las señales del canvas salen ajustadas, la cruz del cursor solo con la grilla; elegir polígonos la apaga y la restaura; elegir
-   el agujero en PCB a 2 caras la apaga y, como el original, no la restaura), base de datos de herramientas (`appDatabase.py`), verificación del diámetro seguro (NCC e Isolation), ajuste a la
+   el agujero en PCB a 2 caras la apaga y, como el original, no la restaura), ~~áreas de exclusión~~ (hechas: núcleo, CNC Job de
+   Perforación y Geometría, y la GUI de los dos paneles), base de datos de herramientas (`appDatabase.py`), verificación del diámetro seguro (NCC e Isolation), ajuste a la
    grilla de los clics, áreas de exclusión (Perforación y Geometría), pulido (`polish`) y fresado de ranuras/agujeros (Excellon).
 3. **Transformaciones** (`ToolTransform`, `ToolMove`, offset/escala de Propiedades), **Distancia** (`ToolDistance`,
    `ToolDistanceMin`), **Propiedades** (`ToolProperties`).
