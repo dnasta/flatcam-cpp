@@ -178,6 +178,15 @@ GeometryObjectUI::GeometryObjectUI(QWidget* parent) : GeometryObjectUIBase(paren
     connect(generate_cnc_button, &QPushButton::clicked, this, [this] {
         if (onGenerateCnc) onGenerateCnc();
     });
+    // ois_polish: "Agregar acabado" muestra sus parámetros.
+    const std::vector<QWidget*> polish = {polish_dia_lbl,      polish_dia_entry,     polish_pressure_lbl,
+                                                    polish_pressure_entry, polish_travelz_lbl, polish_travelz_entry,
+                                                    polish_margin_lbl,   polish_margin_entry,  polish_over_lbl,
+                                                    polish_over_entry,   polish_method_lbl,    polish_method_combo};
+    for (QWidget* w : polish) w->setVisible(polish_cb->isChecked());
+    connect(polish_cb, &QCheckBox::toggled, this, [polish](bool on) {
+        for (QWidget* w : polish) w->setVisible(on);
+    });
     connect(geo_tools_table, &QTableWidget::itemSelectionChanged, this, [this] {
         if (!muted_) updateUi();
     });

@@ -1,5 +1,7 @@
 #include "gui/App.h"
 
+#include "cam/PolygonClearing.h"
+
 #include <QApplication>
 #include <algorithm>
 #include <QDateTime>
@@ -477,9 +479,43 @@ FlatCAMObj* App::addObject(std::unique_ptr<FlatCAMObj> o) {
     return obj;
 }
 
-FlatCAMObj* App::generateCncJob(GeometryObject* geo, const std::vector<int>& toolIds) {
+FlatCAMObj* App::generateCncJob(GeometryObject* geo, const std::vector<int>& toolIds, GeometryObjectUI* polish) {
     QString error;
-    std::unique_ptr<CNCJobObject> job = geo->makeCncJob(toolIds, error, excAreas_->areas());
+    std::vector<int> ids = toolIds;
+    if (polish && polish->polish_cb->isChecked() && !ids.empty()) {
+        // on_polish: una herramienta nueva ("Pulir") que recorre la caja del objeto, agrandada el margen, con el método
+        // elegido (contorno y unir siempre); se agrega a la Geometría y al CNC Job.
+        const double margin = polish->polish_margin_entry->value();
+        const double dia = std::round(polish->polish_dia_entry->value() * 1e4) / 1e4;  // dec_format
+        const QRectF b = geo->bounds();
+        const Shape box = Shape::box(b.left() - margin, b.top() - margin, b.right() + margin, b.bottom() + margin);
+        const int m = polish->polish_method_combo->currentIndex();
+        const auto method = m == 1 ? PolygonClearing::Method::Seed
+                          : m == 2 ? PolygonClearing::Method::Lines
+                                   : PolygonClearing::Method::Standard;
+        const auto lines = PolygonClearing::clear(box, polish->polish_dia_entry->value(), 64,
+                                                  polish->polish_over_entry->value() / 100.0, true, true, method);
+        if (!lines) {
+            ui_->inform("[ERROR_NOTCL] " + tr_("Geometry could not be painted completely"));
+            return nullptr;
+        }
+        GeometryTool t = defaultGeometryTool();
+        t.tooldia = dia;
+        t.offset = "Path";
+        t.offsetValue = 0.0;
+        t.type = tr_("Polish");
+        t.toolType = "C1";
+        t.data.travelZ = polish->polish_travelz_entry->value();
+        t.data.cutZ = polish->polish_pressure_entry->value();
+        for (const auto& l : *lines) {
+            const Shape s = PolygonClearing::toShape(l);
+            if (!s.isEmpty()) t.solidGeometry.push_back(s);
+        }
+        const int uid = geo->tools().empty() ? 1 : geo->tools().rbegin()->first + 1;
+        geo->tools()[uid] = t;
+        ids.push_back(uid);
+    }
+    std::unique_ptr<CNCJobObject> job = geo->makeCncJob(ids, error, excAreas_->areas());
     if (!job) {
         ui_->inform(error);
         return nullptr;
@@ -501,7 +537,7 @@ void App::showProperties(FlatCAMObj* obj) {
     } else if (obj && obj->kind() == ObjectKind::Geometry) {
         auto* geo = static_cast<GeometryObject*>(obj);
         auto* gui = static_cast<GeometryObjectUI*>(panel);
-        gui->onGenerateCnc = [this, geo, gui] { generateCncJob(geo, gui->toolsForCnc()); };
+        gui->onGenerateCnc = [this, geo, gui] { generateCncJob(geo, gui->toolsForCnc(), gui); };
         // Áreas de exclusión (una sola vez por panel).
         if (!gui->property("exclusionConnected").toBool()) {
             gui->setProperty("exclusionConnected", true);
