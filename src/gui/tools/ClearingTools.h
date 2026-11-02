@@ -6,6 +6,7 @@
 #pragma once
 
 #include <map>
+#include <optional>
 #include <vector>
 
 #include "gui/objects/GeometryObject.h"
@@ -69,6 +70,18 @@ void buildClearingTable(QTableWidget* table, const std::map<int, ClearingTool>& 
  * @return Los identificadores.
  */
 std::vector<int> selectedClearingTools(const QTableWidget* table);
+
+class FlatCAMObj;
+
+/**
+ * @brief Diámetro de herramienta seguro de un Gerber (`find_safe_tooldia_worker` de NCC e Isolation): informa "Checking
+ * tools for validity." y, si falla, el error del original.
+ * @param ui Ventana (para los mensajes).
+ * @param obj Objeto elegido (tiene que ser un Gerber).
+ * @param name Nombre que se informa si no hay objeto.
+ * @return La menor distancia entre figuras del cobre, o nada.
+ */
+std::optional<double> findSafeToolDia(MainGUI* ui, FlatCAMObj* obj, const QString& name);
 
 /**
  * @brief Diámetros en el orden en que se usan (`sorted_tools` según `order`).

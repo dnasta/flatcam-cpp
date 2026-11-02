@@ -95,3 +95,18 @@ INSTANTIATE_TEST_SUITE_P(Original, NccIsolation,
                          [](const ::testing::TestParamInfo<std::size_t>& info) {
                              return std::string(golden_ncc_isolation::kScenarios.at(info.param).name);
                          });
+
+// Diámetro de herramienta seguro (find_optim_mp de NCC, el mismo cálculo de Isolation) contra el original.
+#include "golden_safe_tooldia.h"
+#include "tools/Isolation.h"
+
+TEST(SafeToolDiameter, MatchesOriginal) {
+    for (const auto& c : golden_safe_tooldia::kCases) {
+        SCOPED_TRACE(c.name);
+        const Gerber g = loadGerber(c.gerber, c.isPath);
+        std::string error;
+        const auto d = Isolation::safeToolDiameter(g, 4, error);
+        ASSERT_EQ(d.has_value(), c.ok) << error;
+        if (d) EXPECT_DOUBLE_EQ(*d, c.dist);
+    }
+}

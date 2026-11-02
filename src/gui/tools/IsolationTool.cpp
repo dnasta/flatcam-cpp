@@ -1,8 +1,11 @@
 #include "gui/tools/IsolationTool.h"
 
+#include <QToolButton>
+
 #include "gui/App.h"
 #include "gui/CanvasPicker.h"
 #include "gui/Translation.h"
+#include "gui/tools/ClearingTools.h"
 #include "tools/Isolation.h"
 
 namespace flatcam::gui {
@@ -41,6 +44,8 @@ IsolationTool::IsolationTool(App* app, QWidget* parent) : IsolationToolUIBase(pa
         rebuild();
         app_->ui()->inform("[success] " + tr_("Tool(s) deleted from Tool Table."));
     });
+    // on_find_optimal_tooldia: el diámetro seguro pasa al campo de la herramienta nueva.
+    connect(find_optimal_button, &QToolButton::clicked, this, [this] { findOptimalToolDia(); });
     // form_to_storage: lo que se cambia va a las herramientas elegidas.
     connect(passes_entry, &QSpinBox::valueChanged, this, [this] { formToStorage(passes_entry); });
     connect(iso_overlap_entry, &QDoubleSpinBox::valueChanged, this, [this] { formToStorage(iso_overlap_entry); });
@@ -203,6 +208,14 @@ void IsolationTool::formToStorage(QObject* w) {
     }
 }
 
+void IsolationTool::findOptimalToolDia() {
+    const QString name = object_combo->currentText();
+    if (const auto d = findSafeToolDia(app_->ui(), app_->collection()->byName(name), name)) {
+        new_tooldia_entry->setValue(*d);
+        app_->ui()->inform(QString("[success] %1: %2 %3").arg(tr_("Optimal tool diameter found")).arg(*d).arg("mm"));
+    }
+}
+
 std::vector<FlatCAMObj*> IsolationTool::isolate() {
     std::vector<FlatCAMObj*> created;
     const QString name = object_combo->currentText();
@@ -213,6 +226,21 @@ std::vector<FlatCAMObj*> IsolationTool::isolate() {
     }
     // Las elegidas, en el orden de la tabla.
     const std::vector<int> ids = selectedClearingTools(tools_table);
+    if (valid_cb->isChecked()) {
+        // find_safe_tooldia_multiprocessing: solo informa.
+        if (const auto safe = findSafeToolDia(app_->ui(), grb, name)) {
+            if (ids.empty()) {
+                app_->ui()->inform("[ERROR_NOTCL] " + tr_("There are no tools selected in the Tool Table."));
+            } else {
+                for (int id : ids)
+                    if (tools_.at(id).geo.tooldia > *safe) {
+                        app_->ui()->inform("[WARNING] " + tr_("Incomplete isolation. At least one tool could not do a "
+                                                              "complete isolation."));
+                        break;
+                    }
+            }
+        }
+    }
     if (ids.empty()) {
         app_->ui()->inform("[ERROR_NOTCL] " + tr_("There are no tools selected in the Tool Table."));
         return created;

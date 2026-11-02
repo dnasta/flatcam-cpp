@@ -5,10 +5,12 @@
 #pragma once
 
 #include <cstddef>
+#include <optional>
 #include <string>
 #include <vector>
 
 #include "core/Shape.h"
+#include "parsers/Gerber.h"
 
 namespace flatcam {
 
@@ -86,6 +88,19 @@ struct IsolationOutcome {
  */
 class Isolation {
 public:
+    /**
+     * @brief Diámetro de herramienta "seguro" (`find_safe_tooldia_worker` de NCC e Isolation): la menor distancia entre
+     * dos figuras del cobre, redondeada a @p decimals decimales (como `dec_format`).
+     *
+     * Une las figuras sólidas válidas de todas las aperturas (`MultiPolygon(...).buffer(0)`) y mide todas las parejas.
+     * Una herramienta más ancha que esa distancia no puede pasar entre las dos figuras más cercanas.
+     * @param gerber Gerber.
+     * @param decimals Decimales.
+     * @param[out] error Mensaje del original si el cobre es un solo polígono (no hay distancias).
+     * @return La distancia, o nada.
+     */
+    static std::optional<double> safeToolDiameter(const Gerber& gerber, int decimals, std::string& error);
+
     /**
      * @brief Distancia de la pasada @p pass: `tooldia * ((2 i + 1) / 2.0000001) - i * overlap * tooldia`.
      * @param toolDia Diámetro de la herramienta.
