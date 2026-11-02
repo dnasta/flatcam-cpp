@@ -4,6 +4,8 @@
  */
 #pragma once
 
+#include <functional>
+
 #include <QColor>
 #include <QOpenGLBuffer>
 #include <QOpenGLFunctions>
@@ -66,6 +68,20 @@ public:
 
     /** @brief Muestra u oculta el recuadro HUD (`on_toggle_hud`). @param on Mostrar. */
     void setHudEnabled(bool on);
+    /**
+     * @brief Función que ajusta a la grilla las posiciones que emiten las señales del mouse y la cruz del cursor
+     * (`geo_editor.snap` cuando está activo "Ajustar a la grilla"). El zoom y el paneo usan la posición sin ajustar.
+     * @param snapper Función de posición a posición (vacía: sin ajuste).
+     */
+    void setSnapper(std::function<QPointF(QPointF)> snapper) { snapper_ = std::move(snapper); }
+    /**
+     * @brief Muestra u oculta la cruz del cursor (`app_cursor.enabled`: el original solo la muestra con la grilla).
+     * @param on Visible.
+     */
+    void setCursorEnabled(bool on) {
+        cursorEnabled_ = on;
+        update();
+    }
 
     /** @brief Muestra u oculta las líneas por el origen (`on_toggle_axis`). @param on Mostrar. */
     void setAxisEnabled(bool on);
@@ -180,6 +196,9 @@ private:
     double scale_{1.0};           ///< Píxeles por mm.
     bool firstResize_{true};
     bool hudEnabled_{true};       // global_hud
+    bool cursorEnabled_{true};    // app_cursor.enabled (con la grilla activa)
+    std::function<QPointF(QPointF)> snapper_;
+    QPointF eventWorld(const QPointF& pixel) const;
     bool axisEnabled_{true};      // global_axis
     bool gridEnabled_{true};      // global_grid_lines
     bool panning_{false};

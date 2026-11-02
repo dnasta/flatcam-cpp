@@ -20,11 +20,22 @@ void CanvasPicker::start(Mode mode, ShapeList candidates, std::function<void(con
     done_ = std::move(done);
     selected_.clear();
     points_.clear();
+    // Al elegir polígonos el original desactiva el ajuste a la grilla (cuesta hacer clic en un polígono) y lo
+    // restaura al terminar.
+    gridMemory_ = false;
+    if (mode_ == Mode::PickPolygons && ui_->grid_snap_btn->isChecked()) {
+        gridMemory_ = true;
+        ui_->grid_snap_btn->trigger();
+    }
 }
 
 bool CanvasPicker::cancel() {
     if (!active_) return false;
     active_ = false;
+    if (gridMemory_) {
+        gridMemory_ = false;
+        ui_->grid_snap_btn->trigger();
+    }
     selected_.clear();
     points_.clear();
     ui_->plotCanvas()->removeLayer(kLayerId);

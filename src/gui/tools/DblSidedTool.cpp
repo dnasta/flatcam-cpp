@@ -71,6 +71,9 @@ DblSidedTool::DblSidedTool(App* app, QWidget* parent) : DblSidedToolUIBase(paren
             return;
         }
         stopPicking();
+        // Desactiva el ajuste a la grilla (cuesta acertar a un agujero con la grilla). El original no lo vuelve a
+        // activar después (guarda grid_status_memory y no lo usa): se reproduce.
+        if (app_->ui()->grid_snap_btn->isChecked()) app_->ui()->grid_snap_btn->trigger();
         app_->ui()->inform(tr_("Click on canvas within the desired Excellon drill hole") + ".");
         pickConnection_ = connect(app_->ui()->plotCanvas(), &PlotCanvas::mouseClicked, this,
                                   [this](QPointF w, Qt::MouseButton b) {

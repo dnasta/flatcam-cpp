@@ -264,7 +264,7 @@ void PlotCanvas::paintGL() {
         p.drawLine(QPointF(o.x(), vr.top()), QPointF(o.x(), vr.bottom()));
         p.drawLine(QPointF(vr.left(), o.y()), QPointF(vr.right(), o.y()));
     }
-    if (cursorInside_) {
+    if (cursorInside_ && cursorEnabled_) {
         // Cursor de FlatCAM: una cruz chica en el punto, del color global_cursor_color.
         const QPointF c = toPixel(cursorWorld_);
         p.setPen(QPen(kCursorColor, 1.5));
@@ -360,10 +360,10 @@ void PlotCanvas::mousePressEvent(QMouseEvent* event) {
         panning_ = true;
         lastPan_ = event->position();
     } else if (event->button() == Qt::LeftButton) {
-        lastClick_ = toWorld(event->position());
+        lastClick_ = eventWorld(event->position());
         update();
     }
-    Q_EMIT mouseClicked(toWorld(event->position()), event->button());
+    Q_EMIT mouseClicked(eventWorld(event->position()), event->button());
 }
 
 void PlotCanvas::mouseMoveEvent(QMouseEvent* event) {
@@ -373,7 +373,7 @@ void PlotCanvas::mouseMoveEvent(QMouseEvent* event) {
         center_ -= QPointF(delta.x() / scale_, -delta.y() / scale_);
     }
     cursorInside_ = viewRect().contains(event->position());
-    cursorWorld_ = toWorld(event->position());
+    cursorWorld_ = eventWorld(event->position());
     Q_EMIT mouseMoved(cursorWorld_);
     update();
 }
@@ -381,7 +381,12 @@ void PlotCanvas::mouseMoveEvent(QMouseEvent* event) {
 void PlotCanvas::mouseReleaseEvent(QMouseEvent* event) {
     if (event->button() == Qt::RightButton) panning_ = false;
     const QPointF d = event->position() - pressPos_;
-    Q_EMIT mouseReleased(toWorld(event->position()), event->button(), std::hypot(d.x(), d.y()) > 3.0);
+    Q_EMIT mouseReleased(eventWorld(event->position()), event->button(), std::hypot(d.x(), d.y()) > 3.0);
+}
+
+QPointF PlotCanvas::eventWorld(const QPointF& pixel) const {
+    const QPointF w = toWorld(pixel);
+    return snapper_ ? snapper_(w) : w;
 }
 
 void PlotCanvas::leaveEvent(QEvent*) {

@@ -68,6 +68,7 @@ private:
 
     MainGUI* ui_;
     bool active_{false};
+    bool gridMemory_{false};  ///< `grid_status_memory`: la grilla estaba activa al empezar a elegir polígonos.
     Mode mode_{Mode::Rectangles};
     ShapeList candidates_;
     std::function<void(const ShapeList&)> done_;
