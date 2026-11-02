@@ -189,6 +189,7 @@ std::optional<std::vector<EndpointStorage::Line>> PolygonClearing::clear(const S
             if (!ok(r)) r = clearPolygonSeed(polygon, tooldia, stepsPerCircle, overlap, connect, contour);
             if (!ok(r)) r = clearPolygon(polygon, tooldia, stepsPerCircle, overlap, connect);
             break;
+        case Method::LaserLines: break;  // Paint::laserLines
     }
     if (!ok(r)) return std::nullopt;
     return r;

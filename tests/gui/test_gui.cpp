@@ -1,6 +1,8 @@
 // Tests de la interfaz gráfica (Qt6). Corren sin pantalla (plataforma "offscreen").
 #include <gtest/gtest.h>
 
+#include <QStandardItemModel>
+
 #include <QApplication>
 #include <QMenuBar>
 #include <QSplitter>
@@ -1479,4 +1481,34 @@ TEST(GuiPreprocessors, CombosAndHpglLikeTheOriginal) {
     ui->pp_geometry_name_cb->setValue("default");
     EXPECT_EQ(ui->mpass_cb->isChecked(), multidepth);
     EXPECT_TRUE(ui->mpass_cb->isEnabled());
+}
+
+TEST(GuiPaint, LaserLinesOnlyForGerber) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* logo = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Logo.gbr")));
+    ASSERT_NE(logo, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(logo));
+    PaintTool* t = app.paintTool;
+    app.ui()->paint_btn->trigger();
+    auto* model = qobject_cast<QStandardItemModel*>(t->paintmethod_combo->model());
+    ASSERT_NE(model, nullptr);
+    EXPECT_TRUE(model->item(3)->isEnabled());
+    // Líneas láser con una herramienta de 0,1: sigue las líneas centrales de los trazos del Logo.
+    t->deltool_btn->click();
+    t->new_tooldia_entry->setValue(0.1);
+    t->add_newtool_button->click();
+    t->paintmethod_combo->setIndexValue(3);
+    EXPECT_EQ(t->tools().begin()->second.method, 3);
+    t->generate_paint_button->click();
+    auto* geo = dynamic_cast<GeometryObject*>(app.collection()->byName("luz de noche Pascual-Logo.gbr_mt_paint"));
+    ASSERT_NE(geo, nullptr);
+    std::size_t lines = 0;
+    for (const auto& [id, tool] : geo->tools()) lines += tool.solidGeometry.size();
+    EXPECT_GT(lines, 30000u);  // el original da 36.870 trazados con solape 20 %
+    // Con una Geometría el método se deshabilita y, si estaba elegido, pasa a Combo.
+    t->type_obj_radio->setValue("geometry");
+    Q_EMIT t->type_obj_radio->activatedCustom("geometry");
+    EXPECT_FALSE(model->item(3)->isEnabled());
+    EXPECT_EQ(t->paintmethod_combo->indexValue(), 4);
 }

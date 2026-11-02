@@ -224,6 +224,7 @@ std::optional<std::string> Gerber::apertureParse(const std::string& id, const st
     if (type == "C") {
         ap.type = "C";
         ap.size = num(0);
+        if (!apertures_.count(apid)) apertureOrder_.push_back(apid);
         apertures_[apid] = ap;
         return apid;
     }
@@ -232,6 +233,7 @@ std::optional<std::string> Gerber::apertureParse(const std::string& id, const st
         ap.width = num(0);
         ap.height = num(1);
         ap.size = std::sqrt(ap.width * ap.width + ap.height * ap.height);  // "Hack" del original
+        if (!apertures_.count(apid)) apertureOrder_.push_back(apid);
         apertures_[apid] = ap;
         return apid;
     }
@@ -241,6 +243,7 @@ std::optional<std::string> Gerber::apertureParse(const std::string& id, const st
         ap.nVertices = static_cast<int>(std::stod(list.at(1)));
         ap.size = ap.diam;  // "Hack" del original
         if (list.size() >= 3) ap.rotation = num(2);
+        if (!apertures_.count(apid)) apertureOrder_.push_back(apid);
         apertures_[apid] = ap;
         return apid;
     }
@@ -249,6 +252,7 @@ std::optional<std::string> Gerber::apertureParse(const std::string& id, const st
         ap.type = "AM";
         ap.macro = macro->second;
         ap.modifiers = list;
+        if (!apertures_.count(apid)) apertureOrder_.push_back(apid);
         apertures_[apid] = ap;
         return apid;
     }
@@ -331,6 +335,7 @@ bool Gerber::parseLines(const std::vector<std::string>& glines) {
     };
     auto addGeometry = [&](const std::optional<std::string>& key, const ApertureGeometry& g) {
         if (!key) throw std::runtime_error("KeyError: None");
+        if (!apertures_.count(*key)) apertureOrder_.push_back(*key);
         Aperture& ap = apertures_[*key];
         ap.hasGeometry = true;
         ap.geometry.push_back(g);
@@ -345,6 +350,7 @@ bool Gerber::parseLines(const std::vector<std::string>& glines) {
             reg.size = 0.0;
             reg.hasGeometry = true;
             apertures_["0"] = reg;
+            apertureOrder_.push_back("0");
         }
     };
     auto notEmpty = [](const std::optional<Shape>& s) { return s && !s->isEmpty(); };
@@ -1011,9 +1017,19 @@ void Gerber::restore(ShapeList solid, ShapeList follow, std::map<std::string, Ap
     solidGeometry() = std::move(solid);
     followGeometry() = std::move(follow);
     apertures_ = std::move(apertures);
+    apertureOrder_.clear();  // un proyecto guarda las aperturas ordenadas (json.dumps con sort_keys)
     intDigits_ = intDigits;
     fracDigits_ = fracDigits;
     sourceFile_ = std::move(source);
+}
+
+std::vector<std::string> Gerber::apertureOrder() const {
+    std::vector<std::string> out;
+    for (const std::string& id : apertureOrder_)
+        if (apertures_.count(id) && std::find(out.begin(), out.end(), id) == out.end()) out.push_back(id);
+    for (const auto& [id, ap] : apertures_)
+        if (std::find(out.begin(), out.end(), id) == out.end()) out.push_back(id);
+    return out;
 }
 
 }  // namespace flatcam

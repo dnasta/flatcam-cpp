@@ -140,6 +140,12 @@ public:
 
     /** @brief Aperturas definidas en el archivo, por identificador. @return El mapa de aperturas. */
     const std::map<std::string, Aperture>& apertures() const { return apertures_; }
+    /**
+     * @brief Identificadores de las aperturas en el orden del diccionario del original (el de aparición en el archivo; en
+     * un objeto leído de un proyecto, el orden alfabético con que lo guarda `json.dumps`).
+     * @return Los identificadores.
+     */
+    std::vector<std::string> apertureOrder() const;
 
     /** @brief Macros de apertura definidas en el archivo, por nombre. @return El mapa de macros. */
     const std::map<std::string, std::shared_ptr<ApertureMacro>>& apertureMacros() const { return macros_; }
@@ -229,6 +235,7 @@ private:
 
     GerberOptions options_;
     std::map<std::string, Aperture> apertures_;
+    std::vector<std::string> apertureOrder_;  ///< Orden de inserción de las aperturas.
     std::map<std::string, std::shared_ptr<ApertureMacro>> macros_;
     int intDigits_{3};
     int fracDigits_{4};

@@ -31,6 +31,7 @@ add_executable(core_tests
     test_luz_de_noche.cpp
     test_project_file.cpp
     test_clearing_methods.cpp
+    test_laser_lines.cpp
     test_rest_machining.cpp
 )
 target_link_libraries(core_tests PRIVATE flatcam::core GTest::gtest_main)

@@ -7,6 +7,7 @@
 #include <string>
 
 #include "cam/PolygonClearing.h"
+#include "parsers/Gerber.h"
 
 namespace flatcam {
 
@@ -30,11 +31,11 @@ struct PaintRestTool {
 };
 
 /**
- * @brief Pintado de todos los polígonos de un objeto con el método estándar.
+ * @brief Pintado de polígonos (`paint_poly_all`, `paint_geo` y `paint_polygon_worker` de FlatCAM).
  *
- * Reproduce `paint_poly_all` y el pintado normal de `paint_geo` de FlatCAM para una herramienta y el método
- * estándar. No están portados todavía el pintado por áreas ni por objeto de referencia, el método de semilla, el
- * de líneas ni el de mecanizado de resto.
+ * Los métodos Estándar, Semilla, Líneas y Combo están en @ref PolygonClearing; "Líneas láser" necesita las aperturas
+ * del Gerber y está en @ref laserLines. La selección por área, polígono u objeto de referencia la arma la interfaz
+ * (recorta la geometría antes de llamar a @ref paintAll).
  */
 class Paint {
 public:
@@ -44,10 +45,43 @@ public:
      * @param options Opciones del pintado.
      * @param[out] paths Trayectorias resultantes, en el orden del original.
      * @param[out] error Mensaje si falla.
+     * @param gerber Gerber de origen (solo para "Líneas láser", que usa sus aperturas).
      * @return `true` si se generó al menos una trayectoria.
      */
     static bool paintAll(const ShapeList& solidGeometry, const PaintOptions& options, ShapeList& paths,
-                         std::string& error);
+                         std::string& error, const Gerber* gerber = nullptr);
+
+    /**
+     * @brief "Líneas láser" (`paint_method == 3` de `paint_polygon_worker`): pinta un polígono siguiendo las líneas
+     * centrales de los trazos del Gerber que caen dentro, para que el láser haga recorridos largos.
+     *
+     * Los destellos (pads) que caen dentro se pintan con Semilla (circulares y oblongos) o Líneas (rectangulares),
+     * siempre con contorno; cada trazo, con @ref fillWithLines; las líneas de los trazos se unen (`linemerge` de la
+     * unión). Reproduce los fallos del original, en los que todo el polígono queda sin pintar: una apertura con geometría
+     * y sin tamaño (macros, `KeyError`), un destello que no se puede pintar, una línea central que no es una línea, o
+     * que la unión de las líneas de los trazos dé una sola línea (`linemerge` no la acepta).
+     * @param polygon Polígono a pintar.
+     * @param gerber Gerber del que salió (sus aperturas, en el orden del original).
+     * @param options Opciones (diámetro, solape, unir, contorno, segmentos).
+     * @return Las trayectorias, o nada si no se pudo pintar.
+     */
+    static std::optional<ShapeList> laserLines(const Shape& polygon, const Gerber& gerber, const PaintOptions& options);
+
+    /**
+     * @brief `Geometry.fill_with_lines`: líneas paralelas a la línea central de un trazo, dentro del trazo achicado
+     * medio diámetro de herramienta, más su contorno; con @p connect se unen como en `paint_connect`.
+     * @param line Línea central (si no es una línea, el original devuelve None: aquí nada).
+     * @param apertureSize Ancho del trazo.
+     * @param tooldia Diámetro de la herramienta.
+     * @param stepsPerCircle Segmentos por cuarto de círculo.
+     * @param overlap Solape, de 0 a 1.
+     * @param connect Unir líneas.
+     * @param contour Agregar el contorno.
+     * @return Las líneas, o nada.
+     */
+    static std::optional<std::vector<EndpointStorage::Line>> fillWithLines(const Shape& line, double apertureSize,
+                                                                           double tooldia, int stepsPerCircle,
+                                                                           double overlap, bool connect, bool contour);
 
     /**
      * @brief Aplana una geometría en polígonos (`recurse` de `paint_poly_all`).
@@ -73,11 +107,13 @@ public:
      * @param stepsPerCircle Segmentos por cuarto de círculo.
      * @param[out] perTool Trayectorias de cada herramienta que pintó algo, con su índice en @p tools.
      * @param[out] error Mensaje si falla.
+     * @param gerber Gerber de origen (solo para "Líneas láser").
      * @return `true` si alguna herramienta pintó algo.
      */
     static bool paintRest(const ShapeList& geometry, const std::vector<PaintRestTool>& tools, double offset,
                           PolygonClearing::Method method, int stepsPerCircle,
-                          std::vector<std::pair<std::size_t, ShapeList>>& perTool, std::string& error);
+                          std::vector<std::pair<std::size_t, ShapeList>>& perTool, std::string& error,
+                          const Gerber* gerber = nullptr);
 };
 
 }  // namespace flatcam

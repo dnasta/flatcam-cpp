@@ -402,6 +402,12 @@ Shape Shape::simplify(double tolerance, bool preserveTopology) const {
     return wrap(g, "simplify");
 }
 
+Shape Shape::parallelOffset(double distance, bool rightSide, int resolution, JoinStyle join, double mitreLimit) const {
+    if (rightSide) distance = -distance;
+    return wrap(GEOSOffsetCurve_r(H(), raw(*this), distance, resolution, static_cast<int>(join), mitreLimit),
+                "parallelOffset");
+}
+
 Shape Shape::convexHull() const { return wrap(GEOSConvexHull_r(H(), raw(*this)), "convexHull"); }
 
 std::vector<Point2D> Shape::triangulate() const {
