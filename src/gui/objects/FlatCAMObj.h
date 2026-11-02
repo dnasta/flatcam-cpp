@@ -99,6 +99,18 @@ public:
 protected:
     std::unique_ptr<QWidget> ui_;  ///< Panel de propiedades (se crea al pedirlo por primera vez).
 
+public:
+    /**
+     * @brief Agrega una figura a un grupo de dibujo (para quien dibuja fuera de un objeto, como la selección de zonas).
+     * @param s Figura.
+     * @param group Grupo a completar.
+     * @param bounds Límites a agrandar.
+     * @param fill Si es `false` solo se dibuja el contorno.
+     */
+    static void addShapeTo(const Shape& s, PlotGroup& group, QRectF& bounds, bool fill = true) {
+        addShape(s, group, bounds, fill);
+    }
+
 protected:
     /**
      * @brief Agrega una figura a lo dibujado: relleno (si tiene superficie) y contornos (`add_shape`).

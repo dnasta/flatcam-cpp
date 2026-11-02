@@ -13,12 +13,18 @@ bool isMulti(ShapeType t) { return static_cast<int>(t) >= static_cast<int>(Shape
 ShapeList Ncc::emptyArea(const ShapeList& solidGeometry, const NccOptions& o) {
     // calculate_bounding_box, selección "Él mismo": una lista de un solo polígono se une tal cual; en otro caso, la
     // envolvente convexa de la unión.
-    Shape env;
-    if (solidGeometry.size() == 1 && solidGeometry[0].type() == ShapeType::Polygon) env = Shape::unaryUnion(solidGeometry);
-    else env = Shape::unaryUnion(solidGeometry).convexHull();
-
-    // apply_margin_to_bounding_box: buffer con esquinas en ingletes.
-    const Shape bbox = env.buffer(o.margin, 16, JoinStyle::Mitre);
+    Shape bbox;
+    if (o.region) {
+        bbox = *o.region;
+    } else {
+        Shape env;
+        if (solidGeometry.size() == 1 && solidGeometry[0].type() == ShapeType::Polygon)
+            env = Shape::unaryUnion(solidGeometry);
+        else
+            env = Shape::unaryUnion(solidGeometry).convexHull();
+        // apply_margin_to_bounding_box: buffer con esquinas en ingletes.
+        bbox = env.buffer(o.margin, 16, JoinStyle::Mitre);
+    }
 
     // get_tool_empty_area para un Gerber sin herramientas de aislamiento.
     Shape target = Shape::collection(solidGeometry);
@@ -40,6 +46,24 @@ ShapeList Ncc::emptyArea(const ShapeList& solidGeometry, const NccOptions& o) {
         out.push_back(empty);
     }
     return out;
+}
+
+Shape Ncc::areaRegion(const ShapeList& areas, double margin) {
+    // env_obj = unary_union(sel_rect); después cada polígono agrandado el margen y todo unido.
+    const Shape u = Shape::unaryUnion(areas);
+    ShapeList parts;
+    for (const Shape& p : isMulti(u.type()) ? u.parts() : ShapeList{u})
+        parts.push_back(p.buffer(margin, 16, JoinStyle::Mitre));
+    return Shape::unaryUnion(parts);
+}
+
+Shape Ncc::referenceRegion(const ShapeList& copper, const ShapeList& reference, bool referenceIsGerber, double margin) {
+    if (referenceIsGerber) {
+        const Shape box = Shape::unaryUnion(reference).convexHull();
+        const Shape ncc = Shape::unaryUnion(copper).convexHull();
+        return ncc.intersection(box).buffer(margin, 16, JoinStyle::Mitre);
+    }
+    return areaRegion(reference, margin);
 }
 
 bool Ncc::clearCopper(const ShapeList& solidGeometry, const NccOptions& o, ShapeList& paths, std::string& error) {

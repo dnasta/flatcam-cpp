@@ -1,6 +1,7 @@
 #include "gui/tools/PaintTool.h"
 
 #include "gui/App.h"
+#include "gui/CanvasPicker.h"
 #include "gui/Translation.h"
 #include "gui/tools/ClearingTools.h"
 #include "tools/Paint.h"
@@ -14,6 +15,8 @@ PaintTool::PaintTool(App* app, QWidget* parent) : PaintToolUIBase(parent), app_(
     connect(reset_button, &QPushButton::clicked, this, [this] { setToolUi(); });
     connect(order_radio, &RadioSet::activatedCustom, this, [this] { rebuild(); });
     connect(rest_cb, &QCheckBox::toggled, this, [this](bool on) { onRestMachiningCheck(on); });
+    connect(reference_type_combo, &QComboBox::currentIndexChanged, this, [this] { fillReferenceCombo(); });
+    connect(selectmethod_combo, &QComboBox::currentIndexChanged, this, [this] { onSelection(); });
     connect(tools_table, &QTableWidget::itemSelectionChanged, this, [this] {
         if (!muted_) updateUi();
     });
@@ -51,6 +54,24 @@ void PaintTool::onRestMachiningCheck(bool state) {
     rest_offset_entry->setVisible(state);
 }
 
+void PaintTool::onSelection() {
+    // PaintUI.on_selection
+    const int sel = selectmethod_combo->indexValue();
+    for (QWidget* w : std::initializer_list<QWidget*>{reference_combo, reference_type_combo, reference_type_label})
+        w->setVisible(sel == 3);
+    area_shape_label->setVisible(sel == 2);
+    area_shape_radio->setVisible(sel == 2);
+}
+
+void PaintTool::fillReferenceCombo() {
+    // on_reference_combo_changed: los objetos del tipo elegido (Gerber, Excellon o Geometría).
+    const int t = reference_type_combo->indexValue();
+    const ObjectKind kind = t == 1 ? ObjectKind::Excellon : t == 2 ? ObjectKind::Geometry : ObjectKind::Gerber;
+    reference_combo->clear();
+    for (FlatCAMObj* o : app_->collection()->objects())
+        if (o->kind() == kind) reference_combo->addItem(o->name());
+}
+
 void PaintTool::onTypeObjChanged() {
     const bool gerber = type_obj_radio->value().toString() == "gerber";
     obj_combo->clear();
@@ -83,6 +104,8 @@ void PaintTool::setToolUi() {
     muted_ = false;
     addTool(0.3);  // tools_paint_tooldia
     onRestMachiningCheck(false);
+    fillReferenceCombo();
+    onSelection();
 }
 
 bool PaintTool::addTool(double dia) {
@@ -185,10 +208,6 @@ FlatCAMObj* PaintTool::paint() {
         app_->ui()->inform("[ERROR_NOTCL] " + tr_("There are no tools selected in the Tool Table."));
         return nullptr;
     }
-    if (selectmethod_combo->indexValue() != 0) {
-        app_->ui()->inform("[WARNING_NOTCL] Todavía solo está la selección \"Todos\".");
-        return nullptr;
-    }
     // Fuente: la geometría sólida del Gerber, o la de la (única) herramienta de la Geometría.
     ShapeList geometry;
     if (src->kind() == ObjectKind::Gerber) {
@@ -196,6 +215,53 @@ FlatCAMObj* PaintTool::paint() {
     } else {
         auto* g = static_cast<GeometryObject*>(src);
         geometry = g->tools().empty() ? g->solidGeometry() : g->tools().begin()->second.solidGeometry;
+    }
+    const int sel = selectmethod_combo->indexValue();
+    const QString srcName = src->name();
+    // paint_poly_area: el Gerber (o la Geometría) recortado a la zona elegida.
+    auto inArea = [geometry](const Shape& zone) {
+        return Paint::flattenToPolygons({Shape::collection(Paint::flattenToPolygons(geometry)).intersection(zone)});
+    };
+    if (sel == 1) {  // Selección de polígono
+        app_->ui()->inform("[WARNING_NOTCL] " + tr_("Click on a polygon to paint it."));
+        app_->picker()->start(CanvasPicker::Mode::PickPolygons, Paint::flattenToPolygons(geometry),
+                              [this, srcName, ids](const ShapeList& polys) {
+                                  if (FlatCAMObj* s = app_->collection()->byName(srcName)) paintGeometry(s, polys, ids);
+                              });
+        return nullptr;
+    }
+    if (sel == 2) {  // Selección de área
+        app_->ui()->inform("[WARNING_NOTCL] " + tr_("Click the start point of the area."));
+        const auto mode = area_shape_radio->value().toString() == "square" ? CanvasPicker::Mode::Rectangles
+                                                                             : CanvasPicker::Mode::Polygons;
+        app_->picker()->start(mode, {}, [this, srcName, ids, inArea](const ShapeList& zones) {
+            if (FlatCAMObj* s = app_->collection()->byName(srcName))
+                paintGeometry(s, inArea(Shape::unaryUnion(zones)), ids);
+        });
+        return nullptr;
+    }
+    if (sel == 3) {  // Objeto de referencia: paint_poly_ref
+        FlatCAMObj* ref = app_->collection()->byName(reference_combo->currentText());
+        if (!ref) {
+            app_->ui()->inform(QString("[ERROR_NOTCL] %1: %2").arg(tr_("Could not retrieve object"), reference_combo->currentText()));
+            return nullptr;
+        }
+        ShapeList refGeo;
+        if (auto* g = dynamic_cast<GerberObject*>(ref)) refGeo = g->gerber().solidGeometry();
+        else if (auto* e = dynamic_cast<ExcellonObject*>(ref)) refGeo = e->excellon().solidGeometry();
+        else if (auto* gg = dynamic_cast<GeometryObject*>(ref)) refGeo = gg->solidGeometry();
+        const Shape env = refGeo.size() == 1 && refGeo.front().type() == ShapeType::Polygon
+                              ? Shape::unaryUnion(refGeo)
+                              : Shape::unaryUnion(refGeo).convexHull();
+        return paintGeometry(src, inArea(env.buffer(0.0000001, 16, JoinStyle::Mitre)), ids);
+    }
+    return paintGeometry(src, geometry, ids);
+}
+
+FlatCAMObj* PaintTool::paintGeometry(FlatCAMObj* src, const ShapeList& geometry, const std::vector<int>& ids) {
+    if (geometry.empty()) {
+        app_->ui()->inform("[WARNING] " + tr_("No polygon found."));
+        return nullptr;
     }
     app_->ui()->inform(QString("%1 %2").arg(tr_("Paint Tool."), tr_("Paint all polygons task started.")));
     // El original calcula en un hilo de trabajo; acá se calcula en el de la interfaz con el indicador de actividad.

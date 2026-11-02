@@ -1,6 +1,7 @@
 #include "gui/tools/NccTool.h"
 
 #include "gui/App.h"
+#include "gui/CanvasPicker.h"
 #include "gui/Translation.h"
 #include "gui/tools/ClearingTools.h"
 #include "tools/Ncc.h"
@@ -14,6 +15,8 @@ NccTool::NccTool(App* app, QWidget* parent) : NccToolUIBase(parent), app_(app) {
     connect(reset_button, &QPushButton::clicked, this, [this] { setToolUi(); });
     connect(ncc_order_radio, &RadioSet::activatedCustom, this, [this] { rebuild(); });
     connect(ncc_rest_cb, &QCheckBox::toggled, this, [this](bool on) { onRestMachiningCheck(on); });
+    connect(select_combo, &QComboBox::currentIndexChanged, this, [this] { onToggleReference(); });
+    connect(reference_combo_type, &QComboBox::currentIndexChanged, this, [this] { onToggleReference(); });
     connect(tools_table, &QTableWidget::itemSelectionChanged, this, [this] {
         if (!muted_) updateUi();
     });
@@ -54,6 +57,21 @@ void NccTool::onRestMachiningCheck(bool state) {
                                                       rest_ncc_contour_cb, rest_ncc_choice_offset_cb,
                                                       rest_ncc_offset_spinner})
         w->setVisible(state);
+}
+
+void NccTool::onToggleReference() {
+    // on_toggle_reference: Sí mismo, Selección de área u Objeto de referencia.
+    const int sel = select_combo->indexValue();
+    for (QWidget* w : std::initializer_list<QWidget*>{reference_combo, reference_combo_type, reference_combo_type_label})
+        w->setVisible(sel == 2);
+    area_shape_label->setVisible(sel == 1);
+    area_shape_radio->setVisible(sel == 1);
+    if (sel != 1) ncc_rest_cb->setDisabled(false);
+    const int t = reference_combo_type->indexValue();
+    const ObjectKind kind = t == 1 ? ObjectKind::Excellon : t == 2 ? ObjectKind::Geometry : ObjectKind::Gerber;
+    reference_combo->clear();
+    for (FlatCAMObj* o : app_->collection()->objects())
+        if (o->kind() == kind) reference_combo->addItem(o->name());
 }
 
 void NccTool::onTypeObjChanged() {
@@ -97,6 +115,7 @@ void NccTool::setToolUi() {
     muted_ = false;
     for (double dia : {1.0, 0.5}) addTool(dia);  // tools_ncc_tools = "1.0, 0.5"
     onRestMachiningCheck(false);
+    onToggleReference();
 }
 
 bool NccTool::addTool(double dia) {
@@ -207,11 +226,6 @@ FlatCAMObj* NccTool::clearCopper() {
         app_->ui()->inform("[ERROR_NOTCL] " + tr_("There are no tools selected in the Tool Table."));
         return nullptr;
     }
-    if (select_combo->indexValue() != 0) {
-        app_->ui()->inform("[WARNING_NOTCL] Todavía solo está la selección \"Sí mismo\".");
-        return nullptr;
-    }
-
     ShapeList geometry;
     if (src->kind() == ObjectKind::Gerber) {
         geometry = static_cast<GerberObject*>(src)->gerber().solidGeometry();
@@ -219,6 +233,38 @@ FlatCAMObj* NccTool::clearCopper() {
         auto* g = static_cast<GeometryObject*>(src);
         geometry = g->tools().empty() ? g->solidGeometry() : g->tools().begin()->second.solidGeometry;
     }
+    const int sel = select_combo->indexValue();
+    const double margin = ncc_margin_entry->value();
+    const QString srcName = src->name();
+    if (sel == 1) {  // Selección de área
+        app_->ui()->inform("[WARNING_NOTCL] " + tr_("Click the start point of the area."));
+        const auto mode = area_shape_radio->value().toString() == "square" ? CanvasPicker::Mode::Rectangles
+                                                                             : CanvasPicker::Mode::Polygons;
+        app_->picker()->start(mode, {}, [this, srcName, geometry, ids, margin](const ShapeList& zones) {
+            if (FlatCAMObj* s = app_->collection()->byName(srcName))
+                clearRegion(s, geometry, ids, Ncc::areaRegion(zones, margin));
+        });
+        return nullptr;
+    }
+    if (sel == 2) {  // Objeto de referencia
+        FlatCAMObj* ref = app_->collection()->byName(reference_combo->currentText());
+        if (!ref) {
+            app_->ui()->inform(QString("[ERROR_NOTCL] %1: %2").arg(tr_("Could not retrieve object"),
+                                                                   reference_combo->currentText()));
+            return nullptr;
+        }
+        if (auto* g = dynamic_cast<GerberObject*>(ref))
+            return clearRegion(src, geometry, ids, Ncc::referenceRegion(geometry, g->gerber().solidGeometry(), true, margin));
+        if (auto* gg = dynamic_cast<GeometryObject*>(ref))
+            return clearRegion(src, geometry, ids, Ncc::referenceRegion(geometry, gg->solidGeometry(), false, margin));
+        app_->ui()->inform("[ERROR_NOTCL] " + tr_("The reference object type is not supported."));
+        return nullptr;
+    }
+    return clearRegion(src, geometry, ids, std::nullopt);
+}
+
+FlatCAMObj* NccTool::clearRegion(FlatCAMObj* src, const ShapeList& geometry, const std::vector<int>& ids,
+                                 const std::optional<Shape>& region) {
     // El original calcula en un hilo de trabajo; acá se calcula en el de la interfaz con el indicador de actividad.
     BusyScope busy(app_->ui());
     // gen_clear_area: el margen es el del formulario; el resto, de cada herramienta.
@@ -235,6 +281,7 @@ FlatCAMObj* NccTool::clearCopper() {
         // agrandado de los campos rest_*; solape y método de cada herramienta.
         NccOptions common;
         common.margin = margin;
+        common.region = region;
         common.connect = rest_ncc_connect_cb->isChecked();
         common.contour = rest_ncc_contour_cb->isChecked();
         common.hasOffset = rest_ncc_choice_offset_cb->isChecked();
@@ -281,6 +328,7 @@ FlatCAMObj* NccTool::clearCopper() {
         o.overlap = t.overlap / 100.0;
         o.connect = t.connect;
         o.margin = margin;
+        o.region = region;
         o.hasOffset = t.offsetChoice;
         o.offset = t.offset;
         o.contour = t.contour;
