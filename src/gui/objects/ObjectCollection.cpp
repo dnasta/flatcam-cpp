@@ -26,6 +26,13 @@ ObjectCollection::ObjectCollection(QObject* parent) : QAbstractItemModel(parent)
 
 ObjectCollection::~ObjectCollection() = default;
 
+void ObjectCollection::rename(FlatCAMObj* obj, const QString& name) {
+    if (!obj || name.isEmpty() || name == obj->name()) return;
+    obj->setName(name);
+    const QModelIndex idx = indexOf(obj);
+    Q_EMIT dataChanged(idx, idx);
+}
+
 QStringList ObjectCollection::names() const {
     QStringList out;
     for (const auto& g : groups_)

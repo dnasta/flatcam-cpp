@@ -39,6 +39,14 @@ public:
     /** @brief Quita y destruye un objeto. @param obj Objeto. */
     void remove(FlatCAMObj* obj);
 
+    /**
+     * @brief Cambia el nombre de un objeto sin avisar (`on_name_activate` + `update_view`), como el campo Nombre de
+     * Propiedades.
+     * @param obj Objeto.
+     * @param name Nombre nuevo.
+     */
+    void rename(FlatCAMObj* obj, const QString& name);
+
     /** @brief Nombres de todos los objetos (`get_names`). @return Los nombres. */
     QStringList names() const;
 

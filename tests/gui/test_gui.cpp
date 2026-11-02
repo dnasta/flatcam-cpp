@@ -26,6 +26,7 @@
 #include "tools/Isolation.h"
 #include <QFile>
 #include <QMimeData>
+#include <QPlainTextEdit>
 #include <QRegularExpression>
 #include <QDropEvent>
 #include "gui/widgets/KeySensitiveListView.h"
@@ -1092,4 +1093,89 @@ TEST(GuiProject, SavesObjectsCreatedInThePort) {
     const QStringList x = skipDate(d2->exportText()).split('\n'), y = skipDate(static_cast<CNCJobObject*>(dcnc)->exportText()).split('\n');
     ASSERT_EQ(x.size(), y.size());
     for (int i = 0; i < x.size(); ++i) ASSERT_EQ(x[i], y[i]) << "línea " << i + 1;
+}
+
+TEST(GuiProjectMenu, ContextMenuActions) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/";
+    ASSERT_TRUE(app.openProject(QString::fromStdString(dir + "luz_de_noche_reducido.FlatPrj")));
+    ObjectCollection* col = app.collection();
+    KeySensitiveListView* view = app.ui()->collection_view;
+    view->expandAll();
+    auto select = [&](const QStringList& names) {
+        view->clearSelection();
+        view->setCurrentIndex(col->indexOf(col->byName(names.first())));  // carga sus Propiedades
+        for (const QString& n : names)
+            view->selectionModel()->select(col->indexOf(col->byName(n)), QItemSelectionModel::Select);
+    };
+    const QString edge = "luz de noche Pascual-Edge_Cuts.gbr", cut = "luz de noche Pascual-Edge_Cuts.gbr_cutout";
+    // Lo que se ve según lo elegido (on_menu_request): "Crear CNCJob" solo con Geometrías; color con Gerber o Excellon.
+    select({edge});
+    app.updateProjectMenu();
+    EXPECT_FALSE(app.menuProjectGenerateCnc->isVisible());
+    EXPECT_TRUE(app.menuProjectColor->isEnabled());
+    EXPECT_TRUE(app.menuProjectViewSource->isVisible());
+    EXPECT_EQ(app.menuProjectEnable->text(), QString::fromUtf8("Habilitar Parcela"));
+    select({cut});
+    app.updateProjectMenu();
+    EXPECT_TRUE(app.menuProjectGenerateCnc->isVisible());
+    EXPECT_FALSE(app.menuProjectColor->isEnabled());
+    EXPECT_FALSE(app.menuProjectViewSource->isVisible());
+
+    // Mostrar/ocultar.
+    FlatCAMObj* geo = col->byName(cut);
+    EXPECT_FALSE(geo->plotEnabled());  // así estaba en el proyecto del usuario
+    app.menuProjectEnable->trigger();
+    EXPECT_TRUE(geo->plotEnabled());
+    app.menuProjectDisable->trigger();
+    EXPECT_FALSE(geo->plotEnabled());
+
+    // Colores: rojo con transparencia BF y contorno al 70 %; "Por defecto" vuelve a los de fábrica.
+    select({edge});
+    FlatCAMObj* g = col->byName(edge);
+    app.setSelectedColor("Red");
+    EXPECT_EQ(g->fillColor, colorFromFlatCam("#FF0000BF"));
+    EXPECT_EQ(g->outlineColor, QColor(178, 0, 0));  // round(255 * 0.7): 178.49999999999997 -> 178, como Python
+    app.setSelectedColor("Default");
+    EXPECT_EQ(g->fillColor, colorFromFlatCam("#BBF268BF"));
+
+    // Crear CNCJob desde el menú, con todas las herramientas de la Geometría.
+    select({cut});
+    app.menuProjectGenerateCnc->trigger();
+    EXPECT_NE(col->byName(cut + "_cnc_1"), nullptr);  // ya había un "<geo>_cnc": el nuevo se renombra
+
+    // Ver fuente: una pestaña "Editor de fuente" con el texto del Gerber.
+    select({edge});
+    const int tabs = app.ui()->plot_tab_area->count();
+    app.menuProjectViewSource->trigger();
+    ASSERT_EQ(app.ui()->plot_tab_area->count(), tabs + 1);
+    EXPECT_EQ(app.ui()->plot_tab_area->tabText(tabs), QString::fromUtf8("Editor de fuente"));
+    auto* src = qobject_cast<QPlainTextEdit*>(app.ui()->plot_tab_area->widget(tabs));
+    ASSERT_NE(src, nullptr);
+    EXPECT_TRUE(src->toPlainText().startsWith("%TF.GenerationSoftware,KiCad"));
+
+    // Copiar: "<nombre>_copy", con la misma geometría.
+    const std::vector<FlatCAMObj*> copies = app.copySelected();
+    ASSERT_EQ(copies.size(), 1u);
+    EXPECT_EQ(copies[0]->name(), edge + "_copy");
+    EXPECT_NEAR(copies[0]->bounds().width(), g->bounds().width(), 1e-9);
+
+    // Renombrar desde el campo Nombre de Propiedades (Enter).
+    select({edge + "_copy"});
+    auto* ui = qobject_cast<GerberObjectUI*>(app.ui()->properties_scroll_area->widget());
+    ASSERT_NE(ui, nullptr);
+    ui->name_entry->setText("contorno");
+    Q_EMIT ui->name_entry->returnPressed();
+    EXPECT_EQ(copies[0]->name(), "contorno");
+    EXPECT_EQ(col->data(col->indexOf(copies[0]), Qt::DisplayRole).toString(), "contorno");
+
+    // Borrar (sin preguntar) dos objetos; también con la tecla Supr desde el árbol.
+    const int before = static_cast<int>(col->objects().size());
+    select({"contorno", "luz de noche Pascual-Logo.gbr"});
+    ASSERT_TRUE(app.deleteSelected(true));
+    EXPECT_EQ(static_cast<int>(col->objects().size()), before - 2);
+    EXPECT_EQ(col->byName("contorno"), nullptr);
+    EXPECT_EQ(app.ui()->properties_scroll_area->widget()->objectName(), QString());  // panel vacío
+    view->clearSelection();
+    EXPECT_FALSE(app.deleteSelected(true));
 }
