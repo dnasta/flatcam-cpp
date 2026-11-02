@@ -15,10 +15,12 @@ struct ToolInfo {
 };
 
 /**
- * @brief Postprocesadores que lista FlatCAM en sus combos (`app.preprocessors` menos `hpgl`), en el orden en que los
- * carga de la carpeta `preprocessors` en Windows.
+ * @brief Postprocesadores que lista FlatCAM en sus combos (`app.preprocessors`): `default` primero (así lo reordena
+ * `App.__init__`) y después el resto en el orden en que Windows lista la carpeta `preprocessors` (sin distinguir
+ * mayúsculas).
+ * @param includeHpgl `false` en Perforación: el original saltea `hpgl`, que es solo para geometrías.
  * @return Los nombres.
  */
-QStringList preprocessorNames();
+QStringList preprocessorNames(bool includeHpgl = true);
 
 }  // namespace flatcam::gui

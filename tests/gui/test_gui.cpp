@@ -1432,3 +1432,51 @@ TEST(GuiCanvasSelection, AreaPolygonAndReferenceSelections) {
     ASSERT_NE(isoArea, nullptr);
     EXPECT_LE(isoArea->bounds().right(), lb.center().x() + 1e-6);
 }
+
+TEST(GuiPreprocessors, CombosAndHpglLikeTheOriginal) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    // Perforación: todos los postprocesadores menos hpgl, con default primero.
+    auto* exc = static_cast<ExcellonObject*>(app.openByExtension(QString::fromStdString(dir + "PTH.drl")));
+    ASSERT_NE(exc, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(exc));
+    DrillingTool* d = app.drillingTool;
+    app.runTool(d, DrillingTool::info());
+    d->setToolUi();
+    EXPECT_EQ(d->pp_excellon_name_cb->count(), 19);
+    EXPECT_EQ(d->pp_excellon_name_cb->itemText(0), "default");
+    EXPECT_EQ(d->pp_excellon_name_cb->findText("hpgl"), -1);
+    // Con la sonda aparecen sus campos y su valor llega al G-code.
+    d->pp_excellon_name_cb->setValue("Toolchange_Probe_MACH3");
+    EXPECT_FALSE(d->pdepth_entry->isHidden());
+    d->pdepth_entry->setValue(-0.5);
+    auto* cnc = dynamic_cast<CNCJobObject*>(d->generateCnc());
+    ASSERT_NE(cnc, nullptr);
+    EXPECT_NE(cnc->job().gcode().find("G31 Z-0.5000"), std::string::npos);
+
+    // Geometría: también hpgl; al elegirlo se apaga la profundidad múltiple y se fuerza el cambio de herramienta.
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    ASSERT_NE(edge, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(edge));
+    app.ui()->cutout_btn->trigger();
+    auto* geo = dynamic_cast<GeometryObject*>(app.cutoutTool->freeformCutout());
+    ASSERT_NE(geo, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(geo));
+    auto* ui = qobject_cast<GeometryObjectUI*>(app.ui()->properties_scroll_area->widget());
+    ASSERT_NE(ui, nullptr);
+    EXPECT_EQ(ui->pp_geometry_name_cb->count(), 20);
+    const bool multidepth = ui->mpass_cb->isChecked();
+    ui->pp_geometry_name_cb->setValue("hpgl");
+    EXPECT_FALSE(ui->mpass_cb->isChecked());
+    EXPECT_FALSE(ui->mpass_cb->isEnabled());
+    EXPECT_TRUE(ui->toolchangeg_cb->isChecked());
+    ui->generate_cnc_button->click();
+    auto* plot = dynamic_cast<CNCJobObject*>(app.collection()->byName(geo->name() + "_cnc"));
+    ASSERT_NE(plot, nullptr);
+    EXPECT_EQ(plot->job().startGcode().rfind("IN;\nPU;", 0), 0u);
+    EXPECT_NE(plot->job().gcode().find("SP1;"), std::string::npos);
+    // Al volver a otro postprocesador se restauran las casillas.
+    ui->pp_geometry_name_cb->setValue("default");
+    EXPECT_EQ(ui->mpass_cb->isChecked(), multidepth);
+    EXPECT_TRUE(ui->mpass_cb->isEnabled());
+}

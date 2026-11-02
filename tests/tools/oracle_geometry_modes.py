@@ -60,6 +60,24 @@ SCENARIOS = [
     ("offset_out_multidepth", [SQUARE], dict(cutz=-1.0, multidepth=True, depthperpass=0.5), dict(offset="out")),
     ("offset_custom_negative_ring", [SQUARE], dict(cutz=-1.0), dict(offset="custom", offset_value=-0.4)),
 ]
+# Los demás postprocesadores, de punta a punta (Paste_1 es de la pasta de soldar y no sirve para geometrías).
+OTHER_PPS = ["Berta_CNC", "Default_no_M6", "grbl_11", "GRBL_11_no_M6", "hpgl", "ISEL_CNC", "ISEL_ICP_CNC", "line_xyz",
+             "Marlin", "Marlin_laser_FAN_pin", "Marlin_laser_Spindle_pin", "Repetier", "Roland_MDX_20",
+             "Toolchange_Custom", "Toolchange_Manual", "Toolchange_Probe_MACH3", "Z_laser"]
+for _pp in OTHER_PPS:
+    SCENARIOS.append(("pp_" + _pp, [LINE, "POINT (3 4)"], dict(cutz=-0.5, ppname_g=_pp, dwell=True, dwelltime=1.5), {}))
+    SCENARIOS.append(("pp_" + _pp + "_no_toolchange", [LINE], dict(cutz=-0.5, ppname_g=_pp, startz=1.0),
+                      dict(toolchange=False)))
+SCENARIOS += [
+    ("pp_Roland_MDX_20_extracut", [SQUARE], dict(cutz=-1.0, extracut=True, extracut_length=0.5,
+                                                 ppname_g="Roland_MDX_20"), {}),
+    ("pp_Roland_MDX_20_extracut_zero", [SQUARE], dict(cutz=-1.0, extracut=True, extracut_length=0.0,
+                                                      ppname_g="Roland_MDX_20"), {}),
+    ("pp_Marlin_multidepth", [SQUARE], dict(cutz=-1.0, multidepth=True, depthperpass=0.4, ppname_g="Marlin"), {}),
+    ("pp_line_xyz_extracut_multidepth", [SQUARE], dict(cutz=-1.0, multidepth=True, depthperpass=0.5, extracut=True,
+                                                       extracut_length=1.0, ppname_g="line_xyz"), {}),
+    ("pp_hpgl_inches", [LINE], dict(cutz=-0.07, travelz=0.08, ppname_g="hpgl"), dict(units="IN")),
+]
 
 
 class ExcAreas:
@@ -87,16 +105,29 @@ def main():
     sys.path.insert(0, REF)
     camlib = load("camlib", os.path.join(REF, "camlib.py"))
     import appPreProcessor  # noqa: E402
-    default_mod = load("pp_default", os.path.join(REF, "preprocessors", "default.py"))
-    load("pp_laser", os.path.join(REF, "preprocessors", "GRBL_laser.py"))
     import math
-    default_mod.math = math
+    for f in sorted(os.listdir(os.path.join(REF, "preprocessors"))):
+        if f.endswith(".py") and f != "__init__.py":
+            load("pp_" + f[:-3], os.path.join(REF, "preprocessors", f)).math = math
 
     app = FakeApp()
     app.defaults.update({"cncjob_steps_per_circle": 64, "cncjob_coords_type": "G90", "geometry_f_plunge": False})
     app.preprocessors = appPreProcessor.preprocessors
     app.exc_areas = ExcAreas()
     app.dec_format = lambda v, dec=4: float("%.*f" % (dec, v))
+    import logging
+    app.log = logging.getLogger("oracle")  # doformat registra el error y devuelve "" (Roland sin `z`)
+    app.log.addHandler(logging.NullHandler())
+    app.log.propagate = False
+    # line_xyz lee `end_xy`, que CNCjob no define: en el original la cabecera queda vacía. El port la escribe con
+    # `xy_end` (desvío consciente), y así se compara.
+    lxyz = appPreProcessor.preprocessors["line_xyz"]
+    orig_start = type(lxyz).start_code
+
+    def start_with_end_xy(self, p):
+        p["end_xy"] = p["xy_end"]
+        return orig_start(self, p)
+    type(lxyz).start_code = start_with_end_xy
     camlib.Geometry.app = app
     camlib.CNCjob.app = app
 
@@ -138,6 +169,8 @@ def main():
         xmin, ymin, xmax, ymax = unary_union(shapes).bounds
         job.options = {"name": name, "type": "Geometry", "tool_dia": base_tool["tooldia"], "xmin": xmin, "ymin": ymin,
                        "xmax": xmax, "ymax": ymax}
+        job.z_pdepth = -0.02       # mtool_gen_cncjob: geometry_z_pdepth
+        job.feedrate_probe = 75.0  # geometry_feedrate_probe
         job.optimized_travelling_salesman = lambda points, start=None: list(points)
         tools = {1: {"tooldia": base_tool["tooldia"], "offset": jobopts.get("offset", "Path"),
                      "offset_value": jobopts.get("offset_value", 0.0), "solid_geometry": shapes, "data": data}}

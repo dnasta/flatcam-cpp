@@ -15,9 +15,16 @@ máquina del usuario.
 
 **Lo que hay que saber para retomar (el detalle está en `AGENTS.md`, sección 12).**
 
-- **Tests:** 559 (529 del núcleo + 29 de la GUI corren siempre; 1 lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
+- **Tests:** 2.628 casos de `ctest` (2.598 del núcleo, de los que 2.251 son los casos de los postprocesadores, y 30 de la GUI; 1
+  lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
   y Qt 6.12 en el Mac del usuario (M4, AppleClang). micromamba: `old` (Shapely 1.8.4, GEOS 3.11, PyQt5 5.15, para oráculos y para
-  volcar la interfaz original), `sh2`, `geos312`, `geos311` (`AGENTS.md`, secciones 6 y 12.4).
+  volcar la interfaz original), `sh2`, `geos312`, `geos311` (`AGENTS.md`, secciones 6 y 12.4). El build con GEOS 3.12 va en
+  `/tmp/b312` (macOS limpia `/tmp`: si falta, se vuelve a crear con el comando de la sección 6).
+- **Fase 5 en curso** (pedido del usuario: "todo lo que falta portar", plan en `AGENTS.md` sección 13). **Hecho el ítem 1:** los 20
+  postprocesadores, idénticos al original método por método y de punta a punta en geometrías y taladrado; desvíos en
+  `AGENTS.md` 11.14 (la cabecera de `line_xyz`, que en el original queda vacía). **Sigue el ítem 2** (pendientes de las
+  herramientas ya portadas: "Líneas láser" de Paint, operación "Aislamiento" de NCC, base de datos de herramientas, diámetro
+  seguro, ajuste a la grilla, áreas de exclusión, pulido, fresado de ranuras).
 - **Hecho (fases 1, 2 y 3 completas):** parsers, transformaciones, postprocesadores, G-code de taladrado y de geometrías, CutOut,
   Paint, NCC, PCB a 2 caras e Isolation. **Verificado contra el ejecutable FlatCAM 2024.4 del usuario** (placa "luz de noche",
   `tests/data/luz_de_noche/`, `tests/test_luz_de_noche.cpp`): CutOut byte por byte, Paint idéntico con GEOS 3.11, NCC 272 = 272
@@ -59,6 +66,4 @@ máquina del usuario.
   al reabrir un proyecto el port **reconstruye el código de inicio** de los CNC Job (el original lo pierde); los dos CNC Job
   del proyecto real se exportan idénticos a sus `.nc` (`AGENTS.md` 11.13). **En curso (pedido del usuario, en orden):**
   (1) ~~menú contextual del árbol del Proyecto~~ (hecho); (2) ~~proyectos recientes~~ (hecho); (3) Paint/NCC/Isolation: ~~métodos Semilla, Líneas y Combo~~, ~~resto~~ y
-  ~~área y polígono con el mouse~~ (hechos). **Los tres puntos pedidos están completos.** Pendientes menores: "Líneas láser"
-  de Paint, operación "Aislamiento" de NCC, base de datos de herramientas, ajuste a la grilla de los clics. Pendientes menores: Paint/NCC con semilla y líneas, resto de Paint/NCC, selección por área,
-  verificación de diámetro seguro (`AGENTS.md`, sección 11).
+  ~~área y polígono con el mouse~~ (hechos). **Los tres puntos pedidos están completos.** Lo que falta está en el plan de la fase 5 (`AGENTS.md`, sección 13).

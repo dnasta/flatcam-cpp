@@ -82,6 +82,22 @@ TEST(CncJobDrill, FileOrderMatchesOriginalGeneratorExactly) {
     EXPECT_EQ(job.exportGcode(golden_drill::header()), golden_drill::kFullFile);
 }
 
+TEST(CncJobDrill, EveryExcellonPreprocessorMatchesOriginalGenerator) {
+    const Excellon ex = loadDrill();
+    for (const auto& run : golden_drill::kOtherPreprocessors) {
+        SCOPED_TRACE(run.pp);
+        DrillJobSettings s = golden_drill::settings();
+        s.preprocessor = run.pp;
+        s.flavor = GcodeFlavor::FlatCAM2024_4;
+        CncJob job(s);
+        ASSERT_TRUE(job.generateFromExcellon(ex)) << job.lastError();
+        EXPECT_EQ(job.startGcode(), run.start);
+        ASSERT_EQ(job.toolGcodes().size(), run.tools.size());
+        for (std::size_t i = 0; i < run.tools.size(); ++i)
+            EXPECT_EQ(job.toolGcodes()[i], run.tools[i]) << "herramienta #" << i + 1;
+    }
+}
+
 // ------------------------------------------- contra el G-code real generado por FlatCAM 8.994 del usuario
 
 TEST(CncJobDrill, OptimizedMatchesUserFileExceptHoleOrder) {

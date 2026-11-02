@@ -58,7 +58,7 @@ bool CncJob::generateFromExcellon(const Excellon& excellon) {
     gcode_.clear();
     toolGcodes_.clear();
 
-    const auto pp = makePreprocessor(settings_.preprocessor);
+    const auto pp = makePreprocessor(settings_.preprocessor, settings_.flavor);
     if (!pp) {
         lastError_ = "Postprocesador desconocido: " + settings_.preprocessor;
         return false;
@@ -151,6 +151,8 @@ PreprocessorParams CncJob::geometryParams(const GeometryJobSettings& js, const S
     p.toolC = PyNumber(ts.toolDia);
     p.options.type = "Geometry";
     p.options.toolDia = PyNumber(ts.toolDia);
+    p.zPdepth = PyNumber(js.zPdepth);
+    p.feedrateProbe = PyNumber(js.feedrateProbe);
     // Igual que el original: la cabecera imprime los límites del objeto de geometría de origen (`options['xmin']`),
     // no los del recorrido ya desplazado por el offset de la herramienta.
     std::optional<BoundingBox> bb = js.headerBounds ? js.headerBounds : boundsOf(geometry);
@@ -199,6 +201,8 @@ PreprocessorParams CncJob::drillParams(const DrillJobSettings& s, int tool, cons
     for (const DrillToolSummary& t : tools)
         if (t.id == tool) p.toolC = PyNumber(t.dia);
     p.fPlunge = ts.fPlunge;
+    p.zPdepth = ts.zPdepth;
+    p.feedrateProbe = ts.feedrateProbe;
     if (bounds) {
         p.options.xmin = PyNumber(bounds->xmin);
         p.options.ymin = PyNumber(bounds->ymin);
@@ -224,7 +228,7 @@ PreprocessorParams CncJob::drillParams(const DrillJobSettings& s, int tool, cons
 
 std::string CncJob::drillStartGcode(const DrillJobSettings& s, int firstTool, const std::vector<DrillToolSummary>& tools,
                                     const std::optional<BoundingBox>& bounds) {
-    const auto pp = makePreprocessor(s.preprocessor);
+    const auto pp = makePreprocessor(s.preprocessor, s.flavor);
     return pp ? pp->startCode(drillParams(s, firstTool, tools, bounds)) + "\n" : std::string();
 }
 
@@ -232,7 +236,7 @@ bool CncJob::toolGcode(int tool, const std::vector<Point2D>& points, const Excel
                        std::array<double, 2>& firstPoint, bool isFirst, bool isLast, std::string& tGcode,
                        std::string& startGcode) {
     const DrillToolSettings& ts = settings_.tools.at(tool);
-    const auto pp = makePreprocessor(settings_.preprocessor);
+    const auto pp = makePreprocessor(settings_.preprocessor, settings_.flavor);
     if (points.empty()) {
         lastError_ = "La herramienta " + std::to_string(tool) + " no tiene agujeros";
         return false;
@@ -259,6 +263,9 @@ bool CncJob::toolGcode(int tool, const std::vector<Point2D>& points, const Excel
     // ---- G-code
     if (isFirst) startGcode = pp->startCode(p) + "\n";
     tGcode += pp->zFeedrateCode(p) + "\n";
+    // oldx/oldy: el X,Y de cambio de herramienta (o 0, 0) y después el último agujero (line_xyz los usa).
+    p.oldX = firstPoint[0];
+    p.oldY = firstPoint[1];
     tGcode += pp->toolchangeCode(p) + "\n";
     tGcode += pp->zFeedrateCode(p) + "\n";
     tGcode += pp->spindleCode(p) + "\n";
@@ -402,12 +409,26 @@ std::string travelTo(GeoContext& c, double x, double y) {
     return c.pp.rapidCode(c.p) + "\n";
 }
 
-/// Baja a la Z de corte: avance Z, bajada y avance de trabajo.
+/// Baja a la Z de corte: avance Z, bajada y avance de trabajo. Como en el original, solo `down_code` recibe la Z de la
+/// pasada (`z_cut=...`); en las demás llamadas `z_cut` es el del trabajo.
 std::string plunge(GeoContext& c, double x, double y, double zCut) {
     c.p.x = x;
     c.p.y = y;
+    std::string g = c.pp.zFeedrateCode(c.p) + "\n";
     c.p.zCut = PyNumber(zCut);
-    return c.pp.zFeedrateCode(c.p) + "\n" + c.pp.downCode(c.p) + "\n" + c.pp.feedrateCode(c.p) + "\n";
+    g += c.pp.downCode(c.p) + "\n";
+    c.p.zCut = PyNumber(c.ts.cutZ);
+    return g + c.pp.feedrateCode(c.p) + "\n";
+}
+
+/// `doformat(p.linear_code, x=..., y=...)`, con `z=...` solo si se indica (las llamadas del original que la pasan).
+std::string linearTo(GeoContext& c, double x, double y, std::optional<double> z = std::nullopt) {
+    c.p.x = x;
+    c.p.y = y;
+    if (z) c.p.z = PyNumber(*z);
+    std::string g = c.pp.linearCode(c.p) + "\n";
+    c.p.z.reset();
+    return g;
 }
 
 /// Sube a la Z de viaje desde (x, y).
@@ -426,12 +447,7 @@ std::string linear2gcode(GeoContext& c, const std::vector<Point2D>& line, double
 
     std::string g = travelTo(c, path.front().x, path.front().y);
     if (down) g += plunge(c, path.front().x, path.front().y, zCut);
-    for (std::size_t i = 1; i < path.size(); ++i) {
-        c.p.x = path[i].x;
-        c.p.y = path[i].y;
-        c.p.zCut = PyNumber(zCut);
-        g += c.pp.linearCode(c.p) + "\n";
-    }
+    for (std::size_t i = 1; i < path.size(); ++i) g += linearTo(c, path[i].x, path[i].y, zCut);
     if (up) g += lift(c, path.back().x, path.back().y);
     return g;
 }
@@ -448,10 +464,7 @@ std::string linear2gcodeExtra(GeoContext& c, const std::vector<Point2D>& line, d
     g += plunge(c, path.front().x, path.front().y, zCut);
     Point2D prev = path.front();
     for (std::size_t i = 1; i < path.size(); ++i) {
-        c.p.x = path[i].x;
-        c.p.y = path[i].y;
-        c.p.zCut = PyNumber(zCut);
-        g += c.pp.linearCode(c.p) + "\n";
+        g += linearTo(c, path[i].x, path[i].y, zCut);  // solo este tramo pasa z=z_cut; los del solape no
         prev = path[i];
     }
 
@@ -463,13 +476,9 @@ std::string linear2gcodeExtra(GeoContext& c, const std::vector<Point2D>& line, d
         g += travelTo(c, extra[0].x, extra[0].y);
         g += plunge(c, extra[0].x, extra[0].y, zCut);
         for (std::size_t i = 1; i < extra.size(); ++i) {
-            c.p.x = extra[i].x;
-            c.p.y = extra[i].y;
-            g += c.pp.linearCode(c.p) + "\n";
+            g += linearTo(c, extra[i].x, extra[i].y);
         }
-        c.p.x = path[0].x;
-        c.p.y = path[0].y;
-        g += c.pp.linearCode(c.p) + "\n";
+        g += linearTo(c, path[0].x, path[0].y);
         last = path[0];
     } else {
         const double length = target.length();
@@ -480,23 +489,17 @@ std::string linear2gcodeExtra(GeoContext& c, const std::vector<Point2D>& line, d
         g += travelTo(c, extra[0].x, extra[0].y);
         g += plunge(c, extra[0].x, extra[0].y, zCut);
         for (std::size_t i = 1; i < extra.size(); ++i) {
-            c.p.x = extra[i].x;
-            c.p.y = extra[i].y;
-            g += c.pp.linearCode(c.p) + "\n";
+            g += linearTo(c, extra[i].x, extra[i].y);
         }
         extra = target.substring(0, extraLen * 0.5).coordinates();
         for (std::size_t i = 1; i < extra.size(); ++i) {
-            c.p.x = extra[i].x;
-            c.p.y = extra[i].y;
-            g += c.pp.linearCode(c.p) + "\n";
+            g += linearTo(c, extra[i].x, extra[i].y);
         }
         extra = target.substring(0, extraLen * 0.5).coordinates();
         std::reverse(extra.begin(), extra.end());
         last = extra[0];
         for (std::size_t i = 1; i < extra.size(); ++i) {
-            c.p.x = extra[i].x;
-            c.p.y = extra[i].y;
-            g += c.pp.linearCode(c.p) + "\n";
+            g += linearTo(c, extra[i].x, extra[i].y);
             last = extra[i];
         }
     }
@@ -579,6 +582,8 @@ bool CncJob::generateFromGeometryTools(const std::vector<GeometryToolJob>& tools
 bool CncJob::geometryToolGcode(const ShapeList& geometry, const GeometryJobSettings& js, bool isFirst, bool isLast,
                                std::string& tGcode, std::string& startGcode) {
     const GeometryToolSettings& ts = js.toolSettings;
+    // geometry_tool_gcode_gen controla la Z de corte (positiva o cero), la de viaje y la profundidad por pasada ANTES de
+    // leerlas de la herramienta (camlib.py 3532-3575 contra 3577), así que en la práctica no cambian nada: no se portan.
 
     const auto pp = makePreprocessor(js.preprocessor, js.flavor);
     if (!pp) {

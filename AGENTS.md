@@ -66,14 +66,14 @@ logo) y **CutOut** → **CNC Job** con G-code. Taladros y alineación con **PCB 
 | 2 | Parsers de Gerber y Excellon con tests contra archivos reales | **Hecha** |
 | 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | **Hecha**: transformaciones de Gerber, postprocesadores, G-code de taladrado y de geometrías, CutOut, capa de láser, Paint, NCC, PCB a 2 caras e Isolation |
 | 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | **En curso**: ventana principal idéntica a la original (generada desde la interfaz Python real), widgets de `GUIElements`, canvas `QOpenGLWidget` (ejes, grilla, HUD, zoom, paneo y dibujo de objetos con buffers de vértices), abrir Gerber y Excellon (menú, barra, arrastrar y soltar, línea de comandos) con el árbol del Proyecto; Propiedades de Gerber y Excellon (paneles generados + `build_ui`); paneles de NCC, Paint, Perforación y Corte en la pestaña Herramienta (generados). **Perforación completa:** objeto → tabla de herramientas → parámetros por herramienta → CNC Job (objeto, dibujo y Propiedades) → "Guardar código CNC"; desde la interfaz reproduce el `.nc` de la 2024.4 del usuario (salvo fecha y orden de agujeros). **Corte completo:** Corte libre o rectangular → objeto Geometría (Propiedades con su tabla y parámetros por herramienta) → "Generar objeto CNCJob" → exportar; reproduce el `.nc` del contorno de la 2024.4 **línea por línea salvo la fecha**. **Agregado pedido por el usuario:** los objetos de cada grupo del Proyecto se reordenan arrastrándolos y ese orden es el de dibujo (el primero queda arriba). **Paint y NCC completos** (método estándar, "Todos" / "Sí mismo"): el flujo del usuario sobre Logo y B_Cu da sus `.nc` de la 2024.4 (Paint: mismas líneas salvo la variante del láser y últimas cifras de GEOS; NCC: misma cabecera y los mismos trazados ±2 %). **Reflejar:** Opciones → Voltear en el eje X / Y y las teclas X / Y (también desde el árbol), alrededor del centro de la caja de los objetos elegidos; con las cuatro capas de "luz de noche" elegidas da exactamente el reflejo en x = 0 de los `.nc` del usuario. **PCB a 2 caras:** panel generado y lógica completa (reflejar con punto, caja o agujero elegido con el mouse; límites de lo elegido; agujeros de alineación "Alignment Drills"). **Isolation:** panel generado (nivel Básico) y lógica sobre `src/tools/Isolation`: combinado (`_iso_combined`), pasadas separadas (`_<diá>_isoN`), resto (`_iso_rest`), resta de otro objeto y objeto de referencia. **Abrir proyectos** `.FlatPrj` de la versión Python (también el real del usuario, 535 MB comprimido / 1,7 GB: 24 s y 1,8 GB de memoria): lectura en streaming (`src/io/`) que descarta `gcode_parsed` y las copias de geometría que no se usan. **Guardar proyectos** (Archivo → Guardar proyecto / Guardar como, comprimido con XZ como el original): cada objeto como su `to_dict` original, conservando lo que vino del proyecto; el FlatCAM en Python abre lo que guarda el port (`tests/tools/check_project_in_original.py`) |
-| 5 | Herramientas secundarias y postprocesadores restantes | Pendiente |
+| 5 | Herramientas secundarias y postprocesadores restantes | **En curso** (plan en la sección 13): **los 20 postprocesadores hechos**, cada método idéntico al original (2.251 casos) y de punta a punta en geometrías (39 escenarios más) y taladrado (17 postprocesadores) |
 
 Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (AppleClang, GEOS 3.15). Doxygen genera
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 559 tests (529 del núcleo y 29 de la GUI pasan; 1, la lenta del NCC
-del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.628 casos de `ctest` (2.597 del núcleo y 30 de la GUI pasan; 1, la
+lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
 byte por byte; Paint idéntico con GEOS 3.11 (17 líneas con cambios de última cifra con 3.12/3.15); NCC con los mismos 272 trazados
@@ -120,7 +120,12 @@ src/io/                 Proyectos (sin Qt; depende de liblzma)
                          escritura idéntica a json.dumps(indent=2, sort_keys=True) de Python, con o sin XZ
 src/cam/                Generación de G-code (sin Qt)
   PyNumber.*             Número que recuerda si era int o float, para imprimir como `str()` de Python
-  Preprocessor.*         Interfaz `Preprocessor` y los postprocesadores `default` y `GRBL_laser`
+  Preprocessor.*         Interfaz `Preprocessor`, `default`, `GRBL_laser` y `SolderPastePreprocessor` (Paste_1)
+  MorePreprocessors.cpp  Los otros 17 (Berta_CNC, Default_no_M6, grbl_11, GRBL_11_no_M6, hpgl, ISEL_CNC, ISEL_ICP_CNC,
+                         line_xyz, Marlin, Marlin_laser_FAN_pin/Spindle_pin, Repetier, Roland_MDX_20, Toolchange_Custom,
+                         Toolchange_Manual, Toolchange_Probe_MACH3, Z_laser) y la cabecera/cambio de herramienta comunes
+  internal/PpCommon.h    Ayudantes (formato como Python, `StartStyle` de la cabecera, `pyFormat` de las plantillas)
+  generated/PreprocessorTemplates.h  Plantillas multilínea originales tal cual (GENERADO por tools/gen_pp_templates.py)
   PathOptimizer.*        Orden de los agujeros (vecino más cercano + 2-opt; reemplaza a OR-Tools)
   EndpointStorage.*      Almacén de líneas por extremos con `nearest` y borrado (`FlatCAMRTreeStorage`, con una grilla)
   PolygonClearing.*      `clear_polygon` (estándar), `clear_polygon2` (semilla), `clear_polygon3` (líneas), combinado y
@@ -259,8 +264,14 @@ fijan con sentido físico (micras), no en el último bit.
   `tests/tools/oracle_common.py`) además de comparar contra los `.nc` de `tests/data/`.
 - `tests/tools/oracle_gerber_ops.py` genera `tests/golden_gerber_ops.h`: aplica las operaciones originales (scale, offset,
   mirror, rotate, skew, buffer con y sin factor) y resume el resultado (polígonos tras unir, área, límites, aperturas).
-- `tests/tools/oracle_preprocessors.py` genera `tests/golden_preprocessors.h`: ejecuta los postprocesadores originales con 8
-  juegos de parámetros y guarda el texto de cada método (más una lista de números para `pyFloatRepr`).
+- `tests/tools/oracle_preprocessors.py` genera `tests/golden_preprocessors.h`: ejecuta los **20** postprocesadores originales con 8
+  juegos de parámetros y guarda el texto de cada método (2.251 casos, más una lista de números para `pyFloatRepr`). Paste_1 tiene
+  otra interfaz (`AppPreProcTools`): se le pasan el X,Y de cambio y el final como texto `"x,y"` y se comparan sus métodos propios.
+  Las plantillas multilínea (con sus espacios finales) no se copian a mano: `tools/gen_pp_templates.py` las extrae con `ast`.
+  De punta a punta: `oracle_geometry_modes.py` suma 39 escenarios con los otros postprocesadores (con y sin cambio de herramienta,
+  corte extra con Roland, profundidad múltiple con Marlin y line_xyz, hpgl en pulgadas) y `oracle_drill.py` taladra el Excellon del
+  usuario con los 17 de Excellon: todo idéntico al original. Los oráculos le dan a la app simulada un `log`, porque `doformat`
+  atrapa los errores de un postprocesador y deja una línea vacía (pasa con Roland en los tramos del corte extra, sin `z`).
 - `tests/tools/oracle_drill.py` genera `tests/golden_drill.h`: ejecuta `CNCjob.excellon_tool_gcode_gen` **original** sobre el
   Excellon del usuario (reflejado en X) con los parámetros del CNC Job guardado en el `.FlatPrj` (la herramienta 4 corta
   a -4,5; el Excellon guarda el mismo diccionario para todas). La rama `"No"` del original está rota, así que el oráculo usa
@@ -574,6 +585,22 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     (solo informa en el original). Se calculan en el hilo de la interfaz con el indicador "Ocupado" (el NCC de B_Cu: 9 s).
     (m) Errores del original que se reproducen a propósito en Isolation: la herramienta nueva tiene tipo `"           Iso"`
     (con espacios) y forma "V", y el rótulo "Ninguna herramienta seleccionada" lleva `color=#7777FF""`.
+14. **Postprocesadores: desvíos y rarezas del original.** (a) `line_xyz` lee `p['end_xy']`, que `CNCjob` no define: en el
+    original la cabecera falla y `doformat` la deja **vacía** (sin G21/G90/G94). El port la escribe con `xy_end` (desvío
+    consciente; los oráculos le dan `end_xy` para comparar). (b) Se reproducen a propósito: Berta_CNC decide "X,Y End" según el X,Y
+    de cambio de herramienta; las plantillas de line_xyz ponen `x_toolchange` también en la Y; Marlin/Repetier/ISEL_ICP dejan el
+    paréntesis en ";Spindle Speed: ... RPM)"; Toolchange_Custom solo emite `M6` si hay X,Y de cambio; Marlin_laser_* con Z inicial
+    van a la Z de viaje. (c) `linear_code` recibe `z` solo en los tramos de `linear2gcode` (y el primero de `linear2gcode_extra`), y
+    `z_cut` en `linear_code` es siempre la del trabajo, no la de la pasada (solo `down_code` recibe la de la pasada): lo notan
+    Roland y line_xyz. (d) La sonda: en geometrías `mtool_gen_cncjob` usa las preferencias `geometry_z_pdepth` (-0,02) y
+    `geometry_feedrate_probe` (75), no los campos del panel; en Perforación son parámetros generales (`tools_drill_z_pdepth`,
+    `tools_drill_feedrate_probe`). (e) `oldx/oldy` del taladrado (line_xyz los usa sin X,Y de cambio): el X,Y de cambio (o 0, 0) y
+    después el último agujero. (f) `geometry_tool_gcode_gen` controla la Z de corte (positiva o cero), la de viaje y la
+    profundidad por pasada **antes** de leerlas de la herramienta, así que no tienen efecto: no se portan. (g) Combos de la GUI:
+    `default` primero (lo reordena `App.__init__`) y el resto en el orden de Windows; Perforación sin `hpgl`; en Geometría, `hpgl`
+    apaga la profundidad múltiple y fuerza el cambio de herramienta (y al cambiar de postprocesador se restauran). Antes la lista
+    no tenía `hpgl` y ponía Berta_CNC antes que `default`: estaba mal. (h) El taladrado ganó `DrillJobSettings::flavor` (antes
+    usaba siempre la 8.994; solo cambia `GRBL_laser`).
 13. **GUI: pendientes, en orden:** ~~dibujar Gerber y Excellon~~, ~~abrir archivos y el árbol del Proyecto~~, ~~Propiedades de
     Gerber y Excellon~~ y ~~los paneles de las cuatro herramientas~~ (hechos; falta menú contextual del árbol, mostrar/ocultar y
     borrar). ~~Perforación → CNC Job → exportar~~ (hecho). ~~Corte → Geometría → CNC Job~~ (hecho; varias herramientas en un
@@ -620,7 +647,8 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **559 tests** (530 del núcleo y 29 de la GUI): 558 corren siempre y pasan; 1 es lenta (`NccEndToEnd`, ~100 s) y queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
+- **2.628 casos de test** (`ctest`): 2.598 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 30 de la GUI;
+  todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
   oráculos en Python (Shapely 1.8.4) y, donde existe, contra el `.nc` real del usuario (FlatCAM 8.994):
@@ -647,7 +675,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 559 tests, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.628 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -759,3 +787,27 @@ Importante: Shapely
   son de Windows con el estilo nativo: por eso se usa Fusion).
 - Para un oráculo de una herramienta con mucha interfaz conviene extraer los métodos del fuente con `ast` y darles una interfaz
   simulada (como `oracle_isolation.py`) en vez de transcribirlos: así se ejecuta el código original tal cual.
+
+## 13. Port completo: lo que falta y en qué orden (pedido del usuario: "todo lo que falta portar")
+
+El usuario pidió portar **absolutamente todo** lo que falta. Inventario del original (`reference/FlatCAM_2024_4/FlatCAM/`) y orden
+de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem al terminarlo, con su verificación.
+
+1. ~~**Postprocesadores restantes**~~ **Hecho:** los 18 que faltaban (20 en total). Verificado: cada método idéntico al original
+   (`oracle_preprocessors.py`, 2.251 casos), y de punta a punta en geometrías y taladrado (`oracle_geometry_modes.py`,
+   `oracle_drill.py`); desvíos en la sección 11.14. La interfaz de Paste_1 se usará con la herramienta de pasta de soldar (ítem 5).
+2. **Pendientes de las herramientas ya portadas:** "Líneas láser" de Paint (`fill_with_lines`), operación "Aislamiento" de NCC
+   (`isotooldia`), base de datos de herramientas (`appDatabase.py`), verificación del diámetro seguro (NCC e Isolation), ajuste a la
+   grilla de los clics, áreas de exclusión (Perforación y Geometría), pulido (`polish`) y fresado de ranuras/agujeros (Excellon).
+3. **Transformaciones** (`ToolTransform`, `ToolMove`, offset/escala de Propiedades), **Distancia** (`ToolDistance`,
+   `ToolDistanceMin`), **Propiedades** (`ToolProperties`).
+4. **Archivos:** abrir G-code como CNC Job, exportar Gerber/Excellon/DXF/SVG/PNG, importar SVG/DXF/PDF/HPGL2/imagen
+   (`ParseSVG`, `ParseDXF*`, `ParsePDF`, `ParseHPGL2`, `ParseFont`, `ToolImage`, `ToolPDF`), objetos Script y Documento.
+5. **Herramientas restantes** (`appTools/`): Milling, Panelize, Film, Calculators, Copper Thieving, Fiducials, Corners, Extract
+   Drills, Punch Gerber, Invert Gerber, Align Objects, Subtract (`ToolSub`), QR Code, Rules Check, Optimal, Solder Paste,
+   Calibration, Etch Compensation, PCB Wizard, Levelling (autonivelación del CNC Job).
+6. **Preferencias** (`appGUI/preferences/`, ~19.000 líneas): la ventana completa, guardar/cargar `current_defaults.FlatConfig`,
+   importar/exportar preferencias, y que todas las herramientas lean sus valores de fábrica de ahí.
+7. **Consola Tcl** (`ToolShell`, `tclCommands/`, 68 comandos) y scripts.
+8. **Editores** de Gerber, Excellon y Geometría (`appEditors/`, ~17.000 líneas). El usuario los había dejado fuera del alcance
+   (sección 2); quedan al final y solo si los confirma.

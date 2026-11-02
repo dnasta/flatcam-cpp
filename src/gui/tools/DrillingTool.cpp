@@ -51,7 +51,8 @@ DrillingTool::DrillingTool(App* app, QWidget* parent) : DrillingToolUIBase(paren
     connect(pp_excellon_name_cb, &QComboBox::currentTextChanged, this, [this] { onPpChanged(); });
     // form_to_storage: cada campo guarda su valor en las herramientas elegidas (o en todas, si es común).
     for (FCDoubleSpinner* w : {cutz_entry, maxdepth_entry, travelz_entry, feedrate_z_entry, feedrate_rapid_entry,
-                               dwelltime_entry, offset_entry, drill_overlap_entry, toolchangez_entry, endz_entry}) {
+                               dwelltime_entry, offset_entry, drill_overlap_entry, toolchangez_entry, endz_entry,
+                               pdepth_entry, feedrate_probe_entry}) {
         connect(w, &QDoubleSpinBox::valueChanged, this, [this, w] { formToStorage(w); });
     }
     connect(spindlespeed_entry, &QSpinBox::valueChanged, this, [this] { formToStorage(spindlespeed_entry); });
@@ -81,6 +82,8 @@ DrillingTool::ToolData DrillingTool::defaultToolData() const {
     s.toolchangeXY = std::array<double, 2>{0.0, 0.0};  // "0.0, 0.0"
     s.feedrateRapid = PyNumber(1500);
     s.spindleDir = "CW";
+    s.zPdepth = PyNumber(-0.02);   // tools_drill_z_pdepth
+    s.feedrateProbe = PyNumber(75);  // tools_drill_feedrate_probe
     return d;
 }
 
@@ -97,7 +100,7 @@ void DrillingTool::setToolUi() {
     // Postprocesadores (todos menos hpgl), con el nombre como tooltip.
     const QString pp = pp_excellon_name_cb->currentText();
     pp_excellon_name_cb->clear();
-    for (const QString& n : preprocessorNames()) {
+    for (const QString& n : preprocessorNames(false)) {
         pp_excellon_name_cb->addItem(n);
         pp_excellon_name_cb->setItemData(pp_excellon_name_cb->count() - 1, n, Qt::ToolTipRole);
     }
@@ -269,6 +272,8 @@ void DrillingTool::formToStorage(QObject* w) {
         // Comunes: van a todas las herramientas.
         else if (w == toolchangez_entry) s.toolchangeZ = PyNumber(toolchangez_entry->value());
         else if (w == endz_entry) s.endZ = PyNumber(endz_entry->value());
+        else if (w == pdepth_entry) s.zPdepth = PyNumber(pdepth_entry->value());
+        else if (w == feedrate_probe_entry) s.feedrateProbe = PyNumber(feedrate_probe_entry->value());
         else if (w == estartz_entry) s.startZ = evalNumber(estartz_entry->text());
         else if (w == endxy_entry) {
             const auto v = NumericExpression::evaluateTuple(endxy_entry->text());
@@ -277,7 +282,7 @@ void DrillingTool::formToStorage(QObject* w) {
         }
     };
     const bool general = (w == toolchangez_entry || w == endz_entry || w == estartz_entry || w == endxy_entry ||
-                          w == toolchange_cb);
+                          w == toolchange_cb || w == pdepth_entry || w == feedrate_probe_entry);
     if (general) {
         for (auto& [id, d] : storage_) apply(d);
     } else {
@@ -313,6 +318,8 @@ JsonValue DrillingTool::drillDataJson(const ToolData& d, const std::string& pp) 
     j.set("tools_drill_startz", s.startZ ? num(*s.startZ) : JsonValue());
     j.set("tools_drill_endz", num(s.endZ));
     j.set("tools_drill_endxy", pair(s.endXY));
+    j.set("tools_drill_z_pdepth", num(s.zPdepth));
+    j.set("tools_drill_feedrate_probe", num(s.feedrateProbe));
     j.set("tools_drill_f_plunge", JsonValue::boolean(s.fPlunge));
     j.set("tools_drill_f_retract", JsonValue::boolean(s.fRetract));
     j.set("tools_drill_drill_slots", JsonValue::boolean(d.drillSlots));
@@ -343,8 +350,7 @@ FlatCAMObj* DrillingTool::generateCnc() {
     }
     const QString pp = pp_excellon_name_cb->currentText();
     if (!makePreprocessor(pp.toStdString())) {
-        app_->ui()->inform(QString("[ERROR_NOTCL] %1: %2").arg(tr_("Preprocessor"), pp) +
-                           " (todavía no está portado; están default y GRBL_laser)");
+        app_->ui()->inform(QString("[ERROR_NOTCL] %1: %2").arg(tr_("Preprocessor"), pp));
         return nullptr;
     }
     // sel_tools: las elegidas, en el orden de la tabla ("Orden de la Herram").

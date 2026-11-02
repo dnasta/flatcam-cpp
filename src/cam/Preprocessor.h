@@ -88,6 +88,26 @@ struct PreprocessorParams {
     PreprocessorOptions options;            ///< Opciones del objeto CNC.
     std::vector<ExcToolInfo> excTools;      ///< Herramientas de taladrado (`exc_tools`), en orden.
     std::vector<ExcToolInfo> excCncTools;   ///< Herramientas del trabajo (`exc_cnc_tools`), en orden.
+    // ---- Usados por otros postprocesadores
+    PyNumber zPdepth;                       ///< Profundidad de la sonda (`z_pdepth`, Toolchange_Probe_MACH3).
+    PyNumber feedrateProbe;                 ///< Avance de la sonda (`feedrate_probe`).
+    double oldX{0.0};                       ///< X anterior (`oldx`, line_xyz).
+    double oldY{0.0};                       ///< Y anterior (`oldy`, line_xyz).
+    /// Z del punto (`z`, solo la usa Roland_MDX_20). Como en el original, solo existe en las llamadas de `linear_code`
+    /// que la pasan (los tramos de `linear2gcode` y el primero de `linear2gcode_extra`).
+    std::optional<PyNumber> z;
+    PyNumber zStart;                        ///< Pasta de soldar: Z de inicio (`z_start`).
+    PyNumber zDispense;                     ///< Pasta de soldar: Z de dispensado (`z_dispense`).
+    PyNumber zStop;                         ///< Pasta de soldar: Z de parada (`z_stop`).
+    PyNumber zTravel;                       ///< Pasta de soldar: Z de viaje (`z_travel`).
+    PyNumber speedFwd;                      ///< Pasta de soldar: velocidad hacia adelante (`speedfwd`).
+    PyNumber speedRev;                      ///< Pasta de soldar: velocidad hacia atrás (`speedrev`).
+    PyNumber dwellFwd;                      ///< Pasta de soldar: espera hacia adelante (`dwellfwd`).
+    PyNumber dwellRev;                      ///< Pasta de soldar: espera hacia atrás (`dwellrev`).
+    PyNumber frXY;                          ///< Pasta de soldar: avance X-Y (`frxy`).
+    PyNumber frZ;                           ///< Pasta de soldar: avance Z (`frz`).
+    PyNumber frZDispense;                   ///< Pasta de soldar: avance Z al dispensar (`frz_dispense`).
+    std::string ppSolderpasteName{"Paste_1"};  ///< Nombre del postprocesador de pasta (`pp_solderpaste_name`).
 };
 
 /**
@@ -216,8 +236,59 @@ private:
 };
 
 /**
+ * @brief Postprocesador `Paste_1` de la herramienta de pasta de soldar (`preprocessors/Paste_1.py`, interfaz
+ * `AppPreProcTools`).
+ *
+ * Tiene métodos propios del dosificado (bajar a la Z de inicio, subir a la de dispensado, avances y giros hacia adelante
+ * y atrás). Los de la interfaz común que no existen en el original se responden con su equivalente: `downCode` es
+ * `downZStartCode`, `feedrateCode` es `feedrateXYCode`, `spindleCode` es `spindleFwdCode`, `dwellCode` es `dwellFwdCode`,
+ * `spindleStopCode` es `spindleOffCode`, y `startzCode` y `upToZeroCode` no generan nada. El original recibe el X,Y de
+ * cambio de herramienta y el final como texto `"x,y"`; acá vienen en `xyToolchange` y `xyEnd`.
+ */
+class SolderPastePreprocessor : public Preprocessor {
+public:
+    std::string name() const override { return "Paste_1"; }
+    std::string startCode(const PreprocessorParams& p) const override;
+    std::string startzCode(const PreprocessorParams&) const override { return ""; }
+    std::string liftCode(const PreprocessorParams& p) const override;
+    std::string downCode(const PreprocessorParams& p) const override { return downZStartCode(p); }
+    std::string toolchangeCode(const PreprocessorParams& p) const override;
+    std::string upToZeroCode(const PreprocessorParams&) const override { return ""; }
+    std::string positionCode(const PreprocessorParams& p) const override;
+    std::string rapidCode(const PreprocessorParams& p) const override;
+    std::string linearCode(const PreprocessorParams& p) const override;
+    std::string endCode(const PreprocessorParams& p) const override;
+    std::string feedrateCode(const PreprocessorParams& p) const override { return feedrateXYCode(p); }
+    std::string zFeedrateCode(const PreprocessorParams& p) const override;
+    std::string spindleCode(const PreprocessorParams& p) const override { return spindleFwdCode(p); }
+    std::string dwellCode(const PreprocessorParams& p) const override { return dwellFwdCode(p); }
+    std::string spindleStopCode(const PreprocessorParams& p) const override { return spindleOffCode(p); }
+
+    /** @brief Bajada a la Z de inicio del dosificado (`down_z_start_code`). @param p Parámetros. @return El texto. */
+    std::string downZStartCode(const PreprocessorParams& p) const;
+    /** @brief Subida a la Z de dispensado (`lift_z_dispense_code`). @param p Parámetros. @return El texto. */
+    std::string liftZDispenseCode(const PreprocessorParams& p) const;
+    /** @brief Bajada a la Z de parada (`down_z_stop_code`). @param p Parámetros. @return El texto. */
+    std::string downZStopCode(const PreprocessorParams& p) const;
+    /** @brief Avance X-Y (`feedrate_xy_code`). @param p Parámetros. @return El texto. */
+    std::string feedrateXYCode(const PreprocessorParams& p) const;
+    /** @brief Avance Z al dispensar (`feedrate_z_dispense_code`). @param p Parámetros. @return El texto. */
+    std::string feedrateZDispenseCode(const PreprocessorParams& p) const;
+    /** @brief Giro hacia adelante (`spindle_fwd_code`). @param p Parámetros. @return El texto. */
+    std::string spindleFwdCode(const PreprocessorParams& p) const;
+    /** @brief Giro hacia atrás (`spindle_rev_code`). @param p Parámetros. @return El texto. */
+    std::string spindleRevCode(const PreprocessorParams& p) const;
+    /** @brief Apagado del motor (`spindle_off_code`). @return El texto. */
+    std::string spindleOffCode(const PreprocessorParams&) const { return "M05"; }
+    /** @brief Espera tras el giro hacia adelante (`dwell_fwd_code`). @param p Parámetros. @return El texto. */
+    std::string dwellFwdCode(const PreprocessorParams& p) const;
+    /** @brief Espera tras el giro hacia atrás (`dwell_rev_code`). @param p Parámetros. @return El texto. */
+    std::string dwellRevCode(const PreprocessorParams& p) const;
+};
+
+/**
  * @brief Busca un postprocesador por nombre.
- * @param name `"default"` o `"GRBL_laser"`.
+ * @param name Nombre del postprocesador (los 20 de FlatCAM 2024.4: `default`, `GRBL_laser`, `grbl_11`, `Marlin`, ...).
  * @param flavor Versión de FlatCAM cuyo G-code se reproduce (`default` es igual en todas).
  * @return El postprocesador, o `nullptr` si no existe.
  */
