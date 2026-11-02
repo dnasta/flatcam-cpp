@@ -1,5 +1,7 @@
 #include "gui/tools/NccTool.h"
 
+#include <QToolButton>
+
 #include "gui/App.h"
 #include "gui/CanvasPicker.h"
 #include "gui/Translation.h"
@@ -41,6 +43,8 @@ NccTool::NccTool(App* app, QWidget* parent) : NccToolUIBase(parent), app_(app) {
         connect(w, &QCheckBox::toggled, this, [this, w] { formToStorage(w); });
     for (RadioSet* w : {op_radio, milling_type_radio})
         connect(w, &RadioSet::activatedCustom, this, [this, w] { formToStorage(w); });
+    // on_find_optimal_tooldia: el diámetro seguro pasa al campo de la herramienta nueva.
+    connect(find_optimal_button, &QToolButton::clicked, this, [this] { findOptimalToolDia(); });
     // on_operation_change -> NccUI.parameters_ui: con "Aislamiento" solo se edita el tipo de fresado.
     connect(op_radio, &RadioSet::activatedCustom, this, [this](const QString& val) {
         const bool iso = val == "iso";
@@ -224,6 +228,14 @@ void NccTool::formToStorage(QObject* w) {
     }
 }
 
+void NccTool::findOptimalToolDia() {
+    const QString name = object_combo->currentText();
+    if (const auto d = findSafeToolDia(app_->ui(), app_->collection()->byName(name), name)) {
+        new_tooldia_entry->setValue(*d);
+        app_->ui()->inform(QString("[success] %1: %2 %3").arg(tr_("Optimal tool diameter found")).arg(*d).arg("mm"));
+    }
+}
+
 FlatCAMObj* NccTool::clearCopper() {
     const QString name = object_combo->currentText();
     FlatCAMObj* src = app_->collection()->byName(name);
@@ -232,6 +244,22 @@ FlatCAMObj* NccTool::clearCopper() {
         return nullptr;
     }
     const std::vector<int> ids = selectedClearingTools(tools_table);
+    if (valid_cb->isChecked()) {
+        // find_safe_tooldia_multiprocessing: solo informa.
+        if (const auto safe = findSafeToolDia(app_->ui(), src, name)) {
+            if (ids.empty()) {
+                app_->ui()->inform("[ERROR_NOTCL] " + tr_("There are no tools selected in the Tool Table."));
+            } else {
+                bool suitable = false;
+                for (int id : ids) suitable = suitable || tools_.at(id).geo.tooldia <= *safe;
+                if (suitable)
+                    app_->ui()->inform("[success] " + tr_("At least one of the selected tools can do a complete isolation."));
+                else
+                    app_->ui()->inform("[WARNING] " + tr_("Incomplete isolation. None of the selected tools could do a "
+                                                          "complete isolation."));
+            }
+        }
+    }
     if (ids.empty()) {
         app_->ui()->inform("[ERROR_NOTCL] " + tr_("There are no tools selected in the Tool Table."));
         return nullptr;

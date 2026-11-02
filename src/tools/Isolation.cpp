@@ -105,6 +105,37 @@ double Isolation::passOffset(double toolDia, int pass, double overlap, bool nega
     return negative ? -offset : offset;
 }
 
+std::optional<double> Isolation::safeToolDiameter(const Gerber& gerber, int decimals, std::string& error) {
+    error.clear();
+    ShapeList solids;
+    for (const auto& [id, ap] : gerber.apertures())
+        for (const ApertureGeometry& el : ap.geometry)
+            if (el.solid && el.solid->isValid()) solids.push_back(*el.solid);
+    const Shape total = Shape::collection(solids).buffer(0);
+    // `iter(total_geo)`: un solo polígono no se puede recorrer.
+    if (total.type() != ShapeType::MultiPolygon && total.type() != ShapeType::GeometryCollection) {
+        error = "The Gerber object has one Polygon as geometry.\nThere are no distances between geometry elements to be found.";
+        return std::nullopt;
+    }
+    const ShapeList parts = total.parts();
+    auto round = [decimals](double v) {
+        char buf[64];
+        std::snprintf(buf, sizeof(buf), "%.*f", decimals, v);
+        return std::strtod(buf, nullptr);
+    };
+    std::optional<double> best;
+    for (std::size_t i = 0; i < parts.size(); ++i)
+        for (std::size_t j = i + 1; j < parts.size(); ++j) {
+            const double d = round(parts[i].distance(parts[j]));
+            if (!best || d < *best) best = d;
+        }
+    if (!best) {
+        error = "No distances";  // min() de una lista vacía: el original falla y no informa nada
+        return std::nullopt;
+    }
+    return round(*best);  // dec_format
+}
+
 ShapeList Isolation::isolationGeometry(const ShapeList& geometry, double offset, IsolationType type,
                                        int stepsPerCircle) {
     ShapeList buffered;

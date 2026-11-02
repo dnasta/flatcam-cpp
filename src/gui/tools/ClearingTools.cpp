@@ -9,6 +9,7 @@
 #include "gui/Translation.h"
 #include "gui/widgets/FCComboBox.h"
 #include "gui/widgets/FCTable.h"
+#include "tools/Isolation.h"
 
 namespace flatcam::gui {
 
@@ -78,6 +79,19 @@ std::vector<int> selectedClearingTools(const QTableWidget* table) {
     for (int r : rows)
         if (const QTableWidgetItem* it = table->item(r, 3)) ids.push_back(it->text().toInt());
     return ids;
+}
+
+std::optional<double> findSafeToolDia(MainGUI* ui, FlatCAMObj* obj, const QString& name) {
+    ui->inform(tr_("Checking tools for validity."));
+    auto* grb = dynamic_cast<GerberObject*>(obj);
+    if (!grb) {
+        ui->inform(QString("[ERROR_NOTCL] %1: %2").arg(tr_("Object not found"), name));
+        return std::nullopt;
+    }
+    std::string error;
+    const auto d = Isolation::safeToolDiameter(grb->gerber(), 4, error);
+    if (!d && error.rfind("The Gerber object", 0) == 0) ui->inform("[ERROR_NOTCL] " + tr_(error.c_str()));
+    return d;
 }
 
 }  // namespace flatcam::gui

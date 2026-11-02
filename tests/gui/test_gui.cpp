@@ -1555,3 +1555,22 @@ TEST(GuiNcc, IsolationOperation) {
     EXPECT_FALSE(expected.empty());
     EXPECT_EQ(iso->solidGeometry.size(), expected.size());
 }
+
+TEST(GuiNcc, OptimalToolDiameter) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* cu = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "B_Cu.gbr")));
+    ASSERT_NE(cu, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(cu));
+    NccTool* t = app.nccTool;
+    app.ui()->ncc_btn->trigger();
+    // "Óptimo": la menor distancia entre figuras del cobre (0,1994 mm en el original) va al campo de la herramienta nueva.
+    t->find_optimal_button->click();
+    EXPECT_DOUBLE_EQ(t->new_tooldia_entry->value(), 0.1994);
+    EXPECT_TRUE(app.ui()->fcinfo->text->text().contains("0.1994"));
+    // Isolation: lo mismo.
+    IsolationTool* iso = app.isolationTool;
+    app.ui()->isolation_btn->trigger();
+    iso->find_optimal_button->click();
+    EXPECT_DOUBLE_EQ(iso->new_tooldia_entry->value(), 0.1994);
+}

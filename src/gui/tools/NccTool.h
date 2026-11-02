@@ -33,6 +33,11 @@ class FlatCAMObj;
 class NccTool : public NccToolUIBase {
     Q_OBJECT
 public:
+    /**
+     * @brief Botón "Óptimo" (`on_find_optimal_tooldia`): calcula el diámetro seguro del Gerber elegido y lo pone en el
+     * campo de la herramienta nueva.
+     */
+    void findOptimalToolDia();
     /** @brief Crea el panel. @param app Aplicación. @param parent Widget padre. */
     explicit NccTool(App* app, QWidget* parent = nullptr);
 
