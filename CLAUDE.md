@@ -55,6 +55,7 @@ máquina del usuario.
   "Alignment Drills"), aceptado por el usuario. **Isolation** hecho (combinado, pasadas separadas, resto, referencia; falta la
   selección por área/polígono con el mouse). **Abrir proyectos** `.FlatPrj` hecho (también el real del usuario de 535 MB: 24 s);
   liblzma pasa a ser dependencia. **Guardar proyectos** hecho; el FlatCAM original abre lo que guarda el port
-  (`tests/tools/check_project_in_original.py`). **Todo lo acordado para la fase 4 está hecho.** Pendiente de consultar: el CNC Job reabierto exporta sin
-  código de inicio, igual que el original (`AGENTS.md` 11.13). Pendientes menores: Paint/NCC con semilla y líneas, resto de Paint/NCC, selección por área,
+  (`tests/tools/check_project_in_original.py`). **Todo lo acordado para la fase 4 está hecho.** Decisión del usuario:
+  al reabrir un proyecto el port **reconstruye el código de inicio** de los CNC Job (el original lo pierde); los dos CNC Job
+  del proyecto real se exportan idénticos a sus `.nc` (`AGENTS.md` 11.13). Pendientes menores: Paint/NCC con semilla y líneas, resto de Paint/NCC, selección por área,
   verificación de diámetro seguro (`AGENTS.md`, sección 11).
