@@ -30,6 +30,8 @@ add_executable(core_tests
     test_isolation.cpp
     test_luz_de_noche.cpp
     test_project_file.cpp
+    test_clearing_methods.cpp
+    test_rest_machining.cpp
 )
 target_link_libraries(core_tests PRIVATE flatcam::core GTest::gtest_main)
 target_include_directories(core_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

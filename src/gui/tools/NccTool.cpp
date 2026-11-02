@@ -13,6 +13,7 @@ NccTool::NccTool(App* app, QWidget* parent) : NccToolUIBase(parent), app_(app) {
     connect(type_obj_radio, &RadioSet::activatedCustom, this, [this] { onTypeObjChanged(); });
     connect(reset_button, &QPushButton::clicked, this, [this] { setToolUi(); });
     connect(ncc_order_radio, &RadioSet::activatedCustom, this, [this] { rebuild(); });
+    connect(ncc_rest_cb, &QCheckBox::toggled, this, [this](bool on) { onRestMachiningCheck(on); });
     connect(tools_table, &QTableWidget::itemSelectionChanged, this, [this] {
         if (!muted_) updateUi();
     });
@@ -40,6 +41,20 @@ NccTool::NccTool(App* app, QWidget* parent) : NccToolUIBase(parent), app_(app) {
 }
 
 ToolInfo NccTool::info() { return {tr_("Non-Copper Clearing"), tr_("NCC Tool")}; }
+
+void NccTool::onRestMachiningCheck(bool state) {
+    // NccUI.on_rest_machining_check
+    if (state) ncc_order_radio->setValue("rev");
+    ncc_order_label->setDisabled(state);
+    ncc_order_radio->setDisabled(state);
+    for (QWidget* w : std::initializer_list<QWidget*>{nccmarginlabel, ncc_margin_entry, ncc_connect_cb, ncc_contour_cb,
+                                                      ncc_choice_offset_cb, ncc_offset_spinner})
+        w->setVisible(!state);
+    for (QWidget* w : std::initializer_list<QWidget*>{rest_nccmarginlabel, rest_ncc_margin_entry, rest_ncc_connect_cb,
+                                                      rest_ncc_contour_cb, rest_ncc_choice_offset_cb,
+                                                      rest_ncc_offset_spinner})
+        w->setVisible(state);
+}
 
 void NccTool::onTypeObjChanged() {
     const bool gerber = type_obj_radio->value().toString() == "gerber";
@@ -81,6 +96,7 @@ void NccTool::setToolUi() {
     tools_.clear();
     muted_ = false;
     for (double dia : {1.0, 0.5}) addTool(dia);  // tools_ncc_tools = "1.0, 0.5"
+    onRestMachiningCheck(false);
 }
 
 bool NccTool::addTool(double dia) {
@@ -195,10 +211,7 @@ FlatCAMObj* NccTool::clearCopper() {
         app_->ui()->inform("[WARNING_NOTCL] Todavía solo está la selección \"Sí mismo\".");
         return nullptr;
     }
-    if (ncc_rest_cb->isChecked()) {
-        app_->ui()->inform("[WARNING_NOTCL] Todavía no está el mecanizado de resto.");
-        return nullptr;
-    }
+
     ShapeList geometry;
     if (src->kind() == ObjectKind::Gerber) {
         geometry = static_cast<GerberObject*>(src)->gerber().solidGeometry();
@@ -211,10 +224,53 @@ FlatCAMObj* NccTool::clearCopper() {
     // gen_clear_area: el margen es el del formulario; el resto, de cada herramienta.
     const double margin = ncc_margin_entry->value();
     auto obj = std::make_unique<GeometryObject>(src->name() + "_ncc");
+    auto methodOf = [](int m) {
+        return m == 1 ? PolygonClearing::Method::Seed
+             : m == 2 ? PolygonClearing::Method::Lines
+             : m == 3 ? PolygonClearing::Method::Combo
+                      : PolygonClearing::Method::Standard;
+    };
+    if (ncc_rest_cb->isChecked()) {
+        // gen_clear_area_rest: margen de ncc_margin_entry (así en el original, aunque esté oculto); unir, contorno y
+        // agrandado de los campos rest_*; solape y método de cada herramienta.
+        NccOptions common;
+        common.margin = margin;
+        common.connect = rest_ncc_connect_cb->isChecked();
+        common.contour = rest_ncc_contour_cb->isChecked();
+        common.hasOffset = rest_ncc_choice_offset_cb->isChecked();
+        common.offset = rest_ncc_offset_spinner->value();
+        std::vector<NccRestTool> rt;
+        for (int id : ids) {
+            const ClearingTool& t = tools_.at(id);
+            if (t.operation != "clear") {
+                app_->ui()->inform("[WARNING_NOTCL] Todavía solo está la operación \"Limpiar\".");
+                return nullptr;
+            }
+            rt.push_back({t.geo.tooldia, t.overlap / 100.0, methodOf(t.method)});
+        }
+        std::vector<std::pair<std::size_t, ShapeList>> perTool;
+        ShapeList left;
+        std::string error;
+        if (!Ncc::clearCopperRest(geometry, rt, common, perTool, left, error)) {
+            app_->ui()->inform("[ERROR] " + tr_("There is no NCC Geometry in the file.\n"
+                                                "Usually it means that the tool diameter is too big for the painted geometry.\n"
+                                                "Change the painting parameters and try again."));
+            return nullptr;
+        }
+        for (const auto& [idx, paths] : perTool) {
+            GeometryTool gt = tools_.at(ids[idx]).geo;
+            gt.solidGeometry = paths;
+            obj->tools()[ids[idx]] = gt;
+            obj->solidGeometry().insert(obj->solidGeometry().end(), paths.begin(), paths.end());
+        }
+        FlatCAMObj* added = app_->addObject(std::move(obj));
+        app_->ui()->inform("[success] " + tr_("NCC Tool Rest Machining clear all done."));
+        return added;
+    }
     for (int id : orderedClearingTools(tools_, ids, ncc_order_radio->value().toString())) {
         const ClearingTool& t = tools_.at(id);
-        if (t.operation != "clear" || t.method != 0) {
-            app_->ui()->inform("[WARNING_NOTCL] Todavía solo están la operación \"Limpiar\" y el método estándar.");
+        if (t.operation != "clear") {
+            app_->ui()->inform("[WARNING_NOTCL] Todavía solo está la operación \"Limpiar\".");
             return nullptr;
         }
         app_->ui()->inform(QString("[success] %1 = %2%3 %4")
@@ -227,6 +283,9 @@ FlatCAMObj* NccTool::clearCopper() {
         o.margin = margin;
         o.hasOffset = t.offsetChoice;
         o.offset = t.offset;
+        o.contour = t.contour;
+        // ncc_method_combo: Estándar, Semilla, Líneas, Combo.
+        o.method = methodOf(t.method);
         ShapeList paths;
         std::string error;
         if (!Ncc::clearCopper(geometry, o, paths, error) || paths.empty()) {

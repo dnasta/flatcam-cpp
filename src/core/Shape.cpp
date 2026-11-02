@@ -289,6 +289,11 @@ Point2D Shape::centroid() const {
     return c.coordinates().front();
 }
 
+Point2D Shape::representativePoint() const {
+    Shape c = wrap(GEOSPointOnSurface_r(H(), raw(*this)), "representativePoint");
+    return c.coordinates().front();
+}
+
 std::size_t Shape::numParts() const {
     if (static_cast<int>(type()) < static_cast<int>(ShapeType::MultiPoint)) return 1;
     const int n = GEOSGetNumGeometries_r(H(), raw(*this));

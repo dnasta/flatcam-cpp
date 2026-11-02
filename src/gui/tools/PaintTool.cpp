@@ -13,6 +13,7 @@ PaintTool::PaintTool(App* app, QWidget* parent) : PaintToolUIBase(parent), app_(
     connect(type_obj_radio, &RadioSet::activatedCustom, this, [this] { onTypeObjChanged(); });
     connect(reset_button, &QPushButton::clicked, this, [this] { setToolUi(); });
     connect(order_radio, &RadioSet::activatedCustom, this, [this] { rebuild(); });
+    connect(rest_cb, &QCheckBox::toggled, this, [this](bool on) { onRestMachiningCheck(on); });
     connect(tools_table, &QTableWidget::itemSelectionChanged, this, [this] {
         if (!muted_) updateUi();
     });
@@ -38,6 +39,17 @@ PaintTool::PaintTool(App* app, QWidget* parent) : PaintToolUIBase(parent), app_(
 }
 
 ToolInfo PaintTool::info() { return {tr_("Paint Tool"), tr_("Paint Tool")}; }
+
+void PaintTool::onRestMachiningCheck(bool state) {
+    // PaintUI.on_rest_machining_check
+    if (state) order_radio->setValue("rev");
+    order_label->setDisabled(state);
+    order_radio->setDisabled(state);
+    offset_label->setVisible(!state);
+    offset_entry->setVisible(!state);
+    rest_offset_label->setVisible(state);
+    rest_offset_entry->setVisible(state);
+}
 
 void PaintTool::onTypeObjChanged() {
     const bool gerber = type_obj_radio->value().toString() == "gerber";
@@ -70,6 +82,7 @@ void PaintTool::setToolUi() {
     tools_.clear();
     muted_ = false;
     addTool(0.3);  // tools_paint_tooldia
+    onRestMachiningCheck(false);
 }
 
 bool PaintTool::addTool(double dia) {
@@ -187,12 +200,49 @@ FlatCAMObj* PaintTool::paint() {
     app_->ui()->inform(QString("%1 %2").arg(tr_("Paint Tool."), tr_("Paint all polygons task started.")));
     // El original calcula en un hilo de trabajo; acá se calcula en el de la interfaz con el indicador de actividad.
     BusyScope busy(app_->ui());
-    // job_normal_clear: cada herramienta pinta todos los polígonos, en el orden de la tabla.
     auto obj = std::make_unique<GeometryObject>(src->name() + "_mt_paint");
+    const int formMethod = paintmethod_combo->indexValue();
+    auto methodOf = [](int m) {
+        return m == 1 ? PolygonClearing::Method::Seed
+             : m == 2 ? PolygonClearing::Method::Lines
+             : m == 4 ? PolygonClearing::Method::Combo
+                      : PolygonClearing::Method::Standard;
+    };
+    if (rest_cb->isChecked()) {
+        // job_rest_clear: el método es el del formulario; el resto, de cada herramienta.
+        if (formMethod == 3) {
+            app_->ui()->inform("[WARNING_NOTCL] Todavía no está el método \"Lineas laser\".");
+            return nullptr;
+        }
+        std::vector<PaintRestTool> rt;
+        for (int id : ids) {
+            const ClearingTool& t = tools_.at(id);
+            rt.push_back({t.geo.tooldia, t.overlap / 100.0, t.connect, t.contour});
+        }
+        std::vector<std::pair<std::size_t, ShapeList>> perTool;
+        std::string error;
+        if (!Paint::paintRest(geometry, rt, rest_offset_entry->value(), methodOf(formMethod), 64, perTool, error)) {
+            app_->ui()->inform("[ERROR] " + tr_("There is no Painting Geometry in the file.\n"
+                                                "Usually it means that the tool diameter is too big for the painted geometry.\n"
+                                                "Change the painting parameters and try again."));
+            return nullptr;
+        }
+        for (const auto& [idx, paths] : perTool) {
+            GeometryTool gt = tools_.at(ids[idx]).geo;
+            gt.solidGeometry = paths;
+            obj->tools()[ids[idx]] = gt;
+            obj->solidGeometry().insert(obj->solidGeometry().end(), paths.begin(), paths.end());
+        }
+        FlatCAMObj* added = app_->addObject(std::move(obj));
+        app_->ui()->inform("[success] " + tr_("Done."));
+        return added;
+    }
+    // job_normal_clear: cada herramienta pinta todos los polígonos, en el orden de la tabla.
     for (int id : orderedClearingTools(tools_, ids, order_radio->value().toString())) {
         const ClearingTool& t = tools_.at(id);
-        if (t.method != 0) {
-            app_->ui()->inform("[WARNING_NOTCL] Todavía solo está el método estándar de Paint.");
+        // paintmethod_combo: Estándar, Semilla, Líneas, Líneas láser, Combo.
+        if (t.method == 3) {
+            app_->ui()->inform("[WARNING_NOTCL] Todavía no está el método \"Lineas laser\".");
             return nullptr;
         }
         PaintOptions o;
@@ -200,6 +250,8 @@ FlatCAMObj* PaintTool::paint() {
         o.overlap = t.overlap / 100.0;
         o.connect = t.connect;
         o.offset = t.offset;
+        o.contour = t.contour;
+        o.method = methodOf(t.method);
         ShapeList paths;
         std::string error;
         if (!Paint::paintAll(geometry, o, paths, error) || paths.empty()) continue;

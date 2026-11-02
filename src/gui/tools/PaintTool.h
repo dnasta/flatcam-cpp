@@ -22,8 +22,11 @@ class FlatCAMObj;
  * valores de fábrica (`tools_paint_*`), guarda los parámetros de cada herramienta al editarlos y "Generar geometría"
  * pinta todos los polígonos con cada herramienta elegida, en el orden de la tabla, y crea `<objeto>_mt_paint`.
  *
- * Desvíos conscientes: solo están el método estándar y la selección "Todos" (los demás informan que faltan); la base
- * de datos de herramientas no está, así que agregar una herramienta usa siempre los valores por defecto.
+ * Métodos Estándar, Semilla, Líneas y Combo; con "Resto" las herramientas pintan, de mayor a menor, lo que dejó la
+ * anterior (`job_rest_clear`).
+ *
+ * Desvíos conscientes: el método "Líneas láser" no está; la base de datos de herramientas tampoco, así que agregar una
+ * herramienta usa siempre los valores por defecto.
  */
 class PaintTool : public PaintToolUIBase {
     Q_OBJECT
@@ -52,6 +55,7 @@ public:
 
 private:
     void onTypeObjChanged();
+    void onRestMachiningCheck(bool state);
     void updateUi();
     void formToStorage();
     void rebuild();

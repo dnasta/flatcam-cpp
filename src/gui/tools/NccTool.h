@@ -22,9 +22,11 @@ class FlatCAMObj;
  * (`tools_ncc_tools` = "1.0, 0.5"), guarda los parámetros de cada herramienta al editarlos y "Generar geometría" limpia
  * toda la región sin cobre con cada herramienta elegida, en el orden de la tabla, y crea `<objeto>_ncc`.
  *
- * Desvíos conscientes: solo están la operación "Limpiar", el método estándar, la selección "Sí mismo" y sin mecanizado
- * de resto (lo demás informa que falta); la verificación del diámetro seguro (que solo informa) y la base de datos de
- * herramientas no están.
+ * Métodos Estándar, Semilla, Líneas y Combo; con "Resto" las herramientas limpian, de mayor a menor, lo que dejó la
+ * anterior (`gen_clear_area_rest`).
+ *
+ * Desvíos conscientes: la operación "Aislamiento", la verificación del diámetro seguro (que solo informa) y la base de
+ * datos de herramientas no están.
  */
 class NccTool : public NccToolUIBase {
     Q_OBJECT
@@ -53,6 +55,7 @@ public:
 
 private:
     void onTypeObjChanged();
+    void onRestMachiningCheck(bool state);
     void updateUi();
     void formToStorage();
     void rebuild();
