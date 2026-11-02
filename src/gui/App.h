@@ -120,6 +120,26 @@ public:
     QAction* menuProjectSave{nullptr};         ///< "Guardar".
     QAction* menuProjectProperties{nullptr};   ///< "Propiedades".
 
+    /**
+     * @brief Carpeta de datos de la aplicación (`data_path`): la de la aplicación en el sistema, salvo que se cambie.
+     * @return La ruta.
+     */
+    QString dataPath() const;
+
+    /** @brief Cambia la carpeta de datos (para los tests) y vuelve a armar los recientes. @param path Ruta. */
+    void setDataPath(const QString& path);
+
+    /**
+     * @brief Anota un archivo abierto en los recientes (`register_recent`): `recent_projects.json` para los proyectos y
+     * `recent.json` para el resto, los últimos 10 (`global_recent_limit`), y rearma los menús.
+     * @param kind `project`, `gerber`, `excellon`...
+     * @param filename Ruta.
+     */
+    void registerRecent(const QString& kind, const QString& filename);
+
+    /** @brief Arma los menús Archivo → Proyectos recientes y Archivos recientes (`setup_recent_items`). */
+    void setupRecentItems();
+
     /** @brief Quita todos los objetos (`on_file_new` sin preguntar). */
     void clearProject();
 
@@ -223,6 +243,7 @@ private:
     ObjectCollection* collection_;
     QString lastFolder_;
     QString projectFilename_;
+    QString dataPath_;  ///< Carpeta de datos elegida (vacía: la de la aplicación).
     class QMenu* menuProject_{nullptr};  ///< `menuproject`: menú contextual de la pestaña Proyecto.
     JsonValue projectOptions_;  ///< Opciones del proyecto abierto (`options`), para volver a guardarlas.
     QPointF lastClick_{0.0, 0.0};

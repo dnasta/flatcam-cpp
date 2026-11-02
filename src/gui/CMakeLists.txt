@@ -8,6 +8,7 @@ add_library(flatcam_gui STATIC
     MainGUI.cpp
     App.cpp
     AppProjectMenu.cpp
+    AppRecent.cpp
     ProjectIO.cpp
     objects/FlatCAMObj.cpp
     objects/ObjectCollection.cpp

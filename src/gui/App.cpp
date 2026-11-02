@@ -96,6 +96,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
         w->hide();
     connectSignals();
     setupProjectMenu();
+    setupRecentItems();
 }
 
 App::~App() {
@@ -268,6 +269,7 @@ bool App::openProject(const QString& filename) {
     projectFilename_ = filename;
     lastFolder_ = QFileInfo(filename).absolutePath();
     ui_->setUiTitle(filename);
+    registerRecent("project", filename);
     if (!failed.isEmpty()) ui_->inform("[WARNING_NOTCL] " + failed.join("; "));
     else ui_->inform(QString("[success] %1: %2").arg(tr_("Project loaded from"), filename));
     return true;
@@ -290,6 +292,7 @@ bool App::saveProject(const QString& filename) {
     projectFilename_ = filename;
     lastFolder_ = QFileInfo(filename).absolutePath();
     ui_->setUiTitle(filename);
+    registerRecent("project", filename);  // file_opened.emit("project", ...) al guardar
     ui_->inform(QString("[success] %1: %2").arg(tr_("Project saved to"), filename));
     return true;
 }
@@ -349,6 +352,7 @@ FlatCAMObj* App::openGerber(const QString& filename) {
     }
     lastFolder_ = QFileInfo(filename).absolutePath();
     FlatCAMObj* obj = addObject(std::make_unique<GerberObject>(QFileInfo(filename).fileName(), std::move(gerber)));
+    registerRecent("gerber", filename);
     ui_->inform(QString("[success] %1: %2").arg(tr_("Opened"), filename));
     return obj;
 }
@@ -368,6 +372,7 @@ FlatCAMObj* App::openExcellon(const QString& filename) {
     }
     lastFolder_ = QFileInfo(filename).absolutePath();
     FlatCAMObj* obj = addObject(std::make_unique<ExcellonObject>(QFileInfo(filename).fileName(), std::move(exc)));
+    registerRecent("excellon", filename);
     ui_->inform(QString("[success] %1: %2").arg(tr_("Opened"), filename));
     return obj;
 }
