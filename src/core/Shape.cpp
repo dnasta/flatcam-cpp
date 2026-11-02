@@ -363,6 +363,8 @@ bool Shape::contains(const Shape& o) const {
 bool Shape::within(const Shape& o) const {
     return predicate(GEOSWithin_r(H(), raw(*this), raw(o)), "within");
 }
+bool Shape::crosses(const Shape& o) const { return predicate(GEOSCrosses_r(H(), raw(*this), raw(o)), "crosses"); }
+
 bool Shape::intersects(const Shape& o) const {
     return predicate(GEOSIntersects_r(H(), raw(*this), raw(o)), "intersects");
 }

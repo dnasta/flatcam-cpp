@@ -1291,10 +1291,6 @@
          "py": "NumericalEvalTupleEntry",
          "name": "align_ref_label_val",
          "props": {
-          "enabled": {
-           "t": "bool",
-           "v": false
-          },
           "toolTip": {
            "t": "str",
            "v": "El punto de referencia utilizado para crear el segundo ejercicio de alineación.\ndesde el primer ejercicio de alineación, haciendo espejo.\nSe puede modificar en la sección Parámetros Espejo -> Referencia"
@@ -1306,6 +1302,10 @@
           "text": {
            "t": "str",
            "v": "0.0000"
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
           }
          }
         }

@@ -10,6 +10,7 @@ add_library(flatcam_gui STATIC
     AppProjectMenu.cpp
     AppRecent.cpp
     CanvasPicker.cpp
+    ExclusionAreasManager.cpp
     ProjectIO.cpp
     objects/FlatCAMObj.cpp
     objects/ObjectCollection.cpp

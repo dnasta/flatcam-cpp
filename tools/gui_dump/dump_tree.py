@@ -26,7 +26,7 @@ SKIP_PROPS = {
     "sliderPosition", "documentTitle", "html", "markdown", "placeholderText_", "hasSelectedText", "selectedText", "cursorPosition",
     "undoAvailable", "redoAvailable", "modified", "acceptableInput", "displayText", "hasFrame_", "objectName", "windowOpacity",
     "contextMenuPolicy_", "mouseTracking", "tabletTracking", "focusPolicy_", "autoFillBackground_", "windowIcon",
-    "windowTitle_", "fullScreen", "maximized", "minimized", "animated_", "windowModality", "enabled_",
+    "windowTitle_", "fullScreen", "maximized", "minimized", "animated_", "windowModality",
     "iconText",  # Qt lo deriva del texto: el original nunca lo fija
 }
 LAYOUT_SKIP = {"margin", "spacing", "horizontalSpacing", "verticalSpacing"}
@@ -136,6 +136,10 @@ def props_of(obj):
         p = mo.property(i)
         name = p.name()
         if name in SKIP_PROPS or not p.isWritable() or not p.isDesignable():
+            continue
+        # En un widget, `enabled` se lee efectivo (falso si el padre está deshabilitado): se guarda aparte, solo si el
+        # widget mismo está deshabilitado (ver abajo). En una acción o un menú sí es la propiedad propia.
+        if name == "enabled" and isinstance(obj, QtWidgets.QWidget):
             continue
         try:
             v = p.read(obj)

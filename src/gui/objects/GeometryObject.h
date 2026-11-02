@@ -91,9 +91,11 @@ public:
      * @brief Genera el CNC Job de las herramientas pedidas (`mtool_gen_cncjob`, rama multigeo).
      * @param toolIds Herramientas, en el orden de la tabla.
      * @param[out] error Motivo si falla.
+     * @param exclusionAreas Áreas de exclusión de la aplicación (los viajes las esquivan).
      * @return El objeto, o `nullptr` si falló.
      */
-    std::unique_ptr<CNCJobObject> makeCncJob(const std::vector<int>& toolIds, QString& error) const;
+    std::unique_ptr<CNCJobObject> makeCncJob(const std::vector<int>& toolIds, QString& error,
+                                             const std::vector<ExclusionArea>& exclusionAreas = {}) const;
 
     /** @brief Color de las líneas (`geometry_plot_line`). @return El color. */
     static QColor plotLineColor();

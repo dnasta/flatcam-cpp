@@ -237,6 +237,8 @@ public:
     bool within(const Shape& o) const;
     /** @brief Indica si comparten al menos un punto. @param o Otra figura. @return `true` si se intersectan. */
     bool intersects(const Shape& o) const;
+    /** @brief Predicado `crosses` (se cruzan: comparten algo del interior sin que uno contenga al otro). @param o Otra figura. @return Si se cruzan. */
+    bool crosses(const Shape& o) const;
     /** @brief Indica si no comparten ningún punto. @param o Otra figura. @return `true` si son disjuntas. */
     bool disjoint(const Shape& o) const;
     /** @brief Distancia mínima a otra figura. @param o Otra figura. @return La distancia. */

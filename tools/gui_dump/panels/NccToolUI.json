@@ -843,10 +843,6 @@
              "py": "FCLabel",
              "name": "milling_type_label",
              "props": {
-              "enabled": {
-               "t": "bool",
-               "v": false
-              },
               "toolTip": {
                "t": "str",
                "v": "Tipo de fresado:\n- subir / mejor para fresado de precisión y para reducir el uso de la herramienta\n- convencional / útil cuando no hay compensación de contragolpe"
@@ -854,6 +850,10 @@
               "text": {
                "t": "str",
                "v": "Tipo de fresado:"
+              },
+              "enabled": {
+               "t": "bool",
+               "v": false
               }
              }
             }
@@ -869,13 +869,13 @@
              "py": "RadioSet",
              "name": "milling_type_radio",
              "props": {
-              "enabled": {
-               "t": "bool",
-               "v": false
-              },
               "toolTip": {
                "t": "str",
                "v": "Tipo de fresado:\n- subir / mejor para fresado de precisión y para reducir el uso de la herramienta\n- convencional / útil cuando no hay compensación de contragolpe"
+              },
+              "enabled": {
+               "t": "bool",
+               "v": false
               }
              },
              "choices": [
@@ -1445,10 +1445,6 @@
              "py": "FCDoubleSpinner",
              "name": "rest_ncc_offset_spinner",
              "props": {
-              "enabled": {
-               "t": "bool",
-               "v": false
-              },
               "wrapping": {
                "t": "bool",
                "v": true
@@ -1468,6 +1464,10 @@
               "hidden": {
                "t": "bool",
                "v": true
+              },
+              "enabled": {
+               "t": "bool",
+               "v": false
               }
              }
             }

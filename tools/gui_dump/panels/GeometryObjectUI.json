@@ -1284,10 +1284,6 @@
                     "py": "FCDoubleSpinner",
                     "name": "maxdepth_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Profundidad de cada pase (positivo)."
@@ -1307,6 +1303,10 @@
                      "value": {
                       "t": "double",
                       "v": 0.8
+                     },
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
                      }
                     }
                    }
@@ -1564,10 +1564,6 @@
                     "py": "FCDoubleSpinner",
                     "name": "e_cut_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Para eliminar posibles\nsobras de cobre donde el primer corte\nNos reunimos con el último corte, generamos un\nCorte extendido sobre la primera sección de corte."
@@ -1595,6 +1591,10 @@
                      "hidden": {
                       "t": "bool",
                       "v": true
+                     },
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
                      }
                     }
                    }
@@ -1676,10 +1676,6 @@
                     "py": "FCDoubleSpinner",
                     "name": "dwelltime_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Número de unidades de tiempo para que el husillo permanezca."
@@ -1699,6 +1695,10 @@
                      "value": {
                       "t": "double",
                       "v": 1.0
+                     },
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
                      }
                     }
                    }
@@ -2040,10 +2040,6 @@
                     "py": "FCDoubleSpinner",
                     "name": "toolchangez_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Posición del eje Z (altura) para\ncambio de herramienta."
@@ -2063,6 +2059,10 @@
                      "value": {
                       "t": "double",
                       "v": 15.0
+                     },
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
                      }
                     }
                    }
@@ -3032,10 +3032,6 @@
                     "py": "FCButton",
                     "name": "milling_button",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "font": {
                       "t": "QFont",
                       "v": {
@@ -3057,6 +3053,10 @@
                      "icon": {
                       "t": "QIcon",
                       "v": ":/images/milling_tool32.png"
+                     },
+                     "enabled": {
+                      "t": "bool",
+                      "v": false
                      }
                     }
                    }

@@ -232,6 +232,11 @@ std::string CncJob::drillStartGcode(const DrillJobSettings& s, int firstTool, co
     return pp ? pp->startCode(drillParams(s, firstTool, tools, bounds)) + "\n" : std::string();
 }
 
+namespace {
+std::string exclusionTravel(const Preprocessor& pp, PreprocessorParams& p, const std::vector<ExclusionArea>* areas,
+                            const Point2D& from, const Point2D& to, double tooldia, bool inches, double travelZ);
+}  // namespace
+
 bool CncJob::toolGcode(int tool, const std::vector<Point2D>& points, const Excellon& ex,
                        std::array<double, 2>& firstPoint, bool isFirst, bool isLast, std::string& tGcode,
                        std::string& startGcode) {
@@ -277,11 +282,18 @@ bool CncJob::toolGcode(int tool, const std::vector<Point2D>& points, const Excel
     p.zCut = PyNumber(zCut);
 
     Point2D last = ordered.front();
+    Point2D prev{firstPoint[0], firstPoint[1]};  // temp_locx, temp_locy = first_pt
+    double toolDiaRounded = 0;  // current_tooldia = dec_format(tooldia, decimals)
+    for (const auto& [id, t] : ex.drillTools())
+        if (id == tool) toolDiaRounded = std::round(t.tooldia * 1e4) / 1e4;
     for (const Point2D& pt : ordered) {
+        last = pt;
+        // travel_coordinates desde el agujero anterior (sin áreas de exclusión, un solo movimiento rápido).
+        tGcode += exclusionTravel(*pp, p, &settings_.exclusionAreas, prev, pt, toolDiaRounded, settings_.units == "IN",
+                                  ts.travelZ.value());
         p.x = pt.x;
         p.y = pt.y;
-        last = pt;
-        tGcode += pp->rapidCode(p) + "\n";  // sin áreas de exclusión el viaje es un solo movimiento rápido
+        prev = pt;
 
         if (ts.multidepth && std::fabs(zCut) > std::fabs(ts.depthPerPass.value())) {
             const double doc = zCut;
@@ -349,6 +361,9 @@ struct GeoContext {
     const Preprocessor& pp;
     PreprocessorParams& p;
     const GeometryToolSettings& ts;
+    const std::vector<ExclusionArea>* areas{nullptr};  ///< Áreas de exclusión.
+    bool inches{false};
+    Point2D oldPoint{0, 0};  ///< `old_point`: de dónde sale el viaje al comienzo del trazado.
 };
 
 /// Equivale a `Decimal(x).quantize(Decimal('0.000000001'))`, expresado en unidades de 1e-9.
@@ -403,10 +418,36 @@ std::vector<Point2D> segmentPath(const std::vector<Point2D>& coords, double segx
 }
 
 /// Viaje rápido hasta (x, y) a la Z de viaje (sin áreas de exclusión es un solo movimiento rápido).
+/// El viaje al comienzo de un trazado (`travel_coordinates` y los movimientos de linear2gcode): sin áreas de exclusión,
+/// un solo movimiento rápido; con ellas, sube a la Z de cada área "over" al entrar y vuelve a la de viaje al salir.
+std::string exclusionTravel(const Preprocessor& pp, PreprocessorParams& p, const std::vector<ExclusionArea>* areas,
+                            const Point2D& from, const Point2D& to, double tooldia, bool inches, double travelZ) {
+    std::string g;
+    if (!areas || areas->empty()) {
+        p.x = to.x;
+        p.y = to.y;
+        return pp.rapidCode(p) + "\n";
+    }
+    std::optional<double> prevZ;
+    for (const ExclusionTravel& t : ExclusionAreas::travelCoordinates(*areas, from, to, tooldia, inches)) {
+        p.x = t.point.x;
+        p.y = t.point.y;
+        g += pp.rapidCode(p) + "\n";
+        if (t.z) {
+            p.zMove = PyNumber(*t.z);  // sube a la Z segura del área
+            g += pp.liftCode(p) + "\n";
+            p.zMove = PyNumber(travelZ);
+        } else if (prevZ) {
+            p.zMove = PyNumber(travelZ);  // vuelve a la Z de viaje
+            g += pp.liftCode(p) + "\n";
+        }
+        prevZ = t.z;
+    }
+    return g;
+}
+
 std::string travelTo(GeoContext& c, double x, double y) {
-    c.p.x = x;
-    c.p.y = y;
-    return c.pp.rapidCode(c.p) + "\n";
+    return exclusionTravel(c.pp, c.p, c.areas, c.oldPoint, {x, y}, c.ts.toolDia, c.inches, c.ts.travelZ);
 }
 
 /// Baja a la Z de corte: avance Z, bajada y avance de trabajo. Como en el original, solo `down_code` recibe la Z de la
@@ -696,10 +737,11 @@ bool CncJob::geometryToolGcode(const ShapeList& geometry, const GeometryJobSetti
         }
         g += pp->feedrateCode(p) + "\n";
 
-        GeoContext ctx{*pp, p, ts};
+        GeoContext ctx{*pp, p, ts, &js.exclusionAreas, js.units == "IN"};
         Point2D current{0, 0};
         for (std::size_t idx : order) {
             PathItem& item = items[idx];
+            ctx.oldPoint = current;  // old_point=current_pt
             if (!ts.multidepth) {
                 g += singlePass(ctx, item);
             } else {

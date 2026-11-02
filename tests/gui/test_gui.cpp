@@ -24,6 +24,7 @@
 #include "gui/objects/GeometryObject.h"
 #include "gui/ProjectIO.h"
 #include "gui/CanvasPicker.h"
+#include "gui/ExclusionAreasManager.h"
 #include "tools/CutOut.h"
 #include "tools/DoubleSided.h"
 #include "tools/Isolation.h"
@@ -1617,4 +1618,59 @@ TEST(GuiCanvas, GridSnapLikeTheOriginal) {
     EXPECT_FALSE(ui->grid_snap_btn->isChecked());
     app.picker()->cancel();
     EXPECT_TRUE(ui->grid_snap_btn->isChecked());
+}
+
+TEST(GuiDrilling, ExclusionAreas) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* exc = static_cast<ExcellonObject*>(app.openByExtension(QString::fromStdString(dir + "PTH.drl")));
+    ASSERT_NE(exc, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(exc));
+    DrillingTool* t = app.drillingTool;
+    app.runTool(t, DrillingTool::info());
+    t->setToolUi();
+    // La casilla muestra la sección.
+    t->exclusion_cb->setEnabled(true);
+    t->exclusion_cb->setChecked(true);
+    EXPECT_FALSE(t->exclusion_frame->isHidden());
+    // "Alrededor" deshabilita la Z.
+    t->strategy_radio->setValue("around");
+    Q_EMIT t->strategy_radio->activatedCustom("around");
+    EXPECT_FALSE(t->over_z_entry->isEnabled());
+    t->strategy_radio->setValue("over");
+    Q_EMIT t->strategy_radio->activatedCustom("over");
+    t->over_z_entry->setValue(7.5);
+    // Un rectángulo lejos de la placa (dos clics y clic derecho), con la grilla de 1 mm.
+    t->area_shape_radio->setValue("square");
+    PlotCanvas* canvas = app.ui()->plotCanvas();
+    auto click = [&](double x, double y, Qt::MouseButton b) { Q_EMIT canvas->mouseReleased(QPointF(x, y), b, false); };
+    t->add_area_button->click();
+    click(100, 100, Qt::LeftButton);
+    click(110, 110, Qt::LeftButton);
+    click(110, 110, Qt::RightButton);
+    ASSERT_EQ(app.excAreas()->areas().size(), 1u);
+    EXPECT_EQ(app.excAreas()->areas()[0].strategy, "over");
+    EXPECT_DOUBLE_EQ(app.excAreas()->areas()[0].overZ, 7.5);
+    ASSERT_EQ(t->exclusion_table->rowCount(), 1);
+    EXPECT_EQ(t->exclusion_table->item(0, 1)->text(), "excellon");
+    EXPECT_EQ(t->exclusion_table->item(0, 3)->text(), "7.5");
+    EXPECT_TRUE(t->generate_cnc_button->styleSheet().contains("orange"));
+    // El CNC Job se genera con las áreas (lejos de los agujeros: no cambian los viajes).
+    EXPECT_NE(t->generateCnc(), nullptr);
+    // Borrar las elegidas sin elegir nada avisa; con la fila elegida, se borra.
+    t->exclusion_table->clearSelection();
+    t->delete_sel_area_button->click();
+    EXPECT_EQ(app.excAreas()->areas().size(), 1u);
+    t->exclusion_table->selectRow(0);
+    t->delete_sel_area_button->click();
+    EXPECT_TRUE(app.excAreas()->areas().empty());
+    EXPECT_EQ(t->exclusion_table->rowCount(), 0);
+    EXPECT_FALSE(t->generate_cnc_button->styleSheet().contains("orange"));
+    // Un área sobre la placa corta el Excellon: se borran todas.
+    t->add_area_button->click();
+    click(-10, -10, Qt::LeftButton);
+    click(10, 10, Qt::LeftButton);
+    click(10, 10, Qt::RightButton);
+    EXPECT_TRUE(app.excAreas()->areas().empty());
+    EXPECT_TRUE(app.ui()->fcinfo->text->text().contains("Exclus") || app.ui()->fcinfo->text->text().contains("exclus"));
 }
