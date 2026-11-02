@@ -1,5 +1,7 @@
 #include "gui/tools/PaintTool.h"
 
+#include <QStandardItemModel>
+
 #include "gui/App.h"
 #include "gui/CanvasPicker.h"
 #include "gui/Translation.h"
@@ -78,6 +80,11 @@ void PaintTool::onTypeObjChanged() {
     for (FlatCAMObj* o : app_->collection()->objects())
         if (o->kind() == (gerber ? ObjectKind::Gerber : ObjectKind::Geometry)) obj_combo->addItem(o->name());
     obj_combo->setCurrentIndex(0);
+    // "Líneas láser" (índice 3) solo para Gerber; con una Geometría, si estaba elegido pasa al siguiente (Combo).
+    if (auto* model = qobject_cast<QStandardItemModel*>(paintmethod_combo->model())) {
+        if (QStandardItem* item = model->item(3)) item->setEnabled(gerber);
+    }
+    if (!gerber && paintmethod_combo->indexValue() == 3) paintmethod_combo->setIndexValue(4);
 }
 
 void PaintTool::setToolUi() {
@@ -271,15 +278,15 @@ FlatCAMObj* PaintTool::paintGeometry(FlatCAMObj* src, const ShapeList& geometry,
     auto methodOf = [](int m) {
         return m == 1 ? PolygonClearing::Method::Seed
              : m == 2 ? PolygonClearing::Method::Lines
+             : m == 3 ? PolygonClearing::Method::LaserLines
              : m == 4 ? PolygonClearing::Method::Combo
                       : PolygonClearing::Method::Standard;
     };
+    // "Líneas láser" usa las aperturas del Gerber pintado.
+    auto* gerberObj = dynamic_cast<GerberObject*>(src);
+    const Gerber* gerber = gerberObj ? &gerberObj->gerber() : nullptr;
     if (rest_cb->isChecked()) {
         // job_rest_clear: el método es el del formulario; el resto, de cada herramienta.
-        if (formMethod == 3) {
-            app_->ui()->inform("[WARNING_NOTCL] Todavía no está el método \"Lineas laser\".");
-            return nullptr;
-        }
         std::vector<PaintRestTool> rt;
         for (int id : ids) {
             const ClearingTool& t = tools_.at(id);
@@ -287,7 +294,8 @@ FlatCAMObj* PaintTool::paintGeometry(FlatCAMObj* src, const ShapeList& geometry,
         }
         std::vector<std::pair<std::size_t, ShapeList>> perTool;
         std::string error;
-        if (!Paint::paintRest(geometry, rt, rest_offset_entry->value(), methodOf(formMethod), 64, perTool, error)) {
+        if (!Paint::paintRest(geometry, rt, rest_offset_entry->value(), methodOf(formMethod), 64, perTool, error,
+                              gerber)) {
             app_->ui()->inform("[ERROR] " + tr_("There is no Painting Geometry in the file.\n"
                                                 "Usually it means that the tool diameter is too big for the painted geometry.\n"
                                                 "Change the painting parameters and try again."));
@@ -307,10 +315,6 @@ FlatCAMObj* PaintTool::paintGeometry(FlatCAMObj* src, const ShapeList& geometry,
     for (int id : orderedClearingTools(tools_, ids, order_radio->value().toString())) {
         const ClearingTool& t = tools_.at(id);
         // paintmethod_combo: Estándar, Semilla, Líneas, Líneas láser, Combo.
-        if (t.method == 3) {
-            app_->ui()->inform("[WARNING_NOTCL] Todavía no está el método \"Lineas laser\".");
-            return nullptr;
-        }
         PaintOptions o;
         o.toolDia = t.geo.tooldia;
         o.overlap = t.overlap / 100.0;
@@ -320,7 +324,7 @@ FlatCAMObj* PaintTool::paintGeometry(FlatCAMObj* src, const ShapeList& geometry,
         o.method = methodOf(t.method);
         ShapeList paths;
         std::string error;
-        if (!Paint::paintAll(geometry, o, paths, error) || paths.empty()) continue;
+        if (!Paint::paintAll(geometry, o, paths, error, gerber) || paths.empty()) continue;
         GeometryTool gt = t.geo;
         gt.solidGeometry = paths;
         obj->tools()[id] = gt;

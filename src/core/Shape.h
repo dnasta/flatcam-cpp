@@ -268,6 +268,19 @@ public:
                  CapStyle cap = CapStyle::Round, double mitreLimit = 5.0) const;
 
     /**
+     * @brief Línea paralela a una distancia, a la izquierda o a la derecha (`parallel_offset` de Shapely 1.8).
+     *
+     * Usa `GEOSOffsetCurve` como Shapely: a la derecha la distancia se pasa negativa.
+     * @param distance Distancia.
+     * @param rightSide `true` para el lado derecho (`side='right'`).
+     * @param resolution Segmentos por cuarto de círculo en las esquinas redondeadas.
+     * @param join Estilo de las esquinas (redondeado por defecto, como Shapely).
+     * @param mitreLimit Límite de inglete.
+     * @return La línea (o varias), o vacía.
+     */
+    Shape parallelOffset(double distance, bool rightSide, int resolution = 16, JoinStyle join = JoinStyle::Round,
+                         double mitreLimit = 5.0) const;
+    /**
      * @brief Simplifica la figura (algoritmo de Douglas-Peucker).
      * @param tolerance Distancia máxima de desvío.
      * @param preserveTopology Si es `true` evita generar figuras inválidas.

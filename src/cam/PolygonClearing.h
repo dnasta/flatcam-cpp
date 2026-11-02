@@ -78,7 +78,8 @@ public:
         Standard,  ///< Estándar (`clear_polygon`).
         Seed,      ///< Semilla (`clear_polygon2`).
         Lines,     ///< Líneas (`clear_polygon3`).
-        Combo      ///< Combinado: líneas; si no da nada, semilla; si tampoco, estándar.
+        Combo,     ///< Combinado: líneas; si no da nada, semilla; si tampoco, estándar.
+        LaserLines ///< "Líneas láser" de Paint: necesita las aperturas del Gerber (Paint::laserLines); aquí no da nada.
     };
 
     /**
