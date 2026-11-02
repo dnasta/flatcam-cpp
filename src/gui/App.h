@@ -220,6 +220,8 @@ public:
 
     /** @brief Selección interactiva de zonas y polígonos en el canvas. @return El selector. */
     class CanvasPicker* picker() const { return picker_; }
+    /** @brief Áreas de exclusión de la aplicación (`app.exc_areas`). @return El almacén. */
+    class ExclusionAreasManager* excAreas() const { return excAreas_; }
 
     /** @brief Posición del último clic izquierdo en el canvas (`app.pos`). @return La posición en mm. */
     QPointF lastClickPosition() const { return lastClick_; }
@@ -247,7 +249,8 @@ private:
     QString lastFolder_;
     QString projectFilename_;
     QString dataPath_;
-    class CanvasPicker* picker_{nullptr};  ///< Carpeta de datos elegida (vacía: la de la aplicación).
+    class CanvasPicker* picker_{nullptr};
+    class ExclusionAreasManager* excAreas_{nullptr};  ///< Áreas de exclusión.  ///< Carpeta de datos elegida (vacía: la de la aplicación).
     class QMenu* menuProject_{nullptr};  ///< `menuproject`: menú contextual de la pestaña Proyecto.
     JsonValue projectOptions_;  ///< Opciones del proyecto abierto (`options`), para volver a guardarlas.
     QPointF lastClick_{0.0, 0.0};

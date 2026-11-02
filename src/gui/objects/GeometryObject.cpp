@@ -116,7 +116,8 @@ QWidget* GeometryObject::propertiesUi() {
     return ui_.get();
 }
 
-std::unique_ptr<CNCJobObject> GeometryObject::makeCncJob(const std::vector<int>& toolIds, QString& error) const {
+std::unique_ptr<CNCJobObject> GeometryObject::makeCncJob(const std::vector<int>& toolIds, QString& error,
+                                                         const std::vector<ExclusionArea>& exclusionAreas) const {
     if (toolIds.empty()) {
         error = "[ERROR_NOTCL] " + tr_("Failed. No tool selected in the tool table ...");
         return nullptr;
@@ -149,6 +150,7 @@ std::unique_ptr<CNCJobObject> GeometryObject::makeCncJob(const std::vector<int>&
         s.toolSettings.offsetKind = t.offset.toLower() == "path" ? "Path" : t.offset.toLower().toStdString();
         s.toolSettings.offsetValue = t.offsetValue;
         s.headerBounds = BoundingBox{b.left(), b.top(), b.right(), b.bottom()};
+        s.exclusionAreas = exclusionAreas;
         for (const Shape& sh : t.solidGeometry) {
             if (sh.isEmpty()) continue;
             const ShapeList parts = sh.parts();

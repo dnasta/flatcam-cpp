@@ -17,6 +17,7 @@
 #include "gui/objects/CNCJobObject.h"
 #include "gui/objects/GeometryObject.h"
 #include "gui/CanvasPicker.h"
+#include "gui/ExclusionAreasManager.h"
 #include "gui/ProjectIO.h"
 #include "gui/tools/ClearingTools.h"
 #include "gui/objects/ObjectUIs.h"
@@ -85,6 +86,9 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     ui_->setAcceptDrops(true);
     ui_->installEventFilter(this);
     defaultProperties_ = ui_->properties_scroll_area->widget();
+    // El selector con el mouse y las áreas de exclusión, antes que las herramientas que los usan.
+    picker_ = new CanvasPicker(ui_.get(), this);
+    excAreas_ = new ExclusionAreasManager(ui_.get(), picker_, this);
     // Las herramientas (install_tools): sus paneles viven mientras viva la ventana.
     nccTool = new NccTool(this, ui_.get());
     paintTool = new PaintTool(this, ui_.get());
@@ -95,7 +99,6 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool,
                                                       isolationTool})
         w->hide();
-    picker_ = new CanvasPicker(ui_.get(), this);
     connectSignals();
     setupProjectMenu();
     setupRecentItems();
@@ -476,7 +479,7 @@ FlatCAMObj* App::addObject(std::unique_ptr<FlatCAMObj> o) {
 
 FlatCAMObj* App::generateCncJob(GeometryObject* geo, const std::vector<int>& toolIds) {
     QString error;
-    std::unique_ptr<CNCJobObject> job = geo->makeCncJob(toolIds, error);
+    std::unique_ptr<CNCJobObject> job = geo->makeCncJob(toolIds, error, excAreas_->areas());
     if (!job) {
         ui_->inform(error);
         return nullptr;
@@ -499,6 +502,14 @@ void App::showProperties(FlatCAMObj* obj) {
         auto* geo = static_cast<GeometryObject*>(obj);
         auto* gui = static_cast<GeometryObjectUI*>(panel);
         gui->onGenerateCnc = [this, geo, gui] { generateCncJob(geo, gui->toolsForCnc()); };
+        // Áreas de exclusión (una sola vez por panel).
+        if (!gui->property("exclusionConnected").toBool()) {
+            gui->setProperty("exclusionConnected", true);
+            excAreas_->bindPanel(gui->exclusion_cb, gui->exclusion_frame, gui->area_shape_radio, gui->strategy_radio,
+                                 gui->over_z_label, gui->over_z_entry, gui->add_area_button, gui->delete_area_button,
+                                 gui->delete_sel_area_button, gui->generate_cnc_button, gui->exclusion_table,
+                                 [geo] { return geo->solidGeometry(); }, "geometry");
+        }
     }
     area->setWidget(panel);
     // FlatCAMObj.set_ui: Enter en el campo Nombre renombra el objeto (on_name_activate, sin mensaje).

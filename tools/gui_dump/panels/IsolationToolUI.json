@@ -1180,10 +1180,6 @@
              "py": "FCCheckBox",
              "name": "forced_rest_iso_cb",
              "props": {
-              "enabled": {
-               "t": "bool",
-               "v": false
-              },
               "toolTip": {
                "t": "str",
                "v": "Cuando se marca, el aislamiento se realizará con la herramienta actual, incluso si\nNo se pudieron aislar los interiores de un polígono (agujeros en el polígono).\nFunciona cuando se usa 'mecanizado en reposo'."
@@ -1199,6 +1195,10 @@
               "hidden": {
                "t": "bool",
                "v": true
+              },
+              "enabled": {
+               "t": "bool",
+               "v": false
               }
              }
             }
@@ -1288,10 +1288,6 @@
              "py": "RadioSet",
              "name": "type_excobj_radio",
              "props": {
-              "enabled": {
-               "t": "bool",
-               "v": false
-              },
               "toolTip": {
                "t": "str",
                "v": "Especifique el tipo de objeto que se excluirá del aislamiento.\nPuede ser de tipo: Gerber o Geometría.\nLo que se seleccione aquí dictará el tipo\nde objetos que llenarán el cuadro combinado 'Objeto'."
@@ -1299,6 +1295,10 @@
               "hidden": {
                "t": "bool",
                "v": true
+              },
+              "enabled": {
+               "t": "bool",
+               "v": false
               }
              },
              "choices": [
@@ -1327,10 +1327,6 @@
              "py": "FCComboBox",
              "name": "exc_obj_combo",
              "props": {
-              "enabled": {
-               "t": "bool",
-               "v": false
-              },
               "toolTip": {
                "t": "str",
                "v": "Objeto cuya área se eliminará de la geometría de aislamiento."
@@ -1338,6 +1334,10 @@
               "hidden": {
                "t": "bool",
                "v": true
+              },
+              "enabled": {
+               "t": "bool",
+               "v": false
               }
              },
              "items": [],

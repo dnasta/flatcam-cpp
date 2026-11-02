@@ -539,10 +539,6 @@
                     "py": "QLabel",
                     "name": "cutzlabel",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Profundidad de perforación (negativo)\ndebajo de la superficie de cobre."
@@ -565,10 +561,6 @@
                     "py": "FCDoubleSpinner",
                     "name": "cutz_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -603,10 +595,6 @@
                     "py": "FCCheckBox",
                     "name": "mpass_cb",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Usa múltiples pases para limitar\nLa profundidad de corte en cada pasada. Será\ncortar varias veces hasta que el Corte Z sea\nalcanzado."
@@ -629,10 +617,6 @@
                     "py": "FCDoubleSpinner",
                     "name": "maxdepth_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Profundidad de cada pase (positivo)."
@@ -667,10 +651,6 @@
                     "py": "QLabel",
                     "name": "travelzlabel",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Altura de herramienta al viajar\nA través del plano XY."
@@ -693,10 +673,6 @@
                     "py": "FCDoubleSpinner",
                     "name": "travelz_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -727,10 +703,6 @@
                     "py": "QLabel",
                     "name": "frzlabel",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Velocidad de herramienta durante la perforación\n(en unidades por minuto).\nLa llamada velocidad de avance 'Plunge'.\nEsto es para el movimiento lineal G01."
@@ -753,10 +725,6 @@
                     "py": "FCDoubleSpinner",
                     "name": "feedrate_z_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -787,10 +755,6 @@
                     "py": "QLabel",
                     "name": "feedrate_rapid_label",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Velocidad de la herramienta durante la perforación\n(en unidades por minuto).\nEsto es para el movimiento rápido G00.\nEs útil solo para Marlin,\nIgnorar para cualquier otro caso."
@@ -817,10 +781,6 @@
                     "py": "FCDoubleSpinner",
                     "name": "feedrate_rapid_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -855,10 +815,6 @@
                     "py": "QLabel",
                     "name": "spindle_label",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Velocidad del husillo\nen RPM (opcional)"
@@ -881,10 +837,6 @@
                     "py": "FCSpinner",
                     "name": "spindlespeed_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "maximum": {
                       "t": "int",
                       "v": 1000000
@@ -907,10 +859,6 @@
                     "py": "FCCheckBox",
                     "name": "dwell_cb",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Pausa para permitir que el husillo alcance su\nVelocidad antes del corte."
@@ -933,10 +881,6 @@
                     "py": "FCDoubleSpinner",
                     "name": "dwelltime_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Número de unidades de tiempo para que el husillo permanezca."
@@ -971,10 +915,6 @@
                     "py": "QLabel",
                     "name": "tool_offset_label",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Algunas brocas (las más grandes) necesitan profundizar más\npara crear el diámetro del orificio de salida deseado debido a la forma de la punta.\nEl valor aquí puede compensar el parámetro Z de corte."
@@ -997,10 +937,6 @@
                     "py": "FCDoubleSpinner",
                     "name": "offset_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -1027,10 +963,6 @@
                     "py": "FCCheckBox",
                     "name": "drill_slots_cb",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Si la herramienta seleccionada tiene ranuras, se perforarán."
@@ -1057,10 +989,6 @@
                     "py": "QLabel",
                     "name": "drill_overlap_label",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Cuánto (porcentaje) del diámetro de la herramienta debe superponerse al taladro anterior."
@@ -1087,10 +1015,6 @@
                     "py": "FCDoubleSpinner",
                     "name": "drill_overlap_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "suffix": {
                       "t": "str",
                       "v": " %"
@@ -1125,10 +1049,6 @@
                     "py": "FCCheckBox",
                     "name": "last_drill_cb",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Si la longitud de la ranura no está completamente cubierta por taladros,\nagregue un taladro en el punto final de la ranura."
@@ -1216,10 +1136,6 @@
                     "py": "QFrame",
                     "name": null,
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "sizePolicy": {
                       "t": "QSizePolicy",
                       "v": [
@@ -1251,10 +1167,6 @@
                     "py": "FCButton",
                     "name": "apply_param_to_all",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Se aplicarán los parámetros en el formulario actual\nen todas las herramientas de la tabla de herramientas."
@@ -1281,10 +1193,6 @@
                     "py": "QFrame",
                     "name": null,
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "sizePolicy": {
                       "t": "QSizePolicy",
                       "v": [
@@ -1316,10 +1224,6 @@
                     "py": "QLabel",
                     "name": "gen_param_label",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Parámetros que son comunes para todas las herramientas."
@@ -1342,10 +1246,6 @@
                     "py": "FCCheckBox",
                     "name": "toolchange_cb",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Incluir secuencia de cambio de herramienta\nen G-Code (Pausa para cambio de herramienta)."
@@ -1368,10 +1268,6 @@
                     "py": "QLabel",
                     "name": "toolchangez_label",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Posición del eje Z (altura) para\ncambio de herramienta."
@@ -1394,10 +1290,6 @@
                     "py": "FCDoubleSpinner",
                     "name": "toolchangez_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -1428,10 +1320,6 @@
                     "py": "QLabel",
                     "name": "estartz_label",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Altura de la herramienta justo después de comenzar el trabajo.\nElimine el valor si no necesita esta característica."
@@ -1458,10 +1346,6 @@
                     "py": "NumericalEvalEntry",
                     "name": "estartz_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "styleSheet": {
                       "t": "str",
                       "v": "QLineEdit {border: 1px solid #0069A9;}"
@@ -1484,10 +1368,6 @@
                     "py": "QLabel",
                     "name": "endz_label",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Altura de la herramienta después de\nEl último movimiento al final del trabajo."
@@ -1510,10 +1390,6 @@
                     "py": "FCDoubleSpinner",
                     "name": "endz_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -1544,10 +1420,6 @@
                     "py": "QLabel",
                     "name": null,
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Fin movimiento X, Y posición. En formato (x, y).\nSi no se ingresa ningún valor, entonces no hay movimiento\nen el plano X, Y al final del trabajo."
@@ -1570,10 +1442,6 @@
                     "py": "NumericalEvalTupleEntry",
                     "name": "endxy_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "styleSheet": {
                       "t": "str",
                       "v": "QLineEdit {border: 1px solid #0069A9;}"
@@ -1600,10 +1468,6 @@
                     "py": "QLabel",
                     "name": "pdepth_label",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "The maximum depth that the probe is allowed\nto probe. Negative value, in current units."
@@ -1630,10 +1494,6 @@
                     "py": "FCDoubleSpinner",
                     "name": "pdepth_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -1672,10 +1532,6 @@
                     "py": "QLabel",
                     "name": "feedrate_probe_label",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "La velocidad de avance utilizada mientras la sonda está sondeando."
@@ -1702,10 +1558,6 @@
                     "py": "FCDoubleSpinner",
                     "name": "feedrate_probe_entry",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -1740,10 +1592,6 @@
                     "py": "QLabel",
                     "name": null,
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "El archivo JSON del preprocesador que dicta\nSalida de Gcode para objetos Excellon."
@@ -1765,12 +1613,7 @@
                     "qt": "QComboBox",
                     "py": "FCComboBox",
                     "name": "pp_excellon_name_cb",
-                    "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     }
-                    },
+                    "props": {},
                     "items": [],
                     "currentIndex": -1
                    }
@@ -1786,10 +1629,6 @@
                     "py": "FCCheckBox",
                     "name": "exclusion_cb",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Incluir áreas de exclusión.\nEn esas áreas el recorrido de las herramientas.\nestá prohibido."
@@ -1812,10 +1651,6 @@
                     "py": "QFrame",
                     "name": "exclusion_frame",
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "hidden": {
                       "t": "bool",
                       "v": true
@@ -1842,10 +1677,6 @@
                         "py": "FCTable",
                         "name": "exclusion_table",
                         "props": {
-                         "enabled": {
-                          "t": "bool",
-                          "v": false
-                         },
                          "minimumSize": {
                           "t": "QSize",
                           "v": [
@@ -1950,10 +1781,6 @@
                            "py": "FCLabel",
                            "name": "strategy_label",
                            "props": {
-                            "enabled": {
-                             "t": "bool",
-                             "v": false
-                            },
                             "toolTip": {
                              "t": "str",
                              "v": "La estrategia seguida al encontrar un área de exclusión.\nPuede ser:\n- Sobre -> al encontrar el área, la herramienta irá a una altura establecida\n- Alrededor -> evitará el área de exclusión recorriendo el área"
@@ -1975,12 +1802,7 @@
                            "qt": "QWidget",
                            "py": "RadioSet",
                            "name": "strategy_radio",
-                           "props": {
-                            "enabled": {
-                             "t": "bool",
-                             "v": false
-                            }
-                           },
+                           "props": {},
                            "choices": [
                             {
                              "label": "Sobre",
@@ -2007,10 +1829,6 @@
                            "py": "FCLabel",
                            "name": "over_z_label",
                            "props": {
-                            "enabled": {
-                             "t": "bool",
-                             "v": false
-                            },
                             "toolTip": {
                              "t": "str",
                              "v": "La altura Z a la que se elevará la herramienta para evitar\nUn área de interdicción."
@@ -2033,10 +1851,6 @@
                            "py": "FCDoubleSpinner",
                            "name": "over_z_entry",
                            "props": {
-                            "enabled": {
-                             "t": "bool",
-                             "v": false
-                            },
                             "decimals": {
                              "t": "int",
                              "v": 4
@@ -2063,10 +1877,6 @@
                            "py": "QPushButton",
                            "name": "add_area_button",
                            "props": {
-                            "enabled": {
-                             "t": "bool",
-                             "v": false
-                            },
                             "toolTip": {
                              "t": "str",
                              "v": "Agregar un área de exclusión."
@@ -2089,10 +1899,6 @@
                            "py": "RadioSet",
                            "name": "area_shape_radio",
                            "props": {
-                            "enabled": {
-                             "t": "bool",
-                             "v": false
-                            },
                             "toolTip": {
                              "t": "str",
                              "v": "El tipo de forma de selección utilizada para la selección de área."
@@ -2140,10 +1946,6 @@
                            "py": "QPushButton",
                            "name": "delete_area_button",
                            "props": {
-                            "enabled": {
-                             "t": "bool",
-                             "v": false
-                            },
                             "toolTip": {
                              "t": "str",
                              "v": "Eliminar todas las áreas de exclusión."
@@ -2163,10 +1965,6 @@
                            "py": "QPushButton",
                            "name": "delete_sel_area_button",
                            "props": {
-                            "enabled": {
-                             "t": "bool",
-                             "v": false
-                            },
                             "toolTip": {
                              "t": "str",
                              "v": "Elimine todas las áreas de exclusión que están seleccionadas en la tabla."
@@ -2196,10 +1994,6 @@
                     "py": "QFrame",
                     "name": null,
                     "props": {
-                     "enabled": {
-                      "t": "bool",
-                      "v": false
-                     },
                      "sizePolicy": {
                       "t": "QSizePolicy",
                       "v": [
@@ -2275,10 +2069,6 @@
              "py": "QPushButton",
              "name": "generate_cnc_button",
              "props": {
-              "enabled": {
-               "t": "bool",
-               "v": false
-              },
               "font": {
                "t": "QFont",
                "v": {
@@ -2300,6 +2090,10 @@
               "icon": {
                "t": "QIcon",
                "v": ":/images/cnc16.png"
+              },
+              "enabled": {
+               "t": "bool",
+               "v": false
               }
              }
             }

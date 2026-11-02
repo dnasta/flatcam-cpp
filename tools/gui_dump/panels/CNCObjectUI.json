@@ -2008,10 +2008,6 @@
                                  "py": "FCButton",
                                  "name": "controller_reset_button",
                                  "props": {
-                                  "enabled": {
-                                   "t": "bool",
-                                   "v": false
-                                  },
                                   "toolTip": {
                                    "t": "str",
                                    "v": "Restablecimiento del software del controlador."
@@ -2019,6 +2015,10 @@
                                   "text": {
                                    "t": "str",
                                    "v": "Reiniciar"
+                                  },
+                                  "enabled": {
+                                   "t": "bool",
+                                   "v": false
                                   }
                                  }
                                 }
@@ -3191,10 +3191,6 @@
                                  "py": "FCButton",
                                  "name": "grbl_get_heightmap_button",
                                  "props": {
-                                  "enabled": {
-                                   "t": "bool",
-                                   "v": false
-                                  },
                                   "toolTip": {
                                    "t": "str",
                                    "v": "Enviará el GCode de sondeo al controlador GRBL,\nespere los datos de sondeo Z y luego aplique estos datos\nsobre el GCode original, por lo que se realiza una autonivelación."
@@ -3202,6 +3198,10 @@
                                   "text": {
                                    "t": "str",
                                    "v": "Aplicar nivelación automática"
+                                  },
+                                  "enabled": {
+                                   "t": "bool",
+                                   "v": false
                                   }
                                  }
                                 }
@@ -3214,10 +3214,6 @@
                                  "py": "QToolButton",
                                  "name": "grbl_save_height_map_button",
                                  "props": {
-                                  "enabled": {
-                                   "t": "bool",
-                                   "v": false
-                                  },
                                   "toolTip": {
                                    "t": "str",
                                    "v": "Guardará el mapa de altura GRBL."
@@ -3225,6 +3221,10 @@
                                   "icon": {
                                    "t": "QIcon",
                                    "v": ":/images/save_as.png"
+                                  },
+                                  "enabled": {
+                                   "t": "bool",
+                                   "v": false
                                   }
                                  }
                                 }
@@ -3273,10 +3273,6 @@
                    "py": "FCButton",
                    "name": "h_gcode_button",
                    "props": {
-                    "enabled": {
-                     "t": "bool",
-                     "v": false
-                    },
                     "sizePolicy": {
                      "t": "QSizePolicy",
                      "v": [
@@ -3293,6 +3289,10 @@
                     "text": {
                      "t": "str",
                      "v": "Guardar GCode de sondeo"
+                    },
+                    "enabled": {
+                     "t": "bool",
+                     "v": false
                     }
                    }
                   }
@@ -3305,10 +3305,6 @@
                    "py": "QToolButton",
                    "name": "view_h_gcode_button",
                    "props": {
-                    "enabled": {
-                     "t": "bool",
-                     "v": false
-                    },
                     "toolTip": {
                      "t": "str",
                      "v": "Ver / editar el GCode de sondeo."
@@ -3316,6 +3312,10 @@
                     "icon": {
                      "t": "QIcon",
                      "v": ":/images/edit_file32.png"
+                    },
+                    "enabled": {
+                     "t": "bool",
+                     "v": false
                     }
                    }
                   }

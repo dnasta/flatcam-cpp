@@ -78,14 +78,22 @@ SCENARIOS += [
                                                        extracut_length=1.0, ppname_g="line_xyz"), {}),
     ("pp_hpgl_inches", [LINE], dict(cutz=-0.07, travelz=0.08, ppname_g="hpgl"), dict(units="IN")),
 ]
+# Áreas de exclusión: los viajes al comienzo de cada trazado las esquivan (por encima o alrededor).
+BLOCK = "POLYGON ((4 -2, 6 -2, 6 2, 4 2, 4 -2))"
+TRI = "POLYGON ((12 1, 16 1, 14 4, 12 1))"
+FAR = [LINE, "LINESTRING (20 0, 25 5)"]
+SCENARIOS += [
+    ("exclusion_over", FAR, dict(cutz=-0.5), dict(areas=[("POLYGON ((14 -1, 17 -1, 17 4, 14 4, 14 -1))", "over", 3.5)])),
+    ("exclusion_around", FAR, dict(cutz=-0.5), dict(areas=[("POLYGON ((14 -1, 17 -1, 17 4, 14 4, 14 -1))", "around", 0)])),
+    ("exclusion_two_areas", ["LINESTRING (30 0, 32 0)"], dict(cutz=-0.5),
+     dict(areas=[(BLOCK, "over", 2.5), (TRI, "around", 0)])),
+    ("exclusion_multidepth", FAR, dict(cutz=-1.0, multidepth=True, depthperpass=0.5),
+     dict(areas=[("POLYGON ((14 -1, 17 -1, 17 4, 14 4, 14 -1))", "over", 3.0)])),
+    ("exclusion_not_crossed", [LINE], dict(cutz=-0.5), dict(areas=[(TRI, "over", 3.0)])),
+]
 
 
-class ExcAreas:
-    exclusion_areas_storage = []
-
-    @staticmethod
-    def travel_coordinates(start_point, end_point, tooldia):
-        return [(None, end_point)]
+from oracle_exclusion import cpp_areas, exc_areas  # noqa: E402
 
 
 def num(v):
@@ -111,9 +119,10 @@ def main():
             load("pp_" + f[:-3], os.path.join(REF, "preprocessors", f)).math = math
 
     app = FakeApp()
-    app.defaults.update({"cncjob_steps_per_circle": 64, "cncjob_coords_type": "G90", "geometry_f_plunge": False})
+    app.defaults.update({"cncjob_steps_per_circle": 64, "cncjob_coords_type": "G90", "geometry_f_plunge": False,
+                         "units": "MM"})
     app.preprocessors = appPreProcessor.preprocessors
-    app.exc_areas = ExcAreas()
+    app.exc_areas = exc_areas(app, [])
     app.dec_format = lambda v, dec=4: float("%.*f" % (dec, v))
     import logging
     app.log = logging.getLogger("oracle")  # doformat registra el error y devuelve "" (Roland sin `z`)
@@ -148,6 +157,7 @@ def main():
         units = jobopts.get("units", "MM")
         toolchange = jobopts.get("toolchange", True)
         pp_name = data["ppname_g"]
+        app.exc_areas = exc_areas(app, jobopts.get("areas", []))
 
         job = camlib.CNCjob(units=units, kind="geometry", steps_per_circle=64, pp_geometry_name=pp_name)
         job.machinist_setting = 0
@@ -208,6 +218,7 @@ def main():
         out.append("    t.tolerance = %s;" % num(jobopts.get("tolerance", 0.0)))
         out.append("    t.segX = %s;" % num(job.segx))
         out.append("    t.segY = %s;" % num(job.segy))
+        out += cpp_areas(jobopts.get("areas", []), "geometry", "s.exclusionAreas")
         out += ["    return s;", "}"]
         names.append((name, expected))
 

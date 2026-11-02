@@ -722,10 +722,6 @@
                 "py": "FCButton",
                 "name": "milling_button",
                 "props": {
-                 "enabled": {
-                  "t": "bool",
-                  "v": false
-                 },
                  "toolTip": {
                   "t": "str",
                   "v": "Genere una geometría para fresar taladros o ranuras en un objeto Excellon."
@@ -737,6 +733,10 @@
                  "icon": {
                   "t": "QIcon",
                   "v": ":/images/milling_tool32.png"
+                 },
+                 "enabled": {
+                  "t": "bool",
+                  "v": false
                  }
                 }
                }

@@ -17,6 +17,7 @@ add_library(flatcam_core STATIC
     cam/CncJob.cpp
     cam/EndpointStorage.cpp
     cam/PolygonClearing.cpp
+    cam/ExclusionAreas.cpp
     tools/CutOut.cpp
     tools/Paint.cpp
     tools/Ncc.cpp

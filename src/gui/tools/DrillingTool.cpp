@@ -7,6 +7,7 @@
 
 #include "cam/Preprocessor.h"
 #include "gui/App.h"
+#include "gui/ExclusionAreasManager.h"
 #include "gui/Translation.h"
 #include "gui/objects/CNCJobObject.h"
 #include "gui/objects/FlatCAMObj.h"
@@ -60,6 +61,12 @@ DrillingTool::DrillingTool(App* app, QWidget* parent) : DrillingToolUIBase(paren
         connect(w, &QCheckBox::toggled, this, [this, w] { formToStorage(w); });
     for (FCEntry* w : std::initializer_list<FCEntry*>{estartz_entry, endxy_entry})
         connect(w, &QLineEdit::editingFinished, this, [this, w] { formToStorage(w); });
+    // Áreas de exclusión (las de la aplicación: valen para todos los CNC Job).
+    app_->excAreas()->bindPanel(exclusion_cb, exclusion_frame, area_shape_radio, strategy_radio, over_z_label,
+                                over_z_entry, add_area_button, delete_area_button, delete_sel_area_button,
+                                generate_cnc_button, exclusion_table,
+                                [this] { return excellon_ ? excellon_->excellon().solidGeometry() : ShapeList{}; },
+                                "excellon");
 }
 
 ToolInfo DrillingTool::info() { return {tr_("Drilling Tool"), tr_("Drilling Tool")}; }
@@ -374,6 +381,20 @@ FlatCAMObj* DrillingTool::generateCnc() {
         rows.push_back(std::move(row));
     }
     app_->ui()->inform(tr_("Creating a list of points to drill..."));
+    // check_intersection: ningún agujero (con su radio) puede tocar un área de exclusión.
+    js.exclusionAreas = app_->excAreas()->areas();
+    for (int id : js.toolOrder) {
+        const ExcellonTool& t = excellon_->excellon().drillTools().at(id);
+        for (const Point2D& pt : t.drills) {
+            const Shape buf = Shape::point(pt).buffer(t.tooldia / 2.0);
+            for (const ExclusionArea& a : js.exclusionAreas) {
+                if (buf.within(a.shape) || buf.intersects(a.shape)) {
+                    app_->ui()->inform("[ERROR_NOTCL] " + tr_("Failed. Drill points inside the exclusion zones."));
+                    return nullptr;
+                }
+            }
+        }
+    }
     auto job = std::make_unique<CncJob>(js);
     if (!job->generateFromExcellon(excellon_->excellon())) {
         app_->ui()->inform("[ERROR_NOTCL] " + QString::fromStdString(job->lastError()));

@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "cam/EndpointStorage.h"
+#include "cam/ExclusionAreas.h"
 #include "cam/Preprocessor.h"
 #include "parsers/Excellon.h"
 
@@ -56,6 +57,7 @@ struct DrillToolSettings {
 struct DrillJobSettings {
     std::string preprocessor{"default"};  ///< Postprocesador (`tools_drill_ppname_e`).
     GcodeFlavor flavor{GcodeFlavor::FlatCAM8_994};  ///< Versión cuyo G-code se reproduce (solo cambia `GRBL_laser`).
+    std::vector<ExclusionArea> exclusionAreas;  ///< Áreas que esquivan los viajes entre agujeros (`app.exc_areas`).
     std::string units{"MM"};              ///< `"MM"` o `"IN"`.
     int coordsDecimals{4};                ///< Decimales de las coordenadas.
     int decimals{4};                      ///< Decimales generales.
@@ -118,6 +120,7 @@ struct GeometryJobSettings {
     double zPdepth{-0.02};
     /// Avance de la sonda: preferencia `geometry_feedrate_probe`.
     double feedrateProbe{75.0};
+    std::vector<ExclusionArea> exclusionAreas;  ///< Áreas que esquivan los viajes al inicio de cada trazado.
 };
 
 /** @brief Resumen de una herramienta de un Excellon para la cabecera del postprocesador. */
