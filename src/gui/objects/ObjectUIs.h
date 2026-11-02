@@ -76,10 +76,13 @@ private:
     void updateUi();
     void formToStorage();
     void commonToStorage();
-    void onPpChanged();
+    /// `on_pp_changed`; @p fromBuild al cargar el panel (no restaura las casillas que hpgl fuerza).
+    void onPpChanged(bool fromBuild = false);
     std::vector<int> selectedRows() const;
     int toolAt(int row) const;
     GeometryObject* obj_{nullptr};
+    bool oldPpState_{false};          ///< `old_pp_state`: profundidad múltiple antes de elegir hpgl.
+    bool oldToolchangeState_{false};  ///< `old_toolchangeg_state`: cambio de herramienta antes de elegir hpgl.
     bool muted_{false};
 };
 

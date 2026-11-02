@@ -135,8 +135,7 @@ std::unique_ptr<CNCJobObject> GeometryObject::makeCncJob(const std::vector<int>&
     for (int id : toolIds) {
         const GeometryTool& t = tools_.at(id);
         if (!makePreprocessor(t.ppname.toStdString())) {
-            error = QString("[ERROR_NOTCL] %1: %2").arg(tr_("Preprocessor"), t.ppname) +
-                    " (todavía no está portado; están default y GRBL_laser)";
+            error = QString("[ERROR_NOTCL] %1: %2").arg(tr_("Preprocessor"), t.ppname);
             return nullptr;
         }
         GeometryToolJob j;

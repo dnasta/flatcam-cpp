@@ -196,7 +196,7 @@ GeometryObjectUI::GeometryObjectUI(QWidget* parent) : GeometryObjectUIBase(paren
     connect(endxy_entry, &QLineEdit::editingFinished, this, [this] { commonToStorage(); });
     connect(pp_geometry_name_cb, &QComboBox::currentTextChanged, this, [this] {
         commonToStorage();
-        onPpChanged();
+        onPpChanged(muted_);
     });
 }
 
@@ -334,7 +334,7 @@ void GeometryObjectUI::updateUi() {
         tool_offset_entry->setValue(t.offsetValue);
     }
     muted_ = false;
-    onPpChanged();
+    onPpChanged(true);
 }
 
 void GeometryObjectUI::formToStorage() {
@@ -379,9 +379,26 @@ void GeometryObjectUI::commonToStorage() {
     }
 }
 
-void GeometryObjectUI::onPpChanged() {
-    // on_pp_changed (sin hpgl, que no está en la lista).
+void GeometryObjectUI::onPpChanged(bool fromBuild) {
+    // on_pp_changed.
     const QString pp = pp_geometry_name_cb->currentText().toLower();
+    if (pp == "hpgl") {
+        // El plotter no tiene profundidad: sin pasadas múltiples y con cambio de herramienta (SPn).
+        oldPpState_ = mpass_cb->isChecked();
+        oldToolchangeState_ = toolchangeg_cb->isChecked();
+        mpass_cb->setChecked(false);
+        mpass_cb->setDisabled(true);
+        toolchangeg_cb->setChecked(true);
+        toolchangeg_cb->setDisabled(true);
+    } else {
+        // Al abrir el panel (fromBuild) el original ya restauró estos valores antes de cargar los de la herramienta.
+        if (!fromBuild) {
+            mpass_cb->setChecked(oldPpState_);
+            toolchangeg_cb->setChecked(oldToolchangeState_);
+        }
+        mpass_cb->setDisabled(false);
+        toolchangeg_cb->setDisabled(false);
+    }
     const bool probe = pp.contains("toolchange_probe");
     for (QWidget* w : std::initializer_list<QWidget*>{pdepth_entry, pdepth_label, feedrate_probe_entry, feedrate_probe_label})
         w->setVisible(probe);
@@ -412,6 +429,8 @@ void GeometryObjectUI::onPpChanged() {
         travelz_entry->show();
         endz_label->show();
         endz_entry->show();
+        // El original muestra el rótulo del offset (y falla al mostrar `offset_entry`, que no existe).
+        tool_offset_lbl->show();
     }
     spindle_label->setText((laser ? tr_("Laser Power") : tr_("Spindle speed")) + ":");
 }

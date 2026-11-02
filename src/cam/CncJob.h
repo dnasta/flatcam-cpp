@@ -48,11 +48,14 @@ struct DrillToolSettings {
     std::optional<PyNumber> startZ;       ///< Z inicial (`tools_drill_startz`).
     PyNumber endZ;                        ///< Z final (`tools_drill_endz`).
     std::optional<std::array<double, 2>> endXY;         ///< X,Y final (`tools_drill_endxy`).
+    PyNumber zPdepth{-0.02};              ///< Profundidad de la sonda (`tools_drill_z_pdepth`, Toolchange_Probe_MACH3).
+    PyNumber feedrateProbe{75};           ///< Avance de la sonda (`tools_drill_feedrate_probe`).
 };
 
 /** @brief Todo lo necesario para generar el G-code de un Excellon. */
 struct DrillJobSettings {
     std::string preprocessor{"default"};  ///< Postprocesador (`tools_drill_ppname_e`).
+    GcodeFlavor flavor{GcodeFlavor::FlatCAM8_994};  ///< Versión cuyo G-code se reproduce (solo cambia `GRBL_laser`).
     std::string units{"MM"};              ///< `"MM"` o `"IN"`.
     int coordsDecimals{4};                ///< Decimales de las coordenadas.
     int decimals{4};                      ///< Decimales generales.
@@ -111,6 +114,10 @@ struct GeometryJobSettings {
     GcodeFlavor flavor{GcodeFlavor::FlatCAM8_994};  ///< Versión de FlatCAM cuyo G-code se reproduce (predeterminada: 8.994).
     /// Límites que imprime la cabecera (`options['xmin']`...). Si falta se usan los de la geometría de origen.
     std::optional<BoundingBox> headerBounds;
+    /// Profundidad de la sonda (Toolchange_Probe_MACH3): `mtool_gen_cncjob` usa la preferencia `geometry_z_pdepth`.
+    double zPdepth{-0.02};
+    /// Avance de la sonda: preferencia `geometry_feedrate_probe`.
+    double feedrateProbe{75.0};
 };
 
 /** @brief Resumen de una herramienta de un Excellon para la cabecera del postprocesador. */

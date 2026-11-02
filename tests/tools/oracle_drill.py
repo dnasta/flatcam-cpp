@@ -56,15 +56,29 @@ def main():
     camlib = load("camlib", os.path.join(REF, "camlib.py"))
     pexc = load("ParseExcellon", os.path.join(REF, "appParsers", "ParseExcellon.py"))
     import appPreProcessor  # noqa: E402
-    default_mod = load("pp_default", os.path.join(REF, "preprocessors", "default.py"))
     import math
-    default_mod.math = math
+    for f in sorted(os.listdir(os.path.join(REF, "preprocessors"))):
+        if f.endswith(".py") and f != "__init__.py":
+            load("pp_" + f[:-3], os.path.join(REF, "preprocessors", f)).math = math
 
     app = FakeApp()
     app.defaults.update({"cncjob_steps_per_circle": 64, "cncjob_coords_type": "G90", "excellon_search_time": 3})
     app.preprocessors = appPreProcessor.preprocessors
     app.exc_areas = ExcAreas()
     app.dec_format = lambda v, dec=4: float("%.*f" % (dec, v))
+    import logging
+    app.log = logging.getLogger("oracle")  # doformat registra el error y devuelve ""
+    app.log.addHandler(logging.NullHandler())
+    app.log.propagate = False
+    # line_xyz lee `end_xy`, que CNCjob no define: en el original la cabecera queda vacía. El port la escribe con
+    # `xy_end` (desvío consciente), y así se compara.
+    lxyz = appPreProcessor.preprocessors["line_xyz"]
+    orig_start = type(lxyz).start_code
+
+    def start_with_end_xy(self, p):
+        p["end_xy"] = p["xy_end"]
+        return orig_start(self, p)
+    type(lxyz).start_code = start_with_end_xy
     camlib.Geometry.app = app
     camlib.CNCjob.app = app
     pexc.Excellon.app = app
@@ -88,37 +102,50 @@ def main():
     tools = {}
     for tid in sorted(ex.tools):
         t = ex.tools[tid]
-        tools[tid] = {"tooldia": t["tooldia"], "drills": t["drills"], "slots": [], "data": by_tool[tid]}
+        tools[tid] = {"tooldia": t["tooldia"], "drills": t["drills"], "slots": [], "data": dict(by_tool[tid])}
+        # La sonda (Toolchange_Probe_MACH3) no está en el proyecto de la 8.994: valores de fábrica de la 2024.4.
+        tools[tid]["data"].setdefault("tools_drill_z_pdepth", -0.02)
+        tools[tid]["data"].setdefault("tools_drill_feedrate_probe", 75)
 
-    job = camlib.CNCjob(units="MM", kind="excellon", steps_per_circle=64, pp_excellon_name="default",
-                        pp_geometry_name="default")
-    job.machinist_setting = 0
-    job.coords_decimals = 4
-    job.fr_decimals = 2
-    job.use_ui = True
-    job.multitool = True
-    xmin, ymin, xmax, ymax = ex.bounds()
-    job.options = {"name": HEADER["name"], "type": "Excellon", "xmin": xmin, "ymin": ymin, "xmax": xmax, "ymax": ymax,
-                   "Tools_in_use": [["Tool_nr", "Diameter", "Drills_Nr", "Slots_Nr"]] + [
-                       [str(t), str(tools[t]["tooldia"]), str(len(tools[t]["drills"])), "0"] for t in tools]}
-    job.exc_cnc_tools = {tools[t]["tooldia"]: {"tool": t, "data": {"tools_drill_offset": tools[t]["data"]["tools_drill_offset"]}}
-                         for t in tools}
+    def run(pp_name):
+        job = camlib.CNCjob(units="MM", kind="excellon", steps_per_circle=64, pp_excellon_name=pp_name,
+                            pp_geometry_name="default")
+        job.machinist_setting = 0
+        job.coords_decimals = 4
+        job.fr_decimals = 2
+        job.use_ui = True
+        job.multitool = True
+        xmin, ymin, xmax, ymax = ex.bounds()
+        job.options = {"name": HEADER["name"], "type": "Excellon", "xmin": xmin, "ymin": ymin, "xmax": xmax,
+                       "ymax": ymax,
+                       "Tools_in_use": [["Tool_nr", "Diameter", "Drills_Nr", "Slots_Nr"]] + [
+                           [str(t), str(tools[t]["tooldia"]), str(len(tools[t]["drills"])), "0"] for t in tools]}
+        job.exc_cnc_tools = {tools[t]["tooldia"]: {"tool": t, "data": {"tools_drill_offset": tools[t]["data"]["tools_drill_offset"]}}
+                             for t in tools}
+        # El camino "sin optimizar" del original está roto (usa `locations[point]` con tuplas), así que se usa la rama
+        # 'T' con un optimizador que devuelve los puntos tal cual: queda el orden del archivo con el resto del código.
+        job.optimized_travelling_salesman = lambda points, start=None: list(points)
+        # Como ToolDrilling: oldx/oldy arrancan en el X,Y de cambio de herramienta (o 0, 0).
+        tcxy = tools[sel[0]]["data"]["tools_drill_toolchangexy"]
+        job.oldx, job.oldy = (tcxy[0], tcxy[1]) if tcxy else (0.0, 0.0)
+        first_pt = (0.0, 0.0)
+        texts, start_gcode = [], ""
+        for i, t in enumerate(sel):
+            gcode, last_pt, start = job.excellon_tool_gcode_gen(t, tools[t]["drills"], tools, first_pt=first_pt,
+                                                                is_first=(i == 0), is_last=(i == len(sel) - 1),
+                                                                opt_type="T", toolchange=True)
+            texts.append(gcode)
+            first_pt = last_pt
+            if start != "":
+                start_gcode = start
+        return start_gcode, texts
 
-    # El camino "sin optimizar" del original está roto (usa `locations[point]` con tuplas), así que se usa la rama 'T'
-    # con un optimizador que devuelve los puntos tal cual: queda el orden del archivo con el resto del código original.
-    job.optimized_travelling_salesman = lambda points, start=None: list(points)
-
-    first_pt = (0.0, 0.0)
-    texts, start_gcode = [], ""
     sel = list(tools)
-    for i, t in enumerate(sel):
-        gcode, last_pt, start = job.excellon_tool_gcode_gen(t, tools[t]["drills"], tools, first_pt=first_pt,
-                                                            is_first=(i == 0), is_last=(i == len(sel) - 1),
-                                                            opt_type="T", toolchange=True)
-        texts.append(gcode)
-        first_pt = last_pt
-        if start != "":
-            start_gcode = start
+    start_gcode, texts = run("default")
+    OTHER_PPS = ["Berta_CNC", "Default_no_M6", "grbl_11", "GRBL_11_no_M6", "GRBL_laser", "ISEL_CNC", "ISEL_ICP_CNC",
+                 "line_xyz", "Marlin", "Marlin_laser_FAN_pin", "Marlin_laser_Spindle_pin", "Repetier",
+                 "Roland_MDX_20", "Toolchange_Custom", "Toolchange_Manual", "Toolchange_Probe_MACH3", "Z_laser"]
+    other_runs = [(n,) + run(n) for n in OTHER_PPS]
     header = ("(G-CODE GENERATED BY FLATCAM v%(version)s - www.flatcam.org - Version Date: %(date)s)\n\n"
               "(Name: %(name)s)\n(Type: G-code from %(type)s)\n(Units: %(units)s)\n\n"
               "(Created on %(created)s)\n\n") % HEADER
@@ -163,6 +190,11 @@ def main():
     out.append("inline const std::string kStartGcode = %s;" % cs(start_gcode))
     out.append("inline const std::vector<std::string> kToolGcodes = {%s};" % ",\n".join(cs(t) for t in texts))
     out.append("inline const std::string kFullFile = %s;" % cs(full))
+    out.append("struct PpRun { const char* pp; const char* start; std::vector<std::string> tools; };")
+    out.append("inline const std::vector<PpRun> kOtherPreprocessors = {")
+    for n, st, tx in other_runs:
+        out.append('{"%s", %s, {%s}},' % (n, cs(st), ",\n".join(cs(t) for t in tx)))
+    out.append("};")
     out.append("}  // namespace golden_drill")
     with open(OUT, "w") as f:
         f.write("\n".join(out) + "\n")

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Oráculo de los postprocesadores `default` y `GRBL_laser` y del formato de números de Python.
+"""Oráculo de los 20 postprocesadores de FlatCAM 2024.4 y del formato de números de Python.
 
 Ejecuta los postprocesadores ORIGINALES de FlatCAM con varios juegos de parámetros y guarda el texto que
 generan cada uno de sus métodos en `tests/golden_preprocessors.h`. Los tests de C++ arman los mismos
@@ -22,7 +22,17 @@ CPP_METHODS = {"start_code": "startCode", "startz_code": "startzCode", "lift_cod
                "down_code": "downCode", "toolchange_code": "toolchangeCode", "up_to_zero_code": "upToZeroCode",
                "rapid_code": "rapidCode", "linear_code": "linearCode", "end_code": "endCode",
                "feedrate_code": "feedrateCode", "z_feedrate_code": "zFeedrateCode",
-               "spindle_code": "spindleCode", "dwell_code": "dwellCode", "spindle_stop_code": "spindleStopCode"}
+               "spindle_code": "spindleCode", "dwell_code": "dwellCode", "spindle_stop_code": "spindleStopCode",
+               # Los propios de Paste_1 (AppPreProcTools)
+               "down_z_start_code": "downZStartCode", "lift_z_dispense_code": "liftZDispenseCode",
+               "down_z_stop_code": "downZStopCode", "feedrate_xy_code": "feedrateXYCode",
+               "feedrate_z_dispense_code": "feedrateZDispenseCode", "spindle_fwd_code": "spindleFwdCode",
+               "spindle_rev_code": "spindleRevCode", "spindle_off_code": "spindleOffCode",
+               "dwell_fwd_code": "dwellFwdCode", "dwell_rev_code": "dwellRevCode"}
+PASTE_METHODS = ["start_code", "lift_code", "down_z_start_code", "lift_z_dispense_code", "down_z_stop_code",
+                 "toolchange_code", "rapid_code", "linear_code", "end_code", "feedrate_xy_code", "z_feedrate_code",
+                 "feedrate_z_dispense_code", "spindle_fwd_code", "spindle_rev_code", "spindle_off_code",
+                 "dwell_fwd_code", "dwell_rev_code"]
 
 
 class AttrDict(dict):
@@ -45,9 +55,15 @@ def base(**over):
              xy_end=[0.0, 0.0], steps_per_circle=64, pp_excellon_name="default", pp_geometry_name="default",
              spindlespeed=1000.0, spindledir="CW", dwelltime=1000, tool=1, toolC=1.2, f_plunge=False,
              x=1.5, y=-2.25, exc_tools={}, exc_cnc_tools={},
+             # Los que usan otros postprocesadores (sonda, línea XYZ, Roland, pasta de soldar).
+             z_pdepth=-0.02, feedrate_probe=75.0, oldx=3.25, oldy=-1.5, z=-0.75,
+             z_start=0.05, z_dispense=0.1, z_stop=0.2, z_travel=0.5, speedfwd=20, speedrev=10, dwellfwd=1.0,
+             dwellrev=0.5, frxy=200.0, frz=80.0, frz_dispense=1.0, pp_solderpaste_name="Paste_1",
              options=dict(xmin=-37.65, xmax=37.65, ymin=-39.15, ymax=39.15, type="Geometry", tool_dia=1.2,
                           Tools_in_use=[]))
     p.update(over)
+    # line_xyz lee `end_xy`, que CNCjob no define (en el original falla); se le da el mismo valor que `xy_end`.
+    p["end_xy"] = p["xy_end"]
     return p
 
 
@@ -124,6 +140,13 @@ def emit_builder(idx, name, d):
               '    p.ppExcellonName = "%s";' % d["pp_excellon_name"], '    p.ppGeometryName = "%s";' % d["pp_geometry_name"],
               '    p.spindleDir = "%s";' % d["spindledir"], "    p.tool = %d;" % d["tool"],
               "    p.x = %s;" % repr(float(d["x"])), "    p.y = %s;" % repr(float(d["y"]))]
+    for key, cpp in [("z_pdepth", "zPdepth"), ("feedrate_probe", "feedrateProbe"), ("z", "z"), ("z_start", "zStart"),
+                     ("z_dispense", "zDispense"), ("z_stop", "zStop"), ("z_travel", "zTravel"), ("speedfwd", "speedFwd"),
+                     ("speedrev", "speedRev"), ("dwellfwd", "dwellFwd"), ("dwellrev", "dwellRev"), ("frxy", "frXY"),
+                     ("frz", "frZ"), ("frz_dispense", "frZDispense")]:
+        lines.append("    p.%s = %s;" % (cpp, num(d[key])))
+    lines += ["    p.oldX = %s;" % repr(float(d["oldx"])), "    p.oldY = %s;" % repr(float(d["oldy"])),
+              '    p.ppSolderpasteName = "%s";' % d["pp_solderpaste_name"]]
     lines.append(opt_num(d["startz"], "startZ"))
     lines.append(opt_num(d["spindlespeed"], "spindleSpeed"))
     lines.append(pair("xyToolchange", d["xy_toolchange"]))
@@ -150,13 +173,17 @@ def main():
     install_stubs()
     sys.path.insert(0, REF)
     import appPreProcessor  # noqa: E402  (registra los postprocesadores al importarlos)
-    default_mod = load("pp_default", os.path.join(REF, "preprocessors", "default.py"))
-    laser_mod = load("pp_laser", os.path.join(REF, "preprocessors", "GRBL_laser.py"))
-    default_mod.math = math
-    pps = {"default": appPreProcessor.preprocessors["default"], "GRBL_laser": appPreProcessor.preprocessors["GRBL_laser"]}
+    names = sorted(f[:-3] for f in os.listdir(os.path.join(REF, "preprocessors"))
+                   if f.endswith(".py") and f != "__init__.py")
+    for n in names:
+        mod = load("pp_" + n, os.path.join(REF, "preprocessors", n + ".py"))
+        mod.math = math
+    # El orden de la lista: default y GRBL_laser primero (los que ya estaban), después el resto.
+    order = ["default", "GRBL_laser"] + [n for n in names if n not in ("default", "GRBL_laser")]
+    pps = {n: appPreProcessor.preprocessors[n] for n in order}
 
     out = ["// ARCHIVO GENERADO por tests/tools/oracle_preprocessors.py - no editar a mano.",
-           "// Referencia: postprocesadores originales de FlatCAM (default y GRBL_laser).",
+           "// Referencia: todos los postprocesadores originales de FlatCAM 2024.4.",
            "#pragma once", "#include <array>", "#include <vector>", '#include "cam/Preprocessor.h"',
            "namespace golden_pp {"]
     for i, (name, d) in enumerate(SCENARIOS):
@@ -172,9 +199,14 @@ def main():
     count = 0
     for si, (sname, d) in enumerate(SCENARIOS):
         for ppname, pp in pps.items():
-            for m in METHODS:
+            for m in (PASTE_METHODS if ppname == "Paste_1" else METHODS):
                 p = AttrDict(d)
                 p["options"] = AttrDict(d["options"])
+                if ppname == "Paste_1":
+                    # La herramienta de pasta pasa el X,Y de cambio y el final como texto "x,y".
+                    for k in ("xy_toolchange", "xy_end"):
+                        if p[k] is not None:
+                            p[k] = "%r,%r" % (p[k][0], p[k][1])
                 try:
                     r = getattr(pp, m)(p)
                 except Exception as e:  # noqa: BLE001
