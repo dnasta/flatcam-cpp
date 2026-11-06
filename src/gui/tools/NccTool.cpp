@@ -4,6 +4,7 @@
 
 #include "gui/App.h"
 #include "gui/CanvasPicker.h"
+#include "gui/ToolsDatabase.h"
 #include "gui/Translation.h"
 #include "gui/tools/ClearingTools.h"
 #include "tools/Ncc.h"
@@ -23,7 +24,36 @@ NccTool::NccTool(App* app, QWidget* parent) : NccToolUIBase(parent), app_(app) {
         if (!muted_) updateUi();
     });
     connect(add_newtool_button, &QPushButton::clicked, this, [this] {
-        if (addTool(new_tooldia_entry->value())) app_->ui()->inform("[success] " + tr_("Default tool added to Tool Table."));
+        // on_tool_add: primero busca el diámetro en la base de datos de herramientas.
+        // El original compara tool_target con el texto "NCC", y la base guarda números: no encuentra nunca.
+        JsonValue dbTool;
+        double dia = 0;
+        switch (lookupToolForAdd(app_->ui(), app_->dataPath(), tools_, new_tooldia_entry->value(),
+                                 [ncc = tr_("NCC")](const JsonValue& t) { return t.isString() && QString::fromStdString(t.text()) == ncc; }, dbTool, dia)) {
+            case DbAddResult::Cancel: return;
+            case DbAddResult::Default:
+                if (addTool(new_tooldia_entry->value()))
+                    app_->ui()->inform("[success] " + tr_("Default tool added to Tool Table."));
+                return;
+            case DbAddResult::FromDb:
+                if (addDbTool(dbTool, dia, "tools_iso"))  // así en el original (copia los tools_iso*, no los tools_ncc*)
+                    app_->ui()->inform("[success] " + tr_("New tool added to Tool Table from Tools Database."));
+                return;
+        }
+    });
+    // "Agregar desde la base": abre la pestaña; la herramienta que se transfiere entra a la tabla.
+    connect(addtool_from_db_btn, &QPushButton::clicked, this, [this] {
+        app_->openToolsDatabase([this](const JsonValue& tool) {
+            const double target = tool["data"]["tool_target"].toDouble(-1);
+            if (target != 0 && target != 5) {  // [General, la de esta herramienta]
+                app_->closeToolsDatabase();
+                app_->ui()->inform("[ERROR_NOTCL] " + tr_("Selected tool can't be used here. Pick another."));
+                return;
+            }
+            const bool ok = addDbTool(tool, tool["tooldia"].toDouble(), {});
+            app_->closeToolsDatabase();
+            if (ok) app_->ui()->inform("[success] " + tr_("Tool from DB added in Tool Table."));
+        });
     });
     connect(deltool_btn, &QPushButton::clicked, this, [this] {
         const std::vector<int> ids = selectedClearingTools(tools_table);
@@ -130,6 +160,19 @@ void NccTool::setToolUi() {
     for (double dia : {1.0, 0.5}) addTool(dia);  // tools_ncc_tools = "1.0, 0.5"
     onRestMachiningCheck(false);
     onToggleReference();
+}
+
+bool NccTool::addDbTool(const JsonValue& tool, double dia, const std::string& prefix) {
+    // La de fábrica con los datos de la base encima (on_tool_add / on_*_tool_from_db_inserted).
+    if (!addTool(dia)) return false;
+    const int uid = tools_.rbegin()->first;
+    ToolsDatabase::applyTo(tool, tools_.at(uid), prefix);
+    tools_.at(uid).geo.tooldia = QString::number(dia, 'f', 4).toDouble();
+    rebuild();
+    for (int r = 0; r < tools_table->rowCount(); ++r)
+        if (tools_table->item(r, 3)->text().toInt() == uid) tools_table->selectRow(r);
+    updateUi();
+    return true;
 }
 
 bool NccTool::addTool(double dia) {

@@ -8,3 +8,4 @@ DrillingToolUI
 CutOutToolUI
 DblSidedToolUI
 IsolationToolUI
+ToolsDB2UI

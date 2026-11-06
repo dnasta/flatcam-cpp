@@ -4,6 +4,7 @@
 
 #include "gui/App.h"
 #include "gui/CanvasPicker.h"
+#include "gui/ToolsDatabase.h"
 #include "gui/Translation.h"
 #include "gui/tools/ClearingTools.h"
 #include "tools/Isolation.h"
@@ -32,7 +33,36 @@ IsolationTool::IsolationTool(App* app, QWidget* parent) : IsolationToolUIBase(pa
         if (!muted_) updateUi();
     });
     connect(search_and_add_btn, &QPushButton::clicked, this, [this] {
-        if (addTool(new_tooldia_entry->value())) app_->ui()->inform("[success] " + tr_("Default tool added to Tool Table."));
+        // on_tool_add: primero busca el diámetro en la base de datos de herramientas.
+        // Aislamiento: tool_target == 3.
+        JsonValue dbTool;
+        double dia = 0;
+        switch (lookupToolForAdd(app_->ui(), app_->dataPath(), tools_, new_tooldia_entry->value(),
+                                 [](const JsonValue& t) { return t.isNumber() && t.toDouble() == 3; }, dbTool, dia)) {
+            case DbAddResult::Cancel: return;
+            case DbAddResult::Default:
+                if (addTool(new_tooldia_entry->value()))
+                    app_->ui()->inform("[success] " + tr_("Default tool added to Tool Table."));
+                return;
+            case DbAddResult::FromDb:
+                if (addDbTool(dbTool, dia, "tools_iso"))  
+                    app_->ui()->inform("[success] " + tr_("New tool added to Tool Table from Tools Database."));
+                return;
+        }
+    });
+    // "Agregar desde la base": abre la pestaña; la herramienta que se transfiere entra a la tabla.
+    connect(addtool_from_db_btn, &QPushButton::clicked, this, [this] {
+        app_->openToolsDatabase([this](const JsonValue& tool) {
+            const double target = tool["data"]["tool_target"].toDouble(-1);
+            if (target != 0 && target != 3) {  // [General, la de esta herramienta]
+                app_->closeToolsDatabase();
+                app_->ui()->inform("[ERROR_NOTCL] " + tr_("Selected tool can't be used here. Pick another."));
+                return;
+            }
+            const bool ok = addDbTool(tool, tool["tooldia"].toDouble(), {});
+            app_->closeToolsDatabase();
+            if (ok) app_->ui()->inform("[success] " + tr_("Tool from DB added in Tool Table."));
+        });
     });
     connect(deltool_btn, &QPushButton::clicked, this, [this] {
         const std::vector<int> ids = selectedClearingTools(tools_table);
@@ -122,6 +152,19 @@ void IsolationTool::onRestMachiningCheck(bool state) {
     }
     combine_passes_cb->setDisabled(state);
     forced_rest_iso_cb->setDisabled(!state);
+}
+
+bool IsolationTool::addDbTool(const JsonValue& tool, double dia, const std::string& prefix) {
+    // La de fábrica con los datos de la base encima (on_tool_add / on_*_tool_from_db_inserted).
+    if (!addTool(dia)) return false;
+    const int uid = tools_.rbegin()->first;
+    ToolsDatabase::applyTo(tool, tools_.at(uid), prefix);
+    tools_.at(uid).geo.tooldia = QString::number(dia, 'f', 4).toDouble();
+    rebuild();
+    for (int r = 0; r < tools_table->rowCount(); ++r)
+        if (tools_table->item(r, 3)->text().toInt() == uid) tools_table->selectRow(r);
+    updateUi();
+    return true;
 }
 
 bool IsolationTool::addTool(double dia) {

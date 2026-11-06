@@ -4,6 +4,8 @@
  */
 #pragma once
 
+#include "io/JsonValue.h"
+
 #include <map>
 
 #include "gui/generated/NccToolUIBase.h"
@@ -70,6 +72,14 @@ public:
      * @return `false` si ya había una igual o el diámetro es cero.
      */
     bool addTool(double dia);
+    /**
+     * @brief Agrega una herramienta de la base de datos: la de fábrica y, encima, sus datos.
+     * @param tool Herramienta de la base.
+     * @param dia Diámetro.
+     * @param prefix Prefijo de los datos propios que se copian (vacío: todos).
+     * @return `true` si se agregó.
+     */
+    bool addDbTool(const JsonValue& tool, double dia, const std::string& prefix);
 
 private:
     void onTypeObjChanged();

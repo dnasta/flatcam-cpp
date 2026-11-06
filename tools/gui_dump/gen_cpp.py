@@ -46,7 +46,7 @@ SELF_BUILT = {"FlatCAMInfoBar", "FlatCAMActivityView", "FCDetachableTab", "FCDet
               "KeySensitiveListView", "RadioSet"}
 
 QT_HEADERS = ["QAction", "QPixmap", "QFormLayout", "QHeaderView", "QTableWidget", "QDoubleSpinBox", "QSpinBox", "QRadioButton",
-              "QTextEdit", "QPlainTextEdit", "QSlider", "QBoxLayout", "QCheckBox", "QComboBox", "QDockWidget", "QFont", "QFrame", "QGridLayout",
+              "QTextEdit", "QPlainTextEdit", "QSlider", "QBoxLayout", "QCheckBox", "QComboBox", "QDockWidget", "QFont", "QFrame", "QGridLayout", "QGroupBox",
               "QHBoxLayout", "QIcon", "QLabel", "QLineEdit", "QMainWindow", "QMenu", "QMenuBar", "QPushButton",
               "QScrollArea", "QSizePolicy", "QSplitter", "QStackedWidget", "QStatusBar", "QTabBar", "QTabWidget",
               "QToolBar", "QToolButton", "QTreeView", "QTreeWidget", "QVBoxLayout", "QWidget"]

@@ -4,6 +4,7 @@
 - Pestaña Propiedades de cada tipo de objeto: `GerberObjectUI`, `ExcellonObjectUI`, `GeometryObjectUI`, `CNCObjectUI`,
   después del `set_ui` del objeto original (nivel Básico y valores de fábrica en el formulario).
 - Pestaña Herramienta: NCC, Paint, Perforación y Corte, después de su `run()` original (que carga los valores de fábrica).
+- La pestaña "Base de datos de herramientas" (`appDatabase.ToolsDB2`), con la base vacía.
 
 Escribe `tools/gui_dump/panels/<Clase>.json`; `gen_cpp.py --panels` genera las clases C++.
 Uso:  MAMBA_ROOT_PREFIX=$HOME/.local/share/mamba micromamba run -n old python tools/gui_dump/dump_panels.py
@@ -65,6 +66,12 @@ def main():
         data = dump_widget(tool, *(x for x in (ui, tool) if x is not None))
         data["class"] = cls
         written.append(write(cls, data))
+    # La pestaña "Base de datos de herramientas" (App.on_tools_database): ToolsDB2 con la base vacía de fábrica.
+    db = fr.import_original("appDatabase").ToolsDB2(app=fa, callback_on_tool_request=lambda *a, **k: None,
+                                                    parent=fa.ui)
+    data = dump_widget(db, *(x for x in (getattr(db, "ui", None), db) if x is not None))
+    data["class"] = "ToolsDB2UI"
+    written.append(write("ToolsDB2UI", data))
     with open(os.path.join(OUT, "index.txt"), "w") as f:
         f.write("\n".join(written) + "\n")
 

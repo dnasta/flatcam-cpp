@@ -2,6 +2,9 @@
 
 #include "gui/App.h"
 #include "gui/Translation.h"
+#include "gui/tools/ClearingTools.h"
+#include "gui/ProjectIO.h"
+#include "gui/ToolsDatabase.h"
 #include "gui/objects/GeometryObject.h"
 #include "tools/CutOut.h"
 
@@ -11,8 +14,69 @@ CutOutTool::CutOutTool(App* app, QWidget* parent) : CutOutToolUIBase(parent), ap
     setupUi();
     connect(ff_cutout_object_btn, &QPushButton::clicked, this, [this] { freeformCutout(); });
     connect(rect_cutout_object_btn, &QPushButton::clicked, this, [this] { rectangularCutout(); });
+    // "Buscar y agregar" (on_tool_add): busca en la base comparando tool_target con el texto "Cutout" (la base guarda
+    // números: no encuentra nunca) y deja la herramienta de fábrica (on_tool_default_add: los parámetros del corte de
+    // fábrica; el diámetro queda el escrito).
+    connect(add_newtool_button, &QPushButton::clicked, this, [this] {
+        JsonValue dbTool;
+        double dia = 0;
+        const QString cut = tr_("Cutout");
+        const auto r = lookupToolForAdd(app_->ui(), app_->dataPath(), {}, dia_value(),
+                                        [cut](const JsonValue& t) { return t.isString() && QString::fromStdString(t.text()) == cut; },
+                                        dbTool, dia);
+        if (r == DbAddResult::Cancel) return;
+        if (r == DbAddResult::FromDb) {
+            applyCutoutData(dbTool["data"]);
+            this->dia->setValue(dia);
+            app_->ui()->inform("[success] " + tr_("New tool added to Tool Table from Tools Database."));
+            return;
+        }
+        applyCutoutData(ProjectIO::factoryDefaults());
+        app_->ui()->inform("[success] " + tr_("Default tool added."));
+    });
+    // "Agregar desde la base" (on_cutout_tool_add_from_db_executed).
+    connect(addtool_from_db_btn, &QPushButton::clicked, this, [this] {
+        app_->openToolsDatabase([this](const JsonValue& tool) {
+            const double target = tool["data"]["tool_target"].toDouble(-1);
+            if (target != 0 && target != 6) {  // [General, Corte]
+                app_->closeToolsDatabase();
+                app_->ui()->inform("[ERROR_NOTCL] " + tr_("Selected tool can't be used here. Pick another."));
+                return;
+            }
+            JsonValue data = tool["data"];
+            data.set("tools_cutout_tooldia", tool["tooldia"]);
+            data.set("tools_cutout_z", data["cutz"]);
+            data.set("tools_cutout_mdepth", data["multidepth"]);
+            data.set("tools_cutout_depthperpass", data["depthperpass"]);
+            applyCutoutData(data);
+            this->dia->setValue(tool["tooldia"].toDouble());
+            app_->closeToolsDatabase();
+            app_->ui()->inform("[success] " + tr_("Tool updated from Tools Database."));
+        });
+    });
     connect(type_obj_radio, &RadioSet::activatedCustom, this, [this] { onTypeObjChanged(); });
     connect(reset_button, &QPushButton::clicked, this, [this] { setToolUi(); });
+}
+
+double CutOutTool::dia_value() const { return dia->value(); }
+
+void CutOutTool::applyCutoutData(const JsonValue& d) {
+    // update_ui(tool_dict): los parámetros del corte.
+    auto num = [&](const char* k, double def) {
+        const JsonValue& v = d[k];
+        return v.isNumber() || v.isBool() ? v.toDouble(def) : v.isString() ? QString::fromStdString(v.text()).toDouble() : def;
+    };
+    margin->setValue(num("tools_cutout_margin", margin->value()));
+    gapsize->setValue(num("tools_cutout_gapsize", gapsize->value()));
+    if (d["tools_cutout_gap_type"].isString()) gaptype_radio->setValue(QString::fromStdString(d["tools_cutout_gap_type"].text()));
+    thin_depth_entry->setValue(num("tools_cutout_gap_depth", thin_depth_entry->value()));
+    mb_dia_entry->setValue(num("tools_cutout_mb_dia", mb_dia_entry->value()));
+    mb_spacing_entry->setValue(num("tools_cutout_mb_spacing", mb_spacing_entry->value()));
+    if (!d["tools_cutout_convexshape"].isNull()) convex_box_cb->setChecked(d["tools_cutout_convexshape"].toBool());
+    if (!d["tools_cutout_gaps_ff"].isNull()) gaps->setValue(QString::fromStdString(d["tools_cutout_gaps_ff"].text()));
+    cutz_entry->setValue(num("tools_cutout_z", cutz_entry->value()));
+    if (!d["tools_cutout_mdepth"].isNull()) mpass_cb->setChecked(d["tools_cutout_mdepth"].toBool());
+    maxdepth_entry->setValue(num("tools_cutout_depthperpass", maxdepth_entry->value()));
 }
 
 ToolInfo CutOutTool::info() { return {tr_("Cutout PCB"), tr_("Cutout Tool")}; }

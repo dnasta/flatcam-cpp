@@ -5,6 +5,8 @@
 #include <cmath>
 
 #include "gui/Translation.h"
+#include "gui/tools/ClearingTools.h"
+#include "gui/ToolsDatabase.h"
 #include "gui/objects/CNCJobObject.h"
 #include "gui/objects/FlatCAMObj.h"
 #include "gui/objects/GeometryObject.h"
@@ -175,6 +177,11 @@ GeometryObjectUI::GeometryObjectUI(QWidget* parent) : GeometryObjectUIBase(paren
         pp_geometry_name_cb->setItemData(pp_geometry_name_cb->count() - 1, n, Qt::ToolTipRole);
     }
     pp_geometry_name_cb->setValue("default");
+    connect(search_and_add_btn, &QPushButton::clicked, this, [this] { addTool(addtool_entry->value()); });
+    connect(deltool_btn, &QPushButton::clicked, this, [this] { deleteTools(); });
+    connect(addtool_from_db_btn, &QPushButton::clicked, this, [this] {
+        if (onAddFromDb) onAddFromDb();
+    });
     connect(generate_cnc_button, &QPushButton::clicked, this, [this] {
         if (onGenerateCnc) onGenerateCnc();
     });
@@ -344,6 +351,108 @@ void GeometryObjectUI::updateUi() {
     }
     muted_ = false;
     onPpChanged(true);
+}
+
+void GeometryObjectUI::addTool(double diaIn) {
+    if (!obj_) return;
+    auto say = [this](const QString& m) {
+        if (inform) inform(m);
+    };
+    if (diaIn == 0) {
+        build(*obj_);
+        say("[WARNING_NOTCL] " + tr_("Please enter a tool diameter with non-zero value, in Float format."));
+        return;
+    }
+    const double dia = std::round(diaIn * 1e4) / 1e4;
+    auto& tools = obj_->tools();
+    const int uid = tools.empty() ? 1 : tools.rbegin()->first + 1;
+    // on_tool_default_add: copia de la última herramienta (o la de fábrica), con el diámetro nuevo.
+    auto defaultAdd = [&] {
+        GeometryTool t;
+        if (!tools.empty()) {
+            t = tools.rbegin()->second;
+            if (t.solidGeometry.empty()) t.solidGeometry = obj_->solidGeometry();
+        } else {
+            t = defaultGeometryTool();
+            t.solidGeometry = obj_->solidGeometry();
+        }
+        t.tooldia = dia;
+        tools[uid] = t;
+        say("[success] " + tr_("Tool added in Tool Table."));
+        build(*obj_);
+        if (onToolsChanged) onToolsChanged();
+    };
+    JsonValue db;
+    QString error;
+    if (!ToolsDatabase::load(ToolsDatabase::fileName(dataPath), db, error)) {
+        say("[ERROR] " + tr_(error.startsWith("Could") ? "Could not load Tools DB file." : "Failed to parse Tools DB file."));
+        defaultAdd();
+        return;
+    }
+    // Como el original: offset, tipo y forma quedan los de la ÚLTIMA herramienta recorrida de la base; con el mismo
+    // diámetro se copian los datos tools_mill_* y generales, y por la tolerancia los tools_iso* y generales.
+    int found = 0;
+    std::optional<double> updated;
+    JsonValue match, last;
+    std::string prefix;
+    for (const auto& [id, t] : db.members()) {
+        last = t;
+        const JsonValue& d = t["data"];
+        if (!(d["tool_target"].isNumber() && d["tool_target"].toDouble() == 1)) continue;  // Fresado
+        const double dbDia = t["tooldia"].toDouble();
+        if (dia == dbDia) {
+            ++found;
+            match = t;
+            prefix = "tools_mill_";
+        } else if (d["tol_max"].toDouble() >= dia && dia >= d["tol_min"].toDouble()) {
+            ++found;
+            match = t;
+            updated = dbDia;
+            prefix = "tools_iso";
+        }
+    }
+    if (found == 0) {
+        say("[WARNING_NOTCL] " + tr_("Tool not in Tools Database. Adding a default tool."));
+        defaultAdd();
+        return;
+    }
+    if (found > 1) {
+        say("[WARNING_NOTCL] " + tr_("Cancelled.\nMultiple tools for one tool diameter found in Tools Database."));
+        return;
+    }
+    ClearingTool ct;
+    ct.geo = defaultGeometryTool();
+    ToolsDatabase::applyTo(match, ct, prefix);
+    ct.geo.tooldia = updated ? *updated : dia;
+    ct.geo.offset = QString::fromStdString(last["offset"].text());
+    ct.geo.offsetValue = last["offset_value"].toDouble();
+    ct.geo.type = QString::fromStdString(last["type"].text());
+    ct.geo.toolType = QString::fromStdString(last["tool_type"].text());
+    ct.geo.solidGeometry = obj_->solidGeometry();
+    tools[uid] = ct.geo;
+    build(*obj_);
+    for (int r = 0; r < geo_tools_table->rowCount(); ++r)
+        if (toolAt(r) == uid) geo_tools_table->selectRow(r);
+    say("[success] " + tr_("New tool added to Tool Table from Tools Database."));
+    if (onToolsChanged) onToolsChanged();
+}
+
+void GeometryObjectUI::deleteTools() {
+    if (!obj_) return;
+    const std::vector<int> rows = selectedRows();
+    if (rows.empty()) {
+        if (inform) inform("[WARNING_NOTCL] " + tr_("Failed. Select a tool to delete."));
+        return;
+    }
+    std::vector<int> ids;
+    for (int r : rows) ids.push_back(toolAt(r));
+    for (int id : ids) {
+        if (obj_->tools().size() == 1) obj_->solidGeometry() = obj_->tools().begin()->second.solidGeometry;
+        obj_->tools().erase(id);
+    }
+    build(*obj_);
+    if (inform) inform("[success] " + tr_("Tool was deleted in Tool Table."));
+    if (onToolsChanged) onToolsChanged();
 }
 
 void GeometryObjectUI::formToStorage() {
