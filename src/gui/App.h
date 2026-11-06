@@ -5,6 +5,10 @@
  */
 #pragma once
 
+#include <functional>
+
+#include "io/JsonValue.h"
+
 #include <QObject>
 #include <QString>
 #include <memory>
@@ -202,6 +206,16 @@ public:
      * @return `true` si se guardó.
      */
     bool exportGcode(class CNCJobObject* job, QString filename = QString());
+
+    /**
+     * @brief Abre la pestaña "Base de datos de herramientas" (`on_tools_database`); si ya está abierta no hace nada.
+     * @param onToolRequest Qué hacer con la herramienta que se transfiere (la herramienta que la abrió); vacío: la
+     *        Geometría activa (`on_geometry_tool_add_from_db_executed`).
+     * @return La pestaña, o `nullptr` si no se pudo leer la base.
+     */
+    class ToolsDBTab* openToolsDatabase(std::function<void(const JsonValue&)> onToolRequest = {});
+    /** @brief Cierra la pestaña de la base, si está abierta. */
+    void closeToolsDatabase();
 
     /**
      * @brief Genera el CNC Job de una Geometría (`on_generatecnc_button_click` → `mtool_gen_cncjob`) y lo agrega.

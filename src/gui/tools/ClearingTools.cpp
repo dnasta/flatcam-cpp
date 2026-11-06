@@ -9,6 +9,7 @@
 #include "gui/Translation.h"
 #include "gui/widgets/FCComboBox.h"
 #include "gui/widgets/FCTable.h"
+#include "gui/ToolsDatabase.h"
 #include "tools/Isolation.h"
 
 namespace flatcam::gui {
@@ -94,4 +95,41 @@ std::optional<double> findSafeToolDia(MainGUI* ui, FlatCAMObj* obj, const QStrin
     return d;
 }
 
+DbAddResult lookupToolForAdd(MainGUI* ui, const QString& dataPath, const std::map<int, ClearingTool>& tools, double dia,
+                             const std::function<bool(const JsonValue&)>& targetMatches, JsonValue& tool,
+                             double& dia2) {
+    const double d = QString::number(dia, 'f', 4).toDouble();
+    if (d == 0.0) return DbAddResult::Default;
+    auto inTable = [&](double x) {
+        for (const auto& [id, t] : tools)
+            if (QString::number(t.geo.tooldia, 'f', 4).toDouble() == x) return true;
+        return false;
+    };
+    if (inTable(d)) return DbAddResult::Default;
+    const auto r = ToolsDatabase::lookup(ToolsDatabase::fileName(dataPath), targetMatches, d);
+    switch (r.status) {
+        case ToolsDatabase::Lookup::NotLoaded:
+            ui->inform("[ERROR] " + tr_("Could not load the file."));
+            return DbAddResult::Default;
+        case ToolsDatabase::Lookup::ParseError:
+            ui->inform("[ERROR] " + tr_("Failed to parse Tools DB file."));
+            return DbAddResult::Default;
+        case ToolsDatabase::Lookup::NotFound:
+            ui->inform("[WARNING_NOTCL] " + tr_("Tool not in Tools Database. Adding a default tool."));
+            return DbAddResult::Default;
+        case ToolsDatabase::Lookup::Multiple:
+            ui->inform("[WARNING_NOTCL] " + tr_("Cancelled.\nMultiple tools for one tool diameter found in Tools Database."));
+            return DbAddResult::Cancel;
+        case ToolsDatabase::Lookup::Found: break;
+    }
+    if (r.updatedDia && inTable(*r.updatedDia)) {
+        ui->inform("[WARNING_NOTCL] " + tr_("Cancelled. Tool already in Tool Table."));
+        return DbAddResult::Cancel;
+    }
+    tool = r.tool;
+    dia2 = r.updatedDia ? *r.updatedDia : d;
+    return DbAddResult::FromDb;
+}
+
 }  // namespace flatcam::gui
+

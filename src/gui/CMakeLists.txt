@@ -11,6 +11,8 @@ add_library(flatcam_gui STATIC
     AppRecent.cpp
     CanvasPicker.cpp
     ExclusionAreasManager.cpp
+    ToolsDatabase.cpp
+    ToolsDBTab.cpp
     ProjectIO.cpp
     objects/FlatCAMObj.cpp
     objects/ObjectCollection.cpp
@@ -28,6 +30,7 @@ add_library(flatcam_gui STATIC
     objects/GeometryObject.cpp
     objects/CNCJobObject.cpp
     generated/MainGUIBase.cpp
+    generated/ToolsDB2UIBase.cpp
     generated/GerberObjectUIBase.cpp
     generated/ExcellonObjectUIBase.cpp
     generated/GeometryObjectUIBase.cpp

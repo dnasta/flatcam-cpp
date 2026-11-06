@@ -5,11 +5,13 @@
  */
 #pragma once
 
+#include <functional>
 #include <map>
 #include <optional>
 #include <vector>
 
 #include "gui/objects/GeometryObject.h"
+#include "io/JsonValue.h"
 
 class QTableWidget;
 
@@ -70,6 +72,29 @@ void buildClearingTable(QTableWidget* table, const std::map<int, ClearingTool>& 
  * @return Los identificadores.
  */
 std::vector<int> selectedClearingTools(const QTableWidget* table);
+
+/** @brief Qué hacer al agregar una herramienta por diámetro, según la base de datos (`on_tool_add`). */
+enum class DbAddResult {
+    Default,  ///< Agregar la de fábrica (no está en la base, o no se pudo leer).
+    Cancel,   ///< No agregar nada (varias en la base, o ya está en la tabla).
+    FromDb    ///< Agregar la de la base (en `tool`, con el diámetro `dia`).
+};
+
+/**
+ * @brief La búsqueda de `on_tool_add` en la base de datos de herramientas, con sus mensajes. Si el diámetro es 0 o ya está
+ * en la tabla devuelve `Default` para que el agregado normal dé el aviso de siempre.
+ * @param ui Ventana (mensajes).
+ * @param dataPath Carpeta de datos (donde está `tools_db.FlatDB`).
+ * @param tools Herramientas de la tabla.
+ * @param dia Diámetro pedido.
+ * @param targetMatches Si una herramienta de la base sirve, según su `tool_target`.
+ * @param[out] tool La herramienta de la base.
+ * @param[out] dia2 El diámetro a usar (el de la base si se encontró por la tolerancia).
+ * @return Qué hacer.
+ */
+DbAddResult lookupToolForAdd(MainGUI* ui, const QString& dataPath, const std::map<int, ClearingTool>& tools, double dia,
+                             const std::function<bool(const JsonValue&)>& targetMatches, JsonValue& tool,
+                             double& dia2);
 
 class FlatCAMObj;
 

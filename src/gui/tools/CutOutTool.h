@@ -5,6 +5,8 @@
  */
 #pragma once
 
+#include "io/JsonValue.h"
+
 #include "gui/generated/CutOutToolUIBase.h"
 #include "gui/tools/ToolInfo.h"
 
@@ -44,6 +46,9 @@ public:
     FlatCAMObj* rectangularCutout();
 
 private:
+    /// update_ui(tool_dict): los parámetros del corte desde un diccionario (`tools_cutout_*`).
+    void applyCutoutData(const JsonValue& data);
+    double dia_value() const;
     void onTypeObjChanged();
     FlatCAMObj* cutout(bool rectangular);
 

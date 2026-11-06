@@ -25,6 +25,8 @@
 #include "gui/ProjectIO.h"
 #include "gui/CanvasPicker.h"
 #include "gui/ExclusionAreasManager.h"
+#include "gui/ToolsDBTab.h"
+#include "gui/ToolsDatabase.h"
 #include "tools/CutOut.h"
 #include "tools/DoubleSided.h"
 #include "tools/Isolation.h"
@@ -1707,4 +1709,116 @@ TEST(GuiGeometry, PolishAddsAToolOverTheObjectBox) {
     ASSERT_NE(cnc, nullptr);
     EXPECT_EQ(cnc->tools().size(), 2u);
     EXPECT_NE(cnc->job().gcode().find("T2"), std::string::npos);
+}
+
+TEST(GuiToolsDatabase, EditSaveAndUseFromTheTools) {
+    QTemporaryDir data;
+    App app;
+    app.setDataPath(data.path());
+    flatcam::gui::ToolsDatabase::ensureFile(data.path());
+    const QString path = flatcam::gui::ToolsDatabase::fileName(data.path());
+    QFile f0(path);
+    ASSERT_TRUE(f0.open(QIODevice::ReadOnly));
+    EXPECT_EQ(f0.readAll(), "{}");  // vacía, como la crea el original
+    f0.close();
+    // Opciones -> Base de datos de herramientas.
+    app.ui()->menuoptions_tools_db->trigger();
+    FCDetachableTab2* area = app.ui()->plot_tab_area;
+    auto* tab = qobject_cast<ToolsDBTab*>(area->currentWidget());
+    ASSERT_NE(tab, nullptr);
+    EXPECT_EQ(area->tabText(area->currentIndex()), QString::fromUtf8("Base de Datos de Herramientas"));
+    EXPECT_FALSE(tab->milling_box->isEnabled());  // base vacía: todo deshabilitado
+    // Una herramienta nueva: new_tool_1 de 2,4 con los valores de fábrica; como Aislamiento de 0,15 con 3 pasadas.
+    tab->addTool();
+    ASSERT_EQ(tab->tree_widget->topLevelItemCount(), 1);
+    EXPECT_EQ(tab->tree_widget->topLevelItem(0)->text(1), "new_tool_1");
+    EXPECT_DOUBLE_EQ(tab->dia_entry->value(), 2.4);
+    tab->tool_op_combo->setIndexValue(3);
+    EXPECT_TRUE(tab->iso_box->isVisible() || !tab->iso_box->isHidden());
+    EXPECT_TRUE(tab->ncc_box->isHidden());
+    tab->dia_entry->setValue(0.15);
+    tab->iso_passes_entry->setValue(3);
+    EXPECT_TRUE(tab->changed());
+    tab->save();
+    QFile f(path);
+    ASSERT_TRUE(f.open(QIODevice::ReadOnly));
+    const QByteArray saved = f.readAll();
+    EXPECT_TRUE(saved.startsWith("{\n  \"1\": {\n    \"name\": \"new_tool_1\"")) << saved.left(120).toStdString();
+    EXPECT_TRUE(saved.contains("\"tool_target\": 3"));
+    EXPECT_TRUE(saved.contains("\"tools_iso_passes\": 3"));
+    app.closeToolsDatabase();
+    EXPECT_EQ(qobject_cast<ToolsDBTab*>(area->currentWidget()), nullptr);
+
+    // Isolation: "Buscar y agregar" de 0,15 la toma de la base (3 pasadas).
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* cu = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Logo.gbr")));
+    ASSERT_NE(cu, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(cu));
+    IsolationTool* iso = app.isolationTool;
+    app.ui()->isolation_btn->trigger();
+    const std::size_t before = iso->tools().size();
+    iso->new_tooldia_entry->setValue(0.15);
+    iso->search_and_add_btn->click();
+    ASSERT_EQ(iso->tools().size(), before + 1);
+    EXPECT_EQ(iso->tools().rbegin()->second.passes, 3);
+    EXPECT_EQ(app.ui()->fcinfo->text->text(), tr_("New tool added to Tool Table from Tools Database."));
+    // NCC compara con un texto: nunca la encuentra y agrega la de fábrica.
+    NccTool* ncc = app.nccTool;
+    app.ui()->ncc_btn->trigger();
+    const std::size_t nccBefore = ncc->tools().size();
+    ncc->new_tooldia_entry->setValue(0.15);
+    ncc->add_newtool_button->click();
+    ASSERT_EQ(ncc->tools().size(), nccBefore + 1);
+    EXPECT_DOUBLE_EQ(ncc->tools().rbegin()->second.overlap, 40.0);  // la de fábrica
+    // "Agregar desde la base" en NCC: el objetivo es Aislamiento (3), no sirve.
+    ncc->addtool_from_db_btn->click();
+    tab = qobject_cast<ToolsDBTab*>(area->currentWidget());
+    ASSERT_NE(tab, nullptr);
+    tab->tree_widget->topLevelItem(0)->setSelected(true);
+    tab->requestTool();
+    EXPECT_EQ(ncc->tools().size(), nccBefore + 1);
+    EXPECT_EQ(qobject_cast<ToolsDBTab*>(area->currentWidget()), nullptr);  // la pestaña se cierra
+    // En Isolation sí: entra con sus datos.
+    iso->tools_table->selectAll();
+    iso->deltool_btn->click();
+    iso->addtool_from_db_btn->click();
+    tab = qobject_cast<ToolsDBTab*>(area->currentWidget());
+    ASSERT_NE(tab, nullptr);
+    tab->tree_widget->topLevelItem(0)->setSelected(true);
+    tab->requestTool();
+    ASSERT_EQ(iso->tools().size(), 1u);
+    EXPECT_DOUBLE_EQ(iso->tools().begin()->second.geo.tooldia, 0.15);
+    EXPECT_EQ(iso->tools().begin()->second.passes, 3);
+}
+
+TEST(GuiGeometry, AddAndDeleteTools) {
+    QTemporaryDir data;
+    App app;
+    app.setDataPath(data.path());
+    flatcam::gui::ToolsDatabase::ensureFile(data.path());
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    ASSERT_NE(edge, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(edge));
+    app.ui()->cutout_btn->trigger();
+    auto* geo = dynamic_cast<GeometryObject*>(app.cutoutTool->freeformCutout());
+    ASSERT_NE(geo, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(geo));
+    auto* ui = qobject_cast<GeometryObjectUI*>(app.ui()->properties_scroll_area->widget());
+    ASSERT_NE(ui, nullptr);
+    // No está en la base (vacía): copia de la última herramienta con el diámetro nuevo.
+    ui->addtool_entry->setValue(0.8);
+    ui->search_and_add_btn->click();
+    ASSERT_EQ(geo->tools().size(), 2u);
+    EXPECT_DOUBLE_EQ(geo->tools().at(2).tooldia, 0.8);
+    EXPECT_EQ(geo->tools().at(2).solidGeometry.size(), geo->tools().at(1).solidGeometry.size());
+    EXPECT_EQ(ui->geo_tools_table->rowCount(), 2);
+    EXPECT_EQ(app.ui()->fcinfo->text->text(), tr_("Tool added in Tool Table."));
+    // Borrar sin elegir avisa; con la fila elegida, se borra.
+    ui->geo_tools_table->clearSelection();
+    ui->deltool_btn->click();
+    EXPECT_EQ(geo->tools().size(), 2u);
+    ui->geo_tools_table->selectRow(1);
+    ui->deltool_btn->click();
+    EXPECT_EQ(geo->tools().size(), 1u);
 }

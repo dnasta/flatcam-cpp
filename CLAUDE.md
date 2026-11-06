@@ -15,7 +15,7 @@ máquina del usuario.
 
 **Lo que hay que saber para retomar (el detalle está en `AGENTS.md`, sección 12).**
 
-- **Tests:** 2.654 casos de `ctest` (2.618 del núcleo, de los que 2.251 son los casos de los postprocesadores, y 36 de la GUI; 1
+- **Tests:** 2.656 casos de `ctest` (2.618 del núcleo, de los que 2.251 son los casos de los postprocesadores, y 38 de la GUI; 1
   lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
   y Qt 6.12 en el Mac del usuario (M4, AppleClang). micromamba: `old` (Shapely 1.8.4, GEOS 3.11, PyQt5 5.15, para oráculos y para
   volcar la interfaz original), `sh2`, `geos312`, `geos311` (`AGENTS.md`, secciones 6 y 12.4). El build con GEOS 3.12 va en
@@ -26,8 +26,8 @@ máquina del usuario.
   herramientas ya portadas): ~~"Líneas láser" de Paint~~ (hecho, contra el original; GEOS 3.11.0 pierde la pasada central de los
   trazos por un error suyo, el port no) y ~~operación "Aislamiento" de NCC~~ (hecha, contra el original); corregido además un
   error del port: los campos de Paint/NCC/Isolation se copiaban todos a las herramientas elegidas. ~~Diámetro seguro~~ (hecho,
-  idéntico al original). ~~Ajuste a la grilla~~ y ~~áreas de exclusión~~ (hechos; los viajes idénticos al original). ~~Pulido~~ (hecho). Siguen: base de
-  datos de herramientas y fresado de ranuras (este va con la herramienta Milling del ítem 5).
+  idéntico al original). ~~Ajuste a la grilla~~ y ~~áreas de exclusión~~ (hechos; los viajes idénticos al original). ~~Pulido~~ y ~~base de datos de herramientas~~ (hechos). Sigue el ítem 3 (Transformaciones, Distancia, Propiedades);
+  el fresado de ranuras va con Milling (ítem 5).
 - **Hecho (fases 1, 2 y 3 completas):** parsers, transformaciones, postprocesadores, G-code de taladrado y de geometrías, CutOut,
   Paint, NCC, PCB a 2 caras e Isolation. **Verificado contra el ejecutable FlatCAM 2024.4 del usuario** (placa "luz de noche",
   `tests/data/luz_de_noche/`, `tests/test_luz_de_noche.cpp`): CutOut byte por byte, Paint idéntico con GEOS 3.11, NCC 272 = 272

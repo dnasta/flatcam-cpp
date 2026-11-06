@@ -54,9 +54,10 @@ public:
     /**
      * @brief Texto JSON como `json.dumps(value, indent=2, sort_keys=True)` de Python (claves ordenadas, `ensure_ascii`).
      * @param value Documento.
+     * @param sortKeys `false` para el orden de inserción (`json.dump(..., indent=2)` sin `sort_keys`).
      * @return El texto.
      */
-    static std::string dump(const JsonValue& value);
+    static std::string dump(const JsonValue& value, bool sortKeys = true);
 
     /**
      * @brief Guarda un proyecto.

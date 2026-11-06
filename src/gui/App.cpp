@@ -1,5 +1,7 @@
 #include "gui/App.h"
 
+#include <QFile>
+
 #include "cam/PolygonClearing.h"
 
 #include <QApplication>
@@ -20,6 +22,8 @@
 #include "gui/objects/GeometryObject.h"
 #include "gui/CanvasPicker.h"
 #include "gui/ExclusionAreasManager.h"
+#include "gui/ToolsDatabase.h"
+#include "gui/ToolsDBTab.h"
 #include "gui/ProjectIO.h"
 #include "gui/tools/ClearingTools.h"
 #include "gui/objects/ObjectUIs.h"
@@ -91,6 +95,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     // El selector con el mouse y las áreas de exclusión, antes que las herramientas que los usan.
     picker_ = new CanvasPicker(ui_.get(), this);
     excAreas_ = new ExclusionAreasManager(ui_.get(), picker_, this);
+    ToolsDatabase::ensureFile(dataPath());  // tools_db.FlatDB vacío si no existe
     // Las herramientas (install_tools): sus paneles viven mientras viva la ventana.
     nccTool = new NccTool(this, ui_.get());
     paintTool = new PaintTool(this, ui_.get());
@@ -136,7 +141,60 @@ void App::runTool(QWidget* panel, const ToolInfo& info, bool toggle) {
     ui_->notebook->setTabText(2, info.tabText);
 }
 
+ToolsDBTab* App::openToolsDatabase(std::function<void(const JsonValue&)> onToolRequest) {
+    const QString path = ToolsDatabase::fileName(dataPath());
+    if (!QFile::exists(path)) {
+        ui_->inform("[ERROR] " + tr_("Could not load the file."));
+        return nullptr;
+    }
+    FCDetachableTab2* area = ui_->plot_tab_area;
+    for (int i = 0; i < area->count(); ++i)
+        if (area->tabText(i) == tr_("Tools Database")) return qobject_cast<ToolsDBTab*>(area->widget(i));
+    if (!onToolRequest) {
+        // on_geometry_tool_add_from_db_executed: a la Geometría activa (solo Fresado o General).
+        onToolRequest = [this](const JsonValue& tool) {
+            auto* geo = dynamic_cast<GeometryObject*>(activeObject());
+            if (!geo) return;
+            const double target = tool["data"]["tool_target"].toDouble(-1);
+            if (target != 0 && target != 1) {
+                closeToolsDatabase();
+                ui_->inform("[ERROR_NOTCL] " + tr_("Selected tool can't be used here. Pick another."));
+                return;
+            }
+            ClearingTool ct;
+            ct.geo = defaultGeometryTool();
+            ToolsDatabase::applyTo(tool, ct);
+            ct.geo.solidGeometry = geo->solidGeometry();  // 'solid_geometry': self.solid_geometry
+            const int uid = geo->tools().empty() ? 1 : geo->tools().rbegin()->first + 1;
+            geo->tools()[uid] = ct.geo;
+            closeToolsDatabase();
+            showProperties(geo);
+            ui_->inform("[success] " + tr_("Tool from DB added in Tool Table."));
+        };
+    }
+    auto* tab = new ToolsDBTab(this, std::move(onToolRequest));
+    area->addTab(tab, tr_("Tools Database"));
+    tab->setObjectName("database_tab");
+    ui_->coords_toolbar->hide();
+    ui_->delta_coords_toolbar->hide();
+    area->setCurrentWidget(tab);
+    return tab;
+}
+
+void App::closeToolsDatabase() {
+    FCDetachableTab2* area = ui_->plot_tab_area;
+    for (int i = area->count() - 1; i >= 0; --i) {
+        if (area->tabText(i) != tr_("Tools Database")) continue;
+        QWidget* w = area->widget(i);
+        area->removeTab(i);
+        w->deleteLater();
+    }
+    ui_->coords_toolbar->show();
+    ui_->delta_coords_toolbar->show();
+}
+
 void App::connectSignals() {
+    connect(ui_->menuoptions_tools_db, &QAction::triggered, this, [this] { openToolsDatabase(); });
     for (QAction* a : {ui_->menufileopenproject, ui_->file_open_btn})
         connect(a, &QAction::triggered, this, [this] { onFileOpenProject(); });
     for (QAction* a : {ui_->menufilesaveproject, ui_->file_save_btn})
@@ -538,6 +596,12 @@ void App::showProperties(FlatCAMObj* obj) {
         auto* geo = static_cast<GeometryObject*>(obj);
         auto* gui = static_cast<GeometryObjectUI*>(panel);
         gui->onGenerateCnc = [this, geo, gui] { generateCncJob(geo, gui->toolsForCnc(), gui); };
+        gui->inform = [this](const QString& m) { ui_->inform(m); };
+        gui->dataPath = dataPath();
+        gui->onAddFromDb = [this] { openToolsDatabase(); };
+        gui->onToolsChanged = [this, geo] {
+            ui_->plotCanvas()->setLayer(geo->id(), geo->plotData());
+        };
         // Áreas de exclusión (una sola vez por panel).
         if (!gui->property("exclusionConnected").toBool()) {
             gui->setProperty("exclusionConnected", true);
@@ -564,6 +628,11 @@ void App::showProperties(FlatCAMObj* obj) {
 
 bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
     // MainGUI.keyPressEvent sin modificadores: V encuadra; X e Y reflejan; 1, 2 y 3 eligen la pestaña del panel izquierdo.
+    // Ctrl (Cmd en el Mac) + D: la base de datos de herramientas (keyPressEvent de MainGUI).
+    if (modifiers == Qt::ControlModifier && key == Qt::Key_D) {
+        openToolsDatabase();
+        return true;
+    }
     if (modifiers != Qt::NoModifier) return false;
     switch (key) {
         case Qt::Key_V: onZoomFit(); return true;

@@ -349,7 +349,7 @@ void dumpString(std::string& out, const std::string& s) {
     out += '"';
 }
 
-void dumpValue(std::string& out, const JsonValue& v, int indent) {
+void dumpValue(std::string& out, const JsonValue& v, int indent, bool sortKeys) {
     const std::string pad(static_cast<std::size_t>(indent + 2), ' ');
     switch (v.type()) {
         case JsonValue::Type::Null: out += "null"; return;
@@ -364,7 +364,7 @@ void dumpValue(std::string& out, const JsonValue& v, int indent) {
             out += "[\n";
             for (std::size_t i = 0; i < v.items().size(); ++i) {
                 out += pad;
-                dumpValue(out, v.items()[i], indent + 2);
+                dumpValue(out, v.items()[i], indent + 2, sortKeys);
                 out += i + 1 < v.items().size() ? ",\n" : "\n";
             }
             out += std::string(static_cast<std::size_t>(indent), ' ') + "]";
@@ -377,13 +377,14 @@ void dumpValue(std::string& out, const JsonValue& v, int indent) {
             }
             std::vector<const std::pair<std::string, JsonValue>*> sorted;
             for (const auto& m : v.members()) sorted.push_back(&m);
-            std::stable_sort(sorted.begin(), sorted.end(), [](auto* a, auto* b) { return a->first < b->first; });
+            if (sortKeys)
+                std::stable_sort(sorted.begin(), sorted.end(), [](auto* a, auto* b) { return a->first < b->first; });
             out += "{\n";
             for (std::size_t i = 0; i < sorted.size(); ++i) {
                 out += pad;
                 dumpString(out, sorted[i]->first);
                 out += ": ";
-                dumpValue(out, sorted[i]->second, indent + 2);
+                dumpValue(out, sorted[i]->second, indent + 2, sortKeys);
                 out += i + 1 < sorted.size() ? ",\n" : "\n";
             }
             out += std::string(static_cast<std::size_t>(indent), ' ') + "}";
@@ -430,9 +431,9 @@ bool ProjectFile::read(const std::string& path, JsonValue& root, std::string& er
     }
 }
 
-std::string ProjectFile::dump(const JsonValue& value) {
+std::string ProjectFile::dump(const JsonValue& value, bool sortKeys) {
     std::string out;
-    dumpValue(out, value, 0);
+    dumpValue(out, value, 0, sortKeys);
     return out;
 }
 

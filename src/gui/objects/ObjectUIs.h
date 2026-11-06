@@ -71,6 +71,23 @@ public:
     std::vector<int> toolsForCnc() const;
     /** @brief Qué hacer al apretar "Generar objeto CNCJob" (lo fija la aplicación). */
     std::function<void()> onGenerateCnc;
+    /** @brief Mensajes en la barra de estado (lo fija la aplicación). */
+    std::function<void(const QString&)> inform;
+    /** @brief "Agregar desde la base" (abre la pestaña de la base; lo fija la aplicación). */
+    std::function<void()> onAddFromDb;
+    /** @brief Cambiaron las herramientas (para volver a dibujar; lo fija la aplicación). */
+    std::function<void()> onToolsChanged;
+    /** @brief Carpeta de datos (donde está `tools_db.FlatDB`). */
+    QString dataPath;
+
+    /**
+     * @brief "Buscar y agregar" (`on_tool_add`): la herramienta de la base de ese diámetro (objetivo Fresado) o, si no
+     * está, una copia de la última (`on_tool_default_add`).
+     * @param dia Diámetro.
+     */
+    void addTool(double dia);
+    /** @brief Borra las herramientas elegidas (`on_tool_delete`). */
+    void deleteTools();
 
 private:
     void updateUi();
