@@ -5,11 +5,14 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QLocale>
+#include <QMessageBox>
 
 #include "gui/App.h"
 #include "gui/MainGUI.h"
 #include "gui/Translation.h"
 #include "gui/objects/FlatCAMObj.h"
+#include "gui/objects/GeometryObject.h"
+#include "io/DxfExport.h"
 #include "io/FileExport.h"
 #include "io/SvgExport.h"
 #include "parsers/Excellon.h"
@@ -143,6 +146,47 @@ void App::onFileExportSvg() {
         return;
     }
     exportSvgFile(obj, f);
+}
+
+bool App::exportDxfFile(GeometryObject* geo, const QString& filename) {
+    // export_dxf (multigeo): la geometría de cada herramienta, en orden.
+    ShapeList shapes;
+    for (const auto& [uid, t] : geo->tools()) shapes.insert(shapes.end(), t.solidGeometry.begin(), t.solidGeometry.end());
+    QFile f(filename);
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
+        ui_->inform("[WARNING] " + tr_("Permission denied, saving not possible.\n"
+                                       "Most likely another app is holding the file open and not accessible."));
+        return false;
+    }
+    f.write(QByteArray::fromStdString(exportDxf(shapes)));
+    registerRecent("dxf", filename);
+    ui_->inform(QString("[success] %1: %2").arg(tr_("DXF file exported to"), filename));
+    return true;
+}
+
+void App::onFileExportDxf() {
+    FlatCAMObj* obj = activeObject();
+    if (!obj) {
+        ui_->inform("[WARNING_NOTCL] " + tr_("No object is selected."));
+        return;
+    }
+    auto* geo = dynamic_cast<GeometryObject*>(obj);
+    if (!geo) {
+        // Como el original: un cuadro de aviso con el mensaje como texto informativo.
+        QMessageBox box(ui_.get());
+        box.setIcon(QMessageBox::Warning);
+        box.setInformativeText("[ERROR_NOTCL] " + tr_("Only Geometry objects can be used."));
+        box.setDefaultButton(box.addButton(tr_("Ok"), QMessageBox::AcceptRole));
+        box.exec();
+        return;
+    }
+    const QString f = QFileDialog::getSaveFileName(ui_.get(), tr_("Export DXF"), lastFolder() + "/" + obj->name(),
+                                                   "DXF File .dxf (*.DXF);;All Files (*.*)");
+    if (f.isEmpty()) {
+        ui_->inform("[WARNING_NOTCL] " + tr_("Cancelled."));
+        return;
+    }
+    exportDxfFile(geo, f);
 }
 
 }  // namespace flatcam::gui

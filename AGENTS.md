@@ -72,7 +72,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.679 casos de `ctest` (2.622 del núcleo y 56 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.683 casos de `ctest` (2.625 del núcleo y 57 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -105,6 +105,7 @@ src/core/              Núcleo (biblioteca estática flatcam_core, namespace fla
   internal/GeosContext.* Contexto GEOS por hilo (no es API pública)
 src/parsers/           Lectores de archivos (sin Qt, derivan de Geometry)
   ApertureMacro.*        Macros de apertura de Gerber (`%AM`), con su evaluador de expresiones
+  DxfImport.*            Importar DXF (ParseDXF + ParseDXF_Spline + import_dxf_as_geo/as_gerber), lector DXF propio
   SvgImport.*            Importar SVG (ParseSVG + svg.path 7.1 + Geometry/Gerber.import_svg), con un lector XML mínimo
   Gerber.*               Parser de Gerber RS-274X (aperturas, trazos, arcos, regiones, polaridad)
   Excellon.*             Parser de Excellon (herramientas, agujeros, ranuras) y sus transformaciones
@@ -119,6 +120,7 @@ src/tools/              Herramientas de FlatCAM (sin Qt)
   Isolation.*            Aislamiento: pasadas separadas, combinadas y mecanizado de resto (`ToolIsolation.py`)
 src/io/                 Proyectos (sin Qt; depende de liblzma)
   JsonValue.*            Valor JSON liviano (los números conservan su texto, para escribirlos igual que Python)
+  DxfExport.*            Exportar una Geometría a DXF (export_dxf sobre la plantilla R2010 generada de ezdxf)
   SvgExport.*            Exportar a SVG (Geometry.export_svg + App.export_svg)
   FileExport.*           Exportar Gerber y Excellon (export_gerber / export_excellon), idéntico al original
   ProjectFile.*          .FlatPrj: lectura en streaming de JSON (con o sin XZ) que puede descartar valores sin guardarlos;
@@ -701,6 +703,13 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     un bucle infinito (el port ignora el resto); los comentarios XML se saltean (lxml los cuenta como hijos y el original
     falla); los textos (`tspan`) avisan que no se importan. Además, el dibujo de un polígono inválido (que no se puede
     triangular) rellena su `buffer(0)` o solo dibuja el contorno.
+    (v) **DXF.** Rarezas del original que se reproducen al importar: si todas las líneas se unen en una sola, falla (una
+    `LineString` no es iterable en Shapely 1.8); `SOLID`/`TRACE` no aportan nada; las curvas (`bulge`) de las polilíneas
+    se ignoran; los nudos de los splines siempre se reemplazan por uniformes (la lista de la DXF tiene un elemento menos de
+    lo que pide el código); un spline por puntos de ajuste falla; en las inserciones las filas y columnas se copian antes
+    de escalar y la escala es alrededor del centro de cada figura; como Gerber, cualquier polígono (un círculo) hace fallar.
+    Desvío: solo DXF ASCII (ezdxf también lee binario). Exportar: el documento es el de `ezdxf.new('R2010')` (pedido el
+    espacio modelo, que cambia el orden de dos objetos), con GUID nuevos y la hora en `$TDCREATE`/`$TDUPDATE`.
     (m) Errores del original que se reproducen a propósito en Isolation: la herramienta nueva tiene tipo `"           Iso"`
     (con espacios) y forma "V", y el rótulo "Ninguna herramienta seleccionada" lleva `color=#7777FF""`.
 14. **Postprocesadores: desvíos y rarezas del original.** (a) `line_xyz` lee `p['end_xy']`, que `CNCjob` no define: en el
@@ -765,7 +774,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.679 casos de test** (`ctest`): 2.623 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 56 de la GUI;
+- **2.683 casos de test** (`ctest`): 2.626 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 57 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -793,7 +802,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.679 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.683 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -950,7 +959,11 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    GEOS), ~~importar SVG~~ como Geometría o Gerber (`src/parsers/SvgImport.*`: un lector XML mínimo, el intérprete de
    trayectos de `svg.path` 7.1 y `ParseSVG`; `oracle_svg_import.py` sobre `tests/data/svg/`: idéntico vértice por vértice,
    salvo el vértice inicial de lo que pasa por `buffer(0)`). Falta: los textos de un SVG (fuentes TTF de `ParseFont`), el SVG
-   de un CNC Job (necesita su `gcode_parsed`), exportar DXF/PNG, importar SVG/DXF/PDF/HPGL2/imagen
+   de un CNC Job (necesita su `gcode_parsed`), ~~importar DXF~~ (`src/parsers/DxfImport.*`: un lector propio de DXF ASCII
+   en lugar de ezdxf, y `ParseDXF` + `ParseDXF_Spline`; `oracle_dxf_import.py` con ezdxf 0.14.2 sobre `tests/data/dxf/`,
+   generados por `tests/tools/make_test_dxf.py`: idéntico), ~~exportar DXF~~ (`src/io/DxfExport.*`: la plantilla R2010 de
+   ezdxf, `tools/gen_dxf_template.py` → `src/io/generated/DxfR2010Template.h`, con la numeración de ezdxf; idéntico salvo
+   GUID y fechas). Falta exportar PNG, importar SVG/DXF/PDF/HPGL2/imagen
    (`ParseSVG`, `ParseDXF*`, `ParsePDF`, `ParseHPGL2`, `ParseFont`, `ToolImage`, `ToolPDF`), objetos Script y Documento.
 5. **Herramientas restantes** (`appTools/`): Milling, Panelize, Film, Calculators, Copper Thieving, Fiducials, Corners, Extract
    Drills, Punch Gerber, Invert Gerber, Align Objects, Subtract (`ToolSub`), QR Code, Rules Check, Optimal, Solder Paste,

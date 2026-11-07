@@ -9,6 +9,7 @@
 #include "gui/objects/FlatCAMObj.h"
 #include "gui/objects/GeometryObject.h"
 #include "parsers/Gerber.h"
+#include "parsers/DxfImport.h"
 #include "parsers/SvgImport.h"
 
 namespace flatcam::gui {
@@ -68,6 +69,62 @@ void App::onFileImportSvg(bool asGerber) {
         return;
     }
     for (const QString& f : files) importSvg(f, asGerber);
+}
+
+FlatCAMObj* App::importDxf(const QString& filename, bool asGerber) {
+    QFile f(filename);
+    if (!f.open(QIODevice::ReadOnly)) {
+        ui_->inform("[ERROR_NOTCL]" + tr_("Import failed."));
+        return nullptr;
+    }
+    const std::string text = f.readAll().toStdString();
+    const DxfImportResult r = asGerber ? importDxfAsGerber(text) : importDxfAsGeometry(text);
+    if (!r.ok) {
+        ui_->inform("[ERROR_NOTCL]" + tr_("Import failed."));
+        return nullptr;
+    }
+    const QString name = QFileInfo(filename).fileName();
+    FlatCAMObj* obj = nullptr;
+    if (asGerber) {
+        // import_dxf_as_gerber: la geometría sólida es la unión; cada figura va a la apertura "0" (solid = follow).
+        Aperture ap;
+        ap.type = "REG";
+        ap.size = 0.0;
+        ap.hasGeometry = true;
+        for (const Shape& p : r.geometry) {
+            ApertureGeometry el;
+            el.solid = p;
+            el.follow = p;
+            ap.geometry.push_back(el);
+        }
+        const Shape u = Shape::unaryUnion(r.geometry);
+        const ShapeList solid = u.parts().empty() ? ShapeList{u} : u.parts();
+        auto g = std::make_unique<Gerber>();
+        g->restore(solid, solid, {{"0", ap}}, 3, 4, text);
+        obj = addObject(std::make_unique<GerberObject>(name, std::move(g)));
+    } else {
+        auto geo = std::make_unique<GeometryObject>(name);
+        geo->solidGeometry() = r.geometry;
+        GeometryTool t = defaultGeometryTool();
+        t.tooldia = 2.4;  // geometry_cnctooldia
+        t.solidGeometry = r.geometry;
+        geo->tools()[1] = t;
+        obj = addObject(std::move(geo));
+    }
+    lastFolder_ = QFileInfo(filename).absolutePath();
+    registerRecent("dxf", filename);
+    ui_->inform(QString("[success] %1: %2").arg(tr_("Opened"), filename));
+    return obj;
+}
+
+void App::onFileImportDxf(bool asGerber) {
+    const QStringList files = QFileDialog::getOpenFileNames(ui_.get(), tr_("Import DXF"), lastFolder(),
+                                                            "DXF File .dxf (*.DXF);;All Files (*.*)");
+    if (files.isEmpty()) {
+        ui_->inform("[WARNING_NOTCL] " + tr_("Cancelled."));
+        return;
+    }
+    for (const QString& f : files) importDxf(f, asGerber);
 }
 
 }  // namespace flatcam::gui

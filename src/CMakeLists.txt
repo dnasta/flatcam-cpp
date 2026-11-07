@@ -10,10 +10,12 @@ add_library(flatcam_core STATIC
     parsers/ApertureMacro.cpp
     parsers/Gerber.cpp
     parsers/SvgImport.cpp
+    parsers/DxfImport.cpp
     parsers/Excellon.cpp
     cam/PyNumber.cpp
     io/FileExport.cpp
     io/SvgExport.cpp
+    io/DxfExport.cpp
     cam/Preprocessor.cpp
     cam/MorePreprocessors.cpp
     cam/PathOptimizer.cpp

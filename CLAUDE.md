@@ -15,7 +15,7 @@ máquina del usuario.
 
 **Lo que hay que saber para retomar (el detalle está en `AGENTS.md`, sección 12).**
 
-- **Tests:** 2.679 casos de `ctest` (2.623 del núcleo, de los que 2.251 son los casos de los postprocesadores, y 56 de la GUI; 1
+- **Tests:** 2.683 casos de `ctest` (2.626 del núcleo, de los que 2.251 son los casos de los postprocesadores, y 57 de la GUI; 1
   lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
   y Qt 6.12 en el Mac del usuario (M4, AppleClang). micromamba: `old` (Shapely 1.8.4, GEOS 3.11, PyQt5 5.15, para oráculos y para
   volcar la interfaz original), `sh2`, `geos312`, `geos311` (`AGENTS.md`, secciones 6 y 12.4). El build con GEOS 3.12 va en
@@ -31,7 +31,7 @@ máquina del usuario.
   (faltaban; idénticos al original en 75 escenarios). **3b casi hecho** (`AGENTS.md` 13): selección con el mouse, menú del canvas, Ver,
   Editar (unir, convertir, origen, saltar, ubicar), Opciones (girar, inclinar), Ayuda, salir y los atajos; quedan las unidades
   (con las preferencias) y los marcadores. **Ítem 4 en curso:** hechos abrir G-code, exportar Gerber/Excellon (idéntico al
-  original), exportar e importar SVG (idénticos al original); siguen DXF/PNG, importar DXF/PDF/HPGL2/imagen, Script y Documento. Corregido: Gerber/Excellon en pulgadas
+  original), exportar e importar SVG y DXF (idénticos al original); siguen PNG, importar PDF/HPGL2/imagen, Script y Documento. Corregido: Gerber/Excellon en pulgadas
   no se convertían a mm al abrirlos. El fresado de ranuras va con Milling (ítem 5).
 - **Hecho (fases 1, 2 y 3 completas):** parsers, transformaciones, postprocesadores, G-code de taladrado y de geometrías, CutOut,
   Paint, NCC, PCB a 2 caras e Isolation. **Verificado contra el ejecutable FlatCAM 2024.4 del usuario** (placa "luz de noche",

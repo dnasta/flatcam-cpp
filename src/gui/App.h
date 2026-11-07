@@ -397,6 +397,10 @@ public:
     bool exportSvgFile(FlatCAMObj* obj, const QString& filename);
     /** @brief Archivo -> Exportar -> SVG (`on_file_exportsvg`). */
     void onFileExportSvg();
+    /** @brief Exporta una Geometría a DXF (`export_dxf`). @param geo Geometría. @param filename Archivo. @return Si se escribió. */
+    bool exportDxfFile(class GeometryObject* geo, const QString& filename);
+    /** @brief Archivo -> Exportar -> DXF (`on_file_exportdxf`); también "Guardar" de una Geometría. */
+    void onFileExportDxf();
     /**
      * @brief Importa un SVG (`import_svg`) como Geometría o como Gerber. @param filename Archivo.
      * @param asGerber Como Gerber. @return El objeto, o nulo si falló.
@@ -404,6 +408,13 @@ public:
     FlatCAMObj* importSvg(const QString& filename, bool asGerber);
     /** @brief Archivo -> Importar -> SVG (`on_file_importsvg`). @param asGerber Como Gerber. */
     void onFileImportSvg(bool asGerber);
+    /**
+     * @brief Importa un DXF (`import_dxf`) como Geometría o como Gerber. @param filename Archivo.
+     * @param asGerber Como Gerber. @return El objeto, o nulo si falló.
+     */
+    FlatCAMObj* importDxf(const QString& filename, bool asGerber);
+    /** @brief Archivo -> Importar -> DXF (`on_file_importdxf`). @param asGerber Como Gerber. */
+    void onFileImportDxf(bool asGerber);
     /** @brief Arma y abre el menú del canvas (`popMenu`) donde está el cursor. */
     void popupCanvasMenu();
     /** @brief El menú del canvas (`popMenu`). @return El menú. */

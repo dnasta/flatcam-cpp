@@ -256,7 +256,7 @@ void App::saveSelected() {
         source = e->excellon().sourceFile();
         filter = "Excellon File .drl (*.DRL);;All Files (*.*)";  // on_file_saveexcellon
     } else {
-        ui_->inform("[WARNING_NOTCL] Exportar una Geometría a DXF todavía no está en el port.");
+        onFileExportDxf();  // on_project_context_save: una Geometría se exporta a DXF
         return;
     }
     const QString f = QFileDialog::getSaveFileName(ui_.get(), tr_("Save"), lastFolder() + "/" + o->name(), filter);
