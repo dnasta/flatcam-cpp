@@ -36,6 +36,8 @@ add_executable(core_tests
     test_export.cpp
     test_svg_export.cpp
     test_svg_import.cpp
+    test_dxf_import.cpp
+    test_dxf_export.cpp
     test_rest_machining.cpp
 )
 target_link_libraries(core_tests PRIVATE flatcam::core GTest::gtest_main)

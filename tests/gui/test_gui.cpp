@@ -2566,3 +2566,24 @@ TEST(GuiFiles, ImportSvg) {
     // Un SVG con una línea no se puede importar como Gerber.
     EXPECT_EQ(app.importSvg(QString::fromStdString(std::string(FLATCAM_TEST_DATA_DIR) + "/svg/shapes.svg"), true), nullptr);
 }
+
+// Importar DXF como Geometría y exportar una Geometría a DXF (y volver a importarla).
+TEST(GuiFiles, ImportAndExportDxf) {
+    App app;
+    QTemporaryDir data;
+    app.setDataPath(data.path());
+    auto* geo = dynamic_cast<GeometryObject*>(
+        app.openByExtension(QString::fromStdString(std::string(FLATCAM_TEST_DATA_DIR) + "/dxf/entities.dxf")));
+    ASSERT_NE(geo, nullptr);
+    EXPECT_EQ(geo->solidGeometry().size(), 29u);
+    QTemporaryDir tmp;
+    ASSERT_TRUE(app.exportDxfFile(geo, tmp.filePath("g.dxf")));
+    auto* back = dynamic_cast<GeometryObject*>(app.importDxf(tmp.filePath("g.dxf"), false));
+    ASSERT_NE(back, nullptr);
+    EXPECT_FALSE(back->solidGeometry().empty());
+    // Como Gerber falla si hay polígonos (círculos), como el original.
+    EXPECT_EQ(app.importDxf(QString::fromStdString(std::string(FLATCAM_TEST_DATA_DIR) + "/dxf/entities.dxf"), true),
+              nullptr);
+    EXPECT_NE(app.importDxf(QString::fromStdString(std::string(FLATCAM_TEST_DATA_DIR) + "/dxf/lines_r12.dxf"), true),
+              nullptr);
+}
