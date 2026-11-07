@@ -86,6 +86,19 @@ public:
      * @param axis Eje. @param point Punto del eje. @return `true`.
      */
     bool mirror(Axis axis, const Point2D& point) override;
+    /** @brief Rota la geometría y la de cada herramienta. @param angle Grados. @param point Centro. @return `true`. */
+    bool rotate(double angle, const Point2D& point) override;
+    /** @brief Inclina. @param ax Grados en X. @param ay Grados en Y. @param point Punto fijo. @return `true`. */
+    bool skew(double ax, double ay, const Point2D& point) override;
+    /** @brief Escala. @param fx Factor en X. @param fy Factor en Y. @param point Punto fijo. @return `true`. */
+    bool scale(double fx, double fy, const Point2D& point) override;
+    /** @brief Desplaza. @param dx En X. @param dy En Y. @return `true`. */
+    bool offset(double dx, double dy) override;
+    /**
+     * @brief Engrosa cada figura (`Geometry.buffer`: las líneas pasan a polígonos) o la escala alrededor de su centro.
+     * @param distance Distancia (o factor). @param join Esquinas. @param factor Si es un factor. @return `true`.
+     */
+    bool buffer(double distance, JoinStyle join, bool factor) override;
 
     /**
      * @brief Genera el CNC Job de las herramientas pedidas (`mtool_gen_cncjob`, rama multigeo).
@@ -101,6 +114,7 @@ public:
     static QColor plotLineColor();
 
 private:
+    template <typename Fn> void applyToAll(Fn fn);
     ShapeList solid_;
     std::map<int, GeometryTool> tools_;
 };

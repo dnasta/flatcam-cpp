@@ -11,3 +11,4 @@
 #include "gui/tools/NccTool.h"
 #include "gui/tools/PaintTool.h"
 #include "gui/tools/ToolInfo.h"
+#include "gui/tools/TransformTool.h"

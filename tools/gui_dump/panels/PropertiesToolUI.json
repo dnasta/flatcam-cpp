@@ -1,0 +1,84 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "Properties",
+  "name": null,
+  "props": {
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QFrame",
+      "py": "QFrame",
+      "name": "properties_frame",
+      "props": {
+       "hidden": {
+        "t": "bool",
+        "v": true
+       }
+      },
+      "layout": {
+       "qt": "QVBoxLayout",
+       "py": "QVBoxLayout",
+       "name": "properties_box",
+       "props": {},
+       "margins": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spacing": 6,
+       "items": [
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QTreeWidget",
+          "py": "FCTree",
+          "name": "treeWidget",
+          "props": {
+           "sizePolicy": {
+            "t": "QSizePolicy",
+            "v": [
+             7,
+             7,
+             0,
+             0
+            ]
+           },
+           "styleSheet": {
+            "t": "str",
+            "v": "QTreeWidget {border: 0px;}"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "PropertiesToolUI"
+}

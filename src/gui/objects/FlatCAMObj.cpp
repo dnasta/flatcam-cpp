@@ -54,6 +54,54 @@ void FlatCAMObj::addShape(const Shape& s, PlotGroup& out, QRectF& bounds, bool f
 }
 
 bool FlatCAMObj::mirror(Axis, const Point2D&) { return false; }
+bool FlatCAMObj::rotate(double, const Point2D&) { return false; }
+bool FlatCAMObj::skew(double, double, const Point2D&) { return false; }
+bool FlatCAMObj::scale(double, double, const Point2D&) { return false; }
+bool FlatCAMObj::offset(double, double) { return false; }
+bool FlatCAMObj::buffer(double, JoinStyle, bool) { return false; }
+
+bool GerberObject::rotate(double angle, const Point2D& p) {
+    gerber_->rotate(angle, p);
+    return true;
+}
+bool GerberObject::skew(double ax, double ay, const Point2D& p) {
+    gerber_->skew(ax, ay, p);
+    return true;
+}
+bool GerberObject::scale(double fx, double fy, const Point2D& p) {
+    gerber_->scale(fx, fy, p);
+    return true;
+}
+bool GerberObject::offset(double dx, double dy) {
+    gerber_->offset({dx, dy});
+    return true;
+}
+bool GerberObject::buffer(double distance, JoinStyle join, bool factor) {
+    gerber_->buffer(distance, join, factor);
+    return true;
+}
+
+bool ExcellonObject::rotate(double angle, const Point2D& p) {
+    excellon_->rotate(angle, p);
+    return true;
+}
+bool ExcellonObject::skew(double ax, double ay, const Point2D& p) {
+    excellon_->skew(ax, ay, p);
+    return true;
+}
+bool ExcellonObject::scale(double fx, double fy, const Point2D& p) {
+    excellon_->scale(fx, fy, p);
+    return true;
+}
+bool ExcellonObject::offset(double dx, double dy) {
+    excellon_->offset({dx, dy});
+    return true;
+}
+bool ExcellonObject::buffer(double distance, JoinStyle join, bool factor) {
+    excellon_->buffer(distance, join, factor);
+    return true;
+}
+
 
 bool GerberObject::mirror(Axis axis, const Point2D& point) {
     gerber_->mirror(axis, point);

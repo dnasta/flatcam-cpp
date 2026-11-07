@@ -566,4 +566,13 @@ void Excellon::skew(double angleX, double angleY, const Point2D& point) {
     transformAll(AffineTransform::skew(angleX, angleY, point));
 }
 
+void Excellon::buffer(double distance, JoinStyle, bool factor) {
+    if (distance == 0.0) return;
+    for (auto& [id, t] : drillTools_) {
+        if (factor) t.tooldia *= distance;
+        else t.tooldia += distance;
+    }
+    createGeometry();
+}
+
 }  // namespace flatcam

@@ -93,6 +93,19 @@ public:
      * @return `false` si el tipo de objeto no se puede reflejar (en la base, ninguno).
      */
     virtual bool mirror(Axis axis, const Point2D& point);
+    /** @brief Rota (`rotate`). @param angle Grados (antihorario). @param point Centro. @return `false` si el tipo no se transforma. */
+    virtual bool rotate(double angle, const Point2D& point);
+    /** @brief Inclina (`skew`). @param ax Grados en X. @param ay Grados en Y. @param point Punto fijo. @return Ídem. */
+    virtual bool skew(double ax, double ay, const Point2D& point);
+    /** @brief Escala (`scale`). @param fx Factor en X. @param fy Factor en Y. @param point Punto fijo. @return Ídem. */
+    virtual bool scale(double fx, double fy, const Point2D& point);
+    /** @brief Desplaza (`offset`). @param dx En X. @param dy En Y. @return Ídem. */
+    virtual bool offset(double dx, double dy);
+    /**
+     * @brief Engrosa (`buffer`). @param distance Distancia (o factor). @param join Esquinas. @param factor Si es un factor.
+     * @return Ídem.
+     */
+    virtual bool buffer(double distance, JoinStyle join, bool factor);
 
     ~FlatCAMObj() override;
 
@@ -156,6 +169,11 @@ public:
     QWidget* propertiesUi() override;
     /** @brief Refleja el Gerber. @param axis Eje. @param point Punto del eje. @return `true`. */
     bool mirror(Axis axis, const Point2D& point) override;
+    bool rotate(double angle, const Point2D& point) override;
+    bool skew(double ax, double ay, const Point2D& point) override;
+    bool scale(double fx, double fy, const Point2D& point) override;
+    bool offset(double dx, double dy) override;
+    bool buffer(double distance, JoinStyle join, bool factor) override;
 
 private:
     std::unique_ptr<Gerber> gerber_;
@@ -181,6 +199,11 @@ public:
     QWidget* propertiesUi() override;
     /** @brief Refleja agujeros y ranuras. @param axis Eje. @param point Punto del eje. @return `true`. */
     bool mirror(Axis axis, const Point2D& point) override;
+    bool rotate(double angle, const Point2D& point) override;
+    bool skew(double ax, double ay, const Point2D& point) override;
+    bool scale(double fx, double fy, const Point2D& point) override;
+    bool offset(double dx, double dy) override;
+    bool buffer(double distance, JoinStyle join, bool factor) override;
 
 private:
     std::unique_ptr<Excellon> excellon_;
