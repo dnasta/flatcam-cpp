@@ -86,6 +86,8 @@ public:
      * @param axis Eje. @param point Punto del eje. @return `true`.
      */
     bool mirror(Axis axis, const Point2D& point) override;
+    /** @brief `solid_geometry`. @return Las figuras. */
+    ShapeList solidShapes() const override { return solid_; }
     /** @brief Rota la geometría y la de cada herramienta. @param angle Grados. @param point Centro. @return `true`. */
     bool rotate(double angle, const Point2D& point) override;
     /** @brief Inclina. @param ax Grados en X. @param ay Grados en Y. @param point Punto fijo. @return `true`. */

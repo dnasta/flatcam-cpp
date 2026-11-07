@@ -93,6 +93,11 @@ public:
      * @return `false` si el tipo de objeto no se puede reflejar (en la base, ninguno).
      */
     virtual bool mirror(Axis axis, const Point2D& point);
+    /**
+     * @brief La geometría sólida del objeto (`solid_geometry`), como lista de figuras.
+     * @return Las figuras (en la base, ninguna: el CNC Job no la guarda en el port).
+     */
+    virtual ShapeList solidShapes() const { return {}; }
     /** @brief Rota (`rotate`). @param angle Grados (antihorario). @param point Centro. @return `false` si el tipo no se transforma. */
     virtual bool rotate(double angle, const Point2D& point);
     /** @brief Inclina (`skew`). @param ax Grados en X. @param ay Grados en Y. @param point Punto fijo. @return Ídem. */
@@ -169,6 +174,8 @@ public:
     QWidget* propertiesUi() override;
     /** @brief Refleja el Gerber. @param axis Eje. @param point Punto del eje. @return `true`. */
     bool mirror(Axis axis, const Point2D& point) override;
+    /** @brief `solid_geometry`. @return Las figuras. */
+    ShapeList solidShapes() const override;
     bool rotate(double angle, const Point2D& point) override;
     bool skew(double ax, double ay, const Point2D& point) override;
     bool scale(double fx, double fy, const Point2D& point) override;
@@ -199,6 +206,8 @@ public:
     QWidget* propertiesUi() override;
     /** @brief Refleja agujeros y ranuras. @param axis Eje. @param point Punto del eje. @return `true`. */
     bool mirror(Axis axis, const Point2D& point) override;
+    /** @brief `solid_geometry`. @return Las figuras. */
+    ShapeList solidShapes() const override;
     bool rotate(double angle, const Point2D& point) override;
     bool skew(double ax, double ay, const Point2D& point) override;
     bool scale(double fx, double fy, const Point2D& point) override;

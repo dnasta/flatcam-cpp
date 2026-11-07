@@ -25,6 +25,9 @@ add_library(flatcam_gui STATIC
     tools/NccTool.cpp
     tools/DblSidedTool.cpp
     tools/TransformTool.cpp
+    tools/DistanceTool.cpp
+    tools/MoveTool.cpp
+    tools/PropertiesTool.cpp
     tools/IsolationTool.cpp
     generated/IsolationToolUIBase.cpp
     generated/DblSidedToolUIBase.cpp

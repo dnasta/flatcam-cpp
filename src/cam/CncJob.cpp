@@ -57,6 +57,7 @@ bool CncJob::generateFromExcellon(const Excellon& excellon) {
     startGcode_.clear();
     gcode_.clear();
     toolGcodes_.clear();
+    travelDistance_ = routingTime_ = measuredDistance_ = measuredDown_ = measuredUpToZero_ = measuredLift_ = 0.0;
 
     const auto pp = makePreprocessor(settings_.preprocessor, settings_.flavor);
     if (!pp) {
@@ -105,6 +106,7 @@ bool CncJob::generateFromExcellon(const Excellon& excellon) {
         startGcode_ = startGcode;
         gcode_ = tGcode;
         toolGcodes_.push_back(tGcode);
+        finishDrillStats(settings_.tools.at(selected.front()), firstPoint);
         return true;
     }
     for (std::size_t k = 0; k < selected.size(); ++k) {
@@ -118,7 +120,20 @@ bool CncJob::generateFromExcellon(const Excellon& excellon) {
         gcode_ += tGcode;
         toolGcodes_.push_back(tGcode);
     }
+    finishDrillStats(settings_.tools.at(selected.back()), firstPoint);
     return true;
+}
+
+void CncJob::finishDrillStats(const DrillToolSettings& last, const std::array<double, 2>& lastPoint) {
+    // ToolDrilling: hasta el X,Y final (si no hay, el último agujero); el tiempo usa los avances de la última
+    // herramienta (son atributos del trabajo que cada herramienta pisa).
+    const std::array<double, 2> end = last.endXY ? *last.endXY : lastPoint;
+    measuredDistance_ += std::fabs(std::hypot(lastPoint[0] - end[0], lastPoint[1] - end[1]));
+    travelDistance_ = measuredDistance_;
+    routingTime_ = (measuredDown_ + measuredUpToZero_) / last.feedrateZ.value();
+    const double liftTime = measuredLift_ / last.feedrateRapid.value();
+    const double traveledTime = measuredDistance_ / last.feedrateRapid.value();
+    routingTime_ += liftTime + traveledTime;
 }
 
 PreprocessorParams CncJob::geometryParams(const GeometryJobSettings& js, const ShapeList& geometry) {
@@ -293,8 +308,20 @@ bool CncJob::toolGcode(int tool, const std::vector<Point2D>& points, const Excel
                                   ts.travelZ.value());
         p.x = pt.x;
         p.y = pt.y;
+        const Point2D from = prev;
         prev = pt;
 
+        // Distancias medidas (measured_*): la bajada, la subida a cero y la subida a la Z de viaje.
+        const double zMove = std::fabs(ts.travelZ.value());
+        auto measure = [&](double z) {
+            measuredDown_ += std::fabs(z) + zMove;
+            if (!ts.fRetract) {
+                measuredUpToZero_ += std::fabs(z);
+                measuredLift_ += zMove;
+            } else {
+                measuredLift_ += std::fabs(z) + zMove;
+            }
+        };
         if (ts.multidepth && std::fabs(zCut) > std::fabs(ts.depthPerPass.value())) {
             const double doc = zCut;
             double z = 0.0;
@@ -303,6 +330,7 @@ bool CncJob::toolGcode(int tool, const std::vector<Point2D>& points, const Excel
                 if (std::fabs(doc) < std::fabs(z) && std::fabs(z) < std::fabs(doc) + ts.depthPerPass.value()) z = doc;
                 p.zCut = PyNumber(z);
                 tGcode += pp->downCode(p) + "\n";
+                measure(z);
                 if (!ts.fRetract) tGcode += pp->upToZeroCode(p) + "\n";
                 tGcode += pp->liftCode(p) + "\n";
             }
@@ -310,9 +338,11 @@ bool CncJob::toolGcode(int tool, const std::vector<Point2D>& points, const Excel
         } else {
             p.zCut = PyNumber(zCut);
             tGcode += pp->downCode(p) + "\n";
+            measure(zCut);
             if (!ts.fRetract) tGcode += pp->upToZeroCode(p) + "\n";
             tGcode += pp->liftCode(p) + "\n";
         }
+        measuredDistance_ += std::fabs(std::hypot(pt.x - from.x, pt.y - from.y));
     }
 
     if (isLast) {
@@ -603,6 +633,7 @@ bool CncJob::generateFromGeometryTools(const std::vector<GeometryToolJob>& tools
     startGcode_.clear();
     gcode_.clear();
     toolGcodes_.clear();
+    travelDistance_ = routingTime_ = 0.0;
     if (tools.empty()) {
         lastError_ = "No hay herramientas";
         return false;
@@ -739,16 +770,33 @@ bool CncJob::geometryToolGcode(const ShapeList& geometry, const GeometryJobSetti
 
         GeoContext ctx{*pp, p, ts, &js.exclusionAreas, js.units == "IN"};
         Point2D current{0, 0};
+        double totalTravel = 0.0, totalCut = 0.0;  // Measurements
         for (std::size_t idx : order) {
             PathItem& item = items[idx];
             ctx.oldPoint = current;  // old_point=current_pt
+            const Point2D start = item.coords.front();  // pt (multiPass puede dejar la línea invertida)
+            double length = 0.0;  // geo.length (antes de simplificar)
+            for (std::size_t k = 1; k < item.coords.size(); ++k)
+                length += std::hypot(item.coords[k].x - item.coords[k - 1].x, item.coords[k].y - item.coords[k - 1].y);
             if (!ts.multidepth) {
+                totalCut += length;
                 g += singlePass(ctx, item);
             } else {
+                int nrCuts = 0;  // por la cantidad de pasadas
+                for (double depth = std::fabs(ts.cutZ); depth > 0; depth -= ts.depthPerPass) {
+                    ++nrCuts;
+                    if (ts.depthPerPass <= 0) break;
+                }
+                totalCut += length * nrCuts;
                 g += multiPass(ctx, item, current);
             }
+            totalTravel += std::fabs(std::hypot(current.x - start.x, current.y - start.y));
             current = item.coords.back();
         }
+        // El viaje hasta el final (0, 0).
+        totalTravel += std::fabs(std::hypot(current.x, current.y));
+        travelDistance_ += totalTravel + totalCut;
+        routingTime_ += totalCut / ts.feedrate;
         if (isLast) {
             g += pp->spindleStopCode(p) + "\n";
             g += lift(ctx, current.x, current.y);

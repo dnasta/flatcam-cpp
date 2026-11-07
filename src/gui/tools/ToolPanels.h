@@ -12,3 +12,6 @@
 #include "gui/tools/PaintTool.h"
 #include "gui/tools/ToolInfo.h"
 #include "gui/tools/TransformTool.h"
+#include "gui/tools/DistanceTool.h"
+#include "gui/tools/MoveTool.h"
+#include "gui/tools/PropertiesTool.h"

@@ -185,6 +185,17 @@ public:
      */
     FlatCAMObj* addObject(std::unique_ptr<FlatCAMObj> obj);
 
+    /**
+     * @brief Lleva el cursor a un punto (`on_jump_to` con `custom_location`): mueve el puntero, opcionalmente centra la
+     * vista y actualiza las etiquetas de posición de la barra de estado.
+     * @param location Punto en mm.
+     * @param fitCenter Si se centra la vista en un cuadrado de 40 mm alrededor del punto.
+     */
+    void jumpTo(const QPointF& location, bool fitCenter = true);
+
+    /** @brief Opciones de la aplicación: las del proyecto abierto o, si no hay, las de fábrica. @return Las opciones. */
+    const JsonValue& appOptions() const;
+
     /** @brief Objetos elegidos en el árbol, en su orden (`collection.get_selected`). @return Los objetos. */
     std::vector<FlatCAMObj*> selectedObjects() const;
 
@@ -233,6 +244,10 @@ public:
     CutOutTool* cutoutTool;      ///< Panel de corte.
     DblSidedTool* dblsidedTool;  ///< Panel de PCB a 2 caras.
     class TransformTool* transformTool;  ///< Panel de Transformaciones.
+    class DistanceTool* distanceTool;  ///< Herramienta Distancia.
+    class DistanceMinTool* distanceMinTool;  ///< Herramienta Distancia mínima.
+    class MoveTool* moveTool;  ///< Herramienta Mover (sin panel).
+    class PropertiesTool* propertiesTool;  ///< Herramienta Propiedades.
     IsolationTool* isolationTool;  ///< Panel de aislamiento.
 
     /** @brief Selección interactiva de zonas y polígonos en el canvas. @return El selector. */
@@ -258,6 +273,9 @@ private:
     void connectSignals();
     void setupProjectMenu();
     bool handleKey(int key, Qt::KeyboardModifiers modifiers);
+    /** @brief Conecta la escala, el desplazamiento y "Transformaciones" de un panel de Propiedades a su objeto. */
+    template <typename Panel>
+    void connectTransformations(Panel* p, FlatCAMObj* obj);
     QString lastFolder() const;
 
     std::unique_ptr<MainGUI> ui_;

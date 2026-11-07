@@ -243,6 +243,12 @@ public:
     bool disjoint(const Shape& o) const;
     /** @brief Distancia mínima a otra figura. @param o Otra figura. @return La distancia. */
     double distance(const Shape& o) const;
+    /**
+     * @brief Los dos puntos más cercanos entre esta figura y otra (`shapely.ops.nearest_points`).
+     * @param o Otra figura.
+     * @return El punto de esta figura y el de @p o; vacío si alguna de las dos está vacía.
+     */
+    std::optional<std::pair<Point2D, Point2D>> nearestPoints(const Shape& o) const;
     /** @brief Igualdad topológica (mismo conjunto de puntos). @param o Otra figura. @return `true` si son equivalentes. */
     bool equals(const Shape& o) const;
 

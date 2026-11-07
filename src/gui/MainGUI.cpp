@@ -36,9 +36,11 @@ MainGUI::MainGUI(QWidget* parent) : MainGUIBase(parent) {
 void MainGUI::connectSignals() {
     connect(menu_toggle_nb, &QAction::triggered, this, [this] { onToggleNotebook(); });
     connect(menufile_exit, &QAction::triggered, qApp, &QApplication::quit);
-    connect(plotcanvas_, &PlotCanvas::mouseMoved, this, [this](QPointF w) { updateCoordinates(w); });
+    connect(plotcanvas_, &PlotCanvas::mouseMoved, this, [this](QPointF w) {
+        if (canvasHandlers_) updateCoordinates(w);
+    });
     connect(plotcanvas_, &PlotCanvas::mouseClicked, this, [this](QPointF w, Qt::MouseButton b) {
-        if (b == Qt::LeftButton) relPoint1_ = w;
+        if (canvasHandlers_ && b == Qt::LeftButton) relPoint1_ = w;
     });
     // Botones de la barra de estado: HUD y ejes (on_toggle_hud / on_toggle_axis cambian además su estilo).
     connect(hud_label, &FCLabel::clicked, this, [this] {

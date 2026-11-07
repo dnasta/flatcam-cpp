@@ -25,6 +25,9 @@
 #include "gui/ToolsDatabase.h"
 #include "gui/ToolsDBTab.h"
 #include "gui/tools/TransformTool.h"
+#include "gui/tools/DistanceTool.h"
+#include "gui/tools/MoveTool.h"
+#include "gui/tools/PropertiesTool.h"
 #include "gui/ProjectIO.h"
 #include "gui/tools/ClearingTools.h"
 #include "gui/objects/ObjectUIs.h"
@@ -104,9 +107,13 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     cutoutTool = new CutOutTool(this, ui_.get());
     dblsidedTool = new DblSidedTool(this, ui_.get());
     transformTool = new TransformTool(this, ui_.get());
+    distanceTool = new DistanceTool(this, ui_.get());
+    distanceMinTool = new DistanceMinTool(this, ui_.get());
+    moveTool = new MoveTool(this, this);
+    propertiesTool = new PropertiesTool(this, ui_.get());
     isolationTool = new IsolationTool(this, ui_.get());
     for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool, transformTool,
-                                                      isolationTool})
+                                                      isolationTool, distanceTool, distanceMinTool, propertiesTool})
         w->hide();
     connectSignals();
     setupProjectMenu();
@@ -250,6 +257,14 @@ void App::connectSignals() {
             runTool(transformTool, TransformTool::info());
             transformTool->setToolUi();
         });
+    // Distancia (Ctrl+M) y Distancia mínima (Shift+M): run(toggle=True).
+    for (QAction* a : {ui_->distance_tool_menuAction, ui_->distance_btn})
+        connect(a, &QAction::triggered, this, [this] { distanceTool->run(); });
+    for (QAction* a : {ui_->distance_min_tool_menuAction, ui_->distance_min_btn})
+        connect(a, &QAction::triggered, this, [this] { distanceMinTool->run(); });
+    connect(ui_->move_tool_menuAction, &QAction::triggered, this, [this] { moveTool->toggle(); });
+    // Propiedades: el menú llama run(toggle=False) (triggered pasa checked = False); la tecla P, run().
+    connect(ui_->properties_tool_menuAction, &QAction::triggered, this, [this] { propertiesTool->run(false); });
     for (QAction* a : {ui_->dblsidedtool_menuAction, ui_->dblsided_btn})
         connect(a, &QAction::triggered, this, [this] {
             runTool(dblsidedTool, DblSidedTool::info());
@@ -257,7 +272,7 @@ void App::connectSignals() {
         });
     // app.pos: el último clic izquierdo en el canvas.
     connect(ui_->plotCanvas(), &PlotCanvas::mouseClicked, this, [this](QPointF w, Qt::MouseButton b) {
-        if (b == Qt::LeftButton) lastClick_ = w;
+        if (ui_->canvasHandlersEnabled() && b == Qt::LeftButton) lastClick_ = w;
     });
     // Opciones -> Voltear en el eje X / Y (on_flipx refleja con mirror('Y'), on_flipy con mirror('X')).
     connect(ui_->menuoptions_transform_flipx, &QAction::triggered, this, [this] { flip(Axis::Y); });
@@ -466,6 +481,15 @@ void App::objectChanged(FlatCAMObj* obj) {
     if (obj == activeObject()) showProperties(obj);  // las tablas y los límites cambiaron
 }
 
+const JsonValue& App::appOptions() const {
+    return projectOptions_.isObject() ? projectOptions_ : ProjectIO::factoryDefaults();
+}
+
+void App::jumpTo(const QPointF& location, bool fitCenter) {
+    ui_->plotCanvas()->jumpTo(location, fitCenter);
+    ui_->updateCoordinates(location);
+}
+
 std::vector<FlatCAMObj*> App::selectedObjects() const {
     std::vector<FlatCAMObj*> out;
     QModelIndexList rows = ui_->collection_view->selectionModel()->selectedIndexes();
@@ -631,7 +655,44 @@ void App::showProperties(FlatCAMObj* obj) {
             connect(entry, &QLineEdit::returnPressed, this, [this, obj, entry] { collection_->rename(obj, entry->text()); });
             panel->setProperty("nameConnected", true);
         }
+        // FlatCAMObj.set_ui: escala, desplazamiento y el botón Transformaciones del panel.
+        if (auto* p = qobject_cast<GerberObjectUI*>(panel)) connectTransformations(p, obj);
+        else if (auto* p2 = qobject_cast<ExcellonObjectUI*>(panel)) connectTransformations(p2, obj);
+        else if (auto* p3 = qobject_cast<GeometryObjectUI*>(panel)) connectTransformations(p3, obj);
+        else if (auto* p4 = qobject_cast<CNCObjectUI*>(panel)) connectTransformations(p4, obj);
     }
+}
+
+template <typename Panel>
+void App::connectTransformations(Panel* p, FlatCAMObj* obj) {
+    // on_offset_button_click: el vector (x, y) de la fórmula; si no se puede leer, el original falla sin mensaje.
+    auto offset = [this, p, obj] {
+        const auto v = p->offsetvector_entry->evaluated();
+        if (!v || v->size() != 2) return;
+        if (obj->offset((*v)[0], (*v)[1])) objectChanged(obj);
+    };
+    // on_scale_button_click: el mismo factor en X e Y, desde el origen.
+    auto scale = [this, p, obj] {
+        const auto f = p->scale_entry->evaluated();
+        if (!f) {
+            ui_->inform("[ERROR_NOTCL] " + tr_("Scaling could not be executed."));
+            return;
+        }
+        if (*f == 1.0) {
+            ui_->inform("[success] " + tr_("Scale done."));
+            return;
+        }
+        if (obj->scale(*f, *f, {0, 0})) objectChanged(obj);
+        ui_->inform("[success] " + tr_("Scale done."));
+    };
+    connect(p->offset_button, &QPushButton::clicked, this, offset);
+    connect(p->offsetvector_entry, &QLineEdit::returnPressed, this, offset);
+    connect(p->scale_button, &QPushButton::clicked, this, scale);
+    connect(p->scale_entry, &QLineEdit::returnPressed, this, scale);
+    connect(p->transformations_button, &QPushButton::clicked, this, [this] {
+        runTool(transformTool, TransformTool::info());
+        transformTool->setToolUi();
+    });
 }
 
 bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
@@ -641,9 +702,20 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
         openToolsDatabase();
         return true;
     }
+    // Ctrl + M: Distancia; Shift + M: Distancia mínima.
+    if (modifiers == Qt::ControlModifier && key == Qt::Key_M) {
+        distanceTool->run();
+        return true;
+    }
+    if (modifiers == Qt::ShiftModifier && key == Qt::Key_M) {
+        distanceMinTool->run();
+        return true;
+    }
     if (modifiers != Qt::NoModifier) return false;
     switch (key) {
         case Qt::Key_V: onZoomFit(); return true;
+        case Qt::Key_M: moveTool->toggle(); return true;
+        case Qt::Key_P: propertiesTool->run(true); return true;
         case Qt::Key_X: flip(Axis::Y); return true;  // on_flipx
         case Qt::Key_Y: flip(Axis::X); return true;  // on_flipy
         case Qt::Key_1: ui_->notebook->setCurrentWidget(ui_->project_tab); return true;
@@ -652,6 +724,10 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
         case Qt::Key_Delete: deleteSelected(); return true;  // on_delete_keypress
         case Qt::Key_Escape:
             // on_key_press de las herramientas: Escape cancela la selección de zonas o polígonos.
+            if (moveTool->active()) {  // on_key_press de ToolMove
+                moveTool->cancel();
+                return true;
+            }
             if (picker_->cancel()) {
                 ui_->inform("[WARNING_NOTCL] " + tr_("Cancelled by user request."));
                 return true;

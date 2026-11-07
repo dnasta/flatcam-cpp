@@ -51,11 +51,27 @@ public:
      */
     QPointF snapToGrid(const QPointF& p) const;
 
-private:
+    /**
+     * @brief Conecta o desconecta los manejadores del mouse de la aplicación (`on_mouse_move_over_plot`,
+     * `on_mouse_click_over_plot`): las herramientas que usan el mouse por su cuenta, como Distancia, los desconectan.
+     * @param on Conectados.
+     */
+    void setCanvasHandlersEnabled(bool on) { canvasHandlers_ = on; }
+    /** @brief Si los manejadores del mouse de la aplicación están conectados. @return El estado. */
+    bool canvasHandlersEnabled() const { return canvasHandlers_; }
+
+    /**
+     * @brief Escribe las etiquetas de posición de la barra de estado como `on_mouse_move_over_plot` (y `on_jump_to`):
+     * la posición y la distancia a `rel_point1`.
+     * @param world Posición en mm.
+     */
     void updateCoordinates(QPointF world);
+
+private:
     void connectSignals();
 
     PlotCanvas* plotcanvas_{nullptr};
+    bool canvasHandlers_{true};
     QPointF relPoint1_{0, 0};  ///< Punto desde donde se miden Dx y Dy (`rel_point1`).
 };
 

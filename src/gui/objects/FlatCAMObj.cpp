@@ -103,10 +103,14 @@ bool ExcellonObject::buffer(double distance, JoinStyle join, bool factor) {
 }
 
 
+ShapeList GerberObject::solidShapes() const { return gerber_->solidGeometry(); }
+
 bool GerberObject::mirror(Axis axis, const Point2D& point) {
     gerber_->mirror(axis, point);
     return true;
 }
+
+ShapeList ExcellonObject::solidShapes() const { return excellon_->solidGeometry(); }
 
 bool ExcellonObject::mirror(Axis axis, const Point2D& point) {
     excellon_->mirror(axis, point);

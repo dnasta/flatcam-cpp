@@ -1,5 +1,7 @@
 #include "gui/PlotCanvas.h"
 
+#include <QCursor>
+
 #include <algorithm>
 
 #include <QApplication>
@@ -332,7 +334,7 @@ void PlotCanvas::drawHud(QPainter& p, const QRectF& vr) const {
     f.setPointSize(kHudFontSize);
     p.setFont(f);
     p.setPen(Qt::black);
-    const QPointF d = cursorWorld_ - lastClick_;
+    const QPointF d = hudDelta_ ? cursorWorld_ - lastClick_ : QPointF(0, 0);
     const QStringList rows = {"Dx:", "Dy:", "", "X:", "Y:"};
     const double vals[] = {d.x(), d.y(), 0, cursorWorld_.x(), cursorWorld_.y()};
     const QFontMetricsF fm(f);
@@ -387,6 +389,15 @@ void PlotCanvas::mouseReleaseEvent(QMouseEvent* event) {
 QPointF PlotCanvas::eventWorld(const QPointF& pixel) const {
     const QPointF w = toWorld(pixel);
     return snapper_ ? snapper_(w) : w;
+}
+
+void PlotCanvas::jumpTo(const QPointF& world, bool fitCenter) {
+    if (fitCenter) fitTo(QRectF(world.x() - 20, world.y() - 20, 40, 40));
+    const QPointF px = toPixel(world);
+    QCursor::setPos(mapToGlobal(QPoint(int(std::lround(px.x())), int(std::lround(px.y())))));
+    cursorWorld_ = snapper_ ? snapper_(world) : world;
+    cursorInside_ = viewRect().contains(px);
+    update();
 }
 
 void PlotCanvas::leaveEvent(QEvent*) {

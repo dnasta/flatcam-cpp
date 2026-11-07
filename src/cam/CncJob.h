@@ -244,6 +244,20 @@ public:
 
     /** @brief Mensaje del último error. @return El mensaje, vacío si no hubo. */
     const std::string& lastError() const { return lastError_; }
+    /**
+     * @brief Distancia recorrida (`travel_distance`): en un taladrado, los viajes entre agujeros (desde el X,Y de
+     * cambio de herramienta) y hasta el X,Y final (`measured_distance` de `ToolDrilling`); en una geometría, los viajes
+     * entre trazados y hasta (0, 0) más el largo de los cortes (por la cantidad de pasadas con profundidad múltiple).
+     * @return La distancia, en las unidades del trabajo.
+     */
+    double travelDistance() const { return travelDistance_; }
+    /**
+     * @brief Tiempo estimado (`routing_time`), en minutos: en un taladrado, las bajadas y subidas a cero con el avance
+     * Z y las subidas y los viajes con el avance de rápidos (de la última herramienta); en una geometría, el largo de
+     * los cortes dividido por el avance de cada herramienta.
+     * @return El tiempo.
+     */
+    double routingTime() const { return routingTime_; }
 
     /**
      * @brief Cabecera de comentarios del archivo (`gcode_header`).
@@ -270,6 +284,11 @@ private:
     bool geometryToolGcode(const ShapeList& geometry, const GeometryJobSettings& js, bool isFirst, bool isLast,
                            std::string& tGcode, std::string& startGcode);
 
+    /**
+     * @brief Cierra las cuentas de un taladrado (`ToolDrilling.on_cnc_button_click`): el viaje hasta el X,Y final y
+     * el tiempo estimado. @param last Parámetros de la última herramienta. @param lastPoint Último agujero.
+     */
+    void finishDrillStats(const DrillToolSettings& last, const std::array<double, 2>& lastPoint);
     /** @brief Genera el G-code de una herramienta. @return `false` si falla. */
     bool toolGcode(int tool, const std::vector<Point2D>& points, const Excellon& ex, std::array<double, 2>& firstPoint,
                    bool isFirst, bool isLast, std::string& tGcode, std::string& startGcode);
@@ -279,6 +298,12 @@ private:
     std::string gcode_;
     std::vector<std::string> toolGcodes_;
     std::string lastError_;
+    double travelDistance_{0.0};        ///< `travel_distance`.
+    double routingTime_{0.0};           ///< `routing_time`.
+    double measuredDistance_{0.0};      ///< `measured_distance` (taladrado).
+    double measuredDown_{0.0};          ///< `measured_down_distance`.
+    double measuredUpToZero_{0.0};      ///< `measured_up_to_zero_distance`.
+    double measuredLift_{0.0};          ///< `measured_lift_distance`.
 };
 
 }  // namespace flatcam
