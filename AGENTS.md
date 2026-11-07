@@ -969,8 +969,11 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    generados por `tests/tools/make_test_dxf.py`: idéntico), ~~exportar DXF~~ (`src/io/DxfExport.*`: la plantilla R2010 de
    ezdxf, `tools/gen_dxf_template.py` → `src/io/generated/DxfR2010Template.h`, con la numeración de ezdxf; idéntico salvo
    GUID y fechas), ~~exportar PNG~~ (la imagen del canvas, sin alfa, como `_screenshot`), ~~importar HPGL2~~ (`src/parsers/Hpgl2.*`,
-   `oracle_hpgl2.py` sobre `tests/data/hpgl2/`: idéntico, también en sus fallas). Falta importar SVG/DXF/PDF/HPGL2/imagen
-   (`ParseSVG`, `ParseDXF*`, `ParsePDF`, `ParseHPGL2`, `ParseFont`, `ToolImage`, `ToolPDF`), objetos Script y Documento.
+   `oracle_hpgl2.py` sobre `tests/data/hpgl2/`: idéntico, también en sus fallas). Falta: importar PDF (`ParsePDF`,
+   `ToolPDF`) e imagen (`ToolImage`), los textos de SVG y DXF (`ParseFont`), el SVG de un CNC Job, abrir/guardar scripts,
+   imprimir a PDF (`on_file_save_objects_pdf`) y los objetos Script y Documento (`FlatCAMScript`, `FlatCAMDocument`).
+   **Pregunta abierta (al usuario):** en HPGL2, ¿corregir las fallas del original (AT, AA, último trazo, varias órdenes por
+   línea) como desvío consciente? Recomendado: sí.
 5. **Herramientas restantes** (`appTools/`): Milling, Panelize, Film, Calculators, Copper Thieving, Fiducials, Corners, Extract
    Drills, Punch Gerber, Invert Gerber, Align Objects, Subtract (`ToolSub`), QR Code, Rules Check, Optimal, Solder Paste,
    Calibration, Etch Compensation, PCB Wizard, Levelling (autonivelación del CNC Job).
