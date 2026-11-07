@@ -118,6 +118,9 @@ protected:
     std::unique_ptr<QWidget> ui_;  ///< Panel de propiedades (se crea al pedirlo por primera vez).
 
 public:
+    /** @brief Los polígonos de una figura (ella misma o sus partes). @param s Figura. @return Los polígonos. */
+    static ShapeList polygonsOf(const Shape& s);
+
     /**
      * @brief Agrega una figura a un grupo de dibujo (para quien dibuja fuera de un objeto, como la selección de zonas).
      * @param s Figura.

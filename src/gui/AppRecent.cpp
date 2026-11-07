@@ -96,6 +96,7 @@ void App::setupRecentItems() {
             if (k == "gerber") openGerber(f);
             else if (k == "excellon") openExcellon(f);
             else if (k == "cncjob") openGcode(f);
+            else if (k == "svg") importSvg(f, false);
             else ui_->inform("[WARNING_NOTCL] " + tr_("Unsupported file type") + ": " + k);
         });
     }

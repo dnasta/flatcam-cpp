@@ -228,6 +228,8 @@ void App::connectSignals() {
     connect(ui_->menufileexportgerber, &QAction::triggered, this, [this] { onFileExport(ObjectKind::Gerber); });
     connect(ui_->menufileexportexcellon, &QAction::triggered, this, [this] { onFileExport(ObjectKind::Excellon); });
     connect(ui_->menufileexportsvg, &QAction::triggered, this, [this] { onFileExportSvg(); });
+    connect(ui_->menufileimportsvg, &QAction::triggered, this, [this] { onFileImportSvg(false); });
+    connect(ui_->menufileimportsvg_as_gerber, &QAction::triggered, this, [this] { onFileImportSvg(true); });
     connect(ui_->file_open_excellon_btn, &QAction::triggered, this, [this] { onFileOpenExcellon(); });
     for (QAction* a : {ui_->menuview_zoom_fit, ui_->zoom_fit_btn}) connect(a, &QAction::triggered, this, [this] { onZoomFit(); });
     // on_zoom_in / on_zoom_out: factor global_zoom_ratio (1,5) alrededor del centro de la vista.
@@ -567,6 +569,7 @@ FlatCAMObj* App::openByExtension(const QString& filename) {
     }
     if (kExcellonExt.contains(ext)) return openExcellon(filename);
     if (kGcodeExt.contains(ext)) return openGcode(filename);
+    if (ext == "svg") return importSvg(filename, false);
     if (ext == "flatprj") {
         openProject(filename);
         return nullptr;

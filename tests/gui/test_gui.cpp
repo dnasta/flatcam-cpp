@@ -2545,3 +2545,24 @@ TEST(GuiFiles, ExportSvg) {
     EXPECT_TRUE(text.startsWith("<?xml version=\"1.0\" ?>\n<svg xmlns="));
     EXPECT_TRUE(text.contains("<g transform=\"scale(1,-1)\">"));
 }
+
+// Importar SVG como Geometría (soltando el archivo) y como Gerber.
+TEST(GuiFiles, ImportSvg) {
+    App app;
+    QTemporaryDir data;
+    app.setDataPath(data.path());
+    const QString f = QString::fromStdString(std::string(FLATCAM_TEST_DATA_DIR) + "/svg/paths.svg");
+    auto* geo = dynamic_cast<GeometryObject*>(app.openByExtension(f));
+    ASSERT_NE(geo, nullptr);
+    EXPECT_EQ(geo->name(), "paths.svg");
+    EXPECT_EQ(geo->solidGeometry().size(), 7u);
+    ASSERT_EQ(geo->tools().size(), 1u);
+    EXPECT_DOUBLE_EQ(geo->tools().begin()->second.tooldia, 2.4);
+    auto* grb = dynamic_cast<GerberObject*>(app.importSvg(f, true));
+    ASSERT_NE(grb, nullptr);
+    ASSERT_TRUE(grb->gerber().apertures().count("0"));
+    EXPECT_EQ(grb->gerber().apertures().at("0").type, "REG");
+    EXPECT_EQ(grb->gerber().apertures().at("0").geometry.size(), 8u);
+    // Un SVG con una línea no se puede importar como Gerber.
+    EXPECT_EQ(app.importSvg(QString::fromStdString(std::string(FLATCAM_TEST_DATA_DIR) + "/svg/shapes.svg"), true), nullptr);
+}
