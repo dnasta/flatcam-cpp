@@ -172,13 +172,18 @@ class Dumper:
         self.names = names
         self.actions = {}
         self.seen_widgets = set()
+        self._keep = []  # envoltorios temporales vivos: si se liberan, Python reutiliza su id()
 
     def name(self, obj):
         return self.names.get(id(obj))
 
     # ---------------------------------------------------------------- acciones
     def action(self, a):
-        key = str(id(a))
+        # La clave es la dirección del QAction de Qt, no id(a): PyQt devuelve envoltorios temporales (menuAction(),
+        # separadores) cuyo id() se reutiliza cuando se liberan, y así un submenú se confundía con otro ya visto.
+        from PyQt5 import sip
+        self._keep.append(a)
+        key = str(sip.unwrapinstance(a))
         if key in self.actions:
             return key
         entry = {"name": self.name(a), "props": props_of(a)}

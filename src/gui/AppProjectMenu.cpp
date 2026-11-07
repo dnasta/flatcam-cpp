@@ -236,6 +236,7 @@ bool App::deleteSelected(bool force) {
     showProperties(nullptr);  // setup_default_properties_tab
     ui_->plotCanvas()->setLayerOrder(collection_->drawOrder());
     ui_->inform(tr_("Object(s) deleted") + "...");
+    shouldWeSave_ = true;
     return true;
 }
 

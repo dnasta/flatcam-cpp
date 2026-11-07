@@ -1,6 +1,7 @@
 // ARCHIVO GENERADO por tools/gui_dump/gen_cpp.py a partir de la interfaz original - no editar a mano.
 #pragma once
 
+#include <QDialog>
 #include <QAction>
 #include <QPixmap>
 #include <QFormLayout>

@@ -1,5 +1,9 @@
 #include "gui/App.h"
 
+#include <QClipboard>
+#include <QMessageBox>
+#include <QPushButton>
+
 #include <QFile>
 
 #include "cam/PolygonClearing.h"
@@ -118,6 +122,12 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     connectSignals();
     setupProjectMenu();
     setupCanvasMenu();
+    setupHelpMenu();
+    // Archivo -> Salir y cerrar la ventana: final_save.
+    disconnect(ui_->menufile_exit, nullptr, nullptr, nullptr);
+    connect(ui_->menufile_exit, &QAction::triggered, this, [this] {
+        if (finalSave()) QApplication::quit();
+    });
     setupRecentItems();
 }
 
@@ -302,6 +312,7 @@ void App::connectSignals() {
         if (collection_->objectAt(idx)) ui_->notebook->setCurrentWidget(ui_->properties_tab);
     });
     connect(collection_, &ObjectCollection::objectRenamed, this, [this](FlatCAMObj* o, const QString& old) {
+        shouldWeSave_ = true;
         ui_->inform(tr_("Object renamed from <b>{old}</b> to <b>{new}</b>").replace("{old}", old).replace("{new}", o->name()));
     });
 }
@@ -369,6 +380,7 @@ bool App::openProject(const QString& filename) {
     registerRecent("project", filename);
     if (!failed.isEmpty()) ui_->inform("[WARNING_NOTCL] " + failed.join("; "));
     else ui_->inform(QString("[success] %1: %2").arg(tr_("Project loaded from"), filename));
+    shouldWeSave_ = false;  // un proyecto recién abierto no tiene cambios
     return true;
 }
 
@@ -387,6 +399,7 @@ bool App::saveProject(const QString& filename) {
         return false;
     }
     projectFilename_ = filename;
+    shouldWeSave_ = false;
     lastFolder_ = QFileInfo(filename).absolutePath();
     ui_->setUiTitle(filename);
     registerRecent("project", filename);  // file_opened.emit("project", ...) al guardar
@@ -486,6 +499,7 @@ FlatCAMObj* App::openByExtension(const QString& filename) {
 }
 
 void App::objectChanged(FlatCAMObj* obj) {
+    shouldWeSave_ = true;
     ui_->plotCanvas()->setLayer(obj->id(), obj->plotData());
     if (obj == activeObject()) showProperties(obj);  // las tablas y los límites cambiaron
 }
@@ -566,6 +580,7 @@ bool App::exportGcode(CNCJobObject* job, QString filename) {
 
 FlatCAMObj* App::addObject(std::unique_ptr<FlatCAMObj> o) {
     FlatCAMObj* obj = collection_->append(std::move(o));
+    shouldWeSave_ = true;
     // ObjectCollection.append: se expande el grupo y, con global_project_autohide, se abre el panel izquierdo.
     ui_->collection_view->setExpanded(collection_->groupIndex(obj->kind()), true);
     ui_->splitter->setSizes({1, 1});
@@ -707,48 +722,181 @@ void App::connectTransformations(Panel* p, FlatCAMObj* obj) {
 }
 
 bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
-    // MainGUI.keyPressEvent sin modificadores: V encuadra; X e Y reflejan; 1, 2 y 3 eligen la pestaña del panel izquierdo.
-    // Ctrl (Cmd en el Mac) + D: la base de datos de herramientas (keyPressEvent de MainGUI).
-    if (modifiers == Qt::ControlModifier && key == Qt::Key_D) {
-        openToolsDatabase();
+    // MainGUI.keyPressEvent con call_source == 'app' (en el Mac, Ctrl es la tecla Cmd). Los atajos de herramientas o
+    // funciones que el port todavía no tiene no hacen nada.
+    MainGUI* ui = ui_.get();
+    auto tool = [](QAction* a) {
+        a->trigger();
         return true;
+    };
+    if (modifiers == (Qt::ControlModifier | Qt::ShiftModifier)) {
+        if (key == Qt::Key_S) return tool(ui->menufilesaveprojectas);
+        return false;
     }
-    // Ctrl + M: Distancia; Shift + M: Distancia mínima.
-    if (modifiers == Qt::ControlModifier && key == Qt::Key_M) {
-        distanceTool->run();
-        return true;
+    if (modifiers == Qt::ControlModifier) {
+        switch (key) {
+            case Qt::Key_A: onSelectAll(); return true;
+            case Qt::Key_C: copySelected(); return true;
+            case Qt::Key_D: openToolsDatabase(); return true;
+            case Qt::Key_E: onFileOpenExcellon(); return true;
+            case Qt::Key_G: onFileOpenGerber(); return true;
+            case Qt::Key_M: distanceTool->run(); return true;
+            case Qt::Key_N: onFileNewClick(); return true;
+            case Qt::Key_O: onFileOpenProject(); return true;
+            case Qt::Key_S: onFileSaveProject(); return true;
+            case Qt::Key_F10: ui->onTogglePlotArea(); return true;
+            default: return false;
+        }
     }
-    if (modifiers == Qt::ShiftModifier && key == Qt::Key_M) {
-        distanceMinTool->run();
-        return true;
+    if (modifiers == Qt::ShiftModifier) {
+        switch (key) {
+            case Qt::Key_A: ui->onToggleAxis(); return true;
+            case Qt::Key_C: {  // on_copy_name
+                FlatCAMObj* o = activeObject();
+                if (!o) {
+                    ui->inform("[WARNING_NOTCL] " + tr_("No object is selected."));
+                    return true;
+                }
+                QApplication::clipboard()->setText(o->name());
+                ui->inform(tr_("Name copied to clipboard ..."));
+                return true;
+            }
+            case Qt::Key_G: ui->onToggleGridLines(); return true;
+            case Qt::Key_H: ui->onToggleHud(); return true;
+            case Qt::Key_J: onLocate(); return true;
+            case Qt::Key_M: distanceMinTool->run(); return true;
+            case Qt::Key_R: onRotateSelection(-90.0); return true;  // -tools_transform_rotate
+            case Qt::Key_W: onWorkspaceToggle(); return true;
+            case Qt::Key_X: onSkewSelection('X'); return true;
+            case Qt::Key_Y: onSkewSelection('Y'); return true;
+            default: return false;
+        }
+    }
+    if (modifiers == Qt::AltModifier) {
+        switch (key) {
+            case Qt::Key_1: ui->menuviewenable->trigger(); return true;
+            case Qt::Key_2: ui->menuviewdisableall->trigger(); return true;
+            case Qt::Key_3: ui->menuviewenableother->trigger(); return true;
+            case Qt::Key_4: ui->menuviewdisableother->trigger(); return true;
+            case Qt::Key_D: return tool(ui->dblsided_btn);
+            case Qt::Key_I: return tool(ui->isolation_btn);
+            case Qt::Key_N: return tool(ui->ncc_btn);
+            case Qt::Key_P: return tool(ui->paint_btn);
+            case Qt::Key_S: viewSource(activeObject()); return true;
+            case Qt::Key_T: return tool(ui->transform_btn);
+            case Qt::Key_X: return tool(ui->cutout_btn);
+            case Qt::Key_F10: ui->onFullscreen(); return true;
+            default: return false;
+        }
     }
     if (modifiers != Qt::NoModifier) return false;
+    // on_select_tab: si el panel está escondido lo muestra; si ya estaba en esa pestaña, lo esconde.
+    auto selectTab = [ui](QWidget* tab) {
+        if (ui->splitter->sizes().value(0) == 0) ui->splitter->setSizes({1, 1});
+        else if (ui->notebook->currentWidget() == tab) ui->splitter->setSizes({0, 1});
+        ui->notebook->setCurrentWidget(tab);
+        return true;
+    };
+    PlotCanvas* canvas = ui->plotCanvas();
     switch (key) {
-        case Qt::Key_V: onZoomFit(); return true;
-        case Qt::Key_M: moveTool->toggle(); return true;
-        case Qt::Key_P: propertiesTool->run(true); return true;
-        case Qt::Key_X: flip(Axis::Y); return true;  // on_flipx
-        case Qt::Key_Y: flip(Axis::X); return true;  // on_flipy
-        case Qt::Key_1: ui_->notebook->setCurrentWidget(ui_->project_tab); return true;
-        case Qt::Key_2: ui_->notebook->setCurrentWidget(ui_->properties_tab); return true;
-        case Qt::Key_3: ui_->notebook->setCurrentWidget(ui_->tool_tab); return true;
+        case Qt::Key_F1: openHelpLink(0); return true;
+        case Qt::Key_F3: onShortcutList(); return true;
+        case Qt::Key_F4: openHelpLink(1); return true;
+        case Qt::Key_F5: plotAll(); return true;
+        case Qt::Key_1: return selectTab(ui->project_tab);
+        case Qt::Key_2: return selectTab(ui->properties_tab);
+        case Qt::Key_3: return selectTab(ui->tool_tab);
         case Qt::Key_Delete: deleteSelected(); return true;  // on_delete_keypress
         case Qt::Key_Escape:
-            // on_key_press de las herramientas: Escape cancela la selección de zonas o polígonos.
-            if (moveTool->active()) {  // on_key_press de ToolMove
+            // on_key_press de las herramientas: Escape cancela Mover o la selección de zonas o polígonos.
+            if (moveTool->active()) {
                 moveTool->cancel();
                 return true;
             }
             if (picker_->cancel()) {
-                ui_->inform("[WARNING_NOTCL] " + tr_("Cancelled by user request."));
+                ui->inform("[WARNING_NOTCL] " + tr_("Cancelled by user request."));
                 return true;
             }
-            return false;
+            // on_deselect_all, salir de la pantalla completa y dejar de esperar el clic de "Fijar el origen".
+            for (FlatCAMObj* o : collection_->objects()) setActive(o, false);
+            deleteSelectionShape();
+            ui->onFullscreen(true);
+            if (setOriginConnection_) {
+                disconnect(setOriginConnection_);
+                setOriginConnection_ = {};
+            }
+            ui->inform("");
+            return true;
+        case Qt::Key_Space: {
+            // El "Dibujar" de cada elegido cambia.
+            const std::vector<FlatCAMObj*> sel = selectedObjects();
+            for (FlatCAMObj* o : sel) {
+                o->setPlotEnabled(!o->plotEnabled());
+                canvas->setLayerVisible(o->id(), o->plotEnabled());
+                if (o == activeObject()) showProperties(o);
+            }
+            deleteSelectionShape();
+            return true;
+        }
+        case Qt::Key_Up:
+        case Qt::Key_Down: {
+            // Solo con el foco en el árbol del Proyecto: el anterior o el siguiente (dando la vuelta).
+            if (QApplication::focusWidget() != ui->collection_view) return false;
+            FlatCAMObj* active = activeObject();
+            const std::vector<FlatCAMObj*> all = collection_->objects();
+            for (FlatCAMObj* o : all) setActive(o, false);
+            if (!active || all.empty()) return true;
+            const auto it = std::find(all.begin(), all.end(), active);
+            const long idx = it - all.begin(), n = static_cast<long>(all.size());
+            setActive(all[static_cast<std::size_t>(key == Qt::Key_Up ? (idx + n - 1) % n : (idx + 1) % n)], true);
+            return true;
+        }
+        case Qt::Key_G: ui->grid_snap_btn->trigger(); return true;
+        case Qt::Key_J: onJumpTo(); return true;
+        case Qt::Key_M: moveTool->toggle(); return true;
+        case Qt::Key_O: onSetOrigin(); return true;
+        case Qt::Key_P: propertiesTool->run(true); return true;
+        case Qt::Key_R: onRotateSelection(90.0); return true;  // tools_transform_rotate
+        case Qt::Key_V: onZoomFit(); return true;
+        case Qt::Key_X: flip(Axis::Y); return true;  // on_flipx
+        case Qt::Key_Y: flip(Axis::X); return true;  // on_flipy
+        // Acercar y alejar alrededor del mouse (global_zoom_ratio = 1,5).
+        case Qt::Key_Equal: canvas->zoom(1.5, mouse_); return true;
+        case Qt::Key_Minus: canvas->zoom(1 / 1.5, mouse_); return true;
+        case Qt::Key_QuoteLeft: ui->onToggleNotebook(); return true;
         default: return false;
     }
 }
 
+bool App::finalSave() {
+    if (!shouldWeSave_ || collection_->objects().empty()) return true;
+    QMessageBox box(ui_.get());
+    box.setText(tr_("There are files/objects modified in FlatCAM. \nDo you want to Save the project?"));
+    box.setWindowTitle(tr_("Save changes"));
+    box.setWindowIcon(QIcon(":/images/save_as.png"));
+    box.setIcon(QMessageBox::Question);
+    QPushButton* yes = box.addButton(tr_("Yes"), QMessageBox::YesRole);
+    QPushButton* no = box.addButton(tr_("No"), QMessageBox::NoRole);
+    box.addButton(tr_("Cancel"), QMessageBox::RejectRole);
+    box.setDefaultButton(yes);
+    box.exec();
+    QAbstractButton* r = box.clickedButton();
+    if (r == yes) {
+        onFileSaveProjectAs();  // on_file_saveprojectas(quit_action=True): sale si se guardó
+        return !shouldWeSave_;
+    }
+    return r == no;
+}
+
 bool App::eventFilter(QObject* obj, QEvent* ev) {
+    if (obj == ui_.get() && ev->type() == QEvent::Close) {
+        // closeEvent de MainGUI -> final_save: con "Cancelar" la ventana no se cierra.
+        if (!finalSave()) {
+            ev->ignore();
+            return true;
+        }
+        return false;
+    }
     if (obj == ui_.get()) {
         if (ev->type() == QEvent::DragEnter || ev->type() == QEvent::DragMove) {
             auto* e = static_cast<QDropEvent*>(ev);

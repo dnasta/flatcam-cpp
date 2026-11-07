@@ -219,6 +219,10 @@ public:
     QMenu* menuedit_convert{nullptr};  ///< `menuedit_convert` del original.
     QAction* menuedit_convert_mg2sg{nullptr};  ///< `menuedit_convert_mg2sg` del original.
     QAction* menuedit_convert_sg2mg{nullptr};  ///< `menuedit_convert_sg2mg` del original.
+    QMenu* menuedit_join{nullptr};  ///< `menuedit_join` del original.
+    QAction* menuedit_join2geo{nullptr};  ///< `menuedit_join2geo` del original.
+    QAction* menuedit_join_exc2exc{nullptr};  ///< `menuedit_join_exc2exc` del original.
+    QAction* menuedit_join_grb2grb{nullptr};  ///< `menuedit_join_grb2grb` del original.
     QAction* menuedit_move2origin{nullptr};  ///< `menuedit_move2origin` del original.
     QAction* menueditconvert_any2excellon{nullptr};  ///< `menueditconvert_any2excellon` del original.
     QAction* menueditconvert_any2geo{nullptr};  ///< `menueditconvert_any2geo` del original.
@@ -274,6 +278,8 @@ public:
     QAction* menufilesaveprojectas{nullptr};  ///< `menufilesaveprojectas` del original.
     QMenu* menuhelp{nullptr};  ///< `menuhelp` del original.
     QAction* menuhelp_about{nullptr};  ///< `menuhelp_about` del original.
+    QMenu* menuhelp_bookmarks{nullptr};  ///< `menuhelp_bookmarks` del original.
+    QAction* menuhelp_bookmarks_manager{nullptr};  ///< `menuhelp_bookmarks_manager` del original.
     QAction* menuhelp_exc_spec{nullptr};  ///< `menuhelp_exc_spec` del original.
     QAction* menuhelp_gerber_spec{nullptr};  ///< `menuhelp_gerber_spec` del original.
     QAction* menuhelp_manual{nullptr};  ///< `menuhelp_manual` del original.

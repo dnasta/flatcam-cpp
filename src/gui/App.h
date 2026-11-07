@@ -336,6 +336,45 @@ public:
     void onJumpTo();
     /** @brief Editar -> Ubicar (`on_locate`): una esquina o el centro del objeto activo. */
     void onLocate();
+    /** @brief Editar -> Unir Geo/Gerber/Exc -> Geo (`on_edit_join`). @return La Geometría nueva, o nulo si falló. */
+    FlatCAMObj* joinGeometry();
+    /** @brief Editar -> Unir Exc -> Exc (`on_edit_join_exc`). @return El Excellon nuevo, o nulo si falló. */
+    FlatCAMObj* joinExcellon();
+    /** @brief Editar -> Unir Gerber -> Gerber (`on_edit_join_grb`). @return El Gerber nuevo, o nulo si falló. */
+    FlatCAMObj* joinGerber();
+    /** @brief Editar -> Convertir -> a Geometría (`convert_any2geo`), un `<nombre>_conv` por objeto. @return Los nuevos. */
+    std::vector<FlatCAMObj*> convertToGeometry();
+    /** @brief Editar -> Convertir -> a Gerber (`convert_any2gerber`): Geometría o Excellon. @return Los nuevos. */
+    std::vector<FlatCAMObj*> convertToGerber();
+    /** @brief Editar -> Convertir -> a Excellon (`convert_any2excellon`): Gerber o Geometría. @return Los nuevos. */
+    std::vector<FlatCAMObj*> convertToExcellon();
+    /**
+     * @brief Opciones -> Girar la selección (`on_rotate`): alrededor del centro de la caja de los elegidos.
+     * @param preset Ángulo (sin él, se pide con `FCInputDoubleSpinner`).
+     */
+    void onRotateSelection(std::optional<double> preset = std::nullopt);
+    /**
+     * @brief Opciones -> Inclinar en X / Y (`on_skewx`, `on_skewy`): desde la esquina inferior izquierda de los elegidos.
+     * @param axis `'X'` o `'Y'`. @param preset Ángulo (sin él, se pide con `FCInputDoubleSpinner`).
+     */
+    void onSkewSelection(char axis, std::optional<double> preset = std::nullopt);
+    /** @brief El diálogo Acerca de (`on_about`), sin mostrar. @return El diálogo. */
+    std::unique_ptr<class QDialog> aboutDialog();
+    /** @brief El diálogo "Cómo empezar" (`on_howto`), sin mostrar. @return El diálogo. */
+    std::unique_ptr<class QDialog> howtoDialog();
+    /** @brief La pestaña con la lista de atajos (`ShortcutsTab`). @return La pestaña. */
+    QWidget* shortcutsTab();
+    /** @brief Ayuda -> Lista de atajos (`on_shortcut_list`, F3): agrega la pestaña al área de dibujo. */
+    void onShortcutList();
+    /** @brief Abre en el navegador el manual (0, F1) o los videos (1, F4). @param which Cuál. */
+    void openHelpLink(int which);
+    /**
+     * @brief `final_save`: antes de salir, si hay cambios sin guardar pregunta si se guarda el proyecto.
+     * @return `true` si se puede salir (se guardó, se eligió "No" o no había cambios); `false` con "Cancelar".
+     */
+    bool finalSave();
+    /** @brief Si hay cambios sin guardar (`should_we_save`). @return El estado. */
+    bool shouldWeSave() const { return shouldWeSave_; }
     /** @brief Arma y abre el menú del canvas (`popMenu`) donde está el cursor. */
     void popupCanvasMenu();
     /** @brief El menú del canvas (`popMenu`). @return El menú. */
@@ -368,6 +407,9 @@ private:
     QPointF lastClick_{0.0, 0.0};
     void selectObjects(bool multisel);
     void setupCanvasMenu();
+    void setupHelpMenu();
+    bool shouldWeSave_{false};  ///< `should_we_save`: hay cambios sin guardar.
+    QWidget* shortcutsTab_{nullptr};
     void populateGridMenu();
     class QMenu* popMenu_{nullptr};      ///< `popMenu`: menú contextual del canvas.
     class QMenu* gridMenu_{nullptr};     ///< `cmenu_gridmenu`.

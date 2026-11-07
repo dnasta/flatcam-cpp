@@ -1,0 +1,2118 @@
+{
+ "root": {
+  "qt": "QDialog",
+  "py": "AboutDialog",
+  "name": null,
+  "props": {
+   "windowTitle": {
+    "t": "str",
+    "v": "Acerca de"
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": null,
+   "props": {},
+   "margins": [
+    11,
+    11,
+    11,
+    11
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QHBoxLayout",
+      "py": "QHBoxLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "stretch": 0,
+        "spacer": [
+         0,
+         0,
+         7,
+         1
+        ]
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "FlatCAM <strong>2024.4 β </strong>(64bit)<br><a href = \"<MagicMock name='app_url' id='5262978896'>\"><MagicMock name='app_url' id='5262978896'></a>"
+          },
+          "openExternalLinks": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QHBoxLayout",
+      "py": "QHBoxLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QTabWidget",
+         "py": "QTabWidget",
+         "name": null,
+         "props": {},
+         "tabbar": {
+          "py": "QTabBar",
+          "props": {
+           "objectName": {
+            "t": "str",
+            "v": "qt_tabwidget_tabbar"
+           },
+           "drawBase": {
+            "t": "bool",
+            "v": false
+           }
+          }
+         },
+         "tabs": [
+          {
+           "text": "Pantalla de bienvenida",
+           "icon": null,
+           "tooltip": "",
+           "protected": false,
+           "widget": {
+            "qt": "QWidget",
+            "py": "QWidget",
+            "name": "splash_tab",
+            "props": {
+             "objectName": {
+              "t": "str",
+              "v": "splash_about"
+             }
+            },
+            "layout": {
+             "qt": "QHBoxLayout",
+             "py": "QHBoxLayout",
+             "name": "splash_tab_layout",
+             "props": {},
+             "margins": [
+              2,
+              2,
+              2,
+              2
+             ],
+             "spacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QLabel",
+                "py": "QLabel",
+                "name": null,
+                "props": {
+                 "pixmap": {
+                  "t": "QPixmap",
+                  "v": ":/images/flatcam_icon256.png"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "stretch": 1,
+               "widget": {
+                "qt": "QLabel",
+                "py": "QLabel",
+                "name": null,
+                "props": {
+                 "text": {
+                  "t": "str",
+                  "v": "<font size=8><B>FlatCAM β</B></font><BR>Fabricación de placa de circuito impreso asistida por computadora 2D<BR><BR><BR><a href = \"https://bitbucket.org/jpcgt/flatcam/src/Beta/\"><B>Desarrollo</B></a><BR><a href = \"https://bitbucket.org/jpcgt/flatcam/downloads/\"><b>DESCARGAR</B></a><BR><a href = \"https://bitbucket.org/jpcgt/flatcam/issues?status=new&status=open/\"><B>Rastreador de problemas</B></a><BR>"
+                 },
+                 "openExternalLinks": {
+                  "t": "bool",
+                  "v": true
+                 }
+                }
+               }
+              }
+             ]
+            }
+           }
+          },
+          {
+           "text": "Programadores",
+           "icon": null,
+           "tooltip": "",
+           "protected": false,
+           "widget": {
+            "qt": "QWidget",
+            "py": "QWidget",
+            "name": "programmmers_tab",
+            "props": {
+             "objectName": {
+              "t": "str",
+              "v": "programmers_about"
+             },
+             "hidden": {
+              "t": "bool",
+              "v": true
+             }
+            },
+            "layout": {
+             "qt": "QVBoxLayout",
+             "py": "QVBoxLayout",
+             "name": "programmmers_tab_layout",
+             "props": {},
+             "margins": [
+              2,
+              2,
+              2,
+              2
+             ],
+             "spacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QScrollArea",
+                "py": "QScrollArea",
+                "name": null,
+                "props": {
+                 "frameShape": {
+                  "t": "int",
+                  "v": 0
+                 },
+                 "widgetResizable": {
+                  "t": "bool",
+                  "v": true
+                 }
+                },
+                "widget": {
+                 "qt": "QWidget",
+                 "py": "QWidget",
+                 "name": null,
+                 "props": {
+                  "autoFillBackground": {
+                   "t": "bool",
+                   "v": true
+                  }
+                 },
+                 "layout": {
+                  "qt": "QGridLayout",
+                  "py": "QGridLayout",
+                  "name": "prog_grid_lay",
+                  "props": {},
+                  "margins": [
+                   9,
+                   9,
+                   9,
+                   9
+                  ],
+                  "spacing": -1,
+                  "hspacing": 20,
+                  "vspacing": 6,
+                  "rowStretch": [
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0
+                  ],
+                  "colStretch": [
+                   0,
+                   0,
+                   1
+                  ],
+                  "colMinWidth": [
+                   0,
+                   0,
+                   0
+                  ],
+                  "items": [
+                   {
+                    "align": 0,
+                    "row": 0,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "<b>Programador</b>"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 0,
+                    "col": 1,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "<b>Estado</b>"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 0,
+                    "col": 2,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "<b>Email</b>"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 1,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Juan Pablo Caram"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 1,
+                    "col": 1,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Autor del programa"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 2,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {}
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 3,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "vika-sonne"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 3,
+                    "col": 1,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "β Maintainer 2023"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 4,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Denis Hayrullin"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 5,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Kamil Sopko"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 6,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Marius Stanciu"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 6,
+                    "col": 1,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "BETA Mantenedor >= 2019"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 6,
+                    "col": 2,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "<marius_adrian@yahoo.com>"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 7,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {}
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 8,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "David Robertson"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 9,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Matthieu Berthomé"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 10,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Mike Evans"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 11,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Victor Benso"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 12,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {}
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 13,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Jørn Sandvik Nilsson"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 14,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Lei Zheng"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 15,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Leandro Heck"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 16,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Marco A Quezada"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 17,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {}
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 18,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Cedric Dussud"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 19,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Chris Hemingway"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 20,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Damian Wrobel"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 21,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Daniel Sallin"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 22,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {}
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 23,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Bruno Vunderl"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 24,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Gonzalo Lopez"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 25,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Jakob Staudt"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 26,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Mike Smith"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 27,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {}
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 28,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Barnaby Walters"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 29,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Steve Martina"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 30,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Thomas Duffin"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 31,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Andrey Kultyapov"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 32,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {}
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 33,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Alex Lazar"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 34,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Chris Breneman"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 35,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Eric Varsanyi"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 36,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Lubos Medovarsky"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 37,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {}
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 38,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "@Idechix"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 39,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "@SM"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 40,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "@grbf"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 41,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "@Symonty"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 42,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "@mgix"
+                      }
+                     }
+                    }
+                   }
+                  ]
+                 }
+                }
+               }
+              }
+             ]
+            }
+           }
+          },
+          {
+           "text": "Traductores",
+           "icon": null,
+           "tooltip": "",
+           "protected": false,
+           "widget": {
+            "qt": "QWidget",
+            "py": "QWidget",
+            "name": "translators_tab",
+            "props": {
+             "objectName": {
+              "t": "str",
+              "v": "translators_about"
+             },
+             "hidden": {
+              "t": "bool",
+              "v": true
+             }
+            },
+            "layout": {
+             "qt": "QVBoxLayout",
+             "py": "QVBoxLayout",
+             "name": "translators_tab_layout",
+             "props": {},
+             "margins": [
+              2,
+              2,
+              2,
+              2
+             ],
+             "spacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QScrollArea",
+                "py": "QScrollArea",
+                "name": null,
+                "props": {
+                 "frameShape": {
+                  "t": "int",
+                  "v": 0
+                 },
+                 "widgetResizable": {
+                  "t": "bool",
+                  "v": true
+                 }
+                },
+                "widget": {
+                 "qt": "QWidget",
+                 "py": "QWidget",
+                 "name": null,
+                 "props": {
+                  "autoFillBackground": {
+                   "t": "bool",
+                   "v": true
+                  }
+                 },
+                 "layout": {
+                  "qt": "QGridLayout",
+                  "py": "QGridLayout",
+                  "name": "translator_grid_lay",
+                  "props": {},
+                  "margins": [
+                   9,
+                   9,
+                   9,
+                   9
+                  ],
+                  "spacing": 6,
+                  "hspacing": 6,
+                  "vspacing": 6,
+                  "rowStretch": [
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0,
+                   0
+                  ],
+                  "colStretch": [
+                   0,
+                   0,
+                   1,
+                   0
+                  ],
+                  "colMinWidth": [
+                   0,
+                   0,
+                   0,
+                   0
+                  ],
+                  "items": [
+                   {
+                    "align": 0,
+                    "row": 0,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "<b>Idioma</b>"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 0,
+                    "col": 1,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "<b>Traductor</b>"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 0,
+                    "col": 2,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "<b>Correcciones</b>"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 0,
+                    "col": 3,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "<b>Email</b>"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 1,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "BR - Portuguese"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 1,
+                    "col": 1,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Carlos Stein"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 1,
+                    "col": 3,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "<carlos.stein@gmail.com>"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 2,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "French"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 2,
+                    "col": 1,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Michel Maciejewski"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 2,
+                    "col": 2,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Olivier Cornet"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 2,
+                    "col": 3,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "<micmac589@gmail.com>"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 4,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Italian"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 4,
+                    "col": 1,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Massimiliano Golfetto"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 4,
+                    "col": 2,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": " "
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 4,
+                    "col": 3,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "<golfetto.pcb@gmail.com>"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 5,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "German"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 5,
+                    "col": 1,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Marius Stanciu (Google-Tr)"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 5,
+                    "col": 2,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Jens Karstedt, Detlef Eckardt"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 5,
+                    "col": 3,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": " "
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 6,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Romanian"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 6,
+                    "col": 1,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Marius Stanciu"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 6,
+                    "col": 3,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "<marius_adrian@yahoo.com>"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 7,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Russian"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 7,
+                    "col": 1,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Andrey Kultyapov"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 7,
+                    "col": 3,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "<camellan@yandex.ru>"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 8,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Spanish"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 8,
+                    "col": 1,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Marius Stanciu (Google-Tr)"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 8,
+                    "col": 2,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {}
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 8,
+                    "col": 3,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": " "
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 9,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Turkish"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 9,
+                    "col": 1,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Mehmet Kaya"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 9,
+                    "col": 3,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "<malatyakaya480@gmail.com>"
+                      }
+                     }
+                    }
+                   }
+                  ]
+                 }
+                }
+               }
+              }
+             ]
+            }
+           }
+          },
+          {
+           "text": "Licencia",
+           "icon": null,
+           "tooltip": "",
+           "protected": false,
+           "widget": {
+            "qt": "QWidget",
+            "py": "QWidget",
+            "name": "license_tab",
+            "props": {
+             "objectName": {
+              "t": "str",
+              "v": "license_about"
+             },
+             "hidden": {
+              "t": "bool",
+              "v": true
+             }
+            },
+            "layout": {
+             "qt": "QVBoxLayout",
+             "py": "QVBoxLayout",
+             "name": "license_tab_layout",
+             "props": {},
+             "margins": [
+              2,
+              2,
+              2,
+              2
+             ],
+             "spacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QLabel",
+                "py": "QLabel",
+                "name": null,
+                "props": {
+                 "text": {
+                  "t": "str",
+                  "v": "Licenciado bajo la licencia MIT:<br><a href = \"http://www.opensource.org/licenses/mit-license.php\">http://www.opensource.org/licenses/mit-license.php</a><br>"
+                 },
+                 "openExternalLinks": {
+                  "t": "bool",
+                  "v": true
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QLabel",
+                "py": "QLabel",
+                "name": null,
+                "props": {
+                 "text": {
+                  "t": "str",
+                  "v": "Por la presente se otorga permiso, sin cargo, a cualquier persona que obtenga una copia\nde este software y los archivos de documentación asociados (el \"Software\"), para tratar\nen el Software sin restricción, incluidos, entre otros, los derechos\npara usar, copiar, modificar, fusionar, publicar, distribuir, sublicenciar y / o vender\ncopias del Software y para permitir a las personas a quienes pertenece el Software\n amueblado para hacerlo, sujeto a las siguientes condiciones:\n\nEl aviso de copyright anterior y este aviso de permiso se incluirán en\ntodas las copias o partes sustanciales del software.\n\nEL SOFTWARE SE PROPORCIONA \"TAL CUAL\", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA O\nIMPLÍCITO, INCLUYENDO PERO NO LIMITADO A LAS GARANTÍAS DE COMERCIABILIDAD,\nAPTITUD PARA UN PROPÓSITO PARTICULAR Y NO INFRACCIÓN. EN NINGÚN CASO EL\nLOS AUTORES O LOS TITULARES DE LOS DERECHOS DE AUTOR SERÁN RESPONSABLES POR CUALQUIER RECLAMACIÓN, DAÑO U OTRO\nRESPONSABILIDAD, EN CASO DE ACCIÓN DE CONTRATO, TORTURA O DE OTRA MANERA, DERIVADA DE,\nFUERA DE O EN CONEXIÓN CON EL SOFTWARE O EL USO U OTRAS OFERTAS EN\nEL SOFTWARE."
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "stretch": 0,
+               "spacer": [
+                0,
+                0,
+                1,
+                7
+               ]
+              }
+             ]
+            }
+           }
+          },
+          {
+           "text": "Atribuciones",
+           "icon": null,
+           "tooltip": "",
+           "protected": false,
+           "widget": {
+            "qt": "QWidget",
+            "py": "QWidget",
+            "name": "attributions_tab",
+            "props": {
+             "objectName": {
+              "t": "str",
+              "v": "attributions_about"
+             },
+             "hidden": {
+              "t": "bool",
+              "v": true
+             }
+            },
+            "layout": {
+             "qt": "QVBoxLayout",
+             "py": "QVBoxLayout",
+             "name": "attributions_tab_layout",
+             "props": {},
+             "margins": [
+              2,
+              2,
+              2,
+              2
+             ],
+             "spacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QLabel",
+                "py": "QLabel",
+                "name": null,
+                "props": {
+                 "text": {
+                  "t": "str",
+                  "v": "Algunos de los iconos utilizados son de las siguientes fuentes: <br><div> Iconos de <a href=\"https://www.flaticon.com/authors/freepik\" title=\"Freepik\">Freepik</a>de<a href=\"https://www.flaticon.com/\" title=\"Flaticon\"> www.flaticon.com </a></div><div>Iconos de <a target=\"_ blank\" href=\"https: //icons8.com\">Icons8</a></div>Iconos de <a href=\"http://www.onlinewebfonts.com\">oNline Web Fonts</a><div>Iconos de <a href=\"https://www.flaticon.com/authors/pixel-perfect\" title=\"Pixel perfect\">Pixel perfect</a> de <a href=\"https://www.flaticon.com/\" title=\"Flaticon\">www.flaticon.com</a></div>"
+                 },
+                 "openExternalLinks": {
+                  "t": "bool",
+                  "v": true
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "stretch": 0,
+               "spacer": [
+                0,
+                0,
+                1,
+                7
+               ]
+              }
+             ]
+            }
+           }
+          },
+          {
+           "text": "Components",
+           "icon": null,
+           "tooltip": "",
+           "protected": false,
+           "widget": {
+            "qt": "QWidget",
+            "py": "QWidget",
+            "name": "components_tab",
+            "props": {
+             "objectName": {
+              "t": "str",
+              "v": "components_about"
+             },
+             "hidden": {
+              "t": "bool",
+              "v": true
+             }
+            },
+            "layout": {
+             "qt": "QVBoxLayout",
+             "py": "QVBoxLayout",
+             "name": "components_tab_layout",
+             "props": {},
+             "margins": [
+              2,
+              2,
+              2,
+              2
+             ],
+             "spacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QLabel",
+                "py": "QLabel",
+                "name": null,
+                "props": {
+                 "text": {
+                  "t": "str",
+                  "v": "<table><tr><td>Python</td><td>3.10.22</td></tr><tr><td>Qt</td><td>5.15.15</td></tr><tr><td>PyQt</td><td>5.15.11</td></tr><tr><td>Ezdxf</td><td>?</td></tr><tr><td>Lxml</td><td>?</td></tr><tr><td>Numpy</td><td>1.26.4</td></tr><tr><td>OpenGL</td><td>?</td></tr><tr><td>Rasterio</td><td>?</td></tr><tr><td>Rtree</td><td>?</td></tr><tr><td>Shapely</td><td>1.8.4</td></tr><tr><td>Simplejson</td><td>?</td></tr><tr><td>Svglib</td><td>?</td></tr><tr><td>Vispy</td><td>?</td></tr></table>"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "stretch": 0,
+               "spacer": [
+                0,
+                0,
+                1,
+                7
+               ]
+              }
+             ]
+            }
+           }
+          }
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QHBoxLayout",
+      "py": "QHBoxLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "items": []
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QHBoxLayout",
+      "py": "QHBoxLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "stretch": 0,
+        "spacer": [
+         0,
+         0,
+         7,
+         1
+        ]
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "QPushButton",
+         "name": null,
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "Cerca"
+          },
+          "autoDefault": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "AboutDialogUI"
+}

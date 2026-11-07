@@ -4,8 +4,11 @@
 #include <QFormLayout>
 #include <QLabel>
 #include <QPushButton>
+#include <QVBoxLayout>
 
 #include "gui/Translation.h"
+#include "gui/widgets/FCLabel.h"
+#include "gui/widgets/FCSpinners.h"
 
 namespace flatcam::gui {
 
@@ -59,6 +62,29 @@ DialogBoxChoice::DialogBoxChoice(const QString& title, const QIcon& icon, const 
     form->addRow(box);
     connect(box, &QDialogButtonBox::accepted, this, &QDialog::accept);
     connect(box, &QDialogButtonBox::rejected, this, &QDialog::reject);
+}
+
+FCInputDoubleSpinner::FCInputDoubleSpinner(QWidget* parent, const QString& title, const QString& text, double min,
+                                           double max, double step, int decimals, double initVal)
+    : QDialog(parent) {
+    setWindowTitle(title.isEmpty() ? QString("title") : title);
+    auto* lbl = new FCLabel();
+    lbl->setText(text.isEmpty() ? QString("text") : text);
+    wdg = new FCDoubleSpinner();
+    wdg->setPrecision(decimals);
+    wdg->setRange_(min, max);
+    wdg->setSingleStep(step);
+    wdg->setValue(initVal);
+    auto* box = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(box, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    connect(box, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    auto* lay = new QVBoxLayout();
+    lay->addWidget(lbl);
+    lay->addWidget(wdg);
+    lay->addWidget(box);
+    box->button(QDialogButtonBox::Ok)->setText(tr_("Ok"));
+    box->button(QDialogButtonBox::Cancel)->setText(tr_("Cancel"));
+    setLayout(lay);
 }
 
 }  // namespace flatcam::gui

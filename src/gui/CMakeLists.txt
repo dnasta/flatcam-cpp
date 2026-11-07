@@ -11,6 +11,9 @@ add_library(flatcam_gui STATIC
     AppRecent.cpp
     AppCanvasSelection.cpp
     AppEditMenu.cpp
+    AppJoin.cpp
+    AppConvert.cpp
+    AppHelp.cpp
     CanvasPicker.cpp
     ExclusionAreasManager.cpp
     ToolsDatabase.cpp
@@ -49,6 +52,8 @@ add_library(flatcam_gui STATIC
     generated/PaintToolUIBase.cpp
     generated/DrillingToolUIBase.cpp
     generated/CutOutToolUIBase.cpp
+    generated/AboutDialogUIBase.cpp
+    generated/HowtoDialogUIBase.cpp
     widgets/FCButton.h
     widgets/FCSpinners.cpp
     widgets/FCComboBox.cpp

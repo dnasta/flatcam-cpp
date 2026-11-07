@@ -4,7 +4,6 @@
 // populate_cmenu_grids.
 #include <QApplication>
 #include <QClipboard>
-#include <QInputDialog>
 #include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
@@ -23,6 +22,7 @@
 #include "gui/tools/MoveTool.h"
 #include "gui/tools/PropertiesTool.h"
 #include "gui/widgets/DialogBoxRadio.h"
+#include "gui/widgets/FCSpinners.h"
 #include "gui/widgets/NumericalEval.h"
 
 namespace flatcam::gui {
@@ -55,7 +55,7 @@ QString pyTuple(const QString& text, const std::vector<double>& v) {
 // --------------------------------------------------------------------------------------------- Archivo
 
 void App::onFileNewClick() {
-    if (!collection_->objects().empty()) {
+    if (!collection_->objects().empty() && shouldWeSave_) {
         QMessageBox box(ui_.get());
         box.setText(tr_("There are files/objects opened in FlatCAM.\nCreating a New project will delete them.\n"
                         "Do you want to Save the project?"));
@@ -89,6 +89,7 @@ void App::onFileNew() {
     area->protectTab(0);
     ui_->notebook->setCurrentWidget(ui_->project_tab);
     ui_->setUiTitle(tr_("New Project - Not saved"));
+    shouldWeSave_ = false;
 }
 
 // --------------------------------------------------------------------------------------------- Ver
@@ -252,6 +253,56 @@ void App::onLocate() {
     jumpTo(location, true);
 }
 
+// --------------------------------------------------------------------------------------------- Opciones
+
+void App::onRotateSelection(std::optional<double> preset) {
+    const std::vector<FlatCAMObj*> objs = selectedObjects();
+    if (objs.empty()) {
+        ui_->inform("[WARNING_NOTCL] " + tr_("No object is selected."));
+        return;
+    }
+    double num = preset.value_or(0);
+    if (!preset) {
+        FCInputDoubleSpinner box(ui_.get(), tr_("Transform"), tr_("Enter the Angle value:"), -360, 360, 1, 4,
+                                 90.0);  // tools_transform_rotate
+        box.setWindowIcon(QIcon(":/images/rotate.png"));
+        if (box.exec() != QDialog::Accepted) return;
+        num = box.wdg->value();
+    }
+    // Alrededor del centro de la caja de todos los elegidos.
+    QRectF all;
+    for (FlatCAMObj* o : objs) all = all.isNull() ? o->bounds() : all.united(o->bounds());
+    const Point2D c{0.5 * (all.left() + all.right()), 0.5 * (all.top() + all.bottom())};
+    for (FlatCAMObj* o : objs)
+        if (o->rotate(-num, c)) objectChanged(o);
+    ui_->inform("[success] " + tr_("Rotation done."));
+}
+
+void App::onSkewSelection(char axis, std::optional<double> preset) {
+    const std::vector<FlatCAMObj*> objs = selectedObjects();
+    if (objs.empty()) {
+        ui_->inform("[WARNING_NOTCL] " + tr_("No object is selected."));
+        return;
+    }
+    double num = preset.value_or(0);
+    if (!preset) {
+        FCInputDoubleSpinner box(ui_.get(), tr_("Transform"), tr_("Enter the Angle value:"), -360, 360, 1, 4,
+                                 0.0);  // tools_transform_skew_x / _y
+        box.setWindowIcon(QIcon(axis == 'X' ? ":/images/skewX.png" : ":/images/skewY.png"));
+        if (box.exec() != QDialog::Accepted) return;
+        num = box.wdg->value();
+    }
+    // Desde la esquina inferior izquierda de la caja de todos.
+    double x = std::numeric_limits<double>::infinity(), y = x;
+    for (FlatCAMObj* o : objs) {
+        x = std::min(x, o->bounds().left());
+        y = std::min(y, o->bounds().top());
+    }
+    for (FlatCAMObj* o : objs)
+        if (axis == 'X' ? o->skew(num, 0, {x, y}) : o->skew(0, num, {x, y})) objectChanged(o);
+    ui_->inform("[success] " + (axis == 'X' ? tr_("Skew on X axis done.") : tr_("Skew on Y axis done.")));
+}
+
 // --------------------------------------------------------------------------------------------- menú del canvas
 
 void App::setupCanvasMenu() {
@@ -260,6 +311,21 @@ void App::setupCanvasMenu() {
     for (QAction* a : {ui_->menueditdelete, ui_->delete_btn}) connect(a, &QAction::triggered, this, [this] { deleteSelected(); });
     for (QAction* a : {ui_->menueditcopyobject, ui_->copy_btn}) connect(a, &QAction::triggered, this, [this] { copySelected(); });
     connect(ui_->menueditselectall, &QAction::triggered, this, [this] { onSelectAll(); });
+    connect(ui_->menuoptions_transform_rotate, &QAction::triggered, this, [this] { onRotateSelection(); });
+    connect(ui_->menuoptions_transform_skewx, &QAction::triggered, this, [this] { onSkewSelection('X'); });
+    connect(ui_->menuoptions_transform_skewy, &QAction::triggered, this, [this] { onSkewSelection('Y'); });
+    connect(ui_->menuoptions_view_source, &QAction::triggered, this, [this] { viewSource(activeObject()); });
+    connect(ui_->menuedit_join2geo, &QAction::triggered, this, [this] { joinGeometry(); });
+    connect(ui_->menuedit_join_exc2exc, &QAction::triggered, this, [this] { joinExcellon(); });
+    connect(ui_->menuedit_join_grb2grb, &QAction::triggered, this, [this] { joinGerber(); });
+    connect(ui_->menueditconvert_any2geo, &QAction::triggered, this, [this] { convertToGeometry(); });
+    connect(ui_->menueditconvert_any2gerber, &QAction::triggered, this, [this] { convertToGerber(); });
+    connect(ui_->menueditconvert_any2excellon, &QAction::triggered, this, [this] { convertToExcellon(); });
+    // Las Geometrías del port son siempre multiherramienta ("MultiGeo"): convertir entre los dos tipos no aplica.
+    for (QAction* a : {ui_->menuedit_convert_sg2mg, ui_->menuedit_convert_mg2sg})
+        connect(a, &QAction::triggered, this, [this] {
+            ui_->inform("[WARNING_NOTCL] Las Geometrías del port son siempre de varias herramientas (MultiGeo).");
+        });
     for (QAction* a : {ui_->menuedit_move2origin, ui_->move2origin_btn})
         connect(a, &QAction::triggered, this, [this] { onMove2Origin(); });
     for (QAction* a : {ui_->menueditorigin, ui_->origin_btn}) connect(a, &QAction::triggered, this, [this] { onSetOrigin(); });
@@ -351,9 +417,10 @@ void App::populateGridMenu() {
     QAction* del = gridMenu_->addAction(QIcon(":/images/delete32.png"), tr_("Delete"));
     connect(toggle, &QAction::triggered, this, [this] { ui_->grid_snap_btn->trigger(); });
     connect(add, &QAction::triggered, this, [this] {  // on_grid_add
-        bool ok = false;
-        const double val = QInputDialog::getDouble(ui_.get(), tr_("New Grid ..."), tr_("Enter a Grid Value:"), 0.0, 0.0,
-                                                   99.9999, 4, &ok);
+        FCInputDoubleSpinner box(ui_.get(), tr_("New Grid ..."), tr_("Enter a Grid Value:"), 0.0, 99.9999, 1, 4, 0.0);
+        box.setWindowIcon(QIcon(":/images/plus32.png"));
+        const bool ok = box.exec() == QDialog::Accepted;
+        const double val = box.wdg->value();
         if (!ok) {
             ui_->inform("[WARNING_NOTCL] " + tr_("Adding New Grid cancelled") + "...");
         } else if (val == 0) {
@@ -371,9 +438,10 @@ void App::populateGridMenu() {
         }
     });
     connect(del, &QAction::triggered, this, [this] {  // on_grid_delete
-        bool ok = false;
-        const double val =
-            QInputDialog::getDouble(ui_.get(), "Delete Grid ...", "Enter a Grid Value:", 0.0, 0.0, 99.9999, 4, &ok);
+        FCInputDoubleSpinner box(ui_.get(), "Delete Grid ...", "Enter a Grid Value:", 0.0, 99.9999, 1, 4, 0.0);
+        box.setWindowIcon(QIcon(":/images/delete32.png"));
+        const bool ok = box.exec() == QDialog::Accepted;
+        const double val = box.wdg->value();
         if (!ok) {
             ui_->inform("[WARNING_NOTCL] " + tr_("Delete Grid value cancelled") + "...");
             return;

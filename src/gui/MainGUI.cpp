@@ -37,7 +37,6 @@ MainGUI::MainGUI(QWidget* parent) : MainGUIBase(parent) {
 
 void MainGUI::connectSignals() {
     connect(menu_toggle_nb, &QAction::triggered, this, [this] { onToggleNotebook(); });
-    connect(menufile_exit, &QAction::triggered, qApp, &QApplication::quit);
     connect(plotcanvas_, &PlotCanvas::mouseMoved, this, [this](QPointF w) {
         if (canvasHandlers_) updateCoordinates(w);
     });

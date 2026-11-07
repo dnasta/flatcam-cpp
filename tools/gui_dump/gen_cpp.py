@@ -45,7 +45,7 @@ CUSTOM = {
 SELF_BUILT = {"FlatCAMInfoBar", "FlatCAMActivityView", "FCDetachableTab", "FCDetachableTab2", "FCTree",
               "KeySensitiveListView", "RadioSet"}
 
-QT_HEADERS = ["QAction", "QPixmap", "QFormLayout", "QHeaderView", "QTableWidget", "QDoubleSpinBox", "QSpinBox", "QRadioButton",
+QT_HEADERS = ["QDialog", "QAction", "QPixmap", "QFormLayout", "QHeaderView", "QTableWidget", "QDoubleSpinBox", "QSpinBox", "QRadioButton",
               "QTextEdit", "QPlainTextEdit", "QSlider", "QBoxLayout", "QCheckBox", "QComboBox", "QDockWidget", "QFont", "QFrame", "QGridLayout", "QGroupBox",
               "QHBoxLayout", "QIcon", "QLabel", "QLineEdit", "QMainWindow", "QMenu", "QMenuBar", "QPushButton",
               "QScrollArea", "QSizePolicy", "QSplitter", "QStackedWidget", "QStatusBar", "QTabBar", "QTabWidget",
@@ -451,6 +451,8 @@ class Gen:
     def write_panel(self, out_dir, cls):
         self.panel()
         base = cls + "Base"
+        # Los diálogos (Acerca de, Cómo empezar) derivan de QDialog; los demás paneles, de QWidget.
+        qbase = "QDialog" if self.data["root"].get("qt") == "QDialog" else "QWidget"
         os.makedirs(out_dir, exist_ok=True)
         header = ["// ARCHIVO GENERADO por tools/gui_dump/gen_cpp.py a partir de la interfaz original - no editar a mano.",
                   "#pragma once", ""]
@@ -463,10 +465,10 @@ class Gen:
                    " * `setupUi()` arma los mismos widgets, textos, valores de fábrica y layouts que el original. Los miembros tienen",
                    " * el nombre del atributo del original; la lógica va en una clase derivada.",
                    " */",
-                   "class %s : public QWidget {" % base,
+                   "class %s : public %s {" % (base, qbase),
                    "public:",
                    "    /** @brief Crea el panel vacío. @param parent Widget padre. */",
-                   "    explicit %s(QWidget* parent = nullptr) : QWidget(parent) {}" % base,
+                   "    explicit %s(QWidget* parent = nullptr) : %s(parent) {}" % (base, qbase),
                    "",
                    "    /** @brief Construye el panel. */",
                    "    void setupUi();",
