@@ -74,6 +74,46 @@ def main():
     data = dump_widget(db, *(x for x in (getattr(db, "ui", None), db) if x is not None))
     data["class"] = "ToolsDB2UI"
     written.append(write("ToolsDB2UI", data))
+    # Ayuda -> Acerca de y Cómo empezar: los diálogos se arman dentro de on_about / on_howto y se muestran con exec_();
+    # se captura el diálogo en ese momento.
+    from PyQt5 import QtWidgets
+    captured = []
+    orig_exec = QtWidgets.QDialog.exec_
+    QtWidgets.QDialog.exec_ = lambda self: captured.append(self) or 0
+    # La pestaña "Componentes" de Acerca de importa las versiones de las bibliotecas de Python (algunas simuladas): se
+    # les da una versión ficticia; en el port esa pestaña lista las bibliotecas de C++.
+    import importlib
+    import types
+    for modname in ("OpenGL", "shapely", "svglib.svglib", "vispy", "numpy", "rtree", "rasterio", "ezdxf", "simplejson",
+                    "lxml"):
+        try:
+            m = importlib.import_module(modname)
+        except Exception:  # noqa: BLE001
+            m = types.ModuleType(modname)
+            sys.modules[modname] = m
+        try:
+            m.__version__
+        except Exception:  # noqa: BLE001
+            try:
+                m.__version__ = "?"
+            except Exception:  # noqa: BLE001
+                m = types.ModuleType(modname)
+                m.__version__ = "?"
+                sys.modules[modname] = m
+        if not isinstance(getattr(m, "__version__", None), str):
+            m = types.ModuleType(modname)
+            m.__version__ = "?"
+            sys.modules[modname] = m
+    try:
+        for meth, cls in (("on_about", "AboutDialogUI"), ("on_howto", "HowtoDialogUI")):
+            captured.clear()
+            getattr(fr.import_original("app_Main").App, meth)(fa)
+            dlg = captured[0]
+            data = dump_widget(dlg, dlg)
+            data["class"] = cls
+            written.append(write(cls, data))
+    finally:
+        QtWidgets.QDialog.exec_ = orig_exec
     with open(os.path.join(OUT, "index.txt"), "w") as f:
         f.write("\n".join(written) + "\n")
 

@@ -42,6 +42,11 @@
 #include "gui/widgets/KeySensitiveListView.h"
 #include <QTemporaryDir>
 #include <QTimer>
+#include <QCloseEvent>
+#include <QTextEdit>
+#include <QTabWidget>
+#include <QLabel>
+#include <set>
 #include <QMenu>
 #include <QMessageBox>
 #include "gui/widgets/DialogBoxRadio.h"
@@ -2250,4 +2255,225 @@ TEST(GuiEditViewMenus, EditViewAndCanvasMenu) {
     ui->menufilenewproject->trigger();
     EXPECT_TRUE(app.collection()->objects().empty());
     EXPECT_EQ(ui->fcinfo->text->text(), tr_("New Project created") + "...");
+}
+
+// Editar -> Unir: Gerber, Excellon y Geometría (on_edit_join_grb, on_edit_join_exc, on_edit_join).
+TEST(GuiEditViewMenus, JoinObjects) {
+    App app;
+    MainGUI* ui = app.ui();
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    auto* logo = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Logo.gbr")));
+    auto* pth = static_cast<ExcellonObject*>(app.openByExtension(QString::fromStdString(dir + "PTH.drl")));
+    // El NPTH.drl de la placa está vacío (no se crea el objeto): el segundo Excellon es el taladro del dosificador.
+    auto* npth = static_cast<ExcellonObject*>(
+        app.openByExtension(QString::fromStdString(std::string(FLATCAM_TEST_DATA_DIR) + "/PCB principal-Drill.drl")));
+    ASSERT_TRUE(edge && logo && pth && npth);
+    auto* view = ui->collection_view;
+    auto select = [&](std::initializer_list<FlatCAMObj*> objs) {
+        view->selectionModel()->clearSelection();
+        for (FlatCAMObj* o : objs) view->selectionModel()->select(app.collection()->indexOf(o), QItemSelectionModel::Select);
+    };
+    // Con un objeto avisa.
+    select({edge});
+    EXPECT_EQ(app.joinGerber(), nullptr);
+    EXPECT_TRUE(ui->fcinfo->text->text().endsWith(": 1"));
+    // Gerber: la geometría de los dos y todas las aperturas (las repetidas, con otro número).
+    select({edge, logo});
+    ASSERT_TRUE(ui->menuedit_join_grb2grb);
+    ui->menuedit_join_grb2grb->trigger();
+    auto* g = dynamic_cast<GerberObject*>(app.collection()->byName("Combo_Gerber"));
+    ASSERT_NE(g, nullptr);
+    EXPECT_EQ(g->gerber().solidGeometry().size(), edge->gerber().solidGeometry().size() + logo->gerber().solidGeometry().size());
+    EXPECT_EQ(g->gerber().apertures().size(), edge->gerber().apertures().size() + logo->gerber().apertures().size());
+    // Excellon: los agujeros de los dos; las herramientas de igual diámetro, juntas.
+    select({pth, npth});
+    EXPECT_EQ(app.joinGerber(), nullptr);  // no son Gerber
+    ui->menuedit_join_exc2exc->trigger();
+    auto* e = dynamic_cast<ExcellonObject*>(app.collection()->byName("Combo_Excellon"));
+    ASSERT_NE(e, nullptr);
+    std::size_t drills = 0, expected = 0;
+    std::set<double> dias;
+    for (const auto& [id, t] : e->excellon().drillTools()) drills += t.drills.size();
+    for (ExcellonObject* x : {pth, npth})
+        for (const auto& [id, t] : x->excellon().drillTools()) {
+            expected += t.drills.size();
+            dias.insert(std::round(t.tooldia * 1e4) / 1e4);
+        }
+    EXPECT_EQ(drills, expected);
+    EXPECT_EQ(e->excellon().drillTools().size(), dias.size());
+    // Geometría desde un Gerber y un Excellon (los dos de una sola herramienta).
+    select({edge, pth});
+    ui->menuedit_join2geo->trigger();
+    auto* geo = dynamic_cast<GeometryObject*>(app.collection()->byName("Combo_SingleGeo"));
+    ASSERT_NE(geo, nullptr);
+    EXPECT_EQ(geo->solidGeometry().size(), edge->solidShapes().size() + pth->solidShapes().size());
+    EXPECT_EQ(geo->tools().size(), 1u);
+}
+
+// Editar -> Convertir: Excellon -> Geometría -> Excellon, y Excellon -> Gerber.
+TEST(GuiEditViewMenus, ConvertObjects) {
+    App app;
+    MainGUI* ui = app.ui();
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* pth = static_cast<ExcellonObject*>(app.openByExtension(QString::fromStdString(dir + "PTH.drl")));
+    ASSERT_NE(pth, nullptr);
+    auto* view = ui->collection_view;
+    auto selectOnly = [&](FlatCAMObj* o) {
+        view->selectionModel()->clearSelection();
+        view->selectionModel()->select(app.collection()->indexOf(o), QItemSelectionModel::Select);
+    };
+    std::size_t drills = 0;
+    for (const auto& [id, t] : pth->excellon().drillTools()) drills += t.drills.size();
+    selectOnly(pth);
+    ui->menueditconvert_any2geo->trigger();
+    auto* geo = dynamic_cast<GeometryObject*>(app.collection()->byName(pth->name() + "_conv"));
+    ASSERT_NE(geo, nullptr);
+    EXPECT_EQ(geo->solidGeometry().size(), drills);
+    // De la Geometría a Excellon: un agujero por círculo, en su centro, con el diámetro del círculo.
+    selectOnly(geo);
+    ui->menueditconvert_any2excellon->trigger();
+    auto* back = dynamic_cast<ExcellonObject*>(app.collection()->byName(geo->name() + "_conv"));
+    ASSERT_NE(back, nullptr);
+    // Como el original, el diámetro se compara exacto (varía en la última cifra según dónde está el círculo) y el agujero
+    // se agrega a todas las herramientas con el mismo diámetro redondeado: se repiten agujeros. Las posiciones son las 120.
+    std::set<std::pair<double, double>> backDrills, orig;
+    for (const auto& [id, t] : back->excellon().drillTools())
+        for (const flatcam::Point2D& p : t.drills) backDrills.insert({std::round(p.x * 1e6) / 1e6, std::round(p.y * 1e6) / 1e6});
+    for (const auto& [id, t] : pth->excellon().drillTools())
+        for (const flatcam::Point2D& p : t.drills) orig.insert({std::round(p.x * 1e6) / 1e6, std::round(p.y * 1e6) / 1e6});
+    EXPECT_EQ(backDrills.size(), drills);
+    EXPECT_EQ(backDrills, orig);
+    for (const auto& [id, t] : back->excellon().drillTools()) {
+        bool near = false;
+        for (const auto& [id2, t2] : pth->excellon().drillTools()) near = near || std::abs(t.tooldia - t2.tooldia) < 1e-3;
+        EXPECT_TRUE(near) << t.tooldia;
+    }
+    // Del Excellon a Gerber: una apertura por herramienta, desde la 10.
+    selectOnly(pth);
+    const std::vector<FlatCAMObj*> conv = app.convertToGerber();
+    ASSERT_EQ(conv.size(), 1u);
+    auto* grb = dynamic_cast<GerberObject*>(conv.front());
+    ASSERT_NE(grb, nullptr);
+    EXPECT_EQ(grb->gerber().apertures().size(), pth->excellon().drillTools().size());
+    EXPECT_TRUE(grb->gerber().apertures().count("10"));
+}
+
+// Opciones -> Girar la selección e Inclinar en X (on_rotate, on_skewx) con su diálogo.
+TEST(GuiEditViewMenus, RotateAndSkewSelection) {
+    App app;
+    MainGUI* ui = app.ui();
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    ASSERT_NE(edge, nullptr);
+    ui->collection_view->selectionModel()->clearSelection();
+    ui->collection_view->selectionModel()->select(app.collection()->indexOf(edge), QItemSelectionModel::Select);
+    const QRectF b0 = edge->bounds();
+    QTimer::singleShot(0, [] {
+        auto* d = qobject_cast<FCInputDoubleSpinner*>(QApplication::activeModalWidget());
+        ASSERT_NE(d, nullptr);
+        EXPECT_DOUBLE_EQ(d->wdg->value(), 90.0);  // tools_transform_rotate
+        d->accept();
+    });
+    ui->menuoptions_transform_rotate->trigger();
+    EXPECT_NEAR(edge->bounds().width(), b0.height(), 1e-6);
+    EXPECT_NEAR(edge->bounds().center().x(), b0.center().x(), 1e-6);
+    EXPECT_EQ(ui->fcinfo->text->text(), tr_("Rotation done."));
+    const QRectF b1 = edge->bounds();
+    QTimer::singleShot(0, [] {
+        auto* d = qobject_cast<FCInputDoubleSpinner*>(QApplication::activeModalWidget());
+        ASSERT_NE(d, nullptr);
+        d->wdg->setValue(45);
+        d->accept();
+    });
+    ui->menuoptions_transform_skewx->trigger();
+    // tan(45) = 1: el ancho crece en el alto (las esquinas redondeadas del contorno lo cambian en centésimas).
+    EXPECT_NEAR(edge->bounds().width(), b1.width() + b1.height(), 0.1);
+    EXPECT_NEAR(edge->bounds().left(), b1.left(), 0.1);
+    EXPECT_GT(edge->bounds().width(), b1.width() + 0.9 * b1.height());
+}
+
+// Atajos de teclado de la aplicación (MainGUI.keyPressEvent).
+TEST(GuiEditViewMenus, KeyboardShortcuts) {
+    App app;
+    MainGUI* ui = app.ui();
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    ASSERT_NE(edge, nullptr);
+    auto key = [ui](int k, Qt::KeyboardModifiers m = Qt::NoModifier) {
+        QKeyEvent ev(QEvent::KeyPress, k, m);
+        QApplication::sendEvent(ui, &ev);
+    };
+    ui->collection_view->selectionModel()->clearSelection();
+    ui->collection_view->selectionModel()->select(app.collection()->indexOf(edge), QItemSelectionModel::Select);
+    key(Qt::Key_C, Qt::ShiftModifier);  // copiar el nombre
+    EXPECT_EQ(QApplication::clipboard()->text(), edge->name());
+    key(Qt::Key_Space);  // "Dibujar" del elegido
+    EXPECT_FALSE(edge->plotEnabled());
+    key(Qt::Key_1, Qt::AltModifier);  // mostrar todos
+    EXPECT_TRUE(edge->plotEnabled());
+    key(Qt::Key_2, Qt::AltModifier);  // ocultar todos
+    EXPECT_FALSE(edge->plotEnabled());
+    key(Qt::Key_H, Qt::ShiftModifier);  // HUD
+    EXPECT_FALSE(ui->plotCanvas()->hudEnabled());
+    key(Qt::Key_A, Qt::ControlModifier);  // elegir todo
+    EXPECT_EQ(app.selectedObjects().size(), 1u);
+    key(Qt::Key_Escape);  // quitar la selección
+    EXPECT_TRUE(app.selectedObjects().empty());
+    // 1: el panel está escondido al empezar -> se muestra en Proyecto; otra vez 1 -> se esconde.
+    ui->splitter->setSizes({0, 1});
+    key(Qt::Key_1);
+    EXPECT_NE(ui->splitter->sizes().value(0), 0);
+    EXPECT_EQ(ui->notebook->currentWidget(), ui->project_tab);
+    key(Qt::Key_1);
+    EXPECT_EQ(ui->splitter->sizes().value(0), 0);
+    key(Qt::Key_T, Qt::AltModifier);  // Transformaciones
+    EXPECT_EQ(ui->tool_scroll_area->widget(), app.transformTool);
+}
+
+// Ayuda: Acerca de (generado del original, con las bibliotecas del port), Cómo empezar y la lista de atajos.
+TEST(GuiEditViewMenus, HelpMenu) {
+    App app;
+    MainGUI* ui = app.ui();
+    auto about = app.aboutDialog();
+    EXPECT_FALSE(about->windowTitle().isEmpty());
+    bool geos = false;
+    for (QLabel* l : about->findChildren<QLabel*>()) geos = geos || l->text().contains("<td>GEOS</td>");
+    EXPECT_TRUE(geos);
+    auto* tabs = about->findChild<QTabWidget*>();
+    ASSERT_NE(tabs, nullptr);
+    EXPECT_GE(tabs->count(), 6);
+    auto howto = app.howtoDialog();
+    EXPECT_NE(howto->findChild<QTabWidget*>(), nullptr);
+    // F3: la pestaña de atajos, con el texto del original.
+    QKeyEvent f3(QEvent::KeyPress, Qt::Key_F3, Qt::NoModifier);
+    QApplication::sendEvent(ui, &f3);
+    QWidget* cur = ui->plot_tab_area->currentWidget();
+    ASSERT_EQ(cur, app.shortcutsTab());
+    EXPECT_EQ(ui->plot_tab_area->tabText(ui->plot_tab_area->currentIndex()), tr_("Key Shortcut List"));
+    const auto edits = cur->findChildren<QTextEdit*>();
+    ASSERT_EQ(edits.size(), 3);
+    EXPECT_TRUE(edits[1]->toPlainText().contains("F3"));
+}
+
+// Salir (final_save): con cambios sin guardar pregunta; "Cancelar" no cierra; después de guardar no pregunta.
+TEST(GuiEditViewMenus, FinalSaveAsksBeforeQuitting) {
+    App app;
+    EXPECT_TRUE(app.finalSave());  // sin objetos
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    ASSERT_NE(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")), nullptr);
+    EXPECT_TRUE(app.shouldWeSave());
+    QTimer::singleShot(0, [] {
+        auto* box = qobject_cast<QMessageBox*>(QApplication::activeModalWidget());
+        ASSERT_NE(box, nullptr);
+        for (QAbstractButton* bt : box->buttons())
+            if (bt->text() == tr_("Cancel")) bt->click();
+    });
+    QCloseEvent close;
+    QApplication::sendEvent(app.ui(), &close);
+    EXPECT_FALSE(close.isAccepted());
+    QTemporaryDir tmp;
+    ASSERT_TRUE(app.saveProject(tmp.filePath("p.FlatPrj")));
+    EXPECT_FALSE(app.shouldWeSave());
+    EXPECT_TRUE(app.finalSave());
 }

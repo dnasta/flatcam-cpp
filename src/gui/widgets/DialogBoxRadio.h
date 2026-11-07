@@ -40,4 +40,22 @@ public:
     RadioSet* ref_radio;  ///< `ref_radio`.
 };
 
+class FCDoubleSpinner;
+
+/**
+ * @brief Pide un número con un campo de decimales (`FCInputDoubleSpinner`): girar, inclinar, agregar una grilla.
+ * Se muestra con `exec()`; el valor queda en @ref wdg.
+ */
+class FCInputDoubleSpinner : public QDialog {
+    Q_OBJECT
+public:
+    /**
+     * @brief Arma el diálogo. @param parent Padre. @param title Título. @param text Mensaje. @param min Mínimo.
+     * @param max Máximo. @param step Paso. @param decimals Decimales. @param initVal Valor inicial.
+     */
+    FCInputDoubleSpinner(QWidget* parent, const QString& title, const QString& text, double min, double max, double step,
+                         int decimals, double initVal);
+    FCDoubleSpinner* wdg;  ///< `wdg`: el campo.
+};
+
 }  // namespace flatcam::gui

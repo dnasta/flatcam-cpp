@@ -13,3 +13,5 @@ DistanceToolUI
 DistanceMinToolUI
 PropertiesToolUI
 ToolsDB2UI
+AboutDialogUI
+HowtoDialogUI

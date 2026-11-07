@@ -1,0 +1,431 @@
+{
+ "root": {
+  "qt": "QDialog",
+  "py": "HowtoDialog",
+  "name": null,
+  "props": {
+   "windowTitle": {
+    "t": "str",
+    "v": "Cómo ..."
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": null,
+   "props": {},
+   "margins": [
+    11,
+    11,
+    11,
+    11
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QHBoxLayout",
+      "py": "QHBoxLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QTabWidget",
+         "py": "QTabWidget",
+         "name": null,
+         "props": {},
+         "tabbar": {
+          "py": "QTabBar",
+          "props": {
+           "objectName": {
+            "t": "str",
+            "v": "qt_tabwidget_tabbar"
+           },
+           "drawBase": {
+            "t": "bool",
+            "v": false
+           }
+          }
+         },
+         "tabs": [
+          {
+           "text": "Contribuir",
+           "icon": null,
+           "tooltip": "",
+           "protected": false,
+           "widget": {
+            "qt": "QWidget",
+            "py": "QWidget",
+            "name": "intro_tab",
+            "props": {},
+            "layout": {
+             "qt": "QHBoxLayout",
+             "py": "QHBoxLayout",
+             "name": "intro_tab_layout",
+             "props": {},
+             "margins": [
+              2,
+              2,
+              2,
+              2
+             ],
+             "spacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QScrollArea",
+                "py": "QScrollArea",
+                "name": null,
+                "props": {
+                 "frameShape": {
+                  "t": "int",
+                  "v": 0
+                 },
+                 "widgetResizable": {
+                  "t": "bool",
+                  "v": true
+                 }
+                },
+                "widget": {
+                 "qt": "QWidget",
+                 "py": "QWidget",
+                 "name": null,
+                 "props": {
+                  "autoFillBackground": {
+                   "t": "bool",
+                   "v": true
+                  }
+                 },
+                 "layout": {
+                  "qt": "QGridLayout",
+                  "py": "QGridLayout",
+                  "name": "grid_lay",
+                  "props": {},
+                  "margins": [
+                   9,
+                   9,
+                   9,
+                   9
+                  ],
+                  "spacing": -1,
+                  "hspacing": 20,
+                  "vspacing": 6,
+                  "rowStretch": [
+                   0
+                  ],
+                  "colStretch": [
+                   0,
+                   1
+                  ],
+                  "colMinWidth": [
+                   0,
+                   0
+                  ],
+                  "items": [
+                   {
+                    "align": 0,
+                    "row": 0,
+                    "col": 0,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "pixmap": {
+                       "t": "QPixmap",
+                       "v": ":/images/contribute256.png"
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "align": 0,
+                    "row": 0,
+                    "col": 1,
+                    "rs": 1,
+                    "cs": 1,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Este programa es <a href = 'https://opensource.org/'<b>Open Source</b></a> y gratuito en un sentido muy amplio de la palabra.<br>Sin embargo, no puede evolucionar sin <b> contribuciones </b>.<br><br>Si quieres ver esta aplicación crecer y ser mejor y mejor,<br>usted puede <b> contribuir </b> al desarrollo usted mismo:<br><ul><li> &nbsp;Solicitudes de extracción en el repositorio de Bitbucket, si es desarrollador <a href = 'https://bitbucket.org/jpcgt/flatcam/pull-requests/'<b>click</b></a></li><li> &nbsp;Informes de errores al proporcionar los pasos necesarios para reproducir el error <a href = 'https://bitbucket.org/jpcgt/flatcam/issues/new'<b>click</b></a></li></ul><br><br>Si te gusta lo que has visto hasta ahora ... <br><span style='color: blue;'>NO se requieren donaciones.</span> Pero ellos son bienvenidos <a href = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=WLTJJ3Q77D98L&currency_code=USD&source=url'<b>click</b></a><br>"
+                      },
+                      "openExternalLinks": {
+                       "t": "bool",
+                       "v": true
+                      }
+                     }
+                    }
+                   }
+                  ]
+                 }
+                }
+               }
+              }
+             ]
+            }
+           }
+          },
+          {
+           "text": "Intercambio de enlaces",
+           "icon": null,
+           "tooltip": "",
+           "protected": false,
+           "widget": {
+            "qt": "QWidget",
+            "py": "QWidget",
+            "name": "links_tab",
+            "props": {
+             "hidden": {
+              "t": "bool",
+              "v": true
+             }
+            },
+            "layout": {
+             "qt": "QVBoxLayout",
+             "py": "QVBoxLayout",
+             "name": "links_tab_layout",
+             "props": {},
+             "margins": [
+              2,
+              2,
+              2,
+              2
+             ],
+             "spacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QScrollArea",
+                "py": "QScrollArea",
+                "name": null,
+                "props": {
+                 "frameShape": {
+                  "t": "int",
+                  "v": 0
+                 },
+                 "widgetResizable": {
+                  "t": "bool",
+                  "v": true
+                 }
+                },
+                "widget": {
+                 "qt": "QWidget",
+                 "py": "QWidget",
+                 "name": null,
+                 "props": {
+                  "autoFillBackground": {
+                   "t": "bool",
+                   "v": true
+                  }
+                 },
+                 "layout": {
+                  "qt": "QHBoxLayout",
+                  "py": "QHBoxLayout",
+                  "name": "links_lay",
+                  "props": {},
+                  "margins": [
+                   9,
+                   9,
+                   9,
+                   9
+                  ],
+                  "spacing": 6,
+                  "items": [
+                   {
+                    "align": 132,
+                    "stretch": 0,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Pronto ..."
+                      }
+                     }
+                    }
+                   }
+                  ]
+                 }
+                }
+               }
+              }
+             ]
+            }
+           }
+          },
+          {
+           "text": "How To's",
+           "icon": null,
+           "tooltip": "",
+           "protected": false,
+           "widget": {
+            "qt": "QWidget",
+            "py": "QWidget",
+            "name": "howto_tab",
+            "props": {
+             "hidden": {
+              "t": "bool",
+              "v": true
+             }
+            },
+            "layout": {
+             "qt": "QVBoxLayout",
+             "py": "QVBoxLayout",
+             "name": "howto_tab_layout",
+             "props": {},
+             "margins": [
+              2,
+              2,
+              2,
+              2
+             ],
+             "spacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QScrollArea",
+                "py": "QScrollArea",
+                "name": null,
+                "props": {
+                 "frameShape": {
+                  "t": "int",
+                  "v": 0
+                 },
+                 "widgetResizable": {
+                  "t": "bool",
+                  "v": true
+                 }
+                },
+                "widget": {
+                 "qt": "QWidget",
+                 "py": "QWidget",
+                 "name": null,
+                 "props": {
+                  "autoFillBackground": {
+                   "t": "bool",
+                   "v": true
+                  }
+                 },
+                 "layout": {
+                  "qt": "QHBoxLayout",
+                  "py": "QHBoxLayout",
+                  "name": "howto_lay",
+                  "props": {},
+                  "margins": [
+                   9,
+                   9,
+                   9,
+                   9
+                  ],
+                  "spacing": 6,
+                  "items": [
+                   {
+                    "align": 132,
+                    "stretch": 0,
+                    "widget": {
+                     "qt": "QLabel",
+                     "py": "QLabel",
+                     "name": null,
+                     "props": {
+                      "text": {
+                       "t": "str",
+                       "v": "Pronto ..."
+                      }
+                     }
+                    }
+                   }
+                  ]
+                 }
+                }
+               }
+              }
+             ]
+            }
+           }
+          }
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QHBoxLayout",
+      "py": "QHBoxLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "stretch": 0,
+        "spacer": [
+         0,
+         0,
+         7,
+         1
+        ]
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "QPushButton",
+         "name": null,
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "Cerca"
+          },
+          "autoDefault": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "HowtoDialogUI"
+}
