@@ -72,7 +72,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.676 casos de `ctest` (2.620 del núcleo y 55 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.679 casos de `ctest` (2.622 del núcleo y 56 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -105,6 +105,7 @@ src/core/              Núcleo (biblioteca estática flatcam_core, namespace fla
   internal/GeosContext.* Contexto GEOS por hilo (no es API pública)
 src/parsers/           Lectores de archivos (sin Qt, derivan de Geometry)
   ApertureMacro.*        Macros de apertura de Gerber (`%AM`), con su evaluador de expresiones
+  SvgImport.*            Importar SVG (ParseSVG + svg.path 7.1 + Geometry/Gerber.import_svg), con un lector XML mínimo
   Gerber.*               Parser de Gerber RS-274X (aperturas, trazos, arcos, regiones, polaridad)
   Excellon.*             Parser de Excellon (herramientas, agujeros, ranuras) y sus transformaciones
   (Gerber.* también trae scale, offset, mirror, rotate, skew, buffer y getBoundingBox)
@@ -184,6 +185,7 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   AppEditMenu.cpp        Archivo -> Nuevo proyecto, menús Editar y Ver y el menú del canvas (popMenu, con las grillas)
   widgets/DialogBoxRadio.* Diálogos de "Saltar a" (DialogBoxRadio), "Ubicar" (DialogBoxChoice) y FCInputDoubleSpinner
   AppJoin.cpp / AppConvert.cpp  Editar -> Unir y Editar -> Convertir
+  AppImport.cpp          Archivo -> Importar -> SVG como Geometría o Gerber
   AppExport.cpp          Archivo -> Exportar -> Gerber / Excellon (sobre src/io/FileExport) y el texto fuente regenerado
   AppHelp.cpp            Ayuda: Acerca de y Cómo empezar (generated/AboutDialogUIBase, HowtoDialogUIBase), enlaces, atajos
   tools/CutOutTool.*     Corte completo (port de ToolCutOut: libre y rectangular → `<objeto>_cutout`)
@@ -689,6 +691,16 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     G-code y, como el original al soltarlo, se abre como los dos; al exportar un G-code abierto se le agrega la cabecera.
     **Error del port corregido:** un Gerber o Excellon en pulgadas no se convertía a milímetros al abrirlo (el original lo
     hace en `new_object` con `convert_units`); se notó al volver a abrir un Gerber exportado.
+    (u) **Importar SVG.** Rarezas del original que se reproducen: el inicio de cada `Line` no se multiplica por el factor
+    del `viewBox` (el de un `Move` después de cerrar, sí); un trayecto abierto igual se convierte en polígono (se cierra);
+    `matrix(a,b,c,d,e,f)` se pasa a Shapely como `[a, b, d, e, xoff, yoff]` (queda traspuesta); un `rect` con `rx`/`ry` hace
+    fallar la importación (el original multiplica el texto por el factor); `width`/`height` del `rect` no se multiplican por
+    el factor; `parse_svg_point_list` busca los separadores en el texto recortado pero corta el original; los `defs` también
+    se importan; como Gerber, con una sola figura sus agujeros pasan a ser polígonos aparte, cualquier línea hace fallar y
+    al final queda el `Polygon()` vacío inicial del Gerber. Desvíos: con un `transform` que no entiende, el original queda en
+    un bucle infinito (el port ignora el resto); los comentarios XML se saltean (lxml los cuenta como hijos y el original
+    falla); los textos (`tspan`) avisan que no se importan. Además, el dibujo de un polígono inválido (que no se puede
+    triangular) rellena su `buffer(0)` o solo dibuja el contorno.
     (m) Errores del original que se reproducen a propósito en Isolation: la herramienta nueva tiene tipo `"           Iso"`
     (con espacios) y forma "V", y el rótulo "Ninguna herramienta seleccionada" lleva `color=#7777FF""`.
 14. **Postprocesadores: desvíos y rarezas del original.** (a) `line_xyz` lee `p['end_xy']`, que `CNCjob` no define: en el
@@ -753,7 +765,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.676 casos de test** (`ctest`): 2.621 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 55 de la GUI;
+- **2.679 casos de test** (`ctest`): 2.623 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 56 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -781,7 +793,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.676 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.679 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -935,7 +947,10 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    Gerber y 8 Excellon con `oracle_export.py`; mover o fijar el origen regenera el texto fuente como el original),
    ~~exportar SVG~~ de Gerber, Excellon y Geometría (`src/io/SvgExport.*`: el `svg()` de Shapely 1.8 y `toprettyxml`;
    `oracle_svg.py`: idéntico salvo el vértice inicial de los anillos y las últimas cifras del buffer, que cambian con la
-   GEOS). Falta: el SVG de un CNC Job (necesita su `gcode_parsed`), exportar DXF/PNG, importar SVG/DXF/PDF/HPGL2/imagen
+   GEOS), ~~importar SVG~~ como Geometría o Gerber (`src/parsers/SvgImport.*`: un lector XML mínimo, el intérprete de
+   trayectos de `svg.path` 7.1 y `ParseSVG`; `oracle_svg_import.py` sobre `tests/data/svg/`: idéntico vértice por vértice,
+   salvo el vértice inicial de lo que pasa por `buffer(0)`). Falta: los textos de un SVG (fuentes TTF de `ParseFont`), el SVG
+   de un CNC Job (necesita su `gcode_parsed`), exportar DXF/PNG, importar SVG/DXF/PDF/HPGL2/imagen
    (`ParseSVG`, `ParseDXF*`, `ParsePDF`, `ParseHPGL2`, `ParseFont`, `ToolImage`, `ToolPDF`), objetos Script y Documento.
 5. **Herramientas restantes** (`appTools/`): Milling, Panelize, Film, Calculators, Copper Thieving, Fiducials, Corners, Extract
    Drills, Punch Gerber, Invert Gerber, Align Objects, Subtract (`ToolSub`), QR Code, Rules Check, Optimal, Solder Paste,

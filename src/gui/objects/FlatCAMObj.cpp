@@ -4,6 +4,14 @@
 
 namespace flatcam::gui {
 
+ShapeList FlatCAMObj::polygonsOf(const Shape& s) {
+    if (s.type() == ShapeType::Polygon) return {s};
+    ShapeList out;
+    for (const Shape& p : s.parts())
+        if (p.type() == ShapeType::Polygon) out.push_back(p);
+    return out;
+}
+
 QColor colorFromFlatCam(const QString& fc) {
     // FlatCAM guarda los colores como #RRGGBBAA; QColor entiende #AARRGGBB.
     if (fc.size() == 9 && fc.startsWith('#')) return QColor("#" + fc.mid(7, 2) + fc.mid(1, 6));
@@ -40,7 +48,22 @@ void FlatCAMObj::addShape(const Shape& s, PlotGroup& out, QRectF& bounds, bool f
     };
     if (t == ShapeType::Polygon) {
         if (fill) {
-            for (const Point2D& p : s.triangulate()) out.fill.insert(out.fill.end(), {float(p.x), float(p.y)});
+            // Un polígono inválido (por ejemplo un trayecto SVG abierto que el original cierra) no se puede
+            // triangular: se rellena su versión corregida (buffer(0)) o, si tampoco, solo se dibuja el contorno.
+            std::vector<Point2D> tri;
+            try {
+                tri = s.triangulate();
+            } catch (const std::exception&) {
+                try {
+                    for (const Shape& part : FlatCAMObj::polygonsOf(s.buffer(0))) {
+                        const auto t2 = part.triangulate();
+                        tri.insert(tri.end(), t2.begin(), t2.end());
+                    }
+                } catch (const std::exception&) {
+                    tri.clear();
+                }
+            }
+            for (const Point2D& p : tri) out.fill.insert(out.fill.end(), {float(p.x), float(p.y)});
         }
         addLine(s.exterior().coordinates());
         for (const Shape& h : s.interiors()) addLine(h.coordinates());

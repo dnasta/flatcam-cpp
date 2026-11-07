@@ -9,6 +9,7 @@ add_library(flatcam_core STATIC
     core/internal/GeosContext.cpp
     parsers/ApertureMacro.cpp
     parsers/Gerber.cpp
+    parsers/SvgImport.cpp
     parsers/Excellon.cpp
     cam/PyNumber.cpp
     io/FileExport.cpp

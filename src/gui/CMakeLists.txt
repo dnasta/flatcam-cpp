@@ -15,6 +15,7 @@ add_library(flatcam_gui STATIC
     AppConvert.cpp
     AppHelp.cpp
     AppExport.cpp
+    AppImport.cpp
     CanvasPicker.cpp
     ExclusionAreasManager.cpp
     ToolsDatabase.cpp
