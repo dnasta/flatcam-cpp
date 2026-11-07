@@ -234,6 +234,7 @@ void App::connectSignals() {
     connect(ui_->menufileimportsvg_as_gerber, &QAction::triggered, this, [this] { onFileImportSvg(true); });
     connect(ui_->menufileimportdxf, &QAction::triggered, this, [this] { onFileImportDxf(false); });
     connect(ui_->menufileimportdxf_as_gerber, &QAction::triggered, this, [this] { onFileImportDxf(true); });
+    connect(ui_->menufileimport_hpgl2_as_geo, &QAction::triggered, this, [this] { onFileOpenHpgl2(); });
     connect(ui_->file_open_excellon_btn, &QAction::triggered, this, [this] { onFileOpenExcellon(); });
     for (QAction* a : {ui_->menuview_zoom_fit, ui_->zoom_fit_btn}) connect(a, &QAction::triggered, this, [this] { onZoomFit(); });
     // on_zoom_in / on_zoom_out: factor global_zoom_ratio (1,5) alrededor del centro de la vista.

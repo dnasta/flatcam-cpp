@@ -10,6 +10,7 @@
 #include "gui/objects/GeometryObject.h"
 #include "parsers/Gerber.h"
 #include "parsers/DxfImport.h"
+#include "parsers/Hpgl2.h"
 #include "parsers/SvgImport.h"
 
 namespace flatcam::gui {
@@ -125,6 +126,46 @@ void App::onFileImportDxf(bool asGerber) {
         return;
     }
     for (const QString& f : files) importDxf(f, asGerber);
+}
+
+FlatCAMObj* App::openHpgl2(const QString& filename) {
+    QFile f(filename);
+    if (!f.open(QIODevice::ReadOnly)) {
+        ui_->inform("[ERROR_NOTCL] " + tr_("Failed to open file") + ": " + filename);
+        return nullptr;
+    }
+    const std::string text = f.readAll().toStdString();
+    const Hpgl2Result r = parseHpgl2(text);
+    if (!r.ok) {
+        if (!r.error.empty()) ui_->inform("[ERROR] " + tr_("HPGL2 Parser ERROR") + "\n" + QString::fromStdString(r.error));
+        ui_->inform("[ERROR_NOTCL] " + tr_("Object is not HPGL2 file or empty. Aborting object creation."));
+        ui_->inform("[ERROR_NOTCL]" + tr_("Failed. Probable not a HPGL2 file."));
+        return nullptr;
+    }
+    // open_hpgl2: la unión como solid_geometry y una herramienta por pluma (geometry_cnctooldia, tipo "Iso").
+    auto geo = std::make_unique<GeometryObject>(QFileInfo(filename).fileName());
+    geo->solidGeometry() = r.solidGeometry;
+    for (const auto& [pen, shapes] : r.tools) {
+        GeometryTool t = defaultGeometryTool();
+        t.tooldia = 2.4;
+        t.type = "Iso";
+        t.solidGeometry = shapes;
+        geo->tools()[pen] = t;
+    }
+    FlatCAMObj* obj = addObject(std::move(geo));
+    lastFolder_ = QFileInfo(filename).absolutePath();
+    registerRecent("geometry", filename);
+    return obj;
+}
+
+void App::onFileOpenHpgl2() {
+    const QStringList files = QFileDialog::getOpenFileNames(ui_.get(), tr_("Open HPGL2"), lastFolder(),
+                                                            "HPGL2 Files (*.plt);;All Files (*.*)");
+    if (files.isEmpty()) {
+        ui_->inform("[WARNING_NOTCL] " + tr_("Cancelled."));
+        return;
+    }
+    for (const QString& f : files) openHpgl2(f);
 }
 
 }  // namespace flatcam::gui

@@ -2604,3 +2604,16 @@ TEST(GuiFiles, ExportPng) {
         EXPECT_EQ(img.size(), app.ui()->plotCanvas()->grabFramebuffer().size());
     }
 }
+
+// Importar HPGL2 como Geometría: una herramienta por pluma.
+TEST(GuiFiles, OpenHpgl2) {
+    App app;
+    QTemporaryDir data;
+    app.setDataPath(data.path());
+    auto* geo = dynamic_cast<GeometryObject*>(
+        app.openHpgl2(QString::fromStdString(std::string(FLATCAM_TEST_DATA_DIR) + "/hpgl2/basic.plt")));
+    ASSERT_NE(geo, nullptr);
+    EXPECT_EQ(geo->tools().size(), 2u);
+    EXPECT_EQ(geo->tools().begin()->second.type, "Iso");
+    EXPECT_EQ(app.openHpgl2(QString::fromStdString(std::string(FLATCAM_TEST_DATA_DIR) + "/hpgl2/multi_cmd.plt")), nullptr);
+}
