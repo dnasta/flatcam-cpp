@@ -419,6 +419,10 @@ public:
     FlatCAMObj* importDxf(const QString& filename, bool asGerber);
     /** @brief Archivo -> Importar -> DXF (`on_file_importdxf`). @param asGerber Como Gerber. */
     void onFileImportDxf(bool asGerber);
+    /** @brief Abre un HPGL2 como Geometría (`open_hpgl2`). @param filename Archivo. @return El objeto, o nulo. */
+    FlatCAMObj* openHpgl2(const QString& filename);
+    /** @brief Archivo -> Importar -> HPGL2 (`on_fileopenhpgl2`). */
+    void onFileOpenHpgl2();
     /** @brief Arma y abre el menú del canvas (`popMenu`) donde está el cursor. */
     void popupCanvasMenu();
     /** @brief El menú del canvas (`popMenu`). @return El menú. */

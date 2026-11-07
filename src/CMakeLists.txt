@@ -11,6 +11,7 @@ add_library(flatcam_core STATIC
     parsers/Gerber.cpp
     parsers/SvgImport.cpp
     parsers/DxfImport.cpp
+    parsers/Hpgl2.cpp
     parsers/Excellon.cpp
     cam/PyNumber.cpp
     io/FileExport.cpp
