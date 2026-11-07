@@ -1,0 +1,1583 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "ToolTransform",
+  "name": null,
+  "props": {
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Transform. de objetos"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {}
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1,
+       0
+      ],
+      "colMinWidth": [
+       0,
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El punto de referencia para Rotate, Skew, Scale, Mirror.\nPuede ser:\n- Origen -> es el punto 0, 0\n- Selección -> el centro del cuadro delimitador de los objetos seleccionados\n- Punto -> un punto personalizado definido por coordenadas X, Y\n- Objeto -> el centro del cuadro delimitador de un objeto específico"
+          },
+          "text": {
+           "t": "str",
+           "v": "Referencia:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 0,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "ref_combo",
+         "props": {
+          "currentText": {
+           "t": "str",
+           "v": "Selección"
+          }
+         },
+         "items": [
+          "Origen",
+          "Selección",
+          "Punto",
+          "Objeto"
+         ],
+         "currentIndex": 1
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "point_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Un punto de referencia en formato X, Y."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "NumericalEvalTupleEntry",
+         "name": "point_entry",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "0, 0"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "point_button",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Agregar coordenadas de puntos desde el portapapeles."
+          },
+          "text": {
+           "t": "str",
+           "v": "Añadir"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "type_object_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El tipo de objeto utilizado como referencia."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tipo:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "type_obj_combo",
+         "props": {
+          "currentText": {
+           "t": "str",
+           "v": "Gerber"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         },
+         "items": [
+          "Gerber",
+          "Excellon",
+          "Geometría"
+         ],
+         "currentIndex": 0
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "object_combo",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El objeto utilizado como referencia.\nEl punto utilizado es el centro de su cuadro delimitador."
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         },
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "<font size=3><b>Girar</b></font>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "rotate_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Ángulo, en grados.\nNúmero Real entre -360 y 359.\nNúmeros positivos para el movimiento CW.\nNúmeros negativos para movimiento CCW."
+          },
+          "text": {
+           "t": "str",
+           "v": "Ángulo:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "rotate_entry",
+         "props": {
+          "wrapping": {
+           "t": "bool",
+           "v": true
+          },
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -360.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 360.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 45.0
+          },
+          "value": {
+           "t": "double",
+           "v": 90.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "rotate_button",
+         "props": {
+          "minimumSize": {
+           "t": "QSize",
+           "v": [
+            90,
+            0
+           ]
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Rotar los objetos seleccionados.\nEl punto de referencia es el medio de\nel cuadro delimitador para todos los objetos seleccionados."
+          },
+          "text": {
+           "t": "str",
+           "v": "Girar"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 9,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "<font size=3><b>Sesgo / cizalla</b></font>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 9,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "skew_link_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Enlace la entrada Y a la entrada X y copie su contenido."
+          },
+          "text": {
+           "t": "str",
+           "v": "Enlazar"
+          },
+          "checked": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "skewx_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Ángulo para sesgo de acción, en grados.\nNúmero Real entre -360 y 360."
+          },
+          "text": {
+           "t": "str",
+           "v": "Ángulo X:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "skewx_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -360.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 360.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "skewx_button",
+         "props": {
+          "minimumSize": {
+           "t": "QSize",
+           "v": [
+            90,
+            0
+           ]
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Incline / corte los objetos seleccionados.\nEl punto de referencia es el medio de\nel cuadro delimitador para todos los objetos seleccionados."
+          },
+          "text": {
+           "t": "str",
+           "v": "Inclinar X"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "skewy_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Ángulo para sesgo de acción, en grados.\nNúmero Real entre -360 y 360."
+          },
+          "text": {
+           "t": "str",
+           "v": "Ángulo Y:"
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "skewy_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -360.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 360.0
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "skewy_button",
+         "props": {
+          "minimumSize": {
+           "t": "QSize",
+           "v": [
+            90,
+            0
+           ]
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Incline / corte los objetos seleccionados.\nEl punto de referencia es el medio de\nel cuadro delimitador para todos los objetos seleccionados."
+          },
+          "text": {
+           "t": "str",
+           "v": "Inclinar Y"
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 14,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 15,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "<font size=3><b>Escala</b></font>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 15,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "scale_link_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Enlace la entrada Y a la entrada X y copie su contenido."
+          },
+          "text": {
+           "t": "str",
+           "v": "Enlazar"
+          },
+          "checked": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 17,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "scalex_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Factor de escalado en eje X."
+          },
+          "text": {
+           "t": "str",
+           "v": "Factor X:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 17,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "scalex_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -1000000.0
+          },
+          "value": {
+           "t": "double",
+           "v": 1.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 17,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "scalex_button",
+         "props": {
+          "minimumSize": {
+           "t": "QSize",
+           "v": [
+            90,
+            0
+           ]
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Escala los objetos seleccionados.\nEl punto de referencia depende de\nel estado de la casilla de verificación Escalar referencia."
+          },
+          "text": {
+           "t": "str",
+           "v": "Escala x"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 19,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "scaley_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Factor de escalado en eje Y."
+          },
+          "text": {
+           "t": "str",
+           "v": "Factor Y:"
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 19,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "scaley_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -1000000.0
+          },
+          "value": {
+           "t": "double",
+           "v": 1.0
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 19,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "scaley_button",
+         "props": {
+          "minimumSize": {
+           "t": "QSize",
+           "v": [
+            90,
+            0
+           ]
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Escala los objetos seleccionados.\nEl punto de referencia depende de\nel estado de la casilla de verificación Escalar referencia."
+          },
+          "text": {
+           "t": "str",
+           "v": "Escala Y"
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 21,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 23,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "<font size=3><b>Espejo (Flip)</b></font>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 25,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "layout": {
+         "qt": "QHBoxLayout",
+         "py": "QHBoxLayout",
+         "name": null,
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "items": [
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QPushButton",
+            "py": "FCButton",
+            "name": "flipx_button",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Voltee los objetos seleccionados sobre el eje X."
+             },
+             "text": {
+              "t": "str",
+              "v": "Voltear en X"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QPushButton",
+            "py": "FCButton",
+            "name": "flipy_button",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Voltee los objetos seleccionados sobre el eje X."
+             },
+             "text": {
+              "t": "str",
+              "v": "Voltear en Y"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "align": 0,
+        "row": 27,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 29,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "<font size=3><b>Compensar</b></font>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 31,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "offx_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Distancia a desplazamiento en el eje X. En unidades actuales."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor X:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 31,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "offx_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -1000000.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 31,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "offx_button",
+         "props": {
+          "minimumSize": {
+           "t": "QSize",
+           "v": [
+            90,
+            0
+           ]
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Desplazar los objetos seleccionados.\nEl punto de referencia es el medio de\nel cuadro delimitador para todos los objetos seleccionados.\n"
+          },
+          "text": {
+           "t": "str",
+           "v": "Offset X"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 32,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "offy_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Distancia a desplazamiento en el eje Y. En unidades actuales."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor Y:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 32,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "offy_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -1000000.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 32,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "offy_button",
+         "props": {
+          "minimumSize": {
+           "t": "QSize",
+           "v": [
+            90,
+            0
+           ]
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Desplazar los objetos seleccionados.\nEl punto de referencia es el medio de\nel cuadro delimitador para todos los objetos seleccionados.\n"
+          },
+          "text": {
+           "t": "str",
+           "v": "Offset Y"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 34,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 35,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "<font size=3><b>Buffer</b></font>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 35,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "buffer_rounded_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Si se marca, el búfer rodeará la forma tamponada,\nCada rincón será redondeado.\nSi no está marcado, el búfer seguirá la geometría exacta\nde la forma amortiguada."
+          },
+          "text": {
+           "t": "str",
+           "v": "Redondeado"
+          },
+          "checked": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 37,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "buffer_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Un valor positivo creará el efecto de dilatación,\nmientras que un valor negativo creará el efecto de la erosión.\nCada elemento de geometría del objeto se incrementará\no disminuido con la 'distancia'."
+          },
+          "text": {
+           "t": "str",
+           "v": "Distancia:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 37,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "buffer_entry",
+         "props": {
+          "wrapping": {
+           "t": "bool",
+           "v": true
+          },
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -10000.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 37,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "buffer_button",
+         "props": {
+          "minimumSize": {
+           "t": "QSize",
+           "v": [
+            90,
+            0
+           ]
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Crea el efecto de amortiguación en cada geometría,\nelemento del objeto seleccionado, utilizando la distancia."
+          },
+          "text": {
+           "t": "str",
+           "v": "Buffer D"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 38,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "buffer_factor_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Un valor positivo creará el efecto de dilatación,\nmientras que un valor negativo creará el efecto de la erosión.\nCada elemento de geometría del objeto se incrementará\no disminuido para ajustarse al 'Valor'. El Valor es un porcentaje\nde la dimensión inicial."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 38,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "buffer_factor_entry",
+         "props": {
+          "wrapping": {
+           "t": "bool",
+           "v": true
+          },
+          "suffix": {
+           "t": "str",
+           "v": " %"
+          },
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -100.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 1000.0
+          },
+          "value": {
+           "t": "double",
+           "v": 100.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 38,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "buffer_factor_button",
+         "props": {
+          "minimumSize": {
+           "t": "QSize",
+           "v": [
+            90,
+            0
+           ]
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Crea el efecto de amortiguación en cada geometría,\nelemento del objeto seleccionado, utilizando el factor."
+          },
+          "text": {
+           "t": "str",
+           "v": "Buffer F"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 42,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {}
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "reset_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Restablecerá los parámetros de la herramienta."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Restablecer la Herramienta"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/reset32.png"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "TransformToolUI"
+}

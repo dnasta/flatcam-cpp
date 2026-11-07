@@ -232,6 +232,7 @@ public:
     DrillingTool* drillingTool;  ///< Panel de perforación.
     CutOutTool* cutoutTool;      ///< Panel de corte.
     DblSidedTool* dblsidedTool;  ///< Panel de PCB a 2 caras.
+    class TransformTool* transformTool;  ///< Panel de Transformaciones.
     IsolationTool* isolationTool;  ///< Panel de aislamiento.
 
     /** @brief Selección interactiva de zonas y polígonos en el canvas. @return El selector. */

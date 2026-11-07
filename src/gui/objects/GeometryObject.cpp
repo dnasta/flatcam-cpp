@@ -110,6 +110,39 @@ bool GeometryObject::mirror(Axis axis, const Point2D& point) {
     return true;
 }
 
+template <typename Fn>
+void GeometryObject::applyToAll(Fn fn) {
+    for (Shape& s : solid_) s = fn(s);
+    for (auto& [uid, t] : tools_)
+        for (Shape& s : t.solidGeometry) s = fn(s);
+}
+
+bool GeometryObject::rotate(double angle, const Point2D& p) {
+    applyToAll([&](const Shape& s) { return s.rotate(angle, p); });
+    return true;
+}
+
+bool GeometryObject::skew(double ax, double ay, const Point2D& p) {
+    applyToAll([&](const Shape& s) { return s.skew(ax, ay, p); });
+    return true;
+}
+
+bool GeometryObject::scale(double fx, double fy, const Point2D& p) {
+    applyToAll([&](const Shape& s) { return s.scale(fx, fy, p); });
+    return true;
+}
+
+bool GeometryObject::offset(double dx, double dy) {
+    applyToAll([&](const Shape& s) { return s.translate(dx, dy); });
+    return true;
+}
+
+bool GeometryObject::buffer(double distance, JoinStyle join, bool factor) {
+    if (distance == 0.0) return true;
+    applyToAll([&](const Shape& s) { return factor ? s.scale(distance, distance) : s.buffer(distance, 64, join); });
+    return true;
+}
+
 QWidget* GeometryObject::propertiesUi() {
     if (!ui_) ui_ = std::make_unique<GeometryObjectUI>();
     static_cast<GeometryObjectUI*>(ui_.get())->build(*this);

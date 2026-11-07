@@ -146,6 +146,14 @@ public:
     void rotate(double angle, const Point2D& point) override;
     /** @brief Inclina agujeros y ranuras (`skew`). @param angleX Ángulo en X. @param angleY Ángulo en Y. @param point Punto fijo. */
     void skew(double angleX, double angleY, const Point2D& point) override;
+    /**
+     * @brief Engrosa los agujeros (`Excellon.buffer`): suma @p distance al diámetro de cada herramienta (o lo multiplica si
+     * @p factor) y rehace la geometría.
+     * @param distance Distancia, o factor si @p factor.
+     * @param join No se usa (el original solo lo pasa).
+     * @param factor Si @p distance es un factor.
+     */
+    void buffer(double distance, JoinStyle join, bool factor) override;
 
 private:
     /** @brief Aplica una transformación a todos los agujeros y ranuras y recrea la geometría. */

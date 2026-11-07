@@ -24,6 +24,7 @@
 #include "gui/ExclusionAreasManager.h"
 #include "gui/ToolsDatabase.h"
 #include "gui/ToolsDBTab.h"
+#include "gui/tools/TransformTool.h"
 #include "gui/ProjectIO.h"
 #include "gui/tools/ClearingTools.h"
 #include "gui/objects/ObjectUIs.h"
@@ -102,8 +103,9 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     drillingTool = new DrillingTool(this, ui_.get());
     cutoutTool = new CutOutTool(this, ui_.get());
     dblsidedTool = new DblSidedTool(this, ui_.get());
+    transformTool = new TransformTool(this, ui_.get());
     isolationTool = new IsolationTool(this, ui_.get());
-    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool,
+    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool, transformTool,
                                                       isolationTool})
         w->hide();
     connectSignals();
@@ -241,6 +243,12 @@ void App::connectSignals() {
         connect(a, &QAction::triggered, this, [this] {
             runTool(isolationTool, IsolationTool::info());
             isolationTool->setToolUi();
+        });
+    for (QAction* a : {ui_->transform_tool_menuAction, ui_->transform_btn, ui_->grb_transform_btn,
+                       ui_->grb_transform_menuitem, ui_->geo_transform_btn, ui_->geo_transform_menuitem})
+        connect(a, &QAction::triggered, this, [this] {
+            runTool(transformTool, TransformTool::info());
+            transformTool->setToolUi();
         });
     for (QAction* a : {ui_->dblsidedtool_menuAction, ui_->dblsided_btn})
         connect(a, &QAction::triggered, this, [this] {

@@ -1822,3 +1822,57 @@ TEST(GuiGeometry, AddAndDeleteTools) {
     ui->deltool_btn->click();
     EXPECT_EQ(geo->tools().size(), 1u);
 }
+
+TEST(GuiTransform, RotateScaleOffsetFlipAndBuffer) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    auto* exc = static_cast<ExcellonObject*>(app.openByExtension(QString::fromStdString(dir + "PTH.drl")));
+    ASSERT_NE(edge, nullptr);
+    ASSERT_NE(exc, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(edge));
+    app.ui()->transform_btn->trigger();
+    TransformTool* t = app.transformTool;
+    EXPECT_EQ(app.ui()->tool_scroll_area->widget(), t);
+    EXPECT_EQ(t->ref_combo->currentIndex(), 1);   // Selección
+    EXPECT_TRUE(t->point_entry->isHidden());
+    EXPECT_FALSE(t->scaley_entry->isEnabled());  // enlazado
+    const QRectF b0 = edge->bounds();
+    // Desplazar en X.
+    t->offx_entry->setValue(5.0);
+    t->offx_button->click();
+    EXPECT_NEAR(edge->bounds().left(), b0.left() + 5, 1e-9);
+    EXPECT_NEAR(edge->bounds().width(), b0.width(), 1e-9);
+    // Rotar 90 alrededor del centro de la selección: ancho y alto se intercambian.
+    const QRectF b1 = edge->bounds();
+    t->rotate_entry->setValue(90);
+    t->rotate_button->click();
+    EXPECT_NEAR(edge->bounds().width(), b1.height(), 1e-6);
+    EXPECT_NEAR(edge->bounds().height(), b1.width(), 1e-6);
+    EXPECT_NEAR(edge->bounds().center().x(), b1.center().x(), 1e-6);
+    // Escalar por 2 (enlazado) desde el origen.
+    t->ref_combo->setCurrentIndex(0);
+    const QRectF b2 = edge->bounds();
+    t->scalex_entry->setValue(2.0);
+    t->scalex_button->click();
+    EXPECT_NEAR(edge->bounds().left(), 2 * b2.left(), 1e-6);
+    EXPECT_NEAR(edge->bounds().top(), 2 * b2.top(), 1e-6);
+    // Reflejar las X alrededor de un punto.
+    t->ref_combo->setCurrentIndex(2);
+    EXPECT_FALSE(t->point_entry->isHidden());
+    t->point_entry->setText("10, 0");
+    const QRectF b3 = edge->bounds();
+    t->flipx_button->click();
+    EXPECT_NEAR(edge->bounds().left(), 20 - b3.right(), 1e-6);
+    // Engrosar el Excellon 0,2: el diámetro de cada herramienta crece 0,2.
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(exc));
+    const double d0 = exc->excellon().drillTools().begin()->second.tooldia;
+    t->buffer_entry->setValue(0.2);
+    t->buffer_button->click();
+    EXPECT_NEAR(exc->excellon().drillTools().begin()->second.tooldia, d0 + 0.2, 1e-12);
+    // Sin nada elegido avisa.
+    app.ui()->collection_view->clearSelection();
+    t->offy_entry->setValue(1.0);
+    t->offy_button->click();
+    EXPECT_EQ(app.ui()->fcinfo->text->text(), tr_("No object is selected."));
+}

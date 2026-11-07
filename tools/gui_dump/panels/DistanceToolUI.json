@@ -1,0 +1,527 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "Distance",
+  "name": null,
+  "props": {
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {
+       "text": {
+        "t": "str",
+        "v": "<font size=4><b>Herramienta de Dist</b></font><br>"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "units_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esas son las unidades en las que se mide la distancia."
+          },
+          "text": {
+           "t": "str",
+           "v": "Unidades:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 0,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "units_value",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "MÉTRICO (mm)"
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "snap_center_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El cursor del mouse se ajustará al centro de la almohadilla / taladro\ncuando se cierne sobre la geometría de la almohadilla / taladro."
+          },
+          "text": {
+           "t": "str",
+           "v": "Ajustar al centro"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "start_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esto mide las coordenadas del punto de inicio."
+          },
+          "text": {
+           "t": "str",
+           "v": "Iniciar coordenadas:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "FCEntry",
+         "name": "start_entry",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esto mide las coordenadas del punto de inicio."
+          },
+          "text": {
+           "t": "str",
+           "v": "(0, 0)"
+          },
+          "alignment": {
+           "t": "int",
+           "v": 130
+          },
+          "readOnly": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "stop_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Estas son las coordenadas del punto de parada de medición."
+          },
+          "text": {
+           "t": "str",
+           "v": "Detener coordenadas:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "FCEntry",
+         "name": "stop_entry",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Estas son las coordenadas del punto de parada de medición."
+          },
+          "text": {
+           "t": "str",
+           "v": "(0, 0)"
+          },
+          "alignment": {
+           "t": "int",
+           "v": 130
+          },
+          "readOnly": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "distance_x_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esta es la distancia medida sobre el eje X."
+          },
+          "text": {
+           "t": "str",
+           "v": "Dx:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "FCEntry",
+         "name": "distance_x_entry",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esta es la distancia medida sobre el eje X."
+          },
+          "text": {
+           "t": "str",
+           "v": "0.0"
+          },
+          "alignment": {
+           "t": "int",
+           "v": 130
+          },
+          "readOnly": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "distance_y_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esta es la distancia medida sobre el eje Y."
+          },
+          "text": {
+           "t": "str",
+           "v": "Dy:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "FCEntry",
+         "name": "distance_y_entry",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esta es la distancia medida sobre el eje Y."
+          },
+          "text": {
+           "t": "str",
+           "v": "0.0"
+          },
+          "alignment": {
+           "t": "int",
+           "v": 130
+          },
+          "readOnly": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "angle_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Este es el ángulo de orientación de la línea de medición."
+          },
+          "text": {
+           "t": "str",
+           "v": "Ángulo:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "FCEntry",
+         "name": "angle_entry",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Este es el ángulo de orientación de la línea de medición."
+          },
+          "text": {
+           "t": "str",
+           "v": "0.0"
+          },
+          "alignment": {
+           "t": "int",
+           "v": 130
+          },
+          "readOnly": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "total_distance_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Este es el punto a punto de la distancia euclidiana."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>DISTANCIA:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "FCEntry",
+         "name": "total_distance_entry",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Este es el punto a punto de la distancia euclidiana."
+          },
+          "text": {
+           "t": "str",
+           "v": "0.0"
+          },
+          "alignment": {
+           "t": "int",
+           "v": 130
+          },
+          "readOnly": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "measure_btn",
+      "props": {
+       "text": {
+        "t": "str",
+        "v": "Trabajando..."
+       },
+       "enabled": {
+        "t": "bool",
+        "v": false
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "DistanceToolUI"
+}

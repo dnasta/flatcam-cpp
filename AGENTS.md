@@ -66,13 +66,13 @@ logo) y **CutOut** → **CNC Job** con G-code. Taladros y alineación con **PCB 
 | 2 | Parsers de Gerber y Excellon con tests contra archivos reales | **Hecha** |
 | 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | **Hecha**: transformaciones de Gerber, postprocesadores, G-code de taladrado y de geometrías, CutOut, capa de láser, Paint, NCC, PCB a 2 caras e Isolation |
 | 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | **En curso**: ventana principal idéntica a la original (generada desde la interfaz Python real), widgets de `GUIElements`, canvas `QOpenGLWidget` (ejes, grilla, HUD, zoom, paneo y dibujo de objetos con buffers de vértices), abrir Gerber y Excellon (menú, barra, arrastrar y soltar, línea de comandos) con el árbol del Proyecto; Propiedades de Gerber y Excellon (paneles generados + `build_ui`); paneles de NCC, Paint, Perforación y Corte en la pestaña Herramienta (generados). **Perforación completa:** objeto → tabla de herramientas → parámetros por herramienta → CNC Job (objeto, dibujo y Propiedades) → "Guardar código CNC"; desde la interfaz reproduce el `.nc` de la 2024.4 del usuario (salvo fecha y orden de agujeros). **Corte completo:** Corte libre o rectangular → objeto Geometría (Propiedades con su tabla y parámetros por herramienta) → "Generar objeto CNCJob" → exportar; reproduce el `.nc` del contorno de la 2024.4 **línea por línea salvo la fecha**. **Agregado pedido por el usuario:** los objetos de cada grupo del Proyecto se reordenan arrastrándolos y ese orden es el de dibujo (el primero queda arriba). **Paint y NCC completos** (método estándar, "Todos" / "Sí mismo"): el flujo del usuario sobre Logo y B_Cu da sus `.nc` de la 2024.4 (Paint: mismas líneas salvo la variante del láser y últimas cifras de GEOS; NCC: misma cabecera y los mismos trazados ±2 %). **Reflejar:** Opciones → Voltear en el eje X / Y y las teclas X / Y (también desde el árbol), alrededor del centro de la caja de los objetos elegidos; con las cuatro capas de "luz de noche" elegidas da exactamente el reflejo en x = 0 de los `.nc` del usuario. **PCB a 2 caras:** panel generado y lógica completa (reflejar con punto, caja o agujero elegido con el mouse; límites de lo elegido; agujeros de alineación "Alignment Drills"). **Isolation:** panel generado (nivel Básico) y lógica sobre `src/tools/Isolation`: combinado (`_iso_combined`), pasadas separadas (`_<diá>_isoN`), resto (`_iso_rest`), resta de otro objeto y objeto de referencia. **Abrir proyectos** `.FlatPrj` de la versión Python (también el real del usuario, 535 MB comprimido / 1,7 GB: 24 s y 1,8 GB de memoria): lectura en streaming (`src/io/`) que descarta `gcode_parsed` y las copias de geometría que no se usan. **Guardar proyectos** (Archivo → Guardar proyecto / Guardar como, comprimido con XZ como el original): cada objeto como su `to_dict` original, conservando lo que vino del proyecto; el FlatCAM en Python abre lo que guarda el port (`tests/tools/check_project_in_original.py`) |
-| 5 | Herramientas secundarias y postprocesadores restantes | **En curso** (plan en la sección 13): **los 20 postprocesadores hechos**, cada método idéntico al original (2.251 casos) y de punta a punta en geometrías (39 escenarios más) y taladrado (17 postprocesadores) |
+| 5 | Herramientas secundarias y postprocesadores restantes | **En curso** (plan en la sección 13): ítems 1 y 2 hechos, Transformaciones hecha; **los 20 postprocesadores hechos**, cada método idéntico al original (2.251 casos) y de punta a punta en geometrías (39 escenarios más) y taladrado (17 postprocesadores) |
 
 Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (AppleClang, GEOS 3.15). Doxygen genera
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.656 casos de `ctest` (2.617 del núcleo y 38 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.657 casos de `ctest` (2.617 del núcleo y 39 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -694,7 +694,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.656 casos de test** (`ctest`): 2.618 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 38 de la GUI;
+- **2.657 casos de test** (`ctest`): 2.618 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 39 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -722,7 +722,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.656 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.657 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -851,8 +851,12 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    Perforación y Geometría, y la GUI de los dos paneles), ~~pulido~~ (hecho: "Agregar acabado" de la Geometría agrega la
    herramienta "Pulir" sobre la caja del objeto más el margen, como `on_polish`), ~~base de datos de herramientas~~ (hecha: `ToolsDatabase`, pestaña `ToolsDBTab` generada desde `ToolsDB2`, búsqueda al agregar y "desde la base" en NCC, Paint, Isolation, Corte y Geometría; NCC, Paint y Corte comparan el objetivo con un texto y, como el original, nunca encuentran; Geometría ganó "Buscar y agregar" y "Borrar"). Falta: fresado de ranuras (va con Milling, ítem 5). Lista vieja: verificación del diámetro seguro (NCC e Isolation), ajuste a la
    grilla de los clics, áreas de exclusión (Perforación y Geometría), pulido (`polish`) y fresado de ranuras/agujeros (Excellon).
-3. **Transformaciones** (`ToolTransform`, `ToolMove`, offset/escala de Propiedades), **Distancia** (`ToolDistance`,
-   `ToolDistanceMin`), **Propiedades** (`ToolProperties`).
+3. ~~**Transformaciones**~~ (hecha: `tools/TransformTool.*`, panel generado de `ToolTransform`; rotar, inclinar, escalar,
+   desplazar, reflejar y engrosar los objetos elegidos alrededor del origen, la selección, un punto u otro objeto; Gerber,
+   Excellon, cuyo engrosado cambia el diámetro de las herramientas como el original, y Geometría; los CNC Job avisan. Desvío: con
+   referencia "Punto" el original falla, porque lee `self.uipoint_entry`, y el port usa el punto). Siguen `ToolMove`, el offset y
+   la escala de Propiedades, **Distancia** (`ToolDistance`, `ToolDistanceMin`; sus paneles ya están generados) y
+   **Propiedades** (`ToolProperties`, panel generado).
 4. **Archivos:** abrir G-code como CNC Job, exportar Gerber/Excellon/DXF/SVG/PNG, importar SVG/DXF/PDF/HPGL2/imagen
    (`ParseSVG`, `ParseDXF*`, `ParsePDF`, `ParseHPGL2`, `ParseFont`, `ToolImage`, `ToolPDF`), objetos Script y Documento.
 5. **Herramientas restantes** (`appTools/`): Milling, Panelize, Film, Calculators, Copper Thieving, Fiducials, Corners, Extract
