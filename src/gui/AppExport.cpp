@@ -5,10 +5,12 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QLocale>
+#include <QImage>
 #include <QMessageBox>
 
 #include "gui/App.h"
 #include "gui/MainGUI.h"
+#include "gui/PlotCanvas.h"
 #include "gui/Translation.h"
 #include "gui/objects/FlatCAMObj.h"
 #include "gui/objects/GeometryObject.h"
@@ -187,6 +189,26 @@ void App::onFileExportDxf() {
         return;
     }
     exportDxfFile(geo, f);
+}
+
+bool App::exportPngFile(const QString& filename) {
+    // _screenshot(alpha=False) + write_png: lo que muestra el canvas, sin transparencia.
+    const QImage img = ui_->plotCanvas()->grabFramebuffer().convertToFormat(QImage::Format_RGB888);
+    if (img.isNull() || !img.save(filename, "PNG")) return false;
+    registerRecent("png", filename);  // global_open_style = False: file_opened
+    return true;
+}
+
+void App::onFileExportPng() {
+    // Nombre propuesto: png_AAAAMMDD_HHMMSS.
+    const QString date = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
+    const QString f = QFileDialog::getSaveFileName(ui_.get(), tr_("Export PNG Image"), lastFolder() + "/png_" + date,
+                                                   "PNG File (*.png);;All Files (*.*)");
+    if (f.isEmpty()) {
+        ui_->inform(tr_("Cancelled."));
+        return;
+    }
+    exportPngFile(f);
 }
 
 }  // namespace flatcam::gui

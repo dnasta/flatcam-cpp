@@ -42,6 +42,7 @@
 #include "gui/widgets/KeySensitiveListView.h"
 #include <QTemporaryDir>
 #include <QTimer>
+#include <QImage>
 #include <QCloseEvent>
 #include <QTextEdit>
 #include <QTabWidget>
@@ -2586,4 +2587,20 @@ TEST(GuiFiles, ImportAndExportDxf) {
               nullptr);
     EXPECT_NE(app.importDxf(QString::fromStdString(std::string(FLATCAM_TEST_DATA_DIR) + "/dxf/lines_r12.dxf"), true),
               nullptr);
+}
+
+// Exportar PNG: lo que muestra el canvas (en "offscreen" QOpenGLWidget no dibuja: entonces no se escribe nada).
+TEST(GuiFiles, ExportPng) {
+    App app;
+    QTemporaryDir data;
+    app.setDataPath(data.path());
+    QTemporaryDir tmp;
+    const QString f = tmp.filePath("c.png");
+    const bool ok = app.exportPngFile(f);
+    EXPECT_EQ(ok, QFile::exists(f));
+    if (ok) {
+        const QImage img(f);
+        EXPECT_FALSE(img.hasAlphaChannel());
+        EXPECT_EQ(img.size(), app.ui()->plotCanvas()->grabFramebuffer().size());
+    }
 }
