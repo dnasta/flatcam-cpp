@@ -72,7 +72,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.662 casos de `ctest` (2.617 del núcleo y 44 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.664 casos de `ctest` (2.617 del núcleo y 46 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -178,6 +178,9 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
                          Shift+M; salta al punto medio con App::jumpTo, el on_jump_to del original)
   tools/MoveTool.*       Mover (ToolMove, sin panel; tecla M): dos clics, arrastra la caja de la selección
   tools/PropertiesTool.* Propiedades (ToolProperties, tecla P y "Propiedades" del menú del Proyecto): árbol con los datos
+  AppCanvasSelection.cpp Elegir objetos con el mouse en el canvas (select_objects, selection_area_handler, recuadros)
+  AppEditMenu.cpp        Archivo -> Nuevo proyecto, menús Editar y Ver y el menú del canvas (popMenu, con las grillas)
+  widgets/DialogBoxRadio.* Diálogos de "Saltar a" (DialogBoxRadio) y "Ubicar" (DialogBoxChoice)
   tools/CutOutTool.*     Corte completo (port de ToolCutOut: libre y rectangular → `<objeto>_cutout`)
   tools/DrillingTool.*   Perforación completa (port de ToolDrilling: tabla, almacén de parámetros con el tipo de Python de
                          cada valor, formulario, postprocesador, generar el CNC Job)
@@ -657,6 +660,15 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     de pasadas, y la vuelta a (0, 0) sale de ese extremo. `travel_distance` no se guarda en los proyectos: un CNC Job abierto
     de un proyecto no lo muestra (igual que el original). Arreglado de paso: `oracle_geometry_multitool.py` no corría (importaba
     `ExcAreas`, que se había movido a `oracle_exclusion.py`).
+    (r) **Selección en el canvas y menús Ver/Editar** (fase 5, 3b). Como el original: la selección por área compara las
+    **cajas** de los objetos (no su geometría); un clic sobre el objeto ya elegido quita la selección (y aun así avisa que está
+    elegido); con varios objetos bajo el clic, cada clic pasa al siguiente. Las Propiedades siguen ahora al cambio de selección
+    (`selectionChanged`, como `on_list_selection_change`) y el objeto activo es el primero elegido (`get_active`), no el índice
+    actual del árbol. Desvíos: los submenús de los editores del menú del canvas no se agregan (solo existen dentro de un
+    editor); "Nuevo -> Geometría/Gerber/Excellon" (objetos vacíos para editar) avisa; el área de trabajo usa A4 vertical (sin
+    preferencias); el diálogo de "Saltar a" no se abre en el constructor (se llama a `exec()`, así se prueba); mover al origen y
+    fijar el origen no mueven los CNC Job (ver 11.12 p). **Volcador:** ahora guarda `objectName` (antes lo descartaba); el
+    original usa algunos (`plotarea_tab`, `default_properties`, los `e_*` de Perforación...).
     (m) Errores del original que se reproducen a propósito en Isolation: la herramienta nueva tiene tipo `"           Iso"`
     (con espacios) y forma "V", y el rótulo "Ninguna herramienta seleccionada" lleva `color=#7777FF""`.
 14. **Postprocesadores: desvíos y rarezas del original.** (a) `line_xyz` lee `p['end_xy']`, que `CNCjob` no define: en el
@@ -721,7 +733,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.662 casos de test** (`ctest`): 2.618 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 44 de la GUI;
+- **2.664 casos de test** (`ctest`): 2.618 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 46 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -749,7 +761,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.662 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.664 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -885,10 +897,16 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    ~~escala y desplazamiento del panel Propiedades de cada objeto~~, ~~Distancia~~ y ~~Distancia mínima~~ (`ToolDistance`,
    `ToolDistanceMin`) y ~~Propiedades~~ (`ToolProperties`): hechos (sección 11.12 p). Se encontró y se hizo lo que faltaba del
    CNC Job: la distancia recorrida y el tiempo estimado (11.12 q, idénticos al original).
-3b. **Lo que falta de la ventana principal** (encontrado al portar el ítem 3): elegir objetos con clic y con un rectángulo en el
-   canvas (`on_mouse_click_release_over_plot`, `select_objects`, y su recuadro de selección), el resto del menú Editar
-   (saltar a un punto con su diálogo, ubicar, mover al origen, fijar el origen, convertir, unir, etc.) y el resto de los atajos
-   de `MainGUI.keyPressEvent` (hoy: V, X, Y, 1-3, Supr, Escape, M, P, Ctrl+D, Ctrl+M, Shift+M).
+3b. **Lo que falta de la ventana principal** (encontrado al portar el ítem 3). **Hecho:** ~~elegir objetos con clic y con un
+   rectángulo en el canvas~~ (`AppCanvasSelection.cpp`: `select_objects`, `selection_area_handler`, recuadros de selección,
+   Ctrl suma, Shift copia las coordenadas, doble clic abre Propiedades), ~~el menú del canvas~~ (`popMenu` con Grillas,
+   Ver, Copiar, Borrar, Mover, Propiedades), ~~Ver~~ (mostrar/ocultar todos y los otros, redibujar, limpiar, área de trabajo A4,
+   pantalla completa, área de dibujo, panel, grilla, líneas de grilla, ejes, HUD), ~~Editar~~ (borrar, copiar, elegir todo,
+   mover al origen, fijar el origen, saltar a con `DialogBoxRadio`, ubicar) y ~~Archivo -> Nuevo proyecto~~ (`AppEditMenu.cpp`).
+   **Falta:** unir Geometrías/Excellon/Gerber, convertir Geometría simple/multi y a Gerber/Excellon/Geometría, cambiar las
+   unidades, girar e inclinar con diálogo (Opciones), "Ver fuente" de Opciones, objetos vacíos de Archivo -> Nuevo (para los
+   editores), Ayuda (Acerca de, enlaces, lista de atajos), salir con `final_save`, "Guardar copia del proyecto", y el resto de
+   los atajos de `MainGUI.keyPressEvent` (hoy: V, X, Y, 1-3, Supr, Escape, M, P, Ctrl+D, Ctrl+M, Shift+M).
 4. **Archivos:** abrir G-code como CNC Job, exportar Gerber/Excellon/DXF/SVG/PNG, importar SVG/DXF/PDF/HPGL2/imagen
    (`ParseSVG`, `ParseDXF*`, `ParsePDF`, `ParseHPGL2`, `ParseFont`, `ToolImage`, `ToolPDF`), objetos Script y Documento.
 5. **Herramientas restantes** (`appTools/`): Milling, Panelize, Film, Calculators, Copper Thieving, Fiducials, Corners, Extract

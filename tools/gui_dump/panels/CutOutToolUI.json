@@ -4,6 +4,10 @@
   "py": "CutOut",
   "name": null,
   "props": {
+   "objectName": {
+    "t": "str",
+    "v": "PCB de corte"
+   },
    "autoFillBackground": {
     "t": "bool",
     "v": true

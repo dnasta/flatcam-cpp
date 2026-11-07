@@ -2554,6 +2554,10 @@
                     "py": "FCCheckBox",
                     "name": "polish_cb",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "g_polish"
+                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Agregará una sección de pintura al final del GCode.\nUn cepillo metálico limpiará el material después del fresado."
@@ -2602,6 +2606,10 @@
                     "py": "FCDoubleSpinner",
                     "name": "polish_dia_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "g_polish_dia"
+                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -2658,6 +2666,10 @@
                     "py": "FCDoubleSpinner",
                     "name": "polish_travelz_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "g_polish_travelz"
+                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -2718,6 +2730,10 @@
                     "py": "FCDoubleSpinner",
                     "name": "polish_pressure_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "g_polish_pressure"
+                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -2778,6 +2794,10 @@
                     "py": "FCDoubleSpinner",
                     "name": "polish_margin_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "g_polish_margin"
+                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -2834,6 +2854,10 @@
                     "py": "FCDoubleSpinner",
                     "name": "polish_over_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "g_polish_overlap"
+                     },
                      "wrapping": {
                       "t": "bool",
                       "v": true
@@ -2902,6 +2926,10 @@
                     "py": "FCComboBox2",
                     "name": "polish_method_combo",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "g_polish_method"
+                     },
                      "currentText": {
                       "t": "str",
                       "v": "Estándar"

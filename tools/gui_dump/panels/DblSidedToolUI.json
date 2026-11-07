@@ -4,6 +4,10 @@
   "py": "DblSidedTool",
   "name": null,
   "props": {
+   "objectName": {
+    "t": "str",
+    "v": "PCB a 2 caras"
+   },
    "autoFillBackground": {
     "t": "bool",
     "v": true

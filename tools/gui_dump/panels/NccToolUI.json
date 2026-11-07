@@ -4,6 +4,10 @@
   "py": "NonCopperClear",
   "name": null,
   "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Compensación sin cobre"
+   },
    "autoFillBackground": {
     "t": "bool",
     "v": true
@@ -561,6 +565,10 @@
                 "py": "FCDoubleSpinner",
                 "name": "new_tooldia_entry",
                 "props": {
+                 "objectName": {
+                  "t": "str",
+                  "v": "Diá. de Herram"
+                 },
                  "decimals": {
                   "t": "int",
                   "v": 4
@@ -816,7 +824,12 @@
              "qt": "QWidget",
              "py": "RadioSet",
              "name": "op_radio",
-             "props": {},
+             "props": {
+              "objectName": {
+               "t": "str",
+               "v": "n_operation"
+              }
+             },
              "choices": [
               {
                "label": "Limpiar",
@@ -869,6 +882,10 @@
              "py": "RadioSet",
              "name": "milling_type_radio",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "n_milling_type"
+              },
               "toolTip": {
                "t": "str",
                "v": "Tipo de fresado:\n- subir / mejor para fresado de precisión y para reducir el uso de la herramienta\n- convencional / útil cuando no hay compensación de contragolpe"
@@ -926,6 +943,10 @@
              "py": "FCDoubleSpinner",
              "name": "ncc_overlap_entry",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "n_overlap"
+              },
               "wrapping": {
                "t": "bool",
                "v": true
@@ -986,6 +1007,10 @@
              "py": "FCComboBox2",
              "name": "ncc_method_combo",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "n_method"
+              },
               "currentText": {
                "t": "str",
                "v": "Semilla"
@@ -1033,6 +1058,10 @@
              "py": "FCDoubleSpinner",
              "name": "ncc_margin_entry",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "n_margin"
+              },
               "decimals": {
                "t": "int",
                "v": 4
@@ -1063,6 +1092,10 @@
              "py": "FCCheckBox",
              "name": "ncc_connect_cb",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "n_connect"
+              },
               "toolTip": {
                "t": "str",
                "v": "Dibuja líneas entre el resultado\nSegmentos para minimizar elevaciones de herramientas."
@@ -1089,6 +1122,10 @@
              "py": "FCCheckBox",
              "name": "ncc_contour_cb",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "n_contour"
+              },
               "toolTip": {
                "t": "str",
                "v": "Corta todo el perímetro del polígono.\nPara recortar los bordes ásperos."
@@ -1115,6 +1152,10 @@
              "py": "FCCheckBox",
              "name": "ncc_choice_offset_cb",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "n_offset"
+              },
               "toolTip": {
                "t": "str",
                "v": "Si se usa, agregará una compensación a las características de cobre.\nEl claro de cobre terminará a distancia\nde las características de cobre."
@@ -1137,6 +1178,10 @@
              "py": "FCDoubleSpinner",
              "name": "ncc_offset_spinner",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "n_offset_value"
+              },
               "wrapping": {
                "t": "bool",
                "v": true
@@ -1277,6 +1322,10 @@
              "py": "FCCheckBox",
              "name": "ncc_rest_cb",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "n_rest_machining"
+              },
               "toolTip": {
                "t": "str",
                "v": "Si está marcado, use 'mecanizado en resto'.\nBásicamente procesará cobre fuera de las características de la PCB,\nusando la herramienta más grande y continúe con las siguientes herramientas,\nde mayor a menor, para procesar las características de cobre que\nno pudo ser procesado por la herramienta anterior, hasta que haya\nno queda nada por procesar o no hay más herramientas.\n\nSi no está marcado, use el algoritmo estándar."
@@ -1325,6 +1374,10 @@
              "py": "FCDoubleSpinner",
              "name": "rest_ncc_margin_entry",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "n_margin"
+              },
               "decimals": {
                "t": "int",
                "v": 4
@@ -1505,6 +1558,10 @@
              "py": "FCComboBox2",
              "name": "select_combo",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "n_selection"
+              },
               "currentText": {
                "t": "str",
                "v": "Sí mismo"
@@ -1660,6 +1717,10 @@
              "py": "FCCheckBox",
              "name": "valid_cb",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "n_check"
+              },
               "toolTip": {
                "t": "str",
                "v": "Si se marca, se verifican los diámetros de las herramientas.\nsi proporcionarán un aislamiento completo."

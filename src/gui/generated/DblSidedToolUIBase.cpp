@@ -9,6 +9,7 @@ namespace flatcam::gui {
 void DblSidedToolUIBase::setupUi() {
     // ---- acciones (compartidas entre menús y barras)
     this->setAutoFillBackground(true);
+    this->setProperty("objectName", QString::fromUtf8("PCB a 2 caras"));
     layout = new QVBoxLayout();
     layout->setContentsMargins(9, 9, 9, 9);
     layout->setSpacing(6);

@@ -9,6 +9,8 @@ add_library(flatcam_gui STATIC
     App.cpp
     AppProjectMenu.cpp
     AppRecent.cpp
+    AppCanvasSelection.cpp
+    AppEditMenu.cpp
     CanvasPicker.cpp
     ExclusionAreasManager.cpp
     ToolsDatabase.cpp
@@ -51,6 +53,7 @@ add_library(flatcam_gui STATIC
     widgets/FCSpinners.cpp
     widgets/FCComboBox.cpp
     widgets/RadioSet.cpp
+    widgets/DialogBoxRadio.cpp
     widgets/FCTable.cpp
     widgets/NumericalEval.cpp
     widgets/FCLabel.cpp

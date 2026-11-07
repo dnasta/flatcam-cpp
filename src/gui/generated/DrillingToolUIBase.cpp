@@ -9,6 +9,7 @@ namespace flatcam::gui {
 void DrillingToolUIBase::setupUi() {
     // ---- acciones (compartidas entre menús y barras)
     this->setAutoFillBackground(true);
+    this->setProperty("objectName", QString::fromUtf8("Herramienta de Perforación"));
     layout = new QVBoxLayout();
     layout->setContentsMargins(9, 9, 9, 9);
     layout->setSpacing(6);
@@ -105,16 +106,19 @@ void DrillingToolUIBase::setupUi() {
     cutz_entry->setProperty("decimals", 4);
     cutz_entry->setProperty("maximum", 0.0);
     cutz_entry->setProperty("minimum", -10000.0);
+    cutz_entry->setProperty("objectName", QString::fromUtf8("e_cutz"));
     cutz_entry->setProperty("singleStep", 0.1);
     cutz_entry->setProperty("value", -1.7);
     grid1->addWidget(cutz_entry, 4, 1, 1, 1);
     mpass_cb = new FCCheckBox(nullptr);
+    mpass_cb->setProperty("objectName", QString::fromUtf8("e_multidepth"));
     mpass_cb->setText(QString::fromUtf8("Profund. Múlti:"));
     mpass_cb->setToolTip(QString::fromUtf8("Usa múltiples pases para limitar\nLa profundidad de corte en cada pasada. Será\ncortar varias veces hasta que el Corte Z sea\nalcanzado."));
     grid1->addWidget(mpass_cb, 5, 0, 1, 1);
     maxdepth_entry = new FCDoubleSpinner(nullptr);
     maxdepth_entry->setProperty("decimals", 4);
     maxdepth_entry->setProperty("maximum", 10000.0);
+    maxdepth_entry->setProperty("objectName", QString::fromUtf8("e_depthperpass"));
     maxdepth_entry->setProperty("singleStep", 0.1);
     maxdepth_entry->setToolTip(QString::fromUtf8("Profundidad de cada pase (positivo)."));
     maxdepth_entry->setProperty("value", 0.7);
@@ -126,6 +130,7 @@ void DrillingToolUIBase::setupUi() {
     travelz_entry = new FCDoubleSpinner(nullptr);
     travelz_entry->setProperty("decimals", 4);
     travelz_entry->setProperty("maximum", 10000.0);
+    travelz_entry->setProperty("objectName", QString::fromUtf8("e_travelz"));
     travelz_entry->setProperty("singleStep", 0.1);
     travelz_entry->setProperty("value", 2.0);
     grid1->addWidget(travelz_entry, 6, 1, 1, 1);
@@ -136,6 +141,7 @@ void DrillingToolUIBase::setupUi() {
     feedrate_z_entry = new FCDoubleSpinner(nullptr);
     feedrate_z_entry->setProperty("decimals", 4);
     feedrate_z_entry->setProperty("maximum", 910000.0);
+    feedrate_z_entry->setProperty("objectName", QString::fromUtf8("e_feedratez"));
     feedrate_z_entry->setProperty("singleStep", 0.1);
     feedrate_z_entry->setProperty("value", 300.0);
     grid1->addWidget(feedrate_z_entry, 14, 1, 1, 1);
@@ -147,6 +153,7 @@ void DrillingToolUIBase::setupUi() {
     feedrate_rapid_entry = new FCDoubleSpinner(nullptr);
     feedrate_rapid_entry->setProperty("decimals", 4);
     feedrate_rapid_entry->setProperty("maximum", 910000.0);
+    feedrate_rapid_entry->setProperty("objectName", QString::fromUtf8("e_fr_rapid"));
     feedrate_rapid_entry->setProperty("singleStep", 0.1);
     feedrate_rapid_entry->setProperty("value", 1500.0);
     feedrate_rapid_entry->setHidden(true);
@@ -157,15 +164,18 @@ void DrillingToolUIBase::setupUi() {
     grid1->addWidget(spindle_label, 19, 0, 1, 1);
     spindlespeed_entry = new FCSpinner(nullptr);
     spindlespeed_entry->setProperty("maximum", 1000000);
+    spindlespeed_entry->setProperty("objectName", QString::fromUtf8("e_spindlespeed"));
     spindlespeed_entry->setProperty("singleStep", 100);
     grid1->addWidget(spindlespeed_entry, 19, 1, 1, 1);
     dwell_cb = new FCCheckBox(nullptr);
+    dwell_cb->setProperty("objectName", QString::fromUtf8("e_dwell"));
     dwell_cb->setText(QString::fromUtf8("Habitar:"));
     dwell_cb->setToolTip(QString::fromUtf8("Pausa para permitir que el husillo alcance su\nVelocidad antes del corte."));
     grid1->addWidget(dwell_cb, 20, 0, 1, 1);
     dwelltime_entry = new FCDoubleSpinner(nullptr);
     dwelltime_entry->setProperty("decimals", 4);
     dwelltime_entry->setProperty("maximum", 10000.0);
+    dwelltime_entry->setProperty("objectName", QString::fromUtf8("e_dwelltime"));
     dwelltime_entry->setProperty("singleStep", 0.1);
     dwelltime_entry->setToolTip(QString::fromUtf8("Número de unidades de tiempo para que el husillo permanezca."));
     dwelltime_entry->setProperty("value", 1.0);
@@ -178,8 +188,10 @@ void DrillingToolUIBase::setupUi() {
     offset_entry->setProperty("decimals", 4);
     offset_entry->setProperty("maximum", 10000.0);
     offset_entry->setProperty("minimum", -10000.0);
+    offset_entry->setProperty("objectName", QString::fromUtf8("e_offset"));
     grid1->addWidget(offset_entry, 25, 1, 1, 1);
     drill_slots_cb = new FCCheckBox(nullptr);
+    drill_slots_cb->setProperty("objectName", QString::fromUtf8("e_drill_slots"));
     drill_slots_cb->setText(QString::fromUtf8("Perforar las Ranuras"));
     drill_slots_cb->setToolTip(QString::fromUtf8("Si la herramienta seleccionada tiene ranuras, se perforarán."));
     drill_slots_cb->setHidden(true);
@@ -192,12 +204,14 @@ void DrillingToolUIBase::setupUi() {
     drill_overlap_entry = new FCDoubleSpinner(nullptr);
     drill_overlap_entry->setProperty("decimals", 4);
     drill_overlap_entry->setProperty("maximum", 100.0);
+    drill_overlap_entry->setProperty("objectName", QString::fromUtf8("e_drill_slots_overlap"));
     drill_overlap_entry->setProperty("singleStep", 0.1);
     drill_overlap_entry->setProperty("suffix", QString::fromUtf8(" %"));
     drill_overlap_entry->setHidden(true);
     grid1->addWidget(drill_overlap_entry, 28, 1, 1, 1);
     last_drill_cb = new FCCheckBox(nullptr);
     last_drill_cb->setChecked(true);
+    last_drill_cb->setProperty("objectName", QString::fromUtf8("e_drill_last_drill"));
     last_drill_cb->setText(QString::fromUtf8("Último ejercicio"));
     last_drill_cb->setToolTip(QString::fromUtf8("Si la longitud de la ranura no está completamente cubierta por taladros,\nagregue un taladro en el punto final de la ranura."));
     last_drill_cb->setHidden(true);
@@ -228,6 +242,7 @@ void DrillingToolUIBase::setupUi() {
     gen_param_label->setToolTip(QString::fromUtf8("Parámetros que son comunes para todas las herramientas."));
     grid3->addWidget(gen_param_label, 3, 0, 1, 2);
     toolchange_cb = new FCCheckBox(nullptr);
+    toolchange_cb->setProperty("objectName", QString::fromUtf8("e_toolchange"));
     toolchange_cb->setText(QString::fromUtf8("Cambio de herram"));
     toolchange_cb->setToolTip(QString::fromUtf8("Incluir secuencia de cambio de herramienta\nen G-Code (Pausa para cambio de herramienta)."));
     grid3->addWidget(toolchange_cb, 5, 0, 1, 2);
@@ -238,6 +253,7 @@ void DrillingToolUIBase::setupUi() {
     toolchangez_entry = new FCDoubleSpinner(nullptr);
     toolchangez_entry->setProperty("decimals", 4);
     toolchangez_entry->setProperty("maximum", 10000.0);
+    toolchangez_entry->setProperty("objectName", QString::fromUtf8("e_toolchangez"));
     toolchangez_entry->setProperty("singleStep", 0.1);
     toolchangez_entry->setProperty("value", 15.0);
     grid3->addWidget(toolchangez_entry, 7, 1, 1, 1);
@@ -247,6 +263,7 @@ void DrillingToolUIBase::setupUi() {
     estartz_label->setHidden(true);
     grid3->addWidget(estartz_label, 9, 0, 1, 1);
     estartz_entry = new NumericalEvalEntry(nullptr);
+    estartz_entry->setProperty("objectName", QString::fromUtf8("e_startz"));
     estartz_entry->setStyleSheet(QString::fromUtf8("QLineEdit {border: 1px solid #0069A9;}"));
     estartz_entry->setHidden(true);
     grid3->addWidget(estartz_entry, 9, 1, 1, 1);
@@ -257,6 +274,7 @@ void DrillingToolUIBase::setupUi() {
     endz_entry = new FCDoubleSpinner(nullptr);
     endz_entry->setProperty("decimals", 4);
     endz_entry->setProperty("maximum", 10000.0);
+    endz_entry->setProperty("objectName", QString::fromUtf8("e_endz"));
     endz_entry->setProperty("singleStep", 0.1);
     endz_entry->setProperty("value", 0.5);
     grid3->addWidget(endz_entry, 11, 1, 1, 1);
@@ -265,6 +283,7 @@ void DrillingToolUIBase::setupUi() {
     w7->setToolTip(QString::fromUtf8("Fin movimiento X, Y posición. En formato (x, y).\nSi no se ingresa ningún valor, entonces no hay movimiento\nen el plano X, Y al final del trabajo."));
     grid3->addWidget(w7, 12, 0, 1, 1);
     endxy_entry = new NumericalEvalTupleEntry(nullptr);
+    endxy_entry->setProperty("objectName", QString::fromUtf8("e_endxy"));
     endxy_entry->setProperty("placeholderText", QString::fromUtf8("Coordenadas X, Y"));
     endxy_entry->setStyleSheet(QString::fromUtf8("QLineEdit {border: 1px solid #0069A9;}"));
     endxy_entry->setText(QString::fromUtf8("None"));
@@ -278,6 +297,7 @@ void DrillingToolUIBase::setupUi() {
     pdepth_entry->setProperty("decimals", 4);
     pdepth_entry->setProperty("maximum", 10000.0);
     pdepth_entry->setProperty("minimum", -10000.0);
+    pdepth_entry->setProperty("objectName", QString::fromUtf8("e_depth_probe"));
     pdepth_entry->setProperty("singleStep", 0.1);
     pdepth_entry->setProperty("value", -0.02);
     pdepth_entry->setHidden(true);
@@ -290,6 +310,7 @@ void DrillingToolUIBase::setupUi() {
     feedrate_probe_entry = new FCDoubleSpinner(nullptr);
     feedrate_probe_entry->setProperty("decimals", 4);
     feedrate_probe_entry->setProperty("maximum", 10000.0);
+    feedrate_probe_entry->setProperty("objectName", QString::fromUtf8("e_fr_probe"));
     feedrate_probe_entry->setProperty("singleStep", 0.1);
     feedrate_probe_entry->setProperty("value", 75.0);
     feedrate_probe_entry->setHidden(true);
@@ -299,8 +320,10 @@ void DrillingToolUIBase::setupUi() {
     w8->setToolTip(QString::fromUtf8("El archivo JSON del preprocesador que dicta\nSalida de Gcode para objetos Excellon."));
     grid3->addWidget(w8, 15, 0, 1, 1);
     pp_excellon_name_cb = new FCComboBox(nullptr);
+    pp_excellon_name_cb->setProperty("objectName", QString::fromUtf8("e_pp"));
     grid3->addWidget(pp_excellon_name_cb, 15, 1, 1, 1);
     exclusion_cb = new FCCheckBox(nullptr);
+    exclusion_cb->setProperty("objectName", QString::fromUtf8("e_area_exclusion"));
     exclusion_cb->setText(QString::fromUtf8("Agregar Areas de Exclusión"));
     exclusion_cb->setToolTip(QString::fromUtf8("Incluir áreas de exclusión.\nEn esas áreas el recorrido de las herramientas.\nestá prohibido."));
     grid3->addWidget(exclusion_cb, 20, 0, 1, 2);
@@ -335,6 +358,7 @@ void DrillingToolUIBase::setupUi() {
     strategy_label->setToolTip(QString::fromUtf8("La estrategia seguida al encontrar un área de exclusión.\nPuede ser:\n- Sobre -> al encontrar el área, la herramienta irá a una altura establecida\n- Alrededor -> evitará el área de exclusión recorriendo el área"));
     lay9->addWidget(strategy_label, 1, 0, 1, 1);
     strategy_radio = new RadioSet({{QString::fromUtf8("Sobre"), QVariant(QString::fromUtf8("over"))}, {QString::fromUtf8("AlrededorRedondo"), QVariant(QString::fromUtf8("around"))}}, Qt::Horizontal, true, nullptr);
+    strategy_radio->setProperty("objectName", QString::fromUtf8("e_area_strategy"));
     strategy_radio->setValue(QVariant(QString::fromUtf8("over")));
     lay9->addWidget(strategy_radio, 1, 1, 1, 1);
     over_z_label = new FCLabel(nullptr);
@@ -344,6 +368,7 @@ void DrillingToolUIBase::setupUi() {
     over_z_entry = new FCDoubleSpinner(nullptr);
     over_z_entry->setProperty("decimals", 4);
     over_z_entry->setProperty("maximum", 10000.0);
+    over_z_entry->setProperty("objectName", QString::fromUtf8("e_area_overz"));
     over_z_entry->setProperty("value", 1.0);
     lay9->addWidget(over_z_entry, 2, 1, 1, 1);
     add_area_button = new QPushButton(nullptr);
@@ -351,6 +376,7 @@ void DrillingToolUIBase::setupUi() {
     add_area_button->setToolTip(QString::fromUtf8("Agregar un área de exclusión."));
     lay9->addWidget(add_area_button, 4, 0, 1, 1);
     area_shape_radio = new RadioSet({{QString::fromUtf8("Cuadrado"), QVariant(QString::fromUtf8("square"))}, {QString::fromUtf8("Polígono"), QVariant(QString::fromUtf8("polygon"))}}, Qt::Horizontal, true, nullptr);
+    area_shape_radio->setProperty("objectName", QString::fromUtf8("e_area_shape"));
     area_shape_radio->setToolTip(QString::fromUtf8("El tipo de forma de selección utilizada para la selección de área."));
     area_shape_radio->setValue(QVariant(QString::fromUtf8("polygon")));
     lay9->addWidget(area_shape_radio, 4, 1, 1, 1);

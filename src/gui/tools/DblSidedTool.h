@@ -26,6 +26,8 @@ class FlatCAMObj;
 class DblSidedTool : public DblSidedToolUIBase {
     Q_OBJECT
 public:
+    /** @brief Si está esperando el clic sobre un agujero (desconecta la selección de la aplicación). @return El estado. */
+    bool picking() const { return static_cast<bool>(pickConnection_); }
     /** @brief Crea el panel. @param app Aplicación. @param parent Widget padre. */
     explicit DblSidedTool(App* app, QWidget* parent = nullptr);
 

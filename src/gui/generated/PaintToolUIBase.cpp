@@ -9,6 +9,7 @@ namespace flatcam::gui {
 void PaintToolUIBase::setupUi() {
     // ---- acciones (compartidas entre menús y barras)
     this->setAutoFillBackground(true);
+    this->setProperty("objectName", QString::fromUtf8("Herramienta de pintura"));
     layout = new QVBoxLayout();
     layout->setContentsMargins(9, 9, 9, 9);
     layout->setSpacing(6);
@@ -96,6 +97,7 @@ void PaintToolUIBase::setupUi() {
     new_tooldia_entry = new FCDoubleSpinner(nullptr);
     new_tooldia_entry->setProperty("decimals", 4);
     new_tooldia_entry->setProperty("maximum", 10000.0);
+    new_tooldia_entry->setProperty("objectName", QString::fromUtf8("p_tool_dia"));
     new_tooldia_entry->setProperty("value", 0.1);
     grid3->addWidget(new_tooldia_entry, 2, 1, 1, 1);
     auto* lay5 = new QHBoxLayout();
@@ -144,6 +146,7 @@ void PaintToolUIBase::setupUi() {
     paintoverlap_entry = new FCDoubleSpinner(nullptr);
     paintoverlap_entry->setProperty("decimals", 3);
     paintoverlap_entry->setProperty("maximum", 100.0);
+    paintoverlap_entry->setProperty("objectName", QString::fromUtf8("p_overlap"));
     paintoverlap_entry->setProperty("singleStep", 0.1);
     paintoverlap_entry->setProperty("suffix", QString::fromUtf8(" %"));
     paintoverlap_entry->setProperty("value", 20.0);
@@ -157,6 +160,7 @@ void PaintToolUIBase::setupUi() {
     offset_entry->setProperty("decimals", 4);
     offset_entry->setProperty("maximum", 10000.0);
     offset_entry->setProperty("minimum", -10000.0);
+    offset_entry->setProperty("objectName", QString::fromUtf8("p_offset"));
     lay8->addWidget(offset_entry, 2, 1, 1, 1);
     auto* w10 = new FCLabel(nullptr);
     w10->setText(QString::fromUtf8("Método:"));
@@ -164,6 +168,7 @@ void PaintToolUIBase::setupUi() {
     lay8->addWidget(w10, 7, 0, 1, 1);
     paintmethod_combo = new FCComboBox2(nullptr);
     paintmethod_combo->setProperty("currentText", QString::fromUtf8("Estándar"));
+    paintmethod_combo->setProperty("objectName", QString::fromUtf8("p_method"));
     paintmethod_combo->addItem(QString::fromUtf8("Estándar"));
     paintmethod_combo->addItem(QString::fromUtf8("Semilla"));
     paintmethod_combo->addItem(QString::fromUtf8("Líneas"));
@@ -172,11 +177,13 @@ void PaintToolUIBase::setupUi() {
     lay8->addWidget(paintmethod_combo, 7, 1, 1, 1);
     pathconnect_cb = new FCCheckBox(nullptr);
     pathconnect_cb->setChecked(true);
+    pathconnect_cb->setProperty("objectName", QString::fromUtf8("p_connect"));
     pathconnect_cb->setText(QString::fromUtf8("Conectar"));
     pathconnect_cb->setToolTip(QString::fromUtf8("Dibuja líneas entre el resultado\nSegmentos para minimizar elevaciones de herramientas."));
     lay8->addWidget(pathconnect_cb, 10, 0, 1, 1);
     paintcontour_cb = new FCCheckBox(nullptr);
     paintcontour_cb->setChecked(true);
+    paintcontour_cb->setProperty("objectName", QString::fromUtf8("p_contour"));
     paintcontour_cb->setText(QString::fromUtf8("Contorno"));
     paintcontour_cb->setToolTip(QString::fromUtf8("Corta todo el perímetro del polígono.\nPara recortar los bordes ásperos."));
     lay8->addWidget(paintcontour_cb, 10, 1, 1, 1);
@@ -200,6 +207,7 @@ void PaintToolUIBase::setupUi() {
     gen_param_label->setToolTip(QString::fromUtf8("Parámetros que son comunes para todas las herramientas."));
     lay8->addWidget(gen_param_label, 15, 0, 1, 2);
     rest_cb = new FCCheckBox(nullptr);
+    rest_cb->setProperty("objectName", QString::fromUtf8("p_rest_machining"));
     rest_cb->setText(QString::fromUtf8("Resto"));
     rest_cb->setToolTip(QString::fromUtf8("Si está marcado, use 'mecanizado en resto'.\nBásicamente procesará cobre fuera de las características de la PCB,\nusando la herramienta más grande y continúe con las siguientes herramientas,\nde mayor a menor, para procesar las características de cobre que\nno pudo ser procesado por la herramienta anterior, hasta que haya\nno queda nada por procesar o no hay más herramientas.\n\nSi no está marcado, use el algoritmo estándar."));
     lay8->addWidget(rest_cb, 16, 0, 1, 2);
@@ -220,6 +228,7 @@ void PaintToolUIBase::setupUi() {
     lay8->addWidget(w13, 18, 0, 1, 1);
     selectmethod_combo = new FCComboBox2(nullptr);
     selectmethod_combo->setProperty("currentText", QString::fromUtf8("Todos"));
+    selectmethod_combo->setProperty("objectName", QString::fromUtf8("p_selection"));
     selectmethod_combo->addItem(QString::fromUtf8("Todos"));
     selectmethod_combo->addItem(QString::fromUtf8("Selección de polígono"));
     selectmethod_combo->addItem(QString::fromUtf8("Selección de área"));

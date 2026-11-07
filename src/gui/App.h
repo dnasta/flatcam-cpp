@@ -5,6 +5,14 @@
  */
 #pragma once
 
+#include "gui/PlotCanvas.h"
+
+#include <vector>
+
+#include <set>
+
+#include <optional>
+
 #include <functional>
 
 #include "io/JsonValue.h"
@@ -265,6 +273,75 @@ public:
      */
     void objectChanged(FlatCAMObj* obj);
 
+    /** @name Selección con el mouse en el canvas (AppCanvasSelection.cpp; públicos para los tests) */
+    ///@{
+    /**
+     * @brief `on_mouse_click_over_plot`: guarda la posición del clic (`app.pos`). @param world Posición (ajustada a la
+     * grilla). @param button Botón.
+     */
+    void onCanvasPress(const QPointF& world, Qt::MouseButton button);
+    /**
+     * @brief `on_mouse_move_over_plot`: con el botón izquierdo apretado dibuja el rectángulo de selección (azul de
+     * izquierda a derecha, que elige lo que queda adentro; verde de derecha a izquierda, que elige lo que toca).
+     * @param world Posición. @param leftDragging Si se mueve con el botón izquierdo apretado (`event.is_dragging`).
+     */
+    void onCanvasMove(const QPointF& world, bool leftDragging);
+    /**
+     * @brief `on_mouse_click_release_over_plot`: Shift copia las coordenadas del clic; un doble clic abre Propiedades;
+     * un rectángulo elige por área; un clic elige el objeto que está debajo (Ctrl: suma a la selección).
+     * @param world Posición. @param button Botón. @param modifiers Teclas apretadas.
+     * @param dragged Si el botón derecho arrastró (desplazar la vista): entonces no se abre el menú del canvas.
+     */
+    void onCanvasRelease(const QPointF& world, Qt::MouseButton button, Qt::KeyboardModifiers modifiers,
+                         bool dragged = false);
+    /** @brief `on_mouse_double_click_over_plot`. @param button Botón. */
+    void onCanvasDoubleClick(Qt::MouseButton button);
+    /** @brief `delete_selection_shape`: borra los recuadros de selección. */
+    void deleteSelectionShape();
+    /** @brief `draw_selection_shape`: el recuadro alrededor de un objeto. @param obj Objeto. */
+    void drawSelectionShape(FlatCAMObj* obj);
+    /** @brief Capa auxiliar de los recuadros de selección (la `sel_shapes` de `ToolMove`). */
+    static constexpr int kSelectionLayerId = -4;
+    ///@}
+
+    /** @name Menús Archivo, Editar y Ver y el menú del canvas (AppEditMenu.cpp) */
+    ///@{
+    /** @brief Archivo -> Nuevo proyecto (`on_file_new_click`): si hay objetos pregunta si guardar. */
+    void onFileNewClick();
+    /** @brief Vuelve al estado inicial (`on_file_new`): sin objetos, sin proyecto, solo el área de dibujo. */
+    void onFileNew();
+    /** @brief Muestra los objetos (`enable_plots`). @param objs Objetos. */
+    void enablePlots(const std::vector<FlatCAMObj*>& objs);
+    /** @brief Oculta los objetos (`disable_plots`). @param objs Objetos. */
+    void disablePlots(const std::vector<FlatCAMObj*>& objs);
+    /** @brief Invierte la visibilidad de los elegidos (`toggle_plots`). */
+    void togglePlots();
+    /** @brief Objetos que no están elegidos (`get_non_selected`). @return Los objetos. */
+    std::vector<FlatCAMObj*> nonSelectedObjects() const;
+    /** @brief Vuelve a dibujar todo y encuadra (`plot_all`). */
+    void plotAll();
+    /** @brief Borra los dibujos de todos los objetos (`clear_plots`); siguen en el Proyecto. */
+    void clearPlots();
+    /** @brief Muestra u oculta el contorno de la hoja (`on_workspace_toggle`, A4 vertical de fábrica). */
+    void onWorkspaceToggle();
+    /** @brief Elige todos los objetos con su recuadro (`on_selectall`). */
+    void onSelectAll();
+    /** @brief Lleva los elegidos al origen (`on_move2origin`): la esquina inferior izquierda de su caja va a (0, 0). */
+    void onMove2Origin();
+    /** @brief Espera un clic y lo convierte en el origen (`on_set_origin`): mueve todos los objetos. */
+    void onSetOrigin();
+    /** @brief Mueve todos los objetos para que el punto pase a ser el origen (`on_set_zero_click`). @param p Punto. */
+    void setOriginAt(const QPointF& p);
+    /** @brief Editar -> Saltar a (`on_jump_to`): pide la posición con `DialogBoxRadio`. */
+    void onJumpTo();
+    /** @brief Editar -> Ubicar (`on_locate`): una esquina o el centro del objeto activo. */
+    void onLocate();
+    /** @brief Arma y abre el menú del canvas (`popMenu`) donde está el cursor. */
+    void popupCanvasMenu();
+    /** @brief El menú del canvas (`popMenu`). @return El menú. */
+    class QMenu* canvasMenu() const { return popMenu_; }
+    ///@}
+
 protected:
     /** @brief Atajos de teclado de la ventana y arrastrar y soltar archivos. @param obj Objeto. @param ev Evento. @return Si se consumió. */
     bool eventFilter(QObject* obj, QEvent* ev) override;
@@ -289,6 +366,28 @@ private:
     class QMenu* menuProject_{nullptr};  ///< `menuproject`: menú contextual de la pestaña Proyecto.
     JsonValue projectOptions_;  ///< Opciones del proyecto abierto (`options`), para volver a guardarlas.
     QPointF lastClick_{0.0, 0.0};
+    void selectObjects(bool multisel);
+    void setupCanvasMenu();
+    void populateGridMenu();
+    class QMenu* popMenu_{nullptr};      ///< `popMenu`: menú contextual del canvas.
+    class QMenu* gridMenu_{nullptr};     ///< `cmenu_gridmenu`.
+    QStringList gridContextMenu_{"0.1", "0.2", "0.5", "1", "2.54"};  ///< `global_grid_context_menu['mm']`.
+    QPointF mouse_{0, 0};                ///< `self.mouse`: la última posición del mouse sobre el canvas.
+    QString jumpRef_{"abs"};             ///< `global_jump_ref`.
+    QString locatePt_{"bl"};             ///< `global_locate_pt`.
+    bool workspace_{false};              ///< `global_workspace`.
+    QMetaObject::Connection setOriginConnection_;
+    void selectionAreaHandler(const QPointF& start, const QPointF& end, bool enclosure);
+    void selectedMessage(FlatCAMObj* obj);
+    void setActive(FlatCAMObj* obj, bool active);
+    void redrawSelectionShapes();
+    std::vector<PlotGroup> selShapes_;                ///< Recuadros de selección (y el rectángulo que se arrastra).
+    std::optional<PlotGroup> movingSelection_;        ///< Rectángulo que se está arrastrando.
+    std::optional<bool> selectionType_;               ///< `selection_type`: `true` encierra, `false` toca.
+    bool doubleClick_{false};                         ///< `doubleclick`.
+    bool clickNoProject_{false};                      ///< `click_noproject`.
+    QStringList objectsUnderClick_;                   ///< `objects_under_the_click_list`.
+    std::set<FlatCAMObj*> shapeDrawn_;                ///< Objetos con `selection_shape_drawn`.
     QString lastGerberFilter_;
     QString lastExcellonFilter_;
 };

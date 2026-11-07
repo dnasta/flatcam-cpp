@@ -4,6 +4,10 @@
   "py": "ToolDrilling",
   "name": null,
   "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Herramienta de Perforación"
+   },
    "autoFillBackground": {
     "t": "bool",
     "v": true
@@ -561,6 +565,10 @@
                     "py": "FCDoubleSpinner",
                     "name": "cutz_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_cutz"
+                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -595,6 +603,10 @@
                     "py": "FCCheckBox",
                     "name": "mpass_cb",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_multidepth"
+                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Usa múltiples pases para limitar\nLa profundidad de corte en cada pasada. Será\ncortar varias veces hasta que el Corte Z sea\nalcanzado."
@@ -617,6 +629,10 @@
                     "py": "FCDoubleSpinner",
                     "name": "maxdepth_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_depthperpass"
+                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Profundidad de cada pase (positivo)."
@@ -673,6 +689,10 @@
                     "py": "FCDoubleSpinner",
                     "name": "travelz_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_travelz"
+                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -725,6 +745,10 @@
                     "py": "FCDoubleSpinner",
                     "name": "feedrate_z_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_feedratez"
+                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -781,6 +805,10 @@
                     "py": "FCDoubleSpinner",
                     "name": "feedrate_rapid_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_fr_rapid"
+                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -837,6 +865,10 @@
                     "py": "FCSpinner",
                     "name": "spindlespeed_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_spindlespeed"
+                     },
                      "maximum": {
                       "t": "int",
                       "v": 1000000
@@ -859,6 +891,10 @@
                     "py": "FCCheckBox",
                     "name": "dwell_cb",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_dwell"
+                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Pausa para permitir que el husillo alcance su\nVelocidad antes del corte."
@@ -881,6 +917,10 @@
                     "py": "FCDoubleSpinner",
                     "name": "dwelltime_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_dwelltime"
+                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Número de unidades de tiempo para que el husillo permanezca."
@@ -937,6 +977,10 @@
                     "py": "FCDoubleSpinner",
                     "name": "offset_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_offset"
+                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -963,6 +1007,10 @@
                     "py": "FCCheckBox",
                     "name": "drill_slots_cb",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_drill_slots"
+                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Si la herramienta seleccionada tiene ranuras, se perforarán."
@@ -1015,6 +1063,10 @@
                     "py": "FCDoubleSpinner",
                     "name": "drill_overlap_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_drill_slots_overlap"
+                     },
                      "suffix": {
                       "t": "str",
                       "v": " %"
@@ -1049,6 +1101,10 @@
                     "py": "FCCheckBox",
                     "name": "last_drill_cb",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_drill_last_drill"
+                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Si la longitud de la ranura no está completamente cubierta por taladros,\nagregue un taladro en el punto final de la ranura."
@@ -1246,6 +1302,10 @@
                     "py": "FCCheckBox",
                     "name": "toolchange_cb",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_toolchange"
+                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Incluir secuencia de cambio de herramienta\nen G-Code (Pausa para cambio de herramienta)."
@@ -1290,6 +1350,10 @@
                     "py": "FCDoubleSpinner",
                     "name": "toolchangez_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_toolchangez"
+                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -1346,6 +1410,10 @@
                     "py": "NumericalEvalEntry",
                     "name": "estartz_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_startz"
+                     },
                      "styleSheet": {
                       "t": "str",
                       "v": "QLineEdit {border: 1px solid #0069A9;}"
@@ -1390,6 +1458,10 @@
                     "py": "FCDoubleSpinner",
                     "name": "endz_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_endz"
+                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -1442,6 +1514,10 @@
                     "py": "NumericalEvalTupleEntry",
                     "name": "endxy_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_endxy"
+                     },
                      "styleSheet": {
                       "t": "str",
                       "v": "QLineEdit {border: 1px solid #0069A9;}"
@@ -1494,6 +1570,10 @@
                     "py": "FCDoubleSpinner",
                     "name": "pdepth_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_depth_probe"
+                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -1558,6 +1638,10 @@
                     "py": "FCDoubleSpinner",
                     "name": "feedrate_probe_entry",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_fr_probe"
+                     },
                      "decimals": {
                       "t": "int",
                       "v": 4
@@ -1613,7 +1697,12 @@
                     "qt": "QComboBox",
                     "py": "FCComboBox",
                     "name": "pp_excellon_name_cb",
-                    "props": {},
+                    "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_pp"
+                     }
+                    },
                     "items": [],
                     "currentIndex": -1
                    }
@@ -1629,6 +1718,10 @@
                     "py": "FCCheckBox",
                     "name": "exclusion_cb",
                     "props": {
+                     "objectName": {
+                      "t": "str",
+                      "v": "e_area_exclusion"
+                     },
                      "toolTip": {
                       "t": "str",
                       "v": "Incluir áreas de exclusión.\nEn esas áreas el recorrido de las herramientas.\nestá prohibido."
@@ -1802,7 +1895,12 @@
                            "qt": "QWidget",
                            "py": "RadioSet",
                            "name": "strategy_radio",
-                           "props": {},
+                           "props": {
+                            "objectName": {
+                             "t": "str",
+                             "v": "e_area_strategy"
+                            }
+                           },
                            "choices": [
                             {
                              "label": "Sobre",
@@ -1851,6 +1949,10 @@
                            "py": "FCDoubleSpinner",
                            "name": "over_z_entry",
                            "props": {
+                            "objectName": {
+                             "t": "str",
+                             "v": "e_area_overz"
+                            },
                             "decimals": {
                              "t": "int",
                              "v": 4
@@ -1899,6 +2001,10 @@
                            "py": "RadioSet",
                            "name": "area_shape_radio",
                            "props": {
+                            "objectName": {
+                             "t": "str",
+                             "v": "e_area_shape"
+                            },
                             "toolTip": {
                              "t": "str",
                              "v": "El tipo de forma de selección utilizada para la selección de área."

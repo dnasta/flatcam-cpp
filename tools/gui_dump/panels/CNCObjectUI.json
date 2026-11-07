@@ -1709,7 +1709,12 @@
                        "qt": "QWidget",
                        "py": "QWidget",
                        "name": "gr_conn_tab",
-                       "props": {},
+                       "props": {
+                        "objectName": {
+                         "t": "str",
+                         "v": "connect_tab"
+                        }
+                       },
                        "layout": {
                         "qt": "QVBoxLayout",
                         "py": "QVBoxLayout",
@@ -2066,6 +2071,10 @@
                        "py": "QWidget",
                        "name": "gr_ctrl_tab",
                        "props": {
+                        "objectName": {
+                         "t": "str",
+                         "v": "connect_tab"
+                        },
                         "hidden": {
                          "t": "bool",
                          "v": true
@@ -2959,6 +2968,10 @@
                        "py": "QWidget",
                        "name": "gr_send_tab",
                        "props": {
+                        "objectName": {
+                         "t": "str",
+                         "v": "connect_tab"
+                        },
                         "hidden": {
                          "t": "bool",
                          "v": true

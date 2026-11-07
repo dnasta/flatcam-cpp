@@ -108,6 +108,9 @@ public:
     /** @brief Si el recuadro HUD está visible. @return El estado. */
     bool hudEnabled() const { return hudEnabled_; }
 
+    /** @brief Si la grilla está visible. @return El estado. */
+    bool gridEnabled() const { return gridEnabled_; }
+
     /** @brief Si las líneas por el origen están visibles. @return El estado. */
     bool axisEnabled() const { return axisEnabled_; }
 
@@ -172,6 +175,8 @@ Q_SIGNALS:
      * @param dragged Si hubo arrastre (con el botón derecho, para desplazar la vista) desde que se presionó.
      */
     void mouseReleased(QPointF world, Qt::MouseButton button, bool dragged);
+    /** @brief Doble clic en la vista (`mouse_double_click`). @param button Botón. */
+    void mouseDoubleClicked(Qt::MouseButton button);
 
 protected:
     /** @brief Prepara OpenGL. */
@@ -188,6 +193,8 @@ protected:
     void mouseMoveEvent(QMouseEvent* event) override;
     /** @brief Termina el desplazamiento. @param event Evento. */
     void mouseReleaseEvent(QMouseEvent* event) override;
+    /** @brief Avisa el doble clic. @param event Evento. */
+    void mouseDoubleClickEvent(QMouseEvent* event) override;
     /** @brief Oculta la cruz del cursor al salir. @param event Evento. */
     void leaveEvent(QEvent* event) override;
 

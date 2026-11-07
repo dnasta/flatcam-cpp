@@ -65,6 +65,7 @@ void ToolsDB2UIBase::setupUi() {
     name_label->setToolTip(QString::fromUtf8("Nombre de la herramienta.\nEsto no se usa en la aplicación, es función\nes servir como una nota para el usuario."));
     grid_tool->addWidget(name_label, 0, 0, 1, 1);
     name_entry = new FCEntry(nullptr);
+    name_entry->setProperty("objectName", QString::fromUtf8("gdb_name"));
     grid_tool->addWidget(name_entry, 0, 1, 1, 1);
     dia_label = new FCLabel(nullptr);
     dia_label->setText(QString::fromUtf8("Diámetro:"));
@@ -74,6 +75,7 @@ void ToolsDB2UIBase::setupUi() {
     dia_entry->setProperty("decimals", 4);
     dia_entry->setProperty("maximum", 10000.0);
     dia_entry->setProperty("minimum", -10000.0);
+    dia_entry->setProperty("objectName", QString::fromUtf8("gdb_dia"));
     grid_tool->addWidget(dia_entry, 1, 1, 1, 1);
     tol_label = new FCLabel(nullptr);
     tol_label->setText(QString::fromUtf8("<b>Tolerancia de Diámetro:</b>"));
@@ -86,6 +88,7 @@ void ToolsDB2UIBase::setupUi() {
     tol_min_entry = new FCDoubleSpinner(nullptr);
     tol_min_entry->setProperty("decimals", 4);
     tol_min_entry->setProperty("maximum", 10000.0);
+    tol_min_entry->setProperty("objectName", QString::fromUtf8("gdb_tol_min"));
     tol_min_entry->setProperty("singleStep", 0.1);
     grid_tool->addWidget(tol_min_entry, 4, 1, 1, 1);
     max_limit_label = new FCLabel(nullptr);
@@ -95,6 +98,7 @@ void ToolsDB2UIBase::setupUi() {
     tol_max_entry = new FCDoubleSpinner(nullptr);
     tol_max_entry->setProperty("decimals", 4);
     tol_max_entry->setProperty("maximum", 10000.0);
+    tol_max_entry->setProperty("objectName", QString::fromUtf8("gdb_tol_max"));
     tol_max_entry->setProperty("singleStep", 0.1);
     grid_tool->addWidget(tol_max_entry, 6, 1, 1, 1);
     tool_op_label = new FCLabel(nullptr);
@@ -103,6 +107,7 @@ void ToolsDB2UIBase::setupUi() {
     grid_tool->addWidget(tool_op_label, 8, 0, 1, 1);
     tool_op_combo = new FCComboBox2(nullptr);
     tool_op_combo->setProperty("currentText", QString::fromUtf8("General"));
+    tool_op_combo->setProperty("objectName", QString::fromUtf8("gdb_tool_target"));
     tool_op_combo->addItem(QString::fromUtf8("General"));
     tool_op_combo->addItem(QString::fromUtf8("Fresado"));
     tool_op_combo->addItem(QString::fromUtf8("Perforación"));
@@ -138,6 +143,7 @@ void ToolsDB2UIBase::setupUi() {
     iso_passes_entry = new FCSpinner(nullptr);
     iso_passes_entry->setProperty("maximum", 999);
     iso_passes_entry->setProperty("minimum", 1);
+    iso_passes_entry->setProperty("objectName", QString::fromUtf8("gdb_i_passes"));
     iso_passes_entry->setProperty("value", 1);
     grid4->addWidget(iso_passes_entry, 0, 1, 1, 1);
     auto* w9 = new FCLabel(nullptr);
@@ -147,6 +153,7 @@ void ToolsDB2UIBase::setupUi() {
     iso_overlap_entry = new FCDoubleSpinner(nullptr);
     iso_overlap_entry->setProperty("decimals", 4);
     iso_overlap_entry->setProperty("maximum", 99.9999);
+    iso_overlap_entry->setProperty("objectName", QString::fromUtf8("gdb_i_overlap"));
     iso_overlap_entry->setProperty("singleStep", 0.1);
     iso_overlap_entry->setProperty("suffix", QString::fromUtf8(" %"));
     iso_overlap_entry->setWrapping(true);
@@ -156,6 +163,7 @@ void ToolsDB2UIBase::setupUi() {
     iso_milling_type_label->setToolTip(QString::fromUtf8("Tipo de fresado:\n- subir / mejor para fresado de precisión y para reducir el uso de la herramienta\n- convencional / útil cuando no hay compensación de contragolpe"));
     grid4->addWidget(iso_milling_type_label, 4, 0, 1, 1);
     iso_milling_type_radio = new RadioSet({{QString::fromUtf8("Subida"), QVariant(QString::fromUtf8("cl"))}, {QString::fromUtf8("Convencional"), QVariant(QString::fromUtf8("cv"))}}, Qt::Horizontal, true, nullptr);
+    iso_milling_type_radio->setProperty("objectName", QString::fromUtf8("gdb_i_milling_type"));
     iso_milling_type_radio->setToolTip(QString::fromUtf8("Tipo de fresado:\n- subir / mejor para fresado de precisión y para reducir el uso de la herramienta\n- convencional / útil cuando no hay compensación de contragolpe"));
     grid4->addWidget(iso_milling_type_radio, 4, 1, 1, 1);
     follow_label = new FCLabel(nullptr);
@@ -163,6 +171,7 @@ void ToolsDB2UIBase::setupUi() {
     follow_label->setToolTip(QString::fromUtf8("Generar una geometría 'Seguir'.\nEsto significa que cortará a través\nEl medio de la traza."));
     grid4->addWidget(follow_label, 6, 0, 1, 1);
     iso_follow_cb = new FCCheckBox(nullptr);
+    iso_follow_cb->setProperty("objectName", QString::fromUtf8("gdb_i_follow"));
     iso_follow_cb->setToolTip(QString::fromUtf8("Generar una geometría 'Seguir'.\nEsto significa que cortará a través\nEl medio de la traza."));
     grid4->addWidget(iso_follow_cb, 6, 1, 1, 1);
     iso_type_label = new FCLabel(nullptr);
@@ -170,6 +179,7 @@ void ToolsDB2UIBase::setupUi() {
     iso_type_label->setToolTip(QString::fromUtf8("Elija cómo se ejecutará el aislamiento:\n- 'Completo' -> aislamiento completo de polígonos\n- 'Ext' -> aislará solo en el exterior\n- 'Int' -> aislará solo en el interior\nEl aislamiento 'exterior' es casi siempre posible\n(con la herramienta adecuada) pero 'Interior'\nel aislamiento solo se puede hacer cuando hay una abertura\ndentro del polígono (por ejemplo, el polígono tiene forma de 'rosquilla')."));
     grid4->addWidget(iso_type_label, 8, 0, 1, 1);
     iso_type_radio = new RadioSet({{QString::fromUtf8("Completo"), QVariant(QString::fromUtf8("full"))}, {QString::fromUtf8("Exterior"), QVariant(QString::fromUtf8("ext"))}, {QString::fromUtf8("Interior"), QVariant(QString::fromUtf8("int"))}}, Qt::Horizontal, true, nullptr);
+    iso_type_radio->setProperty("objectName", QString::fromUtf8("gdb_i_iso_type"));
     grid4->addWidget(iso_type_radio, 8, 1, 1, 1);
     grid4->setColumnStretch(1, 1);
     iso_vlay->addLayout(grid4, 0);
@@ -195,6 +205,7 @@ void ToolsDB2UIBase::setupUi() {
     paint_overlap_entry = new FCDoubleSpinner(nullptr);
     paint_overlap_entry->setProperty("decimals", 3);
     paint_overlap_entry->setProperty("maximum", 100.0);
+    paint_overlap_entry->setProperty("objectName", QString::fromUtf8("gdb_p_overlap"));
     paint_overlap_entry->setProperty("singleStep", 0.1);
     paint_overlap_entry->setProperty("suffix", QString::fromUtf8(" %"));
     paint_overlap_entry->setWrapping(true);
@@ -207,6 +218,7 @@ void ToolsDB2UIBase::setupUi() {
     paint_offset_entry->setProperty("decimals", 4);
     paint_offset_entry->setProperty("maximum", 10000.0);
     paint_offset_entry->setProperty("minimum", -10000.0);
+    paint_offset_entry->setProperty("objectName", QString::fromUtf8("gdb_p_offset"));
     grid3->addWidget(paint_offset_entry, 2, 1, 1, 1);
     auto* w12 = new FCLabel(nullptr);
     w12->setText(QString::fromUtf8("Método:"));
@@ -214,6 +226,7 @@ void ToolsDB2UIBase::setupUi() {
     grid3->addWidget(w12, 7, 0, 1, 1);
     paint_method_combo = new FCComboBox2(nullptr);
     paint_method_combo->setProperty("currentText", QString::fromUtf8("Estándar"));
+    paint_method_combo->setProperty("objectName", QString::fromUtf8("gdb_p_method"));
     paint_method_combo->addItem(QString::fromUtf8("Estándar"));
     paint_method_combo->addItem(QString::fromUtf8("Semilla"));
     paint_method_combo->addItem(QString::fromUtf8("Líneas"));
@@ -221,10 +234,12 @@ void ToolsDB2UIBase::setupUi() {
     paint_method_combo->addItem(QString::fromUtf8("Combo"));
     grid3->addWidget(paint_method_combo, 7, 1, 1, 1);
     path_connect_cb = new FCCheckBox(nullptr);
+    path_connect_cb->setProperty("objectName", QString::fromUtf8("gdb_p_connect"));
     path_connect_cb->setText(QString::fromUtf8("Conectar"));
     path_connect_cb->setToolTip(QString::fromUtf8("Dibuja líneas entre el resultado\nSegmentos para minimizar elevaciones de herramientas."));
     grid3->addWidget(path_connect_cb, 10, 0, 1, 1);
     paint_contour_cb = new FCCheckBox(nullptr);
+    paint_contour_cb->setProperty("objectName", QString::fromUtf8("gdb_p_contour"));
     paint_contour_cb->setText(QString::fromUtf8("Contorno"));
     paint_contour_cb->setToolTip(QString::fromUtf8("Corta todo el perímetro del polígono.\nPara recortar los bordes ásperos."));
     grid3->addWidget(paint_contour_cb, 10, 1, 1, 1);
@@ -250,12 +265,14 @@ void ToolsDB2UIBase::setupUi() {
     w13->setToolTip(QString::fromUtf8("La 'Operación' puede ser:\n- Aislamiento -> asegurará que la limpieza sin cobre esté siempre completa.\nSi no tiene éxito, la limpieza sin cobre también fallará.\n- Borrar -> la limpieza regular sin cobre."));
     grid2->addWidget(w13, 13, 0, 1, 1);
     ncc_op_radio = new RadioSet({{QString::fromUtf8("Limpiar"), QVariant(QString::fromUtf8("clear"))}, {QString::fromUtf8("Aislamiento"), QVariant(QString::fromUtf8("iso"))}}, Qt::Horizontal, false, nullptr);
+    ncc_op_radio->setProperty("objectName", QString::fromUtf8("gdb_n_operation"));
     grid2->addWidget(ncc_op_radio, 13, 1, 1, 1);
     milling_type_label = new FCLabel(nullptr);
     milling_type_label->setText(QString::fromUtf8("Tipo de fresado:"));
     milling_type_label->setToolTip(QString::fromUtf8("Tipo de fresado:\n- subir / mejor para fresado de precisión y para reducir el uso de la herramienta\n- convencional / útil cuando no hay compensación de contragolpe"));
     grid2->addWidget(milling_type_label, 14, 0, 1, 1);
     ncc_milling_type_radio = new RadioSet({{QString::fromUtf8("Subida"), QVariant(QString::fromUtf8("cl"))}, {QString::fromUtf8("Convencional"), QVariant(QString::fromUtf8("cv"))}}, Qt::Horizontal, true, nullptr);
+    ncc_milling_type_radio->setProperty("objectName", QString::fromUtf8("gdb_n_milling_type"));
     ncc_milling_type_radio->setToolTip(QString::fromUtf8("Tipo de fresado:\n- subir / mejor para fresado de precisión y para reducir el uso de la herramienta\n- convencional / útil cuando no hay compensación de contragolpe"));
     grid2->addWidget(ncc_milling_type_radio, 14, 1, 1, 1);
     auto* w14 = new FCLabel(nullptr);
@@ -265,6 +282,7 @@ void ToolsDB2UIBase::setupUi() {
     ncc_overlap_entry = new FCDoubleSpinner(nullptr);
     ncc_overlap_entry->setProperty("decimals", 4);
     ncc_overlap_entry->setProperty("maximum", 99.9999);
+    ncc_overlap_entry->setProperty("objectName", QString::fromUtf8("gdb_n_overlap"));
     ncc_overlap_entry->setProperty("singleStep", 0.1);
     ncc_overlap_entry->setProperty("suffix", QString::fromUtf8(" %"));
     ncc_overlap_entry->setWrapping(true);
@@ -277,6 +295,7 @@ void ToolsDB2UIBase::setupUi() {
     ncc_margin_entry->setProperty("decimals", 4);
     ncc_margin_entry->setProperty("maximum", 10000.0);
     ncc_margin_entry->setProperty("minimum", -10000.0);
+    ncc_margin_entry->setProperty("objectName", QString::fromUtf8("gdb_n_margin"));
     grid2->addWidget(ncc_margin_entry, 16, 1, 1, 1);
     auto* w16 = new FCLabel(nullptr);
     w16->setText(QString::fromUtf8("Método:"));
@@ -284,26 +303,31 @@ void ToolsDB2UIBase::setupUi() {
     grid2->addWidget(w16, 17, 0, 1, 1);
     ncc_method_combo = new FCComboBox2(nullptr);
     ncc_method_combo->setProperty("currentText", QString::fromUtf8("Estándar"));
+    ncc_method_combo->setProperty("objectName", QString::fromUtf8("gdb_n_method"));
     ncc_method_combo->addItem(QString::fromUtf8("Estándar"));
     ncc_method_combo->addItem(QString::fromUtf8("Semilla"));
     ncc_method_combo->addItem(QString::fromUtf8("Líneas"));
     ncc_method_combo->addItem(QString::fromUtf8("Combo"));
     grid2->addWidget(ncc_method_combo, 17, 1, 1, 1);
     ncc_connect_cb = new FCCheckBox(nullptr);
+    ncc_connect_cb->setProperty("objectName", QString::fromUtf8("gdb_n_connect"));
     ncc_connect_cb->setText(QString::fromUtf8("Conectar"));
     ncc_connect_cb->setToolTip(QString::fromUtf8("Dibuja líneas entre el resultado\nSegmentos para minimizar elevaciones de herramientas."));
     grid2->addWidget(ncc_connect_cb, 18, 0, 1, 1);
     ncc_contour_cb = new FCCheckBox(nullptr);
+    ncc_contour_cb->setProperty("objectName", QString::fromUtf8("gdb_n_contour"));
     ncc_contour_cb->setText(QString::fromUtf8("Contorno"));
     ncc_contour_cb->setToolTip(QString::fromUtf8("Corta todo el perímetro del polígono.\nPara recortar los bordes ásperos."));
     grid2->addWidget(ncc_contour_cb, 18, 1, 1, 1);
     ncc_choice_offset_cb = new FCCheckBox(nullptr);
+    ncc_choice_offset_cb->setProperty("objectName", QString::fromUtf8("gdb_n_offset"));
     ncc_choice_offset_cb->setText(QString::fromUtf8("Compensar"));
     ncc_choice_offset_cb->setToolTip(QString::fromUtf8("Si se usa, agregará una compensación a las características de cobre.\nEl claro de cobre terminará a distancia\nde las características de cobre."));
     grid2->addWidget(ncc_choice_offset_cb, 19, 0, 1, 1);
     ncc_offset_spinner = new FCDoubleSpinner(nullptr);
     ncc_offset_spinner->setProperty("decimals", 4);
     ncc_offset_spinner->setProperty("maximum", 10.0);
+    ncc_offset_spinner->setProperty("objectName", QString::fromUtf8("gdb_n_offset_value"));
     ncc_offset_spinner->setProperty("singleStep", 0.1);
     ncc_offset_spinner->setWrapping(true);
     grid2->addWidget(ncc_offset_spinner, 19, 1, 1, 1);
@@ -332,6 +356,7 @@ void ToolsDB2UIBase::setupUi() {
     cutout_margin_entry->setProperty("decimals", 4);
     cutout_margin_entry->setProperty("maximum", 10000.0);
     cutout_margin_entry->setProperty("minimum", -10000.0);
+    cutout_margin_entry->setProperty("objectName", QString::fromUtf8("gdb_ct_margin"));
     cutout_margin_entry->setProperty("singleStep", 0.1);
     grid6->addWidget(cutout_margin_entry, 11, 1, 1, 1);
     cutout_gapsize_label = new FCLabel(nullptr);
@@ -340,12 +365,14 @@ void ToolsDB2UIBase::setupUi() {
     grid6->addWidget(cutout_gapsize_label, 13, 0, 1, 1);
     cutout_gapsize = new FCDoubleSpinner(nullptr);
     cutout_gapsize->setProperty("decimals", 4);
+    cutout_gapsize->setProperty("objectName", QString::fromUtf8("gdb_ct_gapsize"));
     grid6->addWidget(cutout_gapsize, 13, 1, 1, 1);
     gaptype_label = new FCLabel(nullptr);
     gaptype_label->setText(QString::fromUtf8("Tipo de brecha:"));
     gaptype_label->setToolTip(QString::fromUtf8("El tipo de brecha:\n- Puente -> el corte será interrumpido por puentes\n- Delgado -> igual que 'puente' pero será más delgado al fresar parcialmente el espacio\n- M-Bites -> 'Mouse Bites' - igual que el 'puente' pero cubierto con agujeros"));
     grid6->addWidget(gaptype_label, 15, 0, 1, 1);
     cutout_gaptype_radio = new RadioSet({{QString::fromUtf8("Puente"), QVariant(QString::fromUtf8("b"))}, {QString::fromUtf8("Delgado"), QVariant(QString::fromUtf8("bt"))}, {QString::fromUtf8("M-Bites"), QVariant(QString::fromUtf8("mb"))}}, Qt::Horizontal, true, nullptr);
+    cutout_gaptype_radio->setProperty("objectName", QString::fromUtf8("gdb_ct_gap_type"));
     grid6->addWidget(cutout_gaptype_radio, 15, 1, 1, 1);
     thin_depth_label = new FCLabel(nullptr);
     thin_depth_label->setText(QString::fromUtf8("Profundidad:"));
@@ -355,6 +382,7 @@ void ToolsDB2UIBase::setupUi() {
     cutout_thin_depth_entry->setProperty("decimals", 4);
     cutout_thin_depth_entry->setProperty("maximum", -0.0);
     cutout_thin_depth_entry->setProperty("minimum", -10000.0);
+    cutout_thin_depth_entry->setProperty("objectName", QString::fromUtf8("gdb_ct_gap_depth"));
     cutout_thin_depth_entry->setProperty("singleStep", 0.1);
     grid6->addWidget(cutout_thin_depth_entry, 17, 1, 1, 1);
     mb_dia_label = new FCLabel(nullptr);
@@ -364,6 +392,7 @@ void ToolsDB2UIBase::setupUi() {
     cutout_mb_dia_entry = new FCDoubleSpinner(nullptr);
     cutout_mb_dia_entry->setProperty("decimals", 4);
     cutout_mb_dia_entry->setProperty("maximum", 100.0);
+    cutout_mb_dia_entry->setProperty("objectName", QString::fromUtf8("gdb_ct_mb_dia"));
     grid6->addWidget(cutout_mb_dia_entry, 19, 1, 1, 1);
     mb_spacing_label = new FCLabel(nullptr);
     mb_spacing_label->setText(QString::fromUtf8("Spacing:"));
@@ -372,8 +401,10 @@ void ToolsDB2UIBase::setupUi() {
     cutout_mb_spacing_entry = new FCDoubleSpinner(nullptr);
     cutout_mb_spacing_entry->setProperty("decimals", 4);
     cutout_mb_spacing_entry->setProperty("maximum", 100.0);
+    cutout_mb_spacing_entry->setProperty("objectName", QString::fromUtf8("gdb_ct_mb_spacing"));
     grid6->addWidget(cutout_mb_spacing_entry, 21, 1, 1, 1);
     cutout_convex_box = new FCCheckBox(nullptr);
+    cutout_convex_box->setProperty("objectName", QString::fromUtf8("gdb_ct_convex"));
     cutout_convex_box->setText(QString::fromUtf8("Forma convexa"));
     cutout_convex_box->setToolTip(QString::fromUtf8("Crea una forma convexa que rodea toda la PCB.\nSe usa solo si el tipo de objeto de origen es Gerber."));
     grid6->addWidget(cutout_convex_box, 23, 0, 1, 2);
@@ -383,6 +414,7 @@ void ToolsDB2UIBase::setupUi() {
     grid6->addWidget(cutout_gaps_label, 25, 0, 1, 1);
     cutout_gaps = new FCComboBox(nullptr);
     cutout_gaps->setProperty("currentText", QString::fromUtf8("None"));
+    cutout_gaps->setProperty("objectName", QString::fromUtf8("gdb_ct_gaps"));
     cutout_gaps->addItem(QString::fromUtf8("None"));
     cutout_gaps->addItem(QString::fromUtf8("LR"));
     cutout_gaps->addItem(QString::fromUtf8("TB"));
@@ -423,6 +455,7 @@ void ToolsDB2UIBase::setupUi() {
     drill_cutz_entry->setProperty("decimals", 4);
     drill_cutz_entry->setProperty("maximum", 0.0);
     drill_cutz_entry->setProperty("minimum", -10000.0);
+    drill_cutz_entry->setProperty("objectName", QString::fromUtf8("gdb_e_cutz"));
     drill_cutz_entry->setProperty("singleStep", 0.1);
     grid5->addWidget(drill_cutz_entry, 4, 1, 1, 1);
     tool_offset_label = new FCLabel(nullptr);
@@ -433,12 +466,14 @@ void ToolsDB2UIBase::setupUi() {
     drill_offset_entry->setProperty("decimals", 4);
     drill_offset_entry->setProperty("maximum", 10000.0);
     drill_offset_entry->setProperty("minimum", -10000.0);
+    drill_offset_entry->setProperty("objectName", QString::fromUtf8("gdb_e_offset"));
     grid5->addWidget(drill_offset_entry, 6, 1, 1, 1);
     multidepth_drill_label = new FCLabel(nullptr);
     multidepth_drill_label->setText(QString::fromUtf8("Profund. Múlti:"));
     multidepth_drill_label->setToolTip(QString::fromUtf8("Usa múltiples pases para limitar\nLa profundidad de corte en cada pasada. Será\ncortar varias veces hasta que el Corte Z sea\nalcanzado."));
     grid5->addWidget(multidepth_drill_label, 7, 0, 1, 1);
     drill_mpass_cb = new FCCheckBox(nullptr);
+    drill_mpass_cb->setProperty("objectName", QString::fromUtf8("gdb_e_multidepth"));
     grid5->addWidget(drill_mpass_cb, 7, 1, 1, 1);
     dpp_drill_label = new FCLabel(nullptr);
     dpp_drill_label->setText(QString::fromUtf8("PPP:"));
@@ -447,6 +482,7 @@ void ToolsDB2UIBase::setupUi() {
     drill_maxdepth_entry = new FCDoubleSpinner(nullptr);
     drill_maxdepth_entry->setProperty("decimals", 4);
     drill_maxdepth_entry->setProperty("maximum", 10000.0);
+    drill_maxdepth_entry->setProperty("objectName", QString::fromUtf8("gdb_e_depthperpass"));
     drill_maxdepth_entry->setProperty("singleStep", 0.1);
     drill_maxdepth_entry->setToolTip(QString::fromUtf8("Profundidad de cada pase (positivo)."));
     grid5->addWidget(drill_maxdepth_entry, 8, 1, 1, 1);
@@ -457,6 +493,7 @@ void ToolsDB2UIBase::setupUi() {
     drill_travelz_entry = new FCDoubleSpinner(nullptr);
     drill_travelz_entry->setProperty("decimals", 4);
     drill_travelz_entry->setProperty("maximum", 10000.0);
+    drill_travelz_entry->setProperty("objectName", QString::fromUtf8("gdb_e_travelz"));
     drill_travelz_entry->setProperty("singleStep", 0.1);
     grid5->addWidget(drill_travelz_entry, 10, 1, 1, 1);
     auto* w18 = new QFrame(nullptr);
@@ -471,6 +508,7 @@ void ToolsDB2UIBase::setupUi() {
     drill_feedrate_z_entry = new FCDoubleSpinner(nullptr);
     drill_feedrate_z_entry->setProperty("decimals", 4);
     drill_feedrate_z_entry->setProperty("maximum", 910000.0);
+    drill_feedrate_z_entry->setProperty("objectName", QString::fromUtf8("gdb_e_feedratez"));
     drill_feedrate_z_entry->setProperty("singleStep", 0.1);
     grid5->addWidget(drill_feedrate_z_entry, 14, 1, 1, 1);
     feedrate_rapid_label = new FCLabel(nullptr);
@@ -480,6 +518,7 @@ void ToolsDB2UIBase::setupUi() {
     drill_feedrate_rapid_entry = new FCDoubleSpinner(nullptr);
     drill_feedrate_rapid_entry->setProperty("decimals", 4);
     drill_feedrate_rapid_entry->setProperty("maximum", 910000.0);
+    drill_feedrate_rapid_entry->setProperty("objectName", QString::fromUtf8("gdb_e_fr_rapid"));
     drill_feedrate_rapid_entry->setProperty("singleStep", 0.1);
     grid5->addWidget(drill_feedrate_rapid_entry, 16, 1, 1, 1);
     auto* w19 = new QFrame(nullptr);
@@ -493,6 +532,7 @@ void ToolsDB2UIBase::setupUi() {
     grid5->addWidget(spindle_label, 20, 0, 1, 1);
     drill_spindlespeed_entry = new FCSpinner(nullptr);
     drill_spindlespeed_entry->setProperty("maximum", 1000000);
+    drill_spindlespeed_entry->setProperty("objectName", QString::fromUtf8("gdb_e_spindlespeed"));
     drill_spindlespeed_entry->setProperty("singleStep", 100);
     grid5->addWidget(drill_spindlespeed_entry, 20, 1, 1, 1);
     dwell_drill_label = new FCLabel(nullptr);
@@ -500,6 +540,7 @@ void ToolsDB2UIBase::setupUi() {
     dwell_drill_label->setToolTip(QString::fromUtf8("Habitar.\nMarque esto si se necesita un retraso para permitir\nel motor del husillo para alcanzar su velocidad establecida."));
     grid5->addWidget(dwell_drill_label, 21, 0, 1, 1);
     drill_dwell_cb = new FCCheckBox(nullptr);
+    drill_dwell_cb->setProperty("objectName", QString::fromUtf8("gdb_e_dwell"));
     grid5->addWidget(drill_dwell_cb, 21, 1, 1, 1);
     dwelltime_drill_lbl = new FCLabel(nullptr);
     dwelltime_drill_lbl->setText(QString::fromUtf8("Tiempo de permanencia:"));
@@ -508,6 +549,7 @@ void ToolsDB2UIBase::setupUi() {
     drill_dwelltime_entry = new FCDoubleSpinner(nullptr);
     drill_dwelltime_entry->setProperty("decimals", 4);
     drill_dwelltime_entry->setProperty("maximum", 10000.0);
+    drill_dwelltime_entry->setProperty("objectName", QString::fromUtf8("gdb_e_dwelltime"));
     drill_dwelltime_entry->setProperty("singleStep", 0.1);
     grid5->addWidget(drill_dwelltime_entry, 22, 1, 1, 1);
     auto* w20 = new QFrame(nullptr);
@@ -520,6 +562,7 @@ void ToolsDB2UIBase::setupUi() {
     drill_slots_drill_lbl->setToolTip(QString::fromUtf8("Si la herramienta seleccionada tiene ranuras, se perforarán."));
     grid5->addWidget(drill_slots_drill_lbl, 26, 0, 1, 1);
     drill_slots_cb = new FCCheckBox(nullptr);
+    drill_slots_cb->setProperty("objectName", QString::fromUtf8("gdb_e_drill_slots"));
     grid5->addWidget(drill_slots_cb, 26, 1, 1, 1);
     drill_overlap_label = new FCLabel(nullptr);
     drill_overlap_label->setText(QString::fromUtf8("Superposición:"));
@@ -528,6 +571,7 @@ void ToolsDB2UIBase::setupUi() {
     drill_overlap_entry = new FCDoubleSpinner(nullptr);
     drill_overlap_entry->setProperty("decimals", 4);
     drill_overlap_entry->setProperty("maximum", 100.0);
+    drill_overlap_entry->setProperty("objectName", QString::fromUtf8("gdb_e_drill_slots_over"));
     drill_overlap_entry->setProperty("singleStep", 0.1);
     drill_overlap_entry->setProperty("suffix", QString::fromUtf8(" %"));
     grid5->addWidget(drill_overlap_entry, 28, 1, 1, 1);
@@ -536,6 +580,7 @@ void ToolsDB2UIBase::setupUi() {
     last_drill_drill_lbl->setToolTip(QString::fromUtf8("Si la longitud de la ranura no está completamente cubierta por taladros,\nagregue un taladro en el punto final de la ranura."));
     grid5->addWidget(last_drill_drill_lbl, 30, 0, 1, 2);
     drill_last_drill_cb = new FCCheckBox(nullptr);
+    drill_last_drill_cb->setProperty("objectName", QString::fromUtf8("gdb_e_drill_last_drill"));
     grid5->addWidget(drill_last_drill_cb, 30, 1, 1, 1);
     grid5->setColumnStretch(1, 1);
     drill_vlay->addLayout(grid5, 0);
@@ -564,6 +609,7 @@ void ToolsDB2UIBase::setupUi() {
     grid0->addWidget(shape_label, 2, 0, 1, 1);
     mill_shape_combo = new FCComboBox(nullptr);
     mill_shape_combo->setProperty("currentText", QString::fromUtf8("C1"));
+    mill_shape_combo->setProperty("objectName", QString::fromUtf8("gdb_shape"));
     mill_shape_combo->addItem(QString::fromUtf8("C1"));
     mill_shape_combo->addItem(QString::fromUtf8("C2"));
     mill_shape_combo->addItem(QString::fromUtf8("C3"));
@@ -578,6 +624,7 @@ void ToolsDB2UIBase::setupUi() {
     mill_vdia_entry = new FCDoubleSpinner(nullptr);
     mill_vdia_entry->setProperty("decimals", 4);
     mill_vdia_entry->setProperty("maximum", 10000.0);
+    mill_vdia_entry->setProperty("objectName", QString::fromUtf8("gdb_vdia"));
     grid0->addWidget(mill_vdia_entry, 4, 1, 1, 1);
     vangle_label = new FCLabel(nullptr);
     vangle_label->setText(QString::fromUtf8("V-Ángulo:"));
@@ -587,6 +634,7 @@ void ToolsDB2UIBase::setupUi() {
     mill_vangle_entry->setProperty("decimals", 4);
     mill_vangle_entry->setProperty("maximum", 360.0);
     mill_vangle_entry->setProperty("minimum", -360.0);
+    mill_vangle_entry->setProperty("objectName", QString::fromUtf8("gdb_vangle"));
     grid0->addWidget(mill_vangle_entry, 6, 1, 1, 1);
     auto* w22 = new QFrame(nullptr);
     w22->setProperty("frameShadow", 48);
@@ -599,6 +647,7 @@ void ToolsDB2UIBase::setupUi() {
     grid0->addWidget(type_label, 10, 0, 1, 1);
     mill_type_combo = new FCComboBox(nullptr);
     mill_type_combo->setProperty("currentText", QString::fromUtf8("Iso"));
+    mill_type_combo->setProperty("objectName", QString::fromUtf8("gdb_type"));
     mill_type_combo->addItem(QString::fromUtf8("Iso"));
     mill_type_combo->addItem(QString::fromUtf8("Rough"));
     mill_type_combo->addItem(QString::fromUtf8("Finish"));
@@ -609,6 +658,7 @@ void ToolsDB2UIBase::setupUi() {
     grid0->addWidget(tooloffset_label, 12, 0, 1, 1);
     mill_tooloffset_combo = new FCComboBox(nullptr);
     mill_tooloffset_combo->setProperty("currentText", QString::fromUtf8("Path"));
+    mill_tooloffset_combo->setProperty("objectName", QString::fromUtf8("gdb_tool_offset"));
     mill_tooloffset_combo->addItem(QString::fromUtf8("Path"));
     mill_tooloffset_combo->addItem(QString::fromUtf8("In"));
     mill_tooloffset_combo->addItem(QString::fromUtf8("Out"));
@@ -622,6 +672,7 @@ void ToolsDB2UIBase::setupUi() {
     mill_custom_offset_entry->setProperty("decimals", 4);
     mill_custom_offset_entry->setProperty("maximum", 10000.0);
     mill_custom_offset_entry->setProperty("minimum", -10000.0);
+    mill_custom_offset_entry->setProperty("objectName", QString::fromUtf8("gdb_custom_offset"));
     grid0->addWidget(mill_custom_offset_entry, 14, 1, 1, 1);
     auto* w23 = new QFrame(nullptr);
     w23->setProperty("frameShadow", 48);
@@ -636,12 +687,14 @@ void ToolsDB2UIBase::setupUi() {
     mill_cutz_entry->setProperty("decimals", 4);
     mill_cutz_entry->setProperty("maximum", 10000.0);
     mill_cutz_entry->setProperty("minimum", -10000.0);
+    mill_cutz_entry->setProperty("objectName", QString::fromUtf8("gdb_cutz"));
     grid0->addWidget(mill_cutz_entry, 18, 1, 1, 1);
     multidepth_label = new FCLabel(nullptr);
     multidepth_label->setText(QString::fromUtf8("Profund. Múlti:"));
     multidepth_label->setToolTip(QString::fromUtf8("Multi Profundidad.\nSeleccionar esto permitirá cortar en múltiples pasadas,\ncada pasada agrega una profundidad de parámetro PPP."));
     grid0->addWidget(multidepth_label, 20, 0, 1, 1);
     mill_multidepth_cb = new FCCheckBox(nullptr);
+    mill_multidepth_cb->setProperty("objectName", QString::fromUtf8("gdb_multidepth"));
     grid0->addWidget(mill_multidepth_cb, 20, 1, 1, 1);
     dpp_label = new FCLabel(nullptr);
     dpp_label->setText(QString::fromUtf8("PPP:"));
@@ -651,6 +704,7 @@ void ToolsDB2UIBase::setupUi() {
     mill_multidepth_entry->setProperty("decimals", 4);
     mill_multidepth_entry->setProperty("maximum", 10000.0);
     mill_multidepth_entry->setProperty("minimum", -10000.0);
+    mill_multidepth_entry->setProperty("objectName", QString::fromUtf8("gdb_multidepth_entry"));
     grid0->addWidget(mill_multidepth_entry, 22, 1, 1, 1);
     travelz_label = new FCLabel(nullptr);
     travelz_label->setText(QString::fromUtf8("Viaje Z:"));
@@ -660,12 +714,14 @@ void ToolsDB2UIBase::setupUi() {
     mill_travelz_entry->setProperty("decimals", 4);
     mill_travelz_entry->setProperty("maximum", 10000.0);
     mill_travelz_entry->setProperty("minimum", -10000.0);
+    mill_travelz_entry->setProperty("objectName", QString::fromUtf8("gdb_travelz"));
     grid0->addWidget(mill_travelz_entry, 24, 1, 1, 1);
     ecut_label = new FCLabel(nullptr);
     ecut_label->setText(QString::fromUtf8("Corte extra:"));
     ecut_label->setToolTip(QString::fromUtf8("Corte Extra\nSi está marcada, después de terminar un aislamiento, un corte adicional\nse agregará donde se encuentran el inicio y el final del aislamiento\ncomo que este punto está cubierto por este corte adicional para\nGarantizar un aislamiento completo."));
     grid0->addWidget(ecut_label, 26, 0, 1, 1);
     mill_ecut_cb = new FCCheckBox(nullptr);
+    mill_ecut_cb->setProperty("objectName", QString::fromUtf8("gdb_ecut"));
     grid0->addWidget(mill_ecut_cb, 26, 1, 1, 1);
     ecut_length_label = new FCLabel(nullptr);
     ecut_length_label->setText(QString::fromUtf8("Longitud de Corte extra:"));
@@ -674,6 +730,7 @@ void ToolsDB2UIBase::setupUi() {
     mill_ecut_length_entry = new FCDoubleSpinner(nullptr);
     mill_ecut_length_entry->setProperty("decimals", 4);
     mill_ecut_length_entry->setProperty("maximum", 10000.0);
+    mill_ecut_length_entry->setProperty("objectName", QString::fromUtf8("gdb_ecut_length"));
     grid0->addWidget(mill_ecut_length_entry, 28, 1, 1, 1);
     auto* w24 = new QFrame(nullptr);
     w24->setProperty("frameShadow", 48);
@@ -688,6 +745,7 @@ void ToolsDB2UIBase::setupUi() {
     mill_frxy_entry->setProperty("decimals", 4);
     mill_frxy_entry->setProperty("maximum", 9910000.0);
     mill_frxy_entry->setProperty("minimum", -9910000.0);
+    mill_frxy_entry->setProperty("objectName", QString::fromUtf8("gdb_frxy"));
     grid0->addWidget(mill_frxy_entry, 32, 1, 1, 1);
     frz_label = new FCLabel(nullptr);
     frz_label->setText(QString::fromUtf8("Avance Z:"));
@@ -697,6 +755,7 @@ void ToolsDB2UIBase::setupUi() {
     mill_frz_entry->setProperty("decimals", 4);
     mill_frz_entry->setProperty("maximum", 9910000.0);
     mill_frz_entry->setProperty("minimum", -9910000.0);
+    mill_frz_entry->setProperty("objectName", QString::fromUtf8("gdb_frz"));
     grid0->addWidget(mill_frz_entry, 34, 1, 1, 1);
     frapids_label = new FCLabel(nullptr);
     frapids_label->setText(QString::fromUtf8("Avance rápido:"));
@@ -705,6 +764,7 @@ void ToolsDB2UIBase::setupUi() {
     mill_frapids_entry = new FCDoubleSpinner(nullptr);
     mill_frapids_entry->setProperty("decimals", 4);
     mill_frapids_entry->setProperty("maximum", 10000.0);
+    mill_frapids_entry->setProperty("objectName", QString::fromUtf8("gdb_frapids"));
     grid0->addWidget(mill_frapids_entry, 36, 1, 1, 1);
     auto* w25 = new QFrame(nullptr);
     w25->setProperty("frameShadow", 48);
@@ -719,12 +779,14 @@ void ToolsDB2UIBase::setupUi() {
     mill_spindle_entry->setProperty("decimals", 4);
     mill_spindle_entry->setProperty("maximum", 9910000.0);
     mill_spindle_entry->setProperty("minimum", -9910000.0);
+    mill_spindle_entry->setProperty("objectName", QString::fromUtf8("gdb_spindle"));
     grid0->addWidget(mill_spindle_entry, 40, 1, 1, 1);
     dwell_label = new FCLabel(nullptr);
     dwell_label->setText(QString::fromUtf8("Habitar:"));
     dwell_label->setToolTip(QString::fromUtf8("Habitar.\nMarque esto si se necesita un retraso para permitir\nel motor del husillo para alcanzar su velocidad establecida."));
     grid0->addWidget(dwell_label, 42, 0, 1, 1);
     mill_dwell_cb = new FCCheckBox(nullptr);
+    mill_dwell_cb->setProperty("objectName", QString::fromUtf8("gdb_dwell"));
     grid0->addWidget(mill_dwell_cb, 42, 1, 1, 1);
     dwelltime_label = new FCLabel(nullptr);
     dwelltime_label->setText(QString::fromUtf8("Tiempo de permanencia:"));
@@ -733,6 +795,7 @@ void ToolsDB2UIBase::setupUi() {
     mill_dwelltime_entry = new FCDoubleSpinner(nullptr);
     mill_dwelltime_entry->setProperty("decimals", 4);
     mill_dwelltime_entry->setProperty("maximum", 10000.0);
+    mill_dwelltime_entry->setProperty("objectName", QString::fromUtf8("gdb_dwelltime"));
     grid0->addWidget(mill_dwelltime_entry, 44, 1, 1, 1);
     grid0->setColumnStretch(1, 1);
     milling_vlay->addLayout(grid0, 0);
