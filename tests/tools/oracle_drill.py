@@ -143,10 +143,22 @@ def main():
             first_pt = last_pt
             if start != "":
                 start_gcode = start
+        # ToolDrilling.on_cnc_button_click: "Calculate DISTANCE and ESTIMATED TIME" (copiado del original).
+        if job.xy_end is None:
+            job.xy_end = [job.oldx, job.oldy]
+        job.measured_distance += abs(camlib.distance_euclidian(job.oldx, job.oldy, job.xy_end[0], job.xy_end[1]))
+        job.travel_distance = job.measured_distance
+        job.routing_time = (job.measured_down_distance + job.measured_up_to_zero_distance) / job.z_feedrate
+        lift_time = job.measured_lift_distance / job.feedrate_rapid
+        traveled_time = job.measured_distance / job.feedrate_rapid
+        job.routing_time += lift_time + traveled_time
+        stats.append((job.travel_distance, job.routing_time))
         return start_gcode, texts
 
+    stats = []
     sel = list(tools)
     start_gcode, texts = run("default")
+    travel, routing = stats[0]
     OTHER_PPS = ["Berta_CNC", "Default_no_M6", "grbl_11", "GRBL_11_no_M6", "GRBL_laser", "ISEL_CNC", "ISEL_ICP_CNC",
                  "line_xyz", "Marlin", "Marlin_laser_FAN_pin", "Marlin_laser_Spindle_pin", "Repetier",
                  "Roland_MDX_20", "Toolchange_Custom", "Toolchange_Manual", "Toolchange_Probe_MACH3", "Z_laser"]
@@ -202,6 +214,8 @@ def main():
     out.append("inline const std::string kStartGcode = %s;" % cs(start_gcode))
     out.append("inline const std::vector<std::string> kToolGcodes = {%s};" % ",\n".join(cs(t) for t in texts))
     out.append("inline const std::string kFullFile = %s;" % cs(full))
+    out.append("inline constexpr double kTravelDistance = %r;" % float(travel))
+    out.append("inline constexpr double kRoutingTime = %r;" % float(routing))
     out.append("struct PpRun { const char* pp; const char* start; std::vector<std::string> tools; };")
     out.append("inline const std::vector<PpRun> kOtherPreprocessors = {")
     for n, st, tx in other_runs:

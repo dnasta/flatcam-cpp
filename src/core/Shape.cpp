@@ -376,6 +376,16 @@ double Shape::distance(const Shape& o) const {
     if (!GEOSDistance_r(H(), raw(*this), raw(o), &d)) fail("distance");
     return d;
 }
+std::optional<std::pair<Point2D, Point2D>> Shape::nearestPoints(const Shape& o) const {
+    if (isEmpty() || o.isEmpty()) return std::nullopt;
+    GEOSCoordSequence* seq = GEOSNearestPoints_r(H(), raw(*this), raw(o));
+    if (!seq) fail("nearestPoints");
+    Point2D a, b;
+    GEOSCoordSeq_getXY_r(H(), seq, 0, &a.x, &a.y);
+    GEOSCoordSeq_getXY_r(H(), seq, 1, &b.x, &b.y);
+    GEOSCoordSeq_destroy_r(H(), seq);
+    return std::make_pair(a, b);
+}
 bool Shape::equals(const Shape& o) const {
     return predicate(GEOSEquals_r(H(), raw(*this), raw(o)), "equals");
 }

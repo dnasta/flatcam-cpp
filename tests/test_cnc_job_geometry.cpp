@@ -103,6 +103,9 @@ TEST_P(GeometryModes, MatchesOriginalGenerator) {
     settings.flavor = GcodeFlavor::FlatCAM2024_4;  // los goldens salen del código de la 2024.4
     ASSERT_TRUE(job.generateFromGeometry(sc.geometry(), settings)) << job.lastError();
     EXPECT_EQ(job.startGcode() + "\n" + job.gcode(), sc.expected);
+    // travel_distance y routing_time del original (las sumas de largos pueden diferir en el último bit).
+    EXPECT_NEAR(job.travelDistance(), sc.travelDistance, 1e-9 * std::max(1.0, sc.travelDistance));
+    EXPECT_NEAR(job.routingTime(), sc.routingTime, 1e-9 * std::max(1.0, sc.routingTime));
 }
 
 INSTANTIATE_TEST_SUITE_P(Original, GeometryModes,
@@ -143,6 +146,9 @@ TEST_P(GeometryMultiTool, MatchesOriginalGenerator) {
     ASSERT_TRUE(job.generateFromGeometryTools(jobs)) << job.lastError();
     EXPECT_EQ(job.toolGcodes().size(), jobs.size());
     EXPECT_EQ(job.startGcode() + "\n" + job.gcode(), sc.expected);
+    // travel_distance y routing_time se acumulan entre las herramientas, como en el original.
+    EXPECT_NEAR(job.travelDistance(), sc.travelDistance, 1e-9 * std::max(1.0, sc.travelDistance));
+    EXPECT_NEAR(job.routingTime(), sc.routingTime, 1e-9 * std::max(1.0, sc.routingTime));
 }
 
 INSTANTIATE_TEST_SUITE_P(Original, GeometryMultiTool,

@@ -46,6 +46,8 @@ public:
 
     /** @brief El trabajo. @return Referencia. */
     const CncJob& job() const { return *job_; }
+    /** @brief Datos de la cabecera del archivo (nombre, tipo, unidades...). @return Los datos. */
+    const GcodeHeaderInfo& header() const { return header_; }
 
     /** @brief Herramientas usadas. @return Las filas. */
     const std::vector<CncToolRow>& tools() const { return tools_; }

@@ -13,6 +13,7 @@
 #include <cmath>
 
 #include "gui/App.h"
+#include "gui/tools/PropertiesTool.h"
 #include "gui/ProjectIO.h"
 #include "gui/Translation.h"
 #include "gui/objects/CNCJobObject.h"
@@ -87,13 +88,8 @@ void App::setupProjectMenu() {
     connect(menuProjectCopy, &QAction::triggered, this, [this] { copySelected(); });
     connect(menuProjectDelete, &QAction::triggered, this, [this] { deleteSelected(); });
     connect(menuProjectSave, &QAction::triggered, this, [this] { saveSelected(); });
-    connect(menuProjectProperties, &QAction::triggered, this, [this] {
-        // obj_properties abre la herramienta Propiedades (no portada); se muestra la pestaña Propiedades del objeto.
-        if (FlatCAMObj* o = activeObject()) {
-            showProperties(o);
-            ui_->notebook->setCurrentWidget(ui_->properties_tab);
-        }
-    });
+    // obj_properties: la herramienta Propiedades, run(toggle=False).
+    connect(menuProjectProperties, &QAction::triggered, this, [this] { propertiesTool->run(false); });
     connect(ui_->collection_view, &QWidget::customContextMenuRequested, this, [this](const QPoint& pos) {
         updateProjectMenu();
         menuProject_->popup(ui_->collection_view->mapToGlobal(pos));

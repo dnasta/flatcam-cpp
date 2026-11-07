@@ -17,7 +17,8 @@ from shapely.ops import unary_union
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from oracle_common import DATA, REF, ROOT, FakeApp, install_stubs, load  # noqa: E402
-from oracle_geometry_modes import ExcAreas, cs, num, pair  # noqa: E402
+from oracle_exclusion import exc_areas  # noqa: E402
+from oracle_geometry_modes import cs, num, pair  # noqa: E402
 
 OUT = os.path.join(ROOT, "tests", "golden_geometry_multitool.h")
 
@@ -50,7 +51,7 @@ def main():
     app = FakeApp()
     app.defaults.update({"cncjob_steps_per_circle": 64, "cncjob_coords_type": "G90", "geometry_f_plunge": False})
     app.preprocessors = appPreProcessor.preprocessors
-    app.exc_areas = ExcAreas()
+    app.exc_areas = exc_areas(app, [])
     camlib.Geometry.app = app
     camlib.CNCjob.app = app
 
@@ -125,12 +126,13 @@ def main():
                 out.append("        t.toolchangeXY = %s;" % pair(data["toolchangexy"]))
             out += ["        v.push_back(j);", "    }"]
         out += ["    return v;", "}"]
-        names.append((name, expected))
+        names.append((name, expected, job.travel_distance, job.routing_time))
 
-    out.append("struct Scenario { const char* name; std::vector<flatcam::GeometryToolJob> (*jobs)(); const char* expected; };")
+    out.append("struct Scenario { const char* name; std::vector<flatcam::GeometryToolJob> (*jobs)(); const char* expected;"
+               " double travelDistance; double routingTime; };")
     out.append("inline const std::vector<Scenario> kScenarios = {")
-    for idx, (name, expected) in enumerate(names):
-        out.append('{"%s", jobs%d, %s},' % (name, idx, cs(expected)))
+    for idx, (name, expected, travel, routing) in enumerate(names):
+        out.append('{"%s", jobs%d, %s, %r, %r},' % (name, idx, cs(expected), float(travel), float(routing)))
     out.append("};")
     out.append("}  // namespace golden_geometry_multitool")
     with open(OUT, "w") as f:

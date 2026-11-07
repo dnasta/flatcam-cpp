@@ -563,6 +563,29 @@ CNCObjectUI::CNCObjectUI(QWidget* parent) : CNCObjectUIBase(parent) {
 void CNCObjectUI::build(CNCJobObject& obj) {
     name_entry->setText(obj.name());
     plot_cb->setChecked(obj.plotEnabled());
+    // set_ui: distancia recorrida y duración estimada, si el trabajo se generó en esta sesión (travel_distance no se
+    // guarda en los proyectos).
+    if (const double travel = obj.job().travelDistance(); travel != 0) {
+        t_distance_label->show();
+        t_distance_entry->setVisible(true);
+        t_distance_entry->setDisabled(true);
+        t_distance_entry->setText(QString::asprintf("%.4f", travel));
+        units_label->setText(QString::fromStdString(obj.header().units).toLower());
+        units_label->setDisabled(true);
+        t_time_label->show();
+        t_time_entry->setVisible(true);
+        t_time_entry->setDisabled(true);
+        // Más de 1: minutos; si no, segundos.
+        const double r = obj.job().routingTime();
+        if (r > 1) {
+            t_time_entry->setText(QString::asprintf("%.4f", std::ceil(r)));
+            units_time_label->setText("min");
+        } else {
+            t_time_entry->setText(QString::asprintf("%.4f", std::ceil(r * 60)));
+            units_time_label->setText("sec");
+        }
+        units_time_label->setDisabled(true);
+    }
     // CNCJobObject.build_ui: los trabajos de taladrado muestran la tabla de herramientas de Excellon.
     const auto& tools = obj.tools();
     const bool excellon = !tools.empty() && tools.front().drills > 0;

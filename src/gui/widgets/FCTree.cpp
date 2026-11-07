@@ -39,4 +39,38 @@ QTreeWidgetItem* FCTree::addItem(QTreeWidgetItem* parent, const QStringList& tex
     return item;
 }
 
+QTreeWidgetItem* FCTree::addParent(QTreeWidgetItem* parent, const QString& title, bool expanded, const QColor& color,
+                                   const std::optional<QFont>& font) {
+    auto* item = new QTreeWidgetItem(parent ? parent : invisibleRootItem(), QStringList{title});
+    item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+    item->setExpanded(expanded);
+    if (color.isValid()) item->setForeground(0, QBrush(color));
+    if (font) item->setFont(0, *font);
+    return item;
+}
+
+void FCTree::addChild(QTreeWidgetItem* parent, const QStringList& title, bool column1, const std::optional<QFont>& font,
+                      std::vector<int> fontItems) {
+    auto* item = new QTreeWidgetItem(parent ? parent : invisibleRootItem());
+    item->setText(0, title.value(0));
+    if (column1) item->setText(1, title.value(1));
+    if (font)
+        for (int fi : fontItems) item->setFont(fi, *font);
+}
+
+void FCTree::onResize() {
+    QHeaderView* h = header();
+    for (int c = 0; c < h->count(); ++c) {
+        h->setSectionResizeMode(c, QHeaderView::ResizeToContents);
+        const int w = h->sectionSize(c);
+        h->setSectionResizeMode(c, QHeaderView::Interactive);
+        h->resizeSection(c, w);
+    }
+}
+
+void FCTree::resizeEvent(QResizeEvent* event) {
+    QTreeWidget::resizeEvent(event);
+    onResize();
+}
+
 }  // namespace flatcam::gui

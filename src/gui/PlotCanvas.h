@@ -83,6 +83,22 @@ public:
         update();
     }
 
+    /**
+     * @brief Si el HUD muestra la distancia al último clic (`Dx`, `Dy`) o ceros, como mientras mide la herramienta
+     * Distancia (que escribe `0.0000` en el HUD). @param on Mostrar la distancia.
+     */
+    void setHudShowsDelta(bool on) {
+        hudDelta_ = on;
+        update();
+    }
+
+    /**
+     * @brief Lleva el cursor del mouse a un punto (`on_jump_to`): mueve el puntero del sistema y la cruz.
+     * @param world Punto en mm.
+     * @param fitCenter Si además se centra la vista en un cuadrado de 40 mm alrededor del punto (`fit_center`).
+     */
+    void jumpTo(const QPointF& world, bool fitCenter);
+
     /** @brief Muestra u oculta las líneas por el origen (`on_toggle_axis`). @param on Mostrar. */
     void setAxisEnabled(bool on);
 
@@ -196,6 +212,7 @@ private:
     double scale_{1.0};           ///< Píxeles por mm.
     bool firstResize_{true};
     bool hudEnabled_{true};       // global_hud
+    bool hudDelta_{true};         // false mientras mide la herramienta Distancia
     bool cursorEnabled_{true};    // app_cursor.enabled (con la grilla activa)
     std::function<QPointF(QPointF)> snapper_;
     QPointF eventWorld(const QPointF& pixel) const;

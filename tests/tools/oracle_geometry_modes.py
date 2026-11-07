@@ -220,12 +220,13 @@ def main():
         out.append("    t.segY = %s;" % num(job.segy))
         out += cpp_areas(jobopts.get("areas", []), "geometry", "s.exclusionAreas")
         out += ["    return s;", "}"]
-        names.append((name, expected))
+        names.append((name, expected, job.travel_distance, job.routing_time))
 
-    out.append("struct Scenario { const char* name; flatcam::ShapeList (*geometry)(); flatcam::GeometryJobSettings (*settings)(); const char* expected; };")
+    out.append("struct Scenario { const char* name; flatcam::ShapeList (*geometry)(); flatcam::GeometryJobSettings (*settings)(); const char* expected;"
+               " double travelDistance; double routingTime; };")
     out.append("inline const std::vector<Scenario> kScenarios = {")
-    for idx, (name, expected) in enumerate(names):
-        out.append('{"%s", geometry%d, settings%d, %s},' % (name, idx, idx, cs(expected)))
+    for idx, (name, expected, travel, routing) in enumerate(names):
+        out.append('{"%s", geometry%d, settings%d, %s, %s, %s},' % (name, idx, idx, cs(expected), num(travel), num(routing)))
     out.append("};")
     out.append("}  // namespace golden_geometry_modes")
     with open(OUT, "w") as f:

@@ -80,6 +80,9 @@ TEST(CncJobDrill, FileOrderMatchesOriginalGeneratorExactly) {
         EXPECT_EQ(job.toolGcodes()[i], golden_drill::kToolGcodes[i]) << "herramienta #" << i + 1;
     }
     EXPECT_EQ(job.exportGcode(golden_drill::header()), golden_drill::kFullFile);
+    // Distancia recorrida y tiempo estimado (ToolDrilling): los del original.
+    EXPECT_NEAR(job.travelDistance(), golden_drill::kTravelDistance, 1e-9 * golden_drill::kTravelDistance);
+    EXPECT_NEAR(job.routingTime(), golden_drill::kRoutingTime, 1e-9 * golden_drill::kRoutingTime);
 }
 
 TEST(CncJobDrill, EveryExcellonPreprocessorMatchesOriginalGenerator) {

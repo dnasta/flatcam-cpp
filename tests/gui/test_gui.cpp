@@ -483,6 +483,17 @@ TEST(GuiCutout, UserWorkflowReproducesTheRealFile) {
     auto* cnc = dynamic_cast<CNCJobObject*>(app.collection()->byName("luz de noche Pascual-Edge_Cuts.gbr_cutout_cnc"));
     ASSERT_NE(cnc, nullptr);
     EXPECT_GT(cnc->plotData().fill.size(), 100u);  // la trayectoria se dibuja engrosada con el radio de la fresa
+    // Propiedades: distancia recorrida y duración estimada (travel_distance, routing_time del CNC Job).
+    {
+        auto* cui = dynamic_cast<CNCObjectUI*>(cnc->propertiesUi());
+        ASSERT_NE(cui, nullptr);
+        EXPECT_FALSE(cui->t_distance_entry->isHidden());
+        EXPECT_GT(cnc->job().travelDistance(), 0.0);
+        EXPECT_EQ(cui->t_distance_entry->text(), QString::asprintf("%.4f", cnc->job().travelDistance()));
+        EXPECT_EQ(cui->units_label->text(), "mm");
+        const double r = cnc->job().routingTime();
+        EXPECT_EQ(cui->units_time_label->text(), r > 1 ? "min" : "sec");
+    }
 
     QTemporaryDir tmp;
     const QString out = tmp.filePath("luz de noche Pascual-Edge_Cuts.gbr_cutout_cnc.nc");
@@ -1875,4 +1886,205 @@ TEST(GuiTransform, RotateScaleOffsetFlipAndBuffer) {
     t->offy_entry->setValue(1.0);
     t->offy_button->click();
     EXPECT_EQ(app.ui()->fcinfo->text->text(), tr_("No object is selected."));
+}
+
+// Distancia (ToolDistance): dos clics, el resultado y que se restauren la grilla y los manejadores del mouse.
+TEST(GuiDistance, MeasuresBetweenTwoClicksAndCancels) {
+    App app;
+    MainGUI* ui = app.ui();
+    const bool grid = ui->grid_snap_btn->isChecked();
+    ui->distance_btn->trigger();
+    DistanceTool* t = app.distanceTool;
+    ASSERT_TRUE(t->active());
+    EXPECT_EQ(ui->tool_scroll_area->widget(), t);
+    EXPECT_FALSE(t->measure_btn->isEnabled());
+    EXPECT_TRUE(t->snap_center_cb->isHidden());
+    EXPECT_FALSE(ui->canvasHandlersEnabled());
+    t->onRelease({1, 1}, Qt::LeftButton, false);
+    EXPECT_EQ(t->start_entry->text(), "(1.0000, 1.0000)");
+    t->onMove({4, 1});
+    EXPECT_EQ(t->angle_entry->text(), "0.0000");  // ángulo provisorio
+    t->onRelease({4, 5}, Qt::LeftButton, false);
+    EXPECT_FALSE(t->active());
+    EXPECT_EQ(t->stop_entry->text(), "(4.0000, 5.0000)");
+    EXPECT_EQ(t->distance_x_entry->text(), "3.0000");
+    EXPECT_EQ(t->distance_y_entry->text(), "4.0000");
+    EXPECT_EQ(t->angle_entry->text(), "53.1301");
+    EXPECT_EQ(t->total_distance_entry->text(), "5.0000");
+    EXPECT_TRUE(ui->fcinfo->text->text().contains("5.000000")) << ui->fcinfo->text->text().toStdString();
+    EXPECT_TRUE(t->measure_btn->isEnabled());
+    EXPECT_TRUE(ui->canvasHandlersEnabled());
+    EXPECT_EQ(ui->grid_snap_btn->isChecked(), grid);
+    // Con el botón "Medida" se vuelve a activar; el clic derecho (sin arrastre) cancela, uno con arrastre no.
+    t->measure_btn->click();
+    ASSERT_TRUE(t->active());
+    t->onRelease({0, 0}, Qt::RightButton, true);
+    EXPECT_TRUE(t->active());
+    t->onRelease({0, 0}, Qt::RightButton, false);
+    EXPECT_FALSE(t->active());
+    EXPECT_EQ(ui->fcinfo->text->text(), tr_("Distance Tool cancelled."));
+    // Ctrl+M dos veces: activa y termina.
+    QKeyEvent ctrlM(QEvent::KeyPress, Qt::Key_M, Qt::ControlModifier);
+    QApplication::sendEvent(ui, &ctrlM);
+    EXPECT_TRUE(t->active());
+    QApplication::sendEvent(ui, &ctrlM);
+    EXPECT_FALSE(t->active());
+    EXPECT_EQ(ui->fcinfo->text->text(), tr_("Distance Tool finished."));
+}
+
+// Distancia mínima (ToolDistanceMin): los puntos más cercanos entre los dos objetos elegidos.
+TEST(GuiDistance, MinimumDistanceBetweenTwoObjects) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    auto* exc = static_cast<ExcellonObject*>(app.openByExtension(QString::fromStdString(dir + "PTH.drl")));
+    ASSERT_NE(edge, nullptr);
+    ASSERT_NE(exc, nullptr);
+    MainGUI* ui = app.ui();
+    ui->distance_min_btn->trigger();
+    DistanceMinTool* t = app.distanceMinTool;
+    EXPECT_EQ(ui->tool_scroll_area->widget(), t);
+    EXPECT_FALSE(t->jump_hp_btn->isEnabled());
+    // Con un solo objeto elegido avisa.
+    auto* view = ui->collection_view;
+    view->selectionModel()->clearSelection();
+    view->selectionModel()->select(app.collection()->indexOf(edge), QItemSelectionModel::Select);
+    t->measure_btn->click();
+    EXPECT_TRUE(ui->fcinfo->text->text().endsWith(" 1")) << ui->fcinfo->text->text().toStdString();
+    view->selectionModel()->select(app.collection()->indexOf(exc), QItemSelectionModel::Select);
+    t->measure_btn->click();
+    const double expected =
+        flatcam::Shape::unaryUnion(edge->solidShapes()).distance(flatcam::Shape::unaryUnion(exc->solidShapes()));
+    ASSERT_GT(expected, 0.1);
+    EXPECT_EQ(t->total_distance_entry->text(), QString::asprintf("%.4f", expected));
+    const QPointF h = t->halfPoint();
+    EXPECT_EQ(t->half_point_entry->text(), QString::asprintf("(%.4f, %.4f)", h.x(), h.y()));
+    EXPECT_TRUE(t->jump_hp_btn->isEnabled());
+    t->jump_hp_btn->click();
+    EXPECT_TRUE(ui->position_label->text().contains(QString::asprintf("%.4f", h.x())));
+    EXPECT_TRUE(ui->fcinfo->text->text().contains(QString::asprintf("(%.4f, %.4f)", h.x(), h.y())));
+}
+
+// Mover (ToolMove): sin objetos avisa; con dos clics desplaza los elegidos; Escape cancela.
+TEST(GuiMove, MovesTheSelectedObjectsWithTwoClicks) {
+    App app;
+    MainGUI* ui = app.ui();
+    MoveTool* m = app.moveTool;
+    m->toggle();
+    EXPECT_FALSE(m->active());
+    EXPECT_EQ(ui->fcinfo->text->text(), tr_("Cancelled. No object(s) to move."));
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    auto* exc = static_cast<ExcellonObject*>(app.openByExtension(QString::fromStdString(dir + "PTH.drl")));
+    ASSERT_NE(edge, nullptr);
+    ASSERT_NE(exc, nullptr);
+    auto* view = ui->collection_view;
+    view->selectionModel()->clearSelection();
+    view->selectionModel()->select(app.collection()->indexOf(edge), QItemSelectionModel::Select);
+    view->selectionModel()->select(app.collection()->indexOf(exc), QItemSelectionModel::Select);
+    const QRectF be = edge->bounds(), bx = exc->bounds();
+    QKeyEvent keyM(QEvent::KeyPress, Qt::Key_M, Qt::NoModifier);
+    QApplication::sendEvent(ui, &keyM);
+    ASSERT_TRUE(m->active());
+    m->onClick({1, 2}, Qt::LeftButton);
+    m->onMove({5, 5});
+    m->onClick({11, -3}, Qt::LeftButton);
+    EXPECT_FALSE(m->active());
+    EXPECT_NEAR(edge->bounds().left(), be.left() + 10, 1e-9);
+    EXPECT_NEAR(edge->bounds().top(), be.top() - 5, 1e-9);
+    EXPECT_NEAR(exc->bounds().left(), bx.left() + 10, 1e-9);
+    EXPECT_TRUE(ui->fcinfo->text->text().startsWith("Excellon ")) << ui->fcinfo->text->text().toStdString();
+    // Escape cancela sin mover.
+    m->toggle();
+    ASSERT_TRUE(m->active());
+    m->onClick({0, 0}, Qt::LeftButton);
+    QKeyEvent esc(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+    QApplication::sendEvent(ui, &esc);
+    EXPECT_FALSE(m->active());
+    EXPECT_EQ(ui->fcinfo->text->text(), tr_("Cancelled."));
+    EXPECT_NEAR(edge->bounds().left(), be.left() + 10, 1e-9);
+}
+
+// Propiedades (ToolProperties): el árbol con los datos de los objetos elegidos.
+TEST(GuiPropertiesTool, ShowsTheSelectedObjects) {
+    App app;
+    MainGUI* ui = app.ui();
+    PropertiesTool* t = app.propertiesTool;
+    // Sin objetos: avisa y vuelve a la pestaña Proyecto.
+    ui->properties_tool_menuAction->trigger();
+    EXPECT_EQ(ui->notebook->currentWidget(), ui->project_tab);
+    EXPECT_TRUE(t->properties_frame->isHidden());
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    auto* exc = static_cast<ExcellonObject*>(app.openByExtension(QString::fromStdString(dir + "PTH.drl")));
+    ASSERT_NE(edge, nullptr);
+    ASSERT_NE(exc, nullptr);
+    auto* view = ui->collection_view;
+    view->selectionModel()->clearSelection();
+    view->selectionModel()->select(app.collection()->indexOf(edge), QItemSelectionModel::Select);
+    view->selectionModel()->select(app.collection()->indexOf(exc), QItemSelectionModel::Select);
+    QKeyEvent keyP(QEvent::KeyPress, Qt::Key_P, Qt::NoModifier);
+    QApplication::sendEvent(ui, &keyP);
+    EXPECT_EQ(ui->tool_scroll_area->widget(), t);
+    EXPECT_EQ(ui->notebook->tabText(2), tr_("Properties Tool"));
+    QTreeWidget* tree = t->treeWidget;
+    // Dos objetos: TIPO, NOMBRE, Dimensiones, Unidades, Opciones, Aperturas | Herramientas [, Taladros, Ranuras], separador.
+    ASSERT_EQ(tree->topLevelItemCount(), 7 + 9);
+    auto find = [](QTreeWidgetItem* parent, const QString& text) -> QTreeWidgetItem* {
+        for (int i = 0; i < parent->childCount(); ++i)
+            if (parent->child(i)->text(0) == text) return parent->child(i);
+        return nullptr;
+    };
+    QTreeWidgetItem* type = tree->topLevelItem(0);
+    ASSERT_GE(type->childCount(), 2);
+    EXPECT_EQ(type->child(0)->text(1), "GERBER");
+    EXPECT_EQ(tree->topLevelItem(1)->child(0)->text(0), edge->name());
+    QTreeWidgetItem* dims = tree->topLevelItem(2);
+    QTreeWidgetItem* len = find(dims, tr_("Length") + ":");
+    ASSERT_NE(len, nullptr);
+    EXPECT_EQ(len->text(1), QString::asprintf("%.4f mm", edge->bounds().width()));
+    QTreeWidgetItem* copper = find(dims, tr_("Copper Area") + ":");
+    ASSERT_NE(copper, nullptr);
+    EXPECT_NE(copper->text(1), "0.0000 cm2");
+    QTreeWidgetItem* opts = tree->topLevelItem(4);
+    EXPECT_GT(opts->childCount(), 10);
+    QTreeWidgetItem* plot = find(opts, "plot");
+    ASSERT_NE(plot, nullptr);
+    EXPECT_EQ(plot->text(1), "True");
+    QTreeWidgetItem* aps = tree->topLevelItem(5);
+    EXPECT_EQ(aps->childCount(), static_cast<int>(edge->gerber().apertureOrder().size()));
+    // El Excellon: herramientas con diámetro y cantidad de agujeros, y el total.
+    EXPECT_EQ(tree->topLevelItem(7)->child(0)->text(1), "EXCELLON");
+    QTreeWidgetItem* drills = tree->topLevelItem(7 + 6);
+    ASSERT_EQ(drills->childCount(), 1);
+    int total = 0;
+    for (const auto& [id, tool] : exc->excellon().drillTools()) total += static_cast<int>(tool.drills.size());
+    EXPECT_EQ(drills->child(0)->text(1), QString::number(total));
+    // P otra vez con el panel a la vista: lo esconde.
+    QApplication::sendEvent(ui, &keyP);
+    EXPECT_EQ(ui->splitter->sizes().value(0), 0);
+}
+
+// Propiedades de un objeto: escala y desplazamiento (on_scale_button_click, on_offset_button_click) y "Transformaciones".
+TEST(GuiTransform, ScaleAndOffsetFromThePropertiesPanel) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    ASSERT_NE(edge, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(edge));
+    auto* p = qobject_cast<GerberObjectUI*>(app.ui()->properties_scroll_area->widget());
+    ASSERT_NE(p, nullptr);
+    const QRectF b0 = edge->bounds();
+    p->offsetvector_entry->setText("(1, 2*3)");
+    p->offset_button->click();
+    EXPECT_NEAR(edge->bounds().left(), b0.left() + 1, 1e-9);
+    EXPECT_NEAR(edge->bounds().top(), b0.top() + 6, 1e-9);
+    const QRectF b1 = edge->bounds();
+    p->scale_entry->setText("1/2");
+    p->scale_button->click();
+    EXPECT_NEAR(edge->bounds().left(), b1.left() / 2, 1e-9);
+    EXPECT_NEAR(edge->bounds().width(), b1.width() / 2, 1e-9);
+    EXPECT_EQ(app.ui()->fcinfo->text->text(), tr_("Scale done."));
+    p->transformations_button->click();
+    EXPECT_EQ(app.ui()->tool_scroll_area->widget(), app.transformTool);
 }
