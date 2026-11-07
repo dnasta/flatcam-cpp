@@ -401,6 +401,10 @@ public:
     bool exportDxfFile(class GeometryObject* geo, const QString& filename);
     /** @brief Archivo -> Exportar -> DXF (`on_file_exportdxf`); también "Guardar" de una Geometría. */
     void onFileExportDxf();
+    /** @brief Guarda lo que muestra el canvas en un PNG, sin transparencia. @param filename Archivo. @return Si se escribió. */
+    bool exportPngFile(const QString& filename);
+    /** @brief Archivo -> Exportar -> PNG (`on_file_exportpng`). */
+    void onFileExportPng();
     /**
      * @brief Importa un SVG (`import_svg`) como Geometría o como Gerber. @param filename Archivo.
      * @param asGerber Como Gerber. @return El objeto, o nulo si falló.

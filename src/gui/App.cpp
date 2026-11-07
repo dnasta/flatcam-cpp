@@ -229,6 +229,7 @@ void App::connectSignals() {
     connect(ui_->menufileexportexcellon, &QAction::triggered, this, [this] { onFileExport(ObjectKind::Excellon); });
     connect(ui_->menufileexportsvg, &QAction::triggered, this, [this] { onFileExportSvg(); });
     connect(ui_->menufileexportdxf, &QAction::triggered, this, [this] { onFileExportDxf(); });
+    connect(ui_->menufileexportpng, &QAction::triggered, this, [this] { onFileExportPng(); });
     connect(ui_->menufileimportsvg, &QAction::triggered, this, [this] { onFileImportSvg(false); });
     connect(ui_->menufileimportsvg_as_gerber, &QAction::triggered, this, [this] { onFileImportSvg(true); });
     connect(ui_->menufileimportdxf, &QAction::triggered, this, [this] { onFileImportDxf(false); });
