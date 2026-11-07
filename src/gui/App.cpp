@@ -1,6 +1,7 @@
 #include "gui/App.h"
 
 #include <QClipboard>
+#include <QRegularExpression>
 #include <QMessageBox>
 #include <QPushButton>
 
@@ -223,6 +224,9 @@ void App::connectSignals() {
     connect(ui_->menufileopengerber, &QAction::triggered, this, [this] { onFileOpenGerber(); });
     connect(ui_->file_open_gerber_btn, &QAction::triggered, this, [this] { onFileOpenGerber(); });
     connect(ui_->menufileopenexcellon, &QAction::triggered, this, [this] { onFileOpenExcellon(); });
+    connect(ui_->menufileopengcode, &QAction::triggered, this, [this] { onFileOpenGcode(); });
+    connect(ui_->menufileexportgerber, &QAction::triggered, this, [this] { onFileExport(ObjectKind::Gerber); });
+    connect(ui_->menufileexportexcellon, &QAction::triggered, this, [this] { onFileExport(ObjectKind::Excellon); });
     connect(ui_->file_open_excellon_btn, &QAction::triggered, this, [this] { onFileOpenExcellon(); });
     for (QAction* a : {ui_->menuview_zoom_fit, ui_->zoom_fit_btn}) connect(a, &QAction::triggered, this, [this] { onZoomFit(); });
     // on_zoom_in / on_zoom_out: factor global_zoom_ratio (1,5) alrededor del centro de la vista.
@@ -461,6 +465,11 @@ FlatCAMObj* App::openGerber(const QString& filename) {
         return nullptr;
     }
     lastFolder_ = QFileInfo(filename).absolutePath();
+    // new_object: si el objeto no está en las unidades de la aplicación (mm), se convierte (convert_units).
+    if (gerber->units() != Units::Millimeters) {
+        ui_->inform(tr_("Converting units to ") + ": MM");
+        gerber->convertUnits(Units::Millimeters);
+    }
     FlatCAMObj* obj = addObject(std::make_unique<GerberObject>(QFileInfo(filename).fileName(), std::move(gerber)));
     registerRecent("gerber", filename);
     ui_->inform(QString("[success] %1: %2").arg(tr_("Opened"), filename));
@@ -481,16 +490,82 @@ FlatCAMObj* App::openExcellon(const QString& filename) {
         return nullptr;
     }
     lastFolder_ = QFileInfo(filename).absolutePath();
+    if (exc->units() != Units::Millimeters) {
+        ui_->inform(tr_("Converting units to ") + ": MM");
+        exc->convertUnits(Units::Millimeters);
+    }
     FlatCAMObj* obj = addObject(std::make_unique<ExcellonObject>(QFileInfo(filename).fileName(), std::move(exc)));
     registerRecent("excellon", filename);
     ui_->inform(QString("[success] %1: %2").arg(tr_("Opened"), filename));
     return obj;
 }
 
+FlatCAMObj* App::openGcode(const QString& filename) {
+    // open_gcode: el texto tal cual en un CNC Job; gcode_parse falla si alguna línea tiene '%' (o MOIN/MOMM).
+    QFile f(filename);
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        ui_->inform(QString("[ERROR_NOTCL] %1: %2").arg(tr_("Failed to open"), filename));
+        return nullptr;
+    }
+    const QString text = QString::fromUtf8(f.readAll());
+    QString units = "MM";
+    static const QRegularExpression g2x(R"(^\s*G\s*(20|21)(\.0*)?\b)");
+    for (const QString& line : text.split('\n')) {
+        if (line.contains('%') || line.contains("MOIN") || line.contains("MOMM")) {
+            ui_->inform("[ERROR_NOTCL] " + tr_("This is not GCODE"));
+            ui_->inform("[ERROR_NOTCL] " +
+                        tr_("Failed to create CNCJob Object. Probable not a GCode file. Try to load it from File menu.\n "
+                            "Attempting to create a FlatCAM CNCJob Object from G-Code file failed during processing"));
+            return nullptr;
+        }
+        const auto m = g2x.match(line);
+        if (m.hasMatch()) units = m.captured(1) == "20" ? "IN" : "MM";
+    }
+    auto job = std::make_unique<CncJob>();
+    job->restore(std::string(), {text.toStdString()});
+    GcodeHeaderInfo h;
+    h.version = "2024.4";
+    h.versionDate = "2024/04/15";
+    h.type = "Geometry";  // options['type'] de un CNCJobObject nuevo
+    h.units = units.toStdString();
+    h.name = QFileInfo(filename).fileName().toStdString();
+    lastFolder_ = QFileInfo(filename).absolutePath();
+    FlatCAMObj* obj = addObject(std::make_unique<CNCJobObject>(QFileInfo(filename).fileName(), std::move(job), h,
+                                                               std::vector<CncToolRow>{}));
+    registerRecent("cncjob", filename);
+    ui_->inform(QString("[success] %1: %2").arg(tr_("Opened"), filename));
+    return obj;
+}
+
+void App::onFileOpenGcode() {
+    QString selected = lastGcodeFilter_;
+    const QStringList files = QFileDialog::getOpenFileNames(
+        ui_.get(), tr_("Open G-Code"), lastFolder(),
+        "G-Code Files (*.txt *.nc *.ncc *.tap *.gcode *.cnc *.ecs *.fnc *.dnc *.ncg *.gc *.fan *.fgc *.din *.xpi *.hnc "
+        "*.h *.i *.ncp *.min *.gcd *.rol *.mpr *.ply *.out *.eia *.sbp *.mpf);;All Files (*.*)",
+        &selected);
+    lastGcodeFilter_ = selected;
+    if (files.isEmpty()) {
+        ui_->inform("[WARNING_NOTCL] " + tr_("Cancelled."));
+        return;
+    }
+    for (const QString& f : files) openGcode(f);
+}
+
 FlatCAMObj* App::openByExtension(const QString& filename) {
     const QString ext = QFileInfo(filename).suffix().toLower();
+    // dropEvent de MainGUI: cada lista por separado (".tap" está en la de Excellon y en la de G-code: abre los dos).
+    static const QStringList kGcodeExt = {"cnc", "din", "dnc", "ecs", "eia", "fan", "fgc", "fnc", "gc", "gcd", "gcode",
+                                          "h", "hnc", "i", "min", "mpf", "mpr", "nc", "ncc", "ncg", "ngc", "ncp", "out",
+                                          "ply", "rol", "sbp", "tap", "xpi"};
     if (kGerberExt.contains(ext)) return openGerber(filename);
+    if (ext == "tap") {
+        FlatCAMObj* e = openExcellon(filename);
+        FlatCAMObj* g = openGcode(filename);
+        return g ? g : e;
+    }
     if (kExcellonExt.contains(ext)) return openExcellon(filename);
+    if (kGcodeExt.contains(ext)) return openGcode(filename);
     if (ext == "flatprj") {
         openProject(filename);
         return nullptr;

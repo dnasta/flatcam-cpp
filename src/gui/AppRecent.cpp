@@ -95,6 +95,7 @@ void App::setupRecentItems() {
         connect(a, &QAction::triggered, this, [this, k = kind, f = file] {
             if (k == "gerber") openGerber(f);
             else if (k == "excellon") openExcellon(f);
+            else if (k == "cncjob") openGcode(f);
             else ui_->inform("[WARNING_NOTCL] " + tr_("Unsupported file type") + ": " + k);
         });
     }

@@ -160,6 +160,8 @@ public:
     bool isLpc() const { return isLpc_; }
     /** @brief Texto fuente leído, una sentencia por línea (`source_file`). @return El texto. */
     const std::string& sourceFile() const { return sourceFile_; }
+    /** @brief Reemplaza el texto fuente (`source_file`, por ejemplo después de moverlo). @param text El texto. */
+    void setSourceFile(std::string text) { sourceFile_ = std::move(text); }
     /** @brief Opciones con las que se construyó el lector. @return Las opciones. */
     const GerberOptions& options() const { return options_; }
     /** @brief Mensaje del último error de lectura, vacío si no hubo. @return El mensaje. */

@@ -2477,3 +2477,56 @@ TEST(GuiEditViewMenus, FinalSaveAsksBeforeQuitting) {
     EXPECT_FALSE(app.shouldWeSave());
     EXPECT_TRUE(app.finalSave());
 }
+
+// Abrir un G-code como CNC Job (open_gcode): el .nc del contorno de la placa; al exportarlo queda el mismo cuerpo.
+TEST(GuiFiles, OpenGcodeAsCncJob) {
+    App app;
+    QTemporaryDir data;
+    app.setDataPath(data.path());
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    const QString nc = QString::fromStdString(dir + "Edge_Cuts.gbr_cutout_cnc.nc");
+    auto* cnc = dynamic_cast<CNCJobObject*>(app.openByExtension(nc));
+    ASSERT_NE(cnc, nullptr);
+    EXPECT_EQ(cnc->name(), "luz de noche Pascual-Edge_Cuts.gbr_cutout_cnc.nc");
+    EXPECT_GT(cnc->plotData().lines.size() + cnc->plotData().fill.size(), 100u);
+    EXPECT_GT(cnc->bounds().width(), 60.0);
+    QTemporaryDir tmp;
+    const QString out = tmp.filePath("x.nc");
+    ASSERT_TRUE(app.exportGcode(cnc, out));
+    QFile a(nc), b(out);
+    ASSERT_TRUE(a.open(QIODevice::ReadOnly | QIODevice::Text) && b.open(QIODevice::ReadOnly | QIODevice::Text));
+    const QString orig = QString::fromUtf8(a.readAll()), mine = QString::fromUtf8(b.readAll());
+    EXPECT_TRUE(mine.contains(orig.trimmed())) << "el texto original va entero después de la cabecera";
+    // Un Gerber no es G-code.
+    EXPECT_EQ(app.openGcode(QString::fromStdString(dir + "Edge_Cuts.gbr")), nullptr);
+    EXPECT_TRUE(app.ui()->fcinfo->text->text().contains("CNCJob"));
+}
+
+// Exportar Gerber y Excellon (en pulgadas 2:4, de fábrica) y volver a abrirlos; mover regenera el texto fuente.
+TEST(GuiFiles, ExportGerberAndExcellon) {
+    App app;
+    QTemporaryDir data;
+    app.setDataPath(data.path());
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    auto* pth = static_cast<ExcellonObject*>(app.openByExtension(QString::fromStdString(dir + "PTH.drl")));
+    ASSERT_TRUE(edge && pth);
+    QTemporaryDir tmp;
+    ASSERT_TRUE(app.exportObject(edge, tmp.filePath("e.gbr")));
+    ASSERT_TRUE(app.exportObject(pth, tmp.filePath("p.drl")));
+    auto* e2 = app.openGerber(tmp.filePath("e.gbr"));
+    auto* p2 = app.openExcellon(tmp.filePath("p.drl"));
+    ASSERT_TRUE(e2 && p2);
+    // El factor a pulgadas es 0,03937 (no 1/25,4), como el original: el tamaño vuelve 0,999998 veces.
+    EXPECT_NEAR(e2->bounds().width(), edge->bounds().width() * 0.03937 * 25.4, 0.01);  // 4 decimales en pulgadas
+    std::size_t d1 = 0, d2 = 0;
+    for (const auto& [id, t] : pth->excellon().drillTools()) d1 += t.drills.size();
+    for (const auto& [id, t] : static_cast<ExcellonObject*>(p2)->excellon().drillTools()) d2 += t.drills.size();
+    EXPECT_EQ(d1, d2);
+    // Al moverlo, el texto fuente es el exportado (MOIN).
+    EXPECT_EQ(edge->gerber().sourceFile().find("%MOIN*%"), std::string::npos);
+    app.ui()->collection_view->selectionModel()->clearSelection();
+    app.ui()->collection_view->selectionModel()->select(app.collection()->indexOf(edge), QItemSelectionModel::Select);
+    app.ui()->menuedit_move2origin->trigger();
+    EXPECT_NE(edge->gerber().sourceFile().find("%MOIN*%"), std::string::npos);
+}
