@@ -393,6 +393,10 @@ public:
     bool exportObject(FlatCAMObj* obj, const QString& filename);
     /** @brief Archivo -> Exportar -> Gerber / Excellon (`on_file_exportgerber`, `on_file_exportexcellon`). @param kind Tipo. */
     void onFileExport(ObjectKind kind);
+    /** @brief Exporta un objeto a SVG (`export_svg`). @param obj Objeto. @param filename Archivo. @return Si se escribió. */
+    bool exportSvgFile(FlatCAMObj* obj, const QString& filename);
+    /** @brief Archivo -> Exportar -> SVG (`on_file_exportsvg`). */
+    void onFileExportSvg();
     /** @brief Arma y abre el menú del canvas (`popMenu`) donde está el cursor. */
     void popupCanvasMenu();
     /** @brief El menú del canvas (`popMenu`). @return El menú. */

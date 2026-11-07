@@ -34,6 +34,7 @@ add_executable(core_tests
     test_laser_lines.cpp
     test_ncc_isolation.cpp
     test_export.cpp
+    test_svg_export.cpp
     test_rest_machining.cpp
 )
 target_link_libraries(core_tests PRIVATE flatcam::core GTest::gtest_main)

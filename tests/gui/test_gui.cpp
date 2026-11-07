@@ -2530,3 +2530,18 @@ TEST(GuiFiles, ExportGerberAndExcellon) {
     app.ui()->menuedit_move2origin->trigger();
     EXPECT_NE(edge->gerber().sourceFile().find("%MOIN*%"), std::string::npos);
 }
+
+// Exportar a SVG desde la aplicación.
+TEST(GuiFiles, ExportSvg) {
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* edge = app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr"));
+    ASSERT_NE(edge, nullptr);
+    QTemporaryDir tmp;
+    ASSERT_TRUE(app.exportSvgFile(edge, tmp.filePath("e.svg")));
+    QFile f(tmp.filePath("e.svg"));
+    ASSERT_TRUE(f.open(QIODevice::ReadOnly));
+    const QString text = QString::fromUtf8(f.readAll());
+    EXPECT_TRUE(text.startsWith("<?xml version=\"1.0\" ?>\n<svg xmlns="));
+    EXPECT_TRUE(text.contains("<g transform=\"scale(1,-1)\">"));
+}

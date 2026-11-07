@@ -11,6 +11,7 @@
 #include "gui/Translation.h"
 #include "gui/objects/FlatCAMObj.h"
 #include "io/FileExport.h"
+#include "io/SvgExport.h"
 #include "parsers/Excellon.h"
 #include "parsers/Gerber.h"
 
@@ -105,6 +106,43 @@ void App::onFileExport(ObjectKind kind) {
         return;
     }
     exportObject(obj, f);
+}
+
+bool App::exportSvgFile(FlatCAMObj* obj, const QString& filename) {
+    const std::string text = exportSvg(obj->solidShapes(), "mm");
+    if (text.empty()) {
+        ui_->inform("[ERROR_NOTCL] " + tr_("Could not export."));
+        return false;
+    }
+    QFile f(filename);
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
+        ui_->inform("[WARNING] " + tr_("Permission denied, saving not possible.\n"
+                                       "Most likely another app is holding the file open and not accessible."));
+        return false;
+    }
+    f.write(QByteArray::fromStdString(text));
+    ui_->inform(QString("[success] %1: %2").arg(tr_("SVG file exported to"), filename));
+    return true;
+}
+
+void App::onFileExportSvg() {
+    FlatCAMObj* obj = activeObject();
+    if (!obj) {
+        ui_->inform("[WARNING_NOTCL] " + tr_("No object is selected."));
+        return;
+    }
+    if (obj->kind() == ObjectKind::CNCJob) {
+        // Desvío: el SVG de un CNC Job sale de su G-code interpretado (gcode_parsed), que el port no guarda todavía.
+        ui_->inform("[WARNING_NOTCL] Exportar un CNC Job a SVG todavía no está en el port.");
+        return;
+    }
+    const QString f = QFileDialog::getSaveFileName(ui_.get(), tr_("Export SVG"), lastFolder() + "/" + obj->name() + "_svg",
+                                                   "SVG File (*.svg);;All Files (*.*)");
+    if (f.isEmpty()) {
+        ui_->inform("[WARNING_NOTCL] " + tr_("Cancelled."));
+        return;
+    }
+    exportSvgFile(obj, f);
 }
 
 }  // namespace flatcam::gui
