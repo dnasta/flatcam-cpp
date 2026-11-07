@@ -41,6 +41,11 @@
 #include <QDropEvent>
 #include "gui/widgets/KeySensitiveListView.h"
 #include <QTemporaryDir>
+#include <QTimer>
+#include <QMenu>
+#include <QMessageBox>
+#include "gui/widgets/DialogBoxRadio.h"
+#include <QClipboard>
 #include <algorithm>
 
 using namespace flatcam::gui;
@@ -1198,7 +1203,7 @@ TEST(GuiProjectMenu, ContextMenuActions) {
     ASSERT_TRUE(app.deleteSelected(true));
     EXPECT_EQ(static_cast<int>(col->objects().size()), before - 2);
     EXPECT_EQ(col->byName("contorno"), nullptr);
-    EXPECT_EQ(app.ui()->properties_scroll_area->widget()->objectName(), QString());  // panel vacío
+    EXPECT_EQ(app.ui()->properties_scroll_area->widget()->objectName(), "default_properties");  // panel vacío
     view->clearSelection();
     EXPECT_FALSE(app.deleteSelected(true));
 }
@@ -2087,4 +2092,162 @@ TEST(GuiTransform, ScaleAndOffsetFromThePropertiesPanel) {
     EXPECT_EQ(app.ui()->fcinfo->text->text(), tr_("Scale done."));
     p->transformations_button->click();
     EXPECT_EQ(app.ui()->tool_scroll_area->widget(), app.transformTool);
+}
+
+// Elegir objetos con el mouse en el canvas (select_objects, selection_area_handler, Shift para copiar coordenadas).
+TEST(GuiCanvasSelection, ClickAndAreaSelection) {
+    App app;
+    MainGUI* ui = app.ui();
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    auto* exc = static_cast<ExcellonObject*>(app.openByExtension(QString::fromStdString(dir + "PTH.drl")));
+    ASSERT_NE(edge, nullptr);
+    ASSERT_NE(exc, nullptr);
+    auto sel = [&] { return app.selectedObjects(); };
+    auto click = [&](QPointF p, Qt::KeyboardModifiers m = Qt::NoModifier) {
+        app.onCanvasPress(p, Qt::LeftButton);
+        app.onCanvasMove(p, false);
+        app.onCanvasRelease(p, Qt::LeftButton, m);
+    };
+    ui->collection_view->selectionModel()->clearSelection();
+    // Fuera de todo: nada elegido.
+    click({500, 500});
+    EXPECT_TRUE(sel().empty());
+    EXPECT_EQ(ui->fcinfo->text->text(), tr_("Objects selection is cleared."));
+    // Un punto del borde de la placa, fuera de la caja del Excellon: solo el contorno.
+    const QRectF be = edge->bounds(), bx = exc->bounds();
+    const QPointF onlyEdge(be.left() + 0.01, be.center().y());
+    ASSERT_FALSE(bx.contains(onlyEdge));
+    click(onlyEdge);
+    ASSERT_EQ(sel().size(), 1u);
+    EXPECT_EQ(sel().front(), edge);
+    EXPECT_EQ(ui->properties_scroll_area->widget(), edge->propertiesUi());
+    // Un punto dentro de las dos cajas: cada clic pasa al siguiente objeto.
+    const QPointF both = bx.center();
+    click(both);
+    ASSERT_EQ(sel().size(), 1u);
+    FlatCAMObj* first = sel().front();
+    click(both);
+    ASSERT_EQ(sel().size(), 1u);
+    EXPECT_NE(sel().front(), first);
+    // Rectángulo de izquierda a derecha que encierra solo el Excellon.
+    app.onCanvasPress(bx.topLeft() - QPointF(0.5, 0.5), Qt::LeftButton);
+    app.onCanvasMove(bx.bottomRight() + QPointF(0.5, 0.5), true);
+    app.onCanvasRelease(bx.bottomRight() + QPointF(0.5, 0.5), Qt::LeftButton, Qt::NoModifier);
+    ASSERT_EQ(sel().size(), 1u);
+    EXPECT_EQ(sel().front(), exc);
+    // De derecha a izquierda, tocando: los dos (como el original, se comparan las cajas de los objetos).
+    app.onCanvasPress({be.right() + 1, be.center().y()}, Qt::LeftButton);
+    app.onCanvasMove({bx.center().x(), be.center().y() + 0.1}, true);
+    app.onCanvasRelease({bx.center().x(), be.center().y() + 0.1}, Qt::LeftButton, Qt::NoModifier);
+    EXPECT_EQ(sel().size(), 2u);
+    // Shift copia las coordenadas del clic.
+    click({1.23456, -7}, Qt::ShiftModifier);
+    EXPECT_EQ(QApplication::clipboard()->text(), "(1.2346, -7.0000)");
+    EXPECT_EQ(ui->fcinfo->text->text(), tr_("Coordinates copied to clipboard."));
+    // Un clic sobre un objeto ya elegido quita la selección (como el original); otro lo vuelve a elegir.
+    click(onlyEdge);
+    if (!sel().empty()) click(onlyEdge);
+    EXPECT_TRUE(sel().empty());
+    click(onlyEdge);
+    ASSERT_EQ(sel().size(), 1u);
+    // Doble clic con algo elegido: la pestaña Propiedades.
+    ui->notebook->setCurrentWidget(ui->project_tab);
+    app.onCanvasDoubleClick(Qt::LeftButton);
+    click(onlyEdge);
+    EXPECT_EQ(ui->notebook->currentWidget(), ui->properties_tab);
+}
+
+// Menús Editar y Ver, el menú del canvas y Archivo -> Nuevo proyecto.
+TEST(GuiEditViewMenus, EditViewAndCanvasMenu) {
+    App app;
+    MainGUI* ui = app.ui();
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    auto* exc = static_cast<ExcellonObject*>(app.openByExtension(QString::fromStdString(dir + "PTH.drl")));
+    ASSERT_NE(edge, nullptr);
+    ASSERT_NE(exc, nullptr);
+    auto* view = ui->collection_view;
+    // Ver: ocultar los no elegidos y mostrar todos.
+    view->selectionModel()->clearSelection();
+    view->selectionModel()->select(app.collection()->indexOf(edge), QItemSelectionModel::Select);
+    ui->menuviewdisableother->trigger();
+    EXPECT_TRUE(edge->plotEnabled());
+    EXPECT_FALSE(exc->plotEnabled());
+    ui->menuviewenable->trigger();
+    EXPECT_TRUE(exc->plotEnabled());
+    EXPECT_EQ(ui->fcinfo->text->text(), tr_("All plots enabled."));
+    // Editar -> Elegir todo.
+    ui->menueditselectall->trigger();
+    EXPECT_EQ(app.selectedObjects().size(), 2u);
+    // Mover al origen: la esquina inferior izquierda de la caja de los dos va a (0, 0).
+    ui->menuedit_move2origin->trigger();
+    const QRectF b = edge->bounds().united(exc->bounds());
+    EXPECT_NEAR(b.left(), 0, 1e-9);
+    EXPECT_NEAR(b.top(), 0, 1e-9);
+    // Fijar el origen con un clic: todo se mueve.
+    const QRectF be = edge->bounds();
+    ui->menueditorigin->trigger();
+    Q_EMIT ui->plotCanvas()->mouseClicked(QPointF(2, 3), Qt::RightButton);  // otro botón no cuenta
+    EXPECT_NEAR(edge->bounds().left(), be.left(), 1e-9);
+    Q_EMIT ui->plotCanvas()->mouseClicked(QPointF(2, 3), Qt::LeftButton);
+    EXPECT_NEAR(edge->bounds().left(), be.left() - 2, 1e-9);
+    EXPECT_NEAR(edge->bounds().top(), be.top() - 3, 1e-9);
+    Q_EMIT ui->plotCanvas()->mouseClicked(QPointF(2, 3), Qt::LeftButton);  // ya no espera el clic
+    EXPECT_NEAR(edge->bounds().left(), be.left() - 2, 1e-9);
+    // Saltar a: el diálogo con el portapapeles y la posición escrita.
+    QApplication::clipboard()->setText("(1.5, 2)");
+    QTimer::singleShot(0, [] {
+        auto* d = qobject_cast<DialogBoxRadio*>(QApplication::activeModalWidget());
+        ASSERT_NE(d, nullptr);
+        EXPECT_EQ(d->lineEdit->text(), "1.5, 2");
+        d->lineEdit->setText("10, 2*3");
+        d->accept();
+    });
+    ui->menueditjump->trigger();
+    EXPECT_TRUE(ui->position_label->text().contains("10.0000"));
+    EXPECT_TRUE(ui->position_label->text().contains("6.0000"));
+    // Ubicar: la esquina superior derecha del objeto activo.
+    view->selectionModel()->clearSelection();
+    view->selectionModel()->select(app.collection()->indexOf(edge), QItemSelectionModel::Select);
+    QTimer::singleShot(0, [] {
+        auto* d = qobject_cast<DialogBoxChoice*>(QApplication::activeModalWidget());
+        ASSERT_NE(d, nullptr);
+        d->ref_radio->setValue("tr");
+        d->accept();
+    });
+    ui->menueditlocate->trigger();
+    EXPECT_TRUE(ui->position_label->text().contains(QString::asprintf("%.4f", edge->bounds().right())));
+    // Menú del canvas: clic derecho sin arrastrar; las grillas de la lista cambian la grilla.
+    app.onCanvasRelease({0, 0}, Qt::RightButton, Qt::NoModifier, true);
+    EXPECT_FALSE(app.canvasMenu()->isVisible());
+    app.onCanvasRelease({0, 0}, Qt::RightButton, Qt::NoModifier, false);
+    QMenu* grids = nullptr;
+    for (QAction* a : app.canvasMenu()->actions())
+        if (a->menu() && a->text() == tr_("Grids")) grids = a->menu();
+    ASSERT_NE(grids, nullptr);
+    QAction* g254 = nullptr;
+    for (QAction* a : grids->actions())
+        if (a->text() == "2.54") g254 = a;
+    ASSERT_NE(g254, nullptr);
+    g254->trigger();
+    EXPECT_EQ(ui->grid_gap_x_entry->text(), "2.54");
+    app.canvasMenu()->hide();
+    // Ver -> área de trabajo y área de dibujo.
+    ui->menuview_toggle_workspace->trigger();
+    EXPECT_EQ(ui->wplace_label->text(), "A4");
+    ui->menuview_toggle_parea->trigger();
+    EXPECT_NE(ui->plot_tab_area->indexOf(ui->plot_tab), 0);
+    ui->menuview_toggle_parea->trigger();
+    EXPECT_EQ(ui->plot_tab_area->indexOf(ui->plot_tab), 0);
+    // Archivo -> Nuevo proyecto, contestando "No" (no guardar).
+    QTimer::singleShot(0, [] {
+        auto* box = qobject_cast<QMessageBox*>(QApplication::activeModalWidget());
+        ASSERT_NE(box, nullptr);
+        for (QAbstractButton* bt : box->buttons())
+            if (bt->text() == tr_("No")) bt->click();
+    });
+    ui->menufilenewproject->trigger();
+    EXPECT_TRUE(app.collection()->objects().empty());
+    EXPECT_EQ(ui->fcinfo->text->text(), tr_("New Project created") + "...");
 }

@@ -478,6 +478,7 @@ void GeometryObjectUIBase::setupUi() {
     exclusion_frame->setLayout(exclusion_box);
     grid4->addWidget(exclusion_frame, 14, 0, 1, 2);
     polish_cb = new FCCheckBox(nullptr);
+    polish_cb->setProperty("objectName", QString::fromUtf8("g_polish"));
     polish_cb->setText(QString::fromUtf8("Agregar acabado"));
     polish_cb->setToolTip(QString::fromUtf8("Agregará una sección de pintura al final del GCode.\nUn cepillo metálico limpiará el material después del fresado."));
     grid4->addWidget(polish_cb, 15, 0, 1, 2);
@@ -489,6 +490,7 @@ void GeometryObjectUIBase::setupUi() {
     polish_dia_entry = new FCDoubleSpinner(nullptr);
     polish_dia_entry->setProperty("decimals", 4);
     polish_dia_entry->setProperty("maximum", 10000.0);
+    polish_dia_entry->setProperty("objectName", QString::fromUtf8("g_polish_dia"));
     polish_dia_entry->setProperty("value", 10.0);
     polish_dia_entry->setHidden(true);
     grid4->addWidget(polish_dia_entry, 16, 1, 1, 1);
@@ -500,6 +502,7 @@ void GeometryObjectUIBase::setupUi() {
     polish_travelz_entry = new FCDoubleSpinner(nullptr);
     polish_travelz_entry->setProperty("decimals", 4);
     polish_travelz_entry->setProperty("maximum", 10000.0);
+    polish_travelz_entry->setProperty("objectName", QString::fromUtf8("g_polish_travelz"));
     polish_travelz_entry->setProperty("singleStep", 0.1);
     polish_travelz_entry->setProperty("value", 2.0);
     polish_travelz_entry->setHidden(true);
@@ -513,6 +516,7 @@ void GeometryObjectUIBase::setupUi() {
     polish_pressure_entry->setProperty("decimals", 4);
     polish_pressure_entry->setProperty("maximum", 10000.0);
     polish_pressure_entry->setProperty("minimum", -10000.0);
+    polish_pressure_entry->setProperty("objectName", QString::fromUtf8("g_polish_pressure"));
     polish_pressure_entry->setProperty("value", -1.0);
     polish_pressure_entry->setHidden(true);
     grid4->addWidget(polish_pressure_entry, 18, 1, 1, 1);
@@ -525,6 +529,7 @@ void GeometryObjectUIBase::setupUi() {
     polish_margin_entry->setProperty("decimals", 4);
     polish_margin_entry->setProperty("maximum", 10000.0);
     polish_margin_entry->setProperty("minimum", -10000.0);
+    polish_margin_entry->setProperty("objectName", QString::fromUtf8("g_polish_margin"));
     polish_margin_entry->setHidden(true);
     grid4->addWidget(polish_margin_entry, 20, 1, 1, 1);
     polish_over_lbl = new FCLabel(nullptr);
@@ -535,6 +540,7 @@ void GeometryObjectUIBase::setupUi() {
     polish_over_entry = new FCDoubleSpinner(nullptr);
     polish_over_entry->setProperty("decimals", 4);
     polish_over_entry->setProperty("maximum", 99.9999);
+    polish_over_entry->setProperty("objectName", QString::fromUtf8("g_polish_overlap"));
     polish_over_entry->setProperty("singleStep", 0.1);
     polish_over_entry->setProperty("suffix", QString::fromUtf8(" %"));
     polish_over_entry->setProperty("value", 5.0);
@@ -548,6 +554,7 @@ void GeometryObjectUIBase::setupUi() {
     grid4->addWidget(polish_method_lbl, 24, 0, 1, 1);
     polish_method_combo = new FCComboBox2(nullptr);
     polish_method_combo->setProperty("currentText", QString::fromUtf8("Estándar"));
+    polish_method_combo->setProperty("objectName", QString::fromUtf8("g_polish_method"));
     polish_method_combo->setHidden(true);
     polish_method_combo->addItem(QString::fromUtf8("Estándar"));
     polish_method_combo->addItem(QString::fromUtf8("Semilla"));

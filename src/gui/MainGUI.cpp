@@ -1,5 +1,7 @@
 #include "gui/MainGUI.h"
 
+#include <QScreen>
+
 #include <cmath>
 
 #include <QApplication>
@@ -43,18 +45,16 @@ void MainGUI::connectSignals() {
         if (canvasHandlers_ && b == Qt::LeftButton) relPoint1_ = w;
     });
     // Botones de la barra de estado: HUD y ejes (on_toggle_hud / on_toggle_axis cambian además su estilo).
-    connect(hud_label, &FCLabel::clicked, this, [this] {
-        const bool on = !plotcanvas_->hudEnabled();
-        plotcanvas_->setHudEnabled(on);
-        hud_label->setStyleSheet(on ? "QLabel { color: black; background-color: mediumpurple; }" : "");
-        inform(on ? tr_("HUD enabled.") : tr_("HUD disabled."));
-    });
-    connect(axis_status_label, &FCLabel::clicked, this, [this] {
-        const bool on = !plotcanvas_->axisEnabled();
-        plotcanvas_->setAxisEnabled(on);
-        axis_status_label->setStyleSheet(on ? "QLabel { color: black; background-color: orange; }" : "");
-        inform(on ? tr_("Axis enabled.") : tr_("Axis disabled."));
-    });
+    connect(hud_label, &FCLabel::clicked, this, [this] { onToggleHud(); });
+    connect(axis_status_label, &FCLabel::clicked, this, [this] { onToggleAxis(); });
+    // Menú Ver.
+    connect(menuview_toggle_fscreen, &QAction::triggered, this, [this] { onFullscreen(); });
+    connect(menuview_toggle_parea, &QAction::triggered, this, [this] { onTogglePlotArea(); });
+    connect(menuview_toggle_notebook, &QAction::triggered, this, [this] { onToggleNotebook(); });
+    connect(menuview_toggle_grid, &QAction::triggered, this, [this] { onToggleGrid(); });
+    connect(menuview_toggle_grid_lines, &QAction::triggered, this, [this] { onToggleGridLines(); });
+    connect(menuview_toggle_axis, &QAction::triggered, this, [this] { onToggleAxis(); });
+    connect(menuview_toggle_hud, &QAction::triggered, this, [this] { onToggleHud(); });
     // Ajuste a la grilla: las posiciones del mouse salen ajustadas y la cruz del cursor solo se ve con la grilla activa.
     plotcanvas_->setSnapper([this](QPointF p) { return snapToGrid(p); });
     plotcanvas_->setCursorEnabled(grid_snap_btn->isChecked());
@@ -77,6 +77,66 @@ void MainGUI::onToggleNotebook() {
     } else {
         splitter->setSizes({0, 1});
         menu_toggle_nb->setChecked(false);
+    }
+}
+
+void MainGUI::onToggleHud() {
+    const bool on = !plotcanvas_->hudEnabled();
+    plotcanvas_->setHudEnabled(on);
+    hud_label->setStyleSheet(on ? "QLabel { color: black; background-color: mediumpurple; }" : "");
+    inform(on ? tr_("HUD enabled.") : tr_("HUD disabled."));
+}
+
+void MainGUI::onToggleAxis() {
+    const bool on = !plotcanvas_->axisEnabled();
+    plotcanvas_->setAxisEnabled(on);
+    axis_status_label->setStyleSheet(on ? "QLabel { color: black; background-color: orange; }" : "");
+    inform(on ? tr_("Axis enabled.") : tr_("Axis disabled."));
+}
+
+void MainGUI::onToggleGridLines() {
+    const bool on = !plotcanvas_->gridEnabled();
+    plotcanvas_->setGridEnabled(on);
+    inform(on ? tr_("Grid enabled.") : tr_("Grid disabled."));
+}
+
+void MainGUI::onTogglePlotArea() {
+    QWidget* first = plot_tab_area->widget(0);
+    if (!first) {
+        plot_tab_area->addTab(plot_tab, tr_("Plot Area"));
+        plot_tab_area->protectTab(0);
+        return;
+    }
+    if (first->objectName() != "plotarea_tab") {
+        plot_tab_area->insertTab(0, plot_tab, tr_("Plot Area"));
+        plot_tab_area->protectTab(0);
+    } else {
+        plot_tab_area->closeTab(0);
+    }
+}
+
+void MainGUI::onFullscreen(bool disable) {
+    if (!fullscreen_ && !disable) {
+        // Sin marco, ocupando la pantalla; se esconden las barras salvo las de la barra de estado.
+        normalGeometry_ = geometry();
+        setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
+        if (QScreen* sc = screen()) setGeometry(sc->geometry().adjusted(-1, -1, 1, 1));
+        show();
+        hiddenToolbars_.clear();
+        for (QToolBar* tb : findChildren<QToolBar*>()) {
+            if (tb == coords_toolbar || tb == delta_coords_toolbar || tb == grid_toolbar || tb == status_toolbar) continue;
+            if (tb->isVisible()) hiddenToolbars_.push_back(tb);
+            tb->setVisible(false);
+        }
+        splitter->setSizes({0, 1});
+        fullscreen_ = true;
+    } else if (fullscreen_ || disable) {
+        setWindowFlags(windowFlags() & ~Qt::FramelessWindowHint);
+        setGeometry(normalGeometry_);
+        showNormal();
+        for (QToolBar* tb : hiddenToolbars_) tb->setVisible(true);  // restore_toolbar_view
+        hiddenToolbars_.clear();
+        fullscreen_ = false;
     }
 }
 

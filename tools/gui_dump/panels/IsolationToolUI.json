@@ -4,6 +4,10 @@
   "py": "ToolIsolation",
   "name": null,
   "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Herramienta de Aislamiento"
+   },
    "autoFillBackground": {
     "t": "bool",
     "v": true
@@ -532,6 +536,10 @@
                 "py": "FCDoubleSpinner",
                 "name": "new_tooldia_entry",
                 "props": {
+                 "objectName": {
+                  "t": "str",
+                  "v": "i_new_tooldia"
+                 },
                  "decimals": {
                   "t": "int",
                   "v": 4
@@ -788,6 +796,10 @@
              "py": "FCSpinner",
              "name": "passes_entry",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "i_passes"
+              },
               "minimum": {
                "t": "int",
                "v": 1
@@ -836,6 +848,10 @@
              "py": "FCDoubleSpinner",
              "name": "iso_overlap_entry",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "i_overlap"
+              },
               "wrapping": {
                "t": "bool",
                "v": true
@@ -900,6 +916,10 @@
              "py": "RadioSet",
              "name": "milling_type_radio",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "i_milling_type"
+              },
               "toolTip": {
                "t": "str",
                "v": "Tipo de fresado:\n- subir / mejor para fresado de precisión y para reducir el uso de la herramienta\n- convencional / útil cuando no hay compensación de contragolpe"
@@ -961,6 +981,10 @@
              "py": "FCCheckBox",
              "name": "follow_cb",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "i_follow"
+              },
               "toolTip": {
                "t": "str",
                "v": "Generar una geometría 'Seguir'.\nEsto significa que cortará a través\nEl medio de la traza."
@@ -1009,6 +1033,10 @@
              "py": "RadioSet",
              "name": "iso_type_radio",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "i_iso_type"
+              },
               "hidden": {
                "t": "bool",
                "v": true
@@ -1154,6 +1182,10 @@
              "py": "FCCheckBox",
              "name": "rest_cb",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "i_rest"
+              },
               "toolTip": {
                "t": "str",
                "v": "Si está marcado, use 'mecanizado en resto'.\nBásicamente procesará cobre fuera de las características de la PCB,\nusando la herramienta más grande y continúe con las siguientes herramientas,\nde mayor a menor, para procesar las características de cobre que\nno pudo ser procesado por la herramienta anterior, hasta que haya\nno queda nada por procesar o no hay más herramientas.\n\nSi no está marcado, use el algoritmo estándar."
@@ -1214,6 +1246,10 @@
              "py": "FCCheckBox",
              "name": "combine_passes_cb",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "i_combine"
+              },
               "toolTip": {
                "t": "str",
                "v": "Combina todos los pases en un objeto"
@@ -1240,6 +1276,10 @@
              "py": "FCCheckBox",
              "name": "valid_cb",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "i_check"
+              },
               "toolTip": {
                "t": "str",
                "v": "Si se marca, se verifican los diámetros de las herramientas.\nsi proporcionarán un aislamiento completo."
@@ -1262,6 +1302,10 @@
              "py": "FCCheckBox",
              "name": "except_cb",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "i_except"
+              },
               "toolTip": {
                "t": "str",
                "v": "Cuando se genera la geometría de Aislamiento,\nmarcando esto, el área del objeto a continuación\nserá restado de la geometría de aislamiento."
@@ -1381,6 +1425,10 @@
              "py": "FCComboBox2",
              "name": "select_combo",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "i_selection"
+              },
               "currentText": {
                "t": "str",
                "v": "Todos"

@@ -386,6 +386,12 @@ void PlotCanvas::mouseReleaseEvent(QMouseEvent* event) {
     Q_EMIT mouseReleased(eventWorld(event->position()), event->button(), std::hypot(d.x(), d.y()) > 3.0);
 }
 
+void PlotCanvas::mouseDoubleClickEvent(QMouseEvent* event) {
+    // Qt manda el doble clic en lugar del segundo "presionar": se avisa también como presión, como vispy.
+    mousePressEvent(event);
+    Q_EMIT mouseDoubleClicked(event->button());
+}
+
 QPointF PlotCanvas::eventWorld(const QPointF& pixel) const {
     const QPointF w = toWorld(pixel);
     return snapper_ ? snapper_(w) : w;

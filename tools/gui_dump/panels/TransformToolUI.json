@@ -4,6 +4,10 @@
   "py": "ToolTransform",
   "name": null,
   "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Transform. de objetos"
+   },
    "autoFillBackground": {
     "t": "bool",
     "v": true

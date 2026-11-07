@@ -117,6 +117,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
         w->hide();
     connectSignals();
     setupProjectMenu();
+    setupCanvasMenu();
     setupRecentItems();
 }
 
@@ -270,17 +271,25 @@ void App::connectSignals() {
             runTool(dblsidedTool, DblSidedTool::info());
             dblsidedTool->setToolUi();
         });
-    // app.pos: el último clic izquierdo en el canvas.
-    connect(ui_->plotCanvas(), &PlotCanvas::mouseClicked, this, [this](QPointF w, Qt::MouseButton b) {
-        if (ui_->canvasHandlersEnabled() && b == Qt::LeftButton) lastClick_ = w;
+    // Los manejadores del mouse de la aplicación (app.pos y la selección en el canvas: AppCanvasSelection.cpp).
+    PlotCanvas* canvas = ui_->plotCanvas();
+    connect(canvas, &PlotCanvas::mouseClicked, this, [this](QPointF w, Qt::MouseButton b) { onCanvasPress(w, b); });
+    connect(canvas, &PlotCanvas::mouseMoved, this,
+            [this](QPointF w) { onCanvasMove(w, QApplication::mouseButtons() & Qt::LeftButton); });
+    connect(canvas, &PlotCanvas::mouseReleased, this, [this](QPointF w, Qt::MouseButton b, bool dragged) {
+        onCanvasRelease(w, b, QApplication::keyboardModifiers(), dragged);
     });
+    connect(canvas, &PlotCanvas::mouseDoubleClicked, this, [this](Qt::MouseButton b) { onCanvasDoubleClick(b); });
     // Opciones -> Voltear en el eje X / Y (on_flipx refleja con mirror('Y'), on_flipy con mirror('X')).
     connect(ui_->menuoptions_transform_flipx, &QAction::triggered, this, [this] { flip(Axis::Y); });
     connect(ui_->menuoptions_transform_flipy, &QAction::triggered, this, [this] { flip(Axis::X); });
-    // ObjectCollection: elegir un objeto carga sus Propiedades; activarlo (doble clic o Enter) además abre la pestaña.
-    connect(ui_->collection_view->selectionModel(), &QItemSelectionModel::currentChanged, this,
-            [this](const QModelIndex& cur, const QModelIndex&) {
-                FlatCAMObj* o = collection_->objectAt(cur);
+    // ObjectCollection.on_list_selection_change: el primer objeto recién elegido carga sus Propiedades (item_selected ->
+    // on_row_selected); si solo se quitaron objetos de la selección, la pestaña vuelve a la vacía. Activarlo (doble clic
+    // o Enter) además abre la pestaña.
+    connect(ui_->collection_view->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+            [this](const QItemSelection& selected, const QItemSelection&) {
+                const QModelIndexList idx = selected.indexes();
+                FlatCAMObj* o = idx.isEmpty() ? nullptr : collection_->objectAt(idx.front());
                 showProperties(o);
                 if (o) {
                     ui_->inform(QString("[selected]<span style=\"color:%1;\">%2</span> %3")
@@ -523,7 +532,9 @@ bool App::flip(Axis axis) {
 }
 
 FlatCAMObj* App::activeObject() const {
-    return collection_->objectAt(ui_->collection_view->currentIndex());
+    // get_active: el primero de los elegidos (selectedIndexes), o ninguno.
+    const QModelIndexList sel = ui_->collection_view->selectionModel()->selectedIndexes();
+    return sel.isEmpty() ? nullptr : collection_->objectAt(sel.front());
 }
 
 bool App::exportGcode(CNCJobObject* job, QString filename) {

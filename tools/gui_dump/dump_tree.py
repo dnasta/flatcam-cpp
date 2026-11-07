@@ -24,7 +24,7 @@ SKIP_PROPS = {
     "palette", "cursor", "locale", "inputMethodHints", "windowModified", "windowFilePath", "windowIconText",
     "accessibleName", "accessibleDescription", "currentIndex", "count", "currentRow", "currentColumn", "verticalScrollBarPolicy_",
     "sliderPosition", "documentTitle", "html", "markdown", "placeholderText_", "hasSelectedText", "selectedText", "cursorPosition",
-    "undoAvailable", "redoAvailable", "modified", "acceptableInput", "displayText", "hasFrame_", "objectName", "windowOpacity",
+    "undoAvailable", "redoAvailable", "modified", "acceptableInput", "displayText", "hasFrame_", "windowOpacity",
     "contextMenuPolicy_", "mouseTracking", "tabletTracking", "focusPolicy_", "autoFillBackground_", "windowIcon",
     "windowTitle_", "fullScreen", "maximized", "minimized", "animated_", "windowModality",
     "iconText",  # Qt lo deriva del texto: el original nunca lo fija

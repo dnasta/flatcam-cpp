@@ -9,6 +9,7 @@ namespace flatcam::gui {
 void IsolationToolUIBase::setupUi() {
     // ---- acciones (compartidas entre menús y barras)
     this->setAutoFillBackground(true);
+    this->setProperty("objectName", QString::fromUtf8("Herramienta de Aislamiento"));
     layout = new QVBoxLayout();
     layout->setContentsMargins(9, 9, 9, 9);
     layout->setSpacing(6);
@@ -100,6 +101,7 @@ void IsolationToolUIBase::setupUi() {
     new_tooldia_entry = new FCDoubleSpinner(nullptr);
     new_tooldia_entry->setProperty("decimals", 4);
     new_tooldia_entry->setProperty("maximum", 10000.0);
+    new_tooldia_entry->setProperty("objectName", QString::fromUtf8("i_new_tooldia"));
     new_tooldia_entry->setProperty("value", 0.1);
     lay5->addWidget(new_tooldia_entry, 0);
     find_optimal_button = new QToolButton(nullptr);
@@ -149,6 +151,7 @@ void IsolationToolUIBase::setupUi() {
     passes_entry = new FCSpinner(nullptr);
     passes_entry->setProperty("maximum", 999);
     passes_entry->setProperty("minimum", 1);
+    passes_entry->setProperty("objectName", QString::fromUtf8("i_passes"));
     passes_entry->setProperty("value", 1);
     grid3->addWidget(passes_entry, 13, 1, 1, 1);
     auto* w10 = new FCLabel(nullptr);
@@ -158,6 +161,7 @@ void IsolationToolUIBase::setupUi() {
     iso_overlap_entry = new FCDoubleSpinner(nullptr);
     iso_overlap_entry->setProperty("decimals", 4);
     iso_overlap_entry->setProperty("maximum", 99.9999);
+    iso_overlap_entry->setProperty("objectName", QString::fromUtf8("i_overlap"));
     iso_overlap_entry->setProperty("singleStep", 0.1);
     iso_overlap_entry->setProperty("suffix", QString::fromUtf8(" %"));
     iso_overlap_entry->setProperty("value", 10.0);
@@ -169,6 +173,7 @@ void IsolationToolUIBase::setupUi() {
     milling_type_label->setHidden(true);
     grid3->addWidget(milling_type_label, 15, 0, 1, 1);
     milling_type_radio = new RadioSet({{QString::fromUtf8("Subida"), QVariant(QString::fromUtf8("cl"))}, {QString::fromUtf8("Convencional"), QVariant(QString::fromUtf8("cv"))}}, Qt::Horizontal, true, nullptr);
+    milling_type_radio->setProperty("objectName", QString::fromUtf8("i_milling_type"));
     milling_type_radio->setToolTip(QString::fromUtf8("Tipo de fresado:\n- subir / mejor para fresado de precisión y para reducir el uso de la herramienta\n- convencional / útil cuando no hay compensación de contragolpe"));
     milling_type_radio->setHidden(true);
     milling_type_radio->setValue(QVariant(QString::fromUtf8("cl")));
@@ -179,6 +184,7 @@ void IsolationToolUIBase::setupUi() {
     follow_label->setHidden(true);
     grid3->addWidget(follow_label, 16, 0, 1, 1);
     follow_cb = new FCCheckBox(nullptr);
+    follow_cb->setProperty("objectName", QString::fromUtf8("i_follow"));
     follow_cb->setToolTip(QString::fromUtf8("Generar una geometría 'Seguir'.\nEsto significa que cortará a través\nEl medio de la traza."));
     follow_cb->setHidden(true);
     grid3->addWidget(follow_cb, 16, 1, 1, 1);
@@ -188,6 +194,7 @@ void IsolationToolUIBase::setupUi() {
     iso_type_label->setHidden(true);
     grid3->addWidget(iso_type_label, 17, 0, 1, 1);
     iso_type_radio = new RadioSet({{QString::fromUtf8("Completo"), QVariant(QString::fromUtf8("full"))}, {QString::fromUtf8("Exterior"), QVariant(QString::fromUtf8("ext"))}, {QString::fromUtf8("Interior"), QVariant(QString::fromUtf8("int"))}}, Qt::Horizontal, true, nullptr);
+    iso_type_radio->setProperty("objectName", QString::fromUtf8("i_iso_type"));
     iso_type_radio->setHidden(true);
     iso_type_radio->setValue(QVariant(QString::fromUtf8("full")));
     grid3->addWidget(iso_type_radio, 17, 1, 1, 1);
@@ -211,6 +218,7 @@ void IsolationToolUIBase::setupUi() {
     gen_param_label->setToolTip(QString::fromUtf8("Parámetros que son comunes para todas las herramientas."));
     grid3->addWidget(gen_param_label, 24, 0, 1, 2);
     rest_cb = new FCCheckBox(nullptr);
+    rest_cb->setProperty("objectName", QString::fromUtf8("i_rest"));
     rest_cb->setText(QString::fromUtf8("Resto"));
     rest_cb->setToolTip(QString::fromUtf8("Si está marcado, use 'mecanizado en resto'.\nBásicamente procesará cobre fuera de las características de la PCB,\nusando la herramienta más grande y continúe con las siguientes herramientas,\nde mayor a menor, para procesar las características de cobre que\nno pudo ser procesado por la herramienta anterior, hasta que haya\nno queda nada por procesar o no hay más herramientas.\n\nSi no está marcado, use el algoritmo estándar."));
     rest_cb->setHidden(true);
@@ -224,14 +232,17 @@ void IsolationToolUIBase::setupUi() {
     grid3->addWidget(forced_rest_iso_cb, 25, 1, 1, 1);
     combine_passes_cb = new FCCheckBox(nullptr);
     combine_passes_cb->setChecked(true);
+    combine_passes_cb->setProperty("objectName", QString::fromUtf8("i_combine"));
     combine_passes_cb->setText(QString::fromUtf8("Combinar"));
     combine_passes_cb->setToolTip(QString::fromUtf8("Combina todos los pases en un objeto"));
     grid3->addWidget(combine_passes_cb, 26, 0, 1, 2);
     valid_cb = new FCCheckBox(nullptr);
+    valid_cb->setProperty("objectName", QString::fromUtf8("i_check"));
     valid_cb->setText(QString::fromUtf8("Verificar validez"));
     valid_cb->setToolTip(QString::fromUtf8("Si se marca, se verifican los diámetros de las herramientas.\nsi proporcionarán un aislamiento completo."));
     grid3->addWidget(valid_cb, 28, 0, 1, 2);
     except_cb = new FCCheckBox(nullptr);
+    except_cb->setProperty("objectName", QString::fromUtf8("i_except"));
     except_cb->setText(QString::fromUtf8("Excepto"));
     except_cb->setToolTip(QString::fromUtf8("Cuando se genera la geometría de Aislamiento,\nmarcando esto, el área del objeto a continuación\nserá restado de la geometría de aislamiento."));
     except_cb->setHidden(true);
@@ -254,6 +265,7 @@ void IsolationToolUIBase::setupUi() {
     grid3->addWidget(select_label, 34, 0, 1, 1);
     select_combo = new FCComboBox2(nullptr);
     select_combo->setProperty("currentText", QString::fromUtf8("Todos"));
+    select_combo->setProperty("objectName", QString::fromUtf8("i_selection"));
     select_combo->setHidden(true);
     select_combo->addItem(QString::fromUtf8("Todos"));
     select_combo->addItem(QString::fromUtf8("Selección de área"));

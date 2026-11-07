@@ -1359,6 +1359,7 @@ void MainGUIBase::setupUi() {
     // ---- barras de herramientas (en el orden y las filas de la ventana original)
     toolbarfile = new QToolBar(this);
     toolbarfile->setMovable(false);
+    toolbarfile->setProperty("objectName", QString::fromUtf8("File_TB"));
     toolbarfile->setWindowTitle(QString::fromUtf8("File Toolbar"));
     toolbarfile->addAction(file_open_gerber_btn);
     toolbarfile->addAction(file_open_excellon_btn);
@@ -1368,6 +1369,7 @@ void MainGUIBase::setupUi() {
     addToolBar(Qt::ToolBarArea(4), toolbarfile);
     toolbaredit = new QToolBar(this);
     toolbaredit->setMovable(false);
+    toolbaredit->setProperty("objectName", QString::fromUtf8("Edit_TB"));
     toolbaredit->setWindowTitle(QString::fromUtf8("Edit Toolbar"));
     toolbaredit->addAction(editgeo_btn);
     toolbaredit->addAction(update_obj_btn);
@@ -1384,6 +1386,7 @@ void MainGUIBase::setupUi() {
     addToolBar(Qt::ToolBarArea(4), toolbaredit);
     toolbarview = new QToolBar(this);
     toolbarview->setMovable(false);
+    toolbarview->setProperty("objectName", QString::fromUtf8("View_TB"));
     toolbarview->setWindowTitle(QString::fromUtf8("View Toolbar"));
     toolbarview->setHidden(true);
     toolbarview->addAction(replot_btn);
@@ -1394,6 +1397,7 @@ void MainGUIBase::setupUi() {
     addToolBar(Qt::ToolBarArea(4), toolbarview);
     toolbarshell = new QToolBar(this);
     toolbarshell->setMovable(false);
+    toolbarshell->setProperty("objectName", QString::fromUtf8("Shell_TB"));
     toolbarshell->setWindowTitle(QString::fromUtf8("Shell Toolbar"));
     toolbarshell->setHidden(true);
     toolbarshell->addAction(shell_btn);
@@ -1403,6 +1407,7 @@ void MainGUIBase::setupUi() {
     addToolBar(Qt::ToolBarArea(4), toolbarshell);
     toolbartools = new QToolBar(this);
     toolbartools->setMovable(false);
+    toolbartools->setProperty("objectName", QString::fromUtf8("Tools_TB"));
     toolbartools->setWindowTitle(QString::fromUtf8("Tools Toolbar"));
     toolbartools->addAction(dblsided_btn);
     toolbartools->addAction(align_btn);
@@ -1433,6 +1438,7 @@ void MainGUIBase::setupUi() {
     addToolBar(Qt::ToolBarArea(4), toolbartools);
     exc_edit_toolbar = new QToolBar(this);
     exc_edit_toolbar->setMovable(false);
+    exc_edit_toolbar->setProperty("objectName", QString::fromUtf8("ExcEditor_TB"));
     exc_edit_toolbar->setWindowTitle(QString::fromUtf8("Excellon Editor Toolbar"));
     exc_edit_toolbar->setHidden(true);
     exc_edit_toolbar->addAction(select_drill_btn);
@@ -1450,6 +1456,7 @@ void MainGUIBase::setupUi() {
     addToolBarBreak(Qt::ToolBarArea(4));
     geo_edit_toolbar = new QToolBar(this);
     geo_edit_toolbar->setMovable(false);
+    geo_edit_toolbar->setProperty("objectName", QString::fromUtf8("GeoEditor_TB"));
     geo_edit_toolbar->setWindowTitle(QString::fromUtf8("Geometry Editor Toolbar"));
     geo_edit_toolbar->setHidden(true);
     geo_edit_toolbar->addAction(geo_select_btn);
@@ -1479,6 +1486,7 @@ void MainGUIBase::setupUi() {
     addToolBar(Qt::ToolBarArea(4), geo_edit_toolbar);
     grb_edit_toolbar = new QToolBar(this);
     grb_edit_toolbar->setMovable(false);
+    grb_edit_toolbar->setProperty("objectName", QString::fromUtf8("GrbEditor_TB"));
     grb_edit_toolbar->setWindowTitle(QString::fromUtf8("Gerber Editor Toolbar"));
     grb_edit_toolbar->setHidden(true);
     grb_edit_toolbar->addAction(grb_select_btn);
@@ -1512,6 +1520,7 @@ void MainGUIBase::setupUi() {
     notebook->setTabsClosable(false);
     notebook->tabBar()->setProperty("contextMenuPolicy", 2);
     project_tab = new QWidget(nullptr);
+    project_tab->setProperty("objectName", QString::fromUtf8("project_tab"));
     project_frame_lay = new QVBoxLayout();
     project_frame_lay->setContentsMargins(0, 0, 0, 0);
     project_frame_lay->setSpacing(6);
@@ -1534,6 +1543,7 @@ void MainGUIBase::setupUi() {
     project_tab->setLayout(project_frame_lay);
     notebook->addTab(project_tab, QString::fromUtf8("Proyecto"));
     properties_tab = new QWidget(nullptr);
+    properties_tab->setProperty("objectName", QString::fromUtf8("properties_tab"));
     properties_tab->setHidden(true);
     properties_tab_layout = new QVBoxLayout();
     properties_tab_layout->setContentsMargins(2, 2, 2, 2);
@@ -1541,6 +1551,7 @@ void MainGUIBase::setupUi() {
     properties_scroll_area = new VerticalScrollArea(nullptr);
     auto* w1 = new FCTree(nullptr);
     w1->setAutoFillBackground(true);
+    w1->setProperty("objectName", QString::fromUtf8("default_properties"));
     { QSizePolicy sp(QSizePolicy::Policy(7), QSizePolicy::Policy(7)); sp.setHorizontalStretch(0); sp.setVerticalStretch(0); w1->setSizePolicy(sp); }
     w1->setStyleSheet(QString::fromUtf8("QTreeWidget {border: 0px;}"));
     properties_scroll_area->setWidget(w1);
@@ -1548,6 +1559,7 @@ void MainGUIBase::setupUi() {
     properties_tab->setLayout(properties_tab_layout);
     notebook->addTab(properties_tab, QString::fromUtf8("Propiedades"));
     tool_tab = new QWidget(nullptr);
+    tool_tab->setProperty("objectName", QString::fromUtf8("tool_tab"));
     tool_tab->setHidden(true);
     tool_tab_layout = new QVBoxLayout();
     tool_tab_layout->setContentsMargins(2, 2, 2, 2);
@@ -1567,9 +1579,11 @@ void MainGUIBase::setupUi() {
     plot_tab_area->tabBar()->setProperty("contextMenuPolicy", 2);
     plot_tab_area->tabBar()->setTabsClosable(true);
     plot_tab = new QWidget(nullptr);
+    plot_tab->setProperty("objectName", QString::fromUtf8("plotarea_tab"));
     right_layout = new QVBoxLayout();
     right_layout->setContentsMargins(2, 2, 2, 2);
     right_layout->setSpacing(6);
+    right_layout->setProperty("objectName", QString::fromUtf8("right_layout"));
     plot_tab->setLayout(right_layout);
     plot_tab_area->addTab(plot_tab, QString::fromUtf8("Área de la parcela"));
     plot_tab_area->protectTab(plot_tab_area->count() - 1);
@@ -1582,6 +1596,7 @@ void MainGUIBase::setupUi() {
     fcinfo = new FlatCAMInfoBar(nullptr);
     statusBar()->addWidget(fcinfo, 1);
     delta_coords_toolbar = new QToolBar(nullptr);
+    delta_coords_toolbar->setProperty("objectName", QString::fromUtf8("Delta_Coords_TB"));
     delta_coords_toolbar->setWindowTitle(QString::fromUtf8("Barra de herramientas de coordenadas delta"));
     delta_coords_toolbar->setHidden(true);
     rel_position_label = new FCLabel(nullptr);
@@ -1591,6 +1606,7 @@ void MainGUIBase::setupUi() {
     delta_coords_toolbar->addWidget(rel_position_label);
     statusBar()->addWidget(delta_coords_toolbar, 0);
     coords_toolbar = new QToolBar(nullptr);
+    coords_toolbar->setProperty("objectName", QString::fromUtf8("Coords_TB"));
     coords_toolbar->setWindowTitle(QString::fromUtf8("Barra de herramientas de coordenadas"));
     position_label = new FCLabel(nullptr);
     position_label->setMinimumSize(QSize(110, 0));
@@ -1600,6 +1616,7 @@ void MainGUIBase::setupUi() {
     statusBar()->addWidget(coords_toolbar, 0);
     grid_toolbar = new QToolBar(nullptr);
     grid_toolbar->setMaximumSize(QSize(16777215, 24));
+    grid_toolbar->setProperty("objectName", QString::fromUtf8("Snap_TB"));
     grid_toolbar->setStyleSheet(QString::fromUtf8("\n\t\t\tQToolBar { padding: 0; }\n\t\t\tQToolBar QToolButton { padding: -2; margin: -2; }\n\t\t\t"));
     grid_toolbar->setWindowTitle(QString::fromUtf8("Barra de herramientas de cuadrícula"));
     grid_toolbar->addAction(grid_snap_btn);
@@ -1689,6 +1706,7 @@ void MainGUIBase::setupUi() {
     // ---- paneles acoplables
     shell_dock = new FCDock(this);
     shell_dock->setFloating(false);
+    shell_dock->setProperty("objectName", QString::fromUtf8("Shell_DockWidget"));
     shell_dock->setWindowTitle(QString::fromUtf8("TCL Shell"));
     addDockWidget(Qt::DockWidgetArea(8), shell_dock);
     shell_dock->hide();

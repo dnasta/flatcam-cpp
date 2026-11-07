@@ -4,6 +4,10 @@
   "py": "Properties",
   "name": null,
   "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Propiedades"
+   },
    "autoFillBackground": {
     "t": "bool",
     "v": true

@@ -309,6 +309,7 @@ void CNCObjectUIBase::setupUi() {
     al_toolbar = new FCDetachableTab(nullptr);
     al_toolbar->setTabsClosable(false);
     gr_conn_tab = new QWidget(nullptr);
+    gr_conn_tab->setProperty("objectName", QString::fromUtf8("connect_tab"));
     gr_conn_tab_layout = new QVBoxLayout();
     gr_conn_tab_layout->setContentsMargins(2, 2, 2, 2);
     gr_conn_tab_layout->setSpacing(6);
@@ -386,6 +387,7 @@ void CNCObjectUIBase::setupUi() {
     gr_conn_tab->setLayout(gr_conn_tab_layout);
     al_toolbar->addTab(gr_conn_tab, QString::fromUtf8("Conectar"));
     gr_ctrl_tab = new QWidget(nullptr);
+    gr_ctrl_tab->setProperty("objectName", QString::fromUtf8("connect_tab"));
     gr_ctrl_tab->setHidden(true);
     gr_ctrl_tab_layout = new QVBoxLayout();
     gr_ctrl_tab_layout->setContentsMargins(2, 2, 2, 2);
@@ -550,6 +552,7 @@ void CNCObjectUIBase::setupUi() {
     gr_ctrl_tab->setLayout(gr_ctrl_tab_layout);
     al_toolbar->addTab(gr_ctrl_tab, QString::fromUtf8("Controlar"));
     gr_send_tab = new QWidget(nullptr);
+    gr_send_tab->setProperty("objectName", QString::fromUtf8("connect_tab"));
     gr_send_tab->setHidden(true);
     gr_send_tab_layout = new QVBoxLayout();
     gr_send_tab_layout->setContentsMargins(2, 2, 2, 2);

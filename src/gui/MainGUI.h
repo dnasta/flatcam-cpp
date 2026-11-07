@@ -4,6 +4,10 @@
  */
 #pragma once
 
+#include <QRect>
+#include <QToolBar>
+#include <vector>
+
 #include "gui/generated/MainGUIBase.h"
 
 namespace flatcam::gui {
@@ -29,6 +33,18 @@ public:
 
     /** @brief Muestra u oculta el panel izquierdo (`on_toggle_notebook`). */
     void onToggleNotebook();
+    /** @brief Pantalla completa sin marco, sin barras de herramientas (`on_fullscreen`). @param disable Salir de ella. */
+    void onFullscreen(bool disable = false);
+    /** @brief Saca o vuelve a poner la pestaña "Área de dibujo" (`on_toggle_plotarea`). */
+    void onTogglePlotArea();
+    /** @brief Ajuste a la grilla (`on_toggle_grid`: dispara el botón de la barra). */
+    void onToggleGrid() { grid_snap_btn->trigger(); }
+    /** @brief Líneas de la grilla (`on_toggle_grid_lines`). */
+    void onToggleGridLines();
+    /** @brief Líneas por el origen (`on_toggle_axis`), con el estilo del botón de la barra de estado. */
+    void onToggleAxis();
+    /** @brief Recuadro HUD (`on_toggle_hud`), con el estilo del botón de la barra de estado. */
+    void onToggleHud();
 
     /**
      * @brief Cambia el título de la ventana (`set_ui_title`).
@@ -72,6 +88,9 @@ private:
 
     PlotCanvas* plotcanvas_{nullptr};
     bool canvasHandlers_{true};
+    bool fullscreen_{false};          ///< `toggle_fscreen`.
+    QRect normalGeometry_;            ///< Geometría antes de la pantalla completa.
+    std::vector<QToolBar*> hiddenToolbars_;  ///< Barras visibles antes de la pantalla completa.
     QPointF relPoint1_{0, 0};  ///< Punto desde donde se miden Dx y Dy (`rel_point1`).
 };
 

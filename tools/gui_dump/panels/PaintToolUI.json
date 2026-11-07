@@ -4,6 +4,10 @@
   "py": "ToolPaint",
   "name": null,
   "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Herramienta de pintura"
+   },
    "autoFillBackground": {
     "t": "bool",
     "v": true
@@ -521,6 +525,10 @@
              "py": "FCDoubleSpinner",
              "name": "new_tooldia_entry",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "p_tool_dia"
+              },
               "decimals": {
                "t": "int",
                "v": 4
@@ -803,6 +811,10 @@
              "py": "FCDoubleSpinner",
              "name": "paintoverlap_entry",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "p_overlap"
+              },
               "wrapping": {
                "t": "bool",
                "v": true
@@ -863,6 +875,10 @@
              "py": "FCDoubleSpinner",
              "name": "offset_entry",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "p_offset"
+              },
               "decimals": {
                "t": "int",
                "v": 4
@@ -911,6 +927,10 @@
              "py": "FCComboBox2",
              "name": "paintmethod_combo",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "p_method"
+              },
               "currentText": {
                "t": "str",
                "v": "Estándar"
@@ -937,6 +957,10 @@
              "py": "FCCheckBox",
              "name": "pathconnect_cb",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "p_connect"
+              },
               "toolTip": {
                "t": "str",
                "v": "Dibuja líneas entre el resultado\nSegmentos para minimizar elevaciones de herramientas."
@@ -963,6 +987,10 @@
              "py": "FCCheckBox",
              "name": "paintcontour_cb",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "p_contour"
+              },
               "toolTip": {
                "t": "str",
                "v": "Corta todo el perímetro del polígono.\nPara recortar los bordes ásperos."
@@ -1099,6 +1127,10 @@
              "py": "FCCheckBox",
              "name": "rest_cb",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "p_rest_machining"
+              },
               "toolTip": {
                "t": "str",
                "v": "Si está marcado, use 'mecanizado en resto'.\nBásicamente procesará cobre fuera de las características de la PCB,\nusando la herramienta más grande y continúe con las siguientes herramientas,\nde mayor a menor, para procesar las características de cobre que\nno pudo ser procesado por la herramienta anterior, hasta que haya\nno queda nada por procesar o no hay más herramientas.\n\nSi no está marcado, use el algoritmo estándar."
@@ -1199,6 +1231,10 @@
              "py": "FCComboBox2",
              "name": "selectmethod_combo",
              "props": {
+              "objectName": {
+               "t": "str",
+               "v": "p_selection"
+              },
               "currentText": {
                "t": "str",
                "v": "Todos"

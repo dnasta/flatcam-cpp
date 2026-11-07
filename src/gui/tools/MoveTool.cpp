@@ -20,6 +20,7 @@ void MoveTool::toggle() {
         connections_.clear();
         clickedMove_ = 0;
         canvas->removeLayer(kLayerId);
+        app_->deleteSelectionShape();  // delete_shape borra toda la sel_shapes, también los recuadros de selección
         return;
     }
     visible_ = true;
@@ -49,6 +50,7 @@ void MoveTool::onClick(const QPointF& pos, Qt::MouseButton button) {
         return;
     }
     app_->ui()->plotCanvas()->removeLayer(kLayerId);
+    app_->deleteSelectionShape();
     const double dx = pos.x() - point1_->x(), dy = pos.y() - point1_->y();
     std::vector<FlatCAMObj*> objs;
     for (FlatCAMObj* o : app_->selectedObjects())
@@ -71,6 +73,7 @@ void MoveTool::onClick(const QPointF& pos, Qt::MouseButton button) {
 
 void MoveTool::onMove(const QPointF& pos) {
     if (!visible_ || clickedMove_ != 1) return;
+    app_->deleteSelectionShape();  // update_sel_bbox empieza con delete_shape
     drawBox(pos.x() - point1_->x(), pos.y() - point1_->y());  // update_sel_bbox
 }
 

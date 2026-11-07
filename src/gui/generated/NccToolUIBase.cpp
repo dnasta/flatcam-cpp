@@ -9,6 +9,7 @@ namespace flatcam::gui {
 void NccToolUIBase::setupUi() {
     // ---- acciones (compartidas entre menús y barras)
     this->setAutoFillBackground(true);
+    this->setProperty("objectName", QString::fromUtf8("Compensación sin cobre"));
     layout = new QVBoxLayout();
     layout->setContentsMargins(9, 9, 9, 9);
     layout->setSpacing(6);
@@ -104,6 +105,7 @@ void NccToolUIBase::setupUi() {
     new_tooldia_entry = new FCDoubleSpinner(nullptr);
     new_tooldia_entry->setProperty("decimals", 4);
     new_tooldia_entry->setProperty("maximum", 10000.0);
+    new_tooldia_entry->setProperty("objectName", QString::fromUtf8("Diá. de Herram"));
     new_tooldia_entry->setProperty("value", 0.1);
     lay6->addWidget(new_tooldia_entry, 0);
     find_optimal_button = new QToolButton(nullptr);
@@ -151,6 +153,7 @@ void NccToolUIBase::setupUi() {
     w10->setToolTip(QString::fromUtf8("La 'Operación' puede ser:\n- Aislamiento -> asegurará que la limpieza sin cobre esté siempre completa.\nSi no tiene éxito, la limpieza sin cobre también fallará.\n- Borrar -> la limpieza regular sin cobre."));
     grid3->addWidget(w10, 13, 0, 1, 1);
     op_radio = new RadioSet({{QString::fromUtf8("Limpiar"), QVariant(QString::fromUtf8("clear"))}, {QString::fromUtf8("Aislamiento"), QVariant(QString::fromUtf8("iso"))}}, Qt::Horizontal, false, nullptr);
+    op_radio->setProperty("objectName", QString::fromUtf8("n_operation"));
     op_radio->setValue(QVariant(QString::fromUtf8("clear")));
     grid3->addWidget(op_radio, 13, 1, 1, 1);
     milling_type_label = new FCLabel(nullptr);
@@ -160,6 +163,7 @@ void NccToolUIBase::setupUi() {
     grid3->addWidget(milling_type_label, 14, 0, 1, 1);
     milling_type_radio = new RadioSet({{QString::fromUtf8("Subida"), QVariant(QString::fromUtf8("cl"))}, {QString::fromUtf8("Convencional"), QVariant(QString::fromUtf8("cv"))}}, Qt::Horizontal, true, nullptr);
     milling_type_radio->setEnabled(false);
+    milling_type_radio->setProperty("objectName", QString::fromUtf8("n_milling_type"));
     milling_type_radio->setToolTip(QString::fromUtf8("Tipo de fresado:\n- subir / mejor para fresado de precisión y para reducir el uso de la herramienta\n- convencional / útil cuando no hay compensación de contragolpe"));
     milling_type_radio->setValue(QVariant(QString::fromUtf8("cl")));
     grid3->addWidget(milling_type_radio, 14, 1, 1, 1);
@@ -170,6 +174,7 @@ void NccToolUIBase::setupUi() {
     ncc_overlap_entry = new FCDoubleSpinner(nullptr);
     ncc_overlap_entry->setProperty("decimals", 4);
     ncc_overlap_entry->setProperty("maximum", 99.9999);
+    ncc_overlap_entry->setProperty("objectName", QString::fromUtf8("n_overlap"));
     ncc_overlap_entry->setProperty("singleStep", 0.1);
     ncc_overlap_entry->setProperty("suffix", QString::fromUtf8(" %"));
     ncc_overlap_entry->setProperty("value", 40.0);
@@ -181,6 +186,7 @@ void NccToolUIBase::setupUi() {
     grid3->addWidget(methodlabel, 16, 0, 1, 1);
     ncc_method_combo = new FCComboBox2(nullptr);
     ncc_method_combo->setProperty("currentText", QString::fromUtf8("Semilla"));
+    ncc_method_combo->setProperty("objectName", QString::fromUtf8("n_method"));
     ncc_method_combo->addItem(QString::fromUtf8("Estándar"));
     ncc_method_combo->addItem(QString::fromUtf8("Semilla"));
     ncc_method_combo->addItem(QString::fromUtf8("Líneas"));
@@ -195,25 +201,30 @@ void NccToolUIBase::setupUi() {
     ncc_margin_entry->setProperty("decimals", 4);
     ncc_margin_entry->setProperty("maximum", 10000.0);
     ncc_margin_entry->setProperty("minimum", -10000.0);
+    ncc_margin_entry->setProperty("objectName", QString::fromUtf8("n_margin"));
     ncc_margin_entry->setProperty("value", 1.0);
     grid3->addWidget(ncc_margin_entry, 17, 1, 1, 1);
     ncc_connect_cb = new FCCheckBox(nullptr);
     ncc_connect_cb->setChecked(true);
+    ncc_connect_cb->setProperty("objectName", QString::fromUtf8("n_connect"));
     ncc_connect_cb->setText(QString::fromUtf8("Conectar"));
     ncc_connect_cb->setToolTip(QString::fromUtf8("Dibuja líneas entre el resultado\nSegmentos para minimizar elevaciones de herramientas."));
     grid3->addWidget(ncc_connect_cb, 18, 0, 1, 1);
     ncc_contour_cb = new FCCheckBox(nullptr);
     ncc_contour_cb->setChecked(true);
+    ncc_contour_cb->setProperty("objectName", QString::fromUtf8("n_contour"));
     ncc_contour_cb->setText(QString::fromUtf8("Contorno"));
     ncc_contour_cb->setToolTip(QString::fromUtf8("Corta todo el perímetro del polígono.\nPara recortar los bordes ásperos."));
     grid3->addWidget(ncc_contour_cb, 18, 1, 1, 1);
     ncc_choice_offset_cb = new FCCheckBox(nullptr);
+    ncc_choice_offset_cb->setProperty("objectName", QString::fromUtf8("n_offset"));
     ncc_choice_offset_cb->setText(QString::fromUtf8("Compensar"));
     ncc_choice_offset_cb->setToolTip(QString::fromUtf8("Si se usa, agregará una compensación a las características de cobre.\nEl claro de cobre terminará a distancia\nde las características de cobre."));
     grid3->addWidget(ncc_choice_offset_cb, 19, 0, 1, 1);
     ncc_offset_spinner = new FCDoubleSpinner(nullptr);
     ncc_offset_spinner->setProperty("decimals", 4);
     ncc_offset_spinner->setProperty("maximum", 10.0);
+    ncc_offset_spinner->setProperty("objectName", QString::fromUtf8("n_offset_value"));
     ncc_offset_spinner->setProperty("singleStep", 0.1);
     ncc_offset_spinner->setWrapping(true);
     grid3->addWidget(ncc_offset_spinner, 19, 1, 1, 1);
@@ -237,6 +248,7 @@ void NccToolUIBase::setupUi() {
     gen_param_label->setToolTip(QString::fromUtf8("Parámetros que son comunes para todas las herramientas."));
     grid3->addWidget(gen_param_label, 24, 0, 1, 2);
     ncc_rest_cb = new FCCheckBox(nullptr);
+    ncc_rest_cb->setProperty("objectName", QString::fromUtf8("n_rest_machining"));
     ncc_rest_cb->setText(QString::fromUtf8("Resto"));
     ncc_rest_cb->setToolTip(QString::fromUtf8("Si está marcado, use 'mecanizado en resto'.\nBásicamente procesará cobre fuera de las características de la PCB,\nusando la herramienta más grande y continúe con las siguientes herramientas,\nde mayor a menor, para procesar las características de cobre que\nno pudo ser procesado por la herramienta anterior, hasta que haya\nno queda nada por procesar o no hay más herramientas.\n\nSi no está marcado, use el algoritmo estándar."));
     grid3->addWidget(ncc_rest_cb, 25, 0, 1, 2);
@@ -249,6 +261,7 @@ void NccToolUIBase::setupUi() {
     rest_ncc_margin_entry->setProperty("decimals", 4);
     rest_ncc_margin_entry->setProperty("maximum", 10000.0);
     rest_ncc_margin_entry->setProperty("minimum", -10000.0);
+    rest_ncc_margin_entry->setProperty("objectName", QString::fromUtf8("n_margin"));
     rest_ncc_margin_entry->setProperty("value", 1.0);
     rest_ncc_margin_entry->setHidden(true);
     grid3->addWidget(rest_ncc_margin_entry, 26, 1, 1, 1);
@@ -283,6 +296,7 @@ void NccToolUIBase::setupUi() {
     grid3->addWidget(select_label, 29, 0, 1, 1);
     select_combo = new FCComboBox2(nullptr);
     select_combo->setProperty("currentText", QString::fromUtf8("Sí mismo"));
+    select_combo->setProperty("objectName", QString::fromUtf8("n_selection"));
     select_combo->addItem(QString::fromUtf8("Sí mismo"));
     select_combo->addItem(QString::fromUtf8("Selección de área"));
     select_combo->addItem(QString::fromUtf8("Objeto de referencia"));
@@ -313,6 +327,7 @@ void NccToolUIBase::setupUi() {
     grid3->addWidget(area_shape_radio, 35, 1, 1, 1);
     valid_cb = new FCCheckBox(nullptr);
     valid_cb->setChecked(true);
+    valid_cb->setProperty("objectName", QString::fromUtf8("n_check"));
     valid_cb->setText(QString::fromUtf8("Verificar validez"));
     valid_cb->setToolTip(QString::fromUtf8("Si se marca, se verifican los diámetros de las herramientas.\nsi proporcionarán un aislamiento completo."));
     grid3->addWidget(valid_cb, 37, 0, 1, 2);

@@ -9,6 +9,7 @@ namespace flatcam::gui {
 void TransformToolUIBase::setupUi() {
     // ---- acciones (compartidas entre menús y barras)
     this->setAutoFillBackground(true);
+    this->setProperty("objectName", QString::fromUtf8("Transform. de objetos"));
     layout = new QVBoxLayout();
     layout->setContentsMargins(9, 9, 9, 9);
     layout->setSpacing(6);
