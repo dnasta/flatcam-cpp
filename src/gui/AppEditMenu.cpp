@@ -188,6 +188,7 @@ void App::onMove2Origin() {
     }
     for (FlatCAMObj* o : objs)
         if (o->offset(-x, -y)) objectChanged(o);  // un CNC Job no se mueve (ver MoveTool)
+    for (FlatCAMObj* o : objs) refreshSourceFile(o);
     ui_->inform("[success] " + tr_("Origin set") + "...");
 }
 
@@ -206,6 +207,7 @@ void App::onSetOrigin() {
 void App::setOriginAt(const QPointF& p) {
     for (FlatCAMObj* o : collection_->objects())
         if (o->offset(-p.x(), -p.y())) objectChanged(o);
+    for (FlatCAMObj* o : collection_->objects()) refreshSourceFile(o);
     ui_->inform("[success] " + tr_("Origin set") + "...");
     plotAll();  // origin_replot: dibuja todo y encuadra
 }

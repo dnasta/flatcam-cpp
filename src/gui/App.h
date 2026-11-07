@@ -61,6 +61,13 @@ public:
      * @return El objeto creado, o `nullptr` si falló.
      */
     FlatCAMObj* openExcellon(const QString& filename);
+    /**
+     * @brief Abre un G-code como CNC Job (`open_gcode`): el texto tal cual (al exportarlo se le agrega la cabecera).
+     * @param filename Archivo. @return El objeto, o nulo si no es G-code (una línea con '%', MOIN o MOMM).
+     */
+    FlatCAMObj* openGcode(const QString& filename);
+    /** @brief Archivo -> Abrir G-Code (`on_fileopengcode`). */
+    void onFileOpenGcode();
 
     /**
      * @brief Abre un archivo según su extensión, como al soltarlo sobre la ventana (`dropEvent` de `MainGUI`).
@@ -375,6 +382,17 @@ public:
     bool finalSave();
     /** @brief Si hay cambios sin guardar (`should_we_save`). @return El estado. */
     bool shouldWeSave() const { return shouldWeSave_; }
+    /**
+     * @brief Texto exportado de un Gerber o Excellon (`export_gerber` / `export_excellon` con los formatos
+     * `gerber_exp_*` / `excellon_exp_*`). @param obj Objeto. @return El texto, o vacío.
+     */
+    QString exportedText(FlatCAMObj* obj) const;
+    /** @brief Regenera el texto fuente de un Gerber o Excellon movido, como el original (`local_use`). @param obj Objeto. */
+    void refreshSourceFile(FlatCAMObj* obj);
+    /** @brief Exporta un Gerber o Excellon a un archivo. @param obj Objeto. @param filename Archivo. @return Si se escribió. */
+    bool exportObject(FlatCAMObj* obj, const QString& filename);
+    /** @brief Archivo -> Exportar -> Gerber / Excellon (`on_file_exportgerber`, `on_file_exportexcellon`). @param kind Tipo. */
+    void onFileExport(ObjectKind kind);
     /** @brief Arma y abre el menú del canvas (`popMenu`) donde está el cursor. */
     void popupCanvasMenu();
     /** @brief El menú del canvas (`popMenu`). @return El menú. */
@@ -431,6 +449,7 @@ private:
     QStringList objectsUnderClick_;                   ///< `objects_under_the_click_list`.
     std::set<FlatCAMObj*> shapeDrawn_;                ///< Objetos con `selection_shape_drawn`.
     QString lastGerberFilter_;
+    QString lastGcodeFilter_;
     QString lastExcellonFilter_;
 };
 

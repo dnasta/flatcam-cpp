@@ -61,6 +61,7 @@ void MoveTool::onClick(const QPointF& pos, Qt::MouseButton button) {
         for (FlatCAMObj* o : objs) {
             if (!o->offset(dx, dy)) continue;  // un CNC Job no se mueve (ver la clase)
             app_->objectChanged(o);
+            app_->refreshSourceFile(o);  // source_file = export_gerber / export_excellon(local_use=...)
         }
         // str(sel_obj.kind).capitalize() del último objeto.
         static const char* kinds[] = {"Gerber", "Excellon", "Geometry", "Cncjob", "Script", "Document"};

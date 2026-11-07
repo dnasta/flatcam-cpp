@@ -11,6 +11,7 @@ add_library(flatcam_core STATIC
     parsers/Gerber.cpp
     parsers/Excellon.cpp
     cam/PyNumber.cpp
+    io/FileExport.cpp
     cam/Preprocessor.cpp
     cam/MorePreprocessors.cpp
     cam/PathOptimizer.cpp

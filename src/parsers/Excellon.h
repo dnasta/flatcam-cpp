@@ -131,6 +131,8 @@ public:
     int formatLowerIn() const { return formatLowerIn_; }
     /** @brief Texto fuente leído (`source_file`). @return El texto. */
     const std::string& sourceFile() const { return sourceFile_; }
+    /** @brief Reemplaza el texto fuente (`source_file`, por ejemplo después de moverlo). @param text El texto. */
+    void setSourceFile(std::string text) { sourceFile_ = std::move(text); }
     /** @brief Mensaje del último error de lectura. @return El mensaje, vacío si no hubo. */
     const std::string& lastError() const { return lastError_; }
 
