@@ -31,8 +31,8 @@ Entran: lectura de **Gerber** y **Excellon**, y las herramientas **NCC**, **Pain
 (confirmado por el usuario; ya está portado). Salida de **G-code** con los
 postprocesadores que usa el usuario (`default` y `GRBL_laser`; luego el resto) y una **GUI Qt6**.
 
-**Fuera de alcance:** los editores de Gerber, Geometría y Excellon (`appEditors`, ~17.600 líneas): el usuario no
-los usa; solo carga archivos y el programa genera la geometría y el G-code. A veces edita a mano el G-code para
+**Editores** de Gerber, Geometría y Excellon (`appEditors`, ~17.600 líneas): al principio quedaron fuera del alcance (el
+usuario no los usa); **después decidió incluirlos en la 1.0.0** (sección 13, ítem 8). Su uso habitual: solo carga archivos y el programa genera la geometría y el G-code. A veces edita a mano el G-code para
 láser: con la 2024.4 agrega `G00 Z0` al empezar y quita el `G00 Z..` final. Eso es exactamente la variante
 `GcodeFlavor::FlatCAM8_994` del port (la predeterminada), comprobado con su `B_Cu.gbr_ncc_cnc.nc` de la placa "luz de noche".
 
