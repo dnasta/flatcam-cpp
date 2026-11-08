@@ -72,7 +72,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.686 casos de `ctest` (2.626 del núcleo y 59 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.690 casos de `ctest` (2.630 del núcleo y 59 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -711,10 +711,15 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     de escalar y la escala es alrededor del centro de cada figura; como Gerber, cualquier polígono (un círculo) hace fallar.
     Desvío: solo DXF ASCII (ezdxf también lee binario). Exportar: el documento es el de `ezdxf.new('R2010')` (pedido el
     espacio modelo, que cambia el orden de dos objetos), con GUID nuevos y la hora en `$TDCREATE`/`$TDUPDATE`.
-    (w) **HPGL2.** Rarezas que se reproducen: una orden por línea (con varias separadas por `;` la línea se ignora); el
-    último trazo se pierde si no se levanta la pluma; cambiar de pluma con un trazo de un solo punto falla; bajar la pluma
-    sin trazo empezado falla; después de un `AA` la posición queda con dos puntos (un `CI` se centra en el primero); un `AT`
-    siempre corta la lectura (el original le pasa listas a `three_point_circle`).
+    (w) **HPGL2: cuatro errores del original corregidos a pedido del usuario** (desvíos conscientes; `parseHpgl2(...,
+    fixOriginalBugs = true)` de fábrica; con `false` se comporta exactamente como el original y así se lo compara con
+    `oracle_hpgl2.py`): (1) varias órdenes por línea, partidas en los `;` (el original ignoraba la línea), con coordenadas en
+    `PU`/`PD` y varios pares en `PA`; (2) después de un `AA` la posición queda en el final del arco (el original la dejaba
+    con dos puntos y casi todo fallaba); (3) `AT` dibuja el arco de la posición al final pasando por el intermedio (el
+    original fallaba con `TypeError` al pasarle listas a `three_point_circle` y cortaba la lectura; además terminaba el arco
+    en el punto intermedio); (4) el último trazo con la pluma abajo no se pierde. Siguen como el original: nada antes de `IN`,
+    y cambiar de pluma con un trazo de un punto, bajar la pluma sin trazo o dibujar sin `SP` hacen fallar la lectura.
+    Tests: `Hpgl2.MatchesOriginal` (modo original) y `Hpgl2Fixed.*` (las cuatro correcciones).
     (m) Errores del original que se reproducen a propósito en Isolation: la herramienta nueva tiene tipo `"           Iso"`
     (con espacios) y forma "V", y el rótulo "Ninguna herramienta seleccionada" lleva `color=#7777FF""`.
 14. **Postprocesadores: desvíos y rarezas del original.** (a) `line_xyz` lee `p['end_xy']`, que `CNCjob` no define: en el
@@ -779,7 +784,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.686 casos de test** (`ctest`): 2.627 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 59 de la GUI;
+- **2.690 casos de test** (`ctest`): 2.631 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 59 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -807,7 +812,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.686 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.690 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -972,13 +977,18 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    `oracle_hpgl2.py` sobre `tests/data/hpgl2/`: idéntico, también en sus fallas). Falta: importar PDF (`ParsePDF`,
    `ToolPDF`) e imagen (`ToolImage`), los textos de SVG y DXF (`ParseFont`), el SVG de un CNC Job, abrir/guardar scripts,
    imprimir a PDF (`on_file_save_objects_pdf`) y los objetos Script y Documento (`FlatCAMScript`, `FlatCAMDocument`).
-   **Pregunta abierta (al usuario):** en HPGL2, ¿corregir las fallas del original (AT, AA, último trazo, varias órdenes por
-   línea) como desvío consciente? Recomendado: sí.
+   **Decidido por el usuario:** en HPGL2 se corrigen las cuatro fallas del original (sección 11.12 w).
 5. **Herramientas restantes** (`appTools/`): Milling, Panelize, Film, Calculators, Copper Thieving, Fiducials, Corners, Extract
    Drills, Punch Gerber, Invert Gerber, Align Objects, Subtract (`ToolSub`), QR Code, Rules Check, Optimal, Solder Paste,
    Calibration, Etch Compensation, PCB Wizard, Levelling (autonivelación del CNC Job).
 6. **Preferencias** (`appGUI/preferences/`, ~19.000 líneas): la ventana completa, guardar/cargar `current_defaults.FlatConfig`,
    importar/exportar preferencias, y que todas las herramientas lean sus valores de fábrica de ahí.
 7. **Consola Tcl** (`ToolShell`, `tclCommands/`, 68 comandos) y scripts.
+9. **Hacia la 1.0.0** (pedido del usuario; estimación dada: unas 6 sesiones sin editores y 8 a 9 con editores):
+   (a) preferencias y unidades (ítem 6); (b) herramientas (ítem 5) en dos o tres sesiones; (c) lo que queda de archivos
+   (ítem 4: PDF, imagen, textos con fuentes, SVG del CNC Job, Script, Documento, imprimir a PDF) y la consola Tcl (ítem 7);
+   (d) cierre: comparar la interfaz con las capturas, compilar y probar en Windows y Linux (lo tiene que correr el
+   usuario o un CI), empaquetar `FlatCAM.app` sin depender de Homebrew (`macdeployqt`), `CMakeLists` con versión 1.0.0,
+   README y notas de la versión. Los editores (ítem 8), solo si el usuario los confirma.
 8. **Editores** de Gerber, Excellon y Geometría (`appEditors/`, ~17.000 líneas). El usuario los había dejado fuera del alcance
    (sección 2); quedan al final y solo si los confirma.
