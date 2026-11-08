@@ -21,17 +21,26 @@ struct Hpgl2Result {
 };
 
 /**
- * @brief `HPGL2.parse_lines`: una orden por línea (`IN`, `SPn`, `PU`/`PD`, `PA x,y`, `CI r`, `AA x,y,a`,
- * `AT x1,y1,x2,y2`, `CO "..."`), en unidades de 1/40 mm.
+ * @brief `HPGL2.parse_lines`: las órdenes `IN`, `SPn`, `PU`/`PD`, `PA x,y`, `CI r`, `AA x,y,a`, `AT x1,y1,x2,y2`,
+ * `CO "..."`, en unidades de 1/40 mm.
  *
- * Rarezas del original que se reproducen: las líneas con varias órdenes separadas por `;` se ignoran; nada cuenta
- * antes de `IN`; el último trazo se pierde si no se levanta la pluma ni se cambia de pluma; bajar la pluma sin un trazo
- * empezado o dibujar sin `SP` hacen fallar la lectura; después de un `AA` la posición queda con dos puntos en vez de
- * dos números: un `CI` se centra en el primer punto del arco (lo que hace Shapely con esa tupla) y casi todo lo demás
- * falla; un `AT` (arco por tres puntos) siempre corta la lectura sin geometría (el original le pasa listas a
- * `three_point_circle`, que falla con `TypeError`).
- * @param text El archivo. @param circleSteps `geometry_circle_steps` (64). @return El resultado.
+ * Con @p fixOriginalBugs (de fábrica) se corrigen cuatro errores del original, como desvíos conscientes:
+ * - **Varias órdenes por línea:** cada línea se parte en los `;` (el original ignora la línea entera); además `PU` y `PD`
+ *   aceptan coordenadas y `PA` varios pares, como en los archivos de otros programas.
+ * - **`AA`:** la posición queda en el final del arco (el original la deja con dos puntos en vez de dos números y casi
+ *   todo lo que sigue falla; un `CI` se centraba en el primer punto del arco).
+ * - **`AT`:** dibuja el arco de la posición actual al final pasando por el punto intermedio (el original le pasa listas
+ *   a `three_point_circle`, falla con `TypeError` y corta la lectura sin geometría; y además terminaba el arco en el
+ *   punto intermedio).
+ * - **Último trazo:** si el archivo termina con la pluma abajo, el trazo se guarda (el original lo pierde).
+ *
+ * Sin la corrección se comporta exactamente como el original (así se compara contra él en los tests). En los dos
+ * modos, nada cuenta antes de `IN`, y cambiar de pluma con un trazo de un solo punto, bajar la pluma sin trazo empezado
+ * o dibujar sin `SP` hacen fallar la lectura, como en el original.
+ * @param text El archivo. @param circleSteps `geometry_circle_steps` (64).
+ * @param fixOriginalBugs Corregir los cuatro errores del original.
+ * @return El resultado.
  */
-Hpgl2Result parseHpgl2(const std::string& text, int circleSteps = 64);
+Hpgl2Result parseHpgl2(const std::string& text, int circleSteps = 64, bool fixOriginalBugs = true);
 
 }  // namespace flatcam

@@ -2615,5 +2615,9 @@ TEST(GuiFiles, OpenHpgl2) {
     ASSERT_NE(geo, nullptr);
     EXPECT_EQ(geo->tools().size(), 2u);
     EXPECT_EQ(geo->tools().begin()->second.type, "Iso");
-    EXPECT_EQ(app.openHpgl2(QString::fromStdString(std::string(FLATCAM_TEST_DATA_DIR) + "/hpgl2/multi_cmd.plt")), nullptr);
+    // Varias órdenes por línea: el original no lo lee; el port sí (corrección consciente).
+    EXPECT_NE(app.openHpgl2(QString::fromStdString(std::string(FLATCAM_TEST_DATA_DIR) + "/hpgl2/multi_cmd.plt")), nullptr);
+    // Bajar la pluma sin trazo empezado sigue fallando, como en el original.
+    EXPECT_EQ(app.openHpgl2(QString::fromStdString(std::string(FLATCAM_TEST_DATA_DIR) + "/hpgl2/pen_down_first.plt")),
+              nullptr);
 }
