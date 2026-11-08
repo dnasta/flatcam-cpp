@@ -10,6 +10,9 @@ máquina del usuario.
 
 1. Verificá y corregí todo lo que haga falta **apenas lo detectes**, sin esperar a que lo pida (código, tests y docs).
 2. Al terminar cada respuesta, actualizá el estado del proyecto en este archivo y en `AGENTS.md`.
+3. Errores del port: corregirlos apenas se encuentren. Errores del FlatCAM original: reproducirlos y anotarlos en
+   `AGENTS.md` sección 14; corregirlos todos en el port cuando el proyecto esté terminado y verificado el G-code contra el
+   original (`AGENTS.md`, sección 3).
 
 ## Estado actual (se actualiza al final de cada respuesta)
 
@@ -33,7 +36,7 @@ máquina del usuario.
   (con las preferencias) y los marcadores. **Ítem 4 en curso:** hechos abrir G-code, exportar Gerber/Excellon (idéntico al
   original), exportar e importar SVG y DXF (idénticos al original) exportar PNG e importar HPGL2 (con cuatro fallas del original corregidas a
   pedido del usuario, `AGENTS.md` 11.12 w); siguen importar PDF/imagen, Script y Documento. Corregido: Gerber/Excellon en pulgadas
-  no se convertían a mm al abrirlos. **Plan hacia la 1.0.0** en `AGENTS.md` 13.9 (unas 6 sesiones sin editores, 8 a 9 con). El fresado de ranuras va con Milling (ítem 5).
+  no se convertían a mm al abrirlos. **Plan hacia la 1.0.0** en `AGENTS.md` 13.9: el usuario decidió **incluir los editores** (8 a 9 sesiones). En curso: **Preferencias** (ítem 6). El fresado de ranuras va con Milling (ítem 5).
 - **Hecho (fases 1, 2 y 3 completas):** parsers, transformaciones, postprocesadores, G-code de taladrado y de geometrías, CutOut,
   Paint, NCC, PCB a 2 caras e Isolation. **Verificado contra el ejecutable FlatCAM 2024.4 del usuario** (placa "luz de noche",
   `tests/data/luz_de_noche/`, `tests/test_luz_de_noche.cpp`): CutOut byte por byte, Paint idéntico con GEOS 3.11, NCC 272 = 272

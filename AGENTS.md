@@ -55,6 +55,13 @@ logo) y **CutOut** → **CNC Job** con G-code. Taladros y alineación con **PCB 
 - **Regla permanente (pedida por el usuario):** al terminar cada respuesta, el estado del proyecto tiene que estar
   actualizado en `CLAUDE.md` y en `AGENTS.md` (secciones 4 y 11 de este archivo y "Estado actual" de `CLAUDE.md`). Hacelo
   **antes** del mensaje final y entregá esos cambios en el mismo parche.
+- **Regla permanente (pedida por el usuario): cómo tratar los errores.** (1) Los errores **del port** se corrigen **apenas se
+  encuentran**, sin esperar a que el usuario lo pida. (2) Los errores **del FlatCAM original** se siguen reproduciendo a
+  propósito mientras se porta (así el G-code y los archivos salen iguales y se puede verificar contra el original). (3)
+  **Cuando el proyecto esté completamente terminado** y se haya verificado que el G-code del port sale igual al del original,
+  se corrigen en el código del port **todos** esos errores del original (lista en la sección 14), como desvíos documentados;
+  donde sirva, con una opción para volver al comportamiento original y seguir comparando (como `parseHpgl2(...,
+  fixOriginalBugs)`). Los archivos de `reference/` no se modifican nunca.
 - Nunca pidas ni uses tokens o contraseñas del usuario. En el chat de claude.ai el entorno **puede leer GitHub pero
   no puede hacer `push`** (ver sección 9).
 
@@ -872,6 +879,9 @@ trazados; taladro con los mismos agujeros (sección 7).
   variable los tests corren en "offscreen", donde `QOpenGLWidget` no dibuja) y `ui()->grab().save(...)`.
 - Un test que compara un texto consigo mismo siempre pasa: una vez se coló una aserción así; revisar que cada `EXPECT` pueda fallar.
 
+- **Errores:** los del port, corregirlos apenas se encuentran; los del original, reproducirlos y anotarlos en la sección 14
+  para corregirlos al terminar el proyecto (sección 3).
+
 ### 12.4 Entorno para regenerar los goldens (solo hace falta si se agrega un oráculo)
 
 Los goldens (`tests/golden_*.h`) **están commiteados**; los tests no necesitan Python. Para regenerarlos o crear oráculos nuevos hace falta
@@ -989,6 +999,35 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    (ítem 4: PDF, imagen, textos con fuentes, SVG del CNC Job, Script, Documento, imprimir a PDF) y la consola Tcl (ítem 7);
    (d) cierre: comparar la interfaz con las capturas, compilar y probar en Windows y Linux (lo tiene que correr el
    usuario o un CI), empaquetar `FlatCAM.app` sin depender de Homebrew (`macdeployqt`), `CMakeLists` con versión 1.0.0,
-   README y notas de la versión. Los editores (ítem 8), solo si el usuario los confirma.
-8. **Editores** de Gerber, Excellon y Geometría (`appEditors/`, ~17.000 líneas). El usuario los había dejado fuera del alcance
-   (sección 2); quedan al final y solo si los confirma.
+   README y notas de la versión. **Decidido por el usuario: los editores (ítem 8) entran en la 1.0.0.** Al final, corregir los
+   errores del original de la sección 14.
+8. **Editores** de Gerber, Excellon y Geometría (`appEditors/`, ~17.600 líneas). **Confirmados por el usuario para la 1.0.0.**
+
+## 14. Errores del FlatCAM original que el port reproduce a propósito (corregir al terminar el proyecto)
+
+Regla de la sección 3: se corrigen recién cuando el proyecto esté terminado y verificado el G-code contra el original. Al
+encontrar uno nuevo, agregarlo acá con su sección. Ya corregidos a pedido del usuario: los cuatro de HPGL2 (11.12 w).
+
+- **Parsers** (sección 10): `parse_number` con `"L"`; Excellon sin cabecera que pisa el diámetro con uno inventado.
+- **Postprocesadores** (11.14): Berta_CNC y el X,Y final; `x_toolchange` en la Y de line_xyz; el paréntesis de "Spindle
+  Speed" en Marlin/Repetier/ISEL_ICP; Toolchange_Custom sin `M6` sin X,Y; Marlin_laser con Z inicial; `z_cut` del trabajo en
+  `linear_code`. (La cabecera vacía de line_xyz ya se corrigió: 11.14 a.)
+- **G-code y CNC Job** (11.12 q): la línea con profundidad múltiple queda invertida o no según la paridad de pasadas.
+- **Paint y NCC** (11.9, 11.12 k): rarezas de "Líneas láser" (aperturas de tamaño 0, macros, `linemerge`); herramientas en "V";
+  la geometría siempre en `#FFAAAA` y el rótulo en `#7777FF` (`is_theme_black` sin llamar); NCC, Paint y Corte comparan el
+  objetivo de la base de datos con un texto y nunca encuentran; en Geometría, la búsqueda en la base toma datos de la última
+  herramienta recorrida.
+- **Isolation** (11.12 m): tipo `"           Iso"` con espacios, forma "V", `color=#7777FF""`.
+- **PCB a 2 caras** (11.12 n): "Elegir agujero" apaga la grilla y no la vuelve a encender.
+- **Distancia** (11.12 p): `grid_status_memory` nunca vuelve a `False`; el mensaje con `'%*f'` (ancho en vez de decimales).
+- **Selección y menús** (11.12 r, s): la selección por área compara cajas; un clic sobre el objeto elegido lo deselecciona y
+  avisa que está elegido; al unir Gerber la geometría de seguimiento es la sólida; Geometría -> Excellon compara el diámetro
+  exacto y repite agujeros; una Geometría convertida a Gerber pone todo en la apertura "0".
+- **Exportar** (11.12 t): factor 0,03937 en vez de 1/25,4; las ranuras del Excellon (`slot.x` sobre una tupla).
+- **Importar SVG** (11.12 u): el inicio de `Line` sin el factor del `viewBox`; trayectos abiertos convertidos en polígonos;
+  `matrix()` traspuesta; `rect` con `rx`/`ry` falla; `width`/`height` del `rect` sin factor; `parse_svg_point_list` corta el
+  texto equivocado; los `defs` se importan; como Gerber, agujeros como polígonos aparte, líneas que fallan y el `Polygon()`
+  vacío inicial.
+- **Importar DXF** (11.12 v): una sola línea unida falla; `SOLID`/`TRACE` vacíos; `bulge` ignorado; nudos uniformes;
+  splines por puntos de ajuste fallan; filas/columnas de las inserciones antes de escalar; como Gerber, los polígonos fallan.
+- **HPGL2** (11.12 w): los que quedan (cambiar de pluma con un trazo de un punto, bajar la pluma sin trazo, dibujar sin `SP`).
