@@ -1,6 +1,8 @@
 // ARCHIVO GENERADO por tools/gui_dump/gen_cpp.py a partir de la interfaz original - no editar a mano.
 #pragma once
 
+#include <map>
+#include <string>
 #include <QDialog>
 #include <QAction>
 #include <QPixmap>
@@ -136,6 +138,9 @@ public:
     FCDoubleSpinner* travelz_entry{nullptr};  ///< `travelz_entry` del original.
     QLabel* travelzlabel{nullptr};  ///< `travelzlabel` del original.
     ///@}
+
+    /** @brief Los miembros por su nombre (después de setupUi). @return Nombre -> objeto. */
+    std::map<std::string, QObject*> membersByName() const;
 };
 
 }  // namespace flatcam::gui

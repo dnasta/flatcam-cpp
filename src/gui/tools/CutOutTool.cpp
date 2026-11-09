@@ -31,7 +31,7 @@ CutOutTool::CutOutTool(App* app, QWidget* parent) : CutOutToolUIBase(parent), ap
             app_->ui()->inform("[success] " + tr_("New tool added to Tool Table from Tools Database."));
             return;
         }
-        applyCutoutData(ProjectIO::factoryDefaults());
+        applyCutoutData(app_->defaults());  // self.app.defaults
         app_->ui()->inform("[success] " + tr_("Default tool added."));
     });
     // "Agregar desde la base" (on_cutout_tool_add_from_db_executed).

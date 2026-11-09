@@ -56,10 +56,14 @@ add_library(flatcam_gui STATIC
     generated/CutOutToolUIBase.cpp
     generated/AboutDialogUIBase.cpp
     generated/HowtoDialogUIBase.cpp
+    generated/PreferencesTabUIBase.cpp
+    Preferences.cpp
+    PreferencesGroups.cpp
     widgets/FCButton.h
     widgets/FCSpinners.cpp
     widgets/FCComboBox.cpp
     widgets/RadioSet.cpp
+    widgets/FCPrefWidgets.cpp
     widgets/DialogBoxRadio.cpp
     widgets/FCTable.cpp
     widgets/NumericalEval.cpp

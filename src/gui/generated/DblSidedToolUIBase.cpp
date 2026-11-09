@@ -275,4 +275,53 @@ void DblSidedToolUIBase::setupUi() {
     setLayout(layout);
 }
 
+std::map<std::string, QObject*> DblSidedToolUIBase::membersByName() const {
+    return {
+        {"add_drill_point_button", add_drill_point_button},
+        {"add_point_button", add_point_button},
+        {"ah_label", ah_label},
+        {"align_ax_label", align_ax_label},
+        {"align_axis_radio", align_axis_radio},
+        {"align_ref_label", align_ref_label},
+        {"align_ref_label_val", align_ref_label_val},
+        {"alignment_holes", alignment_holes},
+        {"alignment_label", alignment_label},
+        {"axis_location", axis_location},
+        {"axloc_label", axloc_label},
+        {"box_combo", box_combo},
+        {"box_type_label", box_type_label},
+        {"box_type_radio", box_type_radio},
+        {"bv_label", bv_label},
+        {"calculate_bb_button", calculate_bb_button},
+        {"center_btn", center_btn},
+        {"center_entry", center_entry},
+        {"create_alignment_hole_button", create_alignment_hole_button},
+        {"delete_drill_point_button", delete_drill_point_button},
+        {"drill_dia", drill_dia},
+        {"dt_label", dt_label},
+        {"exc_combo", exc_combo},
+        {"exc_hole_lbl", exc_hole_lbl},
+        {"layout", layout},
+        {"m_objects_label", m_objects_label},
+        {"mirax_label", mirax_label},
+        {"mirror_axis", mirror_axis},
+        {"mirror_button", mirror_button},
+        {"object_combo", object_combo},
+        {"object_type_radio", object_type_radio},
+        {"param_label", param_label},
+        {"pick_hole_button", pick_hole_button},
+        {"point_entry", point_entry},
+        {"reset_button", reset_button},
+        {"type_obj_combo_label", type_obj_combo_label},
+        {"xmax_btn", xmax_btn},
+        {"xmax_entry", xmax_entry},
+        {"xmin_btn", xmin_btn},
+        {"xmin_entry", xmin_entry},
+        {"ymax_btn", ymax_btn},
+        {"ymax_entry", ymax_entry},
+        {"ymin_btn", ymin_btn},
+        {"ymin_entry", ymin_entry},
+    };
+}
+
 }  // namespace flatcam::gui

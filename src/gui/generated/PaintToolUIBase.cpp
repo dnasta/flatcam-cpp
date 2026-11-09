@@ -280,4 +280,47 @@ void PaintToolUIBase::setupUi() {
     setLayout(layout);
 }
 
+std::map<std::string, QObject*> PaintToolUIBase::membersByName() const {
+    return {
+        {"add_newtool_button", add_newtool_button},
+        {"addtool_from_db_btn", addtool_from_db_btn},
+        {"apply_param_to_all", apply_param_to_all},
+        {"area_shape_label", area_shape_label},
+        {"area_shape_radio", area_shape_radio},
+        {"deltool_btn", deltool_btn},
+        {"gen_param_label", gen_param_label},
+        {"generate_paint_button", generate_paint_button},
+        {"grid3", grid3},
+        {"layout", layout},
+        {"new_tooldia_entry", new_tooldia_entry},
+        {"new_tooldia_lbl", new_tooldia_lbl},
+        {"obj_combo", obj_combo},
+        {"object_label", object_label},
+        {"offset_entry", offset_entry},
+        {"offset_label", offset_label},
+        {"order_label", order_label},
+        {"order_radio", order_radio},
+        {"paintcontour_cb", paintcontour_cb},
+        {"paintmethod_combo", paintmethod_combo},
+        {"paintoverlap_entry", paintoverlap_entry},
+        {"pathconnect_cb", pathconnect_cb},
+        {"reference_combo", reference_combo},
+        {"reference_type_combo", reference_type_combo},
+        {"reference_type_label", reference_type_label},
+        {"reset_button", reset_button},
+        {"rest_cb", rest_cb},
+        {"rest_offset_entry", rest_offset_entry},
+        {"rest_offset_label", rest_offset_label},
+        {"selectmethod_combo", selectmethod_combo},
+        {"tool_data_label", tool_data_label},
+        {"tool_sel_label", tool_sel_label},
+        {"tools_box", tools_box},
+        {"tools_frame", tools_frame},
+        {"tools_table", tools_table},
+        {"tools_table_label", tools_table_label},
+        {"type_obj_combo_label", type_obj_combo_label},
+        {"type_obj_radio", type_obj_radio},
+    };
+}
+
 }  // namespace flatcam::gui

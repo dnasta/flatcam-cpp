@@ -100,4 +100,18 @@ void HowtoDialogUIBase::setupUi() {
     setLayout(lay1);
 }
 
+std::map<std::string, QObject*> HowtoDialogUIBase::membersByName() const {
+    return {
+        {"grid_lay", grid_lay},
+        {"howto_lay", howto_lay},
+        {"howto_tab", howto_tab},
+        {"howto_tab_layout", howto_tab_layout},
+        {"intro_tab", intro_tab},
+        {"intro_tab_layout", intro_tab_layout},
+        {"links_lay", links_lay},
+        {"links_tab", links_tab},
+        {"links_tab_layout", links_tab_layout},
+    };
+}
+
 }  // namespace flatcam::gui

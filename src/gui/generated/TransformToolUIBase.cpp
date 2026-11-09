@@ -296,4 +296,50 @@ void TransformToolUIBase::setupUi() {
     setLayout(layout);
 }
 
+std::map<std::string, QObject*> TransformToolUIBase::membersByName() const {
+    return {
+        {"buffer_button", buffer_button},
+        {"buffer_entry", buffer_entry},
+        {"buffer_factor_button", buffer_factor_button},
+        {"buffer_factor_entry", buffer_factor_entry},
+        {"buffer_factor_label", buffer_factor_label},
+        {"buffer_label", buffer_label},
+        {"buffer_rounded_cb", buffer_rounded_cb},
+        {"flipx_button", flipx_button},
+        {"flipy_button", flipy_button},
+        {"layout", layout},
+        {"object_combo", object_combo},
+        {"offx_button", offx_button},
+        {"offx_entry", offx_entry},
+        {"offx_label", offx_label},
+        {"offy_button", offy_button},
+        {"offy_entry", offy_entry},
+        {"offy_label", offy_label},
+        {"point_button", point_button},
+        {"point_entry", point_entry},
+        {"point_label", point_label},
+        {"ref_combo", ref_combo},
+        {"reset_button", reset_button},
+        {"rotate_button", rotate_button},
+        {"rotate_entry", rotate_entry},
+        {"rotate_label", rotate_label},
+        {"scale_link_cb", scale_link_cb},
+        {"scalex_button", scalex_button},
+        {"scalex_entry", scalex_entry},
+        {"scalex_label", scalex_label},
+        {"scaley_button", scaley_button},
+        {"scaley_entry", scaley_entry},
+        {"scaley_label", scaley_label},
+        {"skew_link_cb", skew_link_cb},
+        {"skewx_button", skewx_button},
+        {"skewx_entry", skewx_entry},
+        {"skewx_label", skewx_label},
+        {"skewy_button", skewy_button},
+        {"skewy_entry", skewy_entry},
+        {"skewy_label", skewy_label},
+        {"type_obj_combo", type_obj_combo},
+        {"type_object_label", type_object_label},
+    };
+}
+
 }  // namespace flatcam::gui

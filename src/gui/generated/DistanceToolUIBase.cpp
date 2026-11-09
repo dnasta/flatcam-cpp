@@ -107,4 +107,26 @@ void DistanceToolUIBase::setupUi() {
     setLayout(layout);
 }
 
+std::map<std::string, QObject*> DistanceToolUIBase::membersByName() const {
+    return {
+        {"angle_entry", angle_entry},
+        {"angle_label", angle_label},
+        {"distance_x_entry", distance_x_entry},
+        {"distance_x_label", distance_x_label},
+        {"distance_y_entry", distance_y_entry},
+        {"distance_y_label", distance_y_label},
+        {"layout", layout},
+        {"measure_btn", measure_btn},
+        {"snap_center_cb", snap_center_cb},
+        {"start_entry", start_entry},
+        {"start_label", start_label},
+        {"stop_entry", stop_entry},
+        {"stop_label", stop_label},
+        {"total_distance_entry", total_distance_entry},
+        {"total_distance_label", total_distance_label},
+        {"units_label", units_label},
+        {"units_value", units_value},
+    };
+}
+
 }  // namespace flatcam::gui

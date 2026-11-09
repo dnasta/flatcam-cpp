@@ -50,7 +50,7 @@ gtest_discover_tests(core_tests)
 
 # Tests de la interfaz (solo si se compila la GUI). Corren sin pantalla: plataforma "offscreen" de Qt.
 if(TARGET flatcam_gui)
-    add_executable(gui_tests gui/test_gui.cpp)
+    add_executable(gui_tests gui/test_gui.cpp gui/test_preferences.cpp)
     target_link_libraries(gui_tests PRIVATE flatcam_gui GTest::gtest)
     target_compile_definitions(gui_tests PRIVATE FLATCAM_TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data")
     gtest_discover_tests(gui_tests PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")

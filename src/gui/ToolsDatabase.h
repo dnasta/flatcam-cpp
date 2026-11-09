@@ -48,11 +48,12 @@ public:
     static bool save(const QString& path, const JsonValue& db);
 
     /**
-     * @brief Herramienta nueva de la base (`ToolsDB2.on_tool_add`): `new_tool_<n>` con los valores de fábrica.
+     * @brief Herramienta nueva de la base (`ToolsDB2.on_tool_add`): `new_tool_<n>` con las preferencias.
      * @param db La base (para numerar el nombre).
+     * @param defaults Las opciones de la aplicación (`app.defaults`).
      * @return La herramienta.
      */
-    static JsonValue newTool(const JsonValue& db);
+    static JsonValue newTool(const JsonValue& db, const JsonValue& defaults);
 
     /** @brief Resultado de buscar una herramienta por diámetro. */
     enum class Lookup {

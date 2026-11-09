@@ -196,7 +196,7 @@ void App::viewSource(FlatCAMObj* obj) {
 std::vector<FlatCAMObj*> App::copySelected() {
     // on_copy_command: una copia `<nombre>_copy` de cada Gerber, Excellon o Geometría (los CNC Job no se copian).
     std::vector<FlatCAMObj*> out;
-    const JsonValue& options = projectOptions_.isObject() ? projectOptions_ : ProjectIO::factoryDefaults();
+    const JsonValue& options = appOptions();
     for (FlatCAMObj* o : selectedObjects()) {
         if (o->kind() == ObjectKind::CNCJob) continue;
         JsonValue d = ProjectIO::toDict(*o, options);

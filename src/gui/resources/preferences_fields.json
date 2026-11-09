@@ -1,0 +1,1942 @@
+{
+ "decimals_inch": {
+  "member": "general_app_group_precision_inch_entry",
+  "py": "FCSpinner"
+ },
+ "decimals_metric": {
+  "member": "general_app_group_precision_metric_entry",
+  "py": "FCSpinner"
+ },
+ "units": {
+  "member": "general_app_group_units_radio",
+  "py": "RadioSet"
+ },
+ "global_graphic_engine": {
+  "member": "general_app_group_ge_radio",
+  "py": "RadioSet"
+ },
+ "global_app_level": {
+  "member": "general_app_group_app_level_radio",
+  "py": "RadioSet"
+ },
+ "global_portable": {
+  "member": "general_app_group_portability_cb",
+  "py": "FCCheckBox"
+ },
+ "global_language": {
+  "member": "general_app_group_language_cb",
+  "py": "FCComboBox"
+ },
+ "global_systray_icon": {
+  "member": "general_app_group_systray_cb",
+  "py": "FCCheckBox"
+ },
+ "global_shell_at_startup": {
+  "member": "general_app_group_shell_startup_cb",
+  "py": "FCCheckBox"
+ },
+ "global_project_at_startup": {
+  "member": "general_app_group_project_startup_cb",
+  "py": "FCCheckBox"
+ },
+ "global_version_check": {
+  "member": "general_app_group_version_check_cb",
+  "py": "FCCheckBox"
+ },
+ "global_send_stats": {
+  "member": "general_app_group_send_stats_cb",
+  "py": "FCCheckBox"
+ },
+ "global_worker_number": {
+  "member": "general_app_group_worker_number_sb",
+  "py": "FCSpinner"
+ },
+ "global_tolerance": {
+  "member": "general_app_group_tol_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "global_compression_level": {
+  "member": "general_app_group_compress_spinner",
+  "py": "FCSpinner"
+ },
+ "global_save_compressed": {
+  "member": "general_app_group_save_type_cb",
+  "py": "FCCheckBox"
+ },
+ "global_autosave": {
+  "member": "general_app_group_autosave_cb",
+  "py": "FCCheckBox"
+ },
+ "global_autosave_timeout": {
+  "member": "general_app_group_autosave_entry",
+  "py": "FCSpinner"
+ },
+ "global_tpdf_tmargin": {
+  "member": "general_app_group_tmargin_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "global_tpdf_bmargin": {
+  "member": "general_app_group_bmargin_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "global_tpdf_lmargin": {
+  "member": "general_app_group_lmargin_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "global_tpdf_rmargin": {
+  "member": "general_app_group_rmargin_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "global_theme": {
+  "member": "general_gui_group_theme_radio",
+  "py": "RadioSet"
+ },
+ "global_gray_icons": {
+  "member": "general_gui_group_gray_icons_cb",
+  "py": "FCCheckBox"
+ },
+ "global_layout": {
+  "member": "general_gui_group_layout_combo",
+  "py": "FCComboBox"
+ },
+ "global_hover": {
+  "member": "general_gui_group_hover_cb",
+  "py": "FCCheckBox"
+ },
+ "global_selection_shape": {
+  "member": "general_gui_group_selection_cb",
+  "py": "FCCheckBox"
+ },
+ "global_sel_fill": {
+  "member": "general_gui_group_sf_color_entry",
+  "py": "FCColorEntry"
+ },
+ "global_sel_line": {
+  "member": "general_gui_group_sl_color_entry",
+  "py": "FCColorEntry"
+ },
+ "global_alt_sel_fill": {
+  "member": "general_gui_group_alt_sf_color_entry",
+  "py": "FCColorEntry"
+ },
+ "global_alt_sel_line": {
+  "member": "general_gui_group_alt_sl_color_entry",
+  "py": "FCColorEntry"
+ },
+ "global_draw_color": {
+  "member": "general_gui_group_draw_color_entry",
+  "py": "FCColorEntry"
+ },
+ "global_sel_draw_color": {
+  "member": "general_gui_group_sel_draw_color_entry",
+  "py": "FCColorEntry"
+ },
+ "global_proj_item_color": {
+  "member": "general_gui_group_proj_color_entry",
+  "py": "FCColorEntry"
+ },
+ "global_proj_item_dis_color": {
+  "member": "general_gui_group_proj_color_dis_entry",
+  "py": "FCColorEntry"
+ },
+ "global_project_autohide": {
+  "member": "general_gui_group_project_autohide_cb",
+  "py": "FCCheckBox"
+ },
+ "global_gridx": {
+  "member": "general_app_set_group_gridx_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "global_gridy": {
+  "member": "general_app_set_group_gridy_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "global_snap_max": {
+  "member": "general_app_set_group_snap_max_dist_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "global_workspace": {
+  "member": "general_app_set_group_workspace_cb",
+  "py": "FCCheckBox"
+ },
+ "global_workspaceT": {
+  "member": "general_app_set_group_wk_cb",
+  "py": "FCComboBox"
+ },
+ "global_workspace_orientation": {
+  "member": "general_app_set_group_wk_orientation_radio",
+  "py": "RadioSet"
+ },
+ "global_cursor_type": {
+  "member": "general_app_set_group_cursor_radio",
+  "py": "RadioSet"
+ },
+ "global_cursor_size": {
+  "member": "general_app_set_group_cursor_size_entry",
+  "py": "FCSpinner"
+ },
+ "global_cursor_width": {
+  "member": "general_app_set_group_cursor_width_entry",
+  "py": "FCSpinner"
+ },
+ "global_cursor_color_enabled": {
+  "member": "general_app_set_group_mouse_cursor_color_cb",
+  "py": "FCCheckBox"
+ },
+ "global_cursor_color": {
+  "member": "general_app_set_group_mouse_cursor_entry",
+  "py": "FCColorEntry"
+ },
+ "global_pan_button": {
+  "member": "general_app_set_group_pan_button_radio",
+  "py": "RadioSet"
+ },
+ "global_mselect_key": {
+  "member": "general_app_set_group_mselect_radio",
+  "py": "RadioSet"
+ },
+ "global_delete_confirmation": {
+  "member": "general_app_set_group_delete_conf_cb",
+  "py": "FCCheckBox"
+ },
+ "global_allow_edit_in_project_tab": {
+  "member": "general_app_set_group_allow_edit_cb",
+  "py": "FCCheckBox"
+ },
+ "global_open_style": {
+  "member": "general_app_set_group_open_style_cb",
+  "py": "FCCheckBox"
+ },
+ "global_toggle_tooltips": {
+  "member": "general_app_set_group_toggle_tooltips_cb",
+  "py": "FCCheckBox"
+ },
+ "global_machinist_setting": {
+  "member": "general_app_set_group_machinist_cb",
+  "py": "FCCheckBox"
+ },
+ "global_bookmarks_limit": {
+  "member": "general_app_set_group_bm_limit_spinner",
+  "py": "FCSpinner"
+ },
+ "global_activity_icon": {
+  "member": "general_app_set_group_activity_combo",
+  "py": "FCComboBox"
+ },
+ "gerber_plot": {
+  "member": "gerber_gen_group_plot_cb",
+  "py": "FCCheckBox"
+ },
+ "gerber_solid": {
+  "member": "gerber_gen_group_solid_cb",
+  "py": "FCCheckBox"
+ },
+ "gerber_multicolored": {
+  "member": "gerber_gen_group_multicolored_cb",
+  "py": "FCCheckBox"
+ },
+ "gerber_store_color_list": {
+  "member": "gerber_gen_group_store_colors_cb",
+  "py": "FCCheckBox"
+ },
+ "gerber_circle_steps": {
+  "member": "gerber_gen_group_circle_steps_entry",
+  "py": "FCSpinner"
+ },
+ "gerber_def_units": {
+  "member": "gerber_gen_group_gerber_units_radio",
+  "py": "RadioSet"
+ },
+ "gerber_def_zeros": {
+  "member": "gerber_gen_group_gerber_zeros_radio",
+  "py": "RadioSet"
+ },
+ "gerber_clean_apertures": {
+  "member": "gerber_gen_group_gerber_clean_cb",
+  "py": "FCCheckBox"
+ },
+ "gerber_extra_buffering": {
+  "member": "gerber_gen_group_gerber_extra_buffering",
+  "py": "FCCheckBox"
+ },
+ "gerber_plot_fill": {
+  "member": "gerber_gen_group_fill_color_entry",
+  "py": "FCColorEntry"
+ },
+ "gerber_plot_line": {
+  "member": "gerber_gen_group_line_color_entry",
+  "py": "FCColorEntry"
+ },
+ "gerber_noncoppermargin": {
+  "member": "gerber_opt_group_noncopper_margin_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "gerber_noncopperrounded": {
+  "member": "gerber_opt_group_noncopper_rounded_cb",
+  "py": "FCCheckBox"
+ },
+ "gerber_bboxmargin": {
+  "member": "gerber_opt_group_bbmargin_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "gerber_bboxrounded": {
+  "member": "gerber_opt_group_bbrounded_cb",
+  "py": "FCCheckBox"
+ },
+ "gerber_aperture_display": {
+  "member": "gerber_adv_opt_group_aperture_table_visibility_cb",
+  "py": "FCCheckBox"
+ },
+ "gerber_follow": {
+  "member": "gerber_adv_opt_group_follow_cb",
+  "py": "FCCheckBox"
+ },
+ "gerber_buffering": {
+  "member": "gerber_adv_opt_group_buffering_radio",
+  "py": "RadioSet"
+ },
+ "gerber_delayed_buffering": {
+  "member": "gerber_adv_opt_group_delayed_buffer_cb",
+  "py": "FCCheckBox"
+ },
+ "gerber_simplification": {
+  "member": "gerber_adv_opt_group_simplify_cb",
+  "py": "FCCheckBox"
+ },
+ "gerber_simp_tolerance": {
+  "member": "gerber_adv_opt_group_simplification_tol_spinner",
+  "py": "FCDoubleSpinner"
+ },
+ "gerber_exp_units": {
+  "member": "gerber_exp_group_gerber_units_radio",
+  "py": "RadioSet"
+ },
+ "gerber_exp_integer": {
+  "member": "gerber_exp_group_format_whole_entry",
+  "py": "FCSpinner"
+ },
+ "gerber_exp_decimals": {
+  "member": "gerber_exp_group_format_dec_entry",
+  "py": "FCSpinner"
+ },
+ "gerber_exp_zeros": {
+  "member": "gerber_exp_group_zeros_radio",
+  "py": "RadioSet"
+ },
+ "gerber_editor_sel_limit": {
+  "member": "gerber_editor_group_sel_limit_entry",
+  "py": "FCSpinner"
+ },
+ "gerber_editor_newcode": {
+  "member": "gerber_editor_group_addcode_entry",
+  "py": "FCSpinner"
+ },
+ "gerber_editor_newsize": {
+  "member": "gerber_editor_group_addsize_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "gerber_editor_newtype": {
+  "member": "gerber_editor_group_addtype_combo",
+  "py": "FCComboBox"
+ },
+ "gerber_editor_newdim": {
+  "member": "gerber_editor_group_adddim_entry",
+  "py": "NumericalEvalTupleEntry"
+ },
+ "gerber_editor_array_size": {
+  "member": "gerber_editor_group_grb_array_size_entry",
+  "py": "FCSpinner"
+ },
+ "gerber_editor_lin_axis": {
+  "member": "gerber_editor_group_grb_axis_radio",
+  "py": "RadioSet"
+ },
+ "gerber_editor_lin_pitch": {
+  "member": "gerber_editor_group_grb_pitch_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "gerber_editor_lin_angle": {
+  "member": "gerber_editor_group_grb_angle_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "gerber_editor_circ_dir": {
+  "member": "gerber_editor_group_grb_circular_dir_radio",
+  "py": "RadioSet"
+ },
+ "gerber_editor_circ_angle": {
+  "member": "gerber_editor_group_grb_circular_angle_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "gerber_editor_scale_f": {
+  "member": "gerber_editor_group_grb_scale_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "gerber_editor_buff_f": {
+  "member": "gerber_editor_group_grb_buff_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "gerber_editor_ma_low": {
+  "member": "gerber_editor_group_grb_ma_low_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "gerber_editor_ma_high": {
+  "member": "gerber_editor_group_grb_ma_high_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "excellon_plot": {
+  "member": "excellon_gen_group_plot_cb",
+  "py": "FCCheckBox"
+ },
+ "excellon_solid": {
+  "member": "excellon_gen_group_solid_cb",
+  "py": "FCCheckBox"
+ },
+ "excellon_multicolored": {
+  "member": "excellon_gen_group_multicolored_cb",
+  "py": "FCCheckBox"
+ },
+ "excellon_merge_fuse_tools": {
+  "member": "excellon_gen_group_fuse_tools_cb",
+  "py": "FCCheckBox"
+ },
+ "excellon_format_upper_in": {
+  "member": "excellon_gen_group_excellon_format_upper_in_entry",
+  "py": "FCSpinner"
+ },
+ "excellon_format_lower_in": {
+  "member": "excellon_gen_group_excellon_format_lower_in_entry",
+  "py": "FCSpinner"
+ },
+ "excellon_format_upper_mm": {
+  "member": "excellon_gen_group_excellon_format_upper_mm_entry",
+  "py": "FCSpinner"
+ },
+ "excellon_format_lower_mm": {
+  "member": "excellon_gen_group_excellon_format_lower_mm_entry",
+  "py": "FCSpinner"
+ },
+ "excellon_zeros": {
+  "member": "excellon_gen_group_excellon_zeros_radio",
+  "py": "RadioSet"
+ },
+ "excellon_units": {
+  "member": "excellon_gen_group_excellon_units_radio",
+  "py": "RadioSet"
+ },
+ "excellon_update": {
+  "member": "excellon_gen_group_update_excellon_cb",
+  "py": "FCCheckBox"
+ },
+ "excellon_optimization_type": {
+  "member": "excellon_gen_group_excellon_optimization_radio",
+  "py": "RadioSet"
+ },
+ "excellon_search_time": {
+  "member": "excellon_gen_group_optimization_time_entry",
+  "py": "FCSpinner"
+ },
+ "excellon_plot_fill": {
+  "member": "excellon_gen_group_fill_color_entry",
+  "py": "FCColorEntry"
+ },
+ "excellon_plot_line": {
+  "member": "excellon_gen_group_line_color_entry",
+  "py": "FCColorEntry"
+ },
+ "excellon_operation": {
+  "member": "excellon_opt_group_operation_radio",
+  "py": "RadioSet"
+ },
+ "excellon_milling_type": {
+  "member": "excellon_opt_group_milling_type_radio",
+  "py": "RadioSet"
+ },
+ "excellon_milling_dia": {
+  "member": "excellon_opt_group_mill_dia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "excellon_tooldia": {
+  "member": "excellon_opt_group_tooldia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "excellon_slot_tooldia": {
+  "member": "excellon_opt_group_slot_tooldia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "excellon_tools_table_display": {
+  "member": "excellon_adv_opt_group_table_visibility_cb",
+  "py": "FCCheckBox"
+ },
+ "excellon_autoload_db": {
+  "member": "excellon_adv_opt_group_autoload_db_cb",
+  "py": "FCCheckBox"
+ },
+ "excellon_exp_units": {
+  "member": "excellon_exp_group_excellon_units_radio",
+  "py": "RadioSet"
+ },
+ "excellon_exp_format": {
+  "member": "excellon_exp_group_format_radio",
+  "py": "RadioSet"
+ },
+ "excellon_exp_integer": {
+  "member": "excellon_exp_group_format_whole_entry",
+  "py": "FCSpinner"
+ },
+ "excellon_exp_decimals": {
+  "member": "excellon_exp_group_format_dec_entry",
+  "py": "FCSpinner"
+ },
+ "excellon_exp_zeros": {
+  "member": "excellon_exp_group_zeros_radio",
+  "py": "RadioSet"
+ },
+ "excellon_exp_slot_type": {
+  "member": "excellon_exp_group_slot_type_radio",
+  "py": "RadioSet"
+ },
+ "excellon_editor_sel_limit": {
+  "member": "excellon_editor_group_sel_limit_entry",
+  "py": "FCSpinner"
+ },
+ "excellon_editor_newdia": {
+  "member": "excellon_editor_group_addtool_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "excellon_editor_array_size": {
+  "member": "excellon_editor_group_drill_array_size_entry",
+  "py": "FCSpinner"
+ },
+ "excellon_editor_lin_dir": {
+  "member": "excellon_editor_group_drill_axis_radio",
+  "py": "RadioSet"
+ },
+ "excellon_editor_lin_pitch": {
+  "member": "excellon_editor_group_drill_pitch_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "excellon_editor_lin_angle": {
+  "member": "excellon_editor_group_drill_angle_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "excellon_editor_circ_dir": {
+  "member": "excellon_editor_group_drill_circular_dir_radio",
+  "py": "RadioSet"
+ },
+ "excellon_editor_circ_angle": {
+  "member": "excellon_editor_group_drill_circular_angle_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "excellon_editor_slot_direction": {
+  "member": "excellon_editor_group_slot_axis_radio",
+  "py": "RadioSet"
+ },
+ "excellon_editor_slot_angle": {
+  "member": "excellon_editor_group_slot_angle_spinner",
+  "py": "FCDoubleSpinner"
+ },
+ "excellon_editor_slot_length": {
+  "member": "excellon_editor_group_slot_length_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "excellon_editor_slot_array_size": {
+  "member": "excellon_editor_group_slot_array_size_entry",
+  "py": "FCSpinner"
+ },
+ "excellon_editor_slot_lin_dir": {
+  "member": "excellon_editor_group_slot_array_axis_radio",
+  "py": "RadioSet"
+ },
+ "excellon_editor_slot_lin_pitch": {
+  "member": "excellon_editor_group_slot_array_pitch_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "excellon_editor_slot_lin_angle": {
+  "member": "excellon_editor_group_slot_array_angle_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "excellon_editor_slot_circ_dir": {
+  "member": "excellon_editor_group_slot_array_circular_dir_radio",
+  "py": "RadioSet"
+ },
+ "excellon_editor_slot_circ_angle": {
+  "member": "excellon_editor_group_slot_array_circular_angle_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_plot": {
+  "member": "geometry_gen_group_plot_cb",
+  "py": "FCCheckBox"
+ },
+ "geometry_multicolored": {
+  "member": "geometry_gen_group_multicolored_cb",
+  "py": "FCCheckBox"
+ },
+ "geometry_circle_steps": {
+  "member": "geometry_gen_group_circle_steps_entry",
+  "py": "FCSpinner"
+ },
+ "geometry_cnctooldia": {
+  "member": "geometry_gen_group_cnctooldia_entry",
+  "py": "FCEntry"
+ },
+ "geometry_merge_fuse_tools": {
+  "member": "geometry_gen_group_fuse_tools_cb",
+  "py": "FCCheckBox"
+ },
+ "geometry_plot_line": {
+  "member": "geometry_gen_group_line_color_entry",
+  "py": "FCColorEntry"
+ },
+ "geometry_optimization_type": {
+  "member": "geometry_gen_group_opt_algorithm_radio",
+  "py": "RadioSet"
+ },
+ "geometry_search_time": {
+  "member": "geometry_gen_group_optimization_time_entry",
+  "py": "FCSpinner"
+ },
+ "geometry_cutz": {
+  "member": "geometry_opt_group_cutz_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_travelz": {
+  "member": "geometry_opt_group_travelz_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_feedrate": {
+  "member": "geometry_opt_group_cncfeedrate_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_feedrate_z": {
+  "member": "geometry_opt_group_feedrate_z_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_spindlespeed": {
+  "member": "geometry_opt_group_cncspindlespeed_entry",
+  "py": "FCSpinner"
+ },
+ "geometry_dwell": {
+  "member": "geometry_opt_group_dwell_cb",
+  "py": "FCCheckBox"
+ },
+ "geometry_dwelltime": {
+  "member": "geometry_opt_group_dwelltime_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_ppname_g": {
+  "member": "geometry_opt_group_pp_geometry_name_cb",
+  "py": "FCComboBox"
+ },
+ "geometry_toolchange": {
+  "member": "geometry_opt_group_toolchange_cb",
+  "py": "FCCheckBox"
+ },
+ "geometry_toolchangez": {
+  "member": "geometry_opt_group_toolchangez_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_endz": {
+  "member": "geometry_opt_group_endz_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_endxy": {
+  "member": "geometry_opt_group_endxy_entry",
+  "py": "NumericalEvalTupleEntry"
+ },
+ "geometry_depthperpass": {
+  "member": "geometry_opt_group_depthperpass_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_multidepth": {
+  "member": "geometry_opt_group_multidepth_cb",
+  "py": "FCCheckBox"
+ },
+ "geometry_toolchangexy": {
+  "member": "geometry_adv_opt_group_toolchangexy_entry",
+  "py": "NumericalEvalTupleEntry"
+ },
+ "geometry_startz": {
+  "member": "geometry_adv_opt_group_gstartz_entry",
+  "py": "NumericalEvalEntry"
+ },
+ "geometry_feedrate_rapid": {
+  "member": "geometry_adv_opt_group_feedrate_rapid_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_extracut": {
+  "member": "geometry_adv_opt_group_extracut_cb",
+  "py": "FCCheckBox"
+ },
+ "geometry_extracut_length": {
+  "member": "geometry_adv_opt_group_e_cut_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_z_pdepth": {
+  "member": "geometry_adv_opt_group_pdepth_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_feedrate_probe": {
+  "member": "geometry_adv_opt_group_feedrate_probe_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_spindledir": {
+  "member": "geometry_adv_opt_group_spindledir_radio",
+  "py": "RadioSet"
+ },
+ "geometry_f_plunge": {
+  "member": "geometry_adv_opt_group_fplunge_cb",
+  "py": "FCCheckBox"
+ },
+ "geometry_segx": {
+  "member": "geometry_adv_opt_group_segx_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_segy": {
+  "member": "geometry_adv_opt_group_segy_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_area_exclusion": {
+  "member": "geometry_adv_opt_group_exclusion_cb",
+  "py": "FCCheckBox"
+ },
+ "geometry_area_shape": {
+  "member": "geometry_adv_opt_group_area_shape_radio",
+  "py": "RadioSet"
+ },
+ "geometry_area_strategy": {
+  "member": "geometry_adv_opt_group_strategy_radio",
+  "py": "RadioSet"
+ },
+ "geometry_area_overz": {
+  "member": "geometry_adv_opt_group_over_z_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_polish": {
+  "member": "geometry_adv_opt_group_polish_cb",
+  "py": "FCCheckBox"
+ },
+ "geometry_polish_dia": {
+  "member": "geometry_adv_opt_group_polish_dia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_polish_pressure": {
+  "member": "geometry_adv_opt_group_polish_pressure_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_polish_travelz": {
+  "member": "geometry_adv_opt_group_polish_travelz_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_polish_margin": {
+  "member": "geometry_adv_opt_group_polish_margin_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_polish_overlap": {
+  "member": "geometry_adv_opt_group_polish_over_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "geometry_polish_method": {
+  "member": "geometry_adv_opt_group_polish_method_combo",
+  "py": "FCComboBox2"
+ },
+ "geometry_editor_sel_limit": {
+  "member": "geometry_editor_group_sel_limit_entry",
+  "py": "FCSpinner"
+ },
+ "geometry_editor_milling_type": {
+  "member": "geometry_editor_group_milling_type_radio",
+  "py": "RadioSet"
+ },
+ "cncjob_plot": {
+  "member": "cncjob_gen_group_plot_cb",
+  "py": "FCCheckBox"
+ },
+ "cncjob_tooldia": {
+  "member": "cncjob_gen_group_tooldia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "cncjob_coords_type": {
+  "member": "cncjob_gen_group_coords_type_radio",
+  "py": "RadioSet"
+ },
+ "cncjob_coords_decimals": {
+  "member": "cncjob_gen_group_coords_dec_entry",
+  "py": "FCSpinner"
+ },
+ "cncjob_fr_decimals": {
+  "member": "cncjob_gen_group_fr_dec_entry",
+  "py": "FCSpinner"
+ },
+ "cncjob_steps_per_circle": {
+  "member": "cncjob_gen_group_steps_per_circle_entry",
+  "py": "FCSpinner"
+ },
+ "cncjob_line_ending": {
+  "member": "cncjob_gen_group_line_ending_cb",
+  "py": "FCCheckBox"
+ },
+ "cncjob_plot_line": {
+  "member": "cncjob_gen_group_line_color_entry",
+  "py": "FCColorEntry"
+ },
+ "cncjob_plot_fill": {
+  "member": "cncjob_gen_group_fill_color_entry",
+  "py": "FCColorEntry"
+ },
+ "cncjob_travel_line": {
+  "member": "cncjob_gen_group_tline_color_entry",
+  "py": "FCColorEntry"
+ },
+ "cncjob_travel_fill": {
+  "member": "cncjob_gen_group_tfill_color_entry",
+  "py": "FCColorEntry"
+ },
+ "cncjob_plot_kind": {
+  "member": "cncjob_opt_group_cncplot_method_radio",
+  "py": "RadioSet"
+ },
+ "cncjob_annotation": {
+  "member": "cncjob_opt_group_annotation_cb",
+  "py": "FCCheckBox"
+ },
+ "cncjob_annotation_fontsize": {
+  "member": "cncjob_adv_opt_group_annotation_fontsize_sp",
+  "py": "FCSpinner"
+ },
+ "cncjob_annotation_fontcolor": {
+  "member": "cncjob_adv_opt_group_annotation_fontcolor_entry",
+  "py": "FCColorEntry"
+ },
+ "cncjob_al_mode": {
+  "member": "cncjob_adv_opt_group_al_mode_radio",
+  "py": "RadioSet"
+ },
+ "cncjob_al_method": {
+  "member": "cncjob_adv_opt_group_al_method_radio",
+  "py": "RadioSet"
+ },
+ "cncjob_al_rows": {
+  "member": "cncjob_adv_opt_group_al_rows_entry",
+  "py": "FCSpinner"
+ },
+ "cncjob_al_columns": {
+  "member": "cncjob_adv_opt_group_al_columns_entry",
+  "py": "FCSpinner"
+ },
+ "cncjob_al_travelz": {
+  "member": "cncjob_adv_opt_group_ptravelz_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "cncjob_al_probe_depth": {
+  "member": "cncjob_adv_opt_group_pdepth_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "cncjob_al_probe_fr": {
+  "member": "cncjob_adv_opt_group_feedrate_probe_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "cncjob_al_controller": {
+  "member": "cncjob_adv_opt_group_al_controller_combo",
+  "py": "FCComboBox"
+ },
+ "cncjob_al_grbl_jog_step": {
+  "member": "cncjob_adv_opt_group_jog_step_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "cncjob_al_grbl_jog_fr": {
+  "member": "cncjob_adv_opt_group_jog_fr_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "cncjob_al_grbl_travelz": {
+  "member": "cncjob_adv_opt_group_jog_travelz_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "cncjob_prepend": {
+  "member": "cncjob_editor_group_prepend_text",
+  "py": "FCTextArea"
+ },
+ "cncjob_append": {
+  "member": "cncjob_editor_group_append_text",
+  "py": "FCTextArea"
+ },
+ "tools_iso_tooldia": {
+  "member": "tools_iso_group_tool_dia_entry",
+  "py": "NumericalEvalTupleEntry"
+ },
+ "tools_iso_order": {
+  "member": "tools_iso_group_order_radio",
+  "py": "RadioSet"
+ },
+ "tools_iso_tool_type": {
+  "member": "tools_iso_group_tool_type_radio",
+  "py": "RadioSet"
+ },
+ "tools_iso_tool_vtipdia": {
+  "member": "tools_iso_group_tipdia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_iso_tool_vtipangle": {
+  "member": "tools_iso_group_tipangle_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_iso_tool_cutz": {
+  "member": "tools_iso_group_cutz_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_iso_newdia": {
+  "member": "tools_iso_group_newdia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_iso_passes": {
+  "member": "tools_iso_group_passes_entry",
+  "py": "FCSpinner"
+ },
+ "tools_iso_overlap": {
+  "member": "tools_iso_group_overlap_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_iso_milling_type": {
+  "member": "tools_iso_group_milling_type_radio",
+  "py": "RadioSet"
+ },
+ "tools_iso_follow": {
+  "member": "tools_iso_group_follow_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_iso_isotype": {
+  "member": "tools_iso_group_iso_type_radio",
+  "py": "RadioSet"
+ },
+ "tools_iso_rest": {
+  "member": "tools_iso_group_rest_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_iso_combine_passes": {
+  "member": "tools_iso_group_combine_passes_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_iso_check_valid": {
+  "member": "tools_iso_group_valid_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_iso_isoexcept": {
+  "member": "tools_iso_group_except_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_iso_selection": {
+  "member": "tools_iso_group_select_combo",
+  "py": "FCComboBox2"
+ },
+ "tools_iso_poly_ints": {
+  "member": "tools_iso_group_poly_int_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_iso_force": {
+  "member": "tools_iso_group_force_iso_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_iso_area_shape": {
+  "member": "tools_iso_group_area_shape_radio",
+  "py": "RadioSet"
+ },
+ "tools_iso_plotting": {
+  "member": "tools_iso_group_plotting_radio",
+  "py": "RadioSet"
+ },
+ "tools_drill_tool_order": {
+  "member": "tools_drill_group_order_radio",
+  "py": "RadioSet"
+ },
+ "tools_drill_cutz": {
+  "member": "tools_drill_group_cutz_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_drill_multidepth": {
+  "member": "tools_drill_group_mpass_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_drill_depthperpass": {
+  "member": "tools_drill_group_maxdepth_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_drill_travelz": {
+  "member": "tools_drill_group_travelz_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_drill_endz": {
+  "member": "tools_drill_group_endz_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_drill_endxy": {
+  "member": "tools_drill_group_endxy_entry",
+  "py": "NumericalEvalTupleEntry"
+ },
+ "tools_drill_feedrate_z": {
+  "member": "tools_drill_group_feedrate_z_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_drill_spindlespeed": {
+  "member": "tools_drill_group_spindlespeed_entry",
+  "py": "FCSpinner"
+ },
+ "tools_drill_dwell": {
+  "member": "tools_drill_group_dwell_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_drill_dwelltime": {
+  "member": "tools_drill_group_dwelltime_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_drill_toolchange": {
+  "member": "tools_drill_group_toolchange_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_drill_toolchangez": {
+  "member": "tools_drill_group_toolchangez_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_drill_ppname_e": {
+  "member": "tools_drill_group_pp_excellon_name_cb",
+  "py": "FCComboBox"
+ },
+ "tools_drill_drill_slots": {
+  "member": "tools_drill_group_drill_slots_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_drill_drill_overlap": {
+  "member": "tools_drill_group_drill_overlap_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_drill_last_drill": {
+  "member": "tools_drill_group_last_drill_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_drill_offset": {
+  "member": "tools_drill_group_offset_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_drill_toolchangexy": {
+  "member": "tools_drill_group_toolchangexy_entry",
+  "py": "NumericalEvalTupleEntry"
+ },
+ "tools_drill_startz": {
+  "member": "tools_drill_group_estartz_entry",
+  "py": "NumericalEvalEntry"
+ },
+ "tools_drill_feedrate_rapid": {
+  "member": "tools_drill_group_feedrate_rapid_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_drill_z_pdepth": {
+  "member": "tools_drill_group_pdepth_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_drill_feedrate_probe": {
+  "member": "tools_drill_group_feedrate_probe_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_drill_spindledir": {
+  "member": "tools_drill_group_spindledir_radio",
+  "py": "RadioSet"
+ },
+ "tools_drill_f_plunge": {
+  "member": "tools_drill_group_fplunge_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_drill_f_retract": {
+  "member": "tools_drill_group_fretract_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_drill_area_exclusion": {
+  "member": "tools_drill_group_exclusion_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_drill_area_shape": {
+  "member": "tools_drill_group_area_shape_radio",
+  "py": "RadioSet"
+ },
+ "tools_drill_area_strategy": {
+  "member": "tools_drill_group_strategy_radio",
+  "py": "RadioSet"
+ },
+ "tools_drill_area_overz": {
+  "member": "tools_drill_group_over_z_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_ncc_tools": {
+  "member": "tools_ncc_group_ncc_tool_dia_entry",
+  "py": "NumericalEvalTupleEntry"
+ },
+ "tools_ncc_order": {
+  "member": "tools_ncc_group_ncc_order_radio",
+  "py": "RadioSet"
+ },
+ "tools_ncc_overlap": {
+  "member": "tools_ncc_group_ncc_overlap_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_ncc_margin": {
+  "member": "tools_ncc_group_ncc_margin_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_ncc_method": {
+  "member": "tools_ncc_group_ncc_method_combo",
+  "py": "FCComboBox2"
+ },
+ "tools_ncc_connect": {
+  "member": "tools_ncc_group_ncc_connect_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_ncc_contour": {
+  "member": "tools_ncc_group_ncc_contour_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_ncc_rest": {
+  "member": "tools_ncc_group_ncc_rest_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_ncc_offset_choice": {
+  "member": "tools_ncc_group_ncc_choice_offset_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_ncc_offset_value": {
+  "member": "tools_ncc_group_ncc_offset_spinner",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_ncc_ref": {
+  "member": "tools_ncc_group_select_combo",
+  "py": "FCComboBox2"
+ },
+ "tools_ncc_area_shape": {
+  "member": "tools_ncc_group_area_shape_radio",
+  "py": "RadioSet"
+ },
+ "tools_ncc_milling_type": {
+  "member": "tools_ncc_group_milling_type_radio",
+  "py": "RadioSet"
+ },
+ "tools_ncc_tool_type": {
+  "member": "tools_ncc_group_tool_type_radio",
+  "py": "RadioSet"
+ },
+ "tools_ncc_cutz": {
+  "member": "tools_ncc_group_cutz_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_ncc_tipdia": {
+  "member": "tools_ncc_group_tipdia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_ncc_tipangle": {
+  "member": "tools_ncc_group_tipangle_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_ncc_newdia": {
+  "member": "tools_ncc_group_newdia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_ncc_plotting": {
+  "member": "tools_ncc_group_plotting_radio",
+  "py": "RadioSet"
+ },
+ "tools_ncc_check_valid": {
+  "member": "tools_ncc_group_valid_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_cutout_tooldia": {
+  "member": "tools_cutout_group_cutout_tooldia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cutout_kind": {
+  "member": "tools_cutout_group_obj_kind_combo",
+  "py": "RadioSet"
+ },
+ "tools_cutout_margin": {
+  "member": "tools_cutout_group_cutout_margin_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cutout_z": {
+  "member": "tools_cutout_group_cutz_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cutout_depthperpass": {
+  "member": "tools_cutout_group_maxdepth_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cutout_mdepth": {
+  "member": "tools_cutout_group_mpass_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_cutout_gapsize": {
+  "member": "tools_cutout_group_cutout_gap_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cutout_gaps_ff": {
+  "member": "tools_cutout_group_gaps_combo",
+  "py": "FCComboBox"
+ },
+ "tools_cutout_convexshape": {
+  "member": "tools_cutout_group_convex_box",
+  "py": "FCCheckBox"
+ },
+ "tools_cutout_big_cursor": {
+  "member": "tools_cutout_group_big_cursor_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_cutout_gap_type": {
+  "member": "tools_cutout_group_gaptype_radio",
+  "py": "RadioSet"
+ },
+ "tools_cutout_gap_depth": {
+  "member": "tools_cutout_group_thin_depth_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cutout_mb_dia": {
+  "member": "tools_cutout_group_mb_dia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cutout_mb_spacing": {
+  "member": "tools_cutout_group_mb_spacing_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_paint_tooldia": {
+  "member": "tools_paint_group_painttooldia_entry",
+  "py": "NumericalEvalTupleEntry"
+ },
+ "tools_paint_order": {
+  "member": "tools_paint_group_paint_order_radio",
+  "py": "RadioSet"
+ },
+ "tools_paint_overlap": {
+  "member": "tools_paint_group_paintoverlap_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_paint_offset": {
+  "member": "tools_paint_group_paintmargin_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_paint_method": {
+  "member": "tools_paint_group_paintmethod_combo",
+  "py": "FCComboBox2"
+ },
+ "tools_paint_selectmethod": {
+  "member": "tools_paint_group_selectmethod_combo",
+  "py": "FCComboBox2"
+ },
+ "tools_paint_area_shape": {
+  "member": "tools_paint_group_area_shape_radio",
+  "py": "RadioSet"
+ },
+ "tools_paint_connect": {
+  "member": "tools_paint_group_pathconnect_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_paint_contour": {
+  "member": "tools_paint_group_contour_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_paint_plotting": {
+  "member": "tools_paint_group_paint_plotting_radio",
+  "py": "RadioSet"
+ },
+ "tools_paint_rest": {
+  "member": "tools_paint_group_rest_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_paint_tool_type": {
+  "member": "tools_paint_group_tool_type_radio",
+  "py": "RadioSet"
+ },
+ "tools_paint_cutz": {
+  "member": "tools_paint_group_cutz_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_paint_tipdia": {
+  "member": "tools_paint_group_tipdia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_paint_tipangle": {
+  "member": "tools_paint_group_tipangle_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_paint_newdia": {
+  "member": "tools_paint_group_newdia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_2sided_mirror_axis": {
+  "member": "tools_2sided_group_mirror_axis_radio",
+  "py": "RadioSet"
+ },
+ "tools_2sided_axis_loc": {
+  "member": "tools_2sided_group_axis_location_radio",
+  "py": "RadioSet"
+ },
+ "tools_2sided_drilldia": {
+  "member": "tools_2sided_group_drill_dia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_2sided_allign_axis": {
+  "member": "tools_2sided_group_align_axis_radio",
+  "py": "RadioSet"
+ },
+ "tools_film_type": {
+  "member": "tools_film_group_film_type_radio",
+  "py": "RadioSet"
+ },
+ "tools_film_boundary": {
+  "member": "tools_film_group_film_boundary_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_film_scale_stroke": {
+  "member": "tools_film_group_film_scale_stroke_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_film_color": {
+  "member": "tools_film_group_film_color_entry",
+  "py": "FCColorEntry"
+ },
+ "tools_film_scale_cb": {
+  "member": "tools_film_group_film_scale_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_film_scale_x_entry": {
+  "member": "tools_film_group_film_scalex_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_film_scale_y_entry": {
+  "member": "tools_film_group_film_scaley_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_film_skew_cb": {
+  "member": "tools_film_group_film_skew_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_film_skew_x_entry": {
+  "member": "tools_film_group_film_skewx_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_film_skew_y_entry": {
+  "member": "tools_film_group_film_skewy_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_film_skew_ref_radio": {
+  "member": "tools_film_group_film_skew_reference",
+  "py": "RadioSet"
+ },
+ "tools_film_mirror_cb": {
+  "member": "tools_film_group_film_mirror_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_film_mirror_axis_radio": {
+  "member": "tools_film_group_film_mirror_axis",
+  "py": "RadioSet"
+ },
+ "tools_film_file_type_radio": {
+  "member": "tools_film_group_file_type_radio",
+  "py": "RadioSet"
+ },
+ "tools_film_orientation": {
+  "member": "tools_film_group_orientation_radio",
+  "py": "RadioSet"
+ },
+ "tools_film_pagesize": {
+  "member": "tools_film_group_pagesize_combo",
+  "py": "FCComboBox"
+ },
+ "tools_film_png_dpi": {
+  "member": "tools_film_group_png_dpi_spinner",
+  "py": "FCSpinner"
+ },
+ "tools_panelize_spacing_columns": {
+  "member": "tools_panelize_group_pspacing_columns",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_panelize_spacing_rows": {
+  "member": "tools_panelize_group_pspacing_rows",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_panelize_columns": {
+  "member": "tools_panelize_group_pcolumns",
+  "py": "FCSpinner"
+ },
+ "tools_panelize_rows": {
+  "member": "tools_panelize_group_prows",
+  "py": "FCSpinner"
+ },
+ "tools_panelize_optimization": {
+  "member": "tools_panelize_group_poptimization_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_panelize_constrain": {
+  "member": "tools_panelize_group_pconstrain_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_panelize_constrainx": {
+  "member": "tools_panelize_group_px_width_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_panelize_constrainy": {
+  "member": "tools_panelize_group_py_height_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_panelize_panel_type": {
+  "member": "tools_panelize_group_panel_type_radio",
+  "py": "RadioSet"
+ },
+ "tools_calc_vshape_tip_dia": {
+  "member": "tools_calculators_group_tip_dia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_calc_vshape_tip_angle": {
+  "member": "tools_calculators_group_tip_angle_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_calc_vshape_cut_z": {
+  "member": "tools_calculators_group_cut_z_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_calc_electro_length": {
+  "member": "tools_calculators_group_pcblength_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_calc_electro_width": {
+  "member": "tools_calculators_group_pcbwidth_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_calc_electro_area": {
+  "member": "tools_calculators_group_area_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_calc_electro_cdensity": {
+  "member": "tools_calculators_group_cdensity_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_calc_electro_growth": {
+  "member": "tools_calculators_group_growth_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_transform_reference": {
+  "member": "tools_transform_group_ref_combo",
+  "py": "FCComboBox"
+ },
+ "tools_transform_ref_object": {
+  "member": "tools_transform_group_type_obj_combo",
+  "py": "FCComboBox"
+ },
+ "tools_transform_ref_point": {
+  "member": "tools_transform_group_point_entry",
+  "py": "NumericalEvalTupleEntry"
+ },
+ "tools_transform_rotate": {
+  "member": "tools_transform_group_rotate_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_transform_skew_x": {
+  "member": "tools_transform_group_skewx_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_transform_skew_y": {
+  "member": "tools_transform_group_skewy_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_transform_skew_link": {
+  "member": "tools_transform_group_skew_link_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_transform_scale_x": {
+  "member": "tools_transform_group_scalex_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_transform_scale_y": {
+  "member": "tools_transform_group_scaley_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_transform_scale_link": {
+  "member": "tools_transform_group_scale_link_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_transform_offset_x": {
+  "member": "tools_transform_group_offx_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_transform_offset_y": {
+  "member": "tools_transform_group_offy_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_transform_buffer_dis": {
+  "member": "tools_transform_group_buffer_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_transform_buffer_factor": {
+  "member": "tools_transform_group_buffer_factor_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_transform_buffer_corner": {
+  "member": "tools_transform_group_buffer_rounded_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_solderpaste_tools": {
+  "member": "tools_solderpaste_group_nozzle_tool_dia_entry",
+  "py": "NumericalEvalTupleEntry"
+ },
+ "tools_solderpaste_new": {
+  "member": "tools_solderpaste_group_addtool_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_solderpaste_z_start": {
+  "member": "tools_solderpaste_group_z_start_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_solderpaste_z_dispense": {
+  "member": "tools_solderpaste_group_z_dispense_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_solderpaste_z_stop": {
+  "member": "tools_solderpaste_group_z_stop_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_solderpaste_z_travel": {
+  "member": "tools_solderpaste_group_z_travel_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_solderpaste_z_toolchange": {
+  "member": "tools_solderpaste_group_z_toolchange_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_solderpaste_xy_toolchange": {
+  "member": "tools_solderpaste_group_xy_toolchange_entry",
+  "py": "NumericalEvalTupleEntry"
+ },
+ "tools_solderpaste_frxy": {
+  "member": "tools_solderpaste_group_frxy_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_solderpaste_frz": {
+  "member": "tools_solderpaste_group_frz_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_solderpaste_frz_dispense": {
+  "member": "tools_solderpaste_group_frz_dispense_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_solderpaste_speedfwd": {
+  "member": "tools_solderpaste_group_speedfwd_entry",
+  "py": "FCSpinner"
+ },
+ "tools_solderpaste_dwellfwd": {
+  "member": "tools_solderpaste_group_dwellfwd_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_solderpaste_speedrev": {
+  "member": "tools_solderpaste_group_speedrev_entry",
+  "py": "FCSpinner"
+ },
+ "tools_solderpaste_dwellrev": {
+  "member": "tools_solderpaste_group_dwellrev_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_solderpaste_pp": {
+  "member": "tools_solderpaste_group_pp_combo",
+  "py": "FCComboBox"
+ },
+ "tools_sub_close_paths": {
+  "member": "tools_sub_group_close_paths_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_sub_delete_sources": {
+  "member": "tools_sub_group_delete_sources_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_corners_type": {
+  "member": "tools_corners_group_type_radio",
+  "py": "RadioSet"
+ },
+ "tools_corners_thickness": {
+  "member": "tools_corners_group_thick_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_corners_length": {
+  "member": "tools_corners_group_l_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_corners_margin": {
+  "member": "tools_corners_group_margin_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_corners_drill_dia": {
+  "member": "tools_corners_group_drill_dia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_opt_precision": {
+  "member": "tools2_optimal_group_precision_sp",
+  "py": "FCSpinner"
+ },
+ "tools_cr_trace_size": {
+  "member": "tools2_checkrules_group_trace_size_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_cr_trace_size_val": {
+  "member": "tools2_checkrules_group_trace_size_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cr_c2c": {
+  "member": "tools2_checkrules_group_clearance_copper2copper_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_cr_c2c_val": {
+  "member": "tools2_checkrules_group_clearance_copper2copper_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cr_c2o": {
+  "member": "tools2_checkrules_group_clearance_copper2ol_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_cr_c2o_val": {
+  "member": "tools2_checkrules_group_clearance_copper2ol_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cr_s2s": {
+  "member": "tools2_checkrules_group_clearance_silk2silk_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_cr_s2s_val": {
+  "member": "tools2_checkrules_group_clearance_silk2silk_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cr_s2sm": {
+  "member": "tools2_checkrules_group_clearance_silk2sm_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_cr_s2sm_val": {
+  "member": "tools2_checkrules_group_clearance_silk2sm_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cr_s2o": {
+  "member": "tools2_checkrules_group_clearance_silk2ol_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_cr_s2o_val": {
+  "member": "tools2_checkrules_group_clearance_silk2ol_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cr_sm2sm": {
+  "member": "tools2_checkrules_group_clearance_sm2sm_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_cr_sm2sm_val": {
+  "member": "tools2_checkrules_group_clearance_sm2sm_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cr_ri": {
+  "member": "tools2_checkrules_group_ring_integrity_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_cr_ri_val": {
+  "member": "tools2_checkrules_group_ring_integrity_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cr_h2h": {
+  "member": "tools2_checkrules_group_clearance_d2d_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_cr_h2h_val": {
+  "member": "tools2_checkrules_group_clearance_d2d_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cr_dh": {
+  "member": "tools2_checkrules_group_drill_size_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_cr_dh_val": {
+  "member": "tools2_checkrules_group_drill_size_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_qrcode_version": {
+  "member": "tools2_qrcode_group_version_entry",
+  "py": "FCSpinner"
+ },
+ "tools_qrcode_error": {
+  "member": "tools2_qrcode_group_error_radio",
+  "py": "RadioSet"
+ },
+ "tools_qrcode_box_size": {
+  "member": "tools2_qrcode_group_bsize_entry",
+  "py": "FCSpinner"
+ },
+ "tools_qrcode_border_size": {
+  "member": "tools2_qrcode_group_border_size_entry",
+  "py": "FCSpinner"
+ },
+ "tools_qrcode_qrdata": {
+  "member": "tools2_qrcode_group_text_data",
+  "py": "FCTextArea"
+ },
+ "tools_qrcode_polarity": {
+  "member": "tools2_qrcode_group_pol_radio",
+  "py": "RadioSet"
+ },
+ "tools_qrcode_rounded": {
+  "member": "tools2_qrcode_group_bb_radio",
+  "py": "RadioSet"
+ },
+ "tools_qrcode_fill_color": {
+  "member": "tools2_qrcode_group_fill_color_entry",
+  "py": "FCColorEntry"
+ },
+ "tools_qrcode_back_color": {
+  "member": "tools2_qrcode_group_back_color_entry",
+  "py": "FCColorEntry"
+ },
+ "tools_qrcode_sel_limit": {
+  "member": "tools2_qrcode_group_sel_limit_entry",
+  "py": "FCSpinner"
+ },
+ "tools_copper_thieving_clearance": {
+  "member": "tools2_cfill_group_clearance_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_copper_thieving_margin": {
+  "member": "tools2_cfill_group_margin_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_copper_thieving_area": {
+  "member": "tools2_cfill_group_area_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_copper_thieving_reference": {
+  "member": "tools2_cfill_group_reference_radio",
+  "py": "RadioSet"
+ },
+ "tools_copper_thieving_box_type": {
+  "member": "tools2_cfill_group_bbox_type_radio",
+  "py": "RadioSet"
+ },
+ "tools_copper_thieving_circle_steps": {
+  "member": "tools2_cfill_group_circlesteps_entry",
+  "py": "FCSpinner"
+ },
+ "tools_copper_thieving_fill_type": {
+  "member": "tools2_cfill_group_fill_type_radio",
+  "py": "RadioSet"
+ },
+ "tools_copper_thieving_dots_dia": {
+  "member": "tools2_cfill_group_dot_dia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_copper_thieving_dots_spacing": {
+  "member": "tools2_cfill_group_dot_spacing_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_copper_thieving_squares_size": {
+  "member": "tools2_cfill_group_square_size_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_copper_thieving_squares_spacing": {
+  "member": "tools2_cfill_group_squares_spacing_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_copper_thieving_lines_size": {
+  "member": "tools2_cfill_group_line_size_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_copper_thieving_lines_spacing": {
+  "member": "tools2_cfill_group_lines_spacing_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_copper_thieving_rb_margin": {
+  "member": "tools2_cfill_group_rb_margin_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_copper_thieving_rb_thickness": {
+  "member": "tools2_cfill_group_rb_thickness_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_copper_thieving_mask_clearance": {
+  "member": "tools2_cfill_group_clearance_ppm_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_copper_thieving_geo_choice": {
+  "member": "tools2_cfill_group_ppm_choice_radio",
+  "py": "RadioSet"
+ },
+ "tools_fiducials_dia": {
+  "member": "tools2_fiducials_group_dia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_fiducials_margin": {
+  "member": "tools2_fiducials_group_margin_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_fiducials_mode": {
+  "member": "tools2_fiducials_group_mode_radio",
+  "py": "RadioSet"
+ },
+ "tools_fiducials_second_pos": {
+  "member": "tools2_fiducials_group_pos_radio",
+  "py": "RadioSet"
+ },
+ "tools_fiducials_type": {
+  "member": "tools2_fiducials_group_fid_type_radio",
+  "py": "RadioSet"
+ },
+ "tools_fiducials_line_thickness": {
+  "member": "tools2_fiducials_group_line_thickness_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cal_calsource": {
+  "member": "tools2_cal_group_cal_source_radio",
+  "py": "RadioSet"
+ },
+ "tools_cal_travelz": {
+  "member": "tools2_cal_group_travelz_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cal_verz": {
+  "member": "tools2_cal_group_verz_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cal_zeroz": {
+  "member": "tools2_cal_group_zeroz_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_cal_toolchangez": {
+  "member": "tools2_cal_group_toolchangez_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_cal_toolchange_xy": {
+  "member": "tools2_cal_group_toolchange_xy_entry",
+  "py": "NumericalEvalTupleEntry"
+ },
+ "tools_cal_sec_point": {
+  "member": "tools2_cal_group_second_point_radio",
+  "py": "RadioSet"
+ },
+ "tools_edrills_hole_type": {
+  "member": "tools2_edrills_group_hole_size_radio",
+  "py": "RadioSet"
+ },
+ "tools_edrills_hole_fixed_dia": {
+  "member": "tools2_edrills_group_dia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_edrills_hole_prop_factor": {
+  "member": "tools2_edrills_group_factor_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_edrills_circular_ring": {
+  "member": "tools2_edrills_group_circular_ring_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_edrills_oblong_ring": {
+  "member": "tools2_edrills_group_oblong_ring_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_edrills_square_ring": {
+  "member": "tools2_edrills_group_square_ring_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_edrills_rectangular_ring": {
+  "member": "tools2_edrills_group_rectangular_ring_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_edrills_others_ring": {
+  "member": "tools2_edrills_group_other_ring_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_edrills_circular": {
+  "member": "tools2_edrills_group_circular_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_edrills_oblong": {
+  "member": "tools2_edrills_group_oblong_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_edrills_square": {
+  "member": "tools2_edrills_group_square_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_edrills_rectangular": {
+  "member": "tools2_edrills_group_rectangular_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_edrills_others": {
+  "member": "tools2_edrills_group_other_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_punch_hole_type": {
+  "member": "tools2_punch_group_hole_size_radio",
+  "py": "RadioSet"
+ },
+ "tools_punch_hole_fixed_dia": {
+  "member": "tools2_punch_group_dia_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_punch_hole_prop_factor": {
+  "member": "tools2_punch_group_factor_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_punch_circular_ring": {
+  "member": "tools2_punch_group_circular_ring_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_punch_oblong_ring": {
+  "member": "tools2_punch_group_oblong_ring_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_punch_square_ring": {
+  "member": "tools2_punch_group_square_ring_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_punch_rectangular_ring": {
+  "member": "tools2_punch_group_rectangular_ring_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_punch_others_ring": {
+  "member": "tools2_punch_group_other_ring_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_punch_circular": {
+  "member": "tools2_punch_group_circular_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_punch_oblong": {
+  "member": "tools2_punch_group_oblong_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_punch_square": {
+  "member": "tools2_punch_group_square_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_punch_rectangular": {
+  "member": "tools2_punch_group_rectangular_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_punch_others": {
+  "member": "tools2_punch_group_other_cb",
+  "py": "FCCheckBox"
+ },
+ "tools_invert_margin": {
+  "member": "tools2_invert_group_margin_entry",
+  "py": "FCDoubleSpinner"
+ },
+ "tools_invert_join_style": {
+  "member": "tools2_invert_group_join_radio",
+  "py": "RadioSet"
+ },
+ "fa_excellon": {
+  "member": "fa_excellon_group_exc_list_text",
+  "py": "FCTextArea"
+ },
+ "fa_gcode": {
+  "member": "fa_gcode_group_gco_list_text",
+  "py": "FCTextArea"
+ },
+ "fa_gerber": {
+  "member": "fa_gerber_group_grb_list_text",
+  "py": "FCTextArea"
+ },
+ "util_autocomplete_keywords": {
+  "member": "kw_group_kw_list_text",
+  "py": "FCTextArea"
+ }
+}

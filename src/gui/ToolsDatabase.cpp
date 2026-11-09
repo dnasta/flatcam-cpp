@@ -114,8 +114,8 @@ bool ToolsDatabase::save(const QString& path, const JsonValue& db) {
     return f.write(text.data(), static_cast<qint64>(text.size())) == static_cast<qint64>(text.size());
 }
 
-JsonValue ToolsDatabase::newTool(const JsonValue& db) {
-    const JsonValue& defs = ProjectIO::factoryDefaults();
+JsonValue ToolsDatabase::newTool(const JsonValue& db, const JsonValue& defaults) {
+    const JsonValue& defs = defaults;
     JsonValue data = JsonValue::object();
     for (const DefaultKey& k : kDefaults) {
         const std::string cast = k.cast;

@@ -73,13 +73,13 @@ logo) y **CutOut** → **CNC Job** con G-code. Taladros y alineación con **PCB 
 | 2 | Parsers de Gerber y Excellon con tests contra archivos reales | **Hecha** |
 | 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | **Hecha**: transformaciones de Gerber, postprocesadores, G-code de taladrado y de geometrías, CutOut, capa de láser, Paint, NCC, PCB a 2 caras e Isolation |
 | 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | **En curso**: ventana principal idéntica a la original (generada desde la interfaz Python real), widgets de `GUIElements`, canvas `QOpenGLWidget` (ejes, grilla, HUD, zoom, paneo y dibujo de objetos con buffers de vértices), abrir Gerber y Excellon (menú, barra, arrastrar y soltar, línea de comandos) con el árbol del Proyecto; Propiedades de Gerber y Excellon (paneles generados + `build_ui`); paneles de NCC, Paint, Perforación y Corte en la pestaña Herramienta (generados). **Perforación completa:** objeto → tabla de herramientas → parámetros por herramienta → CNC Job (objeto, dibujo y Propiedades) → "Guardar código CNC"; desde la interfaz reproduce el `.nc` de la 2024.4 del usuario (salvo fecha y orden de agujeros). **Corte completo:** Corte libre o rectangular → objeto Geometría (Propiedades con su tabla y parámetros por herramienta) → "Generar objeto CNCJob" → exportar; reproduce el `.nc` del contorno de la 2024.4 **línea por línea salvo la fecha**. **Agregado pedido por el usuario:** los objetos de cada grupo del Proyecto se reordenan arrastrándolos y ese orden es el de dibujo (el primero queda arriba). **Paint y NCC completos** (método estándar, "Todos" / "Sí mismo"): el flujo del usuario sobre Logo y B_Cu da sus `.nc` de la 2024.4 (Paint: mismas líneas salvo la variante del láser y últimas cifras de GEOS; NCC: misma cabecera y los mismos trazados ±2 %). **Reflejar:** Opciones → Voltear en el eje X / Y y las teclas X / Y (también desde el árbol), alrededor del centro de la caja de los objetos elegidos; con las cuatro capas de "luz de noche" elegidas da exactamente el reflejo en x = 0 de los `.nc` del usuario. **PCB a 2 caras:** panel generado y lógica completa (reflejar con punto, caja o agujero elegido con el mouse; límites de lo elegido; agujeros de alineación "Alignment Drills"). **Isolation:** panel generado (nivel Básico) y lógica sobre `src/tools/Isolation`: combinado (`_iso_combined`), pasadas separadas (`_<diá>_isoN`), resto (`_iso_rest`), resta de otro objeto y objeto de referencia. **Abrir proyectos** `.FlatPrj` de la versión Python (también el real del usuario, 535 MB comprimido / 1,7 GB: 24 s y 1,8 GB de memoria): lectura en streaming (`src/io/`) que descarta `gcode_parsed` y las copias de geometría que no se usan. **Guardar proyectos** (Archivo → Guardar proyecto / Guardar como, comprimido con XZ como el original): cada objeto como su `to_dict` original, conservando lo que vino del proyecto; el FlatCAM en Python abre lo que guarda el port (`tests/tools/check_project_in_original.py`) |
-| 5 | Herramientas secundarias y postprocesadores restantes | **En curso** (plan en la sección 13): ítems 1, 2 y 3 hechos (Transformaciones, Mover, Distancia, Distancia mínima, Propiedades, escala y desplazamiento del panel de cada objeto; distancia recorrida y tiempo estimado del CNC Job, idénticos al original); **los 20 postprocesadores hechos**, cada método idéntico al original (2.251 casos) y de punta a punta en geometrías (39 escenarios más) y taladrado (17 postprocesadores) |
+| 5 | Herramientas secundarias y postprocesadores restantes | **En curso** (plan en la sección 13): ítems 1, 2 y 3 hechos (Transformaciones, Mover, Distancia, Distancia mínima, Propiedades, escala y desplazamiento del panel de cada objeto; distancia recorrida y tiempo estimado del CNC Job, idénticos al original); **los 20 postprocesadores hechos**; Preferencias en curso (pestaña, archivos y manejadores hechos), cada método idéntico al original (2.251 casos) y de punta a punta en geometrías (39 escenarios más) y taladrado (17 postprocesadores) |
 
 Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (AppleClang, GEOS 3.15). Doxygen genera
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.690 casos de `ctest` (2.630 del núcleo y 59 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.698 casos de `ctest` (2.630 del núcleo y 67 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -197,6 +197,13 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   AppJoin.cpp / AppConvert.cpp  Editar -> Unir y Editar -> Convertir
   AppImport.cpp          Archivo -> Importar -> SVG como Geometría o Gerber
   AppExport.cpp          Archivo -> Exportar -> Gerber / Excellon (sobre src/io/FileExport) y el texto fuente regenerado
+  Preferences.*          Preferencias (FlatCAMDefaults + PreferencesUIManager): app.defaults, current_defaults.FlatConfig y
+                         factory_defaults.FlatConfig en la carpeta de datos, la pestaña (generated/PreferencesTabUIBase, de
+                         tools/gui_dump/dump_preferences.py), leer/escribir los 485 campos con el tipo de Python (resources/
+                         preferences_fields.json), Guardar/Aplicar/Cerrar/Restaurar, "editado" en rojo
+  PreferencesGroups.cpp  Las señales de cada grupo de Preferencias: colores y alfa (__init_color_pickers), formatos de
+                         Excellon, asociaciones de archivos y palabras clave
+  widgets/FCPrefWidgets.* FCColorEntry, FCSliderWithSpinner, FCTextArea y FCTab de GUIElements
   AppHelp.cpp            Ayuda: Acerca de y Cómo empezar (generated/AboutDialogUIBase, HowtoDialogUIBase), enlaces, atajos
   tools/CutOutTool.*     Corte completo (port de ToolCutOut: libre y rectangular → `<objeto>_cutout`)
   tools/DrillingTool.*   Perforación completa (port de ToolDrilling: tabla, almacén de parámetros con el tipo de Python de
@@ -727,6 +734,20 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     en el punto intermedio); (4) el último trazo con la pluma abajo no se pierde. Siguen como el original: nada antes de `IN`,
     y cambiar de pluma con un trazo de un punto, bajar la pluma sin trazo o dibujar sin `SP` hacen fallar la lectura.
     Tests: `Hpgl2.MatchesOriginal` (modo original) y `Hpgl2Fixed.*` (las cuatro correcciones).
+    (x) **Preferencias** (fase 5, ítem 6). Como el original: al arrancar se crea `current_defaults.FlatConfig` vacío y
+    `factory_defaults.FlatConfig` (de solo lectura, versión "2024.4"); un archivo de otra versión se descarta (la 2024.4 es
+    beta); al armar la pestaña los controles de alfa reescriben el alfa de los colores en minúsculas ("#BBF268bf") también
+    en las opciones; "Guardar" lee el formulario, copia las opciones al proyecto (`on_options_app2project`), escribe el archivo
+    (JSON con sangría 2 y claves ordenadas) y cierra la pestaña; Ctrl+S en la pestaña aplica; cerrar la pestaña con cambios
+    pregunta si se guardan. Verificado con `oracle_preferences.py` (el `PreferencesUIManager` original con la interfaz PyQt5
+    real): el valor y el tipo de Python de las 485 claves al arrancar, el texto de los campos, la vuelta por un archivo y el
+    `eval` de fórmulas y tuplas escritas a mano (`GuiPreferences.*`). Desvíos: lo que el original guarda con `QSettings`
+    (tema, estilo, HDPI, tamaños de letra, "machinist", pantalla de bienvenida) va a `settings.ini` de la carpeta de datos
+    (no se pisa la configuración del FlatCAM en Python y los tests no tocan la del usuario); el tema de fábrica del port es el
+    claro (el original trae el oscuro, pero el port solo dibuja el claro); registrar las asociaciones de archivos solo hace
+    algo en Windows (el original falla en otros sistemas); "Abrir carpeta" usa `QDesktopServices`. Falta: cambiar las
+    unidades, el área de trabajo y el cursor desde la pestaña, importar/exportar preferencias y que cada herramienta lea sus
+    valores de `app.defaults` (hoy los paneles traen los de fábrica generados).
     (m) Errores del original que se reproducen a propósito en Isolation: la herramienta nueva tiene tipo `"           Iso"`
     (con espacios) y forma "V", y el rótulo "Ninguna herramienta seleccionada" lleva `color=#7777FF""`.
 14. **Postprocesadores: desvíos y rarezas del original.** (a) `line_xyz` lee `p['end_xy']`, que `CNCjob` no define: en el
@@ -791,7 +812,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.690 casos de test** (`ctest`): 2.631 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 59 de la GUI;
+- **2.698 casos de test** (`ctest`): 2.631 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 67 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -819,7 +840,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.690 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.698 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -991,8 +1012,12 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
 5. **Herramientas restantes** (`appTools/`): Milling, Panelize, Film, Calculators, Copper Thieving, Fiducials, Corners, Extract
    Drills, Punch Gerber, Invert Gerber, Align Objects, Subtract (`ToolSub`), QR Code, Rules Check, Optimal, Solder Paste,
    Calibration, Etch Compensation, PCB Wizard, Levelling (autonivelación del CNC Job).
-6. **Preferencias** (`appGUI/preferences/`, ~19.000 líneas): la ventana completa, guardar/cargar `current_defaults.FlatConfig`,
-   importar/exportar preferencias, y que todas las herramientas lean sus valores de fábrica de ahí.
+6. **Preferencias** (`appGUI/preferences/`, ~19.000 líneas). **Hecho:** la pestaña completa generada del original (485 campos),
+   guardar/cargar `current_defaults.FlatConfig` y `factory_defaults.FlatConfig`, Guardar/Aplicar/Cerrar/Restaurar/Abrir
+   carpeta/Borrar ajustes, Editar -> Preferencias, Shift+P, el rótulo de la barra de estado, los manejadores de cada grupo
+   (11.12 x, `oracle_preferences.py`). **Falta:** cambiar las unidades (tecla Q y la pestaña), área de trabajo y cursor,
+   importar/exportar preferencias (Archivo), "Opciones -> Transferir opciones" y que todas las herramientas y objetos lean sus
+   valores de `app.defaults`.
 7. **Consola Tcl** (`ToolShell`, `tclCommands/`, 68 comandos) y scripts.
 9. **Hacia la 1.0.0** (pedido del usuario; estimación dada: unas 6 sesiones sin editores y 8 a 9 con editores):
    (a) preferencias y unidades (ítem 6); (b) herramientas (ítem 5) en dos o tres sesiones; (c) lo que queda de archivos
@@ -1030,4 +1055,8 @@ encontrar uno nuevo, agregarlo acá con su sección. Ya corregidos a pedido del 
   vacío inicial.
 - **Importar DXF** (11.12 v): una sola línea unida falla; `SOLID`/`TRACE` vacíos; `bulge` ignorado; nudos uniformes;
   splines por puntos de ajuste fallan; filas/columnas de las inserciones antes de escalar; como Gerber, los polígonos fallan.
+- **Preferencias** (11.12 x): "Aplicar" no lee el formulario (solo copia las opciones a `current_defaults`); "Cerrar"
+  reescribe el formulario con las señales conectadas y deja las preferencias marcadas como editadas; editar el color de
+  relleno de la selección (izquierda a derecha) deja solo su alfa (`global_sel_fill[7:9]`); el alfa de derecha a izquierda
+  se carga de `global_sel_fill`; los alfa menores que 16 se escriben con un solo dígito (`hex()` sin completar).
 - **HPGL2** (11.12 w): los que quedan (cambiar de pluma con un trazo de un punto, bajar la pluma sin trazo, dibujar sin `SP`).

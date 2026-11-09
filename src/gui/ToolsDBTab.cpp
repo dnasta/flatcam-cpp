@@ -327,7 +327,7 @@ void ToolsDBTab::calculateToolDia() {
 }
 
 void ToolsDBTab::addTool() {
-    JsonValue tool = ToolsDatabase::newTool(db_);
+    JsonValue tool = ToolsDatabase::newTool(db_, app_->defaults());
     const int newId = static_cast<int>(db_.members().size()) + 1;
     db_.set(std::to_string(newId), tool);
     markEdited(true);
