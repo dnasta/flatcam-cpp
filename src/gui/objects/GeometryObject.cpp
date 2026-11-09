@@ -77,7 +77,8 @@ JsonValue geometryToolDataJson(const GeometryTool& t, JsonValue base) {
     return base;
 }
 
-GeometryObject::GeometryObject(QString name) : FlatCAMObj(ObjectKind::Geometry, std::move(name)) {
+GeometryObject::GeometryObject(QString name)
+    : FlatCAMObj(ObjectKind::Geometry, std::move(name)), units_(appUnitsKind()) {
     outlineColor = plotLineColor();
     fillColor = Qt::transparent;
 }
@@ -180,6 +181,11 @@ std::unique_ptr<CNCJobObject> GeometryObject::makeCncJob(const std::vector<int>&
         s.preprocessor = t.ppname.toStdString();
         s.order = t.optimization == "R" ? DrillOrder::RTree : DrillOrder::FileOrder;
         s.toolchange = true;  // mtool_gen_cncjob pasa toolchange=True a geometry_tool_gcode_gen
+        s.units = appUnits().toStdString();
+        s.coordsDecimals = defInt("cncjob_coords_decimals", 4);
+        s.frDecimals = defInt("cncjob_fr_decimals", 2);
+        s.decimals = appDecimals();
+        s.stepsPerCircle = defInt("geometry_circle_steps", 64);
         s.tool = id;          // self.tool = str(tool): el identificador de la herramienta (la 9999 imprime T9999)
         s.toolSettings = t.data;
         s.toolSettings.toolDia = t.tooldia;
@@ -213,8 +219,32 @@ std::unique_ptr<CNCJobObject> GeometryObject::makeCncJob(const std::vector<int>&
     h.version = "2024.4";
     h.versionDate = "2024/04/15";
     h.type = "Geometry";
+    h.units = appUnits().toStdString();
     auto obj = std::make_unique<CNCJobObject>(name() + "_cnc", std::move(job), h, std::move(rows));
     return obj;
+}
+
+}  // namespace flatcam::gui
+
+namespace flatcam::gui {
+
+double GeometryObject::convertUnits(Units units) {
+    // camlib.Geometry.convert_units: scale(factor, factor) desde el origen.
+    if (units == units_) return 1.0;
+    const double factor = units == Units::Millimeters ? 25.4 : 1 / 25.4;
+    units_ = units;
+    scale(factor, factor, {0, 0});
+    const int dec = appDecimals();
+    for (auto& [id, t] : tools_) {
+        t.tooldia = QString::number(t.tooldia * factor, 'f', dec).toDouble();  // float('%.*f' % (decimals, dia))
+        t.offsetValue *= factor;
+        GeometryToolSettings& d = t.data;
+        for (double* v : {&d.cutZ, &d.depthPerPass, &d.travelZ, &d.feedrate, &d.feedrateZ, &d.feedrateRapid, &d.endZ,
+                          &d.toolchangeZ})
+            *v *= factor;
+        t.solidGeometry.clear();  // error del original: 'solid_geometry' no pasa al diccionario nuevo
+    }
+    return factor;
 }
 
 }  // namespace flatcam::gui

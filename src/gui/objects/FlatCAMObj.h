@@ -111,6 +111,11 @@ public:
      * @return Ídem.
      */
     virtual bool buffer(double distance, JoinStyle join, bool factor);
+    /**
+     * @brief `convert_units`: pasa el objeto a otras unidades escalando su geometría desde el origen.
+     * @param units Unidades nuevas. @return El factor aplicado (1 si ya estaba en esas unidades o no se convierte).
+     */
+    virtual double convertUnits(Units units) { (void)units; return 1.0; }
 
     ~FlatCAMObj() override;
 
@@ -184,6 +189,8 @@ public:
     bool scale(double fx, double fy, const Point2D& point) override;
     bool offset(double dx, double dy) override;
     bool buffer(double distance, JoinStyle join, bool factor) override;
+    /** @brief `convert_units` del Gerber. @param units Unidades. @return El factor. */
+    double convertUnits(Units units) override;
 
 private:
     std::unique_ptr<Gerber> gerber_;
@@ -216,6 +223,8 @@ public:
     bool scale(double fx, double fy, const Point2D& point) override;
     bool offset(double dx, double dy) override;
     bool buffer(double distance, JoinStyle join, bool factor) override;
+    /** @brief `convert_units` del Excellon (también los diámetros). @param units Unidades. @return El factor. */
+    double convertUnits(Units units) override;
 
 private:
     std::unique_ptr<Excellon> excellon_;

@@ -57,6 +57,7 @@ QString App::dataPath() const {
 void App::setDataPath(const QString& path) {
     dataPath_ = path;
     prefs_->setup(dataPath());
+    setScreenUnits(appUnits());
     setupRecentItems();
 }
 

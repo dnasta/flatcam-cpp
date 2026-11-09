@@ -200,3 +200,11 @@ QWidget* ExcellonObject::propertiesUi() {
 }
 
 }  // namespace flatcam::gui
+
+namespace flatcam::gui {
+
+double GerberObject::convertUnits(Units units) { return gerber_->convertUnits(units); }
+
+double ExcellonObject::convertUnits(Units units) { return excellon_->convertUnits(units); }
+
+}  // namespace flatcam::gui

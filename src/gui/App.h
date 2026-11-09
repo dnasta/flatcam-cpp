@@ -210,6 +210,18 @@ public:
 
     /** @brief Opciones de la aplicación: las del proyecto abierto o, si no hay, las preferencias. @return Las opciones. */
     const JsonValue& appOptions() const;
+    /**
+     * @brief `on_toggle_units`: pasa la aplicación a las unidades elegidas en la pestaña (pregunta antes), convierte
+     * todos los objetos y, salvo con @p noPref, escala las preferencias con dimensiones.
+     * @param noPref Sin escalar las preferencias (la tecla Q).
+     */
+    void onToggleUnits(bool noPref = false);
+    /** @brief `on_toggle_units_click`: tecla Q y Editar -> Cambiar unidades. */
+    void onToggleUnitsClick();
+    /** @brief `set_screen_units`: el rótulo de unidades de la barra de estado. @param units "MM" o "IN". */
+    void setScreenUnits(const QString& units);
+    /** @brief En los tests: respuesta al aviso de cambiar las unidades. @param a `true` = Aceptar. */
+    void setUnitsAutoAnswer(std::optional<bool> a) { unitsAutoAnswer_ = a; }
     /** @brief Las preferencias (`app.defaults` y la pestaña Preferencias). @return El gestor. */
     class Preferences* preferences() const { return prefs_; }
     /** @brief Las opciones de la aplicación (`app.defaults`). @return Las opciones. */
@@ -453,9 +465,16 @@ private:
     QString projectFilename_;
     QString dataPath_;
     class CanvasPicker* picker_{nullptr};
+    /** @brief `scale_defaults`: escala las opciones con dimensiones. @param factor 25,4 o 1/25,4. */
+    void scaleDefaults(double factor);
+    /** @brief `float(v)` de Python, o @p def. @param v Valor. @param def Si no es un número. @return El número. */
+    static double toFloatOr(const JsonValue& v, double def = 0.0);
+    bool toggleUnitsIgnore_{false};          ///< `toggle_units_ignore`.
+    bool unitsRadioMuted_{false};            ///< El radio de unidades desconectado (on_toggle_units_click).
     /** @brief Crea las preferencias y conecta la pestaña, el menú y el rótulo de la barra de estado. */
     void setupPreferences();
     class Preferences* prefs_{nullptr};  ///< Preferencias.
+    std::optional<bool> unitsAutoAnswer_;   ///< Respuesta automática al aviso de unidades (tests).
     class ExclusionAreasManager* excAreas_{nullptr};  ///< Áreas de exclusión.  ///< Carpeta de datos elegida (vacía: la de la aplicación).
     class QMenu* menuProject_{nullptr};  ///< `menuproject`: menú contextual de la pestaña Proyecto.
     JsonValue projectOptions_;  ///< Opciones del proyecto abierto (`options`), para volver a guardarlas.

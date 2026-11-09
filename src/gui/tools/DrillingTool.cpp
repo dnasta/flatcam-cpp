@@ -375,6 +375,10 @@ FlatCAMObj* DrillingTool::generateCnc() {
     js.preprocessor = pp.toStdString();
     js.order = DrillOrder::Optimized;  // excellon_optimization_type = B (OR-Tools): el optimizador propio
     js.toolchange = toolchange_cb->isChecked();
+    js.units = appUnits().toStdString();
+    js.coordsDecimals = defInt("cncjob_coords_decimals", 4);
+    js.frDecimals = defInt("cncjob_fr_decimals", 2);
+    js.decimals = appDecimals();
     std::vector<CncToolRow> rows;
     for (int id : tableOrder_) {
         if (std::find(sel.begin(), sel.end(), id) == sel.end()) continue;
@@ -413,6 +417,7 @@ FlatCAMObj* DrillingTool::generateCnc() {
     GcodeHeaderInfo h;
     h.version = "2024.4";
     h.versionDate = "2024/04/15";
+    h.units = appUnits().toStdString();
     h.type = "Geometry";  // así lo imprime la 2024.4 también para el taladrado (archivo real del usuario)
     return app_->addObject(std::make_unique<CNCJobObject>(excellon_->name() + "_cnc", std::move(job), h, std::move(rows)));
 }
