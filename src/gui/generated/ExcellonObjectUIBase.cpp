@@ -251,4 +251,50 @@ void ExcellonObjectUIBase::setupUi() {
     setLayout(lay1);
 }
 
+std::map<std::string, QObject*> ExcellonObjectUIBase::membersByName() const {
+    return {
+        {"autoload_db_cb", autoload_db_cb},
+        {"common_grid", common_grid},
+        {"custom_box", custom_box},
+        {"drill_button", drill_button},
+        {"drills_frame", drills_frame},
+        {"editor_button", editor_button},
+        {"generate_milling_button", generate_milling_button},
+        {"generate_milling_slots_button", generate_milling_slots_button},
+        {"icon", icon},
+        {"level", level},
+        {"mill_hole_label", mill_hole_label},
+        {"milling_button", milling_button},
+        {"multicolored_cb", multicolored_cb},
+        {"name_entry", name_entry},
+        {"name_hlay", name_hlay},
+        {"offset_button", offset_button},
+        {"offsetvector_entry", offsetvector_entry},
+        {"plot_cb", plot_cb},
+        {"plot_options_label", plot_options_label},
+        {"properties_box", properties_box},
+        {"properties_button", properties_button},
+        {"properties_frame", properties_frame},
+        {"scale_button", scale_button},
+        {"scale_entry", scale_entry},
+        {"slot_tooldia_entry", slot_tooldia_entry},
+        {"solid_cb", solid_cb},
+        {"table_visibility_cb", table_visibility_cb},
+        {"tdlabel", tdlabel},
+        {"title_box", title_box},
+        {"title_label", title_label},
+        {"tool_lbl", tool_lbl},
+        {"tooldia_entry", tooldia_entry},
+        {"tools_box", tools_box},
+        {"tools_table", tools_table},
+        {"tools_table_label", tools_table_label},
+        {"transform_label", transform_label},
+        {"transformations_button", transformations_button},
+        {"treeWidget", treeWidget},
+        {"util_box", util_box},
+        {"util_button", util_button},
+        {"util_frame", util_frame},
+    };
+}
+
 }  // namespace flatcam::gui

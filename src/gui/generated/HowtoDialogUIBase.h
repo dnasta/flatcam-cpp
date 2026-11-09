@@ -1,6 +1,8 @@
 // ARCHIVO GENERADO por tools/gui_dump/gen_cpp.py a partir de la interfaz original - no editar a mano.
 #pragma once
 
+#include <map>
+#include <string>
 #include <QDialog>
 #include <QAction>
 #include <QPixmap>
@@ -71,6 +73,9 @@ public:
     QWidget* links_tab{nullptr};  ///< `links_tab` del original.
     QVBoxLayout* links_tab_layout{nullptr};  ///< `links_tab_layout` del original.
     ///@}
+
+    /** @brief Los miembros por su nombre (después de setupUi). @return Nombre -> objeto. */
+    std::map<std::string, QObject*> membersByName() const;
 };
 
 }  // namespace flatcam::gui

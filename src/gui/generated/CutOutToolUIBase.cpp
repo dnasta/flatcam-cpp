@@ -259,4 +259,48 @@ void CutOutToolUIBase::setupUi() {
     setLayout(layout);
 }
 
+std::map<std::string, QObject*> CutOutToolUIBase::membersByName() const {
+    return {
+        {"add_newtool_button", add_newtool_button},
+        {"addtool_from_db_btn", addtool_from_db_btn},
+        {"big_cursor_cb", big_cursor_cb},
+        {"convex_box_cb", convex_box_cb},
+        {"convex_box_label", convex_box_label},
+        {"cutz_entry", cutz_entry},
+        {"dia", dia},
+        {"dia_label", dia_label},
+        {"ff_cutout_object_btn", ff_cutout_object_btn},
+        {"gaps", gaps},
+        {"gapsize", gapsize},
+        {"gapsize_label", gapsize_label},
+        {"gaptype_label", gaptype_label},
+        {"gaptype_radio", gaptype_radio},
+        {"kindlabel", kindlabel},
+        {"layout", layout},
+        {"man_gaps_creation_btn", man_gaps_creation_btn},
+        {"man_geo_creation_btn", man_geo_creation_btn},
+        {"man_object_combo", man_object_combo},
+        {"man_object_label", man_object_label},
+        {"margin", margin},
+        {"margin_label", margin_label},
+        {"maxdepth_entry", maxdepth_entry},
+        {"mb_dia_entry", mb_dia_entry},
+        {"mb_dia_label", mb_dia_label},
+        {"mb_spacing_entry", mb_spacing_entry},
+        {"mb_spacing_label", mb_spacing_label},
+        {"mpass_cb", mpass_cb},
+        {"obj_combo", obj_combo},
+        {"obj_kind_combo", obj_kind_combo},
+        {"object_label", object_label},
+        {"param_label", param_label},
+        {"rect_cutout_object_btn", rect_cutout_object_btn},
+        {"reset_button", reset_button},
+        {"thin_depth_entry", thin_depth_entry},
+        {"thin_depth_label", thin_depth_label},
+        {"tool_sel_label", tool_sel_label},
+        {"type_obj_combo_label", type_obj_combo_label},
+        {"type_obj_radio", type_obj_radio},
+    };
+}
+
 }  // namespace flatcam::gui

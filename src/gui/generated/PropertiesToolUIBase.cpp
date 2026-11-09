@@ -27,4 +27,13 @@ void PropertiesToolUIBase::setupUi() {
     setLayout(layout);
 }
 
+std::map<std::string, QObject*> PropertiesToolUIBase::membersByName() const {
+    return {
+        {"layout", layout},
+        {"properties_box", properties_box},
+        {"properties_frame", properties_frame},
+        {"treeWidget", treeWidget},
+    };
+}
+
 }  // namespace flatcam::gui

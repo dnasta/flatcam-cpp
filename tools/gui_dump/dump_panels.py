@@ -114,6 +114,9 @@ def main():
             written.append(write(cls, data))
     finally:
         QtWidgets.QDialog.exec_ = orig_exec
+    # La pestaña Preferencias la vuelca dump_preferences.py (también va en el índice).
+    if os.path.exists(os.path.join(OUT, "PreferencesTabUI.json")):
+        written.append("PreferencesTabUI")
     with open(os.path.join(OUT, "index.txt"), "w") as f:
         f.write("\n".join(written) + "\n")
 

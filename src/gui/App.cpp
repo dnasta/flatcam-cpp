@@ -34,6 +34,9 @@
 #include "gui/tools/MoveTool.h"
 #include "gui/tools/PropertiesTool.h"
 #include "gui/ProjectIO.h"
+#include "gui/Preferences.h"
+#include "gui/widgets/FCLabel.h"
+#include <QProcess>
 #include "gui/tools/ClearingTools.h"
 #include "gui/objects/ObjectUIs.h"
 
@@ -104,6 +107,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     // El selector con el mouse y las áreas de exclusión, antes que las herramientas que los usan.
     picker_ = new CanvasPicker(ui_.get(), this);
     excAreas_ = new ExclusionAreasManager(ui_.get(), picker_, this);
+    setupPreferences();  // app.defaults: antes que las herramientas
     ToolsDatabase::ensureFile(dataPath());  // tools_db.FlatDB vacío si no existe
     // Las herramientas (install_tools): sus paneles viven mientras viva la ventana.
     nccTool = new NccTool(this, ui_.get());
@@ -397,7 +401,7 @@ bool App::openProject(const QString& filename) {
 }
 
 bool App::saveProject(const QString& filename) {
-    const JsonValue& options = projectOptions_.isObject() ? projectOptions_ : ProjectIO::factoryDefaults();
+    const JsonValue& options = appOptions();
     std::string error;
     bool ok = false;
     {
@@ -590,7 +594,35 @@ void App::objectChanged(FlatCAMObj* obj) {
 }
 
 const JsonValue& App::appOptions() const {
-    return projectOptions_.isObject() ? projectOptions_ : ProjectIO::factoryDefaults();
+    return projectOptions_.isObject() ? projectOptions_ : defaults();
+}
+
+const JsonValue& App::defaults() const { return prefs_->defaults(); }
+
+void App::setupPreferences() {
+    prefs_ = new Preferences(ui_.get(), this);
+    prefs_->setup(dataPath());
+    // on_options_app2project: leer el formulario y copiar las preferencias a las opciones del proyecto.
+    connect(prefs_, &Preferences::optionsToProject, this, [this] {
+        prefs_->readForm();
+        if (projectOptions_.isObject())
+            for (const auto& [k, v] : prefs_->defaults().members()) projectOptions_.set(k, v);
+    });
+    // on_app_restart: vuelve a abrir la aplicación con los mismos argumentos.
+    prefs_->onRestart = [this] {
+        if (!finalSave()) return;
+        QProcess::startDetached(QCoreApplication::applicationFilePath(), QCoreApplication::arguments().mid(1));
+        QApplication::quit();
+    };
+    connect(ui_->menueditpreferences, &QAction::triggered, prefs_, &Preferences::open);
+    connect(ui_->pref_status_label, &FCLabel::clicked, prefs_, [this] { prefs_->toggle(); });
+    PreferencesTab* t = prefs_->tab();
+    connect(t->pref_save_button, &QPushButton::clicked, prefs_, [this] { prefs_->onSave(true); });
+    connect(t->pref_apply_button, &QPushButton::clicked, prefs_, [this] { prefs_->onSave(false); });
+    connect(t->pref_close_button, &QPushButton::clicked, prefs_, &Preferences::onCloseButton);
+    connect(t->pref_defaults_button, &QPushButton::clicked, prefs_, &Preferences::onRestoreDefaults);
+    connect(t->pref_open_button, &QPushButton::clicked, prefs_, &Preferences::openFolder);
+    connect(t->clear_btn, &QPushButton::clicked, prefs_, [this] { prefs_->clearGuiSettings(false); });
 }
 
 void App::jumpTo(const QPointF& location, bool fitCenter) {
@@ -828,7 +860,14 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
             case Qt::Key_M: distanceTool->run(); return true;
             case Qt::Key_N: onFileNewClick(); return true;
             case Qt::Key_O: onFileOpenProject(); return true;
-            case Qt::Key_S: onFileSaveProject(); return true;
+            case Qt::Key_S:
+                // En la pestaña Preferencias, Ctrl+S aplica (on_save_button(save_to_file=False)).
+                if (ui->plot_tab_area->currentWidget() && ui->plot_tab_area->currentWidget()->objectName() == "preferences_tab") {
+                    prefs_->onSave(false);
+                    return true;
+                }
+                onFileSaveProject();
+                return true;
             case Qt::Key_F10: ui->onTogglePlotArea(); return true;
             default: return false;
         }
@@ -850,6 +889,7 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
             case Qt::Key_H: ui->onToggleHud(); return true;
             case Qt::Key_J: onLocate(); return true;
             case Qt::Key_M: distanceMinTool->run(); return true;
+            case Qt::Key_P: prefs_->open(); return true;
             case Qt::Key_R: onRotateSelection(-90.0); return true;  // -tools_transform_rotate
             case Qt::Key_W: onWorkspaceToggle(); return true;
             case Qt::Key_X: onSkewSelection('X'); return true;

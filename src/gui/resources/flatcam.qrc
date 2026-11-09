@@ -348,6 +348,7 @@
     <file>images/zoom_out32.png</file>
     <file>es.json</file>
     <file>factory_defaults.json</file>
+    <file>preferences_fields.json</file>
     <file>shortcuts.json</file>
 </qresource>
 </RCC>

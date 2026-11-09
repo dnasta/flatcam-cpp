@@ -5,6 +5,7 @@
 #include <QStandardPaths>
 
 #include "gui/App.h"
+#include "gui/Preferences.h"
 #include "gui/Translation.h"
 #include "io/ProjectFile.h"
 
@@ -55,6 +56,7 @@ QString App::dataPath() const {
 
 void App::setDataPath(const QString& path) {
     dataPath_ = path;
+    prefs_->setup(dataPath());
     setupRecentItems();
 }
 

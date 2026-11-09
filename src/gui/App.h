@@ -208,8 +208,12 @@ public:
      */
     void jumpTo(const QPointF& location, bool fitCenter = true);
 
-    /** @brief Opciones de la aplicación: las del proyecto abierto o, si no hay, las de fábrica. @return Las opciones. */
+    /** @brief Opciones de la aplicación: las del proyecto abierto o, si no hay, las preferencias. @return Las opciones. */
     const JsonValue& appOptions() const;
+    /** @brief Las preferencias (`app.defaults` y la pestaña Preferencias). @return El gestor. */
+    class Preferences* preferences() const { return prefs_; }
+    /** @brief Las opciones de la aplicación (`app.defaults`). @return Las opciones. */
+    const JsonValue& defaults() const;
 
     /** @brief Objetos elegidos en el árbol, en su orden (`collection.get_selected`). @return Los objetos. */
     std::vector<FlatCAMObj*> selectedObjects() const;
@@ -449,6 +453,9 @@ private:
     QString projectFilename_;
     QString dataPath_;
     class CanvasPicker* picker_{nullptr};
+    /** @brief Crea las preferencias y conecta la pestaña, el menú y el rótulo de la barra de estado. */
+    void setupPreferences();
+    class Preferences* prefs_{nullptr};  ///< Preferencias.
     class ExclusionAreasManager* excAreas_{nullptr};  ///< Áreas de exclusión.  ///< Carpeta de datos elegida (vacía: la de la aplicación).
     class QMenu* menuProject_{nullptr};  ///< `menuproject`: menú contextual de la pestaña Proyecto.
     JsonValue projectOptions_;  ///< Opciones del proyecto abierto (`options`), para volver a guardarlas.

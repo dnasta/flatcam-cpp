@@ -39,10 +39,14 @@ CUSTOM = {
     "FCTable": ("gui/widgets/FCTable.h", "new FCTable({parent})"),
     "NumericalEvalEntry": ("gui/widgets/NumericalEval.h", "new NumericalEvalEntry({parent})"),
     "NumericalEvalTupleEntry": ("gui/widgets/NumericalEval.h", "new NumericalEvalTupleEntry({parent})"),
-    "RadioSet": ("gui/widgets/RadioSet.h", None),  # se construye con sus opciones (ver Gen.construct)
+    "RadioSet": ("gui/widgets/RadioSet.h", None),
+    "FCColorEntry": ("gui/widgets/FCPrefWidgets.h", "new FCColorEntry({parent})"),
+    "FCSliderWithSpinner": ("gui/widgets/FCPrefWidgets.h", None),  # se construye con su rango (ver Gen.construct)
+    "FCTextArea": ("gui/widgets/FCPrefWidgets.h", "new FCTextArea({parent})"),
+    "FCTab": ("gui/widgets/FCPrefWidgets.h", "new FCTab({parent})"),  # se construye con sus opciones (ver Gen.construct)
 }
 # Clases cuyo contenido interno arma el propio constructor del port (no se generan sus hijos).
-SELF_BUILT = {"FlatCAMInfoBar", "FlatCAMActivityView", "FCDetachableTab", "FCDetachableTab2", "FCTree",
+SELF_BUILT = {"FCColorEntry", "FCSliderWithSpinner", "FlatCAMInfoBar", "FlatCAMActivityView", "FCDetachableTab", "FCDetachableTab2", "FCTree",
               "KeySensitiveListView", "RadioSet"}
 
 QT_HEADERS = ["QDialog", "QAction", "QPixmap", "QFormLayout", "QHeaderView", "QTableWidget", "QDoubleSpinBox", "QSpinBox", "QRadioButton",
@@ -120,10 +124,24 @@ class Gen:
             choices = ", ".join("{%s, %s}" % (cstr(c["label"]), val(c["value"])) for c in node["choices"])
             return "new RadioSet({%s}, %s, %s, %s)" % (choices, "Qt::Vertical" if node.get("vertical") else "Qt::Horizontal",
                                                       "true" if node.get("stretch") else "false", parent)
+        if py == "FCSliderWithSpinner":
+            self.includes.add(CUSTOM[py][0])
+            sp = self.inner(node, 1)
+            mn = sp.get("minimum", {}).get("v", 0)
+            mx = sp.get("maximum", {}).get("v", 99)
+            st = sp.get("singleStep", {}).get("v", 1)
+            return "new FCSliderWithSpinner(%d, %d, %d, %s)" % (mn, mx, st, parent)
         if py in CUSTOM:
             self.includes.add(CUSTOM[py][0])
             return CUSTOM[py][1].format(parent=parent)
         return "new %s(%s)" % (node["qt"], parent)
+
+    @staticmethod
+    def inner(node, i):
+        """Propiedades del hijo i de un widget compuesto (el campo y el botón de FCColorEntry, el deslizador y el número
+        de FCSliderWithSpinner)."""
+        items = node.get("layout", {}).get("items", [])
+        return items[i]["widget"].get("props", {}) if i < len(items) and "widget" in items[i] else {}
 
     # ------------------------------------------------------------------ propiedades
     def props(self, v, node, kind="widget"):
@@ -242,6 +260,10 @@ class Gen:
         qt = node["qt"]
         if py in SELF_BUILT and "tabs" not in node:
             self.props(v, node)
+            if py == "FCColorEntry" and "text" in self.inner(node, 0):
+                self.emit("%s->setValue(%s);" % (v, cstr(self.inner(node, 0)["text"]["v"])))
+            if py == "FCSliderWithSpinner" and "value" in self.inner(node, 1):
+                self.emit("%s->setValue(%d);" % (v, self.inner(node, 1)["value"]["v"]))
             if py == "RadioSet" and node.get("value") is not None:
                 x = node["value"]
                 lit = ("true" if x else "false") if isinstance(x, bool) else (repr(x) if isinstance(x, (int, float)) else cstr(str(x)))
@@ -475,12 +497,18 @@ class Gen:
                    "", "    /** @name Objetos del panel (mismo nombre que en el original) */", "    ///@{"]
         for name in sorted(self.members):
             header.append("    %s* %s{nullptr};  ///< `%s` del original." % (self.members[name], name, name))
-        header += ["    ///@}", "};", "", "}  // namespace flatcam::gui", ""]
+        header += ["    ///@}", "",
+                   "    /** @brief Los miembros por su nombre (después de setupUi). @return Nombre -> objeto. */",
+                   "    std::map<std::string, QObject*> membersByName() const;",
+                   "};", "", "}  // namespace flatcam::gui", ""]
+        header.insert(3, "#include <map>\n#include <string>")
         body = ["// ARCHIVO GENERADO por tools/gui_dump/gen_cpp.py a partir de la interfaz original - no editar a mano.",
                 '#include "gui/generated/%s.h"' % base, "", "#include <QKeySequence>", "#include <QSpacerItem>", "",
                 "namespace flatcam::gui {", "", "void %s::setupUi() {" % base]
         body += self.lines
-        body += ["}", "", "}  // namespace flatcam::gui", ""]
+        body += ["}", "", "std::map<std::string, QObject*> %s::membersByName() const {" % base, "    return {"]
+        body += ['        {"%s", %s},' % (n, n) for n in sorted(self.members)]
+        body += ["    };", "}", "", "}  // namespace flatcam::gui", ""]
         with open(os.path.join(out_dir, base + ".h"), "w", encoding="utf-8") as f:
             f.write("\n".join(header))
         with open(os.path.join(out_dir, base + ".cpp"), "w", encoding="utf-8") as f:

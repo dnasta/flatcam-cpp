@@ -376,4 +376,23 @@ void AboutDialogUIBase::setupUi() {
     setLayout(lay1);
 }
 
+std::map<std::string, QObject*> AboutDialogUIBase::membersByName() const {
+    return {
+        {"attributions_tab", attributions_tab},
+        {"attributions_tab_layout", attributions_tab_layout},
+        {"components_tab", components_tab},
+        {"components_tab_layout", components_tab_layout},
+        {"license_tab", license_tab},
+        {"license_tab_layout", license_tab_layout},
+        {"prog_grid_lay", prog_grid_lay},
+        {"programmmers_tab", programmmers_tab},
+        {"programmmers_tab_layout", programmmers_tab_layout},
+        {"splash_tab", splash_tab},
+        {"splash_tab_layout", splash_tab_layout},
+        {"translator_grid_lay", translator_grid_lay},
+        {"translators_tab", translators_tab},
+        {"translators_tab_layout", translators_tab_layout},
+    };
+}
+
 }  // namespace flatcam::gui
