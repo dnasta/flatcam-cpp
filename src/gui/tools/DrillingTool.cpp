@@ -1,3 +1,4 @@
+#include "gui/Preferences.h"
 #include "gui/tools/DrillingTool.h"
 
 #include <QHeaderView>
@@ -72,25 +73,33 @@ DrillingTool::DrillingTool(App* app, QWidget* parent) : DrillingToolUIBase(paren
 ToolInfo DrillingTool::info() { return {tr_("Drilling Tool"), tr_("Drilling Tool")}; }
 
 DrillingTool::ToolData DrillingTool::defaultToolData() const {
-    // tools_drill_* de fábrica (defaults.py), con el tipo de Python de cada valor.
+    // tools_drill_* de las preferencias, con el tipo de Python de cada valor (de fábrica: -1.7, 0.7, 2, 0.5, 300...).
     ToolData d;
     DrillToolSettings& s = d.s;
-    s.cutZ = PyNumber(-1.7);
-    s.multidepth = false;
-    s.depthPerPass = PyNumber(0.7);
-    s.travelZ = PyNumber(2);
-    s.endZ = PyNumber(0.5);
-    s.feedrateZ = PyNumber(300);
-    s.spindleSpeed = PyNumber(0);
-    s.dwell = false;
-    s.dwellTime = PyNumber(1);
-    s.toolchangeZ = PyNumber(15);
-    s.offsetZ = PyNumber(0.0);
-    s.toolchangeXY = std::array<double, 2>{0.0, 0.0};  // "0.0, 0.0"
-    s.feedrateRapid = PyNumber(1500);
-    s.spindleDir = "CW";
-    s.zPdepth = PyNumber(-0.02);   // tools_drill_z_pdepth
-    s.feedrateProbe = PyNumber(75);  // tools_drill_feedrate_probe
+    auto py = [](const char* k, PyNumber def) { return defPy(k).value_or(def); };
+    s.cutZ = py("tools_drill_cutz", PyNumber(-1.7));
+    s.multidepth = defBool("tools_drill_multidepth");
+    s.depthPerPass = py("tools_drill_depthperpass", PyNumber(0.7));
+    s.travelZ = py("tools_drill_travelz", PyNumber(2));
+    s.endZ = py("tools_drill_endz", PyNumber(0.5));
+    s.endXY = defPair("tools_drill_endxy");
+    s.feedrateZ = py("tools_drill_feedrate_z", PyNumber(300));
+    s.spindleSpeed = defPy("tools_drill_spindlespeed");
+    s.dwell = defBool("tools_drill_dwell");
+    s.dwellTime = py("tools_drill_dwelltime", PyNumber(1));
+    s.toolchangeZ = py("tools_drill_toolchangez", PyNumber(15));
+    s.offsetZ = py("tools_drill_offset", PyNumber(0.0));
+    s.toolchangeXY = defPair("tools_drill_toolchangexy");  // "0.0, 0.0"
+    s.startZ = defPy("tools_drill_startz");
+    s.feedrateRapid = py("tools_drill_feedrate_rapid", PyNumber(1500));
+    s.spindleDir = defStr("tools_drill_spindledir").toStdString();
+    s.fPlunge = defBool("tools_drill_f_plunge");
+    s.fRetract = defBool("tools_drill_f_retract");
+    s.zPdepth = py("tools_drill_z_pdepth", PyNumber(-0.02));
+    s.feedrateProbe = py("tools_drill_feedrate_probe", PyNumber(75));
+    d.drillSlots = defBool("tools_drill_drill_slots");
+    d.drillOverlap = defNum("tools_drill_drill_overlap");
+    d.lastDrill = defBool("tools_drill_last_drill");
     return d;
 }
 
@@ -111,7 +120,8 @@ void DrillingTool::setToolUi() {
         pp_excellon_name_cb->addItem(n);
         pp_excellon_name_cb->setItemData(pp_excellon_name_cb->count() - 1, n, Qt::ToolTipRole);
     }
-    pp_excellon_name_cb->setValue(pp.isEmpty() ? "default" : pp);
+    pp_excellon_name_cb->setValue(pp.isEmpty() ? defStr("tools_drill_ppname_e") : pp);
+    order_radio->setValue(defVariant("tools_drill_tool_order"));
     muted_ = false;
     onPpChanged();
     onObjectChanged();

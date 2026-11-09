@@ -1,4 +1,5 @@
 #include "gui/objects/GeometryObject.h"
+#include "gui/Preferences.h"
 
 #include "cam/Preprocessor.h"
 #include "core/AffineTransform.h"
@@ -9,27 +10,29 @@
 namespace flatcam::gui {
 
 GeometryTool defaultGeometryTool() {
-    // geometry_* de defaults.py (los que usa geometry_tool_gcode_gen).
+    // geometry_* de las preferencias (los que usa geometry_tool_gcode_gen); de fábrica: 2.4, -2.4, 0.8, 2, 120, 60...
     GeometryTool t;
-    t.tooldia = 2.4;  // geometry_cnctooldia
+    t.tooldia = defNum("geometry_cnctooldia", 2.4);  // un texto ("2.4") en un FCEntry
     GeometryToolSettings& d = t.data;
-    d.cutZ = -2.4;
-    d.multidepth = false;
-    d.depthPerPass = 0.8;
-    d.travelZ = 2.0;
-    d.feedrate = 120.0;
-    d.feedrateZ = 60.0;
-    d.feedrateRapid = 1500.0;
-    d.spindleSpeed = 0.0;
-    d.spindleDir = "CW";
-    d.dwell = false;
-    d.dwellTime = 1.0;
-    d.endZ = 15.0;
-    d.toolchangeZ = 15.0;
-    d.toolchangeXY = std::array<double, 2>{0.0, 0.0};  // "0.0, 0.0"
-    d.extracut = false;
-    d.extracutLength = 0.1;
-    d.tolerance = 0.005 / 20;  // global_tolerance (0,005) / 20 = 0,00025, en mtool_gen_cncjob
+    d.cutZ = defNum("geometry_cutz");
+    d.multidepth = defBool("geometry_multidepth");
+    d.depthPerPass = defNum("geometry_depthperpass");
+    d.travelZ = defNum("geometry_travelz");
+    d.feedrate = defNum("geometry_feedrate");
+    d.feedrateZ = defNum("geometry_feedrate_z");
+    d.feedrateRapid = defNum("geometry_feedrate_rapid");
+    d.spindleSpeed = defNum("geometry_spindlespeed");
+    d.spindleDir = defStr("geometry_spindledir").toStdString();
+    d.dwell = defBool("geometry_dwell");
+    d.dwellTime = defNum("geometry_dwelltime");
+    d.endZ = defNum("geometry_endz");
+    d.endXY = defPair("geometry_endxy");  // None de fábrica
+    if (appDefaults()["geometry_startz"].isNumber()) d.startZ = defNum("geometry_startz");
+    d.toolchangeZ = defNum("geometry_toolchangez");
+    d.toolchangeXY = defPair("geometry_toolchangexy");  // "0.0, 0.0"
+    d.extracut = defBool("geometry_extracut");
+    d.extracutLength = defNum("geometry_extracut_length");
+    d.tolerance = defNum("global_tolerance", 0.005) / 20;  // 0,00025, en mtool_gen_cncjob
     return t;
 }
 

@@ -12,6 +12,7 @@
 #include <QPushButton>
 #include <cmath>
 
+#include "gui/Preferences.h"
 #include "gui/App.h"
 #include "gui/tools/PropertiesTool.h"
 #include "gui/ProjectIO.h"
@@ -214,7 +215,7 @@ bool App::deleteSelected(bool force) {
         return false;
     }
     // global_delete_confirmation (verdadero de fábrica): se pregunta antes de borrar.
-    if (!force) {
+    if (!force && defBool("global_delete_confirmation")) {
         QMessageBox box(ui_.get());
         box.setWindowTitle(tr_("Delete objects"));
         box.setWindowIcon(QIcon(":/images/deleteshape32.png"));

@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <limits>
 
+#include "gui/Preferences.h"
 #include "gui/App.h"
 #include "gui/ExclusionAreasManager.h"
 #include "gui/MainGUI.h"
@@ -266,7 +267,7 @@ void App::onRotateSelection(std::optional<double> preset) {
     double num = preset.value_or(0);
     if (!preset) {
         FCInputDoubleSpinner box(ui_.get(), tr_("Transform"), tr_("Enter the Angle value:"), -360, 360, 1, 4,
-                                 90.0);  // tools_transform_rotate
+                                 defNum("tools_transform_rotate"));
         box.setWindowIcon(QIcon(":/images/rotate.png"));
         if (box.exec() != QDialog::Accepted) return;
         num = box.wdg->value();
@@ -289,7 +290,7 @@ void App::onSkewSelection(char axis, std::optional<double> preset) {
     double num = preset.value_or(0);
     if (!preset) {
         FCInputDoubleSpinner box(ui_.get(), tr_("Transform"), tr_("Enter the Angle value:"), -360, 360, 1, 4,
-                                 0.0);  // tools_transform_skew_x / _y
+                                 defNum(axis == 'X' ? "tools_transform_skew_x" : "tools_transform_skew_y"));
         box.setWindowIcon(QIcon(axis == 'X' ? ":/images/skewX.png" : ":/images/skewY.png"));
         if (box.exec() != QDialog::Accepted) return;
         num = box.wdg->value();

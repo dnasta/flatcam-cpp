@@ -1,3 +1,4 @@
+#include "gui/Preferences.h"
 #include "gui/tools/CutOutTool.h"
 
 #include "gui/App.h"
@@ -100,21 +101,11 @@ void CutOutTool::setToolUi() {
     onTypeObjChanged();
     if (active && (active->kind() == ObjectKind::Gerber || active->kind() == ObjectKind::Geometry))
         obj_combo->setValue(active->name());
-    // tools_cutout_* de fábrica (update_ui con default_data).
-    dia->setValue(2.4);
-    obj_kind_combo->setValue("single");
-    big_cursor_cb->setChecked(true);
-    margin->setValue(0.1);
-    gapsize->setValue(4.0);
-    gaptype_radio->setValue("b");
-    thin_depth_entry->setValue(-1.0);
-    mb_dia_entry->setValue(0.6);
-    mb_spacing_entry->setValue(0.3);
-    convex_box_cb->setChecked(false);
-    gaps->setValue("4");
-    cutz_entry->setValue(-1.8);
-    mpass_cb->setChecked(true);
-    maxdepth_entry->setValue(0.6);
+    // tools_cutout_* de las preferencias (update_ui con default_data; de fábrica: 2.4, margen 0.1, puentes de 4, -1.8).
+    dia->setValue(defNum("tools_cutout_tooldia"));
+    obj_kind_combo->setValue(defStr("tools_cutout_kind"));
+    big_cursor_cb->setChecked(defBool("tools_cutout_big_cursor"));
+    applyCutoutData(appDefaults());
 }
 
 FlatCAMObj* CutOutTool::freeformCutout() { return cutout(false); }

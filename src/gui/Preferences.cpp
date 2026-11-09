@@ -240,6 +240,8 @@ JsonValue pyEval(const QString& raw) {
     return v ? toJson(*v) : JsonValue();
 }
 
+const Preferences* gInstance = nullptr;  ///< La fuente de appDefaults().
+
 QVariant toVariant(const JsonValue& v) {
     switch (v.type()) {
         case JsonValue::Type::Bool: return QVariant(v.toBool());
@@ -301,16 +303,96 @@ bool pyTruth(const JsonValue& v) {
     return false;
 }
 
+/// `a == b` de Python entre valores de JSON (1 == 1.0 y True == 1 son verdaderos).
+bool pyEqual(const JsonValue& a, const JsonValue& b) {
+    const bool an = a.isNumber() || a.isBool(), bn = b.isNumber() || b.isBool();
+    if (an && bn) return a.toDouble() == b.toDouble();
+    if (a.type() != b.type()) return false;
+    switch (a.type()) {
+        case JsonValue::Type::Null: return true;
+        case JsonValue::Type::String: return a.text() == b.text();
+        case JsonValue::Type::Array:
+            if (a.items().size() != b.items().size()) return false;
+            for (std::size_t i = 0; i < a.items().size(); ++i)
+                if (!pyEqual(a.items()[i], b.items()[i])) return false;
+            return true;
+        case JsonValue::Type::Object:
+            if (a.members().size() != b.members().size()) return false;
+            for (const auto& [k, v] : a.members()) {
+                const JsonValue* o = b.find(k);
+                if (!o || !pyEqual(v, *o)) return false;
+            }
+            return true;
+        default: return false;
+    }
+}
+
 }  // namespace
+
+JsonValue pyEvalLiteral(const QString& text) { return pyEval(text); }
+
+const JsonValue& appDefaults() { return gInstance ? gInstance->defaults() : Preferences::factoryDefaults(); }
+
+double defNum(const std::string& key, double def) { return pyFloat(appDefaults()[key]).value_or(def); }
+
+int defInt(const std::string& key, int def) {
+    const auto v = pyInt(appDefaults()[key]);
+    return v ? static_cast<int>(*v) : def;
+}
+
+bool defBool(const std::string& key) { return pyTruth(appDefaults()[key]); }
+
+QString defStr(const std::string& key) { return PropertiesTool::pyStr(appDefaults()[key]); }
+
+QVariant defVariant(const std::string& key) { return toVariant(appDefaults()[key]); }
+
+std::optional<PyNumber> defPy(const std::string& key) {
+    const JsonValue& v = appDefaults()[key];
+    JsonValue n = v;
+    if (v.isString()) n = pyEval(QString::fromStdString(v.text()));  // un texto con un número ("0.1")
+    if (!n.isNumber()) return std::nullopt;
+    if (n.isInteger()) return PyNumber(static_cast<int>(std::llround(n.toDouble())));
+    return PyNumber(n.toDouble());
+}
+
+std::optional<std::array<double, 2>> defPair(const std::string& key) {
+    const JsonValue& v = appDefaults()[key];
+    const JsonValue e = v.isString() ? pyEval(QString::fromStdString(v.text())) : v;
+    if (!e.isArray() || e.items().size() != 2 || !e.items()[0].isNumber() || !e.items()[1].isNumber()) return std::nullopt;
+    return std::array<double, 2>{e.items()[0].toDouble(), e.items()[1].toDouble()};
+}
+
+std::vector<double> defDias(const std::string& key) {
+    const JsonValue& v = appDefaults()[key];
+    std::vector<double> out;
+    if (auto d = pyFloat(v)) return {*d};  // float(...)
+    if (v.isString()) {  // [float(eval(dia)) for dia in v.split(",") if dia != '']
+        for (const QString& part : QString::fromStdString(v.text()).split(',')) {
+            if (part.isEmpty()) continue;
+            const JsonValue e = pyEval(part);
+            if (!e.isNumber()) return {};
+            out.push_back(e.toDouble());
+        }
+        return out;
+    }
+    for (const JsonValue& x : v.items())  // una lista (después de guardar las preferencias)
+        if (x.isNumber()) out.push_back(x.toDouble());
+    return out;
+}
 
 PreferencesTab::PreferencesTab(QWidget* parent) : PreferencesTabUIBase(parent) { setupUi(); }
 
 Preferences::Preferences(MainGUI* ui, QObject* parent) : QObject(parent), ui_(ui) {
     defaults_ = factoryDefaults();
     currentDefaults_ = factoryDefaults();
+    gInstance = this;
     connect(ui_->plot_tab_area, &FCDetachableTab2::tabClosed, this, [this](const QString& name, int) {
         if (name == "preferences_tab") onTabClosed();
     });
+}
+
+Preferences::~Preferences() {
+    if (gInstance == this) gInstance = nullptr;
 }
 
 const char* Preferences::version() { return "2024.4"; }
@@ -341,8 +423,11 @@ const std::map<std::string, std::pair<std::string, std::string>>& Preferences::f
 }
 
 void Preferences::set(const std::string& key, JsonValue v) {
+    // LoudDict.__setitem__: si la clave ya estaba con un valor igual (== de Python) no hace nada; si no, avisa
+    // (on_defaults_dict_change escribe el campo).
+    if (const JsonValue* old = defaults_.find(key); old && pyEqual(*old, v)) return;
     defaults_.set(key, std::move(v));
-    writeFormField(key);  // on_defaults_dict_change
+    writeFormField(key);
 }
 
 QString Preferences::settingsFile() const { return dataPath_ + "/settings.ini"; }

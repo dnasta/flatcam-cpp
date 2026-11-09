@@ -1,3 +1,4 @@
+#include "gui/Preferences.h"
 #include "gui/tools/NccTool.h"
 
 #include <QToolButton>
@@ -134,31 +135,31 @@ void NccTool::setToolUi() {
     onTypeObjChanged();
     if (active && (active->kind() == ObjectKind::Gerber || active->kind() == ObjectKind::Geometry))
         object_combo->setValue(active->name());
-    // tools_ncc_* de fábrica.
-    op_radio->setValue("clear");
-    ncc_order_radio->setValue("rev");
-    ncc_overlap_entry->setValue(40.0);
-    ncc_margin_entry->setValue(1.0);
-    ncc_method_combo->setIndexValue(1);  // Semilla
-    ncc_connect_cb->setChecked(true);
-    ncc_contour_cb->setChecked(true);
-    ncc_choice_offset_cb->setChecked(false);
-    ncc_offset_spinner->setValue(0.0);
-    ncc_rest_cb->setChecked(false);
-    rest_ncc_margin_entry->setValue(1.0);
-    rest_ncc_connect_cb->setChecked(true);
-    rest_ncc_contour_cb->setChecked(true);
-    rest_ncc_choice_offset_cb->setChecked(false);
-    rest_ncc_offset_spinner->setValue(0.0);
-    select_combo->setIndexValue(0);  // Sí mismo
-    area_shape_radio->setValue("square");
-    valid_cb->setChecked(true);
-    milling_type_radio->setValue("cl");
-    new_tooldia_entry->setValue(0.1);
+    // tools_ncc_* de las preferencias (de fábrica: limpiar, 40 %, margen 1, Semilla, "Sí mismo", 1.0 y 0.5).
+    op_radio->setValue(defVariant("tools_ncc_operation"));
+    ncc_order_radio->setValue(defVariant("tools_ncc_order"));
+    ncc_overlap_entry->setValue(defNum("tools_ncc_overlap"));
+    ncc_margin_entry->setValue(defNum("tools_ncc_margin"));
+    ncc_method_combo->setIndexValue(defInt("tools_ncc_method"));
+    ncc_connect_cb->setChecked(defBool("tools_ncc_connect"));
+    ncc_contour_cb->setChecked(defBool("tools_ncc_contour"));
+    ncc_choice_offset_cb->setChecked(defBool("tools_ncc_offset_choice"));
+    ncc_offset_spinner->setValue(defNum("tools_ncc_offset_value"));
+    ncc_rest_cb->setChecked(defBool("tools_ncc_rest"));
+    rest_ncc_margin_entry->setValue(defNum("tools_ncc_margin"));
+    rest_ncc_connect_cb->setChecked(defBool("tools_ncc_connect"));
+    rest_ncc_contour_cb->setChecked(defBool("tools_ncc_contour"));
+    rest_ncc_choice_offset_cb->setChecked(defBool("tools_ncc_offset_choice"));
+    rest_ncc_offset_spinner->setValue(defNum("tools_ncc_offset_value"));
+    select_combo->setIndexValue(defInt("tools_ncc_ref"));
+    area_shape_radio->setValue(defVariant("tools_ncc_area_shape"));
+    valid_cb->setChecked(defBool("tools_ncc_check_valid"));
+    milling_type_radio->setValue(defVariant("tools_ncc_milling_type"));
+    new_tooldia_entry->setValue(defNum("tools_ncc_newdia"));
     tools_.clear();
     muted_ = false;
-    for (double dia : {1.0, 0.5}) addTool(dia);  // tools_ncc_tools = "1.0, 0.5"
-    onRestMachiningCheck(false);
+    for (double dia : defDias("tools_ncc_tools")) addTool(dia);
+    onRestMachiningCheck(defBool("tools_ncc_rest"));
     onToggleReference();
 }
 
@@ -189,22 +190,22 @@ bool NccTool::addTool(double dia) {
         }
     }
     const int uid = tools_.empty() ? 1 : tools_.rbegin()->first + 1;
-    ClearingTool t;  // data = default_data: geometry_* y tools_ncc_* de fábrica
+    ClearingTool t;  // data = default_data: geometry_* y tools_ncc_* de las preferencias
     t.geo = defaultGeometryTool();
     t.geo.tooldia = d;
     t.geo.offset = "Path";
     t.geo.type = "Iso";
-    t.geo.toolType = "C1";  // tools_ncc_tool_type
-    t.overlap = 40.0;
-    t.margin = 1.0;
-    t.method = 1;
-    t.connect = true;
-    t.contour = true;
-    t.offsetChoice = false;
-    t.offset = 0.0;
-    t.operation = "clear";
-    t.millingType = "cl";
-    t.checkValid = true;
+    t.geo.toolType = defStr("tools_ncc_tool_type");
+    t.overlap = defNum("tools_ncc_overlap");
+    t.margin = defNum("tools_ncc_margin");
+    t.method = defInt("tools_ncc_method");
+    t.connect = defBool("tools_ncc_connect");
+    t.contour = defBool("tools_ncc_contour");
+    t.offsetChoice = defBool("tools_ncc_offset_choice");
+    t.offset = defNum("tools_ncc_offset_value");
+    t.operation = defStr("tools_ncc_operation");
+    t.millingType = defStr("tools_ncc_milling_type");
+    t.checkValid = defBool("tools_ncc_check_valid");
     tools_[uid] = t;
     rebuild();
     for (int r = 0; r < tools_table->rowCount(); ++r)
