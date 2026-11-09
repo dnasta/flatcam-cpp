@@ -616,6 +616,8 @@ void App::setupPreferences() {
         QApplication::quit();
     };
     connect(ui_->menueditpreferences, &QAction::triggered, prefs_, &Preferences::open);
+    connect(ui_->menufileimportpref, &QAction::triggered, this, [this] { onImportPreferences(); });
+    connect(ui_->menufileexportpref, &QAction::triggered, this, [this] { onExportPreferences(); });
     connect(ui_->menuedittoggleunits, &QAction::triggered, this, [this] { onToggleUnitsClick(); });
     connect(prefs_->tab()->general_app_group_units_radio, &RadioSet::activatedCustom, this, [this] {
         if (!unitsRadioMuted_) onToggleUnits(false);

@@ -218,6 +218,19 @@ public:
     void onToggleUnits(bool noPref = false);
     /** @brief `on_toggle_units_click`: tecla Q y Editar -> Cambiar unidades. */
     void onToggleUnitsClick();
+    /**
+     * @brief Archivo -> Copia de seguridad -> Importar preferencias (`on_import_preferences`): carga un `.FlatConfig`
+     * sobre las opciones (como al arrancar, una de otra versión se descarta) y marca las preferencias como editadas.
+     * @param filename Archivo; vacío abre el diálogo.
+     */
+    void onImportPreferences(QString filename = {});
+    /**
+     * @brief Archivo -> Copia de seguridad -> Exportar preferencias (`on_export_preferences`): lee la pestaña y guarda las
+     * opciones en un `.FlatConfig`.
+     * @param filename Archivo; vacío abre el diálogo (en la carpeta de datos, `preferences_<fecha>`).
+     * @return Si se guardó.
+     */
+    bool onExportPreferences(QString filename = {});
     /** @brief `set_screen_units`: el rótulo de unidades de la barra de estado. @param units "MM" o "IN". */
     void setScreenUnits(const QString& units);
     /** @brief En los tests: respuesta al aviso de cambiar las unidades. @param a `true` = Aceptar. */
@@ -347,6 +360,21 @@ public:
     void clearPlots();
     /** @brief Muestra u oculta el contorno de la hoja (`on_workspace_toggle`, A4 vertical de fábrica). */
     void onWorkspaceToggle();
+    /** @brief El cursor según las preferencias (`on_cursor_type`, `cursor_color_3D`). */
+    void applyCursorPreferences();
+    /** @brief `on_workspace`: dibuja o borra la hoja según la casilla de Preferencias y lee la pestaña. */
+    void onWorkspace();
+    /** @brief `on_workspace_modified`: cambió el tamaño o la orientación de la hoja. */
+    void onWorkspaceModified();
+    /** @brief `draw_workspace`: dibuja la hoja `global_workspaceT` con su orientación. */
+    void drawWorkspace();
+    /** @brief `delete_workspace`. */
+    void deleteWorkspace();
+    /**
+     * @brief Tamaño de una hoja (`pagesize_dict`).
+     * @param name "A4", "LETTER"... @return Ancho y alto en mm, o vacío si no está.
+     */
+    static std::optional<std::pair<double, double>> pageSize(const QString& name);
     /** @brief Elige todos los objetos con su recuadro (`on_selectall`). */
     void onSelectAll();
     /** @brief Lleva los elegidos al origen (`on_move2origin`): la esquina inferior izquierda de su caja va a (0, 0). */
@@ -491,7 +519,9 @@ private:
     QPointF mouse_{0, 0};                ///< `self.mouse`: la última posición del mouse sobre el canvas.
     QString jumpRef_{"abs"};             ///< `global_jump_ref`.
     QString locatePt_{"bl"};             ///< `global_locate_pt`.
-    bool workspace_{false};              ///< `global_workspace`.
+    bool cursorBig_{false};              ///< El cursor grande (on_cursor_type).
+    bool cursorColorEnabled_{true};      ///< Si el cursor usa global_cursor_color (`cursor_color_3D`).
+    bool workspaceCbMuted_{false};       ///< La casilla del área de trabajo sin su aviso (on_workspace_toggle).
     QMetaObject::Connection setOriginConnection_;
     void selectionAreaHandler(const QPointF& start, const QPointF& end, bool enclosure);
     void selectedMessage(FlatCAMObj* obj);

@@ -27,7 +27,6 @@ constexpr double kMinSceneSize = 0.01;
 constexpr double kMaxSceneSize = 10000.0;
 // PlotCanvas (tema claro): línea de ejes, color del HUD y tamaño de letra.
 const QColor kAxisLineColor = QColor::fromRgbF(0.70f, 0.3f, 0.3f, 0.8f);
-const QColor kCursorColor = QColor("#FF0000");  // global_cursor_color
 const QColor kHudRectColor = QColor(0x00, 0x00, 0xFF, 0x10);
 constexpr int kHudFontSize = 8;     // hud_font_size
 constexpr int kAxisFontSize = 8;    // axis_font_size
@@ -267,11 +266,19 @@ void PlotCanvas::paintGL() {
         p.drawLine(QPointF(vr.left(), o.y()), QPointF(vr.right(), o.y()));
     }
     if (cursorInside_ && cursorEnabled_) {
-        // Cursor de FlatCAM: una cruz chica en el punto, del color global_cursor_color.
+        // Cursor de FlatCAM: el marcador '++' de vispy (una cruz de global_cursor_size píxeles y global_cursor_width de
+        // grosor) o, con el cursor grande, dos líneas que cruzan toda la vista.
         const QPointF c = toPixel(cursorWorld_);
-        p.setPen(QPen(kCursorColor, 1.5));
-        p.drawLine(c + QPointF(-10, 0), c + QPointF(10, 0));
-        p.drawLine(c + QPointF(0, -10), c + QPointF(0, 10));
+        if (cursorBig_) {
+            p.setPen(QPen(cursorColor_, 1));
+            p.drawLine(QPointF(c.x(), vr.top()), QPointF(c.x(), vr.bottom()));
+            p.drawLine(QPointF(vr.left(), c.y()), QPointF(vr.right(), c.y()));
+        } else {
+            const double r = cursorSize_ / 2.0;
+            p.setPen(QPen(cursorColor_, cursorWidth_));
+            p.drawLine(c + QPointF(-r, 0), c + QPointF(r, 0));
+            p.drawLine(c + QPointF(0, -r), c + QPointF(0, r));
+        }
     }
     if (hudEnabled_) drawHud(p, vr);
     p.restore();

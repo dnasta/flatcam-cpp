@@ -11,6 +11,7 @@
 
 #include "gui/App.h"
 #include "gui/MainGUI.h"
+#include "gui/PlotCanvas.h"
 #include "gui/Preferences.h"
 #include "gui/tools/PropertiesTool.h"
 #include "gui/tools/ToolPanels.h"
@@ -337,4 +338,61 @@ TEST(GuiPreferences, ToggleUnitsConvertsTheObjects) {
     FlatCAMObj* g2 = t.app.openGerber(QString::fromStdString(dir + "Edge_Cuts.gbr"));
     ASSERT_NE(g2, nullptr);
     EXPECT_NEAR(g2->bounds().width(), before.width() / 25.4, 1e-9);
+}
+
+// Archivo -> Copia de seguridad -> Exportar / Importar preferencias.
+TEST(GuiPreferences, ExportAndImportPreferences) {
+    QTemporaryDir dir;
+    const QString file = dir.path() + "/mias.FlatConfig";
+    {
+        TempApp t;
+        // Exportar lee la pestaña (aunque no se haya guardado).
+        t.p()->tab()->tools_ncc_group_ncc_overlap_entry->setValue(80.0);
+        ASSERT_TRUE(t.app.onExportPreferences(file));
+        EXPECT_EQ(js(readJson(file)["tools_ncc_overlap"]), "80.0");
+        EXPECT_EQ(readJson(file)["version"].text(), "2024.4");
+        // Como el original, el archivo va a los recientes, pero no aparece en el menú (tipo sin ícono ni lector).
+        for (QAction* a : t.app.ui()->recent->actions()) EXPECT_NE(a->text(), "mias.FlatConfig");
+    }
+    TempApp t;
+    EXPECT_EQ(js(t.p()->value("tools_ncc_overlap")), js(Preferences::factoryDefaults()["tools_ncc_overlap"]));
+    t.app.onImportPreferences(file);
+    EXPECT_EQ(js(t.p()->value("tools_ncc_overlap")), "80.0");
+    EXPECT_EQ(t.p()->tab()->tools_ncc_group_ncc_overlap_entry->value(), 80.0);
+    EXPECT_TRUE(t.p()->changed());  // queda como editada (hay que guardarla para que quede)
+}
+
+// El área de trabajo sigue a las preferencias (tamaño, orientación, casilla) y a las unidades.
+TEST(GuiPreferences, WorkspaceFollowsThePreferences) {
+    TempApp t;
+    MainGUI* ui = t.app.ui();
+    PreferencesTab* pt = t.p()->tab();
+    t.app.onWorkspaceToggle();
+    EXPECT_TRUE(pt->general_app_set_group_workspace_cb->isChecked());
+    EXPECT_TRUE(t.p()->value("global_workspace").toBool());  // on_workspace lee la pestaña
+    EXPECT_EQ(ui->wplace_label->text(), "A4");
+    pt->general_app_set_group_wk_cb->setValue("LETTER");  // currentIndexChanged -> on_workspace_modified
+    EXPECT_EQ(t.p()->value("global_workspaceT").text(), "LETTER");
+    EXPECT_EQ(ui->wplace_label->text(), "LET");  // workspace_size[:3]
+    EXPECT_EQ(ui->wplace_label->toolTip(), "LETTER");
+    ASSERT_TRUE(App::pageSize("LETTER").has_value());
+    EXPECT_DOUBLE_EQ(App::pageSize("LETTER")->first, 8.5 * 25.4);
+    pt->general_app_set_group_workspace_cb->setChecked(false);  // stateChanged -> on_workspace
+    EXPECT_FALSE(t.p()->value("global_workspace").toBool());
+    EXPECT_TRUE(ui->wplace_label->styleSheet().isEmpty());
+}
+
+// El cursor sigue a las preferencias: tipo (on_cursor_type) y color (on_mouse_cursor_color_enable / _entry).
+TEST(GuiPreferences, CursorFollowsThePreferences) {
+    TempApp t;
+    PreferencesTab* pt = t.p()->tab();
+    PlotCanvas* c = t.app.ui()->plotCanvas();
+    EXPECT_FALSE(c->cursorBig());
+    EXPECT_EQ(c->cursorColor(), QColor("#FF0000"));
+    pt->general_app_set_group_cursor_radio->setValue(QString("big"));
+    Q_EMIT pt->general_app_set_group_cursor_radio->activatedCustom("big");
+    EXPECT_TRUE(c->cursorBig());
+    EXPECT_FALSE(pt->general_app_set_group_cursor_size_entry->isEnabled());
+    pt->general_app_set_group_mouse_cursor_color_cb->setChecked(false);
+    EXPECT_EQ(c->cursorColor(), QColor("black"));
 }

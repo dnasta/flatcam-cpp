@@ -44,7 +44,13 @@ QString iconOf(const QString& kind) {
     if (kind == "geometry") return ":/images/geometry16.png";
     if (kind == "cncjob") return ":/images/cnc16.png";
     if (kind == "project") return ":/images/project16.png";
-    return ":/images/notes16_1.png";
+    if (kind == "script") return ":/images/script_new24.png";
+    if (kind == "document") return ":/images/notes16_1.png";
+    if (kind == "svg") return ":/images/geometry16.png";
+    if (kind == "dxf") return ":/images/dxf16.png";
+    if (kind == "pdf") return ":/images/pdf32.png";
+    if (kind == "image") return ":/images/image16.png";
+    return {};  // icons[kind] da KeyError: "Unsupported file type" y el archivo no aparece (png, preferences)
 }
 
 }  // namespace
@@ -93,14 +99,14 @@ void App::setupRecentItems() {
         setupRecentItems();
     });
     for (const auto& [kind, file] : readList(dir + "/recent.json")) {
-        if (kind == "project") continue;
+        if (kind == "project" || iconOf(kind).isEmpty()) continue;
         QAction* a = ui_->recent->addAction(QIcon(iconOf(kind)), QFileInfo(file).fileName());
         connect(a, &QAction::triggered, this, [this, k = kind, f = file] {
             if (k == "gerber") openGerber(f);
             else if (k == "excellon") openExcellon(f);
             else if (k == "cncjob") openGcode(f);
             else if (k == "svg") importSvg(f, false);
-            else if (k == "dxf") importDxf(f, false);
+            else if (k == "dxf" || k == "geometry") importDxf(f, false);
             else ui_->inform("[WARNING_NOTCL] " + tr_("Unsupported file type") + ": " + k);
         });
     }

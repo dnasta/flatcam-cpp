@@ -82,6 +82,22 @@ public:
         cursorEnabled_ = on;
         update();
     }
+    /**
+     * @brief Estilo del cursor (`new_cursor` y `set_data` con `global_cursor_*`).
+     * @param color Color. @param size Tamaño de la cruz chica en píxeles (`global_cursor_size`).
+     * @param width Grosor de la cruz chica (`global_cursor_width`). @param big Cruz que atraviesa toda la vista.
+     */
+    void setCursorStyle(const QColor& color, int size, int width, bool big) {
+        cursorColor_ = color;
+        cursorSize_ = size;
+        cursorWidth_ = width;
+        cursorBig_ = big;
+        update();
+    }
+    /** @brief Si el cursor es la cruz grande. @return `true` si sí. */
+    bool cursorBig() const { return cursorBig_; }
+    /** @brief Color del cursor. @return El color. */
+    QColor cursorColor() const { return cursorColor_; }
 
     /**
      * @brief Si el HUD muestra la distancia al último clic (`Dx`, `Dy`) o ceros, como mientras mide la herramienta
@@ -220,6 +236,10 @@ private:
     bool firstResize_{true};
     bool hudEnabled_{true};       // global_hud
     bool hudDelta_{true};         // false mientras mide la herramienta Distancia
+    QColor cursorColor_{"#FF0000"};  // global_cursor_color
+    int cursorSize_{20};             // global_cursor_size
+    int cursorWidth_{2};             // global_cursor_width
+    bool cursorBig_{false};          // global_cursor_type == "big"
     bool cursorEnabled_{true};    // app_cursor.enabled (con la grilla activa)
     std::function<QPointF(QPointF)> snapper_;
     QPointF eventWorld(const QPointF& pixel) const;

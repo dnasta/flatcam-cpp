@@ -2,6 +2,8 @@
 // set_screen_units del original).
 #include <set>
 
+#include <QDateTime>
+#include <QFileDialog>
 #include <QIcon>
 #include <QMessageBox>
 #include <QPushButton>
@@ -191,6 +193,9 @@ void App::onToggleUnits(bool noPref) {
             o->convertUnits(u);
             objectChanged(o);  // las propiedades guardadas y el panel (build_ui)
         }
+        // Error del original que se reproduce: con el área de trabajo encendida llama a
+        // draw_workspace(pagesize=...), que no tiene ese parámetro (TypeError), y no sigue.
+        if (defBool("global_workspace")) return;
         // La grilla de la barra: global_gridx por el factor (la Y igual a la X si están enlazadas; así, con gridx,
         // también en el original).
         valX = toFloatOr(prefs_->value("global_gridx")) * factor;
@@ -215,6 +220,41 @@ void App::onToggleUnits(bool noPref) {
     const int dec = appDecimals();
     ui_->grid_gap_x_entry->setValue(valX, dec);
     ui_->grid_gap_y_entry->setValue(valY, dec);
+}
+
+void App::onImportPreferences(QString filename) {
+    if (filename.isEmpty())
+        filename = QFileDialog::getOpenFileName(ui_.get(), tr_("Import FlatCAM Preferences"), dataPath(),
+                                                "Config File (*.FlatConfig);;All Files (*.*)");
+    if (filename.isEmpty()) {
+        ui_->inform("[WARNING_NOTCL] " + tr_("Cancelled."));
+        return;
+    }
+    prefs_->load(filename);
+    prefs_->onPreferencesEdited();
+    ui_->inform("[success] " + tr_("Imported Defaults from") + ": " + filename);
+}
+
+bool App::onExportPreferences(QString filename) {
+    if (filename.isEmpty()) {
+        // str(datetime.today()).rpartition('.')[0] sin ':' ni '-', con '_' en vez del espacio: 20261109_183000.
+        const QString date = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
+        filename = QFileDialog::getSaveFileName(ui_.get(), tr_("Export FlatCAM Preferences"),
+                                                dataPath() + "/preferences_" + date,
+                                                "Config File .FlatConfig (*.FlatConfig);;All Files (*.*)");
+    }
+    if (filename.isEmpty()) {
+        ui_->inform("[WARNING_NOTCL] " + tr_("Cancelled."));
+        return false;
+    }
+    prefs_->readForm();
+    if (!prefs_->write(filename)) {
+        ui_->inform("[ERROR_NOTCL] " + tr_("Failed to write defaults to file.") + " " + filename);
+        return false;
+    }
+    if (!defBool("global_open_style")) registerRecent("preferences", filename);  // file_opened
+    ui_->inform("[success] " + tr_("Exported preferences to") + ": " + filename);
+    return true;
 }
 
 double App::toFloatOr(const JsonValue& v, double def) { return toFloat(v).value_or(def); }
