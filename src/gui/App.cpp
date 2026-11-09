@@ -36,6 +36,7 @@
 #include "gui/ProjectIO.h"
 #include "gui/Preferences.h"
 #include "gui/widgets/FCLabel.h"
+#include "gui/widgets/RadioSet.h"
 #include <QProcess>
 #include "gui/tools/ClearingTools.h"
 #include "gui/objects/ObjectUIs.h"
@@ -477,10 +478,10 @@ FlatCAMObj* App::openGerber(const QString& filename) {
         return nullptr;
     }
     lastFolder_ = QFileInfo(filename).absolutePath();
-    // new_object: si el objeto no está en las unidades de la aplicación (mm), se convierte (convert_units).
-    if (gerber->units() != Units::Millimeters) {
-        ui_->inform(tr_("Converting units to ") + ": MM");
-        gerber->convertUnits(Units::Millimeters);
+    // new_object: si el objeto no está en las unidades de la aplicación, se convierte (convert_units).
+    if (gerber->units() != appUnitsKind()) {
+        ui_->inform(tr_("Converting units to ") + ": " + appUnits());
+        gerber->convertUnits(appUnitsKind());
     }
     FlatCAMObj* obj = addObject(std::make_unique<GerberObject>(QFileInfo(filename).fileName(), std::move(gerber)));
     registerRecent("gerber", filename);
@@ -502,9 +503,9 @@ FlatCAMObj* App::openExcellon(const QString& filename) {
         return nullptr;
     }
     lastFolder_ = QFileInfo(filename).absolutePath();
-    if (exc->units() != Units::Millimeters) {
-        ui_->inform(tr_("Converting units to ") + ": MM");
-        exc->convertUnits(Units::Millimeters);
+    if (exc->units() != appUnitsKind()) {
+        ui_->inform(tr_("Converting units to ") + ": " + appUnits());
+        exc->convertUnits(appUnitsKind());
     }
     FlatCAMObj* obj = addObject(std::make_unique<ExcellonObject>(QFileInfo(filename).fileName(), std::move(exc)));
     registerRecent("excellon", filename);
@@ -615,6 +616,11 @@ void App::setupPreferences() {
         QApplication::quit();
     };
     connect(ui_->menueditpreferences, &QAction::triggered, prefs_, &Preferences::open);
+    connect(ui_->menuedittoggleunits, &QAction::triggered, this, [this] { onToggleUnitsClick(); });
+    connect(prefs_->tab()->general_app_group_units_radio, &RadioSet::activatedCustom, this, [this] {
+        if (!unitsRadioMuted_) onToggleUnits(false);
+    });
+    setScreenUnits(appUnits());
     connect(ui_->pref_status_label, &FCLabel::clicked, prefs_, [this] { prefs_->toggle(); });
     PreferencesTab* t = prefs_->tab();
     connect(t->pref_save_button, &QPushButton::clicked, prefs_, [this] { prefs_->onSave(true); });
@@ -981,6 +987,7 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
         case Qt::Key_M: moveTool->toggle(); return true;
         case Qt::Key_O: onSetOrigin(); return true;
         case Qt::Key_P: propertiesTool->run(true); return true;
+        case Qt::Key_Q: onToggleUnitsClick(); return true;  // cambiar las unidades
         case Qt::Key_R: onRotateSelection(defNum("tools_transform_rotate")); return true;
         case Qt::Key_V: onZoomFit(); return true;
         case Qt::Key_X: flip(Axis::Y); return true;  // on_flipx

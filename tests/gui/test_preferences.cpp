@@ -19,6 +19,7 @@
 #include "gui/widgets/FCEntry.h"
 #include "gui/widgets/FCSpinners.h"
 #include "gui/widgets/RadioSet.h"
+#include "gui/widgets/FCLabel.h"
 #include "io/ProjectFile.h"
 
 using namespace flatcam;
@@ -286,4 +287,54 @@ TEST(GuiPreferences, ToolsReadTheirValuesFromThePreferences) {
     app.cutoutTool->setToolUi();
     EXPECT_EQ(app.cutoutTool->dia->value(), 1.2);
     EXPECT_EQ(defaultGeometryTool().data.cutZ, -1.5);  // geometry_cutz
+}
+
+// on_toggle_units y scale_defaults contra el original (tests/tools/oracle_units.py): las 551 opciones después de pasar
+// a pulgadas desde la pestaña, de volver a mm y de la tecla Q (que no escala las preferencias).
+TEST(GuiPreferences, ToggleUnitsMatchesTheOriginal) {
+    const JsonValue o = readJson(QString(FLATCAM_TEST_DATA_DIR) + "/preferences/units.json");
+    TempApp t;
+    t.app.setUnitsAutoAnswer(true);
+    Preferences* p = t.p();
+    auto compare = [&](const char* stage) {
+        int diffs = 0;
+        for (const auto& [k, v] : o[stage].members()) {
+            // El tema, el idioma y la versión son del entorno del oráculo (fc_runtime), no del cambio de unidades.
+            if (k == "global_theme" || k == "global_language" || k == "version") continue;
+            if (js(p->value(k)) != js(v)) {
+                ++diffs;
+                ADD_FAILURE() << stage << " " << k << ": " << js(p->value(k)) << " != " << js(v);
+            }
+        }
+        return diffs;
+    };
+    EXPECT_EQ(compare("startup"), 0);
+    RadioSet* radio = p->tab()->general_app_group_units_radio;
+    radio->setValue(QString("IN"));
+    t.app.onToggleUnits(false);
+    EXPECT_EQ(compare("to_inch"), 0);
+    EXPECT_EQ(t.app.ui()->units_label->text(), "[in]");
+    radio->setValue(QString("MM"));
+    t.app.onToggleUnits(false);
+    EXPECT_EQ(compare("back_to_mm"), 0);
+    t.app.onToggleUnitsClick();
+    EXPECT_EQ(compare("no_pref"), 0);
+}
+
+// Los objetos se convierten: un Gerber y un Excellon en pulgadas (las coordenadas divididas por 25,4).
+TEST(GuiPreferences, ToggleUnitsConvertsTheObjects) {
+    TempApp t;
+    t.app.setUnitsAutoAnswer(true);
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    FlatCAMObj* g = t.app.openGerber(QString::fromStdString(dir + "Edge_Cuts.gbr"));
+    ASSERT_NE(g, nullptr);
+    const QRectF before = g->bounds();
+    t.app.onToggleUnitsClick();
+    EXPECT_EQ(t.p()->value("units").text(), "IN");
+    EXPECT_NEAR(g->bounds().width(), before.width() / 25.4, 1e-9);
+    EXPECT_NEAR(g->bounds().left(), before.left() / 25.4, 1e-9);
+    // Lo que se abre después queda en pulgadas.
+    FlatCAMObj* g2 = t.app.openGerber(QString::fromStdString(dir + "Edge_Cuts.gbr"));
+    ASSERT_NE(g2, nullptr);
+    EXPECT_NEAR(g2->bounds().width(), before.width() / 25.4, 1e-9);
 }

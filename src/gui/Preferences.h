@@ -8,6 +8,7 @@
 #include <functional>
 #include <array>
 #include <map>
+#include <set>
 #include <vector>
 #include <QVariant>
 #include <optional>
@@ -18,6 +19,7 @@
 #include <QString>
 
 #include "cam/PyNumber.h"
+#include "core/Types.h"
 #include "gui/generated/PreferencesTabUIBase.h"
 #include "io/JsonValue.h"
 
@@ -59,6 +61,12 @@ std::vector<double> defDias(const std::string& key);
  * @param key Clave. @return El número, o vacío si es None o no es un número.
  */
 std::optional<PyNumber> defPy(const std::string& key);
+/** @brief Las unidades de la aplicación (`defaults["units"]`). @return `"MM"` o `"IN"`. */
+QString appUnits();
+/** @brief Las unidades de la aplicación. @return Milímetros o pulgadas. */
+Units appUnitsKind();
+/** @brief `app.decimals`: `decimals_metric` o `decimals_inch` según las unidades. @return Los decimales. */
+int appDecimals();
 /** @brief `eval()` de Python para números, tuplas y listas (los `NumericalEval*Entry`). @param text Texto. @return El valor, o nulo. */
 JsonValue pyEvalLiteral(const QString& text);
 ///@}
@@ -103,9 +111,10 @@ public:
     const JsonValue& value(const std::string& key) const { return defaults_[key]; }
     /**
      * @brief Cambia una opción y, como el `LoudDict` del original (`on_defaults_dict_change`), su campo en la pestaña.
-     * @param key Clave. @param v Valor.
+     * @param key Clave. @param v Valor. @param tuple Si es una tupla de Python (sale de un campo de fórmulas); una
+     * tupla nunca es igual a una lista, como en Python.
      */
-    void set(const std::string& key, JsonValue v);
+    void set(const std::string& key, JsonValue v, bool tuple = false);
 
     /**
      * @brief Prepara la carpeta de datos y carga las preferencias (lo del arranque de `App.__init__`): crea
@@ -150,8 +159,11 @@ public:
     void writeForm(const JsonValue* source = nullptr);
     /** @brief `defaults_write_form_field`. @param key Clave. @param source Otra fuente, o `nullptr`. */
     void writeFormField(const std::string& key, const JsonValue* source = nullptr);
-    /** @brief El valor de un campo (`get_value`), con el tipo de Python. @param key Clave. @return El valor, o vacío. */
-    std::optional<JsonValue> formValue(const std::string& key);
+    /**
+     * @brief El valor de un campo (`get_value`), con el tipo de Python.
+     * @param key Clave. @param tuple Si no es nulo, si el valor es una tupla. @return El valor, o vacío.
+     */
+    std::optional<JsonValue> formValue(const std::string& key, bool* tuple = nullptr);
 
     /** @brief `on_preferences`: abre la pestaña Preferencias. */
     void open();
@@ -205,7 +217,8 @@ private:
 
     MainGUI* ui_;
     PreferencesTab* tab_{nullptr};
-    std::map<std::string, QObject*> members_;  ///< Los campos de la pestaña por nombre.
+    std::map<std::string, QObject*> members_;
+    std::set<std::string> tupleKeys_;  ///< Las opciones cuyo valor es una tupla de Python (no una lista).  ///< Los campos de la pestaña por nombre.
     QString dataPath_;
     JsonValue defaults_;
     JsonValue currentDefaults_;

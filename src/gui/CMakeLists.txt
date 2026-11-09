@@ -59,6 +59,7 @@ add_library(flatcam_gui STATIC
     generated/PreferencesTabUIBase.cpp
     Preferences.cpp
     PreferencesGroups.cpp
+    AppUnits.cpp
     widgets/FCButton.h
     widgets/FCSpinners.cpp
     widgets/FCComboBox.cpp

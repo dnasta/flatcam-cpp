@@ -101,6 +101,15 @@ public:
      * @param distance Distancia (o factor). @param join Esquinas. @param factor Si es un factor. @return `true`.
      */
     bool buffer(double distance, JoinStyle join, bool factor) override;
+    /**
+     * @brief `GeometryObject.convert_units`: escala la geometría y los parámetros de cada herramienta (diámetro con los
+     * decimales de la aplicación, desplazamiento, Z, avances). Error del original que se reproduce: las herramientas
+     * pierden su geometría (el diccionario nuevo no copia `solid_geometry`).
+     * @param units Unidades. @return El factor.
+     */
+    double convertUnits(Units units) override;
+    /** @brief Unidades del objeto (las de la aplicación al crearlo). @return Las unidades. */
+    Units units() const { return units_; }
 
     /**
      * @brief Genera el CNC Job de las herramientas pedidas (`mtool_gen_cncjob`, rama multigeo).
@@ -119,6 +128,7 @@ private:
     template <typename Fn> void applyToAll(Fn fn);
     ShapeList solid_;
     std::map<int, GeometryTool> tools_;
+    Units units_{Units::Millimeters};
 };
 
 }  // namespace flatcam::gui

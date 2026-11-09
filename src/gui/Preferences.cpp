@@ -41,6 +41,8 @@ namespace {
 // ---------------------------------------------------------------------------------------------------------------
 struct PyVal {
     enum class Kind { Num, Seq, None, Bool } kind{Kind::None};
+    bool list{false};  ///< Una lista (`[...]`); si no, una tupla.
+    bool bare{false};  ///< Tupla escrita con comas y sin paréntesis (todavía puede ser el contenido de una lista).
     double v{0};
     bool isInt{false};
     bool b{false};
@@ -86,11 +88,16 @@ private:
     }
     /// expr (',' expr)* [','] -> una tupla si hay alguna coma.
     std::optional<PyVal> top(char closing = 0) {
-        if (closing && peek(closing)) return mk(PyVal::Kind::Seq);  // () o []
+        if (closing && peek(closing)) {  // () o []
+            PyVal e = mk(PyVal::Kind::Seq);
+            e.bare = true;
+            return e;
+        }
         auto first = expr();
         if (!first) return std::nullopt;
         if (!peek(',')) return first;
         PyVal seq = mk(PyVal::Kind::Seq);
+        seq.bare = true;
         seq.items.push_back(*first);
         while (eat(',')) {
             skip();
@@ -177,17 +184,21 @@ private:
         if (eat('(')) {
             auto v = top(')');
             if (!v || !eat(')')) return std::nullopt;
+            v->bare = false;  // (a, b) es una tupla; (x) es x
             return v;
         }
         if (eat('[')) {
             auto v = top(']');
             if (!v || !eat(']')) return std::nullopt;
-            if (v->kind != PyVal::Kind::Seq) {  // [x] es una lista de un elemento
-                PyVal seq = mk(PyVal::Kind::Seq);
-                seq.items.push_back(*v);
-                return seq;
+            if (v->kind == PyVal::Kind::Seq && v->bare) {  // [a, b]
+                v->bare = false;
+                v->list = true;
+                return v;
             }
-            return v;
+            PyVal seq = mk(PyVal::Kind::Seq);  // [x] es una lista de un elemento
+            seq.list = true;
+            seq.items.push_back(*v);
+            return seq;
         }
         if (word("None")) return mk(PyVal::Kind::None);
         if (word("True") || word("False")) {
@@ -235,8 +246,9 @@ JsonValue toJson(const PyVal& v) {
 }
 
 /// `eval(raw)`: el valor, o nulo si no se puede evaluar (el original lo registra y devuelve `None`).
-JsonValue pyEval(const QString& raw) {
+JsonValue pyEval(const QString& raw, bool* isTuple = nullptr) {
     const auto v = PyEval(raw.trimmed().toStdString()).parse();
+    if (isTuple) *isTuple = v && v->kind == PyVal::Kind::Seq && !v->list;
     return v ? toJson(*v) : JsonValue();
 }
 
@@ -346,6 +358,12 @@ QString defStr(const std::string& key) { return PropertiesTool::pyStr(appDefault
 
 QVariant defVariant(const std::string& key) { return toVariant(appDefaults()[key]); }
 
+QString appUnits() { return defStr("units").toUpper(); }
+
+Units appUnitsKind() { return appUnits() == "IN" ? Units::Inches : Units::Millimeters; }
+
+int appDecimals() { return defInt(appUnits() == "MM" ? "decimals_metric" : "decimals_inch", 4); }
+
 std::optional<PyNumber> defPy(const std::string& key) {
     const JsonValue& v = appDefaults()[key];
     JsonValue n = v;
@@ -422,11 +440,15 @@ const std::map<std::string, std::pair<std::string, std::string>>& Preferences::f
     return f;
 }
 
-void Preferences::set(const std::string& key, JsonValue v) {
+void Preferences::set(const std::string& key, JsonValue v, bool tuple) {
     // LoudDict.__setitem__: si la clave ya estaba con un valor igual (== de Python) no hace nada; si no, avisa
-    // (on_defaults_dict_change escribe el campo).
-    if (const JsonValue* old = defaults_.find(key); old && pyEqual(*old, v)) return;
+    // (on_defaults_dict_change escribe el campo). Una tupla nunca es igual a una lista ((0, 0) != [0.0, 0.0]).
+    const bool wasTuple = tupleKeys_.count(key) > 0;
+    if (const JsonValue* old = defaults_.find(key); old && pyEqual(*old, v) && (!v.isArray() || wasTuple == tuple))
+        return;
     defaults_.set(key, std::move(v));
+    if (tuple) tupleKeys_.insert(key);
+    else tupleKeys_.erase(key);
     writeFormField(key);
 }
 
@@ -587,7 +609,8 @@ void Preferences::writeFormField(const std::string& key, const JsonValue* source
     }
 }
 
-std::optional<JsonValue> Preferences::formValue(const std::string& key) {
+std::optional<JsonValue> Preferences::formValue(const std::string& key, bool* tuple) {
+    if (tuple) *tuple = false;
     tab();
     const auto it = fields().find(key);
     if (it == fields().end()) return std::nullopt;
@@ -604,16 +627,20 @@ std::optional<JsonValue> Preferences::formValue(const std::string& key) {
     if (py == "FCTextArea") return JsonValue::string(static_cast<FCTextArea*>(w)->value().toStdString());
     if (py == "FCComboBox") return JsonValue::string(static_cast<FCComboBox*>(w)->currentText().toStdString());
     if (py == "FCComboBox2") return JsonValue::integer(static_cast<FCComboBox2*>(w)->currentIndex());
-    if (py == "NumericalEvalTupleEntry") return pyEval(static_cast<FCEntry*>(w)->text());
-    if (py == "NumericalEvalEntry") return pyEval(static_cast<FCEntry*>(w)->text().replace(',', '.'));
+    if (py == "NumericalEvalTupleEntry") return pyEval(static_cast<FCEntry*>(w)->text(), tuple);
+    if (py == "NumericalEvalEntry") return pyEval(static_cast<FCEntry*>(w)->text().replace(',', '.'), tuple);
     if (py == "FCEntry") return JsonValue::string(static_cast<FCEntry*>(w)->text().toStdString());
     return std::nullopt;
 }
 
 void Preferences::readForm() {
     if (!tab_) return;  // sin la pestaña armada, los campos son las opciones mismas
-    for (const auto& [k, f] : fields())
-        if (auto v = formValue(k)) defaults_.set(k, *v);
+    // self.defaults[option] = get_value(): pasa por el LoudDict, así que un valor igual (120 == 120.0) no cambia nada
+    // y conserva su tipo.
+    for (const auto& [k, f] : fields()) {
+        bool tuple = false;
+        if (auto v = formValue(k, &tuple)) set(k, *v, tuple);
+    }
 }
 
 // ---------------------------------------------------------------------------------------------------------------

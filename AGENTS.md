@@ -79,7 +79,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.699 casos de `ctest` (2.630 del núcleo y 68 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.701 casos de `ctest` (2.630 del núcleo y 70 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -201,6 +201,7 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
                          factory_defaults.FlatConfig en la carpeta de datos, la pestaña (generated/PreferencesTabUIBase, de
                          tools/gui_dump/dump_preferences.py), leer/escribir los 485 campos con el tipo de Python (resources/
                          preferences_fields.json), Guardar/Aplicar/Cerrar/Restaurar, "editado" en rojo
+  AppUnits.cpp           Cambiar las unidades (on_toggle_units, scale_defaults) y convertir los objetos
   PreferencesGroups.cpp  Las señales de cada grupo de Preferencias: colores y alfa (__init_color_pickers), formatos de
                          Excellon, asociaciones de archivos y palabras clave
   widgets/FCPrefWidgets.* FCColorEntry, FCSliderWithSpinner, FCTextArea y FCTab de GUIElements
@@ -751,9 +752,16 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     de fábrica de las Geometrías (`geometry_*`), los colores de los objetos y de la selección, el zoom, el giro y la
     confirmación al borrar. **Error del port corregido:** cambiar una opción escribía siempre su campo; el `LoudDict` del
     original solo avisa si el valor cambió (`==` de Python), y sin eso, después de "Guardar", volver a cargar el archivo
-    reescribía los campos de texto (que emiten `modificationChanged`) y al cerrar la pestaña preguntaba si guardar. Falta:
-    cambiar las unidades, el área de trabajo y el cursor desde la pestaña, importar/exportar preferencias y el nivel
-    Avanzado (`global_app_level`; los paneles se generaron en Básico).
+    reescribía los campos de texto (que emiten `modificationChanged`) y al cerrar la pestaña preguntaba si guardar. **Unidades** (`AppUnits.cpp`: `on_toggle_units`,
+    `on_toggle_units_click`, `scale_defaults`, `set_screen_units`): desde la opción de la pestaña (escala las 150 opciones
+    con dimensiones) o con la tecla Q y Editar -> Cambiar unidades (sin escalarlas, como el original); convierte Gerber,
+    Excellon y Geometría; lo que se abre después y los CNC Job nuevos usan las unidades de la aplicación (G20/G21, decimales
+    `cncjob_coords_decimals` / `cncjob_fr_decimals`). Verificado con `oracle_units.py` (el `on_toggle_units` original con la
+    pestaña real): las 551 opciones iguales a mm -> pulgadas, de vuelta y con la tecla Q (`ToggleUnitsMatchesTheOriginal`).
+    Para eso el `LoudDict` del port distingue tupla de lista (`(0, 0) != [0.0, 0.0]` en Python) y `defaults_read_form`
+    pasa por él (un `120 == 120.0` conserva el entero). Desvío: un CNC Job no se convierte (el original solo reescala su
+    dibujo; el G-code queda igual). Falta: el área de trabajo y el cursor desde la pestaña, importar/exportar preferencias
+    y el nivel Avanzado (`global_app_level`; los paneles se generaron en Básico).
     (m) Errores del original que se reproducen a propósito en Isolation: la herramienta nueva tiene tipo `"           Iso"`
     (con espacios) y forma "V", y el rótulo "Ninguna herramienta seleccionada" lleva `color=#7777FF""`.
 14. **Postprocesadores: desvíos y rarezas del original.** (a) `line_xyz` lee `p['end_xy']`, que `CNCjob` no define: en el
@@ -818,7 +826,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.699 casos de test** (`ctest`): 2.631 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 68 de la GUI;
+- **2.701 casos de test** (`ctest`): 2.631 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 70 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -846,7 +854,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.699 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.701 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -1022,7 +1030,8 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    guardar/cargar `current_defaults.FlatConfig` y `factory_defaults.FlatConfig`, Guardar/Aplicar/Cerrar/Restaurar/Abrir
    carpeta/Borrar ajustes, Editar -> Preferencias, Shift+P, el rótulo de la barra de estado, los manejadores de cada grupo
    (11.12 x, `oracle_preferences.py`). También: las herramientas y los objetos leen sus valores de `app.defaults`.
-   **Falta:** cambiar las unidades (tecla Q y la pestaña), área de trabajo y cursor, importar/exportar preferencias (Archivo),
+   También: cambiar las unidades (tecla Q, Editar y la pestaña, `oracle_units.py`).
+   **Falta:** área de trabajo y cursor, importar/exportar preferencias (Archivo),
    "Opciones -> Transferir opciones" y el nivel Avanzado.
 7. **Consola Tcl** (`ToolShell`, `tclCommands/`, 68 comandos) y scripts.
 9. **Hacia la 1.0.0** (pedido del usuario; estimación dada: unas 6 sesiones sin editores y 8 a 9 con editores):
@@ -1065,4 +1074,8 @@ encontrar uno nuevo, agregarlo acá con su sección. Ya corregidos a pedido del 
   reescribe el formulario con las señales conectadas y deja las preferencias marcadas como editadas; editar el color de
   relleno de la selección (izquierda a derecha) deja solo su alfa (`global_sel_fill[7:9]`); el alfa de derecha a izquierda
   se carga de `global_sel_fill`; los alfa menores que 16 se escriben con un solo dígito (`hex()` sin completar).
+- **Unidades** (11.12 x): la grilla se escala dos veces (`scale_defaults` y después `val_x = global_gridx * factor`: 1 mm
+  queda en 0,00155 pulgadas); `geometry_cnctooldia` pasa a ser el texto `"[0.0945]"`; las herramientas de una Geometría
+  pierden su geometría al convertirla (`solid_geometry` no pasa al diccionario nuevo); ida y vuelta acumula redondeos
+  (-2,4 -> -2,4003).
 - **HPGL2** (11.12 w): los que quedan (cambiar de pluma con un trazo de un punto, bajar la pluma sin trazo, dibujar sin `SP`).
