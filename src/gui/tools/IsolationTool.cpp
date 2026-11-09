@@ -1,3 +1,4 @@
+#include "gui/Preferences.h"
 #include "gui/tools/IsolationTool.h"
 
 #include <QToolButton>
@@ -100,22 +101,24 @@ void IsolationTool::setToolUi() {
     rest_cb->setChecked(false);
     except_cb->setChecked(false);
     select_combo->setCurrentIndex(0);
-    // tools_iso_* de fábrica.
-    order_radio->setValue("rev");
-    passes_entry->setValue(1);
-    iso_overlap_entry->setValue(10.0);
-    milling_type_radio->setValue("cl");
-    combine_passes_cb->setChecked(true);
-    valid_cb->setChecked(false);
-    area_shape_radio->setValue("square");
-    poly_int_cb->setChecked(false);
-    forced_rest_iso_cb->setChecked(true);
-    new_tooldia_entry->setValue(0.1);
+    // tools_iso_* de las preferencias (de fábrica: 1 pasada, 10 %, combinar, 0.1).
+    order_radio->setValue(defVariant("tools_iso_order"));
+    passes_entry->setValue(defInt("tools_iso_passes"));
+    iso_overlap_entry->setValue(defNum("tools_iso_overlap"));
+    milling_type_radio->setValue(defVariant("tools_iso_milling_type"));
+    combine_passes_cb->setChecked(defBool("tools_iso_combine_passes"));
+    valid_cb->setChecked(defBool("tools_iso_check_valid"));
+    area_shape_radio->setValue(defVariant("tools_iso_area_shape"));
+    poly_int_cb->setChecked(defBool("tools_iso_poly_ints"));
+    forced_rest_iso_cb->setChecked(defBool("tools_iso_force"));
+    new_tooldia_entry->setValue(defNum("tools_iso_newdia"));
     tools_.clear();
     muted_ = false;
-    oldCombineState_ = true;
-    addTool(0.1);  // tools_iso_tooldia
-    onRestMachiningCheck(false);
+    oldCombineState_ = combine_passes_cb->isChecked();
+    const std::vector<double> dias = defDias("tools_iso_tooldia");
+    if (dias.empty()) return;  // "At least one tool diameter needed" (solo en el registro) y no sigue
+    for (double dia : dias) addTool(dia);
+    onRestMachiningCheck(defBool("tools_iso_rest"));
     onToggleReference();
 }
 
@@ -187,12 +190,12 @@ bool IsolationTool::addTool(double dia) {
     t.geo.offset = "Path";
     t.geo.type = "           Iso";  // así, con los espacios, en on_tool_default_add del original
     t.geo.toolType = "V";
-    t.geo.data.cutZ = -0.05;  // tools_iso_tool_cutz
-    t.passes = 1;
-    t.overlap = 10.0;
-    t.millingType = "cl";
-    t.isoType = "full";
-    t.follow = false;
+    t.geo.data.cutZ = defNum("tools_iso_tool_cutz");
+    t.passes = defInt("tools_iso_passes");
+    t.overlap = defNum("tools_iso_overlap");
+    t.millingType = defStr("tools_iso_milling_type");
+    t.isoType = defStr("tools_iso_isotype");
+    t.follow = defBool("tools_iso_follow");
     tools_[uid] = t;
     rebuild();
     for (int r = 0; r < tools_table->rowCount(); ++r)

@@ -6,7 +6,10 @@
 #pragma once
 
 #include <functional>
+#include <array>
 #include <map>
+#include <vector>
+#include <QVariant>
 #include <optional>
 #include <string>
 
@@ -14,12 +17,51 @@
 #include <QObject>
 #include <QString>
 
+#include "cam/PyNumber.h"
 #include "gui/generated/PreferencesTabUIBase.h"
 #include "io/JsonValue.h"
 
 namespace flatcam::gui {
 
 class MainGUI;
+
+/**
+ * @name Las opciones de la aplicación en curso (`self.app.defaults`)
+ * Las herramientas y los objetos leen de acá sus valores (los `set_tool_ui` del original). Sin aplicación, las de
+ * fábrica. Las conversiones son las de Python: `float(v)`, `int(v)`, `bool(v)`, `str(v)`.
+ */
+///@{
+/** @brief Las opciones. @return Las de la última aplicación creada, o las de fábrica. */
+const JsonValue& appDefaults();
+/** @brief `float(defaults[key])`. @param key Clave. @param def Si no es un número. @return El valor. */
+double defNum(const std::string& key, double def = 0.0);
+/** @brief `int(defaults[key])`. @param key Clave. @param def Si no es un número. @return El valor. */
+int defInt(const std::string& key, int def = 0);
+/** @brief `bool(defaults[key])`. @param key Clave. @return El valor. */
+bool defBool(const std::string& key);
+/** @brief `str(defaults[key])`. @param key Clave. @return El texto. */
+QString defStr(const std::string& key);
+/** @brief El valor para un `RadioSet` (texto, número o booleano). @param key Clave. @return El valor. */
+QVariant defVariant(const std::string& key);
+/**
+ * @brief Un par X,Y (`"0.0, 0.0"` en un texto o `[0.0, 0.0]` en una lista, como queda después de guardar).
+ * @param key Clave. @return El par, o vacío (None, texto vacío o inválido).
+ */
+std::optional<std::array<double, 2>> defPair(const std::string& key);
+/**
+ * @brief Una lista de diámetros como la leen las herramientas (`tools_ncc_tools`...): un número, un texto con comas
+ * (cada parte con `eval`) o una lista.
+ * @param key Clave. @return Los diámetros (vacío si no se puede leer).
+ */
+std::vector<double> defDias(const std::string& key);
+/**
+ * @brief Un número con su tipo de Python (entero o real), para el G-code que lo imprime con `str()`.
+ * @param key Clave. @return El número, o vacío si es None o no es un número.
+ */
+std::optional<PyNumber> defPy(const std::string& key);
+/** @brief `eval()` de Python para números, tuplas y listas (los `NumericalEval*Entry`). @param text Texto. @return El valor, o nulo. */
+JsonValue pyEvalLiteral(const QString& text);
+///@}
 
 /** @brief La pestaña Preferencias (`ui.preferences_tab` con su `pref_tab_area`), generada desde el original. */
 class PreferencesTab : public PreferencesTabUIBase {
@@ -45,6 +87,8 @@ class Preferences : public QObject {
 public:
     /** @brief Crea el gestor (sin la pestaña, que se arma al abrirla). @param ui Ventana principal. @param parent Padre. */
     explicit Preferences(MainGUI* ui, QObject* parent = nullptr);
+    /** @brief Deja de ser la fuente de @ref appDefaults. */
+    ~Preferences() override;
 
     /** @brief La versión que se guarda en las preferencias (`App.version`). @return "2024.4". */
     static const char* version();

@@ -1,3 +1,4 @@
+#include "gui/Preferences.h"
 #include "gui/objects/FlatCAMObj.h"
 
 #include "gui/objects/ObjectUIs.h"
@@ -142,8 +143,8 @@ bool ExcellonObject::mirror(Axis axis, const Point2D& point) {
 
 GerberObject::GerberObject(QString name, std::unique_ptr<Gerber> gerber)
     : FlatCAMObj(ObjectKind::Gerber, std::move(name)), gerber_(std::move(gerber)) {
-    outlineColor = colorFromFlatCam("#006E20BF");  // gerber_plot_line
-    fillColor = colorFromFlatCam("#BBF268BF");     // gerber_plot_fill
+    outlineColor = colorFromFlatCam(defStr("gerber_plot_line"));
+    fillColor = colorFromFlatCam(defStr("gerber_plot_fill"));
 }
 
 PlotLayerData GerberObject::plotData() const {
@@ -168,8 +169,8 @@ QWidget* GerberObject::propertiesUi() {
 
 ExcellonObject::ExcellonObject(QString name, std::unique_ptr<Excellon> excellon)
     : FlatCAMObj(ObjectKind::Excellon, std::move(name)), excellon_(std::move(excellon)) {
-    outlineColor = colorFromFlatCam("#750000BF");  // excellon_plot_line
-    fillColor = colorFromFlatCam("#C40000BF");     // excellon_plot_fill
+    outlineColor = colorFromFlatCam(defStr("excellon_plot_line"));
+    fillColor = colorFromFlatCam(defStr("excellon_plot_fill"));
 }
 
 PlotLayerData ExcellonObject::plotData() const {

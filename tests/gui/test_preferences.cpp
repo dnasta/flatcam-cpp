@@ -13,6 +13,8 @@
 #include "gui/MainGUI.h"
 #include "gui/Preferences.h"
 #include "gui/tools/PropertiesTool.h"
+#include "gui/tools/ToolPanels.h"
+#include "gui/objects/GeometryObject.h"
 #include "gui/widgets/FCDetachableTab.h"
 #include "gui/widgets/FCEntry.h"
 #include "gui/widgets/FCSpinners.h"
@@ -245,4 +247,43 @@ TEST(GuiPreferences, StatusLabelTogglesAndShortcutsOpen) {
     p->tab()->tools_ncc_group_ncc_overlap_entry->setValue(65.0);
     ui->plot_tab_area->closeTab(ui->plot_tab_area->indexOf(p->tab()));
     EXPECT_EQ(js(readJson(t.dir.path() + "/current_defaults.FlatConfig")["tools_ncc_overlap"]), "65.0");
+}
+
+// set_tool_ui: las herramientas leen sus valores de app.defaults (lo que el usuario guarda en Preferencias).
+TEST(GuiPreferences, ToolsReadTheirValuesFromThePreferences) {
+    QTemporaryDir dir;
+    {
+        // Las preferencias habituales del usuario: NCC y Paint con 80 %, método estándar y una herramienta de 0,1.
+        App app;
+        app.setDataPath(dir.path());
+        Preferences* p = app.preferences();
+        p->open();
+        PreferencesTab* t = p->tab();
+        t->tools_ncc_group_ncc_overlap_entry->setValue(80.0);
+        t->tools_ncc_group_ncc_method_combo->setIndexValue(0);
+        t->tools_ncc_group_ncc_tool_dia_entry->setText("0.1");
+        t->tools_paint_group_paintoverlap_entry->setValue(80.0);
+        t->tools_paint_group_painttooldia_entry->setText("0.1, 0.2");
+        t->tools_iso_group_overlap_entry->setValue(25.0);
+        t->tools_cutout_group_cutout_tooldia_entry->setValue(1.2);
+        t->geometry_opt_group_cutz_entry->setValue(-1.5);
+        t->pref_save_button->click();
+        EXPECT_FALSE(p->changed());  // volver a cargar el archivo no marca nada (LoudDict avisa solo si cambia)
+    }
+    App app;
+    app.setDataPath(dir.path());
+    EXPECT_EQ(js(app.defaults()["tools_ncc_tools"]), "0.1");  // eval("0.1"): un número
+    EXPECT_EQ(PropertiesTool::pyStr(app.defaults()["tools_paint_tooldia"]).toStdString(), "[0.1, 0.2]");
+    app.nccTool->setToolUi();
+    EXPECT_EQ(app.nccTool->ncc_overlap_entry->value(), 80.0);
+    EXPECT_EQ(app.nccTool->ncc_method_combo->currentIndex(), 0);
+    EXPECT_EQ(app.nccTool->tools_table->rowCount(), 1);
+    app.paintTool->setToolUi();
+    EXPECT_EQ(app.paintTool->paintoverlap_entry->value(), 80.0);
+    EXPECT_EQ(app.paintTool->tools_table->rowCount(), 2);  // la lista de diámetros de un archivo guardado
+    app.isolationTool->setToolUi();
+    EXPECT_EQ(app.isolationTool->iso_overlap_entry->value(), 25.0);
+    app.cutoutTool->setToolUi();
+    EXPECT_EQ(app.cutoutTool->dia->value(), 1.2);
+    EXPECT_EQ(defaultGeometryTool().data.cutZ, -1.5);  // geometry_cutz
 }

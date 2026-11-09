@@ -1,3 +1,4 @@
+#include "gui/Preferences.h"
 #include "gui/tools/DblSidedTool.h"
 
 #include <QRegularExpression>
@@ -110,11 +111,11 @@ void DblSidedTool::setToolUi() {
     drillValues_.clear();
     point_entry->setText("");
     alignment_holes->setText("");
-    // tools_2sided_* de fábrica.
-    mirror_axis->setValue("X");
-    axis_location->setValue("point");
-    drill_dia->setValue(3.125);
-    align_axis_radio->setValue("X");
+    // tools_2sided_* de las preferencias (de fábrica: X, punto, 3.125, X).
+    mirror_axis->setValue(defVariant("tools_2sided_mirror_axis"));
+    axis_location->setValue(defVariant("tools_2sided_axis_loc"));
+    drill_dia->setValue(defNum("tools_2sided_drilldia"));
+    align_axis_radio->setValue(defVariant("tools_2sided_allign_axis"));
     for (FCDoubleSpinner* w : {xmin_entry, ymin_entry, xmax_entry, ymax_entry}) w->setValue(0.0);
     center_entry->setText("");
     align_ref_label_val->setText(QString::number(0.0, 'f', kDecimals));

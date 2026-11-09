@@ -1,3 +1,4 @@
+#include "gui/Preferences.h"
 #include "gui/objects/CNCJobObject.h"
 
 #include <QDateTime>
@@ -16,8 +17,8 @@ CNCJobObject::CNCJobObject(QString name, std::unique_ptr<CncJob> job, GcodeHeade
                            std::vector<CncToolRow> tools)
     : FlatCAMObj(ObjectKind::CNCJob, std::move(name)), job_(std::move(job)), header_(std::move(header)),
       tools_(std::move(tools)) {
-    outlineColor = colorFromFlatCam("#4650BDFF");  // cncjob_plot_line
-    fillColor = colorFromFlatCam("#5E6CFFFF");     // cncjob_plot_fill
+    outlineColor = colorFromFlatCam(defStr("cncjob_plot_line"));
+    fillColor = colorFromFlatCam(defStr("cncjob_plot_fill"));
 }
 
 QColor CNCJobObject::travelColor() { return colorFromFlatCam("#B5AB3A4c"); }  // cncjob_travel_line

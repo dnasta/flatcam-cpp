@@ -1,3 +1,4 @@
+#include "gui/Preferences.h"
 #include "gui/tools/DistanceTool.h"
 
 #include <QSplitter>
@@ -59,7 +60,7 @@ void DistanceTool::setToolUi() {
     distance_y_entry->setValue(QString("0.0"));
     angle_entry->setValue(QString("0.0"));
     total_distance_entry->setValue(QString("0.0"));
-    snap_center_cb->setChecked(false);  // tools_dist_snap_center de fábrica
+    snap_center_cb->setChecked(defBool("tools_dist_snap_center"));
     snap_center_cb->hide();             // solo en los editores de Gerber y Excellon
     // El original dispara dos veces la grilla (sin efecto neto) y recuerda si estaba activa; nunca lo vuelve a False.
     if (app_->ui()->grid_snap_btn->isChecked()) gridMemory_ = true;

@@ -5,6 +5,7 @@
 #include <QClipboard>
 #include <QSplitter>
 
+#include "gui/Preferences.h"
 #include "gui/App.h"
 #include "gui/CanvasPicker.h"
 #include "gui/MainGUI.h"
@@ -20,7 +21,7 @@ namespace flatcam::gui {
 namespace {
 
 /// Un rectángulo (o la figura) convertido en grupo de dibujo con sus colores.
-PlotGroup groupOf(const Shape& s, const char* line, const char* fill) {
+PlotGroup groupOf(const Shape& s, const QString& line, const QString& fill) {
     PlotGroup g;
     QRectF ignored;
     FlatCAMObj::addShapeTo(s, g, ignored, true);
@@ -51,10 +52,10 @@ void App::onCanvasMove(const QPointF& world, bool leftDragging) {
         const Shape r = rectangle(lastClick_.x(), lastClick_.y(), world.x(), world.y());
         if (dx < 0) {
             // global_alt_sel_line / global_alt_sel_fill con transparencia 0,3 (hex(int(0.3 * 255)) = 4c).
-            movingSelection_ = groupOf(r, "#006E20BF", "#BBF2684c");
+            movingSelection_ = groupOf(r, defStr("global_alt_sel_line"), defStr("global_alt_sel_fill").chopped(2) + "4c");
             selectionType_ = false;
         } else {
-            movingSelection_ = groupOf(r, "#0000ffbf", "#a5a5ff4c");
+            movingSelection_ = groupOf(r, defStr("global_sel_line"), defStr("global_sel_fill").chopped(2) + "4c");
             selectionType_ = true;
         }
         redrawSelectionShapes();
@@ -230,7 +231,7 @@ void App::drawSelectionShape(FlatCAMObj* obj) {
     // mm: buffer(-0.1) y buffer(0.2); global_sel_fill con 0,2 de transparencia y global_sel_line con 0,8.
     Shape buffered = rect.buffer(-0.1).buffer(0.2);
     if (buffered.isEmpty() || !buffered.isValid()) buffered = rect;
-    selShapes_.push_back(groupOf(buffered, "#0000ffcc", "#a5a5ff33"));
+    selShapes_.push_back(groupOf(buffered, defStr("global_sel_line").chopped(2) + "cc", defStr("global_sel_fill").chopped(2) + "33"));
     redrawSelectionShapes();
 }
 

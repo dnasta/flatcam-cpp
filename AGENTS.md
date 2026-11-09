@@ -79,7 +79,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.698 casos de `ctest` (2.630 del núcleo y 67 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.699 casos de `ctest` (2.630 del núcleo y 68 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -745,9 +745,15 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     (tema, estilo, HDPI, tamaños de letra, "machinist", pantalla de bienvenida) va a `settings.ini` de la carpeta de datos
     (no se pisa la configuración del FlatCAM en Python y los tests no tocan la del usuario); el tema de fábrica del port es el
     claro (el original trae el oscuro, pero el port solo dibuja el claro); registrar las asociaciones de archivos solo hace
-    algo en Windows (el original falla en otros sistemas); "Abrir carpeta" usa `QDesktopServices`. Falta: cambiar las
-    unidades, el área de trabajo y el cursor desde la pestaña, importar/exportar preferencias y que cada herramienta lea sus
-    valores de `app.defaults` (hoy los paneles traen los de fábrica generados).
+    algo en Windows (el original falla en otros sistemas); "Abrir carpeta" usa `QDesktopServices`. Las herramientas leen sus
+    valores de `app.defaults` (`appDefaults()`, `defNum`, `defBool`, `defStr`, `defPy`, `defPair`, `defDias` en
+    `Preferences.h`): NCC, Paint, Isolation, Perforación, Corte, PCB a 2 caras, Transformaciones, Distancia, la herramienta
+    de fábrica de las Geometrías (`geometry_*`), los colores de los objetos y de la selección, el zoom, el giro y la
+    confirmación al borrar. **Error del port corregido:** cambiar una opción escribía siempre su campo; el `LoudDict` del
+    original solo avisa si el valor cambió (`==` de Python), y sin eso, después de "Guardar", volver a cargar el archivo
+    reescribía los campos de texto (que emiten `modificationChanged`) y al cerrar la pestaña preguntaba si guardar. Falta:
+    cambiar las unidades, el área de trabajo y el cursor desde la pestaña, importar/exportar preferencias y el nivel
+    Avanzado (`global_app_level`; los paneles se generaron en Básico).
     (m) Errores del original que se reproducen a propósito en Isolation: la herramienta nueva tiene tipo `"           Iso"`
     (con espacios) y forma "V", y el rótulo "Ninguna herramienta seleccionada" lleva `color=#7777FF""`.
 14. **Postprocesadores: desvíos y rarezas del original.** (a) `line_xyz` lee `p['end_xy']`, que `CNCjob` no define: en el
@@ -812,7 +818,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.698 casos de test** (`ctest`): 2.631 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 67 de la GUI;
+- **2.699 casos de test** (`ctest`): 2.631 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 68 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -840,7 +846,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.698 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.699 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -1015,9 +1021,9 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
 6. **Preferencias** (`appGUI/preferences/`, ~19.000 líneas). **Hecho:** la pestaña completa generada del original (485 campos),
    guardar/cargar `current_defaults.FlatConfig` y `factory_defaults.FlatConfig`, Guardar/Aplicar/Cerrar/Restaurar/Abrir
    carpeta/Borrar ajustes, Editar -> Preferencias, Shift+P, el rótulo de la barra de estado, los manejadores de cada grupo
-   (11.12 x, `oracle_preferences.py`). **Falta:** cambiar las unidades (tecla Q y la pestaña), área de trabajo y cursor,
-   importar/exportar preferencias (Archivo), "Opciones -> Transferir opciones" y que todas las herramientas y objetos lean sus
-   valores de `app.defaults`.
+   (11.12 x, `oracle_preferences.py`). También: las herramientas y los objetos leen sus valores de `app.defaults`.
+   **Falta:** cambiar las unidades (tecla Q y la pestaña), área de trabajo y cursor, importar/exportar preferencias (Archivo),
+   "Opciones -> Transferir opciones" y el nivel Avanzado.
 7. **Consola Tcl** (`ToolShell`, `tclCommands/`, 68 comandos) y scripts.
 9. **Hacia la 1.0.0** (pedido del usuario; estimación dada: unas 6 sesiones sin editores y 8 a 9 con editores):
    (a) preferencias y unidades (ítem 6); (b) herramientas (ítem 5) en dos o tres sesiones; (c) lo que queda de archivos

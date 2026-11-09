@@ -1,3 +1,4 @@
+#include "gui/Preferences.h"
 #include "gui/tools/TransformTool.h"
 
 #include <QApplication>
@@ -48,22 +49,22 @@ TransformTool::TransformTool(App* app, QWidget* parent) : TransformToolUIBase(pa
 ToolInfo TransformTool::info() { return {tr_("Object Transform"), tr_("Transform Tool")}; }
 
 void TransformTool::setToolUi() {
-    // tools_transform_* de fábrica.
-    ref_combo->setValue(tr_("Selection"));
-    type_obj_combo->setValue("Gerber");
-    point_entry->setText("0, 0");
-    rotate_entry->setValue(90);
-    skewx_entry->setValue(0.0);
-    skewy_entry->setValue(0.0);
-    skew_link_cb->setChecked(true);
-    scalex_entry->setValue(1.0);
-    scaley_entry->setValue(1.0);
-    scale_link_cb->setChecked(true);
-    offx_entry->setValue(0.0);
-    offy_entry->setValue(0.0);
-    buffer_entry->setValue(0.0);
-    buffer_factor_entry->setValue(100.0);
-    buffer_rounded_cb->setChecked(true);
+    // tools_transform_* de las preferencias (de fábrica: Selección, 90°, escala 1, engrosar 0 con 100 %).
+    ref_combo->setValue(defStr("tools_transform_reference"));
+    type_obj_combo->setValue(defStr("tools_transform_ref_object"));
+    point_entry->setText(defStr("tools_transform_ref_point"));  // EvalEntry.set_value: str(val)
+    rotate_entry->setValue(defNum("tools_transform_rotate"));
+    skewx_entry->setValue(defNum("tools_transform_skew_x"));
+    skewy_entry->setValue(defNum("tools_transform_skew_y"));
+    skew_link_cb->setChecked(defBool("tools_transform_skew_link"));
+    scalex_entry->setValue(defNum("tools_transform_scale_x"));
+    scaley_entry->setValue(defNum("tools_transform_scale_y"));
+    scale_link_cb->setChecked(defBool("tools_transform_scale_link"));
+    offx_entry->setValue(defNum("tools_transform_offset_x"));
+    offy_entry->setValue(defNum("tools_transform_offset_y"));
+    buffer_entry->setValue(defNum("tools_transform_buffer_dis"));
+    buffer_factor_entry->setValue(defNum("tools_transform_buffer_factor"));
+    buffer_rounded_cb->setChecked(defBool("tools_transform_buffer_corner"));
     onReferenceChanged(ref_combo->currentIndex());
     fillObjects();
 }

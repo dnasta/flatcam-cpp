@@ -1,3 +1,4 @@
+#include "gui/Preferences.h"
 #include "gui/tools/PaintTool.h"
 
 #include <QStandardItemModel>
@@ -119,17 +120,17 @@ void PaintTool::onTypeObjChanged() {
 
 void PaintTool::setToolUi() {
     muted_ = true;
-    // tools_paint_* de fábrica.
-    order_radio->setValue("rev");
-    offset_entry->setValue(0.0);
-    paintmethod_combo->setIndexValue(0);
-    selectmethod_combo->setIndexValue(0);
-    area_shape_radio->setValue("square");
-    pathconnect_cb->setChecked(true);
-    paintcontour_cb->setChecked(true);
-    paintoverlap_entry->setValue(20.0);
-    new_tooldia_entry->setValue(0.1);
-    rest_cb->setChecked(false);
+    // tools_paint_* de las preferencias (de fábrica: 20 %, estándar, "Todos", 0.3).
+    order_radio->setValue(defVariant("tools_paint_order"));
+    offset_entry->setValue(defNum("tools_paint_offset"));
+    paintmethod_combo->setIndexValue(defInt("tools_paint_method"));
+    selectmethod_combo->setIndexValue(defInt("tools_paint_selectmethod"));
+    area_shape_radio->setValue(defVariant("tools_paint_area_shape"));
+    pathconnect_cb->setChecked(defBool("tools_paint_connect"));
+    paintcontour_cb->setChecked(defBool("tools_paint_contour"));
+    paintoverlap_entry->setValue(defNum("tools_paint_overlap"));
+    new_tooldia_entry->setValue(defNum("tools_paint_newdia"));
+    rest_cb->setChecked(defBool("tools_paint_rest"));
     // El objeto activo, si es Gerber o Geometría; si no, Geometría.
     FlatCAMObj* active = app_->activeObject();
     const bool gerber = active && active->kind() == ObjectKind::Gerber;
@@ -139,8 +140,8 @@ void PaintTool::setToolUi() {
         obj_combo->setValue(active->name());
     tools_.clear();
     muted_ = false;
-    addTool(0.3);  // tools_paint_tooldia
-    onRestMachiningCheck(false);
+    for (double dia : defDias("tools_paint_tooldia")) addTool(dia);
+    onRestMachiningCheck(defBool("tools_paint_rest"));
     fillReferenceCombo();
     onSelection();
 }
@@ -178,13 +179,13 @@ bool PaintTool::addTool(double dia) {
     t.geo.offset = "Path";
     t.geo.type = "Iso";
     t.geo.toolType = "V";  // así lo pone on_tool_default_add de Paint
-    t.geo.data.cutZ = -0.05;  // tools_paint_cutz
-    // data = default_data: los tools_paint_* de fábrica (no lo que tenga el formulario).
-    t.overlap = 20.0;
-    t.offset = 0.0;
-    t.method = 0;
-    t.connect = true;
-    t.contour = true;
+    t.geo.data.cutZ = defNum("tools_paint_cutz");
+    // data = default_data: los tools_paint_* de las preferencias (no lo que tenga el formulario).
+    t.overlap = defNum("tools_paint_overlap");
+    t.offset = defNum("tools_paint_offset");
+    t.method = defInt("tools_paint_method");
+    t.connect = defBool("tools_paint_connect");
+    t.contour = defBool("tools_paint_contour");
     tools_[uid] = t;
     rebuild();
     // Queda elegida la herramienta nueva.

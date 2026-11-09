@@ -1,3 +1,4 @@
+#include "gui/Preferences.h"
 #include "gui/CanvasPicker.h"
 
 #include "gui/MainGUI.h"
@@ -119,8 +120,8 @@ void CanvasPicker::finish() {
 
 void CanvasPicker::redraw() {
     PlotLayerData d;
-    d.fillColor = colorFromFlatCam("#a5a5ffbf");  // global_sel_fill
-    d.lineColor = colorFromFlatCam("#0000ffbf");  // global_sel_line
+    d.fillColor = colorFromFlatCam(defStr("global_sel_fill"));
+    d.lineColor = colorFromFlatCam(defStr("global_sel_line"));
     PlotGroup g;
     QRectF bounds;
     for (const Shape& s : selected_) FlatCAMObj::addShapeTo(s, g, bounds, true);

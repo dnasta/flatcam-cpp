@@ -246,9 +246,9 @@ void App::connectSignals() {
         PlotCanvas* c = ui_->plotCanvas();
         c->zoom(f, c->toWorld(c->viewRect().center()));
     };
-    for (QAction* a : {ui_->menuview_zoom_in, ui_->zoom_in_btn}) connect(a, &QAction::triggered, this, [zoomBy] { zoomBy(1.5); });
+    for (QAction* a : {ui_->menuview_zoom_in, ui_->zoom_in_btn}) connect(a, &QAction::triggered, this, [zoomBy] { zoomBy(defNum("global_zoom_ratio")); });
     for (QAction* a : {ui_->menuview_zoom_out, ui_->zoom_out_btn})
-        connect(a, &QAction::triggered, this, [zoomBy] { zoomBy(1 / 1.5); });
+        connect(a, &QAction::triggered, this, [zoomBy] { zoomBy(1 / defNum("global_zoom_ratio")); });
     // Herramientas: menú Herramienta y barra de herramientas.
     for (QAction* a : {ui_->ncclear_tool_menuAction, ui_->ncc_btn})
         connect(a, &QAction::triggered, this, [this] {
@@ -890,7 +890,7 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
             case Qt::Key_J: onLocate(); return true;
             case Qt::Key_M: distanceMinTool->run(); return true;
             case Qt::Key_P: prefs_->open(); return true;
-            case Qt::Key_R: onRotateSelection(-90.0); return true;  // -tools_transform_rotate
+            case Qt::Key_R: onRotateSelection(-defNum("tools_transform_rotate")); return true;
             case Qt::Key_W: onWorkspaceToggle(); return true;
             case Qt::Key_X: onSkewSelection('X'); return true;
             case Qt::Key_Y: onSkewSelection('Y'); return true;
@@ -981,13 +981,13 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
         case Qt::Key_M: moveTool->toggle(); return true;
         case Qt::Key_O: onSetOrigin(); return true;
         case Qt::Key_P: propertiesTool->run(true); return true;
-        case Qt::Key_R: onRotateSelection(90.0); return true;  // tools_transform_rotate
+        case Qt::Key_R: onRotateSelection(defNum("tools_transform_rotate")); return true;
         case Qt::Key_V: onZoomFit(); return true;
         case Qt::Key_X: flip(Axis::Y); return true;  // on_flipx
         case Qt::Key_Y: flip(Axis::X); return true;  // on_flipy
-        // Acercar y alejar alrededor del mouse (global_zoom_ratio = 1,5).
-        case Qt::Key_Equal: canvas->zoom(1.5, mouse_); return true;
-        case Qt::Key_Minus: canvas->zoom(1 / 1.5, mouse_); return true;
+        // Acercar y alejar alrededor del mouse (global_zoom_ratio, 1,5 de fábrica).
+        case Qt::Key_Equal: canvas->zoom(defNum("global_zoom_ratio"), mouse_); return true;
+        case Qt::Key_Minus: canvas->zoom(1 / defNum("global_zoom_ratio"), mouse_); return true;
         case Qt::Key_QuoteLeft: ui->onToggleNotebook(); return true;
         default: return false;
     }
