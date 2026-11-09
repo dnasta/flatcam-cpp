@@ -12,6 +12,11 @@
 #include <algorithm>
 #include <limits>
 
+#include <map>
+#include "gui/widgets/FCPrefWidgets.h"
+#include "gui/widgets/FCLabel.h"
+#include "gui/widgets/RadioSet.h"
+#include "gui/widgets/FCCheckBox.h"
 #include "gui/Preferences.h"
 #include "gui/App.h"
 #include "gui/ExclusionAreasManager.h"
@@ -145,24 +150,81 @@ void App::clearPlots() {
     for (FlatCAMObj* o : collection_->objects()) ui_->plotCanvas()->removeLayer(o->id());
 }
 
-void App::onWorkspaceToggle() {
-    workspace_ = !workspace_;
-    if (workspace_) {
-        // draw_workspace(global_workspaceT = "A4"), vertical (global_workspace_orientation = "p"): 210 x 297 mm.
-        const double w = 210, h = 297;
-        PlotLayerData d;
-        d.lineColor = QColor::fromRgbF(0.70f, 0.3f, 0.3f, 0.7f);
-        d.lines = {0, 0, float(w), 0, float(w), 0, float(w), float(h), float(w), float(h), 0, float(h), 0, float(h), 0, 0};
-        ui_->plotCanvas()->setLayer(kWorkspaceLayerId, std::move(d));
-        ui_->wplace_label->setText("A4");
-        ui_->wplace_label->setToolTip("A4");
-        ui_->wplace_label->setStyleSheet("QLabel { color: black; background-color: olivedrab; }");
+std::optional<std::pair<double, double>> App::pageSize(const QString& name) {
+    // PlotCanvas.pagesize_dict (mm).
+    static const std::map<QString, std::pair<double, double>> sizes = {
+        {"A0", {841, 1189}}, {"A1", {594, 841}}, {"A2", {420, 594}}, {"A3", {297, 420}}, {"A4", {210, 297}},
+        {"A5", {148, 210}}, {"A6", {105, 148}}, {"A7", {74, 105}}, {"A8", {52, 74}}, {"A9", {37, 52}},
+        {"A10", {26, 37}}, {"B0", {1000, 1414}}, {"B1", {707, 1000}}, {"B2", {500, 707}}, {"B3", {353, 500}},
+        {"B4", {250, 353}}, {"B5", {176, 250}}, {"B6", {125, 176}}, {"B7", {88, 125}}, {"B8", {62, 88}},
+        {"B9", {44, 62}}, {"B10", {31, 44}}, {"C0", {917, 1297}}, {"C1", {648, 917}}, {"C2", {458, 648}},
+        {"C3", {324, 458}}, {"C4", {229, 324}}, {"C5", {162, 229}}, {"C6", {114, 162}}, {"C7", {81, 114}},
+        {"C8", {57, 81}}, {"C9", {40, 57}}, {"C10", {28, 40}}, {"LETTER", {8.5 * 25.4, 11 * 25.4}},
+        {"LEGAL", {8.5 * 25.4, 14 * 25.4}}, {"ELEVENSEVENTEEN", {11 * 25.4, 17 * 25.4}},
+        {"JUNIOR_LEGAL", {5 * 25.4, 8 * 25.4}}, {"HALF_LETTER", {5.5 * 25.4, 8 * 25.4}},
+        {"GOV_LETTER", {8 * 25.4, 10.5 * 25.4}}, {"GOV_LEGAL", {8.5 * 25.4, 13 * 25.4}},
+        {"LEDGER", {17 * 25.4, 11 * 25.4}}};
+    const auto it = sizes.find(name);
+    if (it == sizes.end()) return std::nullopt;
+    return it->second;
+}
+
+void App::applyCursorPreferences() {
+    // cursor_color_3D: global_cursor_color o, sin color propio, negro (tema claro). El tamaño y el grosor se leen de
+    // las opciones en cada movimiento del mouse.
+    const QColor color = cursorColorEnabled_ ? colorFromFlatCam(defStr("global_cursor_color")) : QColor("black");
+    ui_->plotCanvas()->setCursorStyle(color, defInt("global_cursor_size", 20), defInt("global_cursor_width", 2),
+                                      cursorBig_);
+}
+
+void App::drawWorkspace() {
+    // PlotCanvas.draw_workspace(global_workspaceT): la hoja en las unidades de la aplicación, apaisada con "l".
+    const QString size = defStr("global_workspaceT");
+    auto dims = pageSize(size);
+    if (!dims) return;  // "PlotCanvas.draw_workspace() --> ..." (solo en el registro)
+    if (appUnits() != "MM") dims = std::make_pair(dims->first / 25.4, dims->second / 25.4);
+    if (defStr("global_workspace_orientation") == "l") dims = std::make_pair(dims->second, dims->first);
+    const auto w = float(dims->first), h = float(dims->second);
+    PlotLayerData d;
+    d.lineColor = QColor::fromRgbF(0.70f, 0.3f, 0.3f, 0.7f);
+    d.lines = {0, 0, w, 0, w, 0, w, h, w, h, 0, h, 0, h, 0, 0};
+    ui_->plotCanvas()->setLayer(kWorkspaceLayerId, std::move(d));
+    ui_->wplace_label->setText(size.left(3));  // workspace_size[:3]
+    ui_->wplace_label->setToolTip(size);
+    ui_->wplace_label->setStyleSheet("QLabel { color: black; background-color: olivedrab; }");
+}
+
+void App::deleteWorkspace() {
+    ui_->plotCanvas()->removeLayer(kWorkspaceLayerId);
+    ui_->wplace_label->setStyleSheet("");
+}
+
+void App::onWorkspace() {
+    // on_workspace: según la casilla de la pestaña; después defaults_read_form.
+    if (prefs_->tab()->general_app_set_group_workspace_cb->isChecked()) {
+        drawWorkspace();
         ui_->inform(tr_("Workspace enabled."));
     } else {
-        ui_->plotCanvas()->removeLayer(kWorkspaceLayerId);
-        ui_->wplace_label->setStyleSheet("");
+        deleteWorkspace();
         ui_->inform(tr_("Workspace disabled."));
     }
+    prefs_->readForm();
+}
+
+void App::onWorkspaceToggle() {
+    // on_workspace_toggle: invierte la casilla sin su aviso y llama a on_workspace.
+    FCCheckBox* cb = prefs_->tab()->general_app_set_group_workspace_cb;
+    workspaceCbMuted_ = true;
+    cb->setChecked(!cb->isChecked());
+    workspaceCbMuted_ = false;
+    onWorkspace();
+}
+
+void App::onWorkspaceModified() {
+    // on_workspace_modified (tamaño u orientación): como el original, dibuja la hoja aunque el área esté apagada.
+    deleteWorkspace();
+    prefs_->readForm();
+    drawWorkspace();
 }
 
 // --------------------------------------------------------------------------------------------- Editar
@@ -353,6 +415,35 @@ void App::setupCanvasMenu() {
     for (QAction* a : {ui_->menuview_replot, ui_->replot_btn}) connect(a, &QAction::triggered, this, [this] { plotAll(); });
     connect(ui_->clear_plot_btn, &QAction::triggered, this, [this] { clearPlots(); });
     connect(ui_->menuview_toggle_workspace, &QAction::triggered, this, [this] { onWorkspaceToggle(); });
+    connect(ui_->wplace_label, &FCLabel::clicked, this, [this] { onWorkspaceToggle(); });
+    PreferencesTab* pt = prefs_->tab();
+    connect(pt->general_app_set_group_wk_cb, &QComboBox::currentIndexChanged, this, [this] { onWorkspaceModified(); });
+    connect(pt->general_app_set_group_wk_orientation_radio, &RadioSet::activatedCustom, this,
+            [this] { onWorkspaceModified(); });
+    connect(pt->general_app_set_group_workspace_cb, &QCheckBox::checkStateChanged, this, [this] {
+        if (!workspaceCbMuted_) onWorkspace();
+    });
+    if (defBool("global_workspace")) drawWorkspace();  // PlotCanvas.__init__
+    // El cursor: el tipo (on_cursor_type), el color (on_mouse_cursor_color_enable / on_mouse_cursor_entry) y lo que se
+    // guarda en las preferencias.
+    connect(pt->general_app_set_group_cursor_radio, &RadioSet::activatedCustom, this, [this, pt](const QString& v) {
+        pt->general_app_set_group_cursor_size_entry->setDisabled(v != "small");
+        pt->general_app_set_group_cursor_size_lbl->setDisabled(v != "small");
+        cursorBig_ = v != "small";  // new_cursor(big=...)
+        applyCursorPreferences();
+    });
+    connect(pt->general_app_set_group_mouse_cursor_color_cb, &QCheckBox::checkStateChanged, this, [this, pt] {
+        cursorColorEnabled_ = pt->general_app_set_group_mouse_cursor_color_cb->isChecked();
+        applyCursorPreferences();
+    });
+    connect(pt->general_app_set_group_mouse_cursor_entry, &FCColorEntry::editingFinished, this, [this] {
+        cursorColorEnabled_ = true;  // cursor_color_3D = global_cursor_color
+        applyCursorPreferences();
+    });
+    connect(prefs_, &Preferences::saved, this, [this] { applyCursorPreferences(); });
+    cursorColorEnabled_ = defBool("global_cursor_color_enabled");
+    cursorBig_ = defStr("global_cursor_type") == "big";
+    applyCursorPreferences();
 
     // popMenu (MainGUI.py): transcripto, porque es un QMenu suelto que el volcador no recorre.
     popMenu_ = new QMenu(ui_.get());
