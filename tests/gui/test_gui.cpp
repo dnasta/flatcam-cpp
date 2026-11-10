@@ -2811,3 +2811,29 @@ TEST(GuiExtractDrills, ExtractsTheUserPads) {
     // De fábrica solo los pads circulares: los mismos 59 que el original con ese filtro (oracle_extract_drills.py).
     EXPECT_EQ(tools.at(1).drills.size(), 59u);
 }
+
+// Perforar Gerber (Alt+H) con el taladro del dosificador: los mismos agujeros "clear" que el original (oracle_punch.py).
+TEST(GuiPunch, PunchesThePadsWithTheDrills) {
+    App app;
+    const QString data = QString(FLATCAM_TEST_DATA_DIR);
+    FlatCAMObj* cu = app.openGerber(data + "/PCB principal-B_Cu.gbl");
+    FlatCAMObj* drl = app.openExcellon(data + "/PCB principal-Drill.drl");
+    ASSERT_NE(cu, nullptr);
+    ASSERT_NE(drl, nullptr);
+    QKeyEvent alt(QEvent::KeyPress, Qt::Key_H, Qt::AltModifier);
+    QApplication::sendEvent(app.ui(), &alt);
+    PunchTool* t = app.punchTool;
+    EXPECT_EQ(t->method_punch->value().toString(), "exc");  // tools_punch_hole_type
+    t->select_all_cb->setChecked(true);
+    t->buildToolUi();
+    ASSERT_GT(t->apertures_table->rowCount(), 0);
+    // Como el original, selectColumn(0) deja elegidas todas las aperturas de la tabla.
+    EXPECT_EQ(t->apertures_table->selectedItems().size(), t->apertures_table->rowCount());
+    FlatCAMObj* p = t->punch();
+    ASSERT_NE(p, nullptr);
+    EXPECT_EQ(p->name(), "PCB principal-B_Cu_punched");
+    const auto& aps = static_cast<GerberObject*>(p)->gerber().apertures();
+    ASSERT_TRUE(aps.count("28") && aps.count("31"));
+    EXPECT_EQ(aps.at("28").geometry.size(), 90u);  // agujeros de 0,8 dentro de pads
+    EXPECT_DOUBLE_EQ(aps.at("31").size.value_or(0), 3.4);
+}

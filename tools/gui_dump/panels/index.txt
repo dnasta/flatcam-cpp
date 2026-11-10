@@ -17,6 +17,7 @@ InvertToolUI
 CalculatorsToolUI
 CornersToolUI
 ExtractDrillsToolUI
+PunchToolUI
 ToolsDB2UI
 AboutDialogUI
 HowtoDialogUI

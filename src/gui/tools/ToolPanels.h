@@ -15,6 +15,7 @@
 #include "gui/tools/CalculatorsTool.h"
 #include "gui/tools/CornersTool.h"
 #include "gui/tools/ExtractDrillsTool.h"
+#include "gui/tools/PunchTool.h"
 #include "gui/tools/ToolInfo.h"
 #include "gui/tools/TransformTool.h"
 #include "gui/tools/DistanceTool.h"
