@@ -35,6 +35,8 @@ add_library(flatcam_gui STATIC
     tools/InvertTool.cpp
     tools/CalculatorsTool.cpp
     tools/CornersTool.cpp
+    tools/ExtractDrillsTool.cpp
+    generated/ExtractDrillsToolUIBase.cpp
     generated/CornersToolUIBase.cpp
     generated/CalculatorsToolUIBase.cpp
     generated/InvertToolUIBase.cpp

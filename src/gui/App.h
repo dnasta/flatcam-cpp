@@ -298,6 +298,7 @@ public:
     InvertTool* invertTool;      ///< Panel de Invertir Gerber.
     CalculatorsTool* calculatorsTool;  ///< Panel de Calculadoras.
     CornersTool* cornersTool;          ///< Panel de Marcas de esquina.
+    ExtractDrillsTool* extractDrillsTool;  ///< Panel de Extraer taladros.
     class TransformTool* transformTool;  ///< Panel de Transformaciones.
     class DistanceTool* distanceTool;  ///< Herramienta Distancia.
     class DistanceMinTool* distanceMinTool;  ///< Herramienta Distancia mínima.
