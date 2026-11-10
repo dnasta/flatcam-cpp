@@ -299,6 +299,7 @@ public:
     CalculatorsTool* calculatorsTool;  ///< Panel de Calculadoras.
     CornersTool* cornersTool;          ///< Panel de Marcas de esquina.
     ExtractDrillsTool* extractDrillsTool;  ///< Panel de Extraer taladros.
+    PunchTool* punchTool;                  ///< Panel de Perforar Gerber.
     class TransformTool* transformTool;  ///< Panel de Transformaciones.
     class DistanceTool* distanceTool;  ///< Herramienta Distancia.
     class DistanceMinTool* distanceMinTool;  ///< Herramienta Distancia mínima.

@@ -47,7 +47,7 @@ TOOLS = {"ncclear_tool": "NccToolUI", "paint_tool": "PaintToolUI", "drilling_too
          "distance_min_tool": "DistanceMinToolUI", "properties_tool": "PropertiesToolUI",
          "panelize_tool": "PanelizeToolUI", "invert_tool": "InvertToolUI",
          "calculator_tool": "CalculatorsToolUI", "corners_tool": "CornersToolUI",
-         "edrills_tool": "ExtractDrillsToolUI"}
+         "edrills_tool": "ExtractDrillsToolUI", "punch_tool": "PunchToolUI"}
 
 
 def main():
