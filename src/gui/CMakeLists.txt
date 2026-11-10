@@ -44,6 +44,8 @@ add_library(flatcam_gui STATIC
     generated/EtchToolUIBase.cpp
     tools/AlignTool.cpp
     generated/AlignToolUIBase.cpp
+    tools/FiducialsTool.cpp
+    generated/FiducialsToolUIBase.cpp
     generated/SubToolUIBase.cpp
     generated/PunchToolUIBase.cpp
     generated/ExtractDrillsToolUIBase.cpp
