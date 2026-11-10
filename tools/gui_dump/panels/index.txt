@@ -21,6 +21,7 @@ PunchToolUI
 SubToolUI
 OptimalToolUI
 EtchToolUI
+AlignToolUI
 ToolsDB2UI
 AboutDialogUI
 HowtoDialogUI
