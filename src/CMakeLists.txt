@@ -32,6 +32,7 @@ add_library(flatcam_core STATIC
     tools/ExcellonMilling.cpp
     tools/Panelize.cpp
     tools/InvertGerber.cpp
+    tools/EtchCompensation.cpp
     tools/CornerMarkers.cpp
     tools/ExtractDrills.cpp
     tools/PunchGerber.cpp

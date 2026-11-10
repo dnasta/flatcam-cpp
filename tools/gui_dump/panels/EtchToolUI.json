@@ -1,0 +1,829 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "ToolEtchCompensation",
+  "name": null,
+  "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Herramienta de Comp de Grabado"
+   },
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QFrame",
+      "py": "QFrame",
+      "name": "tools_frame",
+      "props": {},
+      "layout": {
+       "qt": "QVBoxLayout",
+       "py": "QVBoxLayout",
+       "name": "tools_box",
+       "props": {},
+       "margins": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spacing": 6,
+       "items": [
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QLabel",
+          "py": "QLabel",
+          "name": null,
+          "props": {
+           "font": {
+            "t": "QFont",
+            "v": {
+             "bold": true,
+             "pixelSize": 16
+            }
+           },
+           "styleSheet": {
+            "t": "str",
+            "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+           },
+           "text": {
+            "t": "str",
+            "v": "Herramienta de Comp de Grabado"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QGridLayout",
+          "py": "QGridLayout",
+          "name": null,
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "hspacing": 6,
+          "vspacing": 6,
+          "rowStretch": [
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0
+          ],
+          "colStretch": [
+           0,
+           1
+          ],
+          "colMinWidth": [
+           0,
+           0
+          ],
+          "items": [
+           {
+            "align": 0,
+            "row": 0,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": null,
+             "props": {}
+            }
+           },
+           {
+            "align": 0,
+            "row": 1,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "gerber_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Objeto de Gerber que se invertirá."
+              },
+              "text": {
+               "t": "str",
+               "v": "<b>GERBER:</b>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 2,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QComboBox",
+             "py": "FCComboBox",
+             "name": "gerber_combo",
+             "props": {},
+             "items": [],
+             "currentIndex": -1
+            }
+           },
+           {
+            "align": 0,
+            "row": 3,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QFrame",
+             "py": "QFrame",
+             "name": null,
+             "props": {
+              "sizePolicy": {
+               "t": "QSizePolicy",
+               "v": [
+                1,
+                0,
+                0,
+                0
+               ]
+              },
+              "frameShape": {
+               "t": "int",
+               "v": 4
+              },
+              "frameShadow": {
+               "t": "int",
+               "v": 48
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 4,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "util_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Utilidades de conversión."
+              },
+              "text": {
+               "t": "str",
+               "v": "<b>Utilidades:</b>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 5,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "oz_um_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Se convertirá del grosor de oz a micras [um].\nPuede usar fórmulas con operadores: /, *, +, -,%,.\nLos números reales usan el separador de decimales de punto."
+              },
+              "text": {
+               "t": "str",
+               "v": "Oz a Micrones:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 6,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "layout": {
+             "qt": "QHBoxLayout",
+             "py": "QHBoxLayout",
+             "name": null,
+             "props": {},
+             "margins": [
+              0,
+              0,
+              0,
+              0
+             ],
+             "spacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QLineEdit",
+                "py": "NumericalEvalEntry",
+                "name": "oz_entry",
+                "props": {
+                 "styleSheet": {
+                  "t": "str",
+                  "v": "QLineEdit {border: 1px solid #0069A9;}"
+                 },
+                 "placeholderText": {
+                  "t": "str",
+                  "v": "Valor de oz"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QLineEdit",
+                "py": "FCEntry",
+                "name": "oz_to_um_entry",
+                "props": {
+                 "readOnly": {
+                  "t": "bool",
+                  "v": true
+                 },
+                 "placeholderText": {
+                  "t": "str",
+                  "v": "Valor de micras"
+                 }
+                }
+               }
+              }
+             ]
+            }
+           },
+           {
+            "align": 0,
+            "row": 7,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "mils_um_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Se convertirá de milésimas de pulgada a micras [um].\nPuede usar fórmulas con operadores: /, *, +, -,%,.\nLos números reales usan el separador de decimales de punto."
+              },
+              "text": {
+               "t": "str",
+               "v": "Mils a Micrones:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 8,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "layout": {
+             "qt": "QHBoxLayout",
+             "py": "QHBoxLayout",
+             "name": null,
+             "props": {},
+             "margins": [
+              0,
+              0,
+              0,
+              0
+             ],
+             "spacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QLineEdit",
+                "py": "NumericalEvalEntry",
+                "name": "mils_entry",
+                "props": {
+                 "styleSheet": {
+                  "t": "str",
+                  "v": "QLineEdit {border: 1px solid #0069A9;}"
+                 },
+                 "placeholderText": {
+                  "t": "str",
+                  "v": "Valor de milésimas"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QLineEdit",
+                "py": "FCEntry",
+                "name": "mils_to_um_entry",
+                "props": {
+                 "readOnly": {
+                  "t": "bool",
+                  "v": true
+                 },
+                 "placeholderText": {
+                  "t": "str",
+                  "v": "Valor de micras"
+                 }
+                }
+               }
+              }
+             ]
+            }
+           },
+           {
+            "align": 0,
+            "row": 9,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QFrame",
+             "py": "QFrame",
+             "name": null,
+             "props": {
+              "sizePolicy": {
+               "t": "QSizePolicy",
+               "v": [
+                1,
+                0,
+                0,
+                0
+               ]
+              },
+              "frameShape": {
+               "t": "int",
+               "v": 4
+              },
+              "frameShadow": {
+               "t": "int",
+               "v": 48
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 10,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "param_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Parám. para esta herramienta."
+              },
+              "text": {
+               "t": "str",
+               "v": "<b>Parámetros:</b>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 12,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "thick_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "El grosor de la lámina de cobre.\nEn micras [um]."
+              },
+              "text": {
+               "t": "str",
+               "v": "Espesor de cobre:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 12,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "thick_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10000.0
+              },
+              "value": {
+               "t": "double",
+               "v": 18.0
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 14,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "ratio_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "La relación de grabado lateral versus grabado profundo.\nPuede ser:\n- personalizado -> el usuario ingresará un valor personalizado\n- preseleccionado -> valor que depende de una selección de grabadores"
+              },
+              "text": {
+               "t": "str",
+               "v": "Proporción:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 16,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QWidget",
+             "py": "RadioSet",
+             "name": "ratio_radio",
+             "props": {},
+             "choices": [
+              {
+               "label": "Factor de grabado",
+               "value": "factor"
+              },
+              {
+               "label": "Lista de grabados",
+               "value": "etch_list"
+              },
+              {
+               "label": "Desplazamiento manual",
+               "value": "manual"
+              }
+             ],
+             "vertical": true,
+             "stretch": false,
+             "value": "factor"
+            }
+           },
+           {
+            "align": 0,
+            "row": 18,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "etchants_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Una lista de grabadores."
+              },
+              "text": {
+               "t": "str",
+               "v": "Grabadores:"
+              },
+              "hidden": {
+               "t": "bool",
+               "v": true
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 18,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QComboBox",
+             "py": "FCComboBox",
+             "name": "etchants_combo",
+             "props": {
+              "currentText": {
+               "t": "str",
+               "v": "CuCl2"
+              },
+              "hidden": {
+               "t": "bool",
+               "v": true
+              }
+             },
+             "items": [
+              "CuCl2",
+              "Fe3Cl",
+              "Baños alcalinos"
+             ],
+             "currentIndex": 0
+            }
+           },
+           {
+            "align": 0,
+            "row": 19,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "factor_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "La relación entre el grabado profundo y el grabado lateral.\nAcepta números reales y fórmulas utilizando los operadores: /, *, +, -,%"
+              },
+              "text": {
+               "t": "str",
+               "v": "Factor de grabado:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 19,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLineEdit",
+             "py": "NumericalEvalEntry",
+             "name": "factor_entry",
+             "props": {
+              "styleSheet": {
+               "t": "str",
+               "v": "QLineEdit {border: 1px solid #0069A9;}"
+              },
+              "text": {
+               "t": "str",
+               "v": "1"
+              },
+              "placeholderText": {
+               "t": "str",
+               "v": "Número real o fórmula"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 20,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "offset_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Valor con el que aumentar o disminuir (buffer)\nLas características de cobre. En micras [um]."
+              },
+              "text": {
+               "t": "str",
+               "v": "Compensar:"
+              },
+              "hidden": {
+               "t": "bool",
+               "v": true
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 20,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "offset_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "minimum": {
+               "t": "double",
+               "v": -10000.0
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10000.0
+              },
+              "hidden": {
+               "t": "bool",
+               "v": true
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 22,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QFrame",
+             "py": "QFrame",
+             "name": null,
+             "props": {
+              "sizePolicy": {
+               "t": "QSizePolicy",
+               "v": [
+                1,
+                0,
+                0,
+                0
+               ]
+              },
+              "frameShape": {
+               "t": "int",
+               "v": 4
+              },
+              "frameShadow": {
+               "t": "int",
+               "v": 48
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 24,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QPushButton",
+             "py": "FCButton",
+             "name": "compensate_btn",
+             "props": {
+              "font": {
+               "t": "QFont",
+               "v": {
+                "bold": true
+               }
+              },
+              "toolTip": {
+               "t": "str",
+               "v": "Aumentará el grosor de las características de cobre para compensar el grabado lateral."
+              },
+              "styleSheet": {
+               "t": "str",
+               "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+              },
+              "text": {
+               "t": "str",
+               "v": "Compensar"
+              },
+              "icon": {
+               "t": "QIcon",
+               "v": ":/images/etch_32.png"
+              }
+             }
+            }
+           }
+          ]
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "spacer": [
+          0,
+          0,
+          1,
+          7
+         ]
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QPushButton",
+          "py": "QPushButton",
+          "name": "reset_button",
+          "props": {
+           "font": {
+            "t": "QFont",
+            "v": {
+             "bold": true
+            }
+           },
+           "toolTip": {
+            "t": "str",
+            "v": "Restablecerá los parámetros de la herramienta."
+           },
+           "styleSheet": {
+            "t": "str",
+            "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+           },
+           "text": {
+            "t": "str",
+            "v": "Restablecer la Herramienta"
+           },
+           "icon": {
+            "t": "QIcon",
+            "v": ":/images/reset32.png"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "EtchToolUI"
+}
