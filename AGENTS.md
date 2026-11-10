@@ -79,7 +79,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.709 casos de `ctest` (2.631 del núcleo y 75 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.711 casos de `ctest` (2.631 del núcleo y 76 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -128,6 +128,7 @@ src/tools/              Herramientas de FlatCAM (sin Qt)
   Isolation.*            Aislamiento: pasadas separadas, combinadas y mecanizado de resto (`ToolIsolation.py`)
   Panelize.*             Panelizar (`ToolPanelize.on_panelize`): grilla con restricción de área, Excellon, Gerber (sólido y
                          aperturas) y Geometría por herramienta (con "Optimizar": `snap` + `linemerge` + `unary_union`)
+  InvertGerber.*         Invertir un Gerber (`on_grb_invert`): la caja con margen menos el cobre
   ExcellonMilling.*      Fresar agujeros y ranuras de un Excellon (`generate_milling_drills` / `_slots` de FlatCAMExcellon)
 src/io/                 Proyectos (sin Qt; depende de liblzma)
   JsonValue.*            Valor JSON liviano (los números conservan su texto, para escribirlos igual que Python)
@@ -188,6 +189,7 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   tools/PaintTool.*      Paint (port de ToolPaint: método estándar, selección "Todos") → `<objeto>_mt_paint`
   tools/NccTool.*        NCC (port de ToolNCC: "Limpiar", estándar, "Sí mismo") → `<objeto>_ncc`
   tools/IsolationTool.*  Isolation (port de ToolIsolation sobre src/tools/Isolation; falta la selección por área y polígono)
+  tools/InvertTool.*     Invertir Gerber (panel generado de ToolInvertGerber, Alt+G) sobre src/tools/InvertGerber
   tools/PanelizeTool.*   Panelizar (panel generado de ToolPanelize, Alt+Z) sobre src/tools/Panelize
   tools/DblSidedTool.*   PCB a 2 caras (port de ToolDblSided, sobre src/tools/DoubleSided): reflejar y "Alignment Drills"
   tools/TransformTool.*  Transformaciones (ToolTransform): rotar, inclinar, escalar, desplazar, reflejar y engrosar
@@ -845,7 +847,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.709 casos de test** (`ctest`): 2.634 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 75 de la GUI;
+- **2.711 casos de test** (`ctest`): 2.635 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 76 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -873,7 +875,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.709 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.711 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -1050,7 +1052,9 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    errores) y `GuiMilling.*`. Como el original, al abrir el panel no queda ninguna herramienta elegida (`selectColumn(0)` no
    elige nada en una tabla de filas) y los botones quedan deshabilitados hasta elegir. ~~Panelizar~~ (hecho: `src/tools/Panelize.*`, `tools/PanelizeTool.*`, Alt+Z; verificado con `oracle_panelize.py`, que
    ejecuta el `on_panelize` original completo con una interfaz simulada: Gerber como Gerber y como Geometría, restricción de
-   área, Excellon con agujeros y ranuras y Geometría con y sin "Optimizar", idénticos). Siguen: Film, Calculators, Copper Thieving, Fiducials, Corners, Extract
+   área, Excellon con agujeros y ranuras y Geometría con y sin "Optimizar", idénticos). ~~Invertir Gerber~~ (hecho: `src/tools/InvertGerber.*`, `tools/InvertTool.*`, Alt+G; `oracle_invert.py` sobre
+   el contorno de "luz de noche" con los tres tipos de esquina y el logo del dosificador: idéntico con GEOS 3.12 salvo una
+   figura; con 3.15 la resta da otros vértices con la misma geometría, a menos de media micra cuadrada). Siguen: Film, Calculators, Copper Thieving, Fiducials, Corners, Extract
    Drills, Punch Gerber, Invert Gerber, Align Objects, Subtract (`ToolSub`), QR Code, Rules Check, Optimal, Solder Paste,
    Calibration, Etch Compensation, PCB Wizard, Levelling (autonivelación del CNC Job).
 6. **Preferencias** (`appGUI/preferences/`, ~19.000 líneas). **Hecho:** la pestaña completa generada del original (485 campos),

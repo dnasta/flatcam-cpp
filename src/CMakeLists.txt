@@ -31,6 +31,7 @@ add_library(flatcam_core STATIC
     tools/Isolation.cpp
     tools/ExcellonMilling.cpp
     tools/Panelize.cpp
+    tools/InvertGerber.cpp
     io/JsonValue.cpp
     io/ProjectFile.cpp
 )

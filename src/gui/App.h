@@ -295,6 +295,7 @@ public:
     CutOutTool* cutoutTool;      ///< Panel de corte.
     DblSidedTool* dblsidedTool;  ///< Panel de PCB a 2 caras.
     PanelizeTool* panelizeTool;  ///< Panel de Panelizar.
+    InvertTool* invertTool;      ///< Panel de Invertir Gerber.
     class TransformTool* transformTool;  ///< Panel de Transformaciones.
     class DistanceTool* distanceTool;  ///< Herramienta Distancia.
     class DistanceMinTool* distanceMinTool;  ///< Herramienta Distancia mínima.
