@@ -79,7 +79,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.721 casos de `ctest` (2.639 del núcleo y 81 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.723 casos de `ctest` (2.640 del núcleo y 82 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -128,6 +128,7 @@ src/tools/              Herramientas de FlatCAM (sin Qt)
   Isolation.*            Aislamiento: pasadas separadas, combinadas y mecanizado de resto (`ToolIsolation.py`)
   Panelize.*             Panelizar (`ToolPanelize.on_panelize`): grilla con restricción de área, Excellon, Gerber (sólido y
                          aperturas) y Geometría por herramienta (con "Optimizar": `snap` + `linemerge` + `unary_union`)
+  OptimalDistance.*      Óptimo: la distancia mínima entre las figuras de cobre (`find_minimum_distance`)
   Subtract.*             Restar: Gerber menos Gerber (`aperture_intersection` + `new_gerber_object`) y Geometría menos
                          Geometría (`toolgeo_intersection`)
   PunchGerber.*          Perforar un Gerber (con un Excellon, fijo, anillo o proporcional) y sus aperturas `clear`
@@ -194,6 +195,7 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   tools/PaintTool.*      Paint (port de ToolPaint: método estándar, selección "Todos") → `<objeto>_mt_paint`
   tools/NccTool.*        NCC (port de ToolNCC: "Limpiar", estándar, "Sí mismo") → `<objeto>_ncc`
   tools/IsolationTool.*  Isolation (port de ToolIsolation sobre src/tools/Isolation; falta la selección por área y polígono)
+  tools/OptimalTool.*    Óptimo (ToolOptimal, Alt+O) sobre src/tools/OptimalDistance
   tools/SubTool.*        Restar (ToolSub, Alt+W) sobre src/tools/Subtract
   tools/PunchTool.*      Perforar Gerber (ToolPunchGerber, Alt+H) sobre src/tools/PunchGerber
   tools/ExtractDrillsTool.* Extraer taladros (ToolExtractDrills, Alt+E) sobre src/tools/ExtractDrills
@@ -857,7 +859,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.721 casos de test** (`ctest`): 2.640 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 81 de la GUI;
+- **2.723 casos de test** (`ctest`): 2.641 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 82 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -885,7 +887,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.721 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.723 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -1079,7 +1081,10 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    `tools/SubTool.*`, Alt+W; `oracle_sub.py` ejecuta `aperture_intersection`, `new_gerber_object` y `toolgeo_intersection`
    originales: cobre menos máscara y al revés, cobre menos logo, y geometrías con y sin "Cerrar trayectos"; las mismas
    aperturas, elementos y áreas). Hizo falta reproducir el `MultiPolygon` de Shapely 1.8, que de un `MultiPolygon` dentro de
-   la lista se queda solo con la primera parte. Siguen: Film, Calculators, Copper Thieving, Fiducials, Corners, Extract
+   la lista se queda solo con la primera parte. ~~Óptimo~~ (hecho: `src/tools/OptimalDistance.*`, `tools/OptimalTool.*`,
+   Alt+O; `oracle_optimal.py` ejecuta el `find_minimum_distance` original sobre el cobre de "luz de noche" con 4 y 2
+   decimales, el logo del dosificador y el contorno de un solo polígono: la misma mínima, cantidad, puntos y lista de las
+   demás distancias). Siguen: Film, Calculators, Copper Thieving, Fiducials, Corners, Extract
    Drills, Punch Gerber, Invert Gerber, Align Objects, Subtract (`ToolSub`), QR Code, Rules Check, Optimal, Solder Paste,
    Calibration, Etch Compensation, PCB Wizard, Levelling (autonivelación del CNC Job).
 6. **Preferencias** (`appGUI/preferences/`, ~19.000 líneas). **Hecho:** la pestaña completa generada del original (485 campos),

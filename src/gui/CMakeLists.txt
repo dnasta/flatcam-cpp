@@ -38,6 +38,8 @@ add_library(flatcam_gui STATIC
     tools/ExtractDrillsTool.cpp
     tools/PunchTool.cpp
     tools/SubTool.cpp
+    tools/OptimalTool.cpp
+    generated/OptimalToolUIBase.cpp
     generated/SubToolUIBase.cpp
     generated/PunchToolUIBase.cpp
     generated/ExtractDrillsToolUIBase.cpp

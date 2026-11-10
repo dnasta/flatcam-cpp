@@ -19,6 +19,7 @@ CornersToolUI
 ExtractDrillsToolUI
 PunchToolUI
 SubToolUI
+OptimalToolUI
 ToolsDB2UI
 AboutDialogUI
 HowtoDialogUI
