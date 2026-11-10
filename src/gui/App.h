@@ -231,6 +231,13 @@ public:
      * @return Si se guardó.
      */
     bool onExportPreferences(QString filename = {});
+    /**
+     * @brief "Fresar agujeros" / "Fresar ranuras" del panel de un Excellon (`generate_milling_drills` / `_slots`): una
+     * Geometría `<nombre>_mill` o `<nombre>_mill_slot` con el recorrido de la fresa.
+     * @param exc El Excellon. @param tools Herramientas elegidas. @param tooldia Diámetro de la fresa.
+     * @param slots Ranuras en vez de agujeros. @return El objeto nuevo, o `nullptr` si falla.
+     */
+    FlatCAMObj* millExcellon(ExcellonObject* exc, const std::vector<int>& tools, double tooldia, bool slots);
     /** @brief `set_screen_units`: el rótulo de unidades de la barra de estado. @param units "MM" o "IN". */
     void setScreenUnits(const QString& units);
     /** @brief En los tests: respuesta al aviso de cambiar las unidades. @param a `true` = Aceptar. */

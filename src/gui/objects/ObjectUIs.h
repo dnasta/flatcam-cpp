@@ -50,6 +50,14 @@ public:
      * @param obj Objeto.
      */
     void build(ExcellonObject& obj);
+    /** @brief Las herramientas de las filas elegidas, en el orden de la tabla (`get_selected_tools_list`). @return Ids. */
+    std::vector<int> selectedTools() const;
+    /** @brief Lo que hacen "Fresar agujeros" (`false`) y "Fresar ranuras" (`true`); lo fija la aplicación. */
+    std::function<void(bool slots)> onMill;
+
+private:
+    void onRowSelectionChange();
+    ExcellonObject* obj_{nullptr};
 };
 
 /**
