@@ -2621,3 +2621,55 @@ TEST(GuiFiles, OpenHpgl2) {
     EXPECT_EQ(app.openHpgl2(QString::fromStdString(std::string(FLATCAM_TEST_DATA_DIR) + "/hpgl2/pen_down_first.plt")),
               nullptr);
 }
+
+// "Geometría de fresado" del panel del Excellon: Fresar agujeros y Fresar ranuras (generate_milling_drills / _slots).
+TEST(GuiMilling, MillDrillsAndSlotsFromTheExcellonPanel) {
+    App app;
+    const QString data = QString(FLATCAM_TEST_DATA_DIR);
+    FlatCAMObj* pth = app.openExcellon(data + "/luz_de_noche/luz de noche Pascual-PTH.drl");
+    ASSERT_NE(pth, nullptr);
+    app.showProperties(pth);
+    auto* ui = qobject_cast<ExcellonObjectUI*>(app.ui()->properties_scroll_area->widget());
+    ASSERT_NE(ui, nullptr);
+    EXPECT_EQ(ui->tooldia_entry->value(), 0.8);  // excellon_tooldia
+    // Como el original: selectColumn(0) no elige nada en una tabla que elige filas, así que sin herramientas elegidas
+    // los botones quedan deshabilitados.
+    EXPECT_TRUE(ui->selectedTools().empty());
+    EXPECT_FALSE(ui->generate_milling_button->isEnabled());
+    // Se eligen las cuatro herramientas (un clic en la tabla actualiza la sección de fresado).
+    auto pick = [](ExcellonObjectUI* u, int rows) {
+        for (int r = 0; r < rows; ++r) u->tools_table->selectionModel()->select(
+            u->tools_table->model()->index(r, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
+        Q_EMIT u->tools_table->clicked(u->tools_table->model()->index(0, 0));
+    };
+    pick(ui, 4);
+    EXPECT_TRUE(ui->generate_milling_button->isEnabled());
+    EXPECT_FALSE(ui->generate_milling_slots_button->isEnabled());  // sin ranuras
+    // La fresa de 0,8 (igual a T1).
+    EXPECT_EQ(ui->selectedTools(), (std::vector<int>{1, 2, 3, 4}));
+    ui->generate_milling_button->click();
+    auto* geo = dynamic_cast<GeometryObject*>(app.collection()->byName("luz de noche Pascual-PTH.drl_mill"));
+    ASSERT_NE(geo, nullptr);
+    ASSERT_EQ(geo->tools().size(), 1u);
+    EXPECT_EQ(geo->tools().at(1).tooldia, 0.8);
+    EXPECT_EQ(geo->tools().at(1).solidGeometry.size(), 120u);  // los 120 agujeros
+    // Una fresa más grande que T1: falla con el mensaje del original.
+    app.showProperties(pth);
+    pick(ui, 4);
+    ui->tooldia_entry->setValue(1.2);
+    ui->generate_milling_button->click();
+    EXPECT_TRUE(app.ui()->fcinfo->text->text().contains(tr_("Milling tool for DRILLS is larger than hole size. Cancelled.")));
+    // Ranuras.
+    FlatCAMObj* sl = app.openExcellon(data + "/excellon_samples/slots_g85.drl");
+    ASSERT_NE(sl, nullptr);
+    app.showProperties(sl);
+    auto* ui2 = qobject_cast<ExcellonObjectUI*>(app.ui()->properties_scroll_area->widget());
+    ASSERT_NE(ui2, nullptr);
+    pick(ui2, 1);
+    EXPECT_TRUE(ui2->generate_milling_slots_button->isEnabled());
+    ui2->slot_tooldia_entry->setValue(0.5);
+    ui2->generate_milling_slots_button->click();
+    auto* g2 = dynamic_cast<GeometryObject*>(app.collection()->byName("slots_g85.drl_mill_slot"));
+    ASSERT_NE(g2, nullptr);
+    EXPECT_EQ(g2->tools().at(1).solidGeometry.size(), 3u);
+}

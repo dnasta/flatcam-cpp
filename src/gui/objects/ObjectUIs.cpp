@@ -1,4 +1,6 @@
 #include "gui/objects/ObjectUIs.h"
+#include "gui/Preferences.h"
+#include <set>
 
 #include <QHeaderView>
 #include <algorithm>
@@ -91,9 +93,54 @@ void GerberObjectUI::buildAperturesTable(GerberObject& obj) {
     apertures_table->setMaximumHeight(apertures_table->contentHeight());
 }
 
-ExcellonObjectUI::ExcellonObjectUI(QWidget* parent) : ExcellonObjectUIBase(parent) { setupUi(); }
+ExcellonObjectUI::ExcellonObjectUI(QWidget* parent) : ExcellonObjectUIBase(parent) {
+    setupUi();
+    // to_form con las opciones del objeto (excellon_tooldia y excellon_slot_tooldia de las preferencias).
+    tooldia_entry->setValue(defNum("excellon_tooldia"));
+    slot_tooldia_entry->setValue(defNum("excellon_slot_tooldia"));
+    connect(generate_milling_button, &QPushButton::clicked, this, [this] {
+        if (onMill) onMill(false);
+    });
+    connect(generate_milling_slots_button, &QPushButton::clicked, this, [this] {
+        if (onMill) onMill(true);
+    });
+    connect(tools_table, &QTableWidget::clicked, this, [this] { onRowSelectionChange(); });
+}
+
+std::vector<int> ExcellonObjectUI::selectedTools() const {
+    // rows = set(...): las filas en orden creciente; las de los totales no se pueden elegir.
+    std::set<int> rows;
+    for (QTableWidgetItem* it : tools_table->selectedItems()) rows.insert(it->row());
+    std::vector<int> ids;
+    for (int r : rows) ids.push_back(tools_table->item(r, 0)->text().toInt());
+    return ids;
+}
+
+void ExcellonObjectUI::onRowSelectionChange() {
+    // on_row_selection_change: los botones de fresado según las herramientas elegidas tengan agujeros o ranuras.
+    if (!obj_) return;
+    std::set<int> rows;
+    for (const QModelIndex& i : tools_table->selectionModel()->selectedIndexes()) rows.insert(i.row());
+    const bool any = !rows.empty();
+    bool drills = any, slots = any;
+    for (int r : rows) {
+        const QTableWidgetItem* it = tools_table->item(r, 1);
+        if (!it) continue;
+        const double rowDia = std::round(it->text().toDouble() * 1e4) / 1e4;  // dec_format
+        for (const auto& [id, t] : obj_->excellon().drillTools()) {
+            if (std::round(t.tooldia * 1e4) / 1e4 != rowDia) continue;
+            if (t.drills.empty()) drills = false;
+            if (t.slots.empty()) slots = false;
+        }
+    }
+    tooldia_entry->setDisabled(!drills);
+    generate_milling_button->setDisabled(!drills);
+    slot_tooldia_entry->setDisabled(!slots);
+    generate_milling_slots_button->setDisabled(!slots);
+}
 
 void ExcellonObjectUI::build(ExcellonObject& obj) {
+    obj_ = &obj;
     name_entry->setText(obj.name());
     plot_cb->setChecked(obj.plotEnabled());
     const auto& tools = obj.excellon().drillTools();
@@ -167,6 +214,7 @@ void ExcellonObjectUI::build(ExcellonObject& obj) {
     generate_milling_button->setDisabled(!hasDrills);
     slot_tooldia_entry->setDisabled(!hasSlots);
     generate_milling_slots_button->setDisabled(!hasSlots);
+    onRowSelectionChange();  // "update the milling section"
 }
 
 GeometryObjectUI::GeometryObjectUI(QWidget* parent) : GeometryObjectUIBase(parent) {

@@ -79,7 +79,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.704 casos de `ctest` (2.630 del núcleo y 73 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.706 casos de `ctest` (2.631 del núcleo y 74 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -126,6 +126,7 @@ src/tools/              Herramientas de FlatCAM (sin Qt)
   DoubleSided.*          PCB a 2 caras: agujeros de alineación con sus reflejos (`ToolDblSided.py`)
   CutOut.*               Corte de contorno con puentes: libre, rectangular y puente manual (`ToolCutOut.py`)
   Isolation.*            Aislamiento: pasadas separadas, combinadas y mecanizado de resto (`ToolIsolation.py`)
+  ExcellonMilling.*      Fresar agujeros y ranuras de un Excellon (`generate_milling_drills` / `_slots` de FlatCAMExcellon)
 src/io/                 Proyectos (sin Qt; depende de liblzma)
   JsonValue.*            Valor JSON liviano (los números conservan su texto, para escribirlos igual que Python)
   DxfExport.*            Exportar una Geometría a DXF (export_dxf sobre la plantilla R2010 generada de ezdxf)
@@ -368,6 +369,9 @@ fijan con sentido físico (micras), no en el último bit.
   cada herramienta y el área a limpiar coinciden con GEOS 3.12 (también el inicio de cada recorrido); con 3.15 algunos anillos
   empiezan en otro vértice y un anillo cortado por la caja sale como una sola línea en vez de dos: el test comprueba entonces la
   misma geometría y el mismo sentido (el primer tramo de cada parte aparece igual en el original).
+- `tests/tools/oracle_milling.py` genera `tests/golden_milling.h`: toma `generate_milling_drills` y `generate_milling_slots`
+  de `ExcellonObject` con `ast` y los ejecuta sobre el PTH del usuario y dos Excellon con ranuras (8 casos, incluidos la
+  fresa igual al agujero, más grande y sin herramientas): mismos anillos vértice por vértice con GEOS 3.12 y 3.15.
 - `tests/tools/oracle_safe_tooldia.py` genera `tests/golden_safe_tooldia.h`: ejecuta `ToolNCC.find_optim_mp` original (el
   diámetro seguro, igual en Isolation) sobre un Gerber sintético, uno de un solo polígono (el original avisa y no sigue), el Logo
   (0,0285) y `B_Cu` (0,1994) del usuario: idéntico.
@@ -832,7 +836,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.704 casos de test** (`ctest`): 2.631 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 73 de la GUI;
+- **2.706 casos de test** (`ctest`): 2.632 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 74 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -860,7 +864,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.704 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.706 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -990,7 +994,7 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    las señales del canvas salen ajustadas, la cruz del cursor solo con la grilla; elegir polígonos la apaga y la restaura; elegir
    el agujero en PCB a 2 caras la apaga y, como el original, no la restaura), ~~áreas de exclusión~~ (hechas: núcleo, CNC Job de
    Perforación y Geometría, y la GUI de los dos paneles), ~~pulido~~ (hecho: "Agregar acabado" de la Geometría agrega la
-   herramienta "Pulir" sobre la caja del objeto más el margen, como `on_polish`), ~~base de datos de herramientas~~ (hecha: `ToolsDatabase`, pestaña `ToolsDBTab` generada desde `ToolsDB2`, búsqueda al agregar y "desde la base" en NCC, Paint, Isolation, Corte y Geometría; NCC, Paint y Corte comparan el objetivo con un texto y, como el original, nunca encuentran; Geometría ganó "Buscar y agregar" y "Borrar"). Falta: fresado de ranuras (va con Milling, ítem 5). Lista vieja: verificación del diámetro seguro (NCC e Isolation), ajuste a la
+   herramienta "Pulir" sobre la caja del objeto más el margen, como `on_polish`), ~~base de datos de herramientas~~ (hecha: `ToolsDatabase`, pestaña `ToolsDBTab` generada desde `ToolsDB2`, búsqueda al agregar y "desde la base" en NCC, Paint, Isolation, Corte y Geometría; NCC, Paint y Corte comparan el objetivo con un texto y, como el original, nunca encuentran; Geometría ganó "Buscar y agregar" y "Borrar"). ~~Fresado de ranuras~~ (hecho con el ítem 5). Lista vieja: verificación del diámetro seguro (NCC e Isolation), ajuste a la
    grilla de los clics, áreas de exclusión (Perforación y Geometría), pulido (`polish`) y fresado de ranuras/agujeros (Excellon).
 3. ~~**Transformaciones**~~ (hecha: `tools/TransformTool.*`, panel generado de `ToolTransform`; rotar, inclinar, escalar,
    desplazar, reflejar y engrosar los objetos elegidos alrededor del origen, la selección, un punto u otro objeto; Gerber,
@@ -1029,7 +1033,13 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    `ToolPDF`) e imagen (`ToolImage`), los textos de SVG y DXF (`ParseFont`), el SVG de un CNC Job, abrir/guardar scripts,
    imprimir a PDF (`on_file_save_objects_pdf`) y los objetos Script y Documento (`FlatCAMScript`, `FlatCAMDocument`).
    **Decidido por el usuario:** en HPGL2 se corrigen las cuatro fallas del original (sección 11.12 w).
-5. **Herramientas restantes** (`appTools/`): Milling, Panelize, Film, Calculators, Copper Thieving, Fiducials, Corners, Extract
+5. **Herramientas restantes** (`appTools/`). ~~Fresado~~ (hecho): `ToolMilling` no se instala en la 2024.4 (no está en
+   `install_tools` y su botón "Herramienta de fresado" del panel del Excellon está deshabilitado; su código usa la estructura
+   vieja del Excellon, `self.drills`), así que el fresado que se usa es el de la sección "Geometría de fresado" del panel del
+   Excellon: "Fresar agujeros" y "Fresar ranuras" (`src/tools/ExcellonMilling.*`, `App::millExcellon`), verificado con
+   `oracle_milling.py` (el `generate_milling_drills` / `_slots` original: los mismos anillos vértice por vértice, también los
+   errores) y `GuiMilling.*`. Como el original, al abrir el panel no queda ninguna herramienta elegida (`selectColumn(0)` no
+   elige nada en una tabla de filas) y los botones quedan deshabilitados hasta elegir. Siguen: Panelize, Film, Calculators, Copper Thieving, Fiducials, Corners, Extract
    Drills, Punch Gerber, Invert Gerber, Align Objects, Subtract (`ToolSub`), QR Code, Rules Check, Optimal, Solder Paste,
    Calibration, Etch Compensation, PCB Wizard, Levelling (autonivelación del CNC Job).
 6. **Preferencias** (`appGUI/preferences/`, ~19.000 líneas). **Hecho:** la pestaña completa generada del original (485 campos),

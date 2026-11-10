@@ -35,6 +35,7 @@
 #include "gui/tools/PropertiesTool.h"
 #include "gui/ProjectIO.h"
 #include "gui/Preferences.h"
+#include "tools/ExcellonMilling.h"
 #include "gui/widgets/FCLabel.h"
 #include "gui/widgets/RadioSet.h"
 #include <QProcess>
@@ -766,6 +767,34 @@ FlatCAMObj* App::generateCncJob(GeometryObject* geo, const std::vector<int>& too
     return obj;
 }
 
+FlatCAMObj* App::millExcellon(ExcellonObject* exc, const std::vector<int>& tools, double tooldia, bool slots) {
+    // on_generate_milling_button_click / on_generate_milling_slots_button_click: generate_milling_drills / _slots.
+    const MillingResult r = slots ? millSlots(exc->excellon(), tools, tooldia, appDecimals(),
+                                              defInt("geometry_circle_steps", 64))
+                                  : millDrills(exc->excellon(), tools, tooldia);
+    if (r.error == MillingResult::Error::NoTools) {
+        ui_->inform("[ERROR_NOTCL] " + tr_("Please select one or more tools from the list and try again."));
+        return nullptr;
+    }
+    if (r.error == MillingResult::Error::ToolTooLarge) {
+        if (slots) ui_->inform("[ERROR_NOTCL] " + tr_("Milling tool for SLOTS is larger than hole size. Cancelled."));
+        else
+            ui_->inform(QString("[ERROR_NOTCL] %1 %2: %3")
+                            .arg(tr_("Milling tool for DRILLS is larger than hole size. Cancelled."), tr_("Tool"),
+                                 QString::number(r.tool)));
+        return nullptr;
+    }
+    // new_object("geometry", "<nombre>_mill" o "<nombre>_mill_slot"): una Geometría de una herramienta con el
+    // diámetro de la fresa (cnctooldia = str(tooldia)).
+    auto geo = std::make_unique<GeometryObject>(exc->name() + (slots ? "_mill_slot" : "_mill"));
+    geo->solidGeometry() = r.rings;
+    GeometryTool t = defaultGeometryTool();
+    t.tooldia = tooldia;
+    t.solidGeometry = r.rings;
+    geo->tools()[1] = t;
+    return addObject(std::move(geo));
+}
+
 void App::onZoomFit() { ui_->plotCanvas()->fitView(); }
 
 void App::showProperties(FlatCAMObj* obj) {
@@ -775,6 +804,12 @@ void App::showProperties(FlatCAMObj* obj) {
     if (obj && obj->kind() == ObjectKind::CNCJob) {
         auto* job = static_cast<CNCJobObject*>(obj);
         static_cast<CNCObjectUI*>(panel)->onExport = [this, job] { exportGcode(job); };
+    } else if (obj && obj->kind() == ObjectKind::Excellon) {
+        auto* exc = static_cast<ExcellonObject*>(obj);
+        auto* gui = static_cast<ExcellonObjectUI*>(panel);
+        gui->onMill = [this, exc, gui](bool slots) { millExcellon(exc, gui->selectedTools(), slots
+                                                                      ? gui->slot_tooldia_entry->value()
+                                                                      : gui->tooldia_entry->value(), slots); };
     } else if (obj && obj->kind() == ObjectKind::Geometry) {
         auto* geo = static_cast<GeometryObject*>(obj);
         auto* gui = static_cast<GeometryObjectUI*>(panel);
