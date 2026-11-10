@@ -1,0 +1,708 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "ToolOptimal",
+  "name": null,
+  "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Herramienta de Óptima"
+   },
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Herramienta de Óptima"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {}
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QFormLayout",
+      "py": "QFormLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "role": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "gerber_object_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Gerber object for which to find the minimum distance between copper features."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>GERBER:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "role": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "gerber_object_combo",
+         "props": {},
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "role": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "precision_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Número de decimales guardados para distancias encontradas."
+          },
+          "text": {
+           "t": "str",
+           "v": "Precisión:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "role": 1,
+        "widget": {
+         "qt": "QSpinBox",
+         "py": "FCSpinner",
+         "name": "precision_spinner",
+         "props": {
+          "wrapping": {
+           "t": "bool",
+           "v": true
+          },
+          "minimum": {
+           "t": "int",
+           "v": 2
+          },
+          "maximum": {
+           "t": "int",
+           "v": 10
+          },
+          "value": {
+           "t": "int",
+           "v": 4
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "role": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "title_res_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Mostrar la distancia mínima entre las características de cobre."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Distancia minima:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "result_label",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "Determinado:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "role": 1,
+        "layout": {
+         "qt": "QHBoxLayout",
+         "py": "QHBoxLayout",
+         "name": null,
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "items": [
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QLineEdit",
+            "py": "FCEntry",
+            "name": "result_entry",
+            "props": {
+             "text": {
+              "t": "str",
+              "v": "0.0000"
+             },
+             "readOnly": {
+              "t": "bool",
+              "v": true
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": "units_lbl",
+            "props": {
+             "text": {
+              "t": "str",
+              "v": "mm"
+             },
+             "enabled": {
+              "t": "bool",
+              "v": false
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "freq_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Cuántas veces se encuentra este mínimo."
+          },
+          "text": {
+           "t": "str",
+           "v": "Ocurriendo:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "role": 1,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "FCEntry",
+         "name": "freq_entry",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "0"
+          },
+          "readOnly": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "role": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "locations_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Coordenadas para los puntos donde se encontró la distancia mínima."
+          },
+          "text": {
+           "t": "str",
+           "v": "Coordenadas de puntos mínimos"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "role": 2,
+        "widget": {
+         "qt": "QPlainTextEdit",
+         "py": "FCTextArea",
+         "name": "locations_textb",
+         "props": {
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t\tQTextEdit { selection-background-color:blue;\n\t\t\t\t\t\t\t\t\t\t\tselection-color:white;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t "
+          },
+          "readOnly": {
+           "t": "bool",
+           "v": true
+          },
+          "textInteractionFlags": {
+           "t": "int",
+           "v": 1
+          },
+          "placeholderText": {
+           "t": "str",
+           "v": "Coordenadas para los puntos donde se encontró la distancia mínima."
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 9,
+        "role": 2,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "locate_button",
+         "props": {
+          "minimumSize": {
+           "t": "QSize",
+           "v": [
+            60,
+            0
+           ]
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Seleccione una posición en el cuadro de texto Ubicaciones y luego\nhaga clic en este botón."
+          },
+          "text": {
+           "t": "str",
+           "v": "Saltar a la posición seleccionada"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "role": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "title_second_res_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Mostrará otras distancias en el archivo Gerber ordenado a\nel mínimo al máximo, sin incluir el mínimo absoluto."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Otras distancias:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 11,
+        "role": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "sec_locations_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Otras distancias y las coordenadas de los puntos.\ndonde se encontró la distancia."
+          },
+          "text": {
+           "t": "str",
+           "v": "Otras distancias puntos coordenadas"
+          }
+         }
+        }
+       }
+      ],
+      "formRows": true
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QFrame",
+      "py": "QFrame",
+      "name": "sec_locations_frame",
+      "props": {
+       "hidden": {
+        "t": "bool",
+        "v": true
+       }
+      },
+      "layout": {
+       "qt": "QVBoxLayout",
+       "py": "QVBoxLayout",
+       "name": "distances_box",
+       "props": {},
+       "margins": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spacing": 6,
+       "items": [
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QLabel",
+          "py": "FCLabel",
+          "name": "distances_label",
+          "props": {
+           "toolTip": {
+            "t": "str",
+            "v": "Otras distancias y las coordenadas de los puntos.\ndonde se encontró la distancia."
+           },
+           "text": {
+            "t": "str",
+            "v": "Distancias de Gerber"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QPlainTextEdit",
+          "py": "FCTextArea",
+          "name": "distances_textb",
+          "props": {
+           "styleSheet": {
+            "t": "str",
+            "v": "\n\t\t\t\t\t\t\t\tQTextEdit { selection-background-color:blue;\n\t\t\t\t\t\t\t\t\t\t\tselection-color:white;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t "
+           },
+           "readOnly": {
+            "t": "bool",
+            "v": true
+           },
+           "textInteractionFlags": {
+            "t": "int",
+            "v": 1
+           },
+           "placeholderText": {
+            "t": "str",
+            "v": "Otras distancias y las coordenadas de los puntos.\ndonde se encontró la distancia."
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QLabel",
+          "py": "FCLabel",
+          "name": null,
+          "props": {}
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QLabel",
+          "py": "FCLabel",
+          "name": "locations_label",
+          "props": {
+           "toolTip": {
+            "t": "str",
+            "v": "Otras distancias y las coordenadas de los puntos.\ndonde se encontró la distancia."
+           },
+           "text": {
+            "t": "str",
+            "v": "Coordenadas de puntos"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QPlainTextEdit",
+          "py": "FCTextArea",
+          "name": "locations_sec_textb",
+          "props": {
+           "styleSheet": {
+            "t": "str",
+            "v": "\n\t\t\t\t\t\t\t\tQTextEdit { selection-background-color:blue;\n\t\t\t\t\t\t\t\t\t\t\tselection-color:white;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t "
+           },
+           "readOnly": {
+            "t": "bool",
+            "v": true
+           },
+           "textInteractionFlags": {
+            "t": "int",
+            "v": 1
+           },
+           "placeholderText": {
+            "t": "str",
+            "v": "Otras distancias y las coordenadas de los puntos.\ndonde se encontró la distancia."
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QPushButton",
+          "py": "FCButton",
+          "name": "locate_sec_button",
+          "props": {
+           "minimumSize": {
+            "t": "QSize",
+            "v": [
+             60,
+             0
+            ]
+           },
+           "toolTip": {
+            "t": "str",
+            "v": "Seleccione una posición en el cuadro de texto Ubicaciones y luego\nhaga clic en este botón."
+           },
+           "text": {
+            "t": "str",
+            "v": "Saltar a la posición seleccionada"
+           },
+           "enabled": {
+            "t": "bool",
+            "v": false
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "calculate_button",
+      "props": {
+       "minimumSize": {
+        "t": "QSize",
+        "v": [
+         60,
+         0
+        ]
+       },
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Calcule la distancia mínima entre las características de cobre,\nesto permitirá determinar la herramienta adecuada para\nutilizar para aislamiento o limpieza de cobre."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Encuentra mínimo"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/open_excellon32.png"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "reset_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Restablecerá los parámetros de la herramienta."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Restablecer la Herramienta"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/reset32.png"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "OptimalToolUI"
+}

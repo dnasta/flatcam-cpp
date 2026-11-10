@@ -36,6 +36,7 @@ add_library(flatcam_core STATIC
     tools/ExtractDrills.cpp
     tools/PunchGerber.cpp
     tools/Subtract.cpp
+    tools/OptimalDistance.cpp
     io/JsonValue.cpp
     io/ProjectFile.cpp
 )

@@ -2861,3 +2861,22 @@ TEST(GuiSub, SubtractsGerbers) {
     EXPECT_EQ(app.collection()->byName("PCB principal-B_Mask.gbs"), nullptr);
     EXPECT_EQ(t->subtractGeometry(), nullptr);
 }
+
+// Óptimo (Alt+O): la distancia mínima del cobre de "luz de noche" (la misma que el original, oracle_optimal.py) y saltar a
+// la posición.
+TEST(GuiOptimal, FindsTheMinimumDistance) {
+    App app;
+    FlatCAMObj* cu = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-B_Cu.gbr");
+    ASSERT_NE(cu, nullptr);
+    QKeyEvent alt(QEvent::KeyPress, Qt::Key_O, Qt::AltModifier);
+    QApplication::sendEvent(app.ui(), &alt);
+    OptimalTool* t = app.optimalTool;
+    EXPECT_EQ(t->precision_spinner->value(), 4);  // tools_opt_precision
+    ASSERT_TRUE(t->findMinimumDistance());
+    EXPECT_EQ(t->result_entry->text(), "0.1994");
+    EXPECT_EQ(t->freq_entry->text(), "1");
+    EXPECT_FALSE(t->distances_textb->toPlainText().isEmpty());
+    const QString line = t->locations_textb->toPlainText().section('\n', 0, 0);
+    EXPECT_TRUE(t->locate(line));
+    EXPECT_FALSE(t->locate("nada"));
+}

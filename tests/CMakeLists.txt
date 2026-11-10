@@ -35,6 +35,7 @@ add_executable(core_tests
     test_extract_drills.cpp
     test_punch.cpp
     test_sub.cpp
+    test_optimal.cpp
     test_luz_de_noche.cpp
     test_project_file.cpp
     test_clearing_methods.cpp
