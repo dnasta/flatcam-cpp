@@ -2880,3 +2880,36 @@ TEST(GuiOptimal, FindsTheMinimumDistance) {
     EXPECT_TRUE(t->locate(line));
     EXPECT_FALSE(t->locate("nada"));
 }
+
+TEST(GuiEtch, CompensatesTheCopper) {
+    App app;
+    FlatCAMObj* cu = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-B_Cu.gbr");
+    ASSERT_NE(cu, nullptr);
+    app.ui()->etch_tool_menuAction->trigger();
+    EtchTool* t = app.etchTool;
+    EXPECT_EQ(t->thick_entry->value(), 18.0);
+    EXPECT_EQ(t->ratio_radio->value().toString(), "factor");
+    EXPECT_FALSE(t->factor_entry->isHidden());
+    EXPECT_TRUE(t->etchants_combo->isHidden());
+    // Conversores: 1 oz = 34,798 micras; 2 mils = 50,8 micras; un texto inválido deja el resultado vacío.
+    t->oz_entry->setText("1");
+    EXPECT_EQ(t->oz_to_um_entry->text(), "34.7980");
+    t->mils_entry->setText("2");
+    EXPECT_EQ(t->mils_to_um_entry->text(), "50.8000");
+    t->mils_entry->setText("2*");
+    EXPECT_EQ(t->mils_to_um_entry->text(), "");
+    // Con factor 0 avisa y no crea nada, como el original (que además falla después).
+    t->factor_entry->setText("0");
+    EXPECT_EQ(t->compensate(), nullptr);
+    t->factor_entry->setText("2");
+    FlatCAMObj* out = t->compensate();
+    ASSERT_NE(out, nullptr);
+    EXPECT_EQ(out->name(), cu->name() + "_comp");
+    // El mismo resultado que el núcleo, verificado contra el original (golden_etch.h: 48 polígonos).
+    EXPECT_EQ(static_cast<GerberObject*>(out)->gerber().solidGeometry().size(), 48u);
+    // Grabador elegido: los campos visibles cambian.
+    t->ratio_radio->setValue(QString("etch_list"));
+    Q_EMIT t->ratio_radio->activatedCustom("etch_list");
+    EXPECT_FALSE(t->etchants_combo->isHidden());
+    EXPECT_TRUE(t->factor_entry->isHidden());
+}

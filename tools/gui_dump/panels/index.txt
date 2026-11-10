@@ -20,6 +20,7 @@ ExtractDrillsToolUI
 PunchToolUI
 SubToolUI
 OptimalToolUI
+EtchToolUI
 ToolsDB2UI
 AboutDialogUI
 HowtoDialogUI
