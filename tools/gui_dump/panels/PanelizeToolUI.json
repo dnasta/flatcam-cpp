@@ -1,0 +1,833 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "Panelize",
+  "name": null,
+  "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Panelizar PCB"
+   },
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Panelizar PCB"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": "object_label",
+      "props": {
+       "toolTip": {
+        "t": "str",
+        "v": "Especifique el tipo de objeto a ser panelizado\nPuede ser de tipo: Gerber, Excellon o Geometry.\nLa selección aquí decide el tipo de objetos que serán\nen el cuadro combinado Objeto."
+       },
+       "text": {
+        "t": "str",
+        "v": "<b>Objeto fuente:</b>"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QFormLayout",
+      "py": "QFormLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "type_object_label",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "Tipo de objeto:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 0,
+        "role": 1,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "type_obj_combo",
+         "props": {
+          "currentText": {
+           "t": "str",
+           "v": "Gerber"
+          }
+         },
+         "items": [
+          "Gerber",
+          "Excellon",
+          "Geometry"
+         ],
+         "currentIndex": 0
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "role": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "object_combo",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Objeto a ser panelizado. Esto significa que lo hará\nser duplicado en una matriz de filas y columnas."
+          }
+         },
+         "items": [],
+         "currentIndex": -1
+        }
+       }
+      ],
+      "formRows": true
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QFormLayout",
+      "py": "QFormLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "role": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "box_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Elija la referencia para la panelización:\n- Objeto = el cuadro delimitador de un objeto diferente\n- Cuadro delimitador = el cuadro delimitador del objeto a panelizar\n\nLa referencia es útil cuando se hace panelización para más de uno.\nobjeto. Los espacios (realmente desplazados) se aplicarán en referencia\na este objeto de referencia, por lo tanto, manteniendo el panelizado\nobjetos sincronizados."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Ref. de penelización:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "role": 2,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "reference_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Objeto",
+           "value": "object"
+          },
+          {
+           "label": "Cuadro delimitador",
+           "value": "bbox"
+          }
+         ],
+         "vertical": false,
+         "stretch": true,
+         "value": "bbox"
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "type_box_combo_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Especifique el tipo de objeto que se utilizará como contenedor para\npanelización. Puede ser: tipo Gerber o Geometría.\nLa selección aquí decide el tipo de objetos que serán\nen el cuadro combinado Objeto de caja."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tipo de caja:"
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "role": 1,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "type_box_combo",
+         "props": {
+          "currentText": {
+           "t": "str",
+           "v": "Gerber"
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         },
+         "items": [
+          "Gerber",
+          "Geometría"
+         ],
+         "currentIndex": 0
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "role": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "box_combo",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El objeto real que se utiliza como contenedor para\n objeto seleccionado que se va a panelizar."
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         },
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "role": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "role": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esta información dará forma al panel resultante.\nEl número de filas y columnas establecerá cuántos\nSe generarán duplicados de la geometría original.\n\nLos espacios establecerán la distancia entre dos\nelementos de la matriz de paneles."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Datos del panel:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "spacing_columns_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Espaciado entre columnas del panel deseado.\nEn unidades actuales."
+          },
+          "text": {
+           "t": "str",
+           "v": "Col. de espaciado:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "role": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "spacing_columns",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 9999.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "spacing_rows_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Espaciado entre filas del panel deseado.\nEn unidades actuales."
+          },
+          "text": {
+           "t": "str",
+           "v": "Separación de filas:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "role": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "spacing_rows",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 9999.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "columns_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Número de columnas del panel deseado"
+          },
+          "text": {
+           "t": "str",
+           "v": "Columnas:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "role": 1,
+        "widget": {
+         "qt": "QSpinBox",
+         "py": "FCSpinner",
+         "name": "columns",
+         "props": {
+          "maximum": {
+           "t": "int",
+           "v": 9999
+          },
+          "value": {
+           "t": "int",
+           "v": 1
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 9,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "rows_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Número de filas del panel deseado"
+          },
+          "text": {
+           "t": "str",
+           "v": "Filas:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 9,
+        "role": 1,
+        "widget": {
+         "qt": "QSpinBox",
+         "py": "FCSpinner",
+         "name": "rows",
+         "props": {
+          "maximum": {
+           "t": "int",
+           "v": 9999
+          },
+          "value": {
+           "t": "int",
+           "v": 1
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "role": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 11,
+        "role": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "panel_type_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Elija el tipo de objeto para el objeto del panel:\n- Gerber\n- Geometría"
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Tipo de panel:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "role": 2,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "panel_type_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Gerber",
+           "value": "gerber"
+          },
+          {
+           "label": "Geo",
+           "value": "geometry"
+          }
+         ],
+         "vertical": false,
+         "stretch": true,
+         "value": "gerber"
+        }
+       },
+       {
+        "align": 0,
+        "row": 13,
+        "role": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "optimization_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Activo solo para el tipo de panel Geometría.\nCuando se marca, la aplicación encontrará\ncualesquiera dos elementos de línea superpuestos en el panel\ny eliminará las partes superpuestas, conservando solo una de ellas."
+          },
+          "text": {
+           "t": "str",
+           "v": "Optimización de ruta"
+          },
+          "checked": {
+           "t": "bool",
+           "v": true
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 14,
+        "role": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "constrain_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Área definida por DX y DY dentro para restringir el panel.\nLos valores DX y DY están en unidades actuales.\nIndependientemente de cuántas columnas y filas se deseen,\nEl panel final tendrá tantas columnas y filas como\nencajan completamente dentro del área seleccionada."
+          },
+          "text": {
+           "t": "str",
+           "v": "Restrinja el panel dentro de:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 15,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "x_width_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El ancho (DX) dentro del cual debe caber el panel.\nEn unidades actuales."
+          },
+          "text": {
+           "t": "str",
+           "v": "Ancho (DX):"
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 15,
+        "role": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "x_width_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 9999.0
+          },
+          "value": {
+           "t": "double",
+           "v": 200.0
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 16,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "y_height_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "La altura (DY) dentro de la cual debe caber el panel.\nEn unidades actuales."
+          },
+          "text": {
+           "t": "str",
+           "v": "Altura (DY):"
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 16,
+        "role": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "y_height_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 9999.0
+          },
+          "value": {
+           "t": "double",
+           "v": 290.0
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 17,
+        "role": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       }
+      ],
+      "formRows": true
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "panelize_object_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Panelizar el objeto especificado alrededor del cuadro especificado.\nEn otras palabras, crea múltiples copias del objeto fuente,\ndispuestos en una matriz 2D de filas y columnas."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Panelizar objeto"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/panelize16.png"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "reset_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Restablecerá los parámetros de la herramienta."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Restablecer la Herramienta"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/reset32.png"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "PanelizeToolUI"
+}

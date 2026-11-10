@@ -12,6 +12,7 @@ TransformToolUI
 DistanceToolUI
 DistanceMinToolUI
 PropertiesToolUI
+PanelizeToolUI
 ToolsDB2UI
 AboutDialogUI
 HowtoDialogUI

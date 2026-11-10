@@ -44,7 +44,8 @@ def object_with_ui(fa, ou, cls, kind, module, objcls):
 TOOLS = {"ncclear_tool": "NccToolUI", "paint_tool": "PaintToolUI", "drilling_tool": "DrillingToolUI",
          "cutout_tool": "CutOutToolUI", "dblsidedtool": "DblSidedToolUI", "isolation_tool": "IsolationToolUI",
          "transform_tool": "TransformToolUI", "distance_tool": "DistanceToolUI",
-         "distance_min_tool": "DistanceMinToolUI", "properties_tool": "PropertiesToolUI"}
+         "distance_min_tool": "DistanceMinToolUI", "properties_tool": "PropertiesToolUI",
+         "panelize_tool": "PanelizeToolUI"}
 
 
 def main():

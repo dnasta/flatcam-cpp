@@ -340,6 +340,13 @@ public:
     Shape translate(double dx, double dy) const;
 
     /**
+     * @brief Acerca los vértices de esta figura a los de otra (`shapely.ops.snap`).
+     * @param reference Figura de referencia. @param tolerance Distancia máxima.
+     * @return La figura ajustada.
+     */
+    Shape snap(const Shape& reference, double tolerance) const;
+
+    /**
      * @brief Rota la figura (`shapely.affinity.rotate`).
      * @param angleDegrees Ángulo en grados (antihorario positivo).
      * @param origin Centro de giro; si no se indica se usa el centro de la caja delimitadora.

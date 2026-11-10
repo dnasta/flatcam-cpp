@@ -182,6 +182,7 @@ class FakeApp:
         self.fractional_digits = 4
         self.version = "2024.4"  # app_Main.App.version
         self.version_date = "2024/04/15"
+        self.app_url = "http://flatcam.org"  # App.app_url (atributo de la clase)
         self.engine = "3D"  # global_graphic_engine
         self.beta = True
         self.is_legacy = False

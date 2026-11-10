@@ -58,7 +58,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "FlatCAM <strong>2024.4 β </strong>(64bit)<br><a href = \"<MagicMock name='app_url' id='5262978896'>\"><MagicMock name='app_url' id='5262978896'></a>"
+           "v": "FlatCAM <strong>2024.4 β </strong>(64bit)<br><a href = \"http://flatcam.org\">http://flatcam.org</a>"
           },
           "openExternalLinks": {
            "t": "bool",

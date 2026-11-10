@@ -31,6 +31,8 @@ add_library(flatcam_gui STATIC
     tools/PaintTool.cpp
     tools/NccTool.cpp
     tools/DblSidedTool.cpp
+    tools/PanelizeTool.cpp
+    generated/PanelizeToolUIBase.cpp
     tools/TransformTool.cpp
     tools/DistanceTool.cpp
     tools/MoveTool.cpp

@@ -30,6 +30,7 @@ add_library(flatcam_core STATIC
     tools/DoubleSided.cpp
     tools/Isolation.cpp
     tools/ExcellonMilling.cpp
+    tools/Panelize.cpp
     io/JsonValue.cpp
     io/ProjectFile.cpp
 )
