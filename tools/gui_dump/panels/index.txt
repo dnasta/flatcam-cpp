@@ -16,6 +16,7 @@ PanelizeToolUI
 InvertToolUI
 CalculatorsToolUI
 CornersToolUI
+ExtractDrillsToolUI
 ToolsDB2UI
 AboutDialogUI
 HowtoDialogUI

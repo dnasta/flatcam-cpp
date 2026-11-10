@@ -1,0 +1,1078 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "ToolExtractDrills",
+  "name": null,
+  "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Extraer Taladros"
+   },
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Extraer Taladros"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": null,
+      "props": {}
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       1,
+       0
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "grb_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Gerber de donde extraer agujeros de perforación."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>GERBER:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "gerber_object_combo",
+         "props": {},
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "padt_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El tipo de forma de almohadillas que se procesará.\nSi la PCB tiene muchas almohadillas SMD con almohadillas rectangulares,\ndeshabilitar la apertura rectangular."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Tipo de almohadillas procesadas</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "circular_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Proceso de Almohadillas Circulares."
+          },
+          "text": {
+           "t": "str",
+           "v": "Circular"
+          },
+          "checked": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "oblong_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Procesar almohadillas oblongas."
+          },
+          "text": {
+           "t": "str",
+           "v": "Oblongo"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "square_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Procesar almohadillas cuadradas."
+          },
+          "text": {
+           "t": "str",
+           "v": "Cuadrado"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "rectangular_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Proceso Almohadillas Rectangulares."
+          },
+          "text": {
+           "t": "str",
+           "v": "Rectangular"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "other_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Procese los pads no en las categorías anteriores."
+          },
+          "text": {
+           "t": "str",
+           "v": "Otros"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "method_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El método para procesar almohadillas. Puede ser:\n- Diámetro fijo -> todos los agujeros tendrán un tamaño establecido\n- Anillo anular fijo -> todos los agujeros tendrán un anillo anular establecido\n- Proporcional -> cada tamaño de agujero será una fracción del tamaño de la almohadilla"
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Método</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "hole_size_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Diámetro fijo",
+           "value": "fixed"
+          },
+          {
+           "label": "Proporcional",
+           "value": "prop"
+          },
+          {
+           "label": "Anillo anular fijo",
+           "value": "ring"
+          }
+         ],
+         "vertical": true,
+         "stretch": false,
+         "value": "fixed"
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "fixed_label",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "<b>Diámetro fijo</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "dia_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Diámetro fijo del agujero."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "dia_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "value": {
+           "t": "double",
+           "v": 0.5
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QFrame",
+      "py": "QFrame",
+      "name": "ring_frame",
+      "props": {
+       "hidden": {
+        "t": "bool",
+        "v": true
+       }
+      },
+      "layout": {
+       "qt": "QVBoxLayout",
+       "py": "QVBoxLayout",
+       "name": "ring_box",
+       "props": {},
+       "margins": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spacing": 6,
+       "items": [
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QGridLayout",
+          "py": "QGridLayout",
+          "name": null,
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "hspacing": 6,
+          "vspacing": 6,
+          "rowStretch": [
+           0,
+           0,
+           0,
+           0,
+           0,
+           0
+          ],
+          "colStretch": [
+           0,
+           1
+          ],
+          "colMinWidth": [
+           0,
+           0
+          ],
+          "items": [
+           {
+            "align": 0,
+            "row": 0,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "ring_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "El tamaño del anillo anular.\nLa astilla de cobre entre el exterior del agujero\ny el margen de la almohadilla de cobre."
+              },
+              "text": {
+               "t": "str",
+               "v": "<b>Anillo anular fijo</b>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 1,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "circular_ring_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "El tamaño del anillo anular para almohadillas circulares."
+              },
+              "text": {
+               "t": "str",
+               "v": "Circular:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 1,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "circular_ring_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10000.0
+              },
+              "value": {
+               "t": "double",
+               "v": 0.2
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 2,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "oblong_ring_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "El tamaño del anillo anular para almohadillas oblongas."
+              },
+              "text": {
+               "t": "str",
+               "v": "Oblongo:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 2,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "oblong_ring_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10000.0
+              },
+              "value": {
+               "t": "double",
+               "v": 0.2
+              },
+              "enabled": {
+               "t": "bool",
+               "v": false
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 3,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "square_ring_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "El tamaño del anillo anular para almohadillas cuadradas."
+              },
+              "text": {
+               "t": "str",
+               "v": "Cuadrado:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 3,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "square_ring_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10000.0
+              },
+              "value": {
+               "t": "double",
+               "v": 0.2
+              },
+              "enabled": {
+               "t": "bool",
+               "v": false
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 4,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "rectangular_ring_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "El tamaño del anillo anular para almohadillas rectangulares."
+              },
+              "text": {
+               "t": "str",
+               "v": "Rectangular:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 4,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "rectangular_ring_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10000.0
+              },
+              "value": {
+               "t": "double",
+               "v": 0.2
+              },
+              "enabled": {
+               "t": "bool",
+               "v": false
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 5,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "other_ring_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "El tamaño del anillo anular para otras almohadillas."
+              },
+              "text": {
+               "t": "str",
+               "v": "Otros:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 5,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "other_ring_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10000.0
+              },
+              "value": {
+               "t": "double",
+               "v": 0.2
+              },
+              "enabled": {
+               "t": "bool",
+               "v": false
+              }
+             }
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "prop_label",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "<b>Diá. proporcional</b>"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "factor_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Diámetro proporcional.\nEl diámetro del agujero será una fracción del tamaño de la almohadilla."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "factor_entry",
+         "props": {
+          "suffix": {
+           "t": "str",
+           "v": " %"
+          },
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 100.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 80.0
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "QPushButton",
+      "name": "e_drills_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Extraer simulacros de un archivo Gerber dado."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Extraer Taladros"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/drill16.png"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "QPushButton",
+      "name": "reset_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Restablecerá los parámetros de la herramienta."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Restablecer la Herramienta"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/reset32.png"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "ExtractDrillsToolUI"
+}

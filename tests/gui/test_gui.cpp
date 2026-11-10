@@ -2792,3 +2792,22 @@ TEST(GuiCorners, AddsMarkersAndDrills) {
     ASSERT_NE(d, nullptr);
     EXPECT_EQ(static_cast<ExcellonObject*>(d)->excellon().drillTools().at(1).drills.size(), 4u);
 }
+
+// Extraer taladros (Alt+E): un Excellon con los flashes de los pads del cobre del usuario.
+TEST(GuiExtractDrills, ExtractsTheUserPads) {
+    App app;
+    FlatCAMObj* cu = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/PCB principal-B_Cu.gbl");
+    ASSERT_NE(cu, nullptr);
+    QKeyEvent alt(QEvent::KeyPress, Qt::Key_E, Qt::AltModifier);
+    QApplication::sendEvent(app.ui(), &alt);
+    ExtractDrillsTool* t = app.extractDrillsTool;
+    EXPECT_EQ(t->gerber_object_combo->currentText(), cu->name());
+    EXPECT_EQ(t->hole_size_radio->value().toString(), "fixed");  // tools_edrills_hole_type
+    FlatCAMObj* e = t->extract();
+    ASSERT_NE(e, nullptr);
+    EXPECT_EQ(e->name(), "PCB principal-B_Cu");  // sin la extensión
+    const auto& tools = static_cast<ExcellonObject*>(e)->excellon().drillTools();
+    ASSERT_EQ(tools.size(), 1u);
+    // De fábrica solo los pads circulares: los mismos 59 que el original con ese filtro (oracle_extract_drills.py).
+    EXPECT_EQ(tools.at(1).drills.size(), 59u);
+}

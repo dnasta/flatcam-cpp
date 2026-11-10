@@ -32,6 +32,7 @@ add_executable(core_tests
     test_panelize.cpp
     test_invert.cpp
     test_corners.cpp
+    test_extract_drills.cpp
     test_luz_de_noche.cpp
     test_project_file.cpp
     test_clearing_methods.cpp
