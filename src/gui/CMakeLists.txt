@@ -34,6 +34,8 @@ add_library(flatcam_gui STATIC
     tools/PanelizeTool.cpp
     tools/InvertTool.cpp
     tools/CalculatorsTool.cpp
+    tools/CornersTool.cpp
+    generated/CornersToolUIBase.cpp
     generated/CalculatorsToolUIBase.cpp
     generated/InvertToolUIBase.cpp
     generated/PanelizeToolUIBase.cpp

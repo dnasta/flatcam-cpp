@@ -120,13 +120,14 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     panelizeTool = new PanelizeTool(this, ui_.get());
     invertTool = new InvertTool(this, ui_.get());
     calculatorsTool = new CalculatorsTool(this, ui_.get());
+    cornersTool = new CornersTool(this, ui_.get());
     transformTool = new TransformTool(this, ui_.get());
     distanceTool = new DistanceTool(this, ui_.get());
     distanceMinTool = new DistanceMinTool(this, ui_.get());
     moveTool = new MoveTool(this, this);
     propertiesTool = new PropertiesTool(this, ui_.get());
     isolationTool = new IsolationTool(this, ui_.get());
-    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool, panelizeTool, invertTool, calculatorsTool, transformTool,
+    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool, panelizeTool, invertTool, calculatorsTool, cornersTool, transformTool,
                                                       isolationTool, distanceTool, distanceMinTool, propertiesTool})
         w->hide();
     connectSignals();
@@ -297,6 +298,11 @@ void App::connectSignals() {
     connect(ui_->move_tool_menuAction, &QAction::triggered, this, [this] { moveTool->toggle(); });
     // Propiedades: el menú llama run(toggle=False) (triggered pasa checked = False); la tecla P, run().
     connect(ui_->properties_tool_menuAction, &QAction::triggered, this, [this] { propertiesTool->run(false); });
+    for (QAction* a : {ui_->corners_tool_menuAction, ui_->corners_tool_btn})
+        connect(a, &QAction::triggered, this, [this] {
+            runTool(cornersTool, CornersTool::info());
+            cornersTool->setToolUi();
+        });
     for (QAction* a : {ui_->calculator_tool_menuAction, ui_->calculators_btn})
         connect(a, &QAction::triggered, this, [this] {
             runTool(calculatorsTool, CalculatorsTool::info());
@@ -968,6 +974,7 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
             case Qt::Key_Z: return tool(ui->panelize_btn);
             case Qt::Key_G: return tool(ui->invert_btn);
             case Qt::Key_C: return tool(ui->calculators_btn);
+            case Qt::Key_M: return tool(ui->corners_tool_btn);
             case Qt::Key_I: return tool(ui->isolation_btn);
             case Qt::Key_N: return tool(ui->ncc_btn);
             case Qt::Key_P: return tool(ui->paint_btn);

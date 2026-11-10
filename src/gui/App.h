@@ -297,6 +297,7 @@ public:
     PanelizeTool* panelizeTool;  ///< Panel de Panelizar.
     InvertTool* invertTool;      ///< Panel de Invertir Gerber.
     CalculatorsTool* calculatorsTool;  ///< Panel de Calculadoras.
+    CornersTool* cornersTool;          ///< Panel de Marcas de esquina.
     class TransformTool* transformTool;  ///< Panel de Transformaciones.
     class DistanceTool* distanceTool;  ///< Herramienta Distancia.
     class DistanceMinTool* distanceMinTool;  ///< Herramienta Distancia mínima.
