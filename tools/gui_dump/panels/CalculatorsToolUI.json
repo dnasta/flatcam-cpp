@@ -1,0 +1,1396 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "ToolCalculator",
+  "name": null,
+  "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Calculadoras"
+   },
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Calculadoras"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": "unists_spacer_label",
+      "props": {
+       "text": {
+        "t": "str",
+        "v": " "
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {
+       "text": {
+        "t": "str",
+        "v": "<font size=3><b>Calculadora de unidades</b></font>"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       0
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "MM"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 0,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "PULGADA"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "NumericalEvalEntry",
+         "name": "mm_entry",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Aquí ingresa el valor a convertir de MM a PULGADA"
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "QLineEdit {border: 1px solid #0069A9;}"
+          },
+          "text": {
+           "t": "str",
+           "v": "0.0000"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "NumericalEvalEntry",
+         "name": "inch_entry",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Aquí ingresa el valor a convertir de PULGADAS a MM"
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "QLineEdit {border: 1px solid #0069A9;}"
+          },
+          "text": {
+           "t": "str",
+           "v": "0.0000"
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": "v_shape_spacer_label",
+      "props": {
+       "text": {
+        "t": "str",
+        "v": " "
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {
+       "text": {
+        "t": "str",
+        "v": "<font size=3><b>Calc. de herra. en forma de V</b></font>"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QFormLayout",
+      "py": "QFormLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "tipDia_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Este es el diámetro de la punta de la herramienta.\nEstá especificado por el fabricante."
+          },
+          "text": {
+           "t": "str",
+           "v": "Diá. de la punta:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 0,
+        "role": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "tipDia_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 0.2
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "tipAngle_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Este es el ángulo de la punta de la herramienta.\nEstá especificado por el fabricante."
+          },
+          "text": {
+           "t": "str",
+           "v": "Ángulo de la punta:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "role": 1,
+        "widget": {
+         "qt": "QSpinBox",
+         "py": "FCSpinner",
+         "name": "tipAngle_entry",
+         "props": {
+          "maximum": {
+           "t": "int",
+           "v": 180
+          },
+          "singleStep": {
+           "t": "int",
+           "v": 5
+          },
+          "value": {
+           "t": "int",
+           "v": 30
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "cutDepth_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esta es la profundidad para cortar el material.\nEn el CNCJob se encuentra el parámetro CutZ."
+          },
+          "text": {
+           "t": "str",
+           "v": "Corte Z:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "role": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "cutDepth_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -10000.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "value": {
+           "t": "double",
+           "v": 0.05
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "effectiveToolDia_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Este es el diámetro de la herramienta a ingresar\nSección FlatCAM Gerber.\nEn la sección CNCJob se llama >diá. de herra.<."
+          },
+          "text": {
+           "t": "str",
+           "v": "Diá. de Herram:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "role": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "effectiveToolDia_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          }
+         }
+        }
+       }
+      ],
+      "formRows": true
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "calculate_vshape_button",
+      "props": {
+       "toolTip": {
+        "t": "str",
+        "v": "Calcule el corte Z o el diámetro efectivo de la herramienta,\ndependiendo de cuál se desee y cuál se conozca. "
+       },
+       "text": {
+        "t": "str",
+        "v": "Calcular"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/calculator16.png"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {}
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {
+       "toolTip": {
+        "t": "str",
+        "v": "Esta calculadora es útil para aquellos que platican la vía / la almohadilla / los agujeros de perforación,\nUtilizando un método como tinta de graphite o tinta de hipofosfito de calcio o cloruro de paladio."
+       },
+       "text": {
+        "t": "str",
+        "v": "<font size=3><b>Calculadora de electrochapado</b></font>"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "area_sel_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Elija cómo calcular el área del PCB."
+          },
+          "text": {
+           "t": "str",
+           "v": "Cálculo de área:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "area_sel_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Dimensiones",
+           "value": "d"
+          },
+          {
+           "label": "Zona",
+           "value": "a"
+          }
+         ],
+         "vertical": false,
+         "stretch": false,
+         "value": "d"
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "pcblengthlabel",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esta es la longitud del tablero. En centímetros."
+          },
+          "text": {
+           "t": "str",
+           "v": "Longitud del tablero:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "layout": {
+         "qt": "QHBoxLayout",
+         "py": "QHBoxLayout",
+         "name": null,
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "items": [
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QDoubleSpinBox",
+            "py": "FCDoubleSpinner",
+            "name": "pcblength_entry",
+            "props": {
+             "sizePolicy": {
+              "t": "QSizePolicy",
+              "v": [
+               3,
+               5,
+               0,
+               0
+              ]
+             },
+             "decimals": {
+              "t": "int",
+              "v": 4
+             },
+             "maximum": {
+              "t": "double",
+              "v": 10000.0
+             },
+             "value": {
+              "t": "double",
+              "v": 10.0
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": "length_unit",
+            "props": {
+             "minimumSize": {
+              "t": "QSize",
+              "v": [
+               25,
+               0
+              ]
+             },
+             "text": {
+              "t": "str",
+              "v": "cm"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "pcbwidthlabel",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Este es el ancho de la tabla. En centímetros."
+          },
+          "text": {
+           "t": "str",
+           "v": "Ancho del tablero:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "layout": {
+         "qt": "QHBoxLayout",
+         "py": "QHBoxLayout",
+         "name": null,
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "items": [
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QDoubleSpinBox",
+            "py": "FCDoubleSpinner",
+            "name": "pcbwidth_entry",
+            "props": {
+             "sizePolicy": {
+              "t": "QSizePolicy",
+              "v": [
+               3,
+               5,
+               0,
+               0
+              ]
+             },
+             "decimals": {
+              "t": "int",
+              "v": 4
+             },
+             "maximum": {
+              "t": "double",
+              "v": 10000.0
+             },
+             "value": {
+              "t": "double",
+              "v": 10.0
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": "width_unit",
+            "props": {
+             "minimumSize": {
+              "t": "QSize",
+              "v": [
+               25,
+               0
+              ]
+             },
+             "text": {
+              "t": "str",
+              "v": "cm"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "area_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esta es el área del PCB."
+          },
+          "text": {
+           "t": "str",
+           "v": "Zona:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "layout": {
+         "qt": "QHBoxLayout",
+         "py": "QHBoxLayout",
+         "name": null,
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "items": [
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QDoubleSpinBox",
+            "py": "FCDoubleSpinner",
+            "name": "area_entry",
+            "props": {
+             "sizePolicy": {
+              "t": "QSizePolicy",
+              "v": [
+               3,
+               5,
+               0,
+               0
+              ]
+             },
+             "decimals": {
+              "t": "int",
+              "v": 4
+             },
+             "maximum": {
+              "t": "double",
+              "v": 10000.0
+             },
+             "value": {
+              "t": "double",
+              "v": 100.0
+             },
+             "hidden": {
+              "t": "bool",
+              "v": true
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": "area_unit",
+            "props": {
+             "minimumSize": {
+              "t": "QSize",
+              "v": [
+               25,
+               0
+              ]
+             },
+             "text": {
+              "t": "str",
+              "v": "cm<sup>2</sup>"
+             },
+             "hidden": {
+              "t": "bool",
+              "v": true
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "cdensity_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Densidad de corriente para pasar por el tablero.\nEn amperios por pies cuadrados ASF."
+          },
+          "text": {
+           "t": "str",
+           "v": "Densidad actual:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "layout": {
+         "qt": "QHBoxLayout",
+         "py": "QHBoxLayout",
+         "name": null,
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "items": [
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QDoubleSpinBox",
+            "py": "FCDoubleSpinner",
+            "name": "cdensity_entry",
+            "props": {
+             "sizePolicy": {
+              "t": "QSizePolicy",
+              "v": [
+               3,
+               5,
+               0,
+               0
+              ]
+             },
+             "decimals": {
+              "t": "int",
+              "v": 4
+             },
+             "maximum": {
+              "t": "double",
+              "v": 10000.0
+             },
+             "singleStep": {
+              "t": "double",
+              "v": 0.1
+             },
+             "value": {
+              "t": "double",
+              "v": 13.0
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": null,
+            "props": {
+             "minimumSize": {
+              "t": "QSize",
+              "v": [
+               25,
+               0
+              ]
+             },
+             "text": {
+              "t": "str",
+              "v": "ASF"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "growth_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Qué tan grueso pretende ser el crecimiento del cobre.\nEn micras."
+          },
+          "text": {
+           "t": "str",
+           "v": "Crecimiento de cobre:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "layout": {
+         "qt": "QHBoxLayout",
+         "py": "QHBoxLayout",
+         "name": null,
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "items": [
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QDoubleSpinBox",
+            "py": "FCDoubleSpinner",
+            "name": "growth_entry",
+            "props": {
+             "sizePolicy": {
+              "t": "QSizePolicy",
+              "v": [
+               3,
+               5,
+               0,
+               0
+              ]
+             },
+             "decimals": {
+              "t": "int",
+              "v": 4
+             },
+             "maximum": {
+              "t": "double",
+              "v": 10000.0
+             },
+             "singleStep": {
+              "t": "double",
+              "v": 0.01
+             },
+             "value": {
+              "t": "double",
+              "v": 10.0
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": null,
+            "props": {
+             "minimumSize": {
+              "t": "QSize",
+              "v": [
+               25,
+               0
+              ]
+             },
+             "text": {
+              "t": "str",
+              "v": "um"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "cvaluelabel",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Este es el valor de intensidad actual\npara configurar en la fuente de alimentación. En amperios."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor actual:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "layout": {
+         "qt": "QHBoxLayout",
+         "py": "QHBoxLayout",
+         "name": null,
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "items": [
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QDoubleSpinBox",
+            "py": "FCDoubleSpinner",
+            "name": "cvalue_entry",
+            "props": {
+             "sizePolicy": {
+              "t": "QSizePolicy",
+              "v": [
+               3,
+               5,
+               0,
+               0
+              ]
+             },
+             "readOnly": {
+              "t": "bool",
+              "v": true
+             },
+             "decimals": {
+              "t": "int",
+              "v": 4
+             },
+             "maximum": {
+              "t": "double",
+              "v": 10000.0
+             },
+             "singleStep": {
+              "t": "double",
+              "v": 0.1
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": null,
+            "props": {
+             "minimumSize": {
+              "t": "QSize",
+              "v": [
+               25,
+               0
+              ]
+             },
+             "text": {
+              "t": "str",
+              "v": "A"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "align": 0,
+        "row": 14,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "timelabel",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Este es el tiempo calculado requerido para el procedimiento.\nEn minutos."
+          },
+          "text": {
+           "t": "str",
+           "v": "Hora:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 14,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "layout": {
+         "qt": "QHBoxLayout",
+         "py": "QHBoxLayout",
+         "name": null,
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "items": [
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QDoubleSpinBox",
+            "py": "FCDoubleSpinner",
+            "name": "time_entry",
+            "props": {
+             "sizePolicy": {
+              "t": "QSizePolicy",
+              "v": [
+               3,
+               5,
+               0,
+               0
+              ]
+             },
+             "readOnly": {
+              "t": "bool",
+              "v": true
+             },
+             "decimals": {
+              "t": "int",
+              "v": 4
+             },
+             "maximum": {
+              "t": "double",
+              "v": 10000.0
+             },
+             "singleStep": {
+              "t": "double",
+              "v": 0.1
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": null,
+            "props": {
+             "minimumSize": {
+              "t": "QSize",
+              "v": [
+               25,
+               0
+              ]
+             },
+             "text": {
+              "t": "str",
+              "v": "min"
+             }
+            }
+           }
+          }
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "calculate_plate_button",
+      "props": {
+       "toolTip": {
+        "t": "str",
+        "v": "Calcule el valor de intensidad actual y el tiempo del procedimiento,\ndependiendo de los parámetros anteriores"
+       },
+       "text": {
+        "t": "str",
+        "v": "Calcular"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/calculator16.png"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "reset_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Restablecerá los parámetros de la herramienta."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Restablecer la Herramienta"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/reset32.png"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "CalculatorsToolUI"
+}

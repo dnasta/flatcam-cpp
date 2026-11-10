@@ -2741,3 +2741,29 @@ TEST(GuiInvert, InvertsTheGerber) {
     EXPECT_EQ(g.apertures().at("0").geometry.size(), g.solidGeometry().size());
     EXPECT_NEAR(inv->bounds().width(), edge->bounds().width() + 4.0, 1e-9);  // la caja con el margen (ingletes)
 }
+
+// Calculadoras (Alt+C): los mismos resultados y formatos que el original (calculados con sus fórmulas en Python).
+TEST(GuiCalculators, ComputeLikeTheOriginal) {
+    App app;
+    QKeyEvent alt(QEvent::KeyPress, Qt::Key_C, Qt::AltModifier);
+    QApplication::sendEvent(app.ui(), &alt);
+    CalculatorsTool* t = app.calculatorsTool;
+    EXPECT_EQ(t->mm_entry->text(), "0.0000");
+    t->calculateToolDia();  // punta 0,2, 30°, profundidad 0,05
+    EXPECT_DOUBLE_EQ(t->effectiveToolDia_entry->value(), 0.2268);
+    t->mm_entry->setText("12.7");
+    t->calculateInch();
+    EXPECT_EQ(t->inch_entry->text(), "0.5000");
+    t->inch_entry->setText("1.5");
+    t->calculateMm();
+    EXPECT_EQ(t->mm_entry->text(), "38.1000");
+    t->calculateElectroplating();  // 10 x 10 cm, 13 A/dm², 10 um
+    EXPECT_DOUBLE_EQ(t->cvalue_entry->value(), 2.80);
+    EXPECT_DOUBLE_EQ(t->time_entry->value(), 33.0);
+    t->area_sel_radio->setValue(QString("a"));
+    Q_EMIT t->area_sel_radio->activatedCustom("a");
+    EXPECT_FALSE(t->pcbwidth_entry->isVisibleTo(t));
+    EXPECT_TRUE(t->area_entry->isVisibleTo(t));
+    t->calculateElectroplating();  // 100 cm²
+    EXPECT_DOUBLE_EQ(t->cvalue_entry->value(), 2.80);
+}
