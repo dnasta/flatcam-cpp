@@ -127,13 +127,14 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     optimalTool = new OptimalTool(this, ui_.get());
     etchTool = new EtchTool(this, ui_.get());
     alignTool = new AlignTool(this, ui_.get());
+    fiducialsTool = new FiducialsTool(this, ui_.get());
     transformTool = new TransformTool(this, ui_.get());
     distanceTool = new DistanceTool(this, ui_.get());
     distanceMinTool = new DistanceMinTool(this, ui_.get());
     moveTool = new MoveTool(this, this);
     propertiesTool = new PropertiesTool(this, ui_.get());
     isolationTool = new IsolationTool(this, ui_.get());
-    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool, panelizeTool, invertTool, calculatorsTool, cornersTool, extractDrillsTool, punchTool, subTool, optimalTool, etchTool, alignTool, transformTool,
+    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool, panelizeTool, invertTool, calculatorsTool, cornersTool, extractDrillsTool, punchTool, subTool, optimalTool, etchTool, alignTool, fiducialsTool, transformTool,
                                                       isolationTool, distanceTool, distanceMinTool, propertiesTool})
         w->hide();
     connectSignals();
@@ -304,6 +305,11 @@ void App::connectSignals() {
     connect(ui_->move_tool_menuAction, &QAction::triggered, this, [this] { moveTool->toggle(); });
     // Propiedades: el menú llama run(toggle=False) (triggered pasa checked = False); la tecla P, run().
     connect(ui_->properties_tool_menuAction, &QAction::triggered, this, [this] { propertiesTool->run(false); });
+    for (QAction* a : {ui_->fiducial_tool_menuAction, ui_->fiducials_btn})
+        connect(a, &QAction::triggered, this, [this] {
+            runTool(fiducialsTool, FiducialsTool::info());
+            fiducialsTool->setToolUi();
+        });
     for (QAction* a : {ui_->align_objects_tool_menuAction, ui_->align_btn})
         connect(a, &QAction::triggered, this, [this] {
             runTool(alignTool, AlignTool::info());
@@ -1015,6 +1021,7 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
             case Qt::Key_W: return tool(ui->sub_btn);
             case Qt::Key_O: return tool(ui->optimal_btn);
             case Qt::Key_A: return tool(ui->align_btn);
+            case Qt::Key_F: return tool(ui->fiducials_btn);
             case Qt::Key_E: return tool(ui->extract_btn);  // keyPressEvent (el menú dice Alt+I)
             case Qt::Key_I: return tool(ui->isolation_btn);
             case Qt::Key_N: return tool(ui->ncc_btn);

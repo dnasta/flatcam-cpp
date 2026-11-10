@@ -33,6 +33,7 @@ add_executable(core_tests
     test_invert.cpp
     test_etch.cpp
     test_align.cpp
+    test_fiducials.cpp
     test_corners.cpp
     test_extract_drills.cpp
     test_punch.cpp

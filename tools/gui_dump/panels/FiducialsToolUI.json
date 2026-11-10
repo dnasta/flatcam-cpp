@@ -1,0 +1,854 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "ToolFiducials",
+  "name": null,
+  "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Herramienta de Fiduciales"
+   },
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Herramienta de Fiduciales"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": null,
+      "props": {}
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": "points_label",
+      "props": {
+       "toolTip": {
+        "t": "str",
+        "v": "Una tabla con las coordenadas de los puntos fiduciales,\nen el formato (x, y)."
+       },
+       "text": {
+        "t": "str",
+        "v": "<b>Coordenadas Fiduciales:</b>"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QTableWidget",
+      "py": "FCTable",
+      "name": "points_table",
+      "props": {
+       "minimumSize": {
+        "t": "QSize",
+        "v": [
+         0,
+         113
+        ]
+       },
+       "maximumSize": {
+        "t": "QSize",
+        "v": [
+         16777215,
+         113
+        ]
+       },
+       "verticalScrollBarPolicy": {
+        "t": "int",
+        "v": 1
+       },
+       "sizeAdjustPolicy": {
+        "t": "int",
+        "v": 2
+       },
+       "selectionBehavior": {
+        "t": "int",
+        "v": 1
+       },
+       "rowCount": {
+        "t": "int",
+        "v": 3
+       },
+       "columnCount": {
+        "t": "int",
+        "v": 3
+       }
+      },
+      "table": {
+       "cols": 3,
+       "labels": [
+        "#",
+        "Nombre",
+        "Coordenadas"
+       ],
+       "hheader": true,
+       "vheader": false,
+       "resize": [
+        2,
+        2,
+        1
+       ],
+       "stretchLast": false,
+       "hiddenCols": []
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QFrame",
+      "py": "QFrame",
+      "name": null,
+      "props": {
+       "sizePolicy": {
+        "t": "QSizePolicy",
+        "v": [
+         1,
+         0,
+         0,
+         0
+        ]
+       },
+       "frameShape": {
+        "t": "int",
+        "v": 4
+       },
+       "frameShadow": {
+        "t": "int",
+        "v": 48
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "param_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Parámetros utilizados para esta herramienta."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Parámetros:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "size_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esto establece el diámetro fiducial si el tipo fiducial es circular,\nde lo contrario es el tamaño del fiducial.\nLa apertura de la máscara de soldadura es el doble que eso."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tamaño:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "fid_size_entry",
+         "props": {
+          "wrapping": {
+           "t": "bool",
+           "v": true
+          },
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": 1.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 3.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 1.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "margin_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Margen de cuadro delimitador."
+          },
+          "text": {
+           "t": "str",
+           "v": "Margen:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "margin_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -10000.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 1.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "mode_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "- 'Auto' - colocación automática de fiduciales en las esquinas del cuadro delimitador.\n- 'Manual' - colocación manual de fiduciales."
+          },
+          "text": {
+           "t": "str",
+           "v": "Modo:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "mode_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Auto",
+           "value": "auto"
+          },
+          {
+           "label": "Manual",
+           "value": "manual"
+          }
+         ],
+         "vertical": false,
+         "stretch": false,
+         "value": "auto"
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "pos_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "La posición para el segundo fiducial.\n- 'Arriba' - el orden es: abajo a la izquierda, arriba a la izquierda, arriba a la derecha.\n- 'Abajo' - el orden es: abajo a la izquierda, abajo a la derecha, arriba a la derecha.\n- 'Ninguno' - no hay un segundo fiducial. El orden es: abajo a la izquierda, arriba a la derecha."
+          },
+          "text": {
+           "t": "str",
+           "v": "Segundo fiducial:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "pos_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Arriba",
+           "value": "up"
+          },
+          {
+           "label": "Abajo",
+           "value": "down"
+          },
+          {
+           "label": "Ninguno",
+           "value": "no"
+          }
+         ],
+         "vertical": false,
+         "stretch": false,
+         "value": "up"
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "fid_type_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El tipo de fiducial.\n- 'Circular': este es el fiducial regular.\n- 'Cruce' - líneas cruzadas fiduciales.\n- 'Ajedrez' - patrón de ajedrez fiducial."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tipo fiducial:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "fid_type_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Circular",
+           "value": "circular"
+          },
+          {
+           "label": "Cruce",
+           "value": "cross"
+          },
+          {
+           "label": "Ajedrez",
+           "value": "chess"
+          }
+         ],
+         "vertical": false,
+         "stretch": false,
+         "value": "circular"
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "line_thickness_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Espesor de la línea que hace al fiducial."
+          },
+          "text": {
+           "t": "str",
+           "v": "Grosor de la línea:"
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "line_thickness_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 0.25
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 9,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "grbobj_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Gerber Objeto al que se agregará un Copper Thieving."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>GERBER:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "grb_object_combo",
+         "props": {},
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 11,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "QPushButton",
+         "name": "add_cfid_button",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Agregará un polígono en la capa de cobre para servir como fiducial."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+          },
+          "text": {
+           "t": "str",
+           "v": "Añadir Fiducial"
+          },
+          "icon": {
+           "t": "QIcon",
+           "v": ":/images/fiducials_32.png"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 13,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "sm_object_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El objeto Soldermask Gerber."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Soldermask Gerber:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 14,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "sm_object_combo",
+         "props": {},
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 15,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "QPushButton",
+         "name": "add_sm_opening_button",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Agregará un polígono en la capa de máscara de soldadura\npara servir como apertura fiducial.\nEl diámetro siempre es el doble del diámetro.\npara el cobre fiducial."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+          },
+          "text": {
+           "t": "str",
+           "v": "Agregar apertura de Soldermask"
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "QPushButton",
+      "name": "reset_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Restablecerá los parámetros de la herramienta."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Restablecer la Herramienta"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/reset32.png"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "FiducialsToolUI"
+}

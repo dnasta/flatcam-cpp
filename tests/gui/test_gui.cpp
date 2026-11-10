@@ -2956,3 +2956,43 @@ TEST(GuiAlign, MovesTheAlignedObjectFromADrillToAPad) {
     EXPECT_FALSE(t->isPicking());
     EXPECT_TRUE(t->clickedPoints().empty());
 }
+
+TEST(GuiFiducials, AddsFiducialsAndMaskOpenings) {
+    App app;
+    FlatCAMObj* cu = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-B_Cu.gbr");
+    ASSERT_NE(cu, nullptr);
+    QKeyEvent alt(QEvent::KeyPress, Qt::Key_F, Qt::AltModifier);
+    QApplication::sendEvent(app.ui(), &alt);
+    FiducialsTool* t = app.fiducialsTool;
+    EXPECT_EQ(t->fid_size_entry->value(), 1.0);
+    EXPECT_EQ(t->mode_radio->value().toString(), "auto");
+    EXPECT_FALSE(t->line_thickness_entry->isEnabled());  // solo para la cruz
+    // Automático, circular, segundo arriba: los mismos puntos y textos que el original (golden_fiducials.h).
+    t->addFiducials();
+    FlatCAMObj* fid = t->lastCreated();
+    ASSERT_NE(fid, nullptr);
+    EXPECT_EQ(fid->name(), cu->name() + "_fid");
+    EXPECT_EQ(t->bottom_left_coords_entry->text(), "(-35.4995, -32.9995)");
+    EXPECT_EQ(t->top_right_coords_entry->text(), "(35.4995, 32.9995)");
+    EXPECT_EQ(t->sec_points_coords_entry->text(), "(-35.4995, 32.9995)");
+    EXPECT_EQ(static_cast<GerberObject*>(fid)->gerber().solidGeometry().size(), 51u);
+    // La abertura de la máscara usa los mismos puntos, con el doble del tamaño (la apertura C de 2,0).
+    t->sm_object_combo->setValue(cu->name());
+    FlatCAMObj* sm = t->addSoldermaskOpening();
+    ASSERT_NE(sm, nullptr);
+    EXPECT_EQ(static_cast<GerberObject*>(sm)->gerber().apertures().at("12").geometry.size(), 37u);
+    // Manual, sin segundo punto: dos clics.
+    t->grb_object_combo->setValue(cu->name());
+    t->mode_radio->setValue(QString("manual"));
+    t->pos_radio->setValue(QString("no"));
+    Q_EMIT t->pos_radio->activatedCustom("no");
+    EXPECT_FALSE(t->sec_points_coords_entry->isEnabled());
+    t->addFiducials();
+    EXPECT_TRUE(t->isPicking());
+    t->onRelease({1.23456, -2.5}, Qt::LeftButton);
+    EXPECT_EQ(t->bottom_left_coords_entry->text(), "(1.2346, -2.5)");
+    t->onRelease({3, 4}, Qt::LeftButton);
+    EXPECT_EQ(t->top_right_coords_entry->text(), "(3.0, 4.0)");
+    EXPECT_FALSE(t->isPicking());
+    EXPECT_NE(t->lastCreated(), sm);
+}

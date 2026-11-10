@@ -79,7 +79,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.729 casos de `ctest` (2.644 del núcleo y 84 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.731 casos de `ctest` (2.645 del núcleo y 85 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -128,6 +128,7 @@ src/tools/              Herramientas de FlatCAM (sin Qt)
   Isolation.*            Aislamiento: pasadas separadas, combinadas y mecanizado de resto (`ToolIsolation.py`)
   Panelize.*             Panelizar (`ToolPanelize.on_panelize`): grilla con restricción de área, Excellon, Gerber (sólido y
                          aperturas) y Geometría por herramienta (con "Optimizar": `snap` + `linemerge` + `unary_union`)
+  Fiducials.*            Fiduciales (`add_fiducials_geo`): circulares, en cruz o de tablero, y los puntos automáticos
   AlignObjects.*         Alinear objetos: los pads o agujeros bajo el clic y el desplazamiento y giro que resultan
   EtchCompensation.*     Compensación de grabado (`on_compensate`): el desplazamiento y el cobre y las aperturas engrosados
   OptimalDistance.*      Óptimo: la distancia mínima entre las figuras de cobre (`find_minimum_distance`)
@@ -197,6 +198,7 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   tools/PaintTool.*      Paint (port de ToolPaint: método estándar, selección "Todos") → `<objeto>_mt_paint`
   tools/NccTool.*        NCC (port de ToolNCC: "Limpiar", estándar, "Sí mismo") → `<objeto>_ncc`
   tools/IsolationTool.*  Isolation (port de ToolIsolation sobre src/tools/Isolation; falta la selección por área y polígono)
+  tools/FiducialsTool.*  Fiduciales (ToolFiducials, Alt+F) sobre src/tools/Fiducials: automático o con clics
   tools/AlignTool.*      Alinear objetos (AlignObjects, Alt+A) sobre src/tools/AlignObjects: elegir con el mouse
   tools/EtchTool.*       Compensación de grabado (ToolEtchCompensation, sin atajo) sobre src/tools/EtchCompensation
   tools/OptimalTool.*    Óptimo (ToolOptimal, Alt+O) sobre src/tools/OptimalDistance
@@ -397,6 +399,10 @@ fijan con sentido físico (micras), no en el último bit.
   con una interfaz simulada (8 casos): las copias, las aperturas, los agujeros y ranuras y la unión de los cortes coinciden.
   **Ojo con los oráculos de Excellon:** `create_geometry` copia `default_data` en cada herramienta; sin ese atributo la
   excepción corta el bucle y cada herramienta queda con una sola figura (así salían mal los límites del Excellon).
+- `tests/tools/oracle_fiducials.py` genera `tests/golden_fiducials.h`: ejecuta `add_fiducials`, `add_fiducials_geo` y
+  `add_soldermask_opening` originales sobre el cobre de "luz de noche" (11 casos: las tres formas, los tres segundos puntos,
+  márgenes 0 y negativo, aperturas que ya existen, cruces superpuestas que fallan, la máscara): los mismos puntos, textos,
+  polígonos, aperturas (con los elementos agregados vértice por vértice) y geometría de seguimiento.
 - `tests/tools/oracle_align.py` genera `tests/golden_align.h`: ejecuta `on_mouse_click_release`, `check_points`,
   `align_translate` y `align_rotate` originales (con `ast`): qué puntos elige un clic sobre el cobre y el taladro de "luz de
   noche" (pads, trazos, afuera) y el desplazamiento y el giro de 10 juegos de puntos, también los que fallan: idénticos.
@@ -869,7 +875,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.729 casos de test** (`ctest`): 2.645 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 84 de la GUI;
+- **2.731 casos de test** (`ctest`): 2.646 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 85 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -897,7 +903,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.729 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.731 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -1097,7 +1103,10 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    demás distancias). ~~Compensación de grabado~~ (hecha: `src/tools/EtchCompensation.*`, `tools/EtchTool.*`, sin
    atajo, como el original; `oracle_etch.py`: idéntica). ~~Alinear objetos~~ (hecho: `src/tools/AlignObjects.*`,
    `tools/AlignTool.*`, Alt+A; `oracle_align.py`: idéntico; desvío: arrastrar mientras se eligen puntos no dibuja el
-   rectángulo de selección, como en el original tampoco elige nada). Siguen: Film, Calculators, Copper Thieving, Fiducials, Corners, Extract
+   rectángulo de selección, como en el original tampoco elige nada). ~~Fiduciales~~ (hecho: `src/tools/Fiducials.*`,
+   `tools/FiducialsTool.*`, Alt+F; `oracle_fiducials.py`: idénticos; desvíos: los campos de coordenadas de la tabla son
+   `FCEntry` (en el original `EvalEntry`, que no se lee nunca) y los combos eligen el último Gerber al abrir la herramienta,
+   no cada vez que se agrega uno). Siguen: Film, Calculators, Copper Thieving, Fiducials, Corners, Extract
    Drills, Punch Gerber, Invert Gerber, Align Objects, Subtract (`ToolSub`), QR Code, Rules Check, Optimal, Solder Paste,
    Calibration, Etch Compensation, PCB Wizard, Levelling (autonivelación del CNC Job).
 6. **Preferencias** (`appGUI/preferences/`, ~19.000 líneas). **Hecho:** la pestaña completa generada del original (485 campos),
@@ -1177,4 +1186,9 @@ encontrar uno nuevo, agregarlo acá con su sección. Ya corregidos a pedido del 
   **o** en Y (debería ser "y"); el ángulo sale de `atan` y no de `atan2` (con giros de más de 90 grados da otro
   cuadrante); si el destino o el inicio tiene la X del centro, divide por cero: el objeto queda desplazado sin girar y la
   herramienta sigue esperando clics (hay que cancelar con el botón derecho); un clic sobre dos figuras agrega dos puntos.
+- **Fiduciales** (sección 13, ítem 5): la apertura nueva sale de `max()` de los números como texto (como en Marcas de
+  esquina); si las cruces se unen en un solo polígono (puntos muy cerca) falla con `TypeError` y en el modo manual sigue
+  esperando clics; "Agregar abertura de máscara" usa los puntos del último "Agregar fiducial" (sin ninguno, crea la
+  apertura vacía); la geometría de seguimiento de la cruz guarda listas de dos líneas (el port las aplana) y la de los
+  elementos de las aperturas es el centroide del engrosado.
 - **HPGL2** (11.12 w): los que quedan (cambiar de pluma con un trazo de un punto, bajar la pluma sin trazo, dibujar sin `SP`).

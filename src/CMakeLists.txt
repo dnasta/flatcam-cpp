@@ -34,6 +34,7 @@ add_library(flatcam_core STATIC
     tools/InvertGerber.cpp
     tools/EtchCompensation.cpp
     tools/AlignObjects.cpp
+    tools/Fiducials.cpp
     tools/CornerMarkers.cpp
     tools/ExtractDrills.cpp
     tools/PunchGerber.cpp
