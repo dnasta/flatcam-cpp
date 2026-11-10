@@ -19,6 +19,7 @@
 #include "gui/tools/SubTool.h"
 #include "gui/tools/OptimalTool.h"
 #include "gui/tools/EtchTool.h"
+#include "gui/tools/AlignTool.h"
 #include "gui/tools/ToolInfo.h"
 #include "gui/tools/TransformTool.h"
 #include "gui/tools/DistanceTool.h"

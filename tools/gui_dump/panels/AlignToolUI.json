@@ -1,0 +1,495 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "AlignObjects",
+  "name": null,
+  "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Alinear objetos"
+   },
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Alinear objetos"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": null,
+      "props": {}
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Especifique el tipo de objeto a alinear.\nPuede ser de tipo: Gerber o Excellon.\nLa selección aquí decide el tipo de objetos que serán\nen el cuadro combinado Objeto."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Objeto en movimiento:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "type_obj_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Gerber",
+           "value": "grb"
+          },
+          {
+           "label": "Excellon",
+           "value": "exc"
+          }
+         ],
+         "vertical": false,
+         "stretch": true,
+         "value": "grb"
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "object_combo",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Objeto a alinear."
+          }
+         },
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "aligned_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Especifique el tipo de objeto a alinear.\nPuede ser de tipo: Gerber o Excellon.\nLa selección aquí decide el tipo de objetos que serán\nen el cuadro combinado Objeto."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Objeto DESTINO:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "type_aligner_obj_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Gerber",
+           "value": "grb"
+          },
+          {
+           "label": "Excellon",
+           "value": "exc"
+          }
+         ],
+         "vertical": false,
+         "stretch": true,
+         "value": "grb"
+        }
+       },
+       {
+        "align": 0,
+        "row": 9,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "aligner_object_combo",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Objeto a alinear. Alineador."
+          }
+         },
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 11,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "a_type_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El tipo de alineación puede ser:\n- Punto único -> requiere un único punto de sincronización, la acción será una traducción\n- Punto doble -> requiere dos puntos de sincronización, la acción será traslación seguida de rotación"
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Tipo de alineación:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 13,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "a_type_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Punto único",
+           "value": "sp"
+          },
+          {
+           "label": "Punto doble",
+           "value": "dp"
+          }
+         ],
+         "vertical": false,
+         "stretch": true,
+         "value": "sp"
+        }
+       },
+       {
+        "align": 0,
+        "row": 14,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "align_object_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Alinee el objeto especificado con el objeto alineador.\nSi solo se utiliza un punto, se supone que se traduce.\nSi se utilizan estos puntos, se supone traslación y rotación."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Alinear objeto"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/align16.png"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "reset_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Restablecerá los parámetros de la herramienta."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t}\n\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Restablecer la Herramienta"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/reset32.png"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "AlignToolUI"
+}

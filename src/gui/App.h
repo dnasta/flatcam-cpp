@@ -305,6 +305,7 @@ public:
     SubTool* subTool;                      ///< Panel de Restar.
     OptimalTool* optimalTool;              ///< Panel de Óptimo.
     EtchTool* etchTool;                    ///< Panel de Compensación de grabado.
+    AlignTool* alignTool;                  ///< Panel de Alinear objetos.
     class TransformTool* transformTool;  ///< Panel de Transformaciones.
     class DistanceTool* distanceTool;  ///< Herramienta Distancia.
     class DistanceMinTool* distanceMinTool;  ///< Herramienta Distancia mínima.

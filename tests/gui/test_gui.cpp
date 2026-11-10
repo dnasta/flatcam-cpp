@@ -2913,3 +2913,46 @@ TEST(GuiEtch, CompensatesTheCopper) {
     EXPECT_FALSE(t->etchants_combo->isHidden());
     EXPECT_TRUE(t->factor_entry->isHidden());
 }
+
+TEST(GuiAlign, MovesTheAlignedObjectFromADrillToAPad) {
+    App app;
+    const QString dir = QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/";
+    FlatCAMObj* cu = app.openGerber(dir + "luz de noche Pascual-B_Cu.gbr");
+    FlatCAMObj* drl = app.openExcellon(dir + "luz de noche Pascual-PTH.drl");
+    ASSERT_NE(cu, nullptr);
+    ASSERT_NE(drl, nullptr);
+    QKeyEvent alt(QEvent::KeyPress, Qt::Key_A, Qt::AltModifier);
+    QApplication::sendEvent(app.ui(), &alt);
+    AlignTool* t = app.alignTool;
+    EXPECT_EQ(t->a_type_radio->value().toString(), "sp");  // tools_align_objects_align_type
+    EXPECT_EQ(t->object_combo->currentText(), cu->name());
+    t->type_obj_radio->setValue(QString("exc"));
+    Q_EMIT t->type_obj_radio->activatedCustom("exc");
+    EXPECT_EQ(t->object_combo->currentText(), drl->name());
+    const bool grid = app.ui()->grid_snap_btn->isChecked();
+    const QRectF before = drl->bounds();
+    ASSERT_TRUE(t->align());
+    EXPECT_TRUE(t->isPicking());
+    EXPECT_FALSE(app.ui()->grid_snap_btn->isChecked());
+    // Un clic fuera de los agujeros no elige nada; uno dentro elige su centro.
+    t->onRelease({1000, 1000}, Qt::LeftButton, false);
+    EXPECT_TRUE(t->clickedPoints().empty());
+    t->onRelease({-32.445, 21.515}, Qt::LeftButton, false);
+    ASSERT_EQ(t->clickedPoints().size(), 1u);
+    EXPECT_EQ(t->clickedPoints()[0].x, -32.545);
+    // Un trazo del cobre no sirve: solo los pads.
+    t->onRelease({-2.28, -10.56}, Qt::LeftButton, false);
+    EXPECT_EQ(t->clickedPoints().size(), 1u);
+    t->onRelease({-25.09, -29.21}, Qt::LeftButton, false);
+    EXPECT_FALSE(t->isPicking());
+    EXPECT_EQ(app.ui()->grid_snap_btn->isChecked(), grid);
+    const QRectF after = drl->bounds();
+    EXPECT_NEAR(after.left() - before.left(), -25.14 + 32.545, 1e-9);
+    EXPECT_NEAR(after.top() - before.top(), -29.18 - 21.415, 1e-9);
+    // Clic derecho cancela.
+    ASSERT_TRUE(t->align());
+    t->onRelease({-32.445, 21.515}, Qt::LeftButton, false);
+    t->onRelease({0, 0}, Qt::RightButton, false);
+    EXPECT_FALSE(t->isPicking());
+    EXPECT_TRUE(t->clickedPoints().empty());
+}
