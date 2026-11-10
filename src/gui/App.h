@@ -294,6 +294,7 @@ public:
     DrillingTool* drillingTool;  ///< Panel de perforación.
     CutOutTool* cutoutTool;      ///< Panel de corte.
     DblSidedTool* dblsidedTool;  ///< Panel de PCB a 2 caras.
+    PanelizeTool* panelizeTool;  ///< Panel de Panelizar.
     class TransformTool* transformTool;  ///< Panel de Transformaciones.
     class DistanceTool* distanceTool;  ///< Herramienta Distancia.
     class DistanceMinTool* distanceMinTool;  ///< Herramienta Distancia mínima.

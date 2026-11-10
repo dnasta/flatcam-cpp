@@ -344,6 +344,9 @@ Shape Shape::unite(const Shape& o) const {
     if (o.isEmpty()) return *this;
     return wrap(GEOSUnion_r(H(), raw(*this), raw(o)), "unite");
 }
+Shape Shape::snap(const Shape& reference, double tolerance) const {
+    return wrap(GEOSSnap_r(H(), raw(*this), raw(reference), tolerance), "snap");
+}
 Shape Shape::difference(const Shape& o) const {
     if (isEmpty() || o.isEmpty()) return *this;
     return wrap(GEOSDifference_r(H(), raw(*this), raw(o)), "difference");

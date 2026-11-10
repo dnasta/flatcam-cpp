@@ -18,7 +18,7 @@ void AboutDialogUIBase::setupUi() {
     lay2->addItem(new QSpacerItem(0, 0, QSizePolicy::Policy(7), QSizePolicy::Policy(1)));
     auto* w3 = new QLabel(nullptr);
     w3->setOpenExternalLinks(true);
-    w3->setText(QString::fromUtf8("FlatCAM <strong>2024.4 β </strong>(64bit)<br><a href = \"<MagicMock name='app_url' id='5262978896'>\"><MagicMock name='app_url' id='5262978896'></a>"));
+    w3->setText(QString::fromUtf8("FlatCAM <strong>2024.4 β </strong>(64bit)<br><a href = \"http://flatcam.org\">http://flatcam.org</a>"));
     lay2->addWidget(w3, 0);
     lay1->addLayout(lay2, 0);
     auto* lay4 = new QHBoxLayout();

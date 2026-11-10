@@ -81,6 +81,7 @@ def main():
            "inline const std::vector<MillingCase> kCases = {"]
     for f, op, tools, dia in CASES:
         e = Obj(geo_steps_per_circle=64)
+        e.default_data = {}  # create_geometry lo copia en cada herramienta (sin él se corta el bucle)
         e.parse_file(os.path.join(DATA, f))
         e.create_geometry()
         e.options = {"name": os.path.basename(f), "slot_tooldia": dia}

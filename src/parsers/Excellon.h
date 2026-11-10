@@ -119,6 +119,8 @@ public:
 
     /** @brief Supresión de ceros leída (`"L"`, `"T"` o vacío). @return El valor. */
     const std::string& zeros() const { return zeros_; }
+    /** @brief Cambia la supresión de ceros (`zeros`, por ejemplo al panelizar). @param z El valor. */
+    void setZeros(std::string z) { zeros_ = std::move(z); }
     /** @brief Unidades que declaró el archivo, si las declaró. @return Las unidades. */
     const std::optional<Units>& unitsFound() const { return unitsFound_; }
     /** @brief Dígitos enteros del formato en milímetros. @return La cantidad. */

@@ -2673,3 +2673,49 @@ TEST(GuiMilling, MillDrillsAndSlotsFromTheExcellonPanel) {
     ASSERT_NE(g2, nullptr);
     EXPECT_EQ(g2->tools().at(1).solidGeometry.size(), 3u);
 }
+
+// Panelizar desde el panel: Gerber, Excellon y Geometría (on_panelize).
+TEST(GuiPanelize, PanelizesGerberExcellonAndGeometry) {
+    App app;
+    const QString dir = QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    FlatCAMObj* edge = app.openGerber(dir + "Edge_Cuts.gbr");
+    FlatCAMObj* pth = app.openExcellon(dir + "PTH.drl");
+    ASSERT_NE(edge, nullptr);
+    ASSERT_NE(pth, nullptr);
+    PanelizeTool* t = app.panelizeTool;
+    app.ui()->panelize_btn->trigger();
+    EXPECT_EQ(t->columns->value(), 1);  // tools_panelize_columns
+    t->columns->setValue(2);
+    t->rows->setValue(2);
+    t->spacing_columns->setValue(3.0);
+    t->type_obj_combo->setCurrentIndex(0);
+    t->object_combo->setValue(edge->name());
+    FlatCAMObj* panel = t->panelize();
+    ASSERT_NE(panel, nullptr);
+    EXPECT_EQ(panel->name(), edge->name() + "_panelized");
+    EXPECT_EQ(panel->kind(), ObjectKind::Gerber);
+    const QRectF b = edge->bounds(), pb = panel->bounds();
+    EXPECT_NEAR(pb.width(), 2 * b.width() + 3.0, 1e-9);
+    EXPECT_NEAR(pb.height(), 2 * b.height(), 1e-9);
+    EXPECT_EQ(static_cast<GerberObject*>(panel)->gerber().solidGeometry().size(),
+              4 * static_cast<GerberObject*>(edge)->gerber().solidGeometry().size());
+    // Un Excellon: el tipo de panel se deshabilita y sale un Excellon con los agujeros de las cuatro copias.
+    t->type_obj_combo->setCurrentIndex(1);
+    EXPECT_FALSE(t->panel_type_radio->isEnabled());
+    t->object_combo->setValue(pth->name());
+    FlatCAMObj* ep = t->panelize();
+    ASSERT_NE(ep, nullptr);
+    EXPECT_EQ(ep->kind(), ObjectKind::Excellon);
+    std::size_t holes = 0;
+    for (const auto& [id, tool] : static_cast<ExcellonObject*>(ep)->excellon().drillTools()) holes += tool.drills.size();
+    EXPECT_EQ(holes, 4u * 120u);
+    // Restringir a un área donde entra una sola copia.
+    t->type_obj_combo->setCurrentIndex(0);
+    t->object_combo->setValue(edge->name());
+    t->constrain_cb->setChecked(true);
+    t->x_width_entry->setValue(b.width() + 1);
+    t->y_height_entry->setValue(b.height() + 1);
+    FlatCAMObj* one = t->panelize();
+    ASSERT_NE(one, nullptr);
+    EXPECT_NEAR(one->bounds().width(), b.width(), 1e-9);
+}
