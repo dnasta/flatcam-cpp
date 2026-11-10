@@ -2719,3 +2719,25 @@ TEST(GuiPanelize, PanelizesGerberExcellonAndGeometry) {
     ASSERT_NE(one, nullptr);
     EXPECT_NEAR(one->bounds().width(), b.width(), 1e-9);
 }
+
+// Invertir Gerber desde el panel (Alt+G).
+TEST(GuiInvert, InvertsTheGerber) {
+    App app;
+    FlatCAMObj* edge =
+        app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-Edge_Cuts.gbr");
+    ASSERT_NE(edge, nullptr);
+    QKeyEvent alt(QEvent::KeyPress, Qt::Key_G, Qt::AltModifier);
+    QApplication::sendEvent(app.ui(), &alt);
+    InvertTool* t = app.invertTool;
+    EXPECT_EQ(t->gerber_combo->currentText(), edge->name());
+    EXPECT_EQ(t->margin_entry->value(), 0.1);  // tools_invert_margin
+    t->margin_entry->setValue(2.0);
+    FlatCAMObj* inv = t->invert();
+    ASSERT_NE(inv, nullptr);
+    EXPECT_EQ(inv->name(), edge->name() + "_inverted");
+    const auto& g = static_cast<GerberObject*>(inv)->gerber();
+    ASSERT_TRUE(g.apertures().count("0"));
+    EXPECT_EQ(g.apertures().at("0").type, "C");
+    EXPECT_EQ(g.apertures().at("0").geometry.size(), g.solidGeometry().size());
+    EXPECT_NEAR(inv->bounds().width(), edge->bounds().width() + 4.0, 1e-9);  // la caja con el margen (ingletes)
+}

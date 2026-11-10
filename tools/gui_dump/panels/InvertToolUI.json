@@ -1,0 +1,441 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "ToolInvertGerber",
+  "name": null,
+  "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Herram. Invertir Gerber"
+   },
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Herram. Invertir Gerber"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {}
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QFrame",
+      "py": "QFrame",
+      "name": "tools_frame",
+      "props": {},
+      "layout": {
+       "qt": "QVBoxLayout",
+       "py": "QVBoxLayout",
+       "name": "tools_box",
+       "props": {},
+       "margins": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spacing": 6,
+       "items": [
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QGridLayout",
+          "py": "QGridLayout",
+          "name": null,
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "hspacing": 6,
+          "vspacing": 6,
+          "rowStretch": [
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0
+          ],
+          "colStretch": [
+           0,
+           1
+          ],
+          "colMinWidth": [
+           0,
+           0
+          ],
+          "items": [
+           {
+            "align": 0,
+            "row": 1,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "gerber_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Objeto de Gerber que se invertirá."
+              },
+              "text": {
+               "t": "str",
+               "v": "<b>GERBER:</b>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 2,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QComboBox",
+             "py": "FCComboBox",
+             "name": "gerber_combo",
+             "props": {},
+             "items": [],
+             "currentIndex": -1
+            }
+           },
+           {
+            "align": 0,
+            "row": 3,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QFrame",
+             "py": "QFrame",
+             "name": null,
+             "props": {
+              "sizePolicy": {
+               "t": "QSizePolicy",
+               "v": [
+                1,
+                0,
+                0,
+                0
+               ]
+              },
+              "frameShape": {
+               "t": "int",
+               "v": 4
+              },
+              "frameShadow": {
+               "t": "int",
+               "v": 48
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 4,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "param_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Parám. para esta herramienta."
+              },
+              "text": {
+               "t": "str",
+               "v": "<b>Parámetros:</b>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 5,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "margin_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Distancia por la cual evitar\nLos bordes del objeto Gerber."
+              },
+              "text": {
+               "t": "str",
+               "v": "Margen:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 6,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "margin_entry",
+             "props": {
+              "objectName": {
+               "t": "str",
+               "v": "Margen"
+              },
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10000.0
+              },
+              "value": {
+               "t": "double",
+               "v": 0.1
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 7,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "join_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "La forma en que se unirán las líneas en el contorno del objeto.\nPuede ser:\n- redondeado -> se agrega un arco entre dos líneas de unión\n- cuadrado -> las líneas se encuentran en un ángulo de 90 grados\n- bisel -> las líneas están unidas por una tercera línea"
+              },
+              "text": {
+               "t": "str",
+               "v": "Estilo de unión de líneas:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 8,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QWidget",
+             "py": "RadioSet",
+             "name": "join_radio",
+             "props": {},
+             "choices": [
+              {
+               "label": "Redondeado",
+               "value": "r"
+              },
+              {
+               "label": "Cuadrado",
+               "value": "s"
+              },
+              {
+               "label": "Bisel",
+               "value": "b"
+              }
+             ],
+             "vertical": true,
+             "stretch": false,
+             "value": "s"
+            }
+           },
+           {
+            "align": 0,
+            "row": 9,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QFrame",
+             "py": "QFrame",
+             "name": null,
+             "props": {
+              "sizePolicy": {
+               "t": "QSizePolicy",
+               "v": [
+                1,
+                0,
+                0,
+                0
+               ]
+              },
+              "frameShape": {
+               "t": "int",
+               "v": 4
+              },
+              "frameShadow": {
+               "t": "int",
+               "v": 48
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 10,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QPushButton",
+             "py": "FCButton",
+             "name": "invert_btn",
+             "props": {
+              "font": {
+               "t": "QFont",
+               "v": {
+                "bold": true
+               }
+              },
+              "toolTip": {
+               "t": "str",
+               "v": "Invertirá el objeto Gerber: áreas que tienen cobre.\nestará vacío de cobre y el área vacía anterior será\nlleno de cobre."
+              },
+              "styleSheet": {
+               "t": "str",
+               "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+              },
+              "text": {
+               "t": "str",
+               "v": "Invertir Gerber"
+              },
+              "icon": {
+               "t": "QIcon",
+               "v": ":/images/invert32.png"
+              }
+             }
+            }
+           }
+          ]
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "spacer": [
+          0,
+          0,
+          1,
+          7
+         ]
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QPushButton",
+          "py": "FCButton",
+          "name": "reset_button",
+          "props": {
+           "font": {
+            "t": "QFont",
+            "v": {
+             "bold": true
+            }
+           },
+           "toolTip": {
+            "t": "str",
+            "v": "Restablecerá los parámetros de la herramienta."
+           },
+           "styleSheet": {
+            "t": "str",
+            "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+           },
+           "text": {
+            "t": "str",
+            "v": "Restablecer la Herramienta"
+           },
+           "icon": {
+            "t": "QIcon",
+            "v": ":/images/reset32.png"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "InvertToolUI"
+}

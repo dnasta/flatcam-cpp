@@ -30,6 +30,7 @@ add_executable(core_tests
     test_isolation.cpp
     test_milling.cpp
     test_panelize.cpp
+    test_invert.cpp
     test_luz_de_noche.cpp
     test_project_file.cpp
     test_clearing_methods.cpp

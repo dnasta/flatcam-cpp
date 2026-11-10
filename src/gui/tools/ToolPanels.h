@@ -11,6 +11,7 @@
 #include "gui/tools/NccTool.h"
 #include "gui/tools/PaintTool.h"
 #include "gui/tools/PanelizeTool.h"
+#include "gui/tools/InvertTool.h"
 #include "gui/tools/ToolInfo.h"
 #include "gui/tools/TransformTool.h"
 #include "gui/tools/DistanceTool.h"
