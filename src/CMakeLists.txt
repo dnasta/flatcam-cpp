@@ -35,6 +35,7 @@ add_library(flatcam_core STATIC
     tools/CornerMarkers.cpp
     tools/ExtractDrills.cpp
     tools/PunchGerber.cpp
+    tools/Subtract.cpp
     io/JsonValue.cpp
     io/ProjectFile.cpp
 )

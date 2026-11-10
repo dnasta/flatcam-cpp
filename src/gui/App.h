@@ -106,6 +106,8 @@ public:
      * @return `true` si se borró algo.
      */
     bool deleteSelected(bool force = false);
+    /** @brief `collection.delete_by_name`: borra un objeto sin preguntar. @param name Nombre. @return Si estaba. */
+    bool deleteByName(const QString& name);
 
     /** @brief Copia los Gerber, Excellon y Geometrías elegidos como `<nombre>_copy` (`on_copy_command`). @return Las copias. */
     std::vector<FlatCAMObj*> copySelected();
@@ -300,6 +302,7 @@ public:
     CornersTool* cornersTool;          ///< Panel de Marcas de esquina.
     ExtractDrillsTool* extractDrillsTool;  ///< Panel de Extraer taladros.
     PunchTool* punchTool;                  ///< Panel de Perforar Gerber.
+    SubTool* subTool;                      ///< Panel de Restar.
     class TransformTool* transformTool;  ///< Panel de Transformaciones.
     class DistanceTool* distanceTool;  ///< Herramienta Distancia.
     class DistanceMinTool* distanceMinTool;  ///< Herramienta Distancia mínima.

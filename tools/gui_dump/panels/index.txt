@@ -18,6 +18,7 @@ CalculatorsToolUI
 CornersToolUI
 ExtractDrillsToolUI
 PunchToolUI
+SubToolUI
 ToolsDB2UI
 AboutDialogUI
 HowtoDialogUI
