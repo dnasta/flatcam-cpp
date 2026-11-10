@@ -15,6 +15,7 @@ PropertiesToolUI
 PanelizeToolUI
 InvertToolUI
 CalculatorsToolUI
+CornersToolUI
 ToolsDB2UI
 AboutDialogUI
 HowtoDialogUI

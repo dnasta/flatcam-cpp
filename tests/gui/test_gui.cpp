@@ -2767,3 +2767,28 @@ TEST(GuiCalculators, ComputeLikeTheOriginal) {
     t->calculateElectroplating();  // 100 cm²
     EXPECT_DOUBLE_EQ(t->cvalue_entry->value(), 2.80);
 }
+
+// Marcas de esquina (Alt+M): el Gerber con las marcas y el Excellon con los agujeros.
+TEST(GuiCorners, AddsMarkersAndDrills) {
+    App app;
+    FlatCAMObj* edge =
+        app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-Edge_Cuts.gbr");
+    ASSERT_NE(edge, nullptr);
+    QKeyEvent alt(QEvent::KeyPress, Qt::Key_M, Qt::AltModifier);
+    QApplication::sendEvent(app.ui(), &alt);
+    CornersTool* t = app.cornersTool;
+    EXPECT_EQ(t->object_combo->currentText(), edge->name());
+    EXPECT_EQ(t->addMarkers(), nullptr);  // sin esquinas elegidas
+    t->toggle_all_cb->setChecked(true);
+    EXPECT_TRUE(t->tl_cb->isChecked() && t->br_cb->isChecked());
+    FlatCAMObj* c = t->addMarkers();
+    ASSERT_NE(c, nullptr);
+    EXPECT_EQ(c->name(), edge->name() + "_corners");
+    const auto& g = static_cast<GerberObject*>(c)->gerber();
+    ASSERT_TRUE(g.apertures().count("11"));  // apertura nueva de 0,1 (la del archivo es de 0,05)
+    EXPECT_EQ(g.apertures().at("11").geometry.size(), 8u);
+    EXPECT_GT(c->bounds().width(), edge->bounds().width());
+    FlatCAMObj* d = t->createDrills();
+    ASSERT_NE(d, nullptr);
+    EXPECT_EQ(static_cast<ExcellonObject*>(d)->excellon().drillTools().at(1).drills.size(), 4u);
+}
