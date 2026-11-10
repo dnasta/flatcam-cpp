@@ -2837,3 +2837,27 @@ TEST(GuiPunch, PunchesThePadsWithTheDrills) {
     EXPECT_EQ(aps.at("28").geometry.size(), 90u);  // agujeros de 0,8 dentro de pads
     EXPECT_DOUBLE_EQ(aps.at("31").size.value_or(0), 3.4);
 }
+
+// Restar (Alt+W): cobre menos máscara del dosificador; con "Borrar fuentes" se borran los dos. Geometría menos Geometría
+// no crea nada, como el original.
+TEST(GuiSub, SubtractsGerbers) {
+    App app;
+    const QString data = QString(FLATCAM_TEST_DATA_DIR);
+    FlatCAMObj* cu = app.openGerber(data + "/PCB principal-B_Cu.gbl");
+    FlatCAMObj* mask = app.openGerber(data + "/PCB principal-B_Mask.gbs");
+    ASSERT_NE(cu, nullptr);
+    ASSERT_NE(mask, nullptr);
+    QKeyEvent alt(QEvent::KeyPress, Qt::Key_W, Qt::AltModifier);
+    QApplication::sendEvent(app.ui(), &alt);
+    SubTool* t = app.subTool;
+    t->target_gerber_combo->setValue(cu->name());
+    t->sub_gerber_combo->setValue(mask->name());
+    t->delete_sources_cb->setChecked(true);
+    FlatCAMObj* r = t->subtractGerber();
+    ASSERT_NE(r, nullptr);
+    EXPECT_EQ(r->name(), "PCB principal-B_Cu.gbl_sub");
+    EXPECT_EQ(static_cast<GerberObject*>(r)->gerber().solidGeometry().size(), 179u);  // como el original (oracle_sub.py)
+    EXPECT_EQ(app.collection()->byName("PCB principal-B_Cu.gbl"), nullptr);
+    EXPECT_EQ(app.collection()->byName("PCB principal-B_Mask.gbs"), nullptr);
+    EXPECT_EQ(t->subtractGeometry(), nullptr);
+}

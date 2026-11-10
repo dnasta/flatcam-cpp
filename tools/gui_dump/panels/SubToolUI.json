@@ -1,0 +1,572 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "ToolSub",
+  "name": null,
+  "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Herramienta de Sustracción"
+   },
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Herramienta de Sustracción"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": null,
+      "props": {}
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QFrame",
+      "py": "QFrame",
+      "name": "tools_frame",
+      "props": {},
+      "layout": {
+       "qt": "QVBoxLayout",
+       "py": "QVBoxLayout",
+       "name": "tools_box",
+       "props": {},
+       "margins": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spacing": 6,
+       "items": [
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QGridLayout",
+          "py": "QGridLayout",
+          "name": null,
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "hspacing": 6,
+          "vspacing": 6,
+          "rowStretch": [
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0
+          ],
+          "colStretch": [
+           0,
+           1,
+           0
+          ],
+          "colMinWidth": [
+           0,
+           0,
+           0
+          ],
+          "items": [
+           {
+            "align": 0,
+            "row": 0,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QCheckBox",
+             "py": "FCCheckBox",
+             "name": "delete_sources_cb",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Cuando está marcado, eliminará los objetos de origen\ndespués de una operación exitosa."
+              },
+              "text": {
+               "t": "str",
+               "v": "Eliminar fuente"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 2,
+            "col": 0,
+            "rs": 1,
+            "cs": 3,
+            "widget": {
+             "qt": "QFrame",
+             "py": "QFrame",
+             "name": null,
+             "props": {
+              "sizePolicy": {
+               "t": "QSizePolicy",
+               "v": [
+                1,
+                0,
+                0,
+                0
+               ]
+              },
+              "frameShape": {
+               "t": "int",
+               "v": 4
+              },
+              "frameShadow": {
+               "t": "int",
+               "v": 48
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 4,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": null,
+             "props": {}
+            }
+           },
+           {
+            "align": 0,
+            "row": 6,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "gerber_title",
+             "props": {
+              "text": {
+               "t": "str",
+               "v": "<b>GERBER</b>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 8,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "target_gerber_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Objeto de Gerber para restar\nEl sustractor del objeto Gerber."
+              },
+              "text": {
+               "t": "str",
+               "v": "Objetivo:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 8,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QComboBox",
+             "py": "FCComboBox",
+             "name": "target_gerber_combo",
+             "props": {},
+             "items": [],
+             "currentIndex": -1
+            }
+           },
+           {
+            "align": 0,
+            "row": 10,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "sub_gerber_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Objeto de Gerber que se restará\ndel objeto objetivo de Gerber."
+              },
+              "text": {
+               "t": "str",
+               "v": "Sustractor:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 10,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QComboBox",
+             "py": "FCComboBox",
+             "name": "sub_gerber_combo",
+             "props": {},
+             "items": [],
+             "currentIndex": -1
+            }
+           },
+           {
+            "align": 0,
+            "row": 12,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QPushButton",
+             "py": "FCButton",
+             "name": "intersect_btn",
+             "props": {
+              "font": {
+               "t": "QFont",
+               "v": {
+                "bold": true
+               }
+              },
+              "toolTip": {
+               "t": "str",
+               "v": "Eliminará el área ocupada por el sustractor\nGerber del objetivo Gerber.\nSe puede utilizar para eliminar la serigrafía superpuesta\nsobre la máscara de soldadura."
+              },
+              "styleSheet": {
+               "t": "str",
+               "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+              },
+              "text": {
+               "t": "str",
+               "v": "Restar Gerber"
+              },
+              "icon": {
+               "t": "QIcon",
+               "v": ":/images/subtract_btn32.png"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 14,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": null,
+             "props": {}
+            }
+           },
+           {
+            "align": 0,
+            "row": 16,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "geo_title",
+             "props": {
+              "text": {
+               "t": "str",
+               "v": "<b>GEOMETRÍA</b>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 18,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "target_geo_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Objeto de Geometría del cual restar\nEl objeto de Geometría de sustractor."
+              },
+              "text": {
+               "t": "str",
+               "v": "Objetivo:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 18,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QComboBox",
+             "py": "FCComboBox",
+             "name": "target_geo_combo",
+             "props": {},
+             "items": [],
+             "currentIndex": -1
+            }
+           },
+           {
+            "align": 0,
+            "row": 20,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "sub_geo_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Objeto de Geometría que se restará\ndel objeto de Geometría de destino."
+              },
+              "text": {
+               "t": "str",
+               "v": "Sustractor:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 20,
+            "col": 1,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QComboBox",
+             "py": "FCComboBox",
+             "name": "sub_geo_combo",
+             "props": {},
+             "items": [],
+             "currentIndex": -1
+            }
+           },
+           {
+            "align": 0,
+            "row": 22,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QCheckBox",
+             "py": "FCCheckBox",
+             "name": "close_paths_cb",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Marcar esto cerrará los caminos cortados por el objeto sustractor."
+              },
+              "text": {
+               "t": "str",
+               "v": "Caminos cercanos"
+              },
+              "checked": {
+               "t": "bool",
+               "v": true
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 24,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QPushButton",
+             "py": "FCButton",
+             "name": "intersect_geo_btn",
+             "props": {
+              "font": {
+               "t": "QFont",
+               "v": {
+                "bold": true
+               }
+              },
+              "toolTip": {
+               "t": "str",
+               "v": "Eliminará el área ocupada por el sustractor\nGeometría de la Geometría Objetivo."
+              },
+              "styleSheet": {
+               "t": "str",
+               "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+              },
+              "text": {
+               "t": "str",
+               "v": "Restar Geometría"
+              },
+              "icon": {
+               "t": "QIcon",
+               "v": ":/images/subtract_btn32.png"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 26,
+            "col": 0,
+            "rs": 1,
+            "cs": 2,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": null,
+             "props": {}
+            }
+           }
+          ]
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "spacer": [
+          0,
+          0,
+          1,
+          7
+         ]
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QPushButton",
+          "py": "QPushButton",
+          "name": "reset_button",
+          "props": {
+           "font": {
+            "t": "QFont",
+            "v": {
+             "bold": true
+            }
+           },
+           "toolTip": {
+            "t": "str",
+            "v": "Restablecerá los parámetros de la herramienta."
+           },
+           "styleSheet": {
+            "t": "str",
+            "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+           },
+           "text": {
+            "t": "str",
+            "v": "Restablecer la Herramienta"
+           },
+           "icon": {
+            "t": "QIcon",
+            "v": ":/images/reset32.png"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "SubToolUI"
+}

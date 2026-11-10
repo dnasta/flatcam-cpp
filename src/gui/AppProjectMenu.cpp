@@ -241,6 +241,17 @@ bool App::deleteSelected(bool force) {
     return true;
 }
 
+bool App::deleteByName(const QString& name) {
+    FlatCAMObj* o = collection_->byName(name);
+    if (!o) return false;
+    if (ui_->properties_scroll_area->widget() == o->propertiesUi()) ui_->properties_scroll_area->takeWidget();
+    ui_->plotCanvas()->removeLayer(o->id());
+    collection_->remove(o);
+    ui_->plotCanvas()->setLayerOrder(collection_->drawOrder());
+    shouldWeSave_ = true;
+    return true;
+}
+
 void App::saveSelected() {
     // on_project_context_save: según el tipo del objeto activo.
     FlatCAMObj* o = activeObject();
