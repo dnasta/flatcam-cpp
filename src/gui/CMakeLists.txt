@@ -33,6 +33,8 @@ add_library(flatcam_gui STATIC
     tools/DblSidedTool.cpp
     tools/PanelizeTool.cpp
     tools/InvertTool.cpp
+    tools/CalculatorsTool.cpp
+    generated/CalculatorsToolUIBase.cpp
     generated/InvertToolUIBase.cpp
     generated/PanelizeToolUIBase.cpp
     tools/TransformTool.cpp

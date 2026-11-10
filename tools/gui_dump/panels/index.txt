@@ -14,6 +14,7 @@ DistanceMinToolUI
 PropertiesToolUI
 PanelizeToolUI
 InvertToolUI
+CalculatorsToolUI
 ToolsDB2UI
 AboutDialogUI
 HowtoDialogUI
