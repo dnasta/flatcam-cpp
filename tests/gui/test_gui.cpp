@@ -2997,6 +2997,63 @@ TEST(GuiFiducials, AddsFiducialsAndMaskOpenings) {
     EXPECT_NE(t->lastCreated(), sm);
 }
 
+TEST(GuiThieving, FillsAddsTheRobberBarAndThePlatingMask) {
+    App app;
+    FlatCAMObj* cu = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-B_Cu.gbr");
+    ASSERT_NE(cu, nullptr);
+    QKeyEvent alt(QEvent::KeyPress, Qt::Key_J, Qt::AltModifier);
+    QApplication::sendEvent(app.ui(), &alt);
+    ThievingTool* t = app.thievingTool;
+    EXPECT_EQ(t->clearance_entry->value(), 0.25);
+    EXPECT_EQ(t->reference_radio->value().toString(), "itself");
+    EXPECT_EQ(t->grb_object_combo->currentText(), cu->name());
+    // Sólido sobre el propio Gerber (golden_thieving.h: 19 figuras agregadas a la apertura 0, que ya tenía 5).
+    t->addCopperThieving();
+    FlatCAMObj* th = t->lastCreated();
+    ASSERT_NE(th, nullptr);
+    EXPECT_EQ(th->name(), cu->name() + "_thief");
+    EXPECT_EQ(static_cast<GerberObject*>(th)->gerber().apertures().at("0").geometry.size(), 24u);
+    // Las líneas solo van con la referencia "itself".
+    t->fill_type_radio->setValue(QString("line"));
+    t->reference_radio->setValue(QString("area"));
+    EXPECT_EQ(t->reference_radio->value().toString(), "itself");
+    t->fill_type_radio->setValue(QString("solid"));
+    t->reference_radio->setValue(QString("area"));
+    EXPECT_TRUE(t->bbox_type_radio->isHidden());
+    // Área: dos rectángulos; Escape no cancela (el original falla) y el clic derecho termina.
+    t->addCopperThieving();
+    CanvasPicker* pk = app.picker();
+    ASSERT_TRUE(pk->active());
+    pk->onRelease({-30, -30}, Qt::LeftButton, false);
+    pk->onRelease({0, 0}, Qt::LeftButton, false);
+    pk->onRelease({10, 10}, Qt::LeftButton, false);
+    pk->onRelease({-10, -10}, Qt::LeftButton, false);
+    QKeyEvent esc(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+    QApplication::sendEvent(app.ui(), &esc);
+    EXPECT_TRUE(pk->active());
+    pk->onRelease({0, 0}, Qt::RightButton, false);
+    EXPECT_FALSE(pk->active());
+    ASSERT_NE(t->lastCreated(), th);
+    EXPECT_EQ(static_cast<GerberObject*>(t->lastCreated())->gerber().apertures().at("0").geometry.size(), 15u);
+    // La barra de robo de 1 mm: una apertura nueva, la 25.
+    FlatCAMObj* rb = t->addRobberBar();
+    ASSERT_NE(rb, nullptr);
+    EXPECT_EQ(rb->name(), cu->name() + "_robber");
+    EXPECT_EQ(static_cast<GerberObject*>(rb)->gerber().apertures().at("25").geometry.size(), 1u);
+    // La máscara para el galvanizado, con el último relleno y la barra.
+    FlatCAMObj* mask = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/PCB principal-B_Mask.gbs");
+    ASSERT_NE(mask, nullptr);
+    t->sm_object_combo->addItem(mask->name());
+    t->sm_object_combo->setValue(mask->name());
+    FlatCAMObj* pm = t->addPlatingMask();
+    ASSERT_NE(pm, nullptr);
+    EXPECT_EQ(pm->name(), "PCB principal-B_Mask_plating_mask.gbs");
+    EXPECT_FALSE(t->plated_area_entry->text().isEmpty());
+    const auto& aps = static_cast<GerberObject*>(pm)->gerber().apertures();
+    EXPECT_EQ(aps.at("0").geometry.size(), 10u);  // las 10 figuras del relleno del área
+    EXPECT_EQ(aps.at("26").size.value_or(0), 1.0);  // la barra de 1 mm
+}
+
 TEST(GuiQRCode, InsertsTheCodeAndExportsIt) {
     App app;
     FlatCAMObj* cu = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-B_Cu.gbr");

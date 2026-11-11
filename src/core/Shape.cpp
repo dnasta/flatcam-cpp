@@ -425,6 +425,10 @@ Shape Shape::parallelOffset(double distance, bool rightSide, int resolution, Joi
 
 Shape Shape::convexHull() const { return wrap(GEOSConvexHull_r(H(), raw(*this)), "convexHull"); }
 
+std::string Shape::geosVersion() { return GEOSversion(); }
+
+Shape Shape::envelope() const { return wrap(GEOSEnvelope_r(H(), raw(*this)), "envelope"); }
+
 std::vector<Point2D> Shape::triangulate() const {
     std::vector<Point2D> out;
     if (isEmpty()) return out;

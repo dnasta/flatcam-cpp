@@ -79,7 +79,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.733 casos de `ctest` (2.646 del núcleo y 86 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.735 casos de `ctest` (2.647 del núcleo y 87 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -130,6 +130,8 @@ src/tools/              Herramientas de FlatCAM (sin Qt)
                          aperturas) y Geometría por herramienta (con "Optimizar": `snap` + `linemerge` + `unary_union`)
   QrCode.*               Código QR: port de la biblioteca `qrcode` 7.4.2 (BSD; matriz, SVG de fragmentos y de trayecto) y
                          de `ToolQRCode` (geometría y `make`); tablas en generated/QrTables.h (tools/gen_qr_tables.py)
+  CopperThieving.*       Robo de cobre (`copper_thieving`, `on_add_robber_bar_click`, `on_new_pattern_plating_object`):
+                         relleno sólido, de puntos, cuadrados o líneas, barra de robo y máscara para el galvanizado
   Fiducials.*            Fiduciales (`add_fiducials_geo`): circulares, en cruz o de tablero, y los puntos automáticos
   AlignObjects.*         Alinear objetos: los pads o agujeros bajo el clic y el desplazamiento y giro que resultan
   EtchCompensation.*     Compensación de grabado (`on_compensate`): el desplazamiento y el cobre y las aperturas engrosados
@@ -201,6 +203,7 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   tools/NccTool.*        NCC (port de ToolNCC: "Limpiar", estándar, "Sí mismo") → `<objeto>_ncc`
   tools/IsolationTool.*  Isolation (port de ToolIsolation sobre src/tools/Isolation; falta la selección por área y polígono)
   tools/QRCodeTool.*     Código QR (ToolQRCode, Alt+Q) sobre src/tools/QrCode: vista previa, clic, PNG y SVG
+  tools/ThievingTool.*   Robo de cobre (ToolCopperThieving, Alt+J) sobre src/tools/CopperThieving; el área con CanvasPicker
   tools/FiducialsTool.*  Fiduciales (ToolFiducials, Alt+F) sobre src/tools/Fiducials: automático o con clics
   tools/AlignTool.*      Alinear objetos (AlignObjects, Alt+A) sobre src/tools/AlignObjects: elegir con el mouse
   tools/EtchTool.*       Compensación de grabado (ToolEtchCompensation, sin atajo) sobre src/tools/EtchCompensation
@@ -407,6 +410,15 @@ fijan con sentido físico (micras), no en el último bit.
   "luz de noche" (13 casos: modos numérico, alfanumérico y de bytes con trozos, UTF-8, "\n" final, versiones 1 a 21, los
   cuatro niveles, borde 0, polaridad negativa, esquinas redondeadas y un texto que no entra): la misma versión, los mismos
   módulos, el SVG exportado texto por texto, la geometría y el Gerber con el código (polígonos, aperturas y borrado).
+- `tests/tools/oracle_thieving.py` genera `tests/golden_thieving.h`: ejecuta `on_add_copper_thieving_click`,
+  `copper_thieving`, `on_mouse_release` (los rectángulos del área), `on_add_robber_bar_click`,
+  `on_new_pattern_plating_object` y `flatten` originales **encadenados** sobre una misma herramienta (24 operaciones: el
+  relleno, la barra y la lista aplanada pasan de una a otra), sobre el cobre y el logo de "luz de noche" y la máscara del
+  dosificador: los cuatro rellenos, caja rectangular y mínima, área, referencia Gerber, Geometría y Excellon (falla), la
+  barra nueva y en una apertura existente, la máscara con separación positiva, negativa y una que falla. **Con GEOS 3.11
+  (la del oráculo) todo coincide exacto** (polígonos, vértices, áreas, aperturas en orden); con 3.12 y 3.15 cambian
+  hasta 2 % de los vértices de los engrosados y, en el relleno con líneas, cuántos polígonos superpuestos une el engrosado
+  de un `MultiPolygon` inválido (ahí el test compara las aperturas y lo agregado). `Shape::geosVersion` dice cuál corre.
 - `tests/tools/oracle_fiducials.py` genera `tests/golden_fiducials.h`: ejecuta `add_fiducials`, `add_fiducials_geo` y
   `add_soldermask_opening` originales sobre el cobre de "luz de noche" (11 casos: las tres formas, los tres segundos puntos,
   márgenes 0 y negativo, aperturas que ya existen, cruces superpuestas que fallan, la máscara): los mismos puntos, textos,
@@ -883,7 +895,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.733 casos de test** (`ctest`): 2.647 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 86 de la GUI;
+- **2.735 casos de test** (`ctest`): 2.648 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 87 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -911,7 +923,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.733 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.735 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -1117,7 +1129,10 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    no cada vez que se agrega uno). ~~Código QR~~ (hecho: `src/tools/QrCode.*` porta la biblioteca `qrcode` 7.4.2 de Python
    (licencia BSD, agregada a `NOTICE`), `tools/QRCodeTool.*`, Alt+Q; `oracle_qrcode.py`: idéntico. Desvíos: si el texto no
    entra, el original conecta el mouse antes de fallar en su hilo y el clic después falla; el port avisa y no espera el
-   clic; el PNG sale siempre en 8 bits por canal (PIL usa 1 bit con los colores "black"/"white"), con los mismos píxeles). Siguen: Film, Calculators, Copper Thieving, Fiducials, Corners, Extract
+   clic; el PNG sale siempre en 8 bits por canal (PIL usa 1 bit con los colores "black"/"white"), con los mismos píxeles). ~~Robo de cobre~~ (hecho: `src/tools/CopperThieving.*`, `tools/ThievingTool.*`, Alt+J;
+   `oracle_thieving.py`: idéntico con GEOS 3.11. Desvíos: el texto fuente de una máscara con separación negativa sale
+   completo (el original guarda `clear: []` en cada elemento y su `export_gerber` corta cada apertura en el primero); los
+   demás atajos del teclado siguen activos mientras se elige el área (en el original solo G, I, J y otros pocos)). Siguen: Film, Calculators, Copper Thieving, Fiducials, Corners, Extract
    Drills, Punch Gerber, Invert Gerber, Align Objects, Subtract (`ToolSub`), QR Code, Rules Check, Optimal, Solder Paste,
    Calibration, Etch Compensation, PCB Wizard, Levelling (autonivelación del CNC Job).
 6. **Preferencias** (`appGUI/preferences/`, ~19.000 líneas). **Hecho:** la pestaña completa generada del original (485 campos),
@@ -1206,4 +1221,13 @@ encontrar uno nuevo, agregarlo acá con su sección. Ya corregidos a pedido del 
   modifica el Gerber elegido en vez de crear uno; la geometría sólida queda sin unir (los módulos sueltos, y el cobre
   que no contiene entera la máscara queda debajo del código); la apertura nueva tiene ancho y alto agrandados 1 % pero
   el tamaño sin agrandar; un texto que no entra da `ValueError` de la versión 41 (no `DataOverflowError`).
+- **Robo de cobre** (sección 13, ítem 5): Escape no cancela la elección del área (llama a `copperfill_tool`, que no
+  existe); la lista donde se aplanan los rellenos con líneas (`flat_geometry`) no se vacía nunca, así que cada relleno
+  con líneas suma los anteriores; con un solo polígono la caja "mínima" es el polígono y no su envolvente convexa; la
+  geometría sólida sale de engrosar 1e-7 un `MultiPolygon` con figuras superpuestas (no las une del todo y el resultado
+  cambia con la versión de GEOS); en la máscara, el área galvanizada suma el relleno y la barra sin agrandar, la barra
+  que va a una apertura existente entra sin agrandar, la apertura nueva sale de `max()` de los números como texto, un
+  relleno que al achicarse (separación negativa) se parte en varios hace fallar todo (`exterior` de un `MultiPolygon`),
+  una máscara sin aperturas falla (`max()` vacío), el nombre de un objeto sin punto queda `_plating_mask.<nombre>` y el
+  nombre del objeto se registra como archivo reciente (no es un archivo).
 - **HPGL2** (11.12 w): los que quedan (cambiar de pluma con un trazo de un punto, bajar la pluma sin trazo, dibujar sin `SP`).

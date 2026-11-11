@@ -35,6 +35,7 @@ add_library(flatcam_core STATIC
     tools/EtchCompensation.cpp
     tools/AlignObjects.cpp
     tools/Fiducials.cpp
+    tools/CopperThieving.cpp
     tools/QrCode.cpp
     tools/CornerMarkers.cpp
     tools/ExtractDrills.cpp

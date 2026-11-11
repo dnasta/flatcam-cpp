@@ -24,6 +24,7 @@ EtchToolUI
 AlignToolUI
 FiducialsToolUI
 QRCodeToolUI
+ThievingToolUI
 ToolsDB2UI
 AboutDialogUI
 HowtoDialogUI
