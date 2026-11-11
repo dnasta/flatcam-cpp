@@ -1023,6 +1023,16 @@ void Gerber::restore(ShapeList solid, ShapeList follow, std::map<std::string, Ap
     sourceFile_ = std::move(source);
 }
 
+void Gerber::replaceGeometry(ShapeList solid, std::map<std::string, Aperture> apertures,
+                             const std::vector<std::string>& added) {
+    std::vector<std::string> order = apertureOrder();
+    for (const std::string& id : added)
+        if (!apertures_.count(id) && apertures.count(id)) order.push_back(id);
+    solidGeometry() = std::move(solid);
+    apertures_ = std::move(apertures);
+    apertureOrder_ = order;
+}
+
 std::vector<std::string> Gerber::apertureOrder() const {
     std::vector<std::string> out;
     for (const std::string& id : apertureOrder_)

@@ -307,6 +307,7 @@ public:
     EtchTool* etchTool;                    ///< Panel de Compensación de grabado.
     AlignTool* alignTool;                  ///< Panel de Alinear objetos.
     FiducialsTool* fiducialsTool;          ///< Panel de Fiduciales.
+    QRCodeTool* qrcodeTool;                ///< Panel del código QR.
     class TransformTool* transformTool;  ///< Panel de Transformaciones.
     class DistanceTool* distanceTool;  ///< Herramienta Distancia.
     class DistanceMinTool* distanceMinTool;  ///< Herramienta Distancia mínima.
@@ -453,6 +454,8 @@ public:
     QString exportedText(FlatCAMObj* obj) const;
     /** @brief Regenera el texto fuente de un Gerber o Excellon movido, como el original (`local_use`). @param obj Objeto. */
     void refreshSourceFile(FlatCAMObj* obj);
+    /** @brief La última carpeta usada para guardar (`get_last_save_folder`). @return La carpeta. */
+    QString lastFolder() const;
     /** @brief Exporta un Gerber o Excellon a un archivo. @param obj Objeto. @param filename Archivo. @return Si se escribió. */
     bool exportObject(FlatCAMObj* obj, const QString& filename);
     /** @brief Archivo -> Exportar -> Gerber / Excellon (`on_file_exportgerber`, `on_file_exportexcellon`). @param kind Tipo. */
@@ -504,7 +507,6 @@ private:
     /** @brief Conecta la escala, el desplazamiento y "Transformaciones" de un panel de Propiedades a su objeto. */
     template <typename Panel>
     void connectTransformations(Panel* p, FlatCAMObj* obj);
-    QString lastFolder() const;
 
     std::unique_ptr<MainGUI> ui_;
     QWidget* defaultProperties_{nullptr};  ///< Panel de Propiedades sin objeto (`setup_default_properties_tab`).

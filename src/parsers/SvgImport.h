@@ -88,4 +88,12 @@ SvgImportResult importSvgAsGeometry(const std::string& svgText, int circleSteps 
  */
 SvgImportResult importSvgAsGerber(const std::string& svgText, int circleSteps = 64);
 
+/**
+ * @brief Las figuras de un SVG tal cual (invertidas en Y y corridas el alto), sin pasar por un objeto: lo que hace
+ * `convert_svg_to_geo` de la herramienta de códigos QR.
+ * @param svgText El archivo. @param circleSteps `geometry_circle_steps` (64).
+ * @return El resultado.
+ */
+SvgImportResult importSvgShapes(const std::string& svgText, int circleSteps = 64);
+
 }  // namespace flatcam

@@ -834,6 +834,13 @@ SvgImportResult readSvg(const std::string& text, int res, ShapeList& geos) {
 
 }  // namespace
 
+SvgImportResult importSvgShapes(const std::string& svgText, int circleSteps) {
+    ShapeList geos;
+    SvgImportResult r = readSvg(svgText, circleSteps, geos);
+    if (r.ok) r.geometry = geos;
+    return r;
+}
+
 SvgImportResult importSvgAsGeometry(const std::string& svgText, int circleSteps) {
     ShapeList geos;
     SvgImportResult r = readSvg(svgText, circleSteps, geos);

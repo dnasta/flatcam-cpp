@@ -226,6 +226,14 @@ public:
     void restore(ShapeList solid, ShapeList follow, std::map<std::string, Aperture> apertures, int intDigits,
                  int fracDigits, std::string source);
 
+    /**
+     * @brief Reemplaza la geometría sólida y las aperturas del mismo objeto (una herramienta que lo modifica, como el
+     * código QR): las aperturas conservan su orden y las nuevas se agregan al final, en el orden de @p added.
+     * @param solid Geometría sólida. @param apertures Aperturas. @param added Números de las aperturas nuevas.
+     */
+    void replaceGeometry(ShapeList solid, std::map<std::string, Aperture> apertures,
+                         const std::vector<std::string>& added);
+
 private:
     /** @brief Aplica @p fn a la geometría sólida, la de seguimiento y la de cada apertura. */
     template <typename Fn>
