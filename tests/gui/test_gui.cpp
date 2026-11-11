@@ -2996,3 +2996,50 @@ TEST(GuiFiducials, AddsFiducialsAndMaskOpenings) {
     EXPECT_FALSE(t->isPicking());
     EXPECT_NE(t->lastCreated(), sm);
 }
+
+TEST(GuiQRCode, InsertsTheCodeAndExportsIt) {
+    App app;
+    FlatCAMObj* cu = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-B_Cu.gbr");
+    ASSERT_NE(cu, nullptr);
+    QKeyEvent alt(QEvent::KeyPress, Qt::Key_Q, Qt::AltModifier);
+    QApplication::sendEvent(app.ui(), &alt);
+    QRCodeTool* t = app.qrcodeTool;
+    EXPECT_EQ(t->bsize_entry->value(), 3);
+    EXPECT_EQ(t->error_radio->value().toString(), "L");
+    // Sin texto no hace nada.
+    EXPECT_FALSE(t->execute());
+    t->text_data->setValue("https://flatcam.org");
+    ASSERT_TRUE(t->execute());
+    EXPECT_TRUE(t->isPlacing());
+    t->onMove({3, 4});
+    t->onRelease({0, 0}, Qt::RightButton);  // no cancela: solo el izquierdo cuenta
+    EXPECT_TRUE(t->isPlacing());
+    t->onRelease({0, 0}, Qt::LeftButton);
+    EXPECT_FALSE(t->isPlacing());
+    // El Gerber de origen queda modificado, como en el original (golden_qrcode.h: 59 polígonos, apertura 25).
+    const flatcam::Gerber& g = static_cast<GerberObject*>(cu)->gerber();
+    EXPECT_EQ(g.solidGeometry().size(), 59u);
+    ASSERT_TRUE(g.apertures().count("25"));
+    EXPECT_EQ(g.apertures().at("25").geometry.size(), 332u);
+    EXPECT_EQ(g.apertureOrder().back(), "25");
+    // Exportar: el SVG de la biblioteca y un PNG de 33 x 3 píxeles de lado (versión 2 con borde 4).
+    QTemporaryDir dir;
+    ASSERT_TRUE(t->exportSvg(dir.filePath("qr.svg")));
+    QFile f(dir.filePath("qr.svg"));
+    ASSERT_TRUE(f.open(QIODevice::ReadOnly));
+    const QByteArray svg = f.readAll();
+    EXPECT_TRUE(svg.startsWith("<?xml version='1.0' encoding='UTF-8'?>\n<svg width=\"9.9mm\""));
+    EXPECT_TRUE(svg.contains("fill_color=\"#000000\" back_color=\"#FFFFFF\""));
+    ASSERT_TRUE(t->exportPng(dir.filePath("qr.png")));
+    const QImage img(dir.filePath("qr.png"));
+    EXPECT_EQ(img.width(), 99);
+    EXPECT_EQ(img.pixelColor(0, 0), QColor("#FFFFFF"));
+    EXPECT_EQ(img.pixelColor(12, 12), QColor("#000000"));  // esquina del primer patrón de posición
+    // Fondo transparente.
+    t->transparent_cb->setChecked(true);
+    EXPECT_EQ(t->back_color_entry->value(), "transparent");
+    ASSERT_TRUE(t->exportPng(dir.filePath("qr2.png")));
+    EXPECT_EQ(QImage(dir.filePath("qr2.png")).pixelColor(0, 0).alpha(), 0);
+    t->transparent_cb->setChecked(false);
+    EXPECT_EQ(t->back_color_entry->value(), "#FFFFFF");
+}

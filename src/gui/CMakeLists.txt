@@ -46,6 +46,8 @@ add_library(flatcam_gui STATIC
     generated/AlignToolUIBase.cpp
     tools/FiducialsTool.cpp
     generated/FiducialsToolUIBase.cpp
+    tools/QRCodeTool.cpp
+    generated/QRCodeToolUIBase.cpp
     generated/SubToolUIBase.cpp
     generated/PunchToolUIBase.cpp
     generated/ExtractDrillsToolUIBase.cpp

@@ -1,0 +1,1049 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "QRCode",
+  "name": null,
+  "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Herramienta QRCode"
+   },
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Herramienta QRCode"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": null,
+      "props": {}
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "grbobj_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Objeto Gerber al que se agregará el QRCode."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>GERBER:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "grb_object_combo",
+         "props": {},
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "text_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Datos de QRCode. Texto alfanumérico a codificar en el Código QR."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Datos de QRCode</b>:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QPlainTextEdit",
+         "py": "FCTextArea",
+         "name": "text_data",
+         "props": {
+          "placeholderText": {
+           "t": "str",
+           "v": "Agregue aquí el texto que se incluirá en el QRCode ..."
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "qrcode_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Los parámetros utilizados para dar forma al QRCode."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Parámetros</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "version_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "La versión de QRCode puede tener valores de 1 (21x21 elementos)\na 40 (177x177 elementos)."
+          },
+          "text": {
+           "t": "str",
+           "v": "Versión:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QSpinBox",
+         "py": "FCSpinner",
+         "name": "version_entry",
+         "props": {
+          "wrapping": {
+           "t": "bool",
+           "v": true
+          },
+          "minimum": {
+           "t": "int",
+           "v": 1
+          },
+          "maximum": {
+           "t": "int",
+           "v": 40
+          },
+          "value": {
+           "t": "int",
+           "v": 1
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "error_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Parámetro que controla la corrección de errores utilizada para el código QR.\nL = máximo 7 %% de errores pueden ser corregidos\nM = máximo 15%% de errores pueden ser corregidos\nQ = se puede corregir un máximo de 25%% de errores\nH = máximo 30 %% de errores pueden ser corregidos."
+          },
+          "text": {
+           "t": "str",
+           "v": "Corrección de error:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "error_radio",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Parámetro que controla la corrección de errores utilizada para el código QR.\nL = máximo 7 %% de errores pueden ser corregidos\nM = máximo 15%% de errores pueden ser corregidos\nQ = se puede corregir un máximo de 25%% de errores\nH = máximo 30 %% de errores pueden ser corregidos."
+          }
+         },
+         "choices": [
+          {
+           "label": "L",
+           "value": "L"
+          },
+          {
+           "label": "M",
+           "value": "M"
+          },
+          {
+           "label": "Q",
+           "value": "Q"
+          },
+          {
+           "label": "H",
+           "value": "H"
+          }
+         ],
+         "vertical": false,
+         "stretch": true,
+         "value": "L"
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "bsize_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El tamaño del elemento controla el tamaño general del código QR\najustando el tamaño de cada cuadro en el código."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tamaño de Elementos:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QSpinBox",
+         "py": "FCSpinner",
+         "name": "bsize_entry",
+         "props": {
+          "wrapping": {
+           "t": "bool",
+           "v": true
+          },
+          "minimum": {
+           "t": "int",
+           "v": 1
+          },
+          "maximum": {
+           "t": "int",
+           "v": 9999
+          },
+          "value": {
+           "t": "int",
+           "v": 3
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "border_size_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Tamaño del borde del código QR. Cuántos elementos tiene el borde.\nEl valor predeterminado es 4. El ancho del espacio libre alrededor del Código QR."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tamaño de borde:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QSpinBox",
+         "py": "FCSpinner",
+         "name": "border_size_entry",
+         "props": {
+          "wrapping": {
+           "t": "bool",
+           "v": true
+          },
+          "minimum": {
+           "t": "int",
+           "v": 1
+          },
+          "maximum": {
+           "t": "int",
+           "v": 9999
+          },
+          "value": {
+           "t": "int",
+           "v": 4
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "pol_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Elija la polaridad del código QR.\nSe puede dibujar de forma negativa (los cuadrados son claros)\no de manera positiva (los cuadrados son opacos)."
+          },
+          "text": {
+           "t": "str",
+           "v": "Polaridad:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "pol_radio",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Elija el tipo de QRCode que se creará.\nSi se agrega en un archivo de Silkscreen Gerber, el QRCode puede\nser agregado como positivo Si se agrega a un cobre Gerber\nentonces quizás el QRCode se pueda agregar como negativo."
+          }
+         },
+         "choices": [
+          {
+           "label": "Negativa",
+           "value": "neg"
+          },
+          {
+           "label": "Positivo",
+           "value": "pos"
+          }
+         ],
+         "vertical": false,
+         "stretch": true,
+         "value": "pos"
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "bb_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El cuadro delimitador, que significa el espacio vacío que rodea\nLa geometría QRCode, puede tener una forma redondeada o cuadrada."
+          },
+          "text": {
+           "t": "str",
+           "v": "Cuadro delimitador:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "bb_radio",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El cuadro delimitador, que significa el espacio vacío que rodea\nLa geometría QRCode, puede tener una forma redondeada o cuadrada."
+          }
+         },
+         "choices": [
+          {
+           "label": "Redondeado",
+           "value": "r"
+          },
+          {
+           "label": "Cuadrado",
+           "value": "s"
+          }
+         ],
+         "vertical": false,
+         "stretch": true,
+         "value": "s"
+        }
+       },
+       {
+        "align": 0,
+        "row": 9,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "export_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Mostrar un conjunto de controles que permiten exportar el QRCode\na un archivo SVG o un archivo PNG."
+          },
+          "text": {
+           "t": "str",
+           "v": "Exportar el código QR"
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QFrame",
+      "py": "QFrame",
+      "name": "export_frame",
+      "props": {
+       "hidden": {
+        "t": "bool",
+        "v": true
+       }
+      },
+      "layout": {
+       "qt": "QGridLayout",
+       "py": "QGridLayout",
+       "name": "export_lay",
+       "props": {},
+       "margins": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spacing": 6,
+       "hspacing": 6,
+       "vspacing": 6,
+       "rowStretch": [
+        0,
+        0,
+        0,
+        0,
+        0
+       ],
+       "colStretch": [
+        0,
+        1
+       ],
+       "colMinWidth": [
+        0,
+        0
+       ],
+       "items": [
+        {
+         "align": 0,
+         "row": 0,
+         "col": 0,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QLabel",
+          "py": "QLabel",
+          "name": "fill_color_label",
+          "props": {
+           "toolTip": {
+            "t": "str",
+            "v": "Establezca el color de relleno del código QR (color de cuadrados / elementos)."
+           },
+           "text": {
+            "t": "str",
+            "v": "Color de relleno:"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 0,
+         "col": 1,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QWidget",
+          "py": "QWidget",
+          "name": null,
+          "props": {},
+          "layout": {
+           "qt": "QHBoxLayout",
+           "py": "QHBoxLayout",
+           "name": null,
+           "props": {},
+           "margins": [
+            0,
+            0,
+            0,
+            0
+           ],
+           "spacing": 6,
+           "items": [
+            {
+             "align": 0,
+             "stretch": 0,
+             "widget": {
+              "qt": "QLineEdit",
+              "py": "FCEntry",
+              "name": "fill_color_entry",
+              "props": {
+               "text": {
+                "t": "str",
+                "v": "#000000"
+               }
+              }
+             }
+            },
+            {
+             "align": 2,
+             "stretch": 0,
+             "widget": {
+              "qt": "QPushButton",
+              "py": "QPushButton",
+              "name": "fill_color_button",
+              "props": {
+               "minimumSize": {
+                "t": "QSize",
+                "v": [
+                 15,
+                 15
+                ]
+               },
+               "maximumSize": {
+                "t": "QSize",
+                "v": [
+                 15,
+                 15
+                ]
+               },
+               "styleSheet": {
+                "t": "str",
+                "v": "background-color:#000000"
+               }
+              }
+             }
+            }
+           ]
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 1,
+         "col": 0,
+         "rs": 1,
+         "cs": 2,
+         "widget": {
+          "qt": "QCheckBox",
+          "py": "FCCheckBox",
+          "name": "transparent_cb",
+          "props": {
+           "text": {
+            "t": "str",
+            "v": "Color de fondo transparente"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 2,
+         "col": 0,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QLabel",
+          "py": "QLabel",
+          "name": "back_color_label",
+          "props": {
+           "toolTip": {
+            "t": "str",
+            "v": "Establece el color de fondo del QRCode."
+           },
+           "text": {
+            "t": "str",
+            "v": "Color de fondo:"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 2,
+         "col": 1,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QWidget",
+          "py": "QWidget",
+          "name": null,
+          "props": {},
+          "layout": {
+           "qt": "QHBoxLayout",
+           "py": "QHBoxLayout",
+           "name": null,
+           "props": {},
+           "margins": [
+            0,
+            0,
+            0,
+            0
+           ],
+           "spacing": 6,
+           "items": [
+            {
+             "align": 0,
+             "stretch": 0,
+             "widget": {
+              "qt": "QLineEdit",
+              "py": "FCEntry",
+              "name": "back_color_entry",
+              "props": {
+               "text": {
+                "t": "str",
+                "v": "#FFFFFF"
+               }
+              }
+             }
+            },
+            {
+             "align": 2,
+             "stretch": 0,
+             "widget": {
+              "qt": "QPushButton",
+              "py": "QPushButton",
+              "name": "back_color_button",
+              "props": {
+               "minimumSize": {
+                "t": "QSize",
+                "v": [
+                 15,
+                 15
+                ]
+               },
+               "maximumSize": {
+                "t": "QSize",
+                "v": [
+                 15,
+                 15
+                ]
+               },
+               "styleSheet": {
+                "t": "str",
+                "v": "background-color:#FFFFFF"
+               }
+              }
+             }
+            }
+           ]
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 3,
+         "col": 0,
+         "rs": 1,
+         "cs": 2,
+         "widget": {
+          "qt": "QPushButton",
+          "py": "QPushButton",
+          "name": "export_svg_button",
+          "props": {
+           "font": {
+            "t": "QFont",
+            "v": {
+             "bold": true
+            }
+           },
+           "toolTip": {
+            "t": "str",
+            "v": "Exporte un archivo SVG con el contenido de QRCode."
+           },
+           "styleSheet": {
+            "t": "str",
+            "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+           },
+           "text": {
+            "t": "str",
+            "v": "Exportar el QRCode SVG"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 4,
+         "col": 0,
+         "rs": 1,
+         "cs": 2,
+         "widget": {
+          "qt": "QPushButton",
+          "py": "QPushButton",
+          "name": "export_png_button",
+          "props": {
+           "font": {
+            "t": "QFont",
+            "v": {
+             "bold": true
+            }
+           },
+           "toolTip": {
+            "t": "str",
+            "v": "Exporte un archivo de imagen PNG con el contenido de QRCode."
+           },
+           "styleSheet": {
+            "t": "str",
+            "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+           },
+           "text": {
+            "t": "str",
+            "v": "Exportar el QRCode PNG"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "QPushButton",
+      "name": "qrcode_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Crea el objeto QRCode."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Insertar QRCode"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/qrcode32.png"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "QPushButton",
+      "name": "reset_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Restablecerá los parámetros de la herramienta."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Restablecer la Herramienta"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/reset32.png"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "QRCodeToolUI"
+}

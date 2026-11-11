@@ -23,6 +23,7 @@ OptimalToolUI
 EtchToolUI
 AlignToolUI
 FiducialsToolUI
+QRCodeToolUI
 ToolsDB2UI
 AboutDialogUI
 HowtoDialogUI
