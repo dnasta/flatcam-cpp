@@ -1,0 +1,1867 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "ToolCopperThieving",
+  "name": null,
+  "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Herramienta Thieving Tool"
+   },
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Herramienta Thieving Tool"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {}
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "grbobj_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Gerber Objeto al que se agregará un Copper Thieving."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>GERBER:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "grb_object_combo",
+         "props": {},
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "copper_fill_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Parámetros utilizados para esta herramienta."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Parámetros</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "clearance_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esto establece la distancia entre los componentes de Copper Thieving\n(el relleno de polígono puede dividirse en múltiples polígonos)\ny las rastros de cobre en el archivo Gerber."
+          },
+          "text": {
+           "t": "str",
+           "v": "Despeje:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "clearance_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 0.25
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "margin_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Margen de cuadro delimitador."
+          },
+          "text": {
+           "t": "str",
+           "v": "Margen:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "margin_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 1.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "area_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Robar áreas con un área menor a este valor no se agregará."
+          },
+          "text": {
+           "t": "str",
+           "v": "Zona:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "layout": {
+         "qt": "QHBoxLayout",
+         "py": "QHBoxLayout",
+         "name": null,
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "items": [
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QDoubleSpinBox",
+            "py": "FCDoubleSpinner",
+            "name": "area_entry",
+            "props": {
+             "sizePolicy": {
+              "t": "QSizePolicy",
+              "v": [
+               3,
+               5,
+               0,
+               0
+              ]
+             },
+             "decimals": {
+              "t": "int",
+              "v": 4
+             },
+             "maximum": {
+              "t": "double",
+              "v": 10000.0
+             },
+             "singleStep": {
+              "t": "double",
+              "v": 0.1
+             },
+             "value": {
+              "t": "double",
+              "v": 0.1
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": null,
+            "props": {
+             "text": {
+              "t": "str",
+              "v": "mm<sup>2</sup>"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "reference_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "- 'Sí mismo': la extensión de Copper Thieving se basa en la extensión del objeto.\n- 'Selección de área': haga clic con el botón izquierdo del mouse para iniciar la selección del área a rellenar.\n- 'Objeto de referencia': 'Copper Thieving' dentro del área especificada por otro objeto."
+          },
+          "text": {
+           "t": "str",
+           "v": "Referencia:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "reference_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Sí mismo",
+           "value": "itself"
+          },
+          {
+           "label": "Selección de área",
+           "value": "area"
+          },
+          {
+           "label": "Objeto de referencia",
+           "value": "box"
+          }
+         ],
+         "vertical": true,
+         "stretch": false,
+         "value": "itself"
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "ref_combo_type_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El tipo de objeto FlatCAM que se utilizará como referencia de 'Copper Thieving'.\nPuede ser Gerber, Excellon o Geometry."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tipo de Ref:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "ref_combo_type",
+         "props": {
+          "currentText": {
+           "t": "str",
+           "v": "Gerber"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         },
+         "items": [
+          "Gerber",
+          "Excellon",
+          "Geometría"
+         ],
+         "currentIndex": 0
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "ref_combo_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El objeto FlatCAM que se utilizará como referencia de compensación sin cobre."
+          },
+          "text": {
+           "t": "str",
+           "v": "Objeto de Ref:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "ref_combo",
+         "props": {
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         },
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 14,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "bbox_type_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "- 'Rectangular': el cuadro delimitador tendrá forma rectangular.\n- 'Mínimo': el cuadro delimitador tendrá forma de casco convexo."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tipo de caja:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 14,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "bbox_type_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Rectangular",
+           "value": "rect"
+          },
+          {
+           "label": "Mínimo",
+           "value": "min"
+          }
+         ],
+         "vertical": false,
+         "stretch": false,
+         "value": "rect"
+        }
+       },
+       {
+        "align": 0,
+        "row": 16,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 18,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "fill_type_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "- 'Sólido': el robo de cobre será un polígono sólido.\n- 'Cuadrícula de puntos': el área vacía se rellenará con un patrón de puntos.\n- 'Cuadrícula de cuadrados': el área vacía se rellenará con un patrón de cuadrados.\n- 'Cuadrícula de líneas': el área vacía se rellenará con un patrón de líneas."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tipo de relleno:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 18,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "fill_type_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Sólido",
+           "value": "solid"
+          },
+          {
+           "label": "Cuadrícula de puntos",
+           "value": "dot"
+          },
+          {
+           "label": "Cuadrícula de cuadrados",
+           "value": "square"
+          },
+          {
+           "label": "Cuadrícula de líneas",
+           "value": "line"
+          }
+         ],
+         "vertical": true,
+         "stretch": false,
+         "value": "solid"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QFrame",
+      "py": "QFrame",
+      "name": "dots_frame",
+      "props": {
+       "hidden": {
+        "t": "bool",
+        "v": true
+       }
+      },
+      "layout": {
+       "qt": "QGridLayout",
+       "py": "QGridLayout",
+       "name": null,
+       "props": {},
+       "margins": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spacing": 6,
+       "hspacing": 6,
+       "vspacing": 6,
+       "rowStretch": [
+        0,
+        0,
+        0
+       ],
+       "colStretch": [
+        0,
+        1
+       ],
+       "colMinWidth": [
+        0,
+        0
+       ],
+       "items": [
+        {
+         "align": 0,
+         "row": 0,
+         "col": 0,
+         "rs": 1,
+         "cs": 2,
+         "widget": {
+          "qt": "QLabel",
+          "py": "FCLabel",
+          "name": "dots_label",
+          "props": {
+           "text": {
+            "t": "str",
+            "v": "<b>Parámetros de cuadrícula de puntos</b>:"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 1,
+         "col": 0,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QLabel",
+          "py": "FCLabel",
+          "name": "dotdia_label",
+          "props": {
+           "toolTip": {
+            "t": "str",
+            "v": "Diámetro de punto en cuadrícula de puntos."
+           },
+           "text": {
+            "t": "str",
+            "v": "Dia:"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 1,
+         "col": 1,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QDoubleSpinBox",
+          "py": "FCDoubleSpinner",
+          "name": "dot_dia_entry",
+          "props": {
+           "decimals": {
+            "t": "int",
+            "v": 4
+           },
+           "maximum": {
+            "t": "double",
+            "v": 10000.0
+           },
+           "singleStep": {
+            "t": "double",
+            "v": 0.1
+           },
+           "value": {
+            "t": "double",
+            "v": 1.0
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 2,
+         "col": 0,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QLabel",
+          "py": "FCLabel",
+          "name": "dotspacing_label",
+          "props": {
+           "toolTip": {
+            "t": "str",
+            "v": "Distancia entre cada dos puntos en la cuadrícula de puntos."
+           },
+           "text": {
+            "t": "str",
+            "v": "Spacing:"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 2,
+         "col": 1,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QDoubleSpinBox",
+          "py": "FCDoubleSpinner",
+          "name": "dot_spacing_entry",
+          "props": {
+           "decimals": {
+            "t": "int",
+            "v": 4
+           },
+           "maximum": {
+            "t": "double",
+            "v": 10000.0
+           },
+           "singleStep": {
+            "t": "double",
+            "v": 0.1
+           },
+           "value": {
+            "t": "double",
+            "v": 2.0
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QFrame",
+      "py": "QFrame",
+      "name": "squares_frame",
+      "props": {
+       "hidden": {
+        "t": "bool",
+        "v": true
+       }
+      },
+      "layout": {
+       "qt": "QGridLayout",
+       "py": "QGridLayout",
+       "name": null,
+       "props": {},
+       "margins": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spacing": 6,
+       "hspacing": 6,
+       "vspacing": 6,
+       "rowStretch": [
+        0,
+        0,
+        0
+       ],
+       "colStretch": [
+        0,
+        1
+       ],
+       "colMinWidth": [
+        0,
+        0
+       ],
+       "items": [
+        {
+         "align": 0,
+         "row": 0,
+         "col": 0,
+         "rs": 1,
+         "cs": 2,
+         "widget": {
+          "qt": "QLabel",
+          "py": "FCLabel",
+          "name": "squares_label",
+          "props": {
+           "text": {
+            "t": "str",
+            "v": "<b>Parámetros de la cuadrícula de cuadrados</b>:"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 1,
+         "col": 0,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QLabel",
+          "py": "FCLabel",
+          "name": "square_size_label",
+          "props": {
+           "toolTip": {
+            "t": "str",
+            "v": "Tamaño del lado cuadrado en cuadrícula de cuadrados."
+           },
+           "text": {
+            "t": "str",
+            "v": "Tamaño:"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 1,
+         "col": 1,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QDoubleSpinBox",
+          "py": "FCDoubleSpinner",
+          "name": "square_size_entry",
+          "props": {
+           "decimals": {
+            "t": "int",
+            "v": 4
+           },
+           "maximum": {
+            "t": "double",
+            "v": 10000.0
+           },
+           "singleStep": {
+            "t": "double",
+            "v": 0.1
+           },
+           "value": {
+            "t": "double",
+            "v": 1.0
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 2,
+         "col": 0,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QLabel",
+          "py": "FCLabel",
+          "name": "squares_spacing_label",
+          "props": {
+           "toolTip": {
+            "t": "str",
+            "v": "Distancia entre cada dos cuadrados en la cuadrícula de cuadrados."
+           },
+           "text": {
+            "t": "str",
+            "v": "Spacing:"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 2,
+         "col": 1,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QDoubleSpinBox",
+          "py": "FCDoubleSpinner",
+          "name": "squares_spacing_entry",
+          "props": {
+           "decimals": {
+            "t": "int",
+            "v": 4
+           },
+           "maximum": {
+            "t": "double",
+            "v": 10000.0
+           },
+           "singleStep": {
+            "t": "double",
+            "v": 0.1
+           },
+           "value": {
+            "t": "double",
+            "v": 2.0
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QFrame",
+      "py": "QFrame",
+      "name": "lines_frame",
+      "props": {
+       "hidden": {
+        "t": "bool",
+        "v": true
+       }
+      },
+      "layout": {
+       "qt": "QGridLayout",
+       "py": "QGridLayout",
+       "name": null,
+       "props": {},
+       "margins": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spacing": 6,
+       "hspacing": 6,
+       "vspacing": 6,
+       "rowStretch": [
+        0,
+        0,
+        0
+       ],
+       "colStretch": [
+        0,
+        1
+       ],
+       "colMinWidth": [
+        0,
+        0
+       ],
+       "items": [
+        {
+         "align": 0,
+         "row": 0,
+         "col": 0,
+         "rs": 1,
+         "cs": 2,
+         "widget": {
+          "qt": "QLabel",
+          "py": "FCLabel",
+          "name": "lines_label",
+          "props": {
+           "text": {
+            "t": "str",
+            "v": "<b>Parámetros de cuadrícula de líneas</b>:"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 1,
+         "col": 0,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QLabel",
+          "py": "FCLabel",
+          "name": "line_size_label",
+          "props": {
+           "toolTip": {
+            "t": "str",
+            "v": "Tamaño del grosor de línea en la cuadrícula de líneas."
+           },
+           "text": {
+            "t": "str",
+            "v": "Tamaño:"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 1,
+         "col": 1,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QDoubleSpinBox",
+          "py": "FCDoubleSpinner",
+          "name": "line_size_entry",
+          "props": {
+           "decimals": {
+            "t": "int",
+            "v": 4
+           },
+           "maximum": {
+            "t": "double",
+            "v": 10000.0
+           },
+           "singleStep": {
+            "t": "double",
+            "v": 0.1
+           },
+           "value": {
+            "t": "double",
+            "v": 0.25
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 2,
+         "col": 0,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QLabel",
+          "py": "FCLabel",
+          "name": "lines_spacing_label",
+          "props": {
+           "toolTip": {
+            "t": "str",
+            "v": "Distancia entre cada dos líneas en la cuadrícula de líneas."
+           },
+           "text": {
+            "t": "str",
+            "v": "Spacing:"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 2,
+         "col": 1,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QDoubleSpinBox",
+          "py": "FCDoubleSpinner",
+          "name": "lines_spacing_entry",
+          "props": {
+           "decimals": {
+            "t": "int",
+            "v": 4
+           },
+           "maximum": {
+            "t": "double",
+            "v": 10000.0
+           },
+           "singleStep": {
+            "t": "double",
+            "v": 0.1
+           },
+           "value": {
+            "t": "double",
+            "v": 2.0
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "QPushButton",
+      "name": "fill_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Agregará un polígono (puede dividirse en varias partes)\neso rodeará las huellas reales de Gerber a cierta distancia."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Insertar Copper thieving"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/copperfill32.png"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1,
+       0
+      ],
+      "colMinWidth": [
+       0,
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "robber_bar_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Parámetros utilizados para la Robber Bar.\nRobber Bar = borde de cobre para ayudar en el enchapado de agujeros."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Parámetros de la Robber Bar</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "rb_margin_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Margen límite del recinto para Robber Bar."
+          },
+          "text": {
+           "t": "str",
+           "v": "Margen:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "rb_margin_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -10000.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 1.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "rb_thickness_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El grosor de la Robber Bar."
+          },
+          "text": {
+           "t": "str",
+           "v": "Espesor:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "rb_thickness_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 1.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "QPushButton",
+         "name": "rb_button",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Agregará un polígono con un grosor definido\nque rodeará el objeto real de Gerber\na cierta distancia.\nSe requiere cuando se hace un patrón de agujeros."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+          },
+          "text": {
+           "t": "str",
+           "v": "Insertar Robber Bar"
+          },
+          "icon": {
+           "t": "QIcon",
+           "v": ":/images/robber32.png"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "patern_mask_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Genere una máscara para el enchapado de patrones."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Máscara de baño de patrones</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 14,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "sm_obj_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Objeto Gerber con la máscara de soldadura.\nSe utilizará como base para\nEl patrón de la máscara de recubrimiento."
+          },
+          "text": {
+           "t": "str",
+           "v": "Seleccionar objeto Soldermask:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 16,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "sm_object_combo",
+         "props": {},
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 18,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "clearance_ppm_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "La distancia entre los posibles elementos de Copper Thieving.\ny / o Robber Bar y las aberturas reales en la máscara."
+          },
+          "text": {
+           "t": "str",
+           "v": "Despeje:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 18,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "clearance_ppm_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -10000.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 20,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "plated_area_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El área a ser chapada por patrón de chapado.\nBásicamente está hecho de las aberturas en la máscara de recubrimiento.\n\n<<ADVERTENCIA>> - el área calculada es en realidad un poco más grande\nDebido al hecho de que las aberturas de la máscara de soldadura son por diseño\nun poco más grande que las almohadillas de cobre, y esta área es\ncalculado a partir de las aberturas de la máscara de soldadura."
+          },
+          "text": {
+           "t": "str",
+           "v": "Área chapada:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 20,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "FCEntry",
+         "name": "plated_area_entry",
+         "props": {
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 20,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "units_area_label",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "mm<sup>2</sup>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 22,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "ppm_choice_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Elija qué geometría adicional incluir, si está disponible."
+          },
+          "text": {
+           "t": "str",
+           "v": "Añadir:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 22,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "ppm_choice_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Ambas",
+           "value": "b"
+          },
+          {
+           "label": "Ladrón",
+           "value": "t"
+          },
+          {
+           "label": "Barra de Ladrón",
+           "value": "r"
+          },
+          {
+           "label": "Ninguno",
+           "value": "n"
+          }
+         ],
+         "vertical": true,
+         "stretch": false,
+         "value": "b"
+        }
+       },
+       {
+        "align": 0,
+        "row": 24,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "QPushButton",
+         "name": "ppm_button",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Agregará a la máscara de soldadura la geometría gerber\nLas geometrías de Copper Thieving y / o\nla Robber Bar si esos fueron generados."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+          },
+          "text": {
+           "t": "str",
+           "v": "Generar máscara de recubrimiento de patrón"
+          },
+          "icon": {
+           "t": "QIcon",
+           "v": ":/images/pattern32.png"
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "QPushButton",
+      "name": "reset_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Restablecerá los parámetros de la herramienta."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Restablecer la Herramienta"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/reset32.png"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "ThievingToolUI"
+}

@@ -307,6 +307,7 @@ public:
     EtchTool* etchTool;                    ///< Panel de Compensación de grabado.
     AlignTool* alignTool;                  ///< Panel de Alinear objetos.
     FiducialsTool* fiducialsTool;          ///< Panel de Fiduciales.
+    ThievingTool* thievingTool;            ///< Panel de Robo de cobre.
     QRCodeTool* qrcodeTool;                ///< Panel del código QR.
     class TransformTool* transformTool;  ///< Panel de Transformaciones.
     class DistanceTool* distanceTool;  ///< Herramienta Distancia.

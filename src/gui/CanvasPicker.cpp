@@ -13,9 +13,12 @@ CanvasPicker::CanvasPicker(MainGUI* ui, QObject* parent) : QObject(parent), ui_(
             [this](QPointF w, Qt::MouseButton b, bool dragged) { onRelease(w, b, dragged); });
 }
 
-void CanvasPicker::start(Mode mode, ShapeList candidates, std::function<void(const ShapeList&)> done) {
+void CanvasPicker::start(Mode mode, ShapeList candidates, std::function<void(const ShapeList&)> done,
+                         const QString& endMessage, bool escapeCancels) {
     cancel();
     active_ = true;
+    endMessage_ = endMessage.isEmpty() ? tr_("Click the end point of the area.") : endMessage;
+    escapeCancels_ = escapeCancels;
     mode_ = mode;
     candidates_ = std::move(candidates);
     done_ = std::move(done);
@@ -50,7 +53,7 @@ void CanvasPicker::onRelease(const QPointF& world, Qt::MouseButton button, bool 
         if (mode_ == Mode::Rectangles) {
             if (points_.empty()) {
                 points_.push_back(p);
-                ui_->inform("[WARNING_NOTCL] " + tr_("Click the end point of the area."));
+                ui_->inform("[WARNING_NOTCL] " + endMessage_);
             } else {
                 const Point2D a = points_.front();
                 selected_.push_back(Shape::polygon({a, {p.x, a.y}, p, {a.x, p.y}}));

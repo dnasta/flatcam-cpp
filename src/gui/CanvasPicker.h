@@ -42,11 +42,17 @@ public:
      * @param mode Qué se elige.
      * @param candidates Polígonos que se pueden marcar (modo `PickPolygons`).
      * @param done Qué hacer con lo elegido al terminar (no se llama si se cancela o no se eligió nada).
+     * @param endMessage Aviso después del primer clic de un rectángulo (vacío: "Click the end point of the area.").
+     * @param escapeCancels Si Escape cancela (en Robo de cobre el original falla al cancelar y sigue eligiendo).
      */
-    void start(Mode mode, ShapeList candidates, std::function<void(const ShapeList&)> done);
+    void start(Mode mode, ShapeList candidates, std::function<void(const ShapeList&)> done,
+               const QString& endMessage = QString(), bool escapeCancels = true);
 
-    /** @brief Cancela la selección en curso (Escape). @return `true` si había una. */
+    /** @brief Cancela la selección en curso. @return `true` si había una. */
     bool cancel();
+
+    /** @brief Escape: cancela si la selección en curso lo permite. @return `true` si se canceló. */
+    bool cancelByEscape() { return escapeCancels_ && cancel(); }
 
     /** @brief Si hay una selección en curso. @return `true` si la hay. */
     bool active() const { return active_; }
@@ -68,6 +74,8 @@ private:
 
     MainGUI* ui_;
     bool active_{false};
+    bool escapeCancels_{true};
+    QString endMessage_;
     bool gridMemory_{false};  ///< `grid_status_memory`: la grilla estaba activa al empezar a elegir polígonos.
     Mode mode_{Mode::Rectangles};
     ShapeList candidates_;

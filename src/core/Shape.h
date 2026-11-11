@@ -137,6 +137,12 @@ public:
      */
     static Shape unaryUnion(const std::vector<Shape>& shapes);
 
+    /**
+     * @brief Versión de la biblioteca GEOS con la que corre el programa (`GEOSversion`).
+     * @return Por ejemplo `"3.12.1-CAPI-1.18.1"`.
+     */
+    static std::string geosVersion();
+
     // ------------------------------------------------------------- propiedades
 
     /** @brief Tipo de la figura. @return El tipo. */
@@ -298,6 +304,12 @@ public:
 
     /** @brief Envolvente convexa. @return Figura convexa mínima que contiene a esta. */
     Shape convexHull() const;
+
+    /**
+     * @brief Rectángulo que la contiene (`envelope` de Shapely), con los vértices en el orden de GEOS.
+     * @return El rectángulo (un punto o una línea si la figura no tiene área en alguna dirección).
+     */
+    Shape envelope() const;
 
     /**
      * @brief Triángulos que cubren exactamente la superficie de los polígonos (para rellenarlos al dibujar).

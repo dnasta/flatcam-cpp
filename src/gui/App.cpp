@@ -128,6 +128,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     etchTool = new EtchTool(this, ui_.get());
     alignTool = new AlignTool(this, ui_.get());
     fiducialsTool = new FiducialsTool(this, ui_.get());
+    thievingTool = new ThievingTool(this, ui_.get());
     qrcodeTool = new QRCodeTool(this, ui_.get());
     transformTool = new TransformTool(this, ui_.get());
     distanceTool = new DistanceTool(this, ui_.get());
@@ -135,7 +136,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     moveTool = new MoveTool(this, this);
     propertiesTool = new PropertiesTool(this, ui_.get());
     isolationTool = new IsolationTool(this, ui_.get());
-    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool, panelizeTool, invertTool, calculatorsTool, cornersTool, extractDrillsTool, punchTool, subTool, optimalTool, etchTool, alignTool, fiducialsTool, qrcodeTool, transformTool,
+    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool, panelizeTool, invertTool, calculatorsTool, cornersTool, extractDrillsTool, punchTool, subTool, optimalTool, etchTool, alignTool, fiducialsTool, thievingTool, qrcodeTool, transformTool,
                                                       isolationTool, distanceTool, distanceMinTool, propertiesTool})
         w->hide();
     connectSignals();
@@ -310,6 +311,11 @@ void App::connectSignals() {
         connect(a, &QAction::triggered, this, [this] {
             runTool(qrcodeTool, QRCodeTool::info());
             qrcodeTool->setToolUi();
+        });
+    for (QAction* a : {ui_->copper_thieving_tool_menuAction, ui_->copperfill_btn})
+        connect(a, &QAction::triggered, this, [this] {
+            runTool(thievingTool, ThievingTool::info());
+            thievingTool->setToolUi();
         });
     for (QAction* a : {ui_->fiducial_tool_menuAction, ui_->fiducials_btn})
         connect(a, &QAction::triggered, this, [this] {
@@ -1031,6 +1037,7 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
             case Qt::Key_Q: return tool(ui->qrcode_btn);
             case Qt::Key_E: return tool(ui->extract_btn);  // keyPressEvent (el menú dice Alt+I)
             case Qt::Key_I: return tool(ui->isolation_btn);
+            case Qt::Key_J: return tool(ui->copperfill_btn);
             case Qt::Key_N: return tool(ui->ncc_btn);
             case Qt::Key_P: return tool(ui->paint_btn);
             case Qt::Key_S: viewSource(activeObject()); return true;
@@ -1064,10 +1071,12 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
                 moveTool->cancel();
                 return true;
             }
-            if (picker_->cancel()) {
+            if (picker_->cancelByEscape()) {
                 ui->inform("[WARNING_NOTCL] " + tr_("Cancelled by user request."));
                 return true;
             }
+            // En Robo de cobre el original llama a copperfill_tool.on_exit(), que no existe: no hace nada.
+            if (picker_->active()) return true;
             // on_deselect_all, salir de la pantalla completa y dejar de esperar el clic de "Fijar el origen".
             for (FlatCAMObj* o : collection_->objects()) setActive(o, false);
             deleteSelectionShape();
