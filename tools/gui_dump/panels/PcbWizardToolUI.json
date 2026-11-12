@@ -1,0 +1,491 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "PcbWizard",
+  "name": null,
+  "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Herra. de import. PcbWizard"
+   },
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Herra. de import. PcbWizard"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {}
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {
+       "text": {
+        "t": "str",
+        "v": "<b>Cargar archivos:</b>"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QFormLayout",
+      "py": "QFormLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "excellon_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Cargue el archivo Excellon.\nPor lo general, tiene una extensión .DRL"
+          },
+          "text": {
+           "t": "str",
+           "v": "Archivo Excellon:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 0,
+        "role": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "excellon_brn",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "Abrir"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "inf_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Cargue el archivo INF."
+          },
+          "text": {
+           "t": "str",
+           "v": "Archivo INF:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "role": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "inf_btn",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "Abrir"
+          }
+         }
+        }
+       }
+      ],
+      "formRows": true
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QTableWidget",
+      "py": "FCTable",
+      "name": "tools_table",
+      "props": {
+       "minimumSize": {
+        "t": "QSize",
+        "v": [
+         0,
+         24
+        ]
+       },
+       "maximumSize": {
+        "t": "QSize",
+        "v": [
+         16777215,
+         24
+        ]
+       },
+       "verticalScrollBarPolicy": {
+        "t": "int",
+        "v": 1
+       },
+       "horizontalScrollBarPolicy": {
+        "t": "int",
+        "v": 1
+       },
+       "columnCount": {
+        "t": "int",
+        "v": 2
+       },
+       "hidden": {
+        "t": "bool",
+        "v": true
+       }
+      },
+      "table": {
+       "cols": 2,
+       "labels": [
+        "#Tool",
+        "Diámetro"
+       ],
+       "hheader": true,
+       "vheader": false,
+       "resize": [
+        3,
+        1
+       ],
+       "stretchLast": false,
+       "hiddenCols": []
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {}
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {
+       "text": {
+        "t": "str",
+        "v": "<b>Formato Excellon:</b>"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QFormLayout",
+      "py": "QFormLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "int_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El número de dígitos para la parte integral de las coordenadas."
+          },
+          "text": {
+           "t": "str",
+           "v": "Dígitos enteros:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 0,
+        "role": 1,
+        "widget": {
+         "qt": "QSpinBox",
+         "py": "FCSpinner",
+         "name": "int_entry",
+         "props": {
+          "minimum": {
+           "t": "int",
+           "v": 1
+          },
+          "maximum": {
+           "t": "int",
+           "v": 10
+          },
+          "value": {
+           "t": "int",
+           "v": 2
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "frac_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El número de dígitos para la parte fraccionaria de las coordenadas."
+          },
+          "text": {
+           "t": "str",
+           "v": "Dígitos Fraccio:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "role": 1,
+        "widget": {
+         "qt": "QSpinBox",
+         "py": "FCSpinner",
+         "name": "frac_entry",
+         "props": {
+          "minimum": {
+           "t": "int",
+           "v": 1
+          },
+          "maximum": {
+           "t": "int",
+           "v": 10
+          },
+          "value": {
+           "t": "int",
+           "v": 4
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "zeros_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El tipo de supresión de ceros utilizada.\nPuede ser de tipo:\n- LZ = los ceros iniciales se mantienen\n- TZ = los ceros finales se mantienen\n- Sin supresión = sin supresión de cero"
+          },
+          "text": {
+           "t": "str",
+           "v": "Supresión de Ceros:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "role": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "zeros_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "LZ",
+           "value": "LZ"
+          },
+          {
+           "label": "TZ",
+           "value": "TZ"
+          },
+          {
+           "label": "Sin supresión",
+           "value": "D"
+          }
+         ],
+         "vertical": false,
+         "stretch": true,
+         "value": "LZ"
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "units_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El tipo de unidades que las coordenadas y la herramienta\ndiámetros están utilizando. Puede ser PULGADAS o MM."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Unidades:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "role": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "units_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Pulgada",
+           "value": "INCH"
+          },
+          {
+           "label": "mm",
+           "value": "METRIC"
+          }
+         ],
+         "vertical": false,
+         "stretch": true,
+         "value": "INCH"
+        }
+       }
+      ],
+      "formRows": true
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "QPushButton",
+      "name": "import_button",
+      "props": {
+       "toolTip": {
+        "t": "str",
+        "v": "Importar un archivo Excellon\nque almacena su información en 2 archivos.\nUno generalmente tiene la extensión .DRL mientras\nel otro tiene extensión .INF."
+       },
+       "text": {
+        "t": "str",
+        "v": "Importar Excellon"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "PcbWizardToolUI"
+}

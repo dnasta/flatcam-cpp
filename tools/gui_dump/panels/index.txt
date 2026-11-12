@@ -25,6 +25,11 @@ AlignToolUI
 FiducialsToolUI
 QRCodeToolUI
 ThievingToolUI
+RulesToolUI
+SolderPasteToolUI
+CalibrationToolUI
+PcbWizardToolUI
+FilmToolUI
 ToolsDB2UI
 AboutDialogUI
 HowtoDialogUI

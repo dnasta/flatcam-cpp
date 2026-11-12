@@ -25,6 +25,7 @@
 #include "gui/ProjectIO.h"
 #include "gui/CanvasPicker.h"
 #include "gui/editors/ExcEditor.h"
+#include "gui/objects/DocumentObject.h"
 #include "gui/editors/GeoEditor.h"
 #include "gui/editors/GrbEditor.h"
 #include "gui/ExclusionAreasManager.h"
@@ -3142,6 +3143,40 @@ TEST(GuiGrbEditor, AddsAPadAndATrackAndSavesANewGerber) {
     EXPECT_EQ(out->name(), cu->name() + "_edit");
     EXPECT_GT(static_cast<GerberObject*>(out)->gerber().solidGeometry().size(), 0u);
     EXPECT_EQ(app.callSource(), "app");
+}
+
+TEST(GuiRules, ChecksTheRulesAndCreatesTheReport) {
+    App app;
+    FlatCAMObj* cu = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-B_Cu.gbr");
+    FlatCAMObj* edge = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-Edge_Cuts.gbr");
+    FlatCAMObj* pth = app.openExcellon(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-PTH.drl");
+    ASSERT_TRUE(cu && edge && pth);
+    QKeyEvent alt(QEvent::KeyPress, Qt::Key_R, Qt::AltModifier);
+    QApplication::sendEvent(app.ui(), &alt);
+    RulesTool* t = app.rulesTool;
+    t->all_cb->setChecked(true);
+    t->all_cb->setChecked(false);  // apaga todas las reglas
+    t->copper_t_cb->setChecked(true);
+    t->copper_t_object->setValue(cu->name());
+    t->out_cb->setChecked(true);
+    t->outline_object->setValue(edge->name());
+    t->e1_cb->setChecked(true);
+    t->e1_object->setValue(pth->name());
+    t->trace_size_cb->setChecked(true);
+    t->trace_size_entry->setValue(0.5);
+    t->clearance_copper2ol_cb->setChecked(true);
+    t->clearance_copper2ol_entry->setValue(1.5);
+    t->drill_size_cb->setChecked(true);
+    t->drill_size_entry->setValue(1.2);
+    FlatCAMObj* doc = t->execute();
+    ASSERT_NE(doc, nullptr);
+    EXPECT_EQ(doc->name(), "Rules_check_results");
+    EXPECT_EQ(doc->kind(), ObjectKind::Document);
+    const QString txt = static_cast<DocumentObject*>(doc)->text();
+    EXPECT_TRUE(txt.contains("0.8000, 1.0000, ")) << txt.toStdString();  // los diámetros chicos
+    // Con "Cobre a cobre" el original falla (self.copper_t_cb no existe): no hay informe.
+    t->clearance_copper2copper_cb->setChecked(true);
+    EXPECT_EQ(t->execute(), nullptr);
 }
 
 TEST(GuiThieving, FillsAddsTheRobberBarAndThePlatingMask) {
