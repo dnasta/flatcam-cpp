@@ -1,4 +1,7 @@
 #include "gui/App.h"
+#include "gui/editors/ExcEditor.h"
+#include "gui/editors/GeoEditor.h"
+#include "gui/editors/GrbEditor.h"
 
 #include <QClipboard>
 #include <QRegularExpression>
@@ -129,6 +132,9 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     alignTool = new AlignTool(this, ui_.get());
     fiducialsTool = new FiducialsTool(this, ui_.get());
     thievingTool = new ThievingTool(this, ui_.get());
+    geoEditor = new GeoEditor(this);
+    excEditor = new ExcEditor(this);
+    grbEditor = new GrbEditor(this);
     qrcodeTool = new QRCodeTool(this, ui_.get());
     transformTool = new TransformTool(this, ui_.get());
     distanceTool = new DistanceTool(this, ui_.get());
@@ -386,6 +392,21 @@ void App::connectSignals() {
         onCanvasRelease(w, b, QApplication::keyboardModifiers(), dragged);
     });
     connect(canvas, &PlotCanvas::mouseDoubleClicked, this, [this](Qt::MouseButton b) { onCanvasDoubleClick(b); });
+    // Los editores conectan sus propios manejadores (connect_canvas_event_handlers) mientras están activos.
+    connect(canvas, &PlotCanvas::mouseClicked, this, [this](QPointF w, Qt::MouseButton b) {
+        if (geoEditor->active()) geoEditor->onPress(w, b);
+    });
+    connect(canvas, &PlotCanvas::mouseMoved, this, [this](QPointF w) {
+        if (geoEditor->active()) geoEditor->onMove(w, QApplication::mouseButtons() & Qt::LeftButton);
+    });
+    connect(canvas, &PlotCanvas::mouseReleased, this, [this](QPointF w, Qt::MouseButton b, bool dragged) {
+        if (geoEditor->active()) geoEditor->onRelease(w, b, dragged);
+    });
+    // Entrar y salir de los editores.
+    for (QAction* a : {ui_->menueditedit, ui_->editgeo_btn})
+        connect(a, &QAction::triggered, this, [this] { objectToEditor(); });
+    for (QAction* a : {ui_->menueditok, ui_->update_obj_btn})
+        connect(a, &QAction::triggered, this, [this] { editorToObject(); });
     // Opciones -> Voltear en el eje X / Y (on_flipx refleja con mirror('Y'), on_flipy con mirror('X')).
     connect(ui_->menuoptions_transform_flipx, &QAction::triggered, this, [this] { flip(Axis::Y); });
     connect(ui_->menuoptions_transform_flipy, &QAction::triggered, this, [this] { flip(Axis::X); });
@@ -960,6 +981,10 @@ void App::connectTransformations(Panel* p, FlatCAMObj* obj) {
 }
 
 bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
+    // Las ramas geo_editor, exc_editor y grb_editor de MainGUI.keyPressEvent.
+    if (callSource_ == "geo_editor") return geoEditor->handleKey(key, modifiers);
+    if (callSource_ == "exc_editor") return excEditor->handleKey(key, modifiers);
+    if (callSource_ == "grb_editor") return grbEditor->handleKey(key, modifiers);
     // MainGUI.keyPressEvent con call_source == 'app' (en el Mac, Ctrl es la tecla Cmd). Los atajos de herramientas o
     // funciones que el port todavía no tiene no hacen nada.
     MainGUI* ui = ui_.get();
@@ -1058,6 +1083,7 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
     PlotCanvas* canvas = ui->plotCanvas();
     switch (key) {
         case Qt::Key_F1: openHelpLink(0); return true;
+        case Qt::Key_E: objectToEditor(); return true;
         case Qt::Key_F3: onShortcutList(); return true;
         case Qt::Key_F4: openHelpLink(1); return true;
         case Qt::Key_F5: plotAll(); return true;

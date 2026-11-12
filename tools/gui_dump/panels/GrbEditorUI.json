@@ -1,0 +1,1890 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "QWidget",
+  "name": null,
+  "props": {},
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": null,
+   "props": {},
+   "margins": [
+    11,
+    11,
+    11,
+    11
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QHBoxLayout",
+      "py": "QHBoxLayout",
+      "name": "title_box",
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "icon",
+         "props": {
+          "pixmap": {
+           "t": "QPixmap",
+           "v": ":/images/flatcam_icon32.png"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "title_label",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "<font size=5><b>Gerber Editor</b></font>"
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QHBoxLayout",
+      "py": "QHBoxLayout",
+      "name": "name_box",
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "Nombre:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "FCEntry",
+         "name": "name_entry",
+         "props": {}
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QVBoxLayout",
+      "py": "QVBoxLayout",
+      "name": "custom_box",
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "apertures_table_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Tabla de Aperturas para el Objeto Gerber."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Aberturas:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QTableWidget",
+         "py": "FCTable",
+         "name": "apertures_table",
+         "props": {
+          "selectionBehavior": {
+           "t": "int",
+           "v": 1
+          },
+          "columnCount": {
+           "t": "int",
+           "v": 5
+          }
+         },
+         "table": {
+          "cols": 5,
+          "labels": [
+           "#",
+           "Código",
+           "Tipo",
+           "Tamaño",
+           "Dim"
+          ],
+          "hheader": true,
+          "vheader": true,
+          "resize": [
+           0,
+           0,
+           0,
+           0,
+           0
+          ],
+          "stretchLast": false,
+          "hiddenCols": []
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": "apertures_frame",
+         "props": {},
+         "layout": {
+          "qt": "QVBoxLayout",
+          "py": "QVBoxLayout",
+          "name": "apertures_box",
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "items": [
+           {
+            "align": 0,
+            "stretch": 0,
+            "layout": {
+             "qt": "QGridLayout",
+             "py": "QGridLayout",
+             "name": null,
+             "props": {},
+             "margins": [
+              0,
+              0,
+              0,
+              0
+             ],
+             "spacing": 6,
+             "hspacing": 6,
+             "vspacing": 6,
+             "rowStretch": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+             ],
+             "colStretch": [
+              0,
+              1
+             ],
+             "colMinWidth": [
+              0,
+              0
+             ],
+             "items": [
+              {
+               "align": 0,
+               "row": 0,
+               "col": 0,
+               "rs": 1,
+               "cs": 2,
+               "widget": {
+                "qt": "QLabel",
+                "py": "FCLabel",
+                "name": null,
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Añadir / Eliminar una apertura en la tabla de aperturas"
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "<b>Añadir / Eliminar Apertura:</b>"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 1,
+               "col": 0,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QLabel",
+                "py": "FCLabel",
+                "name": null,
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Código para la nueva apertura"
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Código de apertura:"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 1,
+               "col": 1,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QSpinBox",
+                "py": "FCSpinner",
+                "name": "apcode_entry",
+                "props": {
+                 "wrapping": {
+                  "t": "bool",
+                  "v": true
+                 },
+                 "maximum": {
+                  "t": "int",
+                  "v": 1000
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 2,
+               "col": 0,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QLabel",
+                "py": "FCLabel",
+                "name": null,
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Tamaño para la nueva apertura.\nSi el tipo de apertura es 'R' o 'O' entonces\neste valor es automáticamente\ncalculado como:\nsqrt (ancho ** 2 + altura ** 2)"
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Tamaño de apertura:"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 2,
+               "col": 1,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QDoubleSpinBox",
+                "py": "FCDoubleSpinner",
+                "name": "apsize_entry",
+                "props": {
+                 "decimals": {
+                  "t": "int",
+                  "v": 4
+                 },
+                 "maximum": {
+                  "t": "double",
+                  "v": 10000.0
+                 },
+                 "value": {
+                  "t": "double",
+                  "v": 0.8
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 3,
+               "col": 0,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QLabel",
+                "py": "FCLabel",
+                "name": null,
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Seleccione el tipo de apertura nueva. Puede ser:\nC = circular\nR = rectangular\nO = oblongo"
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Tipo de apertura:"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 3,
+               "col": 1,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QComboBox",
+                "py": "FCComboBox",
+                "name": "aptype_cb",
+                "props": {
+                 "currentText": {
+                  "t": "str",
+                  "v": "C"
+                 }
+                },
+                "items": [
+                 "C",
+                 "R",
+                 "O"
+                ],
+                "currentIndex": 0
+               }
+              },
+              {
+               "align": 0,
+               "row": 4,
+               "col": 0,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QLabel",
+                "py": "FCLabel",
+                "name": "apdim_lbl",
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Dimensiones para la nueva apertura.\nActivo solo para aberturas rectangulares (tipo R).\nEl formato es (ancho, alto)."
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Apertura Dim:"
+                 },
+                 "hidden": {
+                  "t": "bool",
+                  "v": true
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 4,
+               "col": 1,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QLineEdit",
+                "py": "EvalEntry2",
+                "name": "apdim_entry",
+                "props": {
+                 "text": {
+                  "t": "str",
+                  "v": "0.5, 0.5"
+                 },
+                 "hidden": {
+                  "t": "bool",
+                  "v": true
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 6,
+               "col": 0,
+               "rs": 1,
+               "cs": 2,
+               "widget": {
+                "qt": "QFrame",
+                "py": "QFrame",
+                "name": null,
+                "props": {
+                 "sizePolicy": {
+                  "t": "QSizePolicy",
+                  "v": [
+                   1,
+                   0,
+                   0,
+                   0
+                  ]
+                 },
+                 "frameShape": {
+                  "t": "int",
+                  "v": 4
+                 },
+                 "frameShadow": {
+                  "t": "int",
+                  "v": 48
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 8,
+               "col": 0,
+               "rs": 1,
+               "cs": 2,
+               "layout": {
+                "qt": "QHBoxLayout",
+                "py": "QHBoxLayout",
+                "name": null,
+                "props": {},
+                "margins": [
+                 0,
+                 0,
+                 0,
+                 0
+                ],
+                "spacing": 6,
+                "items": [
+                 {
+                  "align": 0,
+                  "stretch": 0,
+                  "widget": {
+                   "qt": "QPushButton",
+                   "py": "FCButton",
+                   "name": "addaperture_btn",
+                   "props": {
+                    "toolTip": {
+                     "t": "str",
+                     "v": "Agregar una nueva apertura a la lista de apertura."
+                    },
+                    "text": {
+                     "t": "str",
+                     "v": "Añadir"
+                    },
+                    "icon": {
+                     "t": "QIcon",
+                     "v": ":/images/plus16.png"
+                    }
+                   }
+                  }
+                 },
+                 {
+                  "align": 0,
+                  "stretch": 0,
+                  "widget": {
+                   "qt": "QPushButton",
+                   "py": "FCButton",
+                   "name": "delaperture_btn",
+                   "props": {
+                    "toolTip": {
+                     "t": "str",
+                     "v": "Eliminar una abertura en la lista de aperturas"
+                    },
+                    "text": {
+                     "t": "str",
+                     "v": "Borrar"
+                    },
+                    "icon": {
+                     "t": "QIcon",
+                     "v": ":/images/trash32.png"
+                    }
+                   }
+                  }
+                 }
+                ]
+               }
+              }
+             ]
+            }
+           }
+          ]
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": "buffer_tool_frame",
+         "props": {
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         },
+         "layout": {
+          "qt": "QVBoxLayout",
+          "py": "QVBoxLayout",
+          "name": "buffer_tools_box",
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "items": [
+           {
+            "align": 0,
+            "stretch": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": null,
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Buffer de apertura en la lista de apertura"
+              },
+              "text": {
+               "t": "str",
+               "v": "<b>Apertura del tampón:</b>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "stretch": 0,
+            "layout": {
+             "qt": "QFormLayout",
+             "py": "QFormLayout",
+             "name": null,
+             "props": {},
+             "margins": [
+              0,
+              0,
+              0,
+              0
+             ],
+             "spacing": 6,
+             "hspacing": 6,
+             "vspacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "row": 0,
+               "role": 0,
+               "widget": {
+                "qt": "QLabel",
+                "py": "QLabel",
+                "name": null,
+                "props": {
+                 "text": {
+                  "t": "str",
+                  "v": "Dist. de buffer:"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 0,
+               "role": 1,
+               "widget": {
+                "qt": "QDoubleSpinBox",
+                "py": "FCDoubleSpinner",
+                "name": "buffer_distance_entry",
+                "props": {
+                 "decimals": {
+                  "t": "int",
+                  "v": 4
+                 },
+                 "minimum": {
+                  "t": "double",
+                  "v": -10000.0
+                 },
+                 "maximum": {
+                  "t": "double",
+                  "v": 10000.0
+                 },
+                 "value": {
+                  "t": "double",
+                  "v": 0.1
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 1,
+               "role": 0,
+               "widget": {
+                "qt": "QLabel",
+                "py": "FCLabel",
+                "name": "buffer_corner_lbl",
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Hay 3 tipos de esquinas:\n - 'Redondo': la esquina es redondeada.\n - 'Cuadrado:' la esquina se encuentra en un ángulo agudo.\n - 'Biselado:' la esquina es una línea que conecta directamente las funciones que se encuentran en la esquina"
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Rincón del búfer:"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 1,
+               "role": 1,
+               "widget": {
+                "qt": "QComboBox",
+                "py": "FCComboBox",
+                "name": "buffer_corner_cb",
+                "props": {
+                 "currentText": {
+                  "t": "str",
+                  "v": "Redondo"
+                 }
+                },
+                "items": [
+                 "Redondo",
+                 "Cuadrado",
+                 "Biselado"
+                ],
+                "currentIndex": 0
+               }
+              },
+              {
+               "align": 0,
+               "row": 2,
+               "role": 2,
+               "widget": {
+                "qt": "QFrame",
+                "py": "QFrame",
+                "name": null,
+                "props": {
+                 "sizePolicy": {
+                  "t": "QSizePolicy",
+                  "v": [
+                   1,
+                   0,
+                   0,
+                   0
+                  ]
+                 },
+                 "frameShape": {
+                  "t": "int",
+                  "v": 4
+                 },
+                 "frameShadow": {
+                  "t": "int",
+                  "v": 48
+                 }
+                }
+               }
+              }
+             ],
+             "formRows": true
+            }
+           },
+           {
+            "align": 0,
+            "stretch": 0,
+            "layout": {
+             "qt": "QHBoxLayout",
+             "py": "QHBoxLayout",
+             "name": null,
+             "props": {},
+             "margins": [
+              0,
+              0,
+              0,
+              0
+             ],
+             "spacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QPushButton",
+                "py": "FCButton",
+                "name": "buffer_button",
+                "props": {
+                 "text": {
+                  "t": "str",
+                  "v": "Buffer"
+                 },
+                 "icon": {
+                  "t": "QIcon",
+                  "v": ":/images/buffer16-2.png"
+                 }
+                }
+               }
+              }
+             ]
+            }
+           }
+          ]
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": "scale_tool_frame",
+         "props": {
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         },
+         "layout": {
+          "qt": "QVBoxLayout",
+          "py": "QVBoxLayout",
+          "name": "scale_tools_box",
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "items": [
+           {
+            "align": 0,
+            "stretch": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": null,
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Escala una abertura en la lista de aperturas"
+              },
+              "text": {
+               "t": "str",
+               "v": "<b>Apertura de la escala:</b>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "stretch": 0,
+            "layout": {
+             "qt": "QFormLayout",
+             "py": "QFormLayout",
+             "name": null,
+             "props": {},
+             "margins": [
+              0,
+              0,
+              0,
+              0
+             ],
+             "spacing": 6,
+             "hspacing": 6,
+             "vspacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "row": 0,
+               "role": 0,
+               "widget": {
+                "qt": "QLabel",
+                "py": "FCLabel",
+                "name": "scale_factor_lbl",
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "El factor por el cual escalar la apertura seleccionada.\nLos valores pueden estar entre 0.0000 y 999.9999"
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Factor de escala:"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 0,
+               "role": 1,
+               "widget": {
+                "qt": "QDoubleSpinBox",
+                "py": "FCDoubleSpinner",
+                "name": "scale_factor_entry",
+                "props": {
+                 "decimals": {
+                  "t": "int",
+                  "v": 4
+                 },
+                 "maximum": {
+                  "t": "double",
+                  "v": 10000.0
+                 },
+                 "value": {
+                  "t": "double",
+                  "v": 1.0
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 1,
+               "role": 2,
+               "widget": {
+                "qt": "QFrame",
+                "py": "QFrame",
+                "name": null,
+                "props": {
+                 "sizePolicy": {
+                  "t": "QSizePolicy",
+                  "v": [
+                   1,
+                   0,
+                   0,
+                   0
+                  ]
+                 },
+                 "frameShape": {
+                  "t": "int",
+                  "v": 4
+                 },
+                 "frameShadow": {
+                  "t": "int",
+                  "v": 48
+                 }
+                }
+               }
+              }
+             ],
+             "formRows": true
+            }
+           },
+           {
+            "align": 0,
+            "stretch": 0,
+            "layout": {
+             "qt": "QHBoxLayout",
+             "py": "QHBoxLayout",
+             "name": null,
+             "props": {},
+             "margins": [
+              0,
+              0,
+              0,
+              0
+             ],
+             "spacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QPushButton",
+                "py": "FCButton",
+                "name": "scale_button",
+                "props": {
+                 "text": {
+                  "t": "str",
+                  "v": "Escala"
+                 },
+                 "icon": {
+                  "t": "QIcon",
+                  "v": ":/images/clean32.png"
+                 }
+                }
+               }
+              }
+             ]
+            }
+           }
+          ]
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": "ma_tool_frame",
+         "props": {
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         },
+         "layout": {
+          "qt": "QVBoxLayout",
+          "py": "QVBoxLayout",
+          "name": "ma_tools_box",
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "items": [
+           {
+            "align": 0,
+            "stretch": 0,
+            "widget": {
+             "qt": "QFrame",
+             "py": "QFrame",
+             "name": null,
+             "props": {
+              "sizePolicy": {
+               "t": "QSizePolicy",
+               "v": [
+                1,
+                0,
+                0,
+                0
+               ]
+              },
+              "frameShape": {
+               "t": "int",
+               "v": 4
+              },
+              "frameShadow": {
+               "t": "int",
+               "v": 48
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "stretch": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": null,
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Marca las áreas del polígono."
+              },
+              "text": {
+               "t": "str",
+               "v": "<b>Marcar polígonos:</b>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "stretch": 0,
+            "layout": {
+             "qt": "QFormLayout",
+             "py": "QFormLayout",
+             "name": null,
+             "props": {},
+             "margins": [
+              0,
+              0,
+              0,
+              0
+             ],
+             "spacing": 6,
+             "hspacing": 6,
+             "vspacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "row": 0,
+               "role": 0,
+               "widget": {
+                "qt": "QLabel",
+                "py": "FCLabel",
+                "name": "ma_lower_threshold_lbl",
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "El valor de umbral, todas las áreas más que esto están marcadas.\nPuede tener un valor entre 0.0000 y 10000.0000"
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Umbral inferior de la zona:"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 0,
+               "role": 1,
+               "widget": {
+                "qt": "QDoubleSpinBox",
+                "py": "FCDoubleSpinner",
+                "name": "ma_lower_threshold_entry",
+                "props": {
+                 "decimals": {
+                  "t": "int",
+                  "v": 4
+                 },
+                 "maximum": {
+                  "t": "double",
+                  "v": 10000.0
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 1,
+               "role": 0,
+               "widget": {
+                "qt": "QLabel",
+                "py": "FCLabel",
+                "name": "ma_upper_threshold_lbl",
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "El valor de umbral, todas las áreas menos que esto están marcadas.\nPuede tener un valor entre 0.0000 y 10000.0000"
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Umbral SUPERIOR área:"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 1,
+               "role": 1,
+               "widget": {
+                "qt": "QDoubleSpinBox",
+                "py": "FCDoubleSpinner",
+                "name": "ma_upper_threshold_entry",
+                "props": {
+                 "decimals": {
+                  "t": "int",
+                  "v": 4
+                 },
+                 "maximum": {
+                  "t": "double",
+                  "v": 10000.0
+                 },
+                 "value": {
+                  "t": "double",
+                  "v": 1.0
+                 }
+                }
+               }
+              }
+             ],
+             "formRows": true
+            }
+           },
+           {
+            "align": 0,
+            "stretch": 0,
+            "layout": {
+             "qt": "QHBoxLayout",
+             "py": "QHBoxLayout",
+             "name": null,
+             "props": {},
+             "margins": [
+              0,
+              0,
+              0,
+              0
+             ],
+             "spacing": 6,
+             "items": [
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QPushButton",
+                "py": "FCButton",
+                "name": "ma_threshold_button",
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Marque los polígonos que se ajustan dentro de los límites."
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Marque"
+                 },
+                 "icon": {
+                  "t": "QIcon",
+                  "v": ":/images/markarea32.png"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QPushButton",
+                "py": "FCButton",
+                "name": "ma_delete_button",
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Eliminar todos los polígonos marcados."
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Borrar"
+                 },
+                 "icon": {
+                  "t": "QIcon",
+                  "v": ":/images/trash32.png"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "stretch": 0,
+               "widget": {
+                "qt": "QPushButton",
+                "py": "FCButton",
+                "name": "ma_clear_button",
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Borra todas las marcas."
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Limpiar"
+                 },
+                 "icon": {
+                  "t": "QIcon",
+                  "v": ":/images/clean32.png"
+                 }
+                }
+               }
+              }
+             ]
+            }
+           }
+          ]
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": "array_frame",
+         "props": {},
+         "layout": {
+          "qt": "QVBoxLayout",
+          "py": "QVBoxLayout",
+          "name": "array_box",
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "items": [
+           {
+            "align": 0,
+            "stretch": 0,
+            "widget": {
+             "qt": "QFrame",
+             "py": "QFrame",
+             "name": null,
+             "props": {
+              "sizePolicy": {
+               "t": "QSizePolicy",
+               "v": [
+                1,
+                0,
+                0,
+                0
+               ]
+              },
+              "frameShape": {
+               "t": "int",
+               "v": 4
+              },
+              "frameShadow": {
+               "t": "int",
+               "v": 48
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "stretch": 0,
+            "layout": {
+             "qt": "QGridLayout",
+             "py": "QGridLayout",
+             "name": null,
+             "props": {},
+             "margins": [
+              0,
+              0,
+              0,
+              0
+             ],
+             "spacing": 6,
+             "hspacing": 6,
+             "vspacing": 6,
+             "rowStretch": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+             ],
+             "colStretch": [
+              0,
+              1
+             ],
+             "colMinWidth": [
+              0,
+              0
+             ],
+             "items": [
+              {
+               "align": 0,
+               "row": 0,
+               "col": 0,
+               "rs": 1,
+               "cs": 2,
+               "widget": {
+                "qt": "QLabel",
+                "py": "FCLabel",
+                "name": "padarray_label",
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Añadir una matriz de pads (lineal o circular)"
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "<b>Agregar matriz de pad</b>"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 2,
+               "col": 0,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QLabel",
+                "py": "FCLabel",
+                "name": null,
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Seleccione el tipo de matriz de pads para crear.\nPuede ser Lineal X (Y) o Circular"
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Tipo:"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 2,
+               "col": 1,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QWidget",
+                "py": "RadioSet",
+                "name": "array_type_radio",
+                "props": {},
+                "choices": [
+                 {
+                  "label": "Lineal",
+                  "value": "linear"
+                 },
+                 {
+                  "label": "Circular",
+                  "value": "circular"
+                 }
+                ],
+                "vertical": false,
+                "stretch": true,
+                "value": "linear"
+               }
+              },
+              {
+               "align": 0,
+               "row": 4,
+               "col": 0,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QLabel",
+                "py": "FCLabel",
+                "name": null,
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Especifique cuántos pads estarán en la matriz."
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Nº de almohadillas:"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 4,
+               "col": 1,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QSpinBox",
+                "py": "FCSpinner",
+                "name": "pad_array_size_entry",
+                "props": {
+                 "minimum": {
+                  "t": "int",
+                  "v": 1
+                 },
+                 "maximum": {
+                  "t": "int",
+                  "v": 10000
+                 },
+                 "value": {
+                  "t": "int",
+                  "v": 5
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 6,
+               "col": 0,
+               "rs": 1,
+               "cs": 2,
+               "widget": {
+                "qt": "QFrame",
+                "py": "QFrame",
+                "name": "lin_separator_line",
+                "props": {
+                 "sizePolicy": {
+                  "t": "QSizePolicy",
+                  "v": [
+                   1,
+                   0,
+                   0,
+                   0
+                  ]
+                 },
+                 "frameShape": {
+                  "t": "int",
+                  "v": 4
+                 },
+                 "frameShadow": {
+                  "t": "int",
+                  "v": 48
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 8,
+               "col": 0,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QLabel",
+                "py": "FCLabel",
+                "name": "pad_axis_label",
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Dirección en la que se orienta la matriz lineal:\n- 'X' - eje horizontal\n- 'Y' - eje vertical o\n- 'Ángulo': un ángulo personalizado para la inclinación de la matriz"
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Dirección:"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 8,
+               "col": 1,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QWidget",
+                "py": "RadioSet",
+                "name": "pad_axis_radio",
+                "props": {},
+                "choices": [
+                 {
+                  "label": "X",
+                  "value": "X"
+                 },
+                 {
+                  "label": "Y",
+                  "value": "Y"
+                 },
+                 {
+                  "label": "Ángulo",
+                  "value": "A"
+                 }
+                ],
+                "vertical": false,
+                "stretch": true,
+                "value": "X"
+               }
+              },
+              {
+               "align": 0,
+               "row": 10,
+               "col": 0,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QLabel",
+                "py": "FCLabel",
+                "name": "pad_pitch_label",
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Paso = Distancia entre elementos de la matriz."
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Paso:"
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 10,
+               "col": 1,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QDoubleSpinBox",
+                "py": "FCDoubleSpinner",
+                "name": "pad_pitch_entry",
+                "props": {
+                 "decimals": {
+                  "t": "int",
+                  "v": 4
+                 },
+                 "maximum": {
+                  "t": "double",
+                  "v": 10000.0
+                 },
+                 "singleStep": {
+                  "t": "double",
+                  "v": 0.1
+                 },
+                 "value": {
+                  "t": "double",
+                  "v": 0.1
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 12,
+               "col": 0,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QLabel",
+                "py": "FCLabel",
+                "name": "linear_angle_label",
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Ángulo en el que se coloca la matriz lineal.\nLa precisión es de max 2 decimales.\nEl valor mínimo es: -360.00 grados.\nEl valor máximo es: 360.00 grados."
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Ángulo:"
+                 },
+                 "hidden": {
+                  "t": "bool",
+                  "v": true
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 12,
+               "col": 1,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QDoubleSpinBox",
+                "py": "FCDoubleSpinner",
+                "name": "linear_angle_spinner",
+                "props": {
+                 "decimals": {
+                  "t": "int",
+                  "v": 4
+                 },
+                 "minimum": {
+                  "t": "double",
+                  "v": -360.0
+                 },
+                 "maximum": {
+                  "t": "double",
+                  "v": 360.0
+                 },
+                 "hidden": {
+                  "t": "bool",
+                  "v": true
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 14,
+               "col": 0,
+               "rs": 1,
+               "cs": 2,
+               "widget": {
+                "qt": "QFrame",
+                "py": "QFrame",
+                "name": "circ_separator_line",
+                "props": {
+                 "sizePolicy": {
+                  "t": "QSizePolicy",
+                  "v": [
+                   1,
+                   0,
+                   0,
+                   0
+                  ]
+                 },
+                 "frameShape": {
+                  "t": "int",
+                  "v": 4
+                 },
+                 "frameShadow": {
+                  "t": "int",
+                  "v": 48
+                 },
+                 "hidden": {
+                  "t": "bool",
+                  "v": true
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 16,
+               "col": 0,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QLabel",
+                "py": "FCLabel",
+                "name": "pad_direction_label",
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Dirección para matriz circular.\nPuede ser CW = en sentido horario o CCW = en sentido antihorario."
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Dirección:"
+                 },
+                 "hidden": {
+                  "t": "bool",
+                  "v": true
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 16,
+               "col": 1,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QWidget",
+                "py": "RadioSet",
+                "name": "pad_direction_radio",
+                "props": {
+                 "hidden": {
+                  "t": "bool",
+                  "v": true
+                 }
+                },
+                "choices": [
+                 {
+                  "label": "CW",
+                  "value": "CW"
+                 },
+                 {
+                  "label": "CCW",
+                  "value": "CCW"
+                 }
+                ],
+                "vertical": false,
+                "stretch": true,
+                "value": "CW"
+               }
+              },
+              {
+               "align": 0,
+               "row": 18,
+               "col": 0,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QLabel",
+                "py": "FCLabel",
+                "name": "pad_angle_label",
+                "props": {
+                 "toolTip": {
+                  "t": "str",
+                  "v": "Ángulo en el que se coloca cada elemento de la matriz circular."
+                 },
+                 "text": {
+                  "t": "str",
+                  "v": "Ángulo:"
+                 },
+                 "hidden": {
+                  "t": "bool",
+                  "v": true
+                 }
+                }
+               }
+              },
+              {
+               "align": 0,
+               "row": 18,
+               "col": 1,
+               "rs": 1,
+               "cs": 1,
+               "widget": {
+                "qt": "QDoubleSpinBox",
+                "py": "FCDoubleSpinner",
+                "name": "pad_angle_entry",
+                "props": {
+                 "decimals": {
+                  "t": "int",
+                  "v": 4
+                 },
+                 "minimum": {
+                  "t": "double",
+                  "v": -360.0
+                 },
+                 "maximum": {
+                  "t": "double",
+                  "v": 360.0
+                 },
+                 "singleStep": {
+                  "t": "double",
+                  "v": 0.1
+                 },
+                 "hidden": {
+                  "t": "bool",
+                  "v": true
+                 }
+                }
+               }
+              }
+             ]
+            }
+           }
+          ]
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "spacer": [
+         0,
+         0,
+         1,
+         7
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "exit_editor_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Salida del editor."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\t\t\t\t  QPushButton\n\t\t\t\t\t\t\t\t\t\t\t  {\n\t\t\t\t\t\t\t\t\t\t\t\t  font-weight: bold;\n\t\t\t\t\t\t\t\t\t\t\t  }\n\t\t\t\t\t\t\t\t\t\t\t  "
+       },
+       "text": {
+        "t": "str",
+        "v": "Salir del editor"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/power16.png"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "GrbEditorUI"
+}

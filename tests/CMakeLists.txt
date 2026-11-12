@@ -35,6 +35,7 @@ add_executable(core_tests
     test_align.cpp
     test_fiducials.cpp
     test_thieving.cpp
+    test_geo_editor.cpp
     test_qrcode.cpp
     test_corners.cpp
     test_extract_drills.cpp

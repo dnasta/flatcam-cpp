@@ -1,0 +1,179 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "QWidget",
+  "name": null,
+  "props": {},
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": null,
+   "props": {},
+   "margins": [
+    11,
+    11,
+    11,
+    11
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QFrame",
+      "py": "QFrame",
+      "name": "geo_frame",
+      "props": {},
+      "layout": {
+       "qt": "QVBoxLayout",
+       "py": "QVBoxLayout",
+       "name": "tools_box",
+       "props": {},
+       "margins": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spacing": 6,
+       "items": [
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QHBoxLayout",
+          "py": "QHBoxLayout",
+          "name": "title_box",
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "items": [
+           {
+            "align": 0,
+            "stretch": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "icon",
+             "props": {
+              "pixmap": {
+               "t": "QPixmap",
+               "v": ":/images/flatcam_icon32.png"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "stretch": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": "title_label",
+             "props": {
+              "text": {
+               "t": "str",
+               "v": "<font size=5><b>Editor de geometría</b></font>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "stretch": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "FCLabel",
+             "name": null,
+             "props": {}
+            }
+           }
+          ]
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QTreeWidget",
+          "py": "FCTree",
+          "name": "tw",
+          "props": {
+           "selectionMode": {
+            "t": "int",
+            "v": 3
+           },
+           "indentation": {
+            "t": "int",
+            "v": 0
+           },
+           "headerHidden": {
+            "t": "bool",
+            "v": false
+           },
+           "columnCount": {
+            "t": "int",
+            "v": 3
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "exit_editor_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Salida del editor."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\t\t  QPushButton\n\t\t\t\t\t\t\t\t\t  {\n\t\t\t\t\t\t\t\t\t\t  font-weight: bold;\n\t\t\t\t\t\t\t\t\t  }\n\t\t\t\t\t\t\t\t\t  "
+       },
+       "text": {
+        "t": "str",
+        "v": "Salir del editor"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/power16.png"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "GeoEditorUI"
+}

@@ -82,10 +82,7 @@ void App::setupProjectMenu() {
         }
     });
     connect(menuProjectViewSource, &QAction::triggered, this, [this] { viewSource(activeObject()); });
-    connect(menuProjectEdit, &QAction::triggered, this, [this] {
-        // Los editores de Gerber, Excellon y Geometría quedan fuera del alcance del port.
-        ui_->inform("[WARNING_NOTCL] Los editores no forman parte del port.");
-    });
+    connect(menuProjectEdit, &QAction::triggered, this, [this] { objectToEditor(); });
     connect(menuProjectCopy, &QAction::triggered, this, [this] { copySelected(); });
     connect(menuProjectDelete, &QAction::triggered, this, [this] { deleteSelected(); });
     connect(menuProjectSave, &QAction::triggered, this, [this] { saveSelected(); });
