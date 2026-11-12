@@ -26,6 +26,7 @@
 #include "gui/CanvasPicker.h"
 #include "gui/editors/ExcEditor.h"
 #include "gui/editors/GeoEditor.h"
+#include "gui/editors/GrbEditor.h"
 #include "gui/ExclusionAreasManager.h"
 #include "gui/ToolsDBTab.h"
 #include "gui/ToolsDatabase.h"
@@ -3099,6 +3100,47 @@ TEST(GuiExcEditor, AddsADrillAndSavesANewExcellon) {
     const auto& tools = static_cast<ExcellonObject*>(out)->excellon().drillTools();
     ASSERT_EQ(tools.size(), 4u);
     EXPECT_EQ(tools.begin()->second.drills.size(), 85u);
+    EXPECT_EQ(app.callSource(), "app");
+}
+
+TEST(GuiGrbEditor, AddsAPadAndATrackAndSavesANewGerber) {
+    App app;
+    FlatCAMObj* cu = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-B_Cu.gbr");
+    ASSERT_NE(cu, nullptr);
+    app.ui()->collection_view->selectionModel()->select(app.collection()->indexOf(cu), QItemSelectionModel::Select);
+    app.objectToEditor();
+    GrbEditor* ed = app.grbEditor;
+    ASSERT_TRUE(ed->active());
+    EXPECT_EQ(app.callSource(), "grb_editor");
+    FCTable* t = ed->panel()->apertures_table;
+    ASSERT_GT(t->rowCount(), 0);
+    // La apertura 12 (C de 2,0): un pad con P y un clic.
+    int row = -1;
+    for (int r = 0; r < t->rowCount(); ++r)
+        if (t->item(r, 1)->text() == "12") row = r;
+    ASSERT_GE(row, 0);
+    ed->rowSelected(row);
+    const std::size_t before = ed->model().aperture("12")->geometry.size();
+    QKeyEvent p(QEvent::KeyPress, Qt::Key_P, Qt::NoModifier);
+    QApplication::sendEvent(app.ui(), &p);
+    EXPECT_EQ(ed->activeToolName(), "pad");
+    ed->onMove({60, 60}, false);
+    ed->onPress({60, 60}, Qt::LeftButton);
+    EXPECT_EQ(ed->model().aperture("12")->geometry.size(), before + 1);
+    // Una pista de dos tramos con T (cada clic agrega su tramo; el clic derecho termina).
+    ed->selectTool("track");
+    ed->onMove({60, 70}, false);
+    ed->onPress({60, 70}, Qt::LeftButton);
+    ed->onMove({70, 70}, false);
+    ed->onPress({70, 70}, Qt::LeftButton);
+    ed->onRelease({70, 70}, Qt::RightButton, false);
+    EXPECT_GT(ed->model().aperture("12")->geometry.size(), before + 1);
+    // Guardar: un Gerber nuevo "<nombre>_edit".
+    ASSERT_TRUE(app.editorToObject(true));
+    FlatCAMObj* out = ed->lastCreated();
+    ASSERT_NE(out, nullptr);
+    EXPECT_EQ(out->name(), cu->name() + "_edit");
+    EXPECT_GT(static_cast<GerberObject*>(out)->gerber().solidGeometry().size(), 0u);
     EXPECT_EQ(app.callSource(), "app");
 }
 
