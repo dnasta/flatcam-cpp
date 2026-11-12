@@ -395,12 +395,15 @@ void App::connectSignals() {
     // Los editores conectan sus propios manejadores (connect_canvas_event_handlers) mientras están activos.
     connect(canvas, &PlotCanvas::mouseClicked, this, [this](QPointF w, Qt::MouseButton b) {
         if (geoEditor->active()) geoEditor->onPress(w, b);
+        if (excEditor->active()) excEditor->onPress(w, b);
     });
     connect(canvas, &PlotCanvas::mouseMoved, this, [this](QPointF w) {
         if (geoEditor->active()) geoEditor->onMove(w, QApplication::mouseButtons() & Qt::LeftButton);
+        if (excEditor->active()) excEditor->onMove(w, QApplication::mouseButtons() & Qt::LeftButton);
     });
     connect(canvas, &PlotCanvas::mouseReleased, this, [this](QPointF w, Qt::MouseButton b, bool dragged) {
         if (geoEditor->active()) geoEditor->onRelease(w, b, dragged);
+        if (excEditor->active()) excEditor->onRelease(w, b, dragged);
     });
     // Entrar y salir de los editores.
     for (QAction* a : {ui_->menueditedit, ui_->editgeo_btn})

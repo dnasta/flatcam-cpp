@@ -24,6 +24,7 @@
 #include "gui/objects/GeometryObject.h"
 #include "gui/ProjectIO.h"
 #include "gui/CanvasPicker.h"
+#include "gui/editors/ExcEditor.h"
 #include "gui/editors/GeoEditor.h"
 #include "gui/ExclusionAreasManager.h"
 #include "gui/ToolsDBTab.h"
@@ -3056,6 +3057,49 @@ TEST(GuiGeoEditor, DrawsMovesAndSavesBack) {
     ASSERT_EQ(geo->tools()[1].solidGeometry.size(), 2u);
     EXPECT_EQ(geo->solidGeometry().size(), 2u);
     EXPECT_TRUE(app.ui()->project_frame->isEnabled());
+}
+
+TEST(GuiExcEditor, AddsADrillAndSavesANewExcellon) {
+    App app;
+    FlatCAMObj* exc = app.openExcellon(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-PTH.drl");
+    ASSERT_NE(exc, nullptr);
+    app.ui()->collection_view->selectionModel()->select(app.collection()->indexOf(exc), QItemSelectionModel::Select);
+    app.objectToEditor();
+    ExcEditor* ed = app.excEditor;
+    ASSERT_TRUE(ed->active());
+    EXPECT_EQ(app.callSource(), "exc_editor");
+    // La tabla: los 4 diámetros más los totales (84 + 29 + 4 + 3 agujeros).
+    FCTable* t = ed->panel()->tools_table_exc;
+    ASSERT_EQ(t->rowCount(), 6);
+    EXPECT_EQ(t->item(0, 1)->text(), "0.8000");
+    // sortItems(1) ordena también los totales por su texto: en español "Ranuras totales" va antes.
+    EXPECT_EQ(t->item(5, 2)->text(), "120");
+    // Agregar un agujero con la herramienta 1 (D): se sigue agregando hasta Escape.
+    t->selectRow(0);
+    ed->rowSelected(0);
+    QKeyEvent d(QEvent::KeyPress, Qt::Key_D, Qt::NoModifier);
+    QApplication::sendEvent(app.ui(), &d);
+    EXPECT_EQ(ed->activeToolName(), "drill_add");
+    ed->onMove({50, 50}, false);
+    ed->onPress({50, 50}, Qt::LeftButton);
+    EXPECT_EQ(ed->activeToolName(), "drill_add");
+    EXPECT_EQ(ed->model().storage(0.8)->size(), 85u);
+    QKeyEvent esc(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+    QApplication::sendEvent(app.ui(), &esc);
+    EXPECT_EQ(ed->activeToolName(), "drill_select");
+    // Elegir el nuevo con un clic y moverlo con M.
+    ed->onPress({50.1, 50.05}, Qt::LeftButton);
+    ed->onRelease({50.1, 50.05}, Qt::LeftButton, false);
+    ASSERT_EQ(ed->model().selected.size(), 1u);
+    // Guardar: un Excellon nuevo (el original no cambia); sin cambios en las herramientas, con el mismo nombre (+1).
+    ASSERT_TRUE(app.editorToObject(true));
+    FlatCAMObj* out = ed->lastCreated();
+    ASSERT_NE(out, nullptr);
+    EXPECT_NE(out, exc);
+    const auto& tools = static_cast<ExcellonObject*>(out)->excellon().drillTools();
+    ASSERT_EQ(tools.size(), 4u);
+    EXPECT_EQ(tools.begin()->second.drills.size(), 85u);
+    EXPECT_EQ(app.callSource(), "app");
 }
 
 TEST(GuiThieving, FillsAddsTheRobberBarAndThePlatingMask) {
