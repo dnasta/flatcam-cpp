@@ -36,6 +36,8 @@ add_library(flatcam_core STATIC
     tools/AlignObjects.cpp
     tools/Fiducials.cpp
     tools/CopperThieving.cpp
+    editors/EditorStorage.cpp
+    editors/GeoEditorModel.cpp
     tools/QrCode.cpp
     tools/CornerMarkers.cpp
     tools/ExtractDrills.cpp

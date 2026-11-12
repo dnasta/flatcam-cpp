@@ -48,6 +48,17 @@ add_library(flatcam_gui STATIC
     generated/FiducialsToolUIBase.cpp
     tools/ThievingTool.cpp
     generated/ThievingToolUIBase.cpp
+    AppEditors.cpp
+    editors/GeoEditor.cpp
+    editors/ExcEditor.cpp
+    editors/GrbEditor.cpp
+    generated/GeoEditorUIBase.cpp
+    generated/GeoPaintToolUIBase.cpp
+    generated/GeoTextToolUIBase.cpp
+    generated/GeoTransformToolUIBase.cpp
+    generated/ExcEditorUIBase.cpp
+    generated/GrbEditorUIBase.cpp
+    generated/GrbTransformToolUIBase.cpp
     tools/QRCodeTool.cpp
     generated/QRCodeToolUIBase.cpp
     generated/SubToolUIBase.cpp

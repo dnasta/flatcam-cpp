@@ -13,6 +13,7 @@
 #include <QSpinBox>
 #include <QRadioButton>
 #include <QTextEdit>
+#include <QFontComboBox>
 #include <QPlainTextEdit>
 #include <QSlider>
 #include <QBoxLayout>

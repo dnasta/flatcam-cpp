@@ -28,4 +28,11 @@ ThievingToolUI
 ToolsDB2UI
 AboutDialogUI
 HowtoDialogUI
+GeoEditorUI
+GeoPaintToolUI
+GeoTransformToolUI
+GeoTextToolUI
+ExcEditorUI
+GrbEditorUI
+GrbTransformToolUI
 PreferencesTabUI

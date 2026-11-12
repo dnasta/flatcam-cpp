@@ -119,6 +119,9 @@ public:
 
     ~FlatCAMObj() override;
 
+    /** @brief El panel de propiedades si ya se creó (sin volver a cargarlo). @return El panel, o nulo. */
+    QWidget* builtUi() const { return ui_.get(); }
+
 protected:
     std::unique_ptr<QWidget> ui_;  ///< Panel de propiedades (se crea al pedirlo por primera vez).
 
