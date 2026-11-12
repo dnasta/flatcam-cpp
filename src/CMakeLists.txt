@@ -37,6 +37,7 @@ add_library(flatcam_core STATIC
     tools/Fiducials.cpp
     tools/CopperThieving.cpp
     tools/RulesCheck.cpp
+    tools/SolderPaste.cpp
     editors/EditorStorage.cpp
     editors/GeoEditorModel.cpp
     editors/ExcEditorModel.cpp
