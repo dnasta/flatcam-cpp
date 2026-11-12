@@ -1,0 +1,1631 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "SolderPaste",
+  "name": null,
+  "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Herra. de Pasta de Soldadura"
+   },
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t   QLabel\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-size: 16px;\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "
+       },
+       "text": {
+        "t": "str",
+        "v": "Herra. de Pasta de Soldadura"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QFormLayout",
+      "py": "QFormLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "role": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "object_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Objeto de pasta de soldadura Gerber."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>GERBER</b>:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "role": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "obj_combo",
+         "props": {},
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "role": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       }
+      ],
+      "formRows": true
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": "tools_table_label",
+      "props": {
+       "toolTip": {
+        "t": "str",
+        "v": "Conjunto de herramientas desde el cual el algoritmo\nelegirá los que se usan para dispensar pasta de soldadura."
+       },
+       "text": {
+        "t": "str",
+        "v": "<b>Tabla de herramientas</b>"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QTableWidget",
+      "py": "FCTable",
+      "name": "tools_table",
+      "props": {
+       "minimumSize": {
+        "t": "QSize",
+        "v": [
+         0,
+         72
+        ]
+       },
+       "maximumSize": {
+        "t": "QSize",
+        "v": [
+         16777215,
+         72
+        ]
+       },
+       "contextMenuPolicy": {
+        "t": "int",
+        "v": 2
+       },
+       "verticalScrollBarPolicy": {
+        "t": "int",
+        "v": 1
+       },
+       "rowCount": {
+        "t": "int",
+        "v": 2
+       },
+       "columnCount": {
+        "t": "int",
+        "v": 3
+       }
+      },
+      "table": {
+       "cols": 3,
+       "labels": [
+        "#",
+        "Diámetro",
+        ""
+       ],
+       "hheader": true,
+       "vheader": false,
+       "resize": [
+        2,
+        1,
+        0
+       ],
+       "stretchLast": false,
+       "hiddenCols": [
+        2
+       ]
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QHBoxLayout",
+      "py": "QHBoxLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "addtool_entry_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Diámetro de la nueva herramienta para agregar en la tabla de herramientas"
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Nueva herra. de boquilla:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "addtool_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 0.3
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       0,
+       0
+      ],
+      "colMinWidth": [
+       0,
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "QPushButton",
+         "name": "addtool_btn",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Agregue una nueva herramienta de boquilla a la tabla de herramientas\ncon el diámetro especificado anteriormente."
+          },
+          "text": {
+           "t": "str",
+           "v": "Añadir"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 0,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "QPushButton",
+         "name": "deltool_btn",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Eliminar una selección de herramientas en la tabla de herramientas\nseleccionando primero una fila en la Tabla de herramientas."
+          },
+          "text": {
+           "t": "str",
+           "v": "Borrar"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0
+      ],
+      "colStretch": [
+       0,
+       0,
+       0
+      ],
+      "colMinWidth": [
+       0,
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 32,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El primer paso es seleccionar una serie de herramientas de boquillas para su uso\ny luego opcionalmente modificar los parámetros GCode a continuación."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>PASO 1:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 64,
+        "row": 0,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "Seleccionar herramientas.\nModificar parámetros."
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QFrame",
+      "py": "QFrame",
+      "name": "gcode_frame",
+      "props": {},
+      "layout": {
+       "qt": "QVBoxLayout",
+       "py": "QVBoxLayout",
+       "name": "gcode_box",
+       "props": {},
+       "margins": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spacing": 6,
+       "items": [
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QFormLayout",
+          "py": "QFormLayout",
+          "name": "gcode_form_layout",
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "hspacing": 6,
+          "vspacing": 6,
+          "items": [
+           {
+            "align": 0,
+            "row": 0,
+            "role": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "z_start_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "La altura (Z) cuando comienza la dispensación de pasta de soldadura."
+              },
+              "text": {
+               "t": "str",
+               "v": "Inicio de dispen. Z:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 0,
+            "role": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "z_start_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10000.0
+              },
+              "singleStep": {
+               "t": "double",
+               "v": 0.1
+              },
+              "value": {
+               "t": "double",
+               "v": 0.05
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 1,
+            "role": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "z_dispense_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "La altura (Z) al dispensar pasta de soldadura."
+              },
+              "text": {
+               "t": "str",
+               "v": "Dispensación Z:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 1,
+            "role": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "z_dispense_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10000.0
+              },
+              "singleStep": {
+               "t": "double",
+               "v": 0.1
+              },
+              "value": {
+               "t": "double",
+               "v": 0.1
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 2,
+            "role": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "z_stop_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "La altura (Z) cuando se detiene la dispensación de pasta de soldadura."
+              },
+              "text": {
+               "t": "str",
+               "v": "Parada de dispen. Z:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 2,
+            "role": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "z_stop_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10000.0
+              },
+              "singleStep": {
+               "t": "double",
+               "v": 0.1
+              },
+              "value": {
+               "t": "double",
+               "v": 0.05
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 3,
+            "role": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "z_travel_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "La altura (Z) para viajar entre almohadillas\n(sin dispensar pasta de soldadura)."
+              },
+              "text": {
+               "t": "str",
+               "v": "Viajar Z:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 3,
+            "role": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "z_travel_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10000.0
+              },
+              "singleStep": {
+               "t": "double",
+               "v": 0.1
+              },
+              "value": {
+               "t": "double",
+               "v": 0.1
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 4,
+            "role": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "z_toolchange_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "La altura (Z) para el cambio de herramienta (boquilla)."
+              },
+              "text": {
+               "t": "str",
+               "v": "Cambio de herra. Z:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 4,
+            "role": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "z_toolchange_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10000.0
+              },
+              "singleStep": {
+               "t": "double",
+               "v": 0.1
+              },
+              "value": {
+               "t": "double",
+               "v": 1.0
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 5,
+            "role": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "xy_toolchange_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "La ubicación X, Y para el cambio de herramienta (boquilla).\nEl formato es (x, y) donde x e y son números reales."
+              },
+              "text": {
+               "t": "str",
+               "v": "Cambio de herra X, Y:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 5,
+            "role": 1,
+            "widget": {
+             "qt": "QLineEdit",
+             "py": "FCEntry",
+             "name": "xy_toolchange_entry",
+             "props": {
+              "text": {
+               "t": "str",
+               "v": "0.0, 0.0"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 6,
+            "role": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "frxy_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Avance (velocidad) mientras se mueve en el plano X-Y."
+              },
+              "text": {
+               "t": "str",
+               "v": "Avance X-Y:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 6,
+            "role": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "frxy_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 910000.0
+              },
+              "singleStep": {
+               "t": "double",
+               "v": 0.1
+              },
+              "value": {
+               "t": "double",
+               "v": 150.0
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 7,
+            "role": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "frz_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Avance (velocidad) mientras se mueve verticalmente\n(en el plano Z)."
+              },
+              "text": {
+               "t": "str",
+               "v": "Avance Z:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 7,
+            "role": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "frz_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 910000.0
+              },
+              "singleStep": {
+               "t": "double",
+               "v": 0.1
+              },
+              "value": {
+               "t": "double",
+               "v": 150.0
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 8,
+            "role": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "frz_dispense_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Avance (velocidad) mientras se mueve verticalmente\npara dispensar la posición (en el plano Z)."
+              },
+              "text": {
+               "t": "str",
+               "v": "Avance de Dispens. Z:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 8,
+            "role": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "frz_dispense_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 910000.0
+              },
+              "singleStep": {
+               "t": "double",
+               "v": 0.1
+              },
+              "value": {
+               "t": "double",
+               "v": 1.0
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 9,
+            "role": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "speedfwd_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "La velocidad del dispensador mientras empuja la pasta de soldadura\na través de la boquilla dispensadora."
+              },
+              "text": {
+               "t": "str",
+               "v": "Veloc. del husillo FWD:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 9,
+            "role": 1,
+            "widget": {
+             "qt": "QSpinBox",
+             "py": "FCSpinner",
+             "name": "speedfwd_entry",
+             "props": {
+              "maximum": {
+               "t": "int",
+               "v": 999999
+              },
+              "singleStep": {
+               "t": "int",
+               "v": 1000
+              },
+              "value": {
+               "t": "int",
+               "v": 300
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 10,
+            "role": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "dwellfwd_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Pausa después de la dispensación de soldadura."
+              },
+              "text": {
+               "t": "str",
+               "v": "Morar FWD:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 10,
+            "role": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "dwellfwd_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10000.0
+              },
+              "singleStep": {
+               "t": "double",
+               "v": 0.1
+              },
+              "value": {
+               "t": "double",
+               "v": 1.0
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 11,
+            "role": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "speedrev_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "La velocidad del dispensador mientras se retrae la pasta de soldadura\na través de la boquilla dispensadora."
+              },
+              "text": {
+               "t": "str",
+               "v": "Veloc. del husillo REV:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 11,
+            "role": 1,
+            "widget": {
+             "qt": "QSpinBox",
+             "py": "FCSpinner",
+             "name": "speedrev_entry",
+             "props": {
+              "maximum": {
+               "t": "int",
+               "v": 999999
+              },
+              "singleStep": {
+               "t": "int",
+               "v": 1000
+              },
+              "value": {
+               "t": "int",
+               "v": 200
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 12,
+            "role": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "dwellrev_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Pausa después de que el dispensador de pasta de soldadura se retraiga,\npara permitir el equilibrio de presión."
+              },
+              "text": {
+               "t": "str",
+               "v": "Morar REV:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 12,
+            "role": 1,
+            "widget": {
+             "qt": "QDoubleSpinBox",
+             "py": "FCDoubleSpinner",
+             "name": "dwellrev_entry",
+             "props": {
+              "decimals": {
+               "t": "int",
+               "v": 4
+              },
+              "maximum": {
+               "t": "double",
+               "v": 10000.0
+              },
+              "singleStep": {
+               "t": "double",
+               "v": 0.1
+              },
+              "value": {
+               "t": "double",
+               "v": 1.0
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 13,
+            "role": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": null,
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Archivos que controlan la generación de GCode."
+              },
+              "text": {
+               "t": "str",
+               "v": "Postprocesador:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 13,
+            "role": 1,
+            "widget": {
+             "qt": "QComboBox",
+             "py": "FCComboBox",
+             "name": "pp_combo",
+             "props": {},
+             "items": [],
+             "currentIndex": -1
+            }
+           }
+          ],
+          "formRows": true
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QFrame",
+      "py": "QFrame",
+      "name": "generation_frame",
+      "props": {},
+      "layout": {
+       "qt": "QVBoxLayout",
+       "py": "QVBoxLayout",
+       "name": "generation_box",
+       "props": {},
+       "margins": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spacing": 6,
+       "items": [
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QGridLayout",
+          "py": "QGridLayout",
+          "name": null,
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "hspacing": 6,
+          "vspacing": 6,
+          "rowStretch": [
+           0
+          ],
+          "colStretch": [
+           0,
+           0,
+           0
+          ],
+          "colMinWidth": [
+           0,
+           0,
+           0
+          ],
+          "items": [
+           {
+            "align": 0,
+            "row": 0,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": null,
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "El segundo paso es crear una dispensación de pasta de soldadura\ngeometría de un archivo Gerber de máscara de pasta de soldadura."
+              },
+              "text": {
+               "t": "str",
+               "v": "<b>PASO 2:</b>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 0,
+            "col": 2,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QPushButton",
+             "py": "QPushButton",
+             "name": "soldergeo_btn",
+             "props": {
+              "font": {
+               "t": "QFont",
+               "v": {
+                "bold": true
+               }
+              },
+              "toolTip": {
+               "t": "str",
+               "v": "Generar geometría de dispensación de pasta de soldadura."
+              },
+              "styleSheet": {
+               "t": "str",
+               "v": "\n\t\t\t\t\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t\t\t\t\t   "
+              },
+              "text": {
+               "t": "str",
+               "v": "Generar Geo"
+              }
+             }
+            }
+           }
+          ]
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QFormLayout",
+          "py": "QFormLayout",
+          "name": null,
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "hspacing": 6,
+          "vspacing": 6,
+          "items": [
+           {
+            "align": 0,
+            "row": 0,
+            "role": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "geo_object_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Objeto de pasta de soldadura de geometría.\nEl nombre del objeto tiene que terminar en:\n'_solderpaste' como protección."
+              },
+              "text": {
+               "t": "str",
+               "v": "Resultado Geo:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 0,
+            "role": 1,
+            "widget": {
+             "qt": "QComboBox",
+             "py": "FCComboBox",
+             "name": "geo_obj_combo",
+             "props": {},
+             "items": [],
+             "currentIndex": -1
+            }
+           }
+          ],
+          "formRows": true
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QGridLayout",
+          "py": "QGridLayout",
+          "name": null,
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "hspacing": 6,
+          "vspacing": 6,
+          "rowStretch": [
+           0
+          ],
+          "colStretch": [
+           0,
+           0,
+           0
+          ],
+          "colMinWidth": [
+           0,
+           0,
+           0
+          ],
+          "items": [
+           {
+            "align": 0,
+            "row": 0,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": null,
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "El tercer paso es seleccionar una geometría de distribución de pasta de soldadura,\ny luego generar un objeto CNCJob.\n\nRECUERDE: si desea crear un CNCJob con nuevos parámetros,\nprimero necesitas generar una geometría con esos nuevos parámetros,\ny solo después de eso puede generar un CNCJob actualizado."
+              },
+              "text": {
+               "t": "str",
+               "v": "<b>PASO 3:</b>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 0,
+            "col": 2,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QPushButton",
+             "py": "QPushButton",
+             "name": "solder_gcode_btn",
+             "props": {
+              "font": {
+               "t": "QFont",
+               "v": {
+                "bold": true
+               }
+              },
+              "toolTip": {
+               "t": "str",
+               "v": "Generar GCodelo para dispensar pasta de soldadura\nen almohadillas de PCB."
+              },
+              "styleSheet": {
+               "t": "str",
+               "v": "\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "
+              },
+              "text": {
+               "t": "str",
+               "v": "Generar GCode"
+              }
+             }
+            }
+           }
+          ]
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QFormLayout",
+          "py": "QFormLayout",
+          "name": null,
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "hspacing": 6,
+          "vspacing": 6,
+          "items": [
+           {
+            "align": 0,
+            "row": 0,
+            "role": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "cnc_object_label",
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "CNCJob soldar pegar objeto.\nPara habilitar la sección de guardar GCode,\nel nombre del objeto debe terminar en:\n'_solderpaste' como protección."
+              },
+              "text": {
+               "t": "str",
+               "v": "Resultado del CNC:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 0,
+            "role": 1,
+            "widget": {
+             "qt": "QComboBox",
+             "py": "FCComboBox",
+             "name": "cnc_obj_combo",
+             "props": {},
+             "items": [],
+             "currentIndex": -1
+            }
+           }
+          ],
+          "formRows": true
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QGridLayout",
+          "py": "QGridLayout",
+          "name": null,
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "hspacing": 6,
+          "vspacing": 6,
+          "rowStretch": [
+           0,
+           0
+          ],
+          "colStretch": [
+           0,
+           0,
+           0
+          ],
+          "colMinWidth": [
+           0,
+           0,
+           0
+          ],
+          "items": [
+           {
+            "align": 0,
+            "row": 0,
+            "col": 0,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": null,
+             "props": {
+              "toolTip": {
+               "t": "str",
+               "v": "Cuarto paso (y último) es seleccionar un CNCJob hecho de\nuna geometría de dispensación de pasta de soldadura, y luego ver / guardar su código GC."
+              },
+              "text": {
+               "t": "str",
+               "v": "<b>PASO 4:</b>"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 0,
+            "col": 2,
+            "rs": 1,
+            "cs": 1,
+            "widget": {
+             "qt": "QPushButton",
+             "py": "QPushButton",
+             "name": "solder_gcode_view_btn",
+             "props": {
+              "font": {
+               "t": "QFont",
+               "v": {
+                "bold": true
+               }
+              },
+              "toolTip": {
+               "t": "str",
+               "v": "Ver el GCode generado para la dispensación de pasta de soldadura\nen almohadillas de PCB."
+              },
+              "styleSheet": {
+               "t": "str",
+               "v": "\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "
+              },
+              "text": {
+               "t": "str",
+               "v": "Ver GCode"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "row": 1,
+            "col": 0,
+            "rs": 1,
+            "cs": 3,
+            "widget": {
+             "qt": "QPushButton",
+             "py": "QPushButton",
+             "name": "solder_gcode_save_btn",
+             "props": {
+              "font": {
+               "t": "QFont",
+               "v": {
+                "bold": true
+               }
+              },
+              "toolTip": {
+               "t": "str",
+               "v": "Guarde el GCode generado para la dispensación de pasta de soldadura\nen almohadillas de PCB, a un archivo."
+              },
+              "styleSheet": {
+               "t": "str",
+               "v": "\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "
+              },
+              "text": {
+               "t": "str",
+               "v": "Guardar GCode"
+              }
+             }
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "QPushButton",
+      "name": "reset_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Restablecerá los parámetros de la herramienta."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "
+       },
+       "text": {
+        "t": "str",
+        "v": "Restablecer la Herramienta"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/reset32.png"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "SolderPasteToolUI"
+}

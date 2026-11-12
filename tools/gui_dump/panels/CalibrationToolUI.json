@@ -1,0 +1,1642 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "ToolCalibration",
+  "name": null,
+  "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Herramienta de Calibración"
+   },
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Herramienta de Calibración"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": null,
+      "props": {}
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1,
+       0
+      ],
+      "colMinWidth": [
+       0,
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "gcode_title_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Parámetros utilizados al crear el GCode en esta herramienta."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Parámetros:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Altura (Z) para viajar entre los puntos."
+          },
+          "text": {
+           "t": "str",
+           "v": "Viaje Z:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "travelz_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -10000.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 2.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Altura (Z) para verificar el punto."
+          },
+          "text": {
+           "t": "str",
+           "v": "Verificación Z:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "verz_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -10000.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 0.1
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "zeroz_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Incluya una secuencia para poner a cero la altura (Z)\nde la herramienta de verificación."
+          },
+          "text": {
+           "t": "str",
+           "v": "Cero la Z para Herram."
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Altura (Z) para montar la sonda de verificación."
+          },
+          "text": {
+           "t": "str",
+           "v": "Cambio de herramienta Z:"
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "toolchangez_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 15.0
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Posición de cambio de herramienta X, Y.\nSi no se ingresa ningún valor, entonces el actual\n(x, y) se utilizará el punto,"
+          },
+          "text": {
+           "t": "str",
+           "v": "Cambio de herra X, Y:"
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLineEdit",
+         "py": "FCEntry",
+         "name": "toolchange_xy_entry",
+         "props": {
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El segundo punto en la verificación de Gcode puede ser:\n- arriba a la izquierda -> el usuario alineará la PCB verticalmente\n- abajo a la derecha -> el usuario alineará la PCB horizontalmente"
+          },
+          "text": {
+           "t": "str",
+           "v": "Segundo punto:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "second_point_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Arriba a la izquierda",
+           "value": "tl"
+          },
+          {
+           "label": "Abajo a la derecha",
+           "value": "br"
+          }
+         ],
+         "vertical": true,
+         "stretch": true,
+         "value": "tl"
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 9,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Elija cuatro puntos haciendo clic en el lienzo.\nEsos cuatro puntos deberían estar en los cuatro\n(tanto como sea posible) esquinas del objeto."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>PASO 1: Adquiera puntos de calibración</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 11,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "cal_source_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "La fuente de los puntos de calibración.\nPuede ser:\n- Objeto -> haga clic en un agujero geo para Excellon o una almohadilla para Gerber\n- Libre -> haga clic libremente en el lienzo para adquirir los puntos de calibración"
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Tipo de Fuente:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 11,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "cal_source_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "Objeto",
+           "value": "object"
+          },
+          {
+           "label": "Libre",
+           "value": "free"
+          }
+         ],
+         "vertical": false,
+         "stretch": false,
+         "value": "object"
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "obj_type_label",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "Tipo de objeto:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "obj_type_combo",
+         "props": {
+          "currentText": {
+           "t": "str",
+           "v": "Excellon"
+          }
+         },
+         "items": [
+          "Gerber",
+          "Excellon"
+         ],
+         "currentIndex": 1
+        }
+       },
+       {
+        "align": 0,
+        "row": 13,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "object_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Objeto FlatCAM que se utilizará como fuente de puntos de referencia."
+          },
+          "text": {
+           "t": "str",
+           "v": "Selección de objeto de origen:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 14,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "object_combo",
+         "props": {},
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 15,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "points_table_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Contiene los puntos de calibración esperados y el\nlos medidos."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Puntos de calibración</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 16,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QTableWidget",
+         "py": "FCTable",
+         "name": "points_table",
+         "props": {
+          "minimumSize": {
+           "t": "QSize",
+           "v": [
+            0,
+            258
+           ]
+          },
+          "maximumSize": {
+           "t": "QSize",
+           "v": [
+            16777215,
+            259
+           ]
+          },
+          "verticalScrollBarPolicy": {
+           "t": "int",
+           "v": 1
+          },
+          "sizeAdjustPolicy": {
+           "t": "int",
+           "v": 2
+          },
+          "selectionBehavior": {
+           "t": "int",
+           "v": 1
+          },
+          "rowCount": {
+           "t": "int",
+           "v": 8
+          },
+          "columnCount": {
+           "t": "int",
+           "v": 4
+          }
+         },
+         "table": {
+          "cols": 4,
+          "labels": [
+           "#",
+           "Nombre",
+           "Objetivo",
+           "Delta encontrado"
+          ],
+          "hheader": true,
+          "vheader": false,
+          "resize": [
+           2,
+           2,
+           1,
+           1
+          ],
+          "stretchLast": false,
+          "hiddenCols": []
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 17,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "QPushButton",
+         "name": "start_button",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Elija cuatro puntos haciendo clic en el lienzo si la opción de origen\nes 'libre' o está dentro de la geometría del objeto si la fuente es 'objeto'.\nEsos cuatro puntos deben estar en los cuatro cuadrados de\nel objeto."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "
+          },
+          "text": {
+           "t": "str",
+           "v": "Obtener puntos"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 18,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 19,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 20,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Genere un archivo GCode para localizar y alinear la PCB utilizando\nLos cuatro puntos adquiridos anteriormente.\nLa secuencia de puntos es:\n- primer punto -> establecer el origen\n- segundo punto -> punto de alineación. Puede ser: arriba a la izquierda o abajo a la derecha.\n- tercer punto -> punto de control. Puede ser: arriba a la izquierda o abajo a la derecha.\n- cuarto punto -> punto de verificación final. Solo para evaluación."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>PASO 2: Verificación GCode</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 21,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "QPushButton",
+         "name": "gcode_button",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Genere un archivo GCode para localizar y alinear la PCB utilizando\nLos cuatro puntos adquiridos anteriormente.\nLa secuencia de puntos es:\n- primer punto -> establecer el origen\n- segundo punto -> punto de alineación. Puede ser: arriba a la izquierda o abajo a la derecha.\n- tercer punto -> punto de control. Puede ser: arriba a la izquierda o abajo a la derecha.\n- cuarto punto -> punto de verificación final. Solo para evaluación."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "
+          },
+          "text": {
+           "t": "str",
+           "v": "Generar GCode"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 22,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 23,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 24,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Calcular factores de escala y sesgo basados en las diferencias (delta)\nencontrado al verificar el patrón de PCB. Las diferencias deben llenarse\nen los campos encontrados (Delta)."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>PASO 3: Ajustes</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 25,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "QPushButton",
+         "name": "generate_factors_button",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Calcular factores de escala y sesgo basados en las diferencias (delta)\nencontrado al verificar el patrón de PCB. Las diferencias deben llenarse\nen los campos encontrados (Delta)."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "
+          },
+          "text": {
+           "t": "str",
+           "v": "Calcular factores"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 26,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 27,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 28,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Generar un archivo GCode de verificación ajustado con\nLos factores anteriores."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>PASO 4: Código GC ajustado</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 29,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "scalex_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Factor para la acción de escala sobre el eje X."
+          },
+          "text": {
+           "t": "str",
+           "v": "Factor de escala X:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 29,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "scalex_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 1.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 30,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "scaley_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Factor de acción de escala sobre eje Y."
+          },
+          "text": {
+           "t": "str",
+           "v": "Factor de escala Y:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 30,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "scaley_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 10000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 1.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 31,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "QPushButton",
+         "name": "scale_button",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Aplicar factores de escala en los puntos de calibración."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t\t\t  QPushButton\n\t\t\t\t\t\t\t\t\t  {\n\t\t\t\t\t\t\t\t\t\t  font-weight: bold;\n\t\t\t\t\t\t\t\t\t  }\n\t\t\t\t\t\t\t\t\t  "
+          },
+          "text": {
+           "t": "str",
+           "v": "Aplicar factores de escala"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 32,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "skewx_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Ángulo, en grados.\nNúmero Real entre -360 y 359."
+          },
+          "text": {
+           "t": "str",
+           "v": "Ángulo de Inclinar X:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 32,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "skewx_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -360.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 360.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 33,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "skewy_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Ángulo, en grados.\nNúmero Real entre -360 y 359."
+          },
+          "text": {
+           "t": "str",
+           "v": "Ángulo de Inclinar Y:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 33,
+        "col": 1,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "skewy_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -360.0
+          },
+          "maximum": {
+           "t": "double",
+           "v": 360.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 34,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "QPushButton",
+         "name": "skew_button",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Aplicar factores de inclinación en los puntos de calibración."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t\t\t  QPushButton\n\t\t\t\t\t\t\t\t\t  {\n\t\t\t\t\t\t\t\t\t\t  font-weight: bold;\n\t\t\t\t\t\t\t\t\t  }\n\t\t\t\t\t\t\t\t\t  "
+          },
+          "text": {
+           "t": "str",
+           "v": "Aplicar factores Sesgados"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 42,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "QPushButton",
+         "name": "adj_gcode_button",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Generar un archivo GCode de verificación ajustado con\nLos factores establecidos anteriormente.\nLos parámetros GCode se pueden reajustar\nantes de hacer clic en este botón."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "
+          },
+          "text": {
+           "t": "str",
+           "v": "Generar código GC ajustado"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 43,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 44,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 45,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Ajuste los objetos FlatCAM\ncon los factores determinados y verificados anteriormente."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>PASO 5: Calibrar objetos FlatCAM</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 46,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "adj_object_type_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Tipo del objeto FlatCAM que se ajustará."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tipo de objeto ajustado:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 47,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "adj_object_type_combo",
+         "props": {
+          "currentText": {
+           "t": "str",
+           "v": "Gerber"
+          }
+         },
+         "items": [
+          "Gerber",
+          "Excellon",
+          "Geometría"
+         ],
+         "currentIndex": 0
+        }
+       },
+       {
+        "align": 0,
+        "row": 48,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "adj_object_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El objeto FlatCAM a ajustar."
+          },
+          "text": {
+           "t": "str",
+           "v": "Selección de objeto ajustada:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 49,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "adj_object_combo",
+         "props": {},
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 50,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "QPushButton",
+         "name": "cal_button",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Ajustar (escalar y / o sesgar) los objetos\ncon los factores determinados anteriormente."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "
+          },
+          "text": {
+           "t": "str",
+           "v": "Calibrar"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 51,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 52,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": null,
+         "props": {}
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "QPushButton",
+      "name": "reset_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Restablecerá los parámetros de la herramienta."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "
+       },
+       "text": {
+        "t": "str",
+        "v": "Restablecer la Herramienta"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/reset32.png"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "CalibrationToolUI"
+}

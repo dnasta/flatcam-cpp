@@ -1,0 +1,1572 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "RulesCheck",
+  "name": null,
+  "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Verificar Reglas"
+   },
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Verificar Reglas"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": "grid_layout",
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       3,
+       0
+      ],
+      "colMinWidth": [
+       0,
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "gerber_title_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Objetos de Gerber para los cuales verificar las reglas."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>GERBER</b>:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 0,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "all_obj_cb",
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "copper_t_object_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El objeto de cobre Top Gerber para el que se verifican las reglas."
+          },
+          "text": {
+           "t": "str",
+           "v": "Top:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "copper_t_object",
+         "props": {
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         },
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "copper_t_cb",
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "copper_b_object_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El objeto de cobre de Gerber inferior para el que se verifican las reglas."
+          },
+          "text": {
+           "t": "str",
+           "v": "Inferior:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "copper_b_object",
+         "props": {
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         },
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "copper_b_cb",
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "sm_t_object_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El objeto Máscara de soldadura de Gerber superior para el que se verifican las reglas."
+          },
+          "text": {
+           "t": "str",
+           "v": "SM Top:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "sm_t_object",
+         "props": {
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         },
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "sm_t_cb",
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "sm_b_object_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El objeto de máscara de soldadura de Gerber inferior para el que se verifican las reglas."
+          },
+          "text": {
+           "t": "str",
+           "v": "SM Inferior:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "sm_b_object",
+         "props": {
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         },
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "sm_b_cb",
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "ss_t_object_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El objeto de serigrafía Top Gerber para el que se verifican las reglas."
+          },
+          "text": {
+           "t": "str",
+           "v": "Top de serigrafía:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "ss_t_object",
+         "props": {
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         },
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "ss_t_cb",
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "ss_b_object_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El objeto Serigrafía inferior de Gerber para el que se verifican las reglas."
+          },
+          "text": {
+           "t": "str",
+           "v": "Serigrafía Inferior:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "ss_b_object",
+         "props": {
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         },
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "ss_b_cb",
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "outline_object_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El objeto Esquema de Gerber (Recorte) para el que se verifican las reglas."
+          },
+          "text": {
+           "t": "str",
+           "v": "Contorno:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "outline_object",
+         "props": {
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         },
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "out_cb",
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 9,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "excellon_title_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Excellon objetos para los cuales verificar las reglas."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>EXCELLON</b>:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "e1_object_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Objeto Excellon para el cual verificar las reglas.\nContiene los agujeros chapados o un contenido general del archivo Excellon."
+          },
+          "text": {
+           "t": "str",
+           "v": "Excellon 1:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "e1_object",
+         "props": {
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         },
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "e1_cb",
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 11,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "e2_object_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Objeto Excellon para el cual verificar las reglas.\nSostiene los agujeros no chapados."
+          },
+          "text": {
+           "t": "str",
+           "v": "Excellon 2:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 11,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "e2_object",
+         "props": {
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         },
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 11,
+        "col": 2,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "e2_cb",
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 0,
+        "rs": 1,
+        "cs": 3,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {}
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QCheckBox",
+      "py": "FCCheckBox",
+      "name": "all_cb",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Esto marca / desmarca todas las reglas a continuación."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\tQCheckBox {font-weight: bold; color: green}\n\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Todas las reglas"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QFormLayout",
+      "py": "QFormLayout",
+      "name": "form_layout_1",
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "role": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "role": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "trace_size_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esto comprueba si se cumple el tamaño mínimo para las trazas."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tamaño de traza:"
+          },
+          "checked": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "trace_size_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Tamaño de traza mínimo aceptable."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor mínimo:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "role": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "trace_size_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 1000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 0.25
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "role": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "clearance_copper2copper_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esto comprueba si la distancia mínima entre cobre\nhuellas se cumplen."
+          },
+          "text": {
+           "t": "str",
+           "v": "Distancia de Cobre a Cobre:"
+          },
+          "checked": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "clearance_copper2copper_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Valor mínimo de distancia aceptable."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor mínimo:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "role": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "clearance_copper2copper_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 1000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 0.25
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "role": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "clearance_copper2ol_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esto comprueba si la distancia mínima entre cobre\nhuellas y el esquema se cumple."
+          },
+          "text": {
+           "t": "str",
+           "v": "Distancia de Cobre a Contorno:"
+          },
+          "checked": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "clearance_copper2ol_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Valor mínimo de distancia aceptable."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor mínimo:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "role": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "clearance_copper2ol_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 1000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 1.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "role": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "clearance_silk2silk_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esto comprueba si la distancia mínima entre serigrafía\nhuellas y huellas de serigrafía se cumplen."
+          },
+          "text": {
+           "t": "str",
+           "v": "Distancia de Serigrafía a Serigrafía:"
+          },
+          "checked": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "clearance_silk2silk_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Valor mínimo de distancia aceptable."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor mínimo:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "role": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "clearance_silk2silk_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 1000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 0.25
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 9,
+        "role": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "clearance_silk2sm_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esto comprueba si la distancia mínima entre serigrafía\nTraces y soldermask traces se cumplen."
+          },
+          "text": {
+           "t": "str",
+           "v": "Serigrafía para Soldar Máscara Distancia:"
+          },
+          "checked": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "clearance_silk2sm_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Valor mínimo de distancia aceptable."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor mínimo:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "role": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "clearance_silk2sm_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 1000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 0.25
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 11,
+        "role": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "clearance_silk2ol_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esto verifica si el espacio libre mínimo entre la serigrafía\nhuellas y el contorno se cumple."
+          },
+          "text": {
+           "t": "str",
+           "v": "Serigrafía para Contorno Distancia:"
+          },
+          "checked": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "clearance_silk2ol_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Valor mínimo de distancia aceptable."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor mínimo:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "role": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "clearance_silk2ol_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 1000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 1.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 13,
+        "role": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "clearance_sm2sm_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esto verifica si la distancia mínima entre la máscara de soldadura\nrastros y rastros de máscara de soldadura se cumplen."
+          },
+          "text": {
+           "t": "str",
+           "v": "Astilla de máscara de soldadura mínima:"
+          },
+          "checked": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 14,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "clearance_sm2sm_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Valor mínimo de distancia aceptable."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor mínimo:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 14,
+        "role": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "clearance_sm2sm_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 1000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 0.25
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 15,
+        "role": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "ring_integrity_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esto verifica si queda el anillo de cobre mínimo al perforar\nSe encuentra un agujero en una almohadilla."
+          },
+          "text": {
+           "t": "str",
+           "v": "Anillo anular mínimo:"
+          },
+          "checked": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 16,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "ring_integrity_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Valor mínimo aceptable del anillo."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor mínimo:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 16,
+        "role": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "ring_integrity_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 1000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 0.3
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 17,
+        "role": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": null,
+         "props": {}
+        }
+       },
+       {
+        "align": 0,
+        "row": 18,
+        "role": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "clearance_d2d_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esto verifica si la distancia mínima entre un taladro\ny se encuentra otro taladro."
+          },
+          "text": {
+           "t": "str",
+           "v": "Distancia entre Agujeros:"
+          },
+          "checked": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 19,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "clearance_d2d_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Valor mínimo de distancia aceptable."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor mínimo:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 19,
+        "role": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "clearance_d2d_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 1000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 0.3
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 20,
+        "role": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "drill_size_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Esto comprueba si los agujeros de perforación\nLos tamaños están por encima del umbral."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tamaño del Agujero:"
+          },
+          "checked": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 21,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "drill_size_lbl",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Tamaño mínimo aceptable de perforación."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor mínimo:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 21,
+        "role": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "drill_size_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "maximum": {
+           "t": "double",
+           "v": 1000.0
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.1
+          },
+          "value": {
+           "t": "double",
+           "v": 0.3
+          }
+         }
+        }
+       }
+      ],
+      "formRows": true
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QHBoxLayout",
+      "py": "QHBoxLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "run_button",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Panelizar el objeto especificado alrededor del cuadro especificado.\nEn otras palabras, crea múltiples copias del objeto fuente,\ndispuestos en una matriz 2D de filas y columnas."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+          },
+          "text": {
+           "t": "str",
+           "v": "Ejecutar Reglas Verificar"
+          },
+          "icon": {
+           "t": "QIcon",
+           "v": ":/images/rules32.png"
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "reset_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Restablecerá los parámetros de la herramienta."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Restablecer la Herramienta"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/reset32.png"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "RulesToolUI"
+}

@@ -1,0 +1,1639 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "Film",
+  "name": null,
+  "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Película de PCB"
+   },
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Película de PCB"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "FCLabel",
+      "name": null,
+      "props": {}
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "tf_type_obj_combo_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Especifique el tipo de objeto para el cual crear la película.\nEl objeto puede ser de tipo: Gerber o Geometry.\nLa selección aquí decide el tipo de objetos que serán\nen el cuadro combinado de objeto de película."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Objeto</b>:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 0,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "tf_type_obj_combo",
+         "props": {},
+         "choices": [
+          {
+           "label": "Gerber",
+           "value": "grb"
+          },
+          {
+           "label": "Geometría",
+           "value": "geo"
+          }
+         ],
+         "vertical": false,
+         "stretch": true,
+         "value": "grb"
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "tf_object_combo",
+         "props": {},
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "tf_type_box_combo_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Especifique el tipo de objeto que se utilizará como contenedor para\ncreación cinematográfica. Puede ser: tipo Gerber o Geometría. La selección aquí decide el tipo de objetos que serán\nen el cuadro combinado Objeto de caja."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tipo de caja:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "tf_type_box_combo",
+         "props": {},
+         "choices": [
+          {
+           "label": "Gerber",
+           "value": "grb"
+          },
+          {
+           "label": "Geometría",
+           "value": "geo"
+          }
+         ],
+         "vertical": false,
+         "stretch": true,
+         "value": "grb"
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "tf_box_combo",
+         "props": {},
+         "items": [],
+         "currentIndex": -1
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 5,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "film_adj_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "En algún momento, las impresoras distorsionarán la forma de impresión, especialmente los tipos de láser.\nEsta sección proporciona las herramientas para compensar las distorsiones de impresión."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Ajustes de la película</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "film_scale_cb",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Un valor mayor que 1 estirará la película\nmientras que un valor menor que 1 lo sacudirá."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\tQCheckBox {font-weight: bold; color: black}\n\t\t\t"
+          },
+          "text": {
+           "t": "str",
+           "v": "Escalar la Geo de la Película"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "film_scalex_label",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "Factor X:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 7,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "film_scalex_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -999.9999
+          },
+          "maximum": {
+           "t": "double",
+           "v": 999.9999
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.01
+          },
+          "value": {
+           "t": "double",
+           "v": 1.0
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "film_scaley_label",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "Factor Y:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 8,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "film_scaley_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -999.9999
+          },
+          "maximum": {
+           "t": "double",
+           "v": 999.9999
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.01
+          },
+          "value": {
+           "t": "double",
+           "v": 1.0
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 9,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 10,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "film_skew_cb",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Los valores positivos se sesgarán a la derecha.\nmientras que los valores negativos se desviarán a la izquierda."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\tQCheckBox {font-weight: bold; color: black}\n\t\t\t"
+          },
+          "text": {
+           "t": "str",
+           "v": "Inclina la Geo de la Película"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 11,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "film_skewx_label",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "Ángulo X:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 11,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "film_skewx_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -999.9999
+          },
+          "maximum": {
+           "t": "double",
+           "v": 999.9999
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.01
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "film_skewy_label",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "Ángulo Y:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 12,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "film_skewy_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -999.9999
+          },
+          "maximum": {
+           "t": "double",
+           "v": 999.9999
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.01
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 13,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "film_skew_ref_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El punto de referencia que se utilizará como origen para el sesgo.\nPuede ser uno de los cuatro puntos del cuadro delimitador de geometría."
+          },
+          "text": {
+           "t": "str",
+           "v": "Referencia:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 13,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "film_skew_reference",
+         "props": {
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         },
+         "choices": [
+          {
+           "label": "Abajo a la izquierda",
+           "value": "bottomleft"
+          },
+          {
+           "label": "Arriba a la izquierda",
+           "value": "topleft"
+          },
+          {
+           "label": "Abajo a la derecha",
+           "value": "bottomright"
+          },
+          {
+           "label": "Arriba a la derecha",
+           "value": "topright"
+          }
+         ],
+         "vertical": true,
+         "stretch": false,
+         "value": "bottomleft"
+        }
+       },
+       {
+        "align": 0,
+        "row": 14,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 15,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "film_mirror_cb",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Refleje la geometría de la película en el eje seleccionado o en ambos."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\tQCheckBox {font-weight: bold; color: black}\n\t\t\t"
+          },
+          "text": {
+           "t": "str",
+           "v": "Refleja la Geo de la Película"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 16,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "film_mirror_axis_label",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "Eje espejo:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 16,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "film_mirror_axis",
+         "props": {
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         },
+         "choices": [
+          {
+           "label": "Ninguno",
+           "value": "none"
+          },
+          {
+           "label": "X",
+           "value": "x"
+          },
+          {
+           "label": "Y",
+           "value": "y"
+          },
+          {
+           "label": "Ambas",
+           "value": "both"
+          }
+         ],
+         "vertical": false,
+         "stretch": false,
+         "value": "none"
+        }
+       },
+       {
+        "align": 0,
+        "row": 17,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 18,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "film_param_label",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "<b>Parámetros de la película</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 19,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "film_scale_stroke_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Escale el grosor de trazo de línea de cada entidad en el archivo SVG.\nSignifica que la línea que envuelve cada característica SVG será más gruesa o más delgada,\npor lo tanto, las características finas pueden verse más afectadas por este parámetro."
+          },
+          "text": {
+           "t": "str",
+           "v": "Trazo de escala:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 19,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "film_scale_stroke_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -999.9999
+          },
+          "maximum": {
+           "t": "double",
+           "v": 999.9999
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.01
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 21,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "film_type_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Genera una película negra positiva o una película negativa.\nPositivo significa que imprimirá las características.\nCon negro sobre un lienzo blanco.\nNegativo significa que imprimirá las características.\nCon blanco sobre un lienzo negro.\nEl formato de la película es SVG."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tipo de Filme:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 21,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "film_type",
+         "props": {},
+         "choices": [
+          {
+           "label": "Positivo",
+           "value": "pos"
+          },
+          {
+           "label": "Negativa",
+           "value": "neg"
+          }
+         ],
+         "vertical": false,
+         "stretch": false,
+         "value": "neg"
+        }
+       },
+       {
+        "align": 0,
+        "row": 22,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "boundary_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Especifique un borde alrededor del objeto.\nSólo para película negativa.\nAyuda si usamos como objeto de caja lo mismo\nobjeto como en el objeto de la película. Se creará una gruesa\nbarra negra alrededor de la impresión real que permite una\nmejor delimitación de las características del esquema que son de\nColor blanco como el resto y que puede confundir con el\nEntorno si no fuera por esta frontera."
+          },
+          "text": {
+           "t": "str",
+           "v": "Frontera:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 22,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QDoubleSpinBox",
+         "py": "FCDoubleSpinner",
+         "name": "boundary_entry",
+         "props": {
+          "decimals": {
+           "t": "int",
+           "v": 4
+          },
+          "minimum": {
+           "t": "double",
+           "v": -999.9999
+          },
+          "maximum": {
+           "t": "double",
+           "v": 999.9999
+          },
+          "singleStep": {
+           "t": "double",
+           "v": 0.01
+          },
+          "value": {
+           "t": "double",
+           "v": 1.0
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 23,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "punch_cb",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Cuando está marcada, la película generada tendrá agujeros en las almohadillas cuando\nLa película generada es positiva. Esto se hace para ayudar a perforar,\ncuando se hace manualmente."
+          },
+          "text": {
+           "t": "str",
+           "v": "Perforar Agujeros"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QFrame",
+      "py": "QFrame",
+      "name": "punch_frame",
+      "props": {
+       "hidden": {
+        "t": "bool",
+        "v": true
+       }
+      },
+      "layout": {
+       "qt": "QGridLayout",
+       "py": "QGridLayout",
+       "name": null,
+       "props": {},
+       "margins": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spacing": 6,
+       "hspacing": 6,
+       "vspacing": 6,
+       "rowStretch": [
+        0,
+        0,
+        0
+       ],
+       "colStretch": [
+        0,
+        1
+       ],
+       "colMinWidth": [
+        0,
+        0
+       ],
+       "items": [
+        {
+         "align": 0,
+         "row": 0,
+         "col": 0,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QLabel",
+          "py": "FCLabel",
+          "name": "source_label",
+          "props": {
+           "toolTip": {
+            "t": "str",
+            "v": "La fuente del orificio de perforación puede ser:\n- Excellon -> un centro de agujeros Excellon servirá como referencia.\n- Centro de almohadillas -> intentará usar el centro de almohadillas como referencia."
+           },
+           "text": {
+            "t": "str",
+            "v": "Fuente:"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 0,
+         "col": 1,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QWidget",
+          "py": "RadioSet",
+          "name": "source_punch",
+          "props": {},
+          "choices": [
+           {
+            "label": "Excellon",
+            "value": "exc"
+           },
+           {
+            "label": "Centro de la almohadilla",
+            "value": "pad"
+           }
+          ],
+          "vertical": false,
+          "stretch": false,
+          "value": "exc"
+         }
+        },
+        {
+         "align": 0,
+         "row": 1,
+         "col": 0,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QLabel",
+          "py": "FCLabel",
+          "name": "exc_label",
+          "props": {
+           "toolTip": {
+            "t": "str",
+            "v": "Retire la geometría de Excellon de la película para crear los agujeros en las almohadillas."
+           },
+           "text": {
+            "t": "str",
+            "v": "Objeto Excellon:"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 1,
+         "col": 1,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QComboBox",
+          "py": "FCComboBox",
+          "name": "exc_combo",
+          "props": {},
+          "items": [],
+          "currentIndex": -1
+         }
+        },
+        {
+         "align": 0,
+         "row": 2,
+         "col": 0,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QLabel",
+          "py": "FCLabel",
+          "name": "punch_size_label",
+          "props": {
+           "toolTip": {
+            "t": "str",
+            "v": "El valor aquí controlará qué tan grande es el agujero de perforación en los pads."
+           },
+           "text": {
+            "t": "str",
+            "v": "Tamaño de perforación:"
+           },
+           "hidden": {
+            "t": "bool",
+            "v": true
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "row": 2,
+         "col": 1,
+         "rs": 1,
+         "cs": 1,
+         "widget": {
+          "qt": "QDoubleSpinBox",
+          "py": "FCDoubleSpinner",
+          "name": "punch_size_spinner",
+          "props": {
+           "decimals": {
+            "t": "int",
+            "v": 4
+           },
+           "maximum": {
+            "t": "double",
+            "v": 999.9999
+           },
+           "singleStep": {
+            "t": "double",
+            "v": 0.1
+           },
+           "hidden": {
+            "t": "bool",
+            "v": true
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QGridLayout",
+      "py": "QGridLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "rowStretch": [
+       0,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "colStretch": [
+       0,
+       1
+      ],
+      "colMinWidth": [
+       0,
+       0
+      ],
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QFrame",
+         "py": "QFrame",
+         "name": null,
+         "props": {
+          "sizePolicy": {
+           "t": "QSizePolicy",
+           "v": [
+            1,
+            0,
+            0,
+            0
+           ]
+          },
+          "frameShape": {
+           "t": "int",
+           "v": 4
+          },
+          "frameShadow": {
+           "t": "int",
+           "v": 48
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "file_type_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El tipo de archivo de la película guardada. Puede ser:\n- 'SVG' -> formato vectorial de código abierto\n- 'PNG' -> imagen de trama\n- 'PDF' -> formato de documento portátil"
+          },
+          "text": {
+           "t": "str",
+           "v": "Tipo de Filme:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "file_type_radio",
+         "props": {},
+         "choices": [
+          {
+           "label": "SVG",
+           "value": "svg"
+          },
+          {
+           "label": "PNG",
+           "value": "png"
+          },
+          {
+           "label": "PDF",
+           "value": "pdf"
+          }
+         ],
+         "vertical": false,
+         "stretch": false,
+         "value": "svg"
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "orientation_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Puede ser:\n- retrato\n- paisaje"
+          },
+          "text": {
+           "t": "str",
+           "v": "Orient. de la página:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "orientation_radio",
+         "props": {
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         },
+         "choices": [
+          {
+           "label": "Retrato",
+           "value": "p"
+          },
+          {
+           "label": "Paisaje",
+           "value": "l"
+          }
+         ],
+         "vertical": false,
+         "stretch": false,
+         "value": "p"
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "pagesize_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Una selección de tamaños de página estándar ISO 216."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tamaño de página:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "pagesize_combo",
+         "props": {
+          "currentText": {
+           "t": "str",
+           "v": "A4"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         },
+         "items": [
+          "Bounds",
+          "A0",
+          "A1",
+          "A2",
+          "A3",
+          "A4",
+          "A5",
+          "A6",
+          "A7",
+          "A8",
+          "A9",
+          "A10",
+          "B0",
+          "B1",
+          "B2",
+          "B3",
+          "B4",
+          "B5",
+          "B6",
+          "B7",
+          "B8",
+          "B9",
+          "B10",
+          "C0",
+          "C1",
+          "C2",
+          "C3",
+          "C4",
+          "C5",
+          "C6",
+          "C7",
+          "C8",
+          "C9",
+          "C10",
+          "LETTER",
+          "LEGAL",
+          "ELEVENSEVENTEEN",
+          "JUNIOR_LEGAL",
+          "HALF_LETTER",
+          "GOV_LETTER",
+          "GOV_LEGAL",
+          "LEDGER"
+         ],
+         "currentIndex": 5
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 0,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "png_dpi_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "El valor predeterminado es 96 DPI. Cambie este valor para escalar el archivo PNG."
+          },
+          "text": {
+           "t": "str",
+           "v": "PNG DPI:"
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "col": 1,
+        "rs": 1,
+        "cs": 1,
+        "widget": {
+         "qt": "QSpinBox",
+         "py": "FCSpinner",
+         "name": "png_dpi_spinner",
+         "props": {
+          "maximum": {
+           "t": "int",
+           "v": 100000
+          },
+          "value": {
+           "t": "int",
+           "v": 96
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 6,
+        "col": 0,
+        "rs": 1,
+        "cs": 2,
+        "widget": {
+         "qt": "QPushButton",
+         "py": "FCButton",
+         "name": "film_object_button",
+         "props": {
+          "font": {
+           "t": "QFont",
+           "v": {
+            "bold": true
+           }
+          },
+          "toolTip": {
+           "t": "str",
+           "v": "Crear una Película para el objeto seleccionado, dentro de\nEl cuadro especificado. No crea un nuevo\nObjeto FlatCAM, pero guárdelo directamente en el\nformato seleccionado."
+          },
+          "styleSheet": {
+           "t": "str",
+           "v": "\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "
+          },
+          "text": {
+           "t": "str",
+           "v": "Guardar película"
+          },
+          "icon": {
+           "t": "QIcon",
+           "v": ":/images/save_as.png"
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "reset_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Restablecerá los parámetros de la herramienta."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "
+       },
+       "text": {
+        "t": "str",
+        "v": "Restablecer la Herramienta"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/reset32.png"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "FilmToolUI"
+}

@@ -332,6 +332,7 @@ public:
     AlignTool* alignTool;                  ///< Panel de Alinear objetos.
     FiducialsTool* fiducialsTool;          ///< Panel de Fiduciales.
     ThievingTool* thievingTool;            ///< Panel de Robo de cobre.
+    RulesTool* rulesTool;                  ///< Panel de Verificación de reglas.
     QRCodeTool* qrcodeTool;                ///< Panel del código QR.
     class TransformTool* transformTool;  ///< Panel de Transformaciones.
     class DistanceTool* distanceTool;  ///< Herramienta Distancia.
