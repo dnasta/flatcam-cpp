@@ -79,7 +79,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.735 casos de `ctest` (2.647 del núcleo y 87 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.743 casos de `ctest` (2.652 del núcleo y 90 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -143,6 +143,13 @@ src/tools/              Herramientas de FlatCAM (sin Qt)
   CornerMarkers.*        Marcas de esquina (`add_corners_geo`) y sus taladros (`on_create_drill_object`)
   InvertGerber.*         Invertir un Gerber (`on_grb_invert`): la caja con margen menos el cobre
   ExcellonMilling.*      Fresar agujeros y ranuras de un Excellon (`generate_milling_drills` / `_slots` de FlatCAMExcellon)
+src/editors/            Modelos de los editores (sin Qt)
+  EditorStorage.*        FlatCAMRTreeStorage + DrawToolShape.get_pts: figuras e índice de vértices (tomado al insertar)
+  GeoEditorModel.*       Editor de Geometría: figuras de las herramientas de dibujo, elección, unir, intersecar, restar,
+                         cortar, explotar, goma, pintar, transformar, on_shape_complete (fresado por ascenso)
+  ExcEditorModel.*       Editor de Excellon: agujeros (cruces) y ranuras por diámetro, grillas, cambio de diámetro, guardar
+  GrbEditorModel.*       Editor de Gerber: elementos por apertura, pads, codos de pistas y regiones, semidiscos, engrosar,
+                         escalar, poligonizar, marcar área, goma, mover, guardar
 src/io/                 Proyectos (sin Qt; depende de liblzma)
   JsonValue.*            Valor JSON liviano (los números conservan su texto, para escribirlos igual que Python)
   DxfExport.*            Exportar una Geometría a DXF (export_dxf sobre la plantilla R2010 generada de ezdxf)
@@ -202,6 +209,10 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   tools/PaintTool.*      Paint (port de ToolPaint: método estándar, selección "Todos") → `<objeto>_mt_paint`
   tools/NccTool.*        NCC (port de ToolNCC: "Limpiar", estándar, "Sí mismo") → `<objeto>_ncc`
   tools/IsolationTool.*  Isolation (port de ToolIsolation sobre src/tools/Isolation; falta la selección por área y polígono)
+  AppEditors.cpp         object2editor / editor2object: entrar y salir de los editores (pestaña "Editor" en rojo)
+  editors/GeoEditor.*    Editor de Geometría (AppGeoEditor) y sus paneles de Pintar, Transformar y Texto (generados)
+  editors/ExcEditor.*    Editor de Excellon (AppExcEditor): tabla de herramientas, agujeros, ranuras, grillas
+  editors/GrbEditor.*    Editor de Gerber (AppGerberEditor): tabla de aperturas y sus herramientas
   tools/QRCodeTool.*     Código QR (ToolQRCode, Alt+Q) sobre src/tools/QrCode: vista previa, clic, PNG y SVG
   tools/ThievingTool.*   Robo de cobre (ToolCopperThieving, Alt+J) sobre src/tools/CopperThieving; el área con CanvasPicker
   tools/FiducialsTool.*  Fiduciales (ToolFiducials, Alt+F) sobre src/tools/Fiducials: automático o con clics
@@ -410,6 +421,14 @@ fijan con sentido físico (micras), no en el último bit.
   "luz de noche" (13 casos: modos numérico, alfanumérico y de bytes con trozos, UTF-8, "\n" final, versiones 1 a 21, los
   cuatro niveles, borde 0, polaridad negativa, esquinas redondeadas y un texto que no entra): la misma versión, los mismos
   módulos, el SVG exportado texto por texto, la geometría y el Gerber con el código (polígonos, aperturas y borrado).
+- **Editores:** `tests/tools/oracle_geo_editor.py` (56 pasos encadenados sobre un `FlatCAMRTreeStorage` real: las
+  herramientas de dibujo, `on_shape_complete` con fresado por ascenso y convencional, elegir con clic y área, unir,
+  intersecar, restar, cortar, explotar, goma, pintar con los tres métodos, transformar y `update_fcgeometry`; exacto con
+  GEOS 3.11, con 3.12/3.15 algunos anillos arrancan en otro vértice y el método de líneas pierde una línea),
+  `oracle_exc_editor.py` (`edit_fcexcellon`, elegir con un clic, `ResizeEditorExc.make` y `update_fcexcellon` sobre el
+  taladro de "luz de noche" y un Excellon con ranuras, más las figuras de agujeros, ranuras y grillas) y
+  `oracle_grb_editor.py` (la carga de `edit_fcgerber` con la resta de los borrados, los pads C/R/O, los semidiscos y
+  `new_edited_gerber` sobre los dos cobres del usuario).
 - `tests/tools/oracle_thieving.py` genera `tests/golden_thieving.h`: ejecuta `on_add_copper_thieving_click`,
   `copper_thieving`, `on_mouse_release` (los rectángulos del área), `on_add_robber_bar_click`,
   `on_new_pattern_plating_object` y `flatten` originales **encadenados** sobre una misma herramienta (24 operaciones: el
@@ -895,7 +914,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.735 casos de test** (`ctest`): 2.648 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 87 de la GUI;
+- **2.743 casos de test** (`ctest`): 2.653 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 90 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -923,7 +942,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.735 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.743 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -1149,7 +1168,21 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    usuario o un CI), empaquetar `FlatCAM.app` sin depender de Homebrew (`macdeployqt`), `CMakeLists` con versión 1.0.0,
    README y notas de la versión. **Decidido por el usuario: los editores (ítem 8) entran en la 1.0.0.** Al final, corregir los
    errores del original de la sección 14.
-8. **Editores** de Gerber, Excellon y Geometría (`appEditors/`, ~17.600 líneas). **Confirmados por el usuario para la 1.0.0.**
+8. ~~**Editores** de Gerber, Excellon y Geometría~~ (hechos, pedido del usuario "de un tirón"): `src/editors/` (modelos sin Qt,
+   contra el original con `oracle_geo_editor.py`, `oracle_exc_editor.py`, `oracle_grb_editor.py`) y `src/gui/editors/`
+   (paneles generados del original con `dump_panels.py`: `GeoEditorUI`, `GeoPaintToolUI`, `GeoTransformToolUI`,
+   `GeoTextToolUI`, `ExcEditorUI`, `GrbEditorUI`, `GrbTransformToolUI`). Entrar con E, Editar -> Editar objeto, el
+   botón de la barra, el menú del Proyecto y del canvas; salir con Ctrl+S, Editar -> Guardar, el botón del panel o el menú
+   del canvas (pregunta si guarda). Como el original, Excellon y Gerber guardan en un objeto nuevo (`_edit`). Desvíos: el
+   texto del editor de Geometría sale de los contornos de Qt (curvas aplanadas) y no de los puntos de control de FreeType
+   (`ParseFont`, que no está portado); las figuras elegidas no se dibujan más gruesas; con una sola herramienta, una
+   Geometría se edita sin elegir la fila (en el port todas son multiherramienta); borrar una figura transformada saca sus
+   vértices del índice (el original deja vértices viejos que apuntan a nada); al cargar un Gerber el port no modifica el
+   objeto original (el original le resta los borrados y le cambia las unidades aunque no se guarde); cambiar el diámetro
+   de varias herramientas a la vez las recorre en orden creciente (el original, en el orden de un `set` de Python); el
+   panel de Transformaciones del editor de Gerber solo usa el origen o el centro de lo elegido; marcar área no escribe
+   las áreas en el canvas; la edición de una apertura desde la tabla del editor de Gerber no está. Falta el editor de
+   G-code (`appGCodeEditor`, editar un CNC Job avisa).
 
 ## 14. Errores del FlatCAM original que el port reproduce a propósito (corregir al terminar el proyecto)
 
@@ -1230,4 +1263,21 @@ encontrar uno nuevo, agregarlo acá con su sección. Ya corregidos a pedido del 
   relleno que al achicarse (separación negativa) se parte en varios hace fallar todo (`exterior` de un `MultiPolygon`),
   una máscara sin aperturas falla (`max()` vacío), el nombre de un objeto sin punto queda `_plating_mask.<nombre>` y el
   nombre del objeto se registra como archivo reciente (no es un archivo).
+- **Editor de Geometría** (sección 13, ítem 8): la herramienta Buffer no se puede abrir (`BufferSelectionTool` falla con
+  `'%S:'`); Explotar falla con cualquier figura que no sea un polígono (los polígonos abiertos se cargan como anillos) y
+  con agujeros; transformar o borrar con la goma no actualiza el índice de vértices (elegir y ajustar a esquinas usan los
+  vértices viejos); Alt+Y desplaza en X y Shift+Y inclina en X; elegir con un clic siempre toma la más cercana y la lista
+  del panel nunca muestra lo elegido (busca el id en la columna del tipo); unir sin nada elegido agrega una figura vacía;
+  con fresado por ascenso, mover o copiar convierte los anillos en polígonos y pierde las figuras múltiples (salvo que
+  haya una línea, que deja todo igual); con negrita y cursiva el texto sale en negrita; el menú Objetos queda
+  deshabilitado si el objeto elegido no se puede editar.
+- **Editor de Excellon** (sección 13, ítem 8): una herramienta sin agujeros hace que los clics no elijan nada; cambiar el
+  diámetro con una herramienta sin agujeros ni ranuras se cancela después de quitar lo elegido (se pierde); si se cambian
+  todos los agujeros de una herramienta que también tiene ranuras, se borra la herramienta con sus ranuras; copiar suma a
+  la cuenta de agujeros y a la de ranuras; Supr borra las herramientas elegidas en la tabla; la caja de un clic sobre un
+  agujero está corrida hacia arriba y a la derecha; la tabla se ordena por el texto (también los totales, según la
+  traducción); los agujeros de una grilla se cuentan con el último punto del mouse.
+- **Editor de Gerber** (sección 13, ítem 8): guarda siempre en `<nombre>_edit`; al terminar una pista su último tramo se
+  agrega dos veces; con la grilla apagada la región repite cada punto; en el modo de codo 1 (45°) hacia arriba el codo
+  sale para abajo; engrosar también engrosa las líneas de seguimiento (pasan a ser polígonos).
 - **HPGL2** (11.12 w): los que quedan (cambiar de pluma con un trazo de un punto, bajar la pluma sin trazo, dibujar sin `SP`).

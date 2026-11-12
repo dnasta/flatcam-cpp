@@ -37,6 +37,7 @@ add_executable(core_tests
     test_thieving.cpp
     test_geo_editor.cpp
     test_exc_editor.cpp
+    test_grb_editor.cpp
     test_qrcode.cpp
     test_corners.cpp
     test_extract_drills.cpp

@@ -39,6 +39,7 @@ add_library(flatcam_core STATIC
     editors/EditorStorage.cpp
     editors/GeoEditorModel.cpp
     editors/ExcEditorModel.cpp
+    editors/GrbEditorModel.cpp
     tools/QrCode.cpp
     tools/CornerMarkers.cpp
     tools/ExtractDrills.cpp

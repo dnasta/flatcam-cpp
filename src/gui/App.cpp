@@ -396,15 +396,27 @@ void App::connectSignals() {
     connect(canvas, &PlotCanvas::mouseClicked, this, [this](QPointF w, Qt::MouseButton b) {
         if (geoEditor->active()) geoEditor->onPress(w, b);
         if (excEditor->active()) excEditor->onPress(w, b);
+        if (grbEditor->active()) grbEditor->onPress(w, b);
     });
     connect(canvas, &PlotCanvas::mouseMoved, this, [this](QPointF w) {
         if (geoEditor->active()) geoEditor->onMove(w, QApplication::mouseButtons() & Qt::LeftButton);
         if (excEditor->active()) excEditor->onMove(w, QApplication::mouseButtons() & Qt::LeftButton);
+        if (grbEditor->active()) grbEditor->onMove(w, QApplication::mouseButtons() & Qt::LeftButton);
     });
     connect(canvas, &PlotCanvas::mouseReleased, this, [this](QPointF w, Qt::MouseButton b, bool dragged) {
         if (geoEditor->active()) geoEditor->onRelease(w, b, dragged);
         if (excEditor->active()) excEditor->onRelease(w, b, dragged);
+        if (grbEditor->active()) grbEditor->onRelease(w, b, dragged);
     });
+    // Los submenús de los editores de Gerber y Excellon en el menú del canvas.
+    for (const auto& [name, a] : canvasMenu_.grbActions) {
+        const QString n = name;
+        connect(a, &QAction::triggered, this, [this, n] { grbEditor->selectTool(n); });
+    }
+    for (const auto& [name, a] : canvasMenu_.excActions) {
+        const QString n = name;
+        connect(a, &QAction::triggered, this, [this, n] { excEditor->selectTool(n); });
+    }
     // Entrar y salir de los editores.
     for (QAction* a : {ui_->menueditedit, ui_->editgeo_btn})
         connect(a, &QAction::triggered, this, [this] { objectToEditor(); });

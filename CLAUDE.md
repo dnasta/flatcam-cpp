@@ -18,11 +18,14 @@ máquina del usuario.
 
 **Lo que hay que saber para retomar (el detalle está en `AGENTS.md`, sección 12).**
 
-- **Tests:** 2.735 casos de `ctest` (2.648 del núcleo, de los que 2.251 son los casos de los postprocesadores, y 87 de la GUI; 1
+- **Tests:** 2.743 casos de `ctest` (2.653 del núcleo, de los que 2.251 son los casos de los postprocesadores, y 90 de la GUI; 1
   lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
   y Qt 6.12 en el Mac del usuario (M4, AppleClang). micromamba: `old` (Shapely 1.8.4, GEOS 3.11, PyQt5 5.15, para oráculos y para
   volcar la interfaz original), `sh2`, `geos312`, `geos311` (`AGENTS.md`, secciones 6 y 12.4). El build con GEOS 3.12 va en
   `/tmp/b312` (macOS limpia `/tmp`: si falta, se vuelve a crear con el comando de la sección 6).
+- **Editores hechos (fase 5, ítem 8):** Geometría, Excellon y Gerber (`src/editors/` sin Qt y `src/gui/editors/`), contra el
+  original con `oracle_geo_editor.py`, `oracle_exc_editor.py` y `oracle_grb_editor.py`; entrar y salir con E, Editar, el menú
+  del Proyecto y del canvas (`App::objectToEditor` / `editorToObject`). Falta el editor de G-code de los CNC Job.
 - **Fase 5 en curso** (pedido del usuario: "todo lo que falta portar", plan en `AGENTS.md` sección 13). **Hecho el ítem 1:** los 20
   postprocesadores, idénticos al original método por método y de punta a punta en geometrías y taladrado; desvíos en
   `AGENTS.md` 11.14 (la cabecera de `line_xyz`, que en el original queda vacía). **Ítem 2 en curso** (pendientes de las
