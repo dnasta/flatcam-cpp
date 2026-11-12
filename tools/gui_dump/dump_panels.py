@@ -118,11 +118,43 @@ def main():
             written.append(write(cls, data))
     finally:
         QtWidgets.QDialog.exec_ = orig_exec
+    dump_editors(fa, written)
     # La pestaña Preferencias la vuelca dump_preferences.py (también va en el índice).
     if os.path.exists(os.path.join(OUT, "PreferencesTabUI.json")):
         written.append("PreferencesTabUI")
     with open(os.path.join(OUT, "index.txt"), "w") as f:
         f.write("\n".join(written) + "\n")
+
+
+def dump_editors(fa, written):
+    """Los paneles de los editores (`appEditors/`): el de cada editor en la pestaña Propiedades y los de sus
+    herramientas en la pestaña Herramienta, construidos con las clases originales."""
+    ge = fr.import_original("appEditors.AppGeoEditor")
+    ee = fr.import_original("appEditors.AppExcEditor")
+    gre = fr.import_original("appEditors.AppGerberEditor")
+    geo = ge.AppGeoEditor(fa)
+    fa.geo_editor = geo
+    panels = [("GeoEditorUI", geo.geo_edit_widget, (geo,))]
+    # BufferSelectionTool no se puede construir: falla con "%S:" (ValueError); en el original nunca se abre.
+    for cls, tool in (("GeoPaintToolUI", geo.paint_tool),
+                      ("GeoTransformToolUI", geo.transform_tool), ("GeoTextToolUI", ge.TextInputTool(fa))):
+        try:
+            tool.run()
+        except TypeError:
+            tool.run(toggle=False)
+        panels.append((cls, tool, (tool,)))
+    exc = ee.AppExcEditor(fa)
+    fa.exc_editor = exc
+    panels.append(("ExcEditorUI", exc.ui.exc_edit_widget, (exc.ui, exc)))
+    grb = gre.AppGerberEditor(fa)
+    fa.grb_editor = grb
+    panels.append(("GrbEditorUI", grb.ui.grb_edit_widget, (grb.ui, grb)))
+    grb.transform_tool.run(toggle=False)
+    panels.append(("GrbTransformToolUI", grb.transform_tool, (grb.transform_tool,)))
+    for cls, root, srcs in panels:
+        data = dump_widget(root, *srcs)
+        data["class"] = cls
+        written.append(write(cls, data))
 
 
 def write(cls, data):

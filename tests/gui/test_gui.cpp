@@ -24,6 +24,7 @@
 #include "gui/objects/GeometryObject.h"
 #include "gui/ProjectIO.h"
 #include "gui/CanvasPicker.h"
+#include "gui/editors/GeoEditor.h"
 #include "gui/ExclusionAreasManager.h"
 #include "gui/ToolsDBTab.h"
 #include "gui/ToolsDatabase.h"
@@ -2995,6 +2996,66 @@ TEST(GuiFiducials, AddsFiducialsAndMaskOpenings) {
     EXPECT_EQ(t->top_right_coords_entry->text(), "(3.0, 4.0)");
     EXPECT_FALSE(t->isPicking());
     EXPECT_NE(t->lastCreated(), sm);
+}
+
+TEST(GuiGeoEditor, DrawsMovesAndSavesBack) {
+    App app;
+    auto g = std::make_unique<GeometryObject>("geo");
+    GeometryTool tool = defaultGeometryTool();
+    tool.tooldia = 1.0;
+    tool.solidGeometry = {flatcam::Shape::box(0, 0, 10, 10)};
+    g->tools()[1] = tool;
+    g->solidGeometry() = tool.solidGeometry;
+    FlatCAMObj* obj = app.addObject(std::move(g));
+    app.ui()->collection_view->selectionModel()->select(app.collection()->indexOf(obj), QItemSelectionModel::Select);
+    // E abre el editor: el polígono entra como su anillo exterior.
+    QKeyEvent e(QEvent::KeyPress, Qt::Key_E, Qt::NoModifier);
+    QApplication::sendEvent(app.ui(), &e);
+    GeoEditor* ed = app.geoEditor;
+    ASSERT_TRUE(ed->active());
+    EXPECT_EQ(app.callSource(), "geo_editor");
+    ASSERT_EQ(ed->model().storage.size(), 1u);
+    EXPECT_EQ(ed->model().storage.objects()[0]->geo.type(), flatcam::ShapeType::LinearRing);
+    EXPECT_TRUE(app.ui()->grid_snap_btn->isChecked());
+    // R: rectángulo con dos clics (fresado por ascenso: sale invertido).
+    QKeyEvent r(QEvent::KeyPress, Qt::Key_R, Qt::NoModifier);
+    QApplication::sendEvent(app.ui(), &r);
+    EXPECT_EQ(ed->activeToolName(), "rectangle");
+    ed->onPress({20, 0}, Qt::LeftButton);
+    ed->onMove({25, 5}, false);
+    ed->onPress({25, 5}, Qt::LeftButton);
+    ASSERT_EQ(ed->model().storage.size(), 2u);
+    const flatcam::Shape rect = ed->model().storage.objects()[1]->geo;
+    EXPECT_EQ(rect.type(), flatcam::ShapeType::Polygon);
+    EXPECT_NEAR(rect.area(), 25.0, 1e-9);
+    // Escape vuelve a elegir; un clic cerca del rectángulo lo elige, M lo mueve con dos clics.
+    QKeyEvent esc(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+    QApplication::sendEvent(app.ui(), &esc);
+    EXPECT_EQ(ed->activeToolName(), "select");
+    ed->onPress({25, 5}, Qt::LeftButton);
+    ed->onRelease({25, 5}, Qt::LeftButton, false);
+    ASSERT_EQ(ed->model().selected.size(), 1u);
+    ed->onMove({20, 0}, false);
+    QKeyEvent m(QEvent::KeyPress, Qt::Key_M, Qt::NoModifier);
+    QApplication::sendEvent(app.ui(), &m);
+    EXPECT_EQ(ed->activeToolName(), "move");
+    ed->onPress({30, 0}, Qt::LeftButton);
+    ASSERT_EQ(ed->model().storage.size(), 2u);
+    EXPECT_NEAR(ed->model().storage.objects()[1]->geo.bounds()->xmin, 30.0, 1e-9);
+    // U con los dos elegidos con un rectángulo de izquierda a derecha.
+    ed->selectTool("select");
+    ed->onPress({-1, -1}, Qt::LeftButton);
+    ed->onMove({41, 11}, true);
+    ed->onRelease({41, 11}, Qt::LeftButton, true);
+    EXPECT_EQ(ed->model().selected.size(), 2u);
+    // Guardar: la herramienta y el objeto reciben lo editado.
+    ASSERT_TRUE(app.editorToObject(true));
+    EXPECT_FALSE(ed->active());
+    EXPECT_EQ(app.callSource(), "app");
+    auto* geo = static_cast<GeometryObject*>(obj);
+    ASSERT_EQ(geo->tools()[1].solidGeometry.size(), 2u);
+    EXPECT_EQ(geo->solidGeometry().size(), 2u);
+    EXPECT_TRUE(app.ui()->project_frame->isEnabled());
 }
 
 TEST(GuiThieving, FillsAddsTheRobberBarAndThePlatingMask) {

@@ -109,6 +109,30 @@ public:
     /** @brief `collection.delete_by_name`: borra un objeto sin preguntar. @param name Nombre. @return Si estaba. */
     bool deleteByName(const QString& name);
 
+    /** @name Editores (AppEditors.cpp) */
+    ///@{
+    /**
+     * @brief `object2editor`: abre el objeto elegido en su editor (Geometría, Excellon o Gerber): la pestaña
+     * Propiedades pasa a llamarse "Editor" (en rojo), la de Proyecto se deshabilita y se esconde la barra de herramientas.
+     */
+    void objectToEditor();
+    /**
+     * @brief `editor2object`: sale del editor; pregunta si se guarda lo editado.
+     * @param save La respuesta (vacía: la pregunta con un diálogo). @param cleanup Salir sin preguntar ni guardar.
+     * @return `false` si no había un editor abierto o se canceló.
+     */
+    bool editorToObject(std::optional<bool> save = std::nullopt, bool cleanup = false);
+    /** @brief Si hay un editor abierto (`call_source != 'app'`). @return `true` si lo hay. */
+    bool editorActive() const;
+    /** @brief `call_source`: `app`, `geo_editor`, `exc_editor` o `grb_editor`. @return El valor. */
+    const QString& callSource() const { return callSource_; }
+    /** @brief Pide borrar el objeto editado al salir del editor (un Gerber o Excellon que quedó vacío). */
+    void requestDeleteEditedObject() { pendingDelete_ = true; }
+    class GeoEditor* geoEditor{nullptr};  ///< `geo_editor`.
+    class ExcEditor* excEditor{nullptr};  ///< `exc_editor`.
+    class GrbEditor* grbEditor{nullptr};  ///< `grb_editor`.
+    ///@}
+
     /** @brief Copia los Gerber, Excellon y Geometrías elegidos como `<nombre>_copy` (`on_copy_command`). @return Las copias. */
     std::vector<FlatCAMObj*> copySelected();
 
@@ -534,9 +558,27 @@ private:
     void setupCanvasMenu();
     void setupHelpMenu();
     bool shouldWeSave_{false};  ///< `should_we_save`: hay cambios sin guardar.
+    QString callSource_{"app"};          ///< `call_source`.
+    QColor oldTabTextColor_;             ///< `old_tab_text_color`.
+    bool oldStateOfToolsToolbar_{false}; ///< `old_state_of_tools_toolbar`.
+    bool pendingDelete_{false};
     QWidget* shortcutsTab_{nullptr};
     void populateGridMenu();
     class QMenu* popMenu_{nullptr};      ///< `popMenu`: menú contextual del canvas.
+    /// Las partes del menú del canvas que cambian dentro de los editores.
+    struct CanvasMenu {
+        class QAction* disable{nullptr};
+        class QAction* newMenu{nullptr};
+        class QAction* edit{nullptr};
+        class QAction* save{nullptr};
+        class QAction* properties{nullptr};
+        class QMenu* geo{nullptr};
+        class QMenu* grb{nullptr};
+        class QMenu* exc{nullptr};
+        std::map<QString, class QAction*> grbActions;
+        std::map<QString, class QAction*> excActions;
+    };
+    CanvasMenu canvasMenu_;
     class QMenu* gridMenu_{nullptr};     ///< `cmenu_gridmenu`.
     QStringList gridContextMenu_{"0.1", "0.2", "0.5", "1", "2.54"};  ///< `global_grid_context_menu['mm']`.
     QPointF mouse_{0, 0};                ///< `self.mouse`: la última posición del mouse sobre el canvas.

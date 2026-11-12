@@ -19,6 +19,7 @@
 #include "gui/widgets/FCCheckBox.h"
 #include "gui/Preferences.h"
 #include "gui/App.h"
+#include "gui/editors/GeoEditor.h"
 #include "gui/ExclusionAreasManager.h"
 #include "gui/MainGUI.h"
 #include "gui/PlotCanvas.h"
@@ -463,8 +464,84 @@ void App::setupCanvasMenu() {
     QAction* clearplot = viewMenu->addAction(QIcon(":/images/clear_plot32.png"), tr_("Clear Plot"));
     QAction* replot = viewMenu->addAction(QIcon(":/images/replot32.png"), tr_("Replot"));
     popMenu_->addSeparator();
-    // Los submenús de los editores (Geo Editor, Gerber Editor, Exc Editor) solo se ven dentro de un editor, que el port
-    // no tiene: no se agregan.
+    // Los submenús de los editores (g_editor_cmenu, grb_editor_cmenu, e_editor_cmenu): solo se ven dentro del editor.
+    auto act = [](QMenu* m, const char* icon, const QString& text) { return m->addAction(QIcon(icon), text); };
+    QMenu* gm = popMenu_->addMenu(QIcon(":/images/draw32.png"), tr_("Geo Editor"));
+    canvasMenu_.geo = gm;
+    const std::vector<std::pair<QAction*, QString>> geoActs = {
+        {act(gm, ":/images/path32.png", tr_("Path")), "path"},
+        {act(gm, ":/images/rectangle32.png", tr_("Rectangle")), "rectangle"},
+        {gm->addSeparator(), ""},
+        {act(gm, ":/images/circle32.png", tr_("Circle")), "circle"},
+        {act(gm, ":/images/polygon32.png", tr_("Polygon")), "polygon"},
+        {act(gm, ":/images/arc32.png", tr_("Arc")), "arc"},
+        {gm->addSeparator(), ""},
+        {act(gm, ":/images/text32.png", tr_("Text")), "text"},
+        {act(gm, ":/images/buffer16-2.png", tr_("Buffer")), "buffer"},
+        {act(gm, ":/images/paint20_1.png", tr_("Paint")), "paint"},
+        {act(gm, ":/images/eraser26.png", tr_("Eraser")), "eraser"},
+        {gm->addSeparator(), ""},
+        {act(gm, ":/images/union32.png", tr_("Union")), "#union"},
+        {act(gm, ":/images/intersection32.png", tr_("Intersection")), "#intersection"},
+        {act(gm, ":/images/subtract32.png", tr_("Subtraction")), "#subtract"},
+        {act(gm, ":/images/cutpath32.png", tr_("Cut")), "#cut"},
+        {act(gm, ":/images/transform.png", tr_("Transformations")), "transform"},
+        {gm->addSeparator(), ""},
+        {act(gm, ":/images/move32.png", tr_("Move")), "move"}};
+    for (const auto& [a, name] : geoActs) {
+        if (name.isEmpty()) continue;
+        const QString n = name;
+        connect(a, &QAction::triggered, this, [this, n] {
+            if (n == "#union") geoEditor->unite();
+            else if (n == "#intersection") geoEditor->intersection();
+            else if (n == "#subtract") geoEditor->subtract();
+            else if (n == "#cut") geoEditor->cutpath();
+            else if (n == "transform") ui_->geo_transform_menuitem->trigger();  // draw_transform: transform_tool.run
+            else geoEditor->selectTool(n);
+        });
+    }
+    QMenu* grm = popMenu_->addMenu(QIcon(":/images/draw32.png"), tr_("Gerber Editor"));
+    canvasMenu_.grb = grm;
+    for (const auto& [icon, text, name] : std::vector<std::tuple<const char*, QString, QString>>{
+             {":/images/aperture32.png", tr_("Pad"), "pad"},
+             {":/images/padarray32.png", tr_("Pad Array"), "array"},
+             {nullptr, "", ""},
+             {":/images/track32.png", tr_("Track"), "track"},
+             {":/images/polygon32.png", tr_("Region"), "region"},
+             {":/images/poligonize32.png", tr_("Poligonize"), "poligonize"},
+             {":/images/semidisc32.png", tr_("SemiDisc"), "semidisc"},
+             {":/images/disc32.png", tr_("Disc"), "disc"},
+             {nullptr, "", ""},
+             {":/images/buffer16-2.png", tr_("Buffer"), "buffer"},
+             {":/images/scale32.png", tr_("Scale"), "scale"},
+             {":/images/markarea32.png", tr_("Mark Area"), "markarea"},
+             {":/images/eraser26.png", tr_("Eraser"), "eraser"},
+             {nullptr, "", ""},
+             {":/images/transform.png", tr_("Transformations"), "transform"}}) {
+        if (!icon) {
+            grm->addSeparator();
+            continue;
+        }
+        QAction* a = act(grm, icon, text);
+        canvasMenu_.grbActions[name] = a;
+    }
+    QMenu* em = popMenu_->addMenu(QIcon(":/images/drill32.png"), tr_("Exc Editor"));
+    canvasMenu_.exc = em;
+    for (const auto& [icon, text, name] : std::vector<std::tuple<const char*, QString, QString>>{
+             {":/images/drill32.png", tr_("Add Drill"), "drill_add"},
+             {":/images/addarray32.png", tr_("Add Drill Array"), "drill_array"},
+             {nullptr, "", ""},
+             {":/images/slot26.png", tr_("Add Slot"), "slot_add"},
+             {":/images/slot_array26.png", tr_("Add Slot Array"), "slot_array"},
+             {nullptr, "", ""},
+             {":/images/resize16.png", tr_("Resize Drill"), "drill_resize"}}) {
+        if (!icon) {
+            em->addSeparator();
+            continue;
+        }
+        canvasMenu_.excActions[name] = act(em, icon, text);
+    }
+    for (QMenu* m : {gm, grm, em}) m->menuAction()->setVisible(false);
     popMenu_->addSeparator();
     QAction* copy = popMenu_->addAction(QIcon(":/images/copy32.png"), tr_("Copy"));
     QAction* del = popMenu_->addAction(QIcon(":/images/delete32.png"), tr_("Delete"));
@@ -474,6 +551,12 @@ void App::setupCanvasMenu() {
     popMenu_->addSeparator();
     QAction* move = popMenu_->addAction(QIcon(":/images/move32.png"), tr_("Move"));
     QAction* props = popMenu_->addAction(QIcon(":/images/properties32.png"), tr_("Properties"));
+    canvasMenu_.disable = disable;
+    canvasMenu_.newMenu = newMenu->menuAction();
+    canvasMenu_.edit = edit;
+    canvasMenu_.save = save;
+    canvasMenu_.properties = props;
+    connect(save, &QAction::triggered, this, [this] { editorToObject(); });
     connect(disable, &QAction::triggered, this, [this] { togglePlots(); });
     connect(panel, &QAction::triggered, ui_.get(), &MainGUI::onToggleNotebook);
     auto notPorted = [this] { ui_->inform("[WARNING_NOTCL] Los objetos vacíos para los editores no forman parte del port."); };
@@ -482,11 +565,20 @@ void App::setupCanvasMenu() {
     connect(zoomfit, &QAction::triggered, this, [this] { onZoomFit(); });
     connect(clearplot, &QAction::triggered, this, [this] { clearPlots(); });
     connect(replot, &QAction::triggered, this, [this] { plotAll(); });
-    connect(copy, &QAction::triggered, this, [this] { copySelected(); });
-    connect(del, &QAction::triggered, this, [this] { deleteSelected(); });
-    connect(edit, &QAction::triggered, this,
-            [this] { ui_->inform("[WARNING_NOTCL] Los editores no forman parte del port."); });
-    connect(move, &QAction::triggered, this, [this] { moveTool->toggle(); });  // obj_move
+    // Dentro del editor de Geometría, Copiar, Borrar y Mover son las del editor (connect_canvas_event_handlers).
+    connect(copy, &QAction::triggered, this, [this] {
+        if (callSource_ == "geo_editor") geoEditor->selectTool("copy");
+        else if (callSource_ == "app") copySelected();
+    });
+    connect(del, &QAction::triggered, this, [this] {
+        if (callSource_ == "geo_editor") geoEditor->deleteSelected();
+        else if (callSource_ == "app") deleteSelected();
+    });
+    connect(edit, &QAction::triggered, this, [this] { objectToEditor(); });
+    connect(move, &QAction::triggered, this, [this] {
+        if (callSource_ == "geo_editor") geoEditor->selectTool("move");
+        else if (callSource_ == "app") moveTool->toggle();  // obj_move
+    });
     connect(props, &QAction::triggered, this, [this] { propertiesTool->run(false); });
 }
 
@@ -556,6 +648,16 @@ void App::populateGridMenu() {
 }
 
 void App::popupCanvasMenu() {
+    // activate / deactivate de cada editor: qué se ve del menú.
+    const bool inEditor = callSource_ != "app";
+    canvasMenu_.edit->setVisible(!inEditor);
+    canvasMenu_.save->setVisible(inEditor);
+    canvasMenu_.disable->setVisible(!inEditor);
+    canvasMenu_.newMenu->setVisible(!inEditor);
+    canvasMenu_.properties->setVisible(!inEditor);
+    canvasMenu_.geo->menuAction()->setVisible(callSource_ == "geo_editor");
+    canvasMenu_.grb->menuAction()->setVisible(callSource_ == "grb_editor");
+    canvasMenu_.exc->menuAction()->setVisible(callSource_ == "exc_editor");
     populateGridMenu();
     popMenu_->popup(QCursor::pos());
 }
