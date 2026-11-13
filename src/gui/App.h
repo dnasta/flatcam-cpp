@@ -335,6 +335,7 @@ public:
     RulesTool* rulesTool;                  ///< Panel de Verificación de reglas.
     SolderPasteTool* solderPasteTool;      ///< Panel de Pasta de soldar.
     PcbWizardTool* pcbWizardTool;          ///< Panel del Asistente de PCB.
+    CalibrationTool* calibrationTool;      ///< Panel de Calibración.
     QRCodeTool* qrcodeTool;                ///< Panel del código QR.
     class TransformTool* transformTool;  ///< Panel de Transformaciones.
     class DistanceTool* distanceTool;  ///< Herramienta Distancia.

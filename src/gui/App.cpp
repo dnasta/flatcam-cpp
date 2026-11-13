@@ -135,6 +135,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     rulesTool = new RulesTool(this, ui_.get());
     solderPasteTool = new SolderPasteTool(this, ui_.get());
     pcbWizardTool = new PcbWizardTool(this, ui_.get());
+    calibrationTool = new CalibrationTool(this, ui_.get());
     geoEditor = new GeoEditor(this);
     excEditor = new ExcEditor(this);
     grbEditor = new GrbEditor(this);
@@ -145,7 +146,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     moveTool = new MoveTool(this, this);
     propertiesTool = new PropertiesTool(this, ui_.get());
     isolationTool = new IsolationTool(this, ui_.get());
-    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool, panelizeTool, invertTool, calculatorsTool, cornersTool, extractDrillsTool, punchTool, subTool, optimalTool, etchTool, alignTool, fiducialsTool, thievingTool, rulesTool, solderPasteTool, pcbWizardTool, qrcodeTool, transformTool,
+    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool, panelizeTool, invertTool, calculatorsTool, cornersTool, extractDrillsTool, punchTool, subTool, optimalTool, etchTool, alignTool, fiducialsTool, thievingTool, rulesTool, solderPasteTool, pcbWizardTool, calibrationTool, qrcodeTool, transformTool,
                                                       isolationTool, distanceTool, distanceMinTool, propertiesTool})
         w->hide();
     connectSignals();
@@ -325,6 +326,11 @@ void App::connectSignals() {
         connect(a, &QAction::triggered, this, [this] {
             runTool(solderPasteTool, SolderPasteTool::info());
             solderPasteTool->setToolUi();
+        });
+    for (QAction* a : {ui_->cal_exc_tool_menuAction, ui_->cal_btn})
+        connect(a, &QAction::triggered, this, [this] {
+            runTool(calibrationTool, CalibrationTool::info());
+            calibrationTool->setToolUi();
         });
     connect(ui_->pcb_wizard_tool_menuAction, &QAction::triggered, this, [this] {
         runTool(pcbWizardTool, PcbWizardTool::info());
