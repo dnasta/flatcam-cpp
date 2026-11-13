@@ -50,6 +50,7 @@
 #include "gui/objects/CNCAutolevel.h"
 #include "golden_cnc_svg.h"
 #include "golden_image.h"
+#include "golden_pdf.h"
 #include <QTimer>
 #include <QImage>
 #include <QCloseEvent>
@@ -3647,4 +3648,30 @@ TEST(GuiImage, ReadsTheBandsLikeRasterioAndImports) {
     FlatCAMObj* geo = t->importImage(QString(FLATCAM_TEST_DATA_DIR) + "/images/rgb.png");
     ASSERT_NE(geo, nullptr);
     EXPECT_EQ(geo->kind(), ObjectKind::Geometry);
+}
+
+TEST(GuiPdf, OpensThePdfLayersLikeTheOriginal) {
+    App app;
+    const std::vector<FlatCAMObj*> objs = app.openPdf(QString(FLATCAM_TEST_DATA_DIR) + "/pdf/two_pages.pdf");
+    // Las capas 1, 2 y 3 como Gerber y la 0 (rellenos blancos) como Excellon, en ese orden.
+    ASSERT_EQ(objs.size(), 4u);
+    EXPECT_EQ(objs[0]->name(), "two_pages.pdf_1");
+    EXPECT_EQ(objs[3]->name(), "two_pages.pdf_0");
+    EXPECT_EQ(objs[3]->kind(), ObjectKind::Excellon);
+    for (const auto& L : golden_pdf::kLayers) {
+        if (std::string(L.file) != "two_pages.pdf") continue;
+        SCOPED_TRACE(L.layer);
+        FlatCAMObj* o = app.collection()->byName(QString("two_pages.pdf_%1").arg(L.layer));
+        ASSERT_NE(o, nullptr);
+        if (L.layer == 0) {
+            const auto& tools = static_cast<ExcellonObject*>(o)->excellon().drillTools();
+            ASSERT_EQ(tools.size(), L.tools.size());
+            int i = 0;
+            for (const auto& [id, t] : tools) EXPECT_EQ(t.tooldia, L.tools[i++].dia);
+        } else {
+            double area = 0;
+            for (const flatcam::Shape& s : static_cast<GerberObject*>(o)->gerber().solidGeometry()) area += s.area();
+            EXPECT_NEAR(area, L.area, 1e-6);
+        }
+    }
 }
