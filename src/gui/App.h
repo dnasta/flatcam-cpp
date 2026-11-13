@@ -336,6 +336,7 @@ public:
     SolderPasteTool* solderPasteTool;      ///< Panel de Pasta de soldar.
     PcbWizardTool* pcbWizardTool;          ///< Panel del Asistente de PCB.
     CalibrationTool* calibrationTool;      ///< Panel de Calibración.
+    FilmTool* filmTool;                    ///< Panel de Film.
     QRCodeTool* qrcodeTool;                ///< Panel del código QR.
     class TransformTool* transformTool;  ///< Panel de Transformaciones.
     class DistanceTool* distanceTool;  ///< Herramienta Distancia.
