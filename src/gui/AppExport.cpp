@@ -18,6 +18,7 @@
 #include "gui/objects/CNCJobObject.h"
 #include "gui/objects/GeometryObject.h"
 #include "gui/Preferences.h"
+#include "gui/tools/FilmTool.h"
 #include "io/DxfExport.h"
 #include "io/FileExport.h"
 #include "io/SvgExport.h"
@@ -236,6 +237,69 @@ void App::onFileExportPng() {
         return;
     }
     exportPngFile(f);
+}
+
+bool App::printPdf(const QString& filename, const std::vector<FlatCAMObj*>& objs, std::string* svgOut) {
+    if (objs.empty()) return false;
+    std::vector<PrintSvgItem> items;
+    std::string color = "black", opacity = "1.0";
+    BoundingBox b{1e300, 1e300, -1e300, -1e300};
+    auto alphaHex = [](const QColor& c) { return QString("%1").arg(c.alpha(), 2, 16, QChar('0')).toUpper().toStdString(); };
+    for (FlatCAMObj* o : objs) {
+        ShapeList shapes;
+        if (auto* g = dynamic_cast<GerberObject*>(o)) {
+            shapes = g->gerber().solidGeometry();
+        } else if (auto* e = dynamic_cast<ExcellonObject*>(o)) {
+            shapes = e->excellon().solidGeometry();
+        } else if (auto* geo = dynamic_cast<GeometryObject*>(o)) {
+            for (const auto& [id, t] : geo->tools()) shapes.insert(shapes.end(), t.solidGeometry.begin(), t.solidGeometry.end());
+        } else {
+            // CNCJob.export_svg no acepta los factores de escala: TypeError, no se escribe nada.
+            ui_->inform("[ERROR_NOTCL] " + tr_("Failed."));
+            return false;
+        }
+        if (o->kind() == ObjectKind::Geometry) {
+            color = defStr("global_draw_color").toStdString();
+        } else {
+            color = o->fillColor.name(QColor::HexRgb).toUpper().toStdString();  // fill_color[:-2]
+            opacity = alphaHex(o->fillColor);                                    // fill_color[-2:]
+        }
+        items.push_back({shapes, color, opacity});
+        const QRectF r = o->bounds();
+        b = {std::min(b.xmin, r.left()), std::min(b.ymin, r.top()), std::max(b.xmax, r.right()), std::max(b.ymax, r.bottom())};
+    }
+    const std::string uom = appUnits().toLower() == "in" ? "in" : "mm";
+    const std::string svg = exportPrintSvg(items, b, uom);
+    if (svgOut) *svgOut = svg;
+    const double boundary = uom == "mm" ? 1.0 : 0.0393701;
+    const double toPt = uom == "in" ? 72.0 : 72.0 / 25.4;
+    const QSizeF drawing((b.xmax - b.xmin + 2 * boundary) * toPt, (b.ymax - b.ymin + 2 * boundary) * toPt);
+    const double unit = appUnits().toUpper() == "IN" ? 72.0 : 72.0 / 25.4;
+    if (!renderSvgToPdf(QByteArray::fromStdString(svg), filename, drawing, defStr("global_workspaceT"),
+                        defStr("global_workspace_orientation") == "p", {b.xmin * unit, b.ymin * unit}))
+        return false;
+    ui_->inform(QString("[success] %1: %2").arg(tr_("PDF file saved to"), filename));
+    return true;
+}
+
+void App::onFilePrintPdf() {
+    const std::vector<FlatCAMObj*> sel = selectedObjects();
+    if (sel.empty()) {
+        ui_->inform("[ERROR_NOTCL] " + tr_("No object is selected."));
+        return;
+    }
+    // date = str(datetime.today()) sin los microsegundos, sin ':' ni '-' y con '_' en el espacio
+    const QString date = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
+    const QString objName = sel.size() == 1 ? sel.front()->name() : tr_("FlatCAM objects print");
+    const QString f = QFileDialog::getSaveFileName(ui_.get(), tr_("Save Object as PDF ..."),
+                                                   lastFolder() + "/" + objName + "_" + date,
+                                                   "PDF File .pdf (*.PDF);; All Files (*.*)");
+    if (f.isEmpty()) {
+        ui_->inform("[WARNING_NOTCL] " + tr_("Cancelled."));
+        return;
+    }
+    printPdf(f, sel);
+    lastFolder_ = QFileInfo(f).absolutePath();
 }
 
 }  // namespace flatcam::gui

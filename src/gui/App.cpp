@@ -332,6 +332,7 @@ void App::connectSignals() {
             solderPasteTool->setToolUi();
         });
     connect(ui_->pdf_tool_menuAction, &QAction::triggered, this, [this] { onFileOpenPdf(); });
+    connect(ui_->menufile_print, &QAction::triggered, this, [this] { onFilePrintPdf(); });
     connect(ui_->image_tool_menuAction, &QAction::triggered, this, [this] {
         runTool(imageTool, ImageTool::info());
         imageTool->setToolUi();
@@ -1057,6 +1058,7 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
         switch (key) {
             case Qt::Key_A: onSelectAll(); return true;
             case Qt::Key_Q: onFileOpenPdf(); return true;  // pdf_tool.run()
+            case Qt::Key_P: onFilePrintPdf(); return true;  // on_file_save_objects_pdf
             case Qt::Key_C: copySelected(); return true;
             case Qt::Key_D: openToolsDatabase(); return true;
             case Qt::Key_E: onFileOpenExcellon(); return true;

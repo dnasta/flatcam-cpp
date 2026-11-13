@@ -521,6 +521,14 @@ public:
     std::vector<FlatCAMObj*> openPdf(const QString& filename);
     /** @brief `on_open_pdf_click`: el diálogo y `openPdf` de cada archivo. */
     void onFileOpenPdf();
+    /**
+     * @brief `save_pdf` (Archivo -> Imprimir, Ctrl+P): los objetos elegidos en un PDF con la hoja del área de trabajo.
+     * @param filename Archivo. @param objs Los objetos. @param svgOut Si no es nulo, recibe el SVG intermedio.
+     * @return Si se escribió (un CNC Job hace fallar al original y no se escribe nada).
+     */
+    bool printPdf(const QString& filename, const std::vector<FlatCAMObj*>& objs, std::string* svgOut = nullptr);
+    /** @brief `on_file_save_objects_pdf`: el diálogo y `printPdf` de lo elegido. */
+    void onFilePrintPdf();
     /** @brief Archivo -> Importar -> SVG (`on_file_importsvg`). @param asGerber Como Gerber. */
     void onFileImportSvg(bool asGerber);
     /**
