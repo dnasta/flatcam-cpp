@@ -494,6 +494,9 @@ public:
     void onFileExport(ObjectKind kind);
     /** @brief Exporta un objeto a SVG (`export_svg`). @param obj Objeto. @param filename Archivo. @return Si se escribió. */
     bool exportSvgFile(FlatCAMObj* obj, const QString& filename);
+    /** @brief El SVG de un CNC Job (`CNCjob.export_svg` + `App.export_svg`). @param job El trabajo.
+     *  @return El texto, o vacío si el original falla (un taladrado: los agujeros son polígonos). */
+    std::string cncSvgText(const CNCJobObject* job) const;
     /** @brief Archivo -> Exportar -> SVG (`on_file_exportsvg`). */
     void onFileExportSvg();
     /** @brief Exporta una Geometría a DXF (`export_dxf`). @param geo Geometría. @param filename Archivo. @return Si se escribió. */

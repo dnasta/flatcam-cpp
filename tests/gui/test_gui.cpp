@@ -45,8 +45,10 @@
 #include <QDropEvent>
 #include "gui/widgets/KeySensitiveListView.h"
 #include <QTemporaryDir>
+#include <sstream>
 
 #include "gui/objects/CNCAutolevel.h"
+#include "golden_cnc_svg.h"
 #include <QTimer>
 #include <QImage>
 #include <QCloseEvent>
@@ -3556,4 +3558,57 @@ TEST(GuiAutolevel, GridAndManualProbePointsHeightMapAndGrbl) {
     ui->al_controller_combo->setCurrentText("GRBL");
     EXPECT_TRUE(ui->h_gcode_button->isHidden());
     EXPECT_FALSE(ui->grbl_frame->isHidden());
+}
+
+namespace {
+/// Largo total de las polilíneas de un color y la línea del encabezado <svg ...> (sin depender de cómo une GEOS).
+std::pair<double, double> cncSvgLengths(const std::string& svg) {
+    double travel = 0, cut = 0;
+    std::size_t i = 0;
+    while ((i = svg.find("<polyline", i)) != std::string::npos) {
+        const std::size_t e = svg.find("/>", i);
+        const std::string el = svg.substr(i, e - i);
+        const std::size_t p = el.find("points=\"") + 8;
+        std::istringstream in(el.substr(p, el.find('"', p) - p));
+        std::string tok;
+        double len = 0, px = 0, py = 0;
+        bool first = true;
+        while (in >> tok) {
+            const double x = std::stod(tok.substr(0, tok.find(','))), y = std::stod(tok.substr(tok.find(',') + 1));
+            if (!first) len += std::hypot(x - px, y - py);
+            first = false;
+            px = x;
+            py = y;
+        }
+        (el.find("#F0E24D") != std::string::npos ? travel : cut) += len;
+        i = e;
+    }
+    return {travel, cut};
+}
+}  // namespace
+
+TEST(GuiCncSvg, ExportsTheCncJobLikeTheOriginal) {
+    // golden_cnc_svg.h: CNCjob.gcode_parse + export_svg + App.export_svg originales sobre G-code abierto de archivo.
+    App app;
+    for (const auto& c : golden_cnc_svg::kCases) {
+        SCOPED_TRACE(c.file);
+        FlatCAMObj* cnc = app.openGcode(QString(FLATCAM_TEST_DATA_DIR) + "/" + c.file);
+        ASSERT_NE(cnc, nullptr);
+        const std::string svg = app.cncSvgText(static_cast<CNCJobObject*>(cnc));
+        EXPECT_EQ(svg.empty(), std::string(c.error) != "");
+        if (flatcam::Shape::geosVersion().rfind("3.11", 0) == 0) {
+            // Con la GEOS del oráculo, el mismo texto.
+            if (!c.svg.empty()) EXPECT_EQ(svg, c.svg);
+            continue;
+        }
+        // Las GEOS nuevas unen distinto las líneas (fusionan tramos colineales): el mismo encabezado y los mismos largos.
+        const std::string want = c.svg.empty() ? c.head : c.svg;
+        EXPECT_EQ(svg.substr(0, svg.find("<g transform")), want.substr(0, want.find("<g transform")));
+        if (!c.svg.empty()) {
+            const auto [t1, c1] = cncSvgLengths(svg);
+            const auto [t2, c2] = cncSvgLengths(c.svg);
+            EXPECT_NEAR(t1, t2, 1e-6);
+            EXPECT_NEAR(c1, c2, 1e-6);
+        }
+    }
 }
