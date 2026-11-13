@@ -1,0 +1,467 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "ToolImage",
+  "name": null,
+  "props": {
+   "objectName": {
+    "t": "str",
+    "v": "Imagen como objeto"
+   },
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": "layout",
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": null,
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true,
+         "pixelSize": 16
+        }
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"
+       },
+       "text": {
+        "t": "str",
+        "v": "Imagen como objeto"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QFormLayout",
+      "py": "QFormLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "tf_type_obj_combo_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Especifique el tipo de objeto a crear a partir de la imagen.\nPuede ser de tipo: Gerber o Geometría."
+          },
+          "text": {
+           "t": "str",
+           "v": "Tipo de objeto:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 0,
+        "role": 1,
+        "widget": {
+         "qt": "QComboBox",
+         "py": "FCComboBox",
+         "name": "tf_type_obj_combo",
+         "props": {
+          "currentText": {
+           "t": "str",
+           "v": "Gerber"
+          }
+         },
+         "items": [
+          "Gerber",
+          "Geometría"
+         ],
+         "currentIndex": 0
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "dpi_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Especifique un valor de DPI para la imagen."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor de DPI:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "role": 1,
+        "widget": {
+         "qt": "QSpinBox",
+         "py": "FCSpinner",
+         "name": "dpi_entry",
+         "props": {
+          "maximum": {
+           "t": "int",
+           "v": 99999
+          },
+          "value": {
+           "t": "int",
+           "v": 96
+          }
+         }
+        }
+       }
+      ],
+      "formRows": true
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": "emty_lbl",
+      "props": {}
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QLabel",
+      "py": "QLabel",
+      "name": "detail_label",
+      "props": {
+       "text": {
+        "t": "str",
+        "v": "<font size=4><b>Nivel de detalle:</b></font>"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QFormLayout",
+      "py": "QFormLayout",
+      "name": null,
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "hspacing": 6,
+      "vspacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "row": 0,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "image_type_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Elija un método para la interpretación de la imagen.\nB / N significa una imagen en blanco y negro. Color significa una imagen en color."
+          },
+          "text": {
+           "t": "str",
+           "v": "<b>Tipo de imagen:</b>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 0,
+        "role": 1,
+        "widget": {
+         "qt": "QWidget",
+         "py": "RadioSet",
+         "name": "image_type",
+         "props": {},
+         "choices": [
+          {
+           "label": "B/W",
+           "value": "black"
+          },
+          {
+           "label": "Color",
+           "value": "color"
+          }
+         ],
+         "vertical": false,
+         "stretch": true,
+         "value": "black"
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "mask_bw_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Máscara para imagen monocroma.\nToma valores entre [0 ... 255].\nDecide el nivel de detalles a incluir\nen la geometría resultante.\n0 significa sin detalles y 255 significa todo\n(que es totalmente negro)"
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor de la máscara <b>B/W</b>:"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 1,
+        "role": 1,
+        "widget": {
+         "qt": "QSpinBox",
+         "py": "FCSpinner",
+         "name": "mask_bw_entry",
+         "props": {
+          "maximum": {
+           "t": "int",
+           "v": 255
+          },
+          "value": {
+           "t": "int",
+           "v": 250
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "mask_r_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Máscara para color ROJO.\nToma valores entre [0 ... 255].\nDecide el nivel de detalles a incluir\nen la geometría resultante."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor de la máscara <b>R:</b>"
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 2,
+        "role": 1,
+        "widget": {
+         "qt": "QSpinBox",
+         "py": "FCSpinner",
+         "name": "mask_r_entry",
+         "props": {
+          "maximum": {
+           "t": "int",
+           "v": 255
+          },
+          "value": {
+           "t": "int",
+           "v": 250
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "mask_g_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Máscara para color VERDE.\nToma valores entre [0 ... 255].\nDecide el nivel de detalles a incluir\nen la geometría resultante."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor de la máscara <b>G:</b>"
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 3,
+        "role": 1,
+        "widget": {
+         "qt": "QSpinBox",
+         "py": "FCSpinner",
+         "name": "mask_g_entry",
+         "props": {
+          "maximum": {
+           "t": "int",
+           "v": 255
+          },
+          "value": {
+           "t": "int",
+           "v": 250
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "role": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "QLabel",
+         "name": "mask_b_label",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "Máscara para color AZUL.\nToma valores entre [0 ... 255].\nDecide el nivel de detalles a incluir\nen la geometría resultante."
+          },
+          "text": {
+           "t": "str",
+           "v": "Valor de la máscara <b>B:</b>"
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "row": 4,
+        "role": 1,
+        "widget": {
+         "qt": "QSpinBox",
+         "py": "FCSpinner",
+         "name": "mask_b_entry",
+         "props": {
+          "maximum": {
+           "t": "int",
+           "v": 255
+          },
+          "value": {
+           "t": "int",
+           "v": 250
+          },
+          "enabled": {
+           "t": "bool",
+           "v": false
+          }
+         }
+        }
+       }
+      ],
+      "formRows": true
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "QPushButton",
+      "name": "import_button",
+      "props": {
+       "toolTip": {
+        "t": "str",
+        "v": "Abra una imagen de tipo ráster y luego impórtela en FlatCAM."
+       },
+       "text": {
+        "t": "str",
+        "v": "Importar imagen"
+       }
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "ImageToolUI"
+}

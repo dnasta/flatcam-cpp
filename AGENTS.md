@@ -79,7 +79,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.758 casos de `ctest` (2.658 del núcleo y 99 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.760 casos de `ctest` (2.659 del núcleo y 100 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -113,6 +113,7 @@ src/core/              Núcleo (biblioteca estática flatcam_core, namespace fla
 src/parsers/           Lectores de archivos (sin Qt, derivan de Geometry)
   ApertureMacro.*        Macros de apertura de Gerber (`%AM`), con su evaluador de expresiones
   DxfImport.*            Importar DXF (ParseDXF + ParseDXF_Spline + import_dxf_as_geo/as_gerber), lector DXF propio
+  ImageImport.*          Importar imagen (Geometry.import_image): la unión de los píxeles que pasan el umbral
   Hpgl2.*                Importar HPGL2 (ParseHPGL2), con sus rarezas
   SvgImport.*            Importar SVG (ParseSVG + svg.path 7.1 + Geometry/Gerber.import_svg), con un lector XML mínimo
   Gerber.*               Parser de Gerber RS-274X (aperturas, trazos, arcos, regiones, polaridad)
@@ -226,6 +227,7 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   tools/SolderPasteTool.* Pasta de soldar (ToolSolderPaste, Alt+K): boquillas, `<objeto>_solderpaste` y su CNC Job
   tools/CalibrationTool.* Calibración (ToolCalibration, sin atajo): los cuatro puntos con el mouse, el "Visor de Gcode" y
                          `<objeto>_calibrated`
+  tools/ImageTool.*      Importar imagen (ToolImage, Archivo -> Importar): las bandas con QImage como las lee rasterio
   tools/FilmTool.*       Film (ToolFilm, Alt+L): SVG; PNG y PDF dibujando ese SVG con QtSvg (Qt6::Svg)
   tools/PcbWizardTool.*  Asistente de PCB (ToolPcbWizard, Archivo -> Importar): cargar el Excellon y el `.INF`, importar
   tools/QRCodeTool.*     Código QR (ToolQRCode, Alt+Q) sobre src/tools/QrCode: vista previa, clic, PNG y SVG
@@ -488,6 +490,11 @@ fijan con sentido físico (micras), no en el último bit.
   es idéntico (build de la GUI con esa GEOS: `/tmp/b311g`, como `/tmp/b311` pero sin `-DFLATCAM_BUILD_GUI=OFF` y con
   `-DCMAKE_PREFIX_PATH="$E;/opt/homebrew"`); con 3.12/3.15 la unión de líneas fusiona tramos colineales y el test compara
   el encabezado y el largo total de viajes y cortes.
+- `tests/tools/oracle_image.py` genera `tests/golden_image.h` (necesita `rasterio`, que no está en `old`: entorno
+  `raster`, `micromamba create -n raster -c conda-forge python=3.11 rasterio shapely numpy pillow`): arma imágenes chicas en
+  `tests/data/images/` (gris con agujero y píxeles en diagonal, RGB, RGBA, con paleta, BMP) y ejecuta `import_image`
+  original (con `ast`): las bandas que lee rasterio (el port las lee igual con `QImage`: índices en las de paleta, una
+  banda en las grises) y el resultado (área, límites, polígonos y agujeros) idénticos.
 - `tests/tools/oracle_fiducials.py` genera `tests/golden_fiducials.h`: ejecuta `add_fiducials`, `add_fiducials_geo` y
   `add_soldermask_opening` originales sobre el cobre de "luz de noche" (11 casos: las tres formas, los tres segundos puntos,
   márgenes 0 y negativo, aperturas que ya existen, cruces superpuestas que fallan, la máscara): los mismos puntos, textos,
@@ -964,7 +971,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.758 casos de test** (`ctest`): 2.659 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 99 de la GUI;
+- **2.760 casos de test** (`ctest`): 2.660 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 100 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -992,7 +999,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.758 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.760 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -1161,8 +1168,10 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    generados por `tests/tools/make_test_dxf.py`: idéntico), ~~exportar DXF~~ (`src/io/DxfExport.*`: la plantilla R2010 de
    ezdxf, `tools/gen_dxf_template.py` → `src/io/generated/DxfR2010Template.h`, con la numeración de ezdxf; idéntico salvo
    GUID y fechas), ~~exportar PNG~~ (la imagen del canvas, sin alfa, como `_screenshot`), ~~importar HPGL2~~ (`src/parsers/Hpgl2.*`,
-   `oracle_hpgl2.py` sobre `tests/data/hpgl2/`: idéntico, también en sus fallas). Falta: importar PDF (`ParsePDF`,
-   `ToolPDF`) e imagen (`ToolImage`), los textos de SVG y DXF (`ParseFont`), abrir/guardar scripts,
+   `oracle_hpgl2.py` sobre `tests/data/hpgl2/`: idéntico, también en sus fallas). ~~Importar imagen~~ (hecho: `src/parsers/ImageImport.*`, `tools/ImageTool.*`;
+   `oracle_image.py`: idéntico. Como `rasterio.features.shapes` + `unary_union`, el resultado es la unión de los píxeles
+   elegidos: el port la arma con un rectángulo por tramo de fila; las coordenadas son las mismas, `col * 25,4 / dpi` y
+   `-(fila * 25,4 / dpi)`). Falta: importar PDF (`ParsePDF`, `ToolPDF`), los textos de SVG y DXF (`ParseFont`), abrir/guardar scripts,
    imprimir a PDF (`on_file_save_objects_pdf`) y los objetos Script y Documento (`FlatCAMScript`, `FlatCAMDocument`).
    **Decidido por el usuario:** en HPGL2 se corrigen las cuatro fallas del original (sección 11.12 w).
 5. **Herramientas restantes** (`appTools/`). ~~Fresado~~ (hecho): `ToolMilling` no se instala en la 2024.4 (no está en

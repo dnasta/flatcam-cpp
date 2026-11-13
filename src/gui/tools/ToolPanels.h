@@ -27,6 +27,7 @@
 #include "gui/tools/PcbWizardTool.h"
 #include "gui/tools/CalibrationTool.h"
 #include "gui/tools/FilmTool.h"
+#include "gui/tools/ImageTool.h"
 #include "gui/tools/QRCodeTool.h"
 #include "gui/tools/ToolInfo.h"
 #include "gui/tools/TransformTool.h"
