@@ -134,6 +134,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     thievingTool = new ThievingTool(this, ui_.get());
     rulesTool = new RulesTool(this, ui_.get());
     solderPasteTool = new SolderPasteTool(this, ui_.get());
+    pcbWizardTool = new PcbWizardTool(this, ui_.get());
     geoEditor = new GeoEditor(this);
     excEditor = new ExcEditor(this);
     grbEditor = new GrbEditor(this);
@@ -144,7 +145,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     moveTool = new MoveTool(this, this);
     propertiesTool = new PropertiesTool(this, ui_.get());
     isolationTool = new IsolationTool(this, ui_.get());
-    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool, panelizeTool, invertTool, calculatorsTool, cornersTool, extractDrillsTool, punchTool, subTool, optimalTool, etchTool, alignTool, fiducialsTool, thievingTool, rulesTool, solderPasteTool, qrcodeTool, transformTool,
+    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool, panelizeTool, invertTool, calculatorsTool, cornersTool, extractDrillsTool, punchTool, subTool, optimalTool, etchTool, alignTool, fiducialsTool, thievingTool, rulesTool, solderPasteTool, pcbWizardTool, qrcodeTool, transformTool,
                                                       isolationTool, distanceTool, distanceMinTool, propertiesTool})
         w->hide();
     connectSignals();
@@ -325,6 +326,10 @@ void App::connectSignals() {
             runTool(solderPasteTool, SolderPasteTool::info());
             solderPasteTool->setToolUi();
         });
+    connect(ui_->pcb_wizard_tool_menuAction, &QAction::triggered, this, [this] {
+        runTool(pcbWizardTool, PcbWizardTool::info());
+        pcbWizardTool->setToolUi();
+    });
     for (QAction* a : {ui_->rules_tool_menuAction, ui_->rules_btn})
         connect(a, &QAction::triggered, this, [this] {
             runTool(rulesTool, RulesTool::info());

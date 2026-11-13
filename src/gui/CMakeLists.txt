@@ -52,10 +52,11 @@ add_library(flatcam_gui STATIC
     objects/DocumentObject.cpp
     tools/RulesTool.cpp
     tools/SolderPasteTool.cpp
+    tools/PcbWizardTool.cpp
     generated/RulesToolUIBase.cpp
     generated/SolderPasteToolUIBase.cpp
-    generated/CalibrationToolUIBase.cpp
     generated/PcbWizardToolUIBase.cpp
+    generated/CalibrationToolUIBase.cpp
     generated/FilmToolUIBase.cpp
     editors/GeoEditor.cpp
     editors/ExcEditor.cpp
