@@ -37,6 +37,7 @@ add_executable(core_tests
     test_thieving.cpp
     test_rules.cpp
     test_solderpaste.cpp
+    test_pcbwizard.cpp
     test_geo_editor.cpp
     test_exc_editor.cpp
     test_grb_editor.cpp
