@@ -18,15 +18,17 @@ máquina del usuario.
 
 **Lo que hay que saber para retomar (el detalle está en `AGENTS.md`, sección 12).**
 
-- **Tests:** 2.745 casos de `ctest` (2.654 del núcleo, de los que 2.251 son los casos de los postprocesadores, y 91 de la GUI; 1
+- **Tests:** 2.755 casos de `ctest` (2.658 del núcleo, de los que 2.251 son los casos de los postprocesadores, y 97 de la GUI; 1
   lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
   y Qt 6.12 en el Mac del usuario (M4, AppleClang). micromamba: `old` (Shapely 1.8.4, GEOS 3.11, PyQt5 5.15, para oráculos y para
   volcar la interfaz original), `sh2`, `geos312`, `geos311` (`AGENTS.md`, secciones 6 y 12.4). El build con GEOS 3.12 va en
   `/tmp/b312` (macOS limpia `/tmp`: si falta, se vuelve a crear con el comando de la sección 6).
-- **Herramientas restantes (ítem 5, en curso):** hecha Verificación de reglas (`src/tools/RulesCheck.*`, `tools/RulesTool.*`,
-  Alt+R, `oracle_rules.py`; el informe como Documento `Rules_check_results`). Pasta de soldar: núcleo escrito
-  (`src/tools/SolderPaste.*`), **falta su oráculo, la GUI (`SolderPasteToolUIBase` ya generado) y el atajo Alt+K**. Siguen
-  Calibración, Asistente de PCB, Film (Alt+L; paneles ya generados) y Autonivelación (en el CNC Job).
+- **Herramientas restantes (ítem 5, casi terminado):** hechas Verificación de reglas (Alt+R, `oracle_rules.py`), Pasta de
+  soldar (Alt+K, `oracle_solderpaste.py`), Asistente de PCB (Archivo -> Importar, `oracle_pcbwizard.py`), Calibración
+  (`oracle_calibration.py`) y Film (Alt+L, `oracle_film.py`; PNG/PDF con QtSvg, nueva dependencia `Qt6::Svg`). **Falta solo
+  la Autonivelación del CNC Job**: en el original `probing_gcode` es `@staticmethod` con `self` (cada llamada da `TypeError`)
+  y aplicar la nivelación es `pass`; GRBL usa el puerto serie. Builds extra: `/tmp/b312` (GEOS 3.12) y `/tmp/b311` (3.11,
+  la del oráculo: Film sale byte por byte).
 - **Editores hechos (fase 5, ítem 8):** Geometría, Excellon y Gerber (`src/editors/` sin Qt y `src/gui/editors/`), contra el
   original con `oracle_geo_editor.py`, `oracle_exc_editor.py` y `oracle_grb_editor.py`; entrar y salir con E, Editar, el menú
   del Proyecto y del canvas (`App::objectToEditor` / `editorToObject`). Falta el editor de G-code de los CNC Job.

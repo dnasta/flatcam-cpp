@@ -67,7 +67,8 @@ CalibrationPoints calibrationScale(const CalibrationPoints& pts, double sx, doub
  *  @param ay Grados en Y. @return Los puntos nuevos. */
 CalibrationPoints calibrationSkew(const CalibrationPoints& pts, double ax, double ay);
 
-/** @brief `float('%.*f' % (decimals, v))`. @param v Valor. @param decimals Decimales. @return El valor redondeado. */
+/** @brief El valor redondeado como el original (lo escribe con @p decimals cifras y lo vuelve a leer).
+ *  @param v Valor. @param decimals Decimales. @return El valor redondeado. */
 double calibrationRound(double v, int decimals);
 
 }  // namespace flatcam
