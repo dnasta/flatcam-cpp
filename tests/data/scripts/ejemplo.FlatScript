@@ -1,0 +1,6 @@
+# Script de prueba
+new
+open_gerber "a.gbr" -outname cobre
+
+set x 5
+puts "x vale $x"

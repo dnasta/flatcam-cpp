@@ -18,6 +18,7 @@
 #include "io/JsonValue.h"
 
 #include <QObject>
+#include <QPointer>
 #include <QString>
 #include <memory>
 
@@ -542,6 +543,48 @@ public:
     FlatCAMObj* openHpgl2(const QString& filename);
     /** @brief Archivo -> Importar -> HPGL2 (`on_fileopenhpgl2`). */
     void onFileOpenHpgl2();
+    /**
+     * @brief Las palabras del autocompletado (`myKeywords`): los comandos Tcl de FlatCAM, `util_autocomplete_keywords`,
+     * las palabras de Tcl y los nombres de los objetos. @return Las palabras.
+     */
+    QStringList keywords() const;
+    /** @brief `on_filenewscript`: un Script `new_script` con el texto de bienvenida. @param silent Sin aviso. @return El objeto. */
+    FlatCAMObj* onFileNewScript(bool silent = false);
+    /** @brief `on_fileopenscript`: el diálogo (o el archivo dado) y `openScript`. @param name Archivo (vacío: el diálogo). */
+    void onFileOpenScript(const QString& name = {});
+    /** @brief `on_fileopenscript_example`: lo mismo, con el diálogo en la carpeta de ejemplos. */
+    void onFileOpenScriptExample();
+    /**
+     * @brief `open_script`: un Script con el texto del archivo (si falla, lo busca en `global_tcl_path`).
+     * @param filename Archivo. @param outname Nombre (vacío: el del archivo). @return El objeto, o nulo.
+     */
+    FlatCAMObj* openScript(const QString& filename, const QString& outname = {});
+    /** @brief `on_filerunscript`: lee un script y lo ejecuta en la consola Tcl. @param name Archivo (vacío: el diálogo). */
+    void onFileRunScript(const QString& name = {});
+    /** @brief `handle_run_code` del Script: ejecuta el texto en la consola Tcl. @param code El texto. */
+    void runScriptCode(const QString& code);
+    /** @brief `new_document_object`: un Documento vacío `new_document`. @return El objeto. */
+    FlatCAMObj* newDocumentObject();
+    /**
+     * @brief `save_source_file`: el texto guardado de un objeto, con la cabecera `G04` del original.
+     * @param obj El objeto. @param filename Archivo. @return Si se escribió (falla con el texto vacío).
+     */
+    bool saveSourceFile(FlatCAMObj* obj, const QString& filename);
+    /** @brief `on_file_savescript` ("Guardar" de un Script). @param filename Archivo (vacío: el diálogo). */
+    void onFileSaveScript(const QString& filename = {});
+    /** @brief `on_file_savedocument` ("Guardar" de un Documento). @param filename Archivo (vacío: el diálogo). */
+    void onFileSaveDocument(const QString& filename = {});
+    /**
+     * @brief `open_config_file`: abre un `.FlatConfig` en el "Editor de código" (lo cierra y lo vuelve a abrir).
+     * @param filename Archivo.
+     */
+    void openConfigFile(const QString& filename);
+    /** @brief `on_toggle_code_editor` (Ver -> Editor de código, Shift+E): abre o cierra la pestaña "Editor de código". */
+    void onToggleCodeEditor();
+    /** @brief La pestaña "Editor de código" si está abierta. @return El editor, o nulo. */
+    class AppTextEditor* codeEditorTab() const;
+    /** @brief `goto_text_line` (Ctrl+G en un editor): pide la línea y lleva el cursor ahí. @param line Línea (vacío: el diálogo). */
+    void gotoTextLine(std::optional<int> line = std::nullopt);
     /** @brief Arma y abre el menú del canvas (`popMenu`) donde está el cursor. */
     void popupCanvasMenu();
     /** @brief El menú del canvas (`popMenu`). @return El menú. */
@@ -564,6 +607,7 @@ private:
     QWidget* defaultProperties_{nullptr};  ///< Panel de Propiedades sin objeto (`setup_default_properties_tab`).
     ObjectCollection* collection_;
     QString lastFolder_;
+    QPointer<class AppTextEditor> codeEditor_;  ///< La pestaña "Editor de código" (`text_editor_tab`).
     QString projectFilename_;
     QString dataPath_;
     class CanvasPicker* picker_{nullptr};
