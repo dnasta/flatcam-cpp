@@ -2,6 +2,7 @@
 """Vuelca a JSON los paneles ORIGINALES de FlatCAM que necesita la primera versión del port.
 
 - Pestaña Propiedades de cada tipo de objeto: `GerberObjectUI`, `ExcellonObjectUI`, `GeometryObjectUI`, `CNCObjectUI`,
+  `ScriptObjectUI`, `DocumentObjectUI`,
   después del `set_ui` del objeto original (nivel Básico y valores de fábrica en el formulario).
 - Pestaña Herramienta: NCC, Paint, Perforación y Corte, después de su `run()` original (que carga los valores de fábrica).
 - La pestaña "Base de datos de herramientas" (`appDatabase.ToolsDB2`), con la base vacía.
@@ -23,10 +24,12 @@ OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "panels")
 OBJECT_UIS = {"GerberObjectUI": ("gerber", "appObjects.FlatCAMGerber", "GerberObject"),
               "ExcellonObjectUI": ("excellon", "appObjects.FlatCAMExcellon", "ExcellonObject"),
               "GeometryObjectUI": ("geometry", "appObjects.FlatCAMGeometry", "GeometryObject"),
-              "CNCObjectUI": ("cncjob", "appObjects.FlatCAMCNCJob", "CNCJobObject")}
+              "CNCObjectUI": ("cncjob", "appObjects.FlatCAMCNCJob", "CNCJobObject"),
+              "ScriptObjectUI": ("script", "appObjects.FlatCAMScript", "ScriptObject"),
+              "DocumentObjectUI": ("document", "appObjects.FlatCAMDocument", "DocumentObject")}
 # opciones de herramientas que AppObject.new_object copia a cada tipo de objeto
 EXTRA_OPTIONS = {"gerber": ("tools_iso_",), "excellon": ("tools_drill_", "tools_mill_"), "geometry": ("tools_mill_",),
-                 "cncjob": ()}
+                 "cncjob": (), "script": (), "document": ()}
 
 
 def object_with_ui(fa, ou, cls, kind, module, objcls):
@@ -57,6 +60,7 @@ def main():
     ou = fr.import_original("appGUI.ObjectUI")
     written = []
     fr.import_original("appObjects.FlatCAMObj").FlatCAMObj.app = fa
+    fa.myKeywords = []  # palabras del autocompletado (AppTextEditor de Script y Documento)
     for cls, spec in OBJECT_UIS.items():
         ui = object_with_ui(fa, ou, cls, *spec)
         # Como en FlatCAMObj.build_ui: el panel vive dentro del área de Propiedades (cambia márgenes y fondo).

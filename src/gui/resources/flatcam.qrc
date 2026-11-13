@@ -350,5 +350,6 @@
     <file>factory_defaults.json</file>
     <file>preferences_fields.json</file>
     <file>shortcuts.json</file>
+    <file>tcl_keywords.json</file>
 </qresource>
 </RCC>

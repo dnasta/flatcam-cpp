@@ -79,7 +79,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.765 casos de `ctest` (2.662 del núcleo y 102 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.772 casos de `ctest` (2.662 del núcleo y 109 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -225,7 +225,14 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   editors/ExcEditor.*    Editor de Excellon (AppExcEditor): tabla de herramientas, agujeros, ranuras, grillas
   editors/GrbEditor.*    Editor de Gerber (AppGerberEditor): tabla de aperturas y sus herramientas
   tools/RulesTool.*      Verificación de reglas (ToolRulesCheck, Alt+R): el informe en un Documento `Rules_check_results`
-  objects/DocumentObject.* Objeto Documento mínimo (texto HTML en un QTextBrowser)
+  objects/ScriptObject.* Objeto Script (FlatCAMScript) y la base TextObject: el texto, el panel generado y la pestaña
+                         "Editor de guiones" (AppTextEditor con "Ejecutar")
+  objects/DocumentObject.* Objeto Documento (FlatCAMDocument): "Editor de Documentos" con formato y su panel
+  AppTextEditor.*        El editor de texto (appEditors/AppTextEditor): buscar, reemplazar, imprimir, abrir, guardar (texto
+                         o PDF); lo usan Script, Documento, Ver fuente y el Editor de código (Qt6::PrintSupport)
+  widgets/FCTextEdits.*  FCTextAreaExtended, FCPlainTextAreaExtended, FCTextAreaLineNumber y MyCompleter de GUIElements
+  AppScripts.cpp         Archivo -> Nuevo/Abrir/Ejecutar script, Nuevo documento, save_source_file, Editor de código
+                         (Shift+E), ir a una línea (Ctrl+G en un editor), open_config_file
   tools/SolderPasteTool.* Pasta de soldar (ToolSolderPaste, Alt+K): boquillas, `<objeto>_solderpaste` y su CNC Job
   tools/CalibrationTool.* Calibración (ToolCalibration, sin atajo): los cuatro puntos con el mouse, el "Visor de Gcode" y
                          `<objeto>_calibrated`
@@ -503,6 +510,12 @@ fijan con sentido físico (micras), no en el último bit.
   `parse_pdf`, `layer_rendering_as_gerber` y `layer_rendering_as_excellon` originales (con `ast`). Las capas, las aperturas
   (en orden, con su tamaño, elementos y áreas), el Gerber de cada capa y las herramientas del Excellon: idénticos, con GEOS
   3.11, 3.12 y 3.15. Ojo: un trazo de grosor 0 hace caer al original (ver la sección 14).
+- `tests/tools/oracle_script_document.py` escribe `tests/data/scripts/oracle.json`: con la interfaz PyQt5 real ejecuta
+  `new_object` con `new_script_object` / `new_document_object` (las opciones, el texto inicial, la pestaña),
+  `open_script` (CRLF a LF) y `save_source_file`, un Documento con HTML y con texto (lo editado no llega a
+  `source_file`) y el `AppTextEditor` (botones, buscar, reemplazar uno y "Todos", Ctrl+/, paréntesis automáticos,
+  guardar a `.txt`): idénticos (`GuiScript.*`, `GuiDocument.*`, `GuiTextEditor.*`). `check_project_in_original.py`
+  abre ahora también Script y Documento (el original abre los que guarda el port).
 - `tests/tools/oracle_print_pdf.py` genera `tests/golden_print_pdf.h`: ejecuta `save_pdf` original (Archivo -> Imprimir,
   con `ast`) con el contorno y el taladro de "luz de noche" y captura el SVG que le pasa a svglib, la hoja y el
   desplazamiento (3 casos: dos objetos en A4 vertical, uno en A4 apaisada, uno en carta). Con GEOS 3.11 idéntico a menos de
@@ -917,6 +930,15 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     en el original (no se porta). **Corregido en el port:** "Archivos recientes" mostraba los tipos que el original no
     muestra (PNG, preferencias: `icons[kind]` da KeyError y no aparecen). Falta: el nivel Avanzado (`global_app_level`; los
     paneles se generaron en Básico).
+    (z) **Script, Documento y el editor de texto** (ítem 4). Desvíos: la pestaña de cada objeto se busca por el propio
+    editor, no por `objectName` == nombre (en el original, después de renombrar, elegir el objeto agregaría la misma
+    pestaña otra vez y borrarlo no la cerraría); guardar el editor a PDF dibuja el texto con Helvetica 10 / 12 puntos
+    con QPdfWriter en vez del `Paragraph` de reportlab (la misma hoja y márgenes); "Ejecutar" y Archivo -> Ejecutar
+    script avisan que falta la consola Tcl (ítem 7); `myKeywords` sigue los nombres actuales de los objetos (el
+    original agrega el pedido, antes de renombrar por repetido). **Errores del port corregidos de paso:** soltar un
+    `.pdf` o un `.FlatConfig` en la ventana no hacía nada (el original los abre); Archivos recientes no abría los
+    scripts, PDF ni imágenes; "Ver fuente" era un texto de solo lectura (ahora es el `AppTextEditor`). En macOS,
+    QtPrintSupport arrastra `Cups::Cups`, que mete el `usr/include` del SDK y rompe libc++: el `CMakeLists` lo quita.
     (y) **Error del port corregido (volcador):** el diálogo "Acerca de" mostraba `<MagicMock name='app_url' ...>` en vez de
     `http://flatcam.org`, porque la aplicación simulada de `fc_runtime.py` no tenía `app_url`.
     (m) Errores del original que se reproducen a propósito en Isolation: la herramienta nueva tiene tipo `"           Iso"`
@@ -983,7 +1005,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.765 casos de test** (`ctest`): 2.663 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 102 de la GUI;
+- **2.772 casos de test** (`ctest`): 2.663 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 109 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -1011,7 +1033,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.765 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.772 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -1187,10 +1209,13 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    Archivo -> Importar -> PDF y Ctrl+Q; `oracle_pdf.py`: idéntico. Desvíos: la pila de estados gráficos se vacía en cada
    archivo (en el original es del analizador y queda de un PDF al siguiente si no están balanceados los `q`/`Q`); un trazo
    de grosor 0 da un elemento vacío (el original se cae, ver la sección 14); se lee en el hilo de la interfaz). Falta: los
-   textos de SVG y DXF (`ParseFont`), abrir/guardar scripts,
+   textos de SVG y DXF (`ParseFont`),
    ~~imprimir a PDF~~ (hecho: `exportPrintSvg` en `src/io/SvgExport.*`,
    `App::printPdf` / `onFilePrintPdf`, Archivo -> Imprimir y Ctrl+P; `oracle_print_pdf.py`: idéntico; el PDF se dibuja
-   con QtSvg, como Film, con `renderSvgToPdf` de `tools/FilmTool.h`) y los objetos Script y Documento (`FlatCAMScript`, `FlatCAMDocument`).
+   con QtSvg, como Film, con `renderSvgToPdf` de `tools/FilmTool.h`). ~~Los objetos Script y Documento~~ (hechos: `objects/ScriptObject.*`, `objects/DocumentObject.*`, `AppTextEditor`,
+   `AppScripts.cpp`; Archivo -> Nuevo -> Script / Documento, Abrir script, Abrir ejemplo, Ejecutar script, la barra de
+   scripts, Guardar del menú del Proyecto, copiar, proyectos, recientes, Ver -> Editor de código (Shift+E), Ctrl+G;
+   paneles generados del original; `oracle_script_document.py`: idénticos; 11.12 z).
    **Decidido por el usuario:** en HPGL2 se corrigen las cuatro fallas del original (sección 11.12 w).
 5. **Herramientas restantes** (`appTools/`). ~~Fresado~~ (hecho): `ToolMilling` no se instala en la 2024.4 (no está en
    `install_tools` y su botón "Herramienta de fresado" del panel del Excellon está deshabilitado; su código usa la estructura
@@ -1398,6 +1423,14 @@ encontrar uno nuevo, agregarlo acá con su sección. Ya corregidos a pedido del 
   estado; el número de apertura nueva sube una sola vez (puede pisar una existente); `B` sobre un trazado de un punto
   corta todo el archivo (`LineString` sin `try`), igual que una curva sin punto actual; con cualquier stream que no sea
   texto UTF-8 (fuentes, imágenes) no se abre nada; el archivo reciente se registra como Gerber o Excellon.
+- **Script y Documento** (sección 13, ítem 4): lo escrito en un Documento nunca llega a `source_file` (`load_text`
+  desconecta `on_text_changed`), así que no se guarda en el proyecto; en un Script tampoco (no hay conexión) y
+  "Guardar" del menú del Proyecto escribe el texto original con la cabecera de un Gerber (`G04*`...); "Guardar" de un
+  Documento siempre falla (comprueba que sea un `ScriptObject`); el reciente del script guardado es "Script" (sin
+  ícono: no aparece); "Todos" reemplaza solo desde el cursor hasta el final; después de abrir el menú del Proyecto
+  sobre un Script o Documento, "Activar/Desactivar dibujo", "Editar" y "Propiedades" quedan ocultos para todos los
+  objetos el resto de la sesión (solo "Editar" se vuelve a mostrar); `read_only` no hace nada; Ctrl+G en la pestaña de un
+  script abre un Gerber (su `objectName` es el nombre del objeto, sin "editor"); la carpeta de ejemplos lleva `\\`.
 - **Imprimir a PDF** (sección 13, ítem 4): como en Film, el SVG lleva `b'` y `'` como texto y un objeto de un solo
   polígono no se recolorea; la opacidad es el alfa en hexadecimal tal cual (`"BF"`, que no es un valor válido de SVG); una
   Geometría usa el color de dibujo y la opacidad del objeto anterior; con un CNC Job elegido no se imprime nada

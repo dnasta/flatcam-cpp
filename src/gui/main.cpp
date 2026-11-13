@@ -50,7 +50,16 @@ int main(int argc, char* argv[]) {
     };
     const QString select = takeOption("--select"), tool = takeOption("--tool");
     app.ui()->show();
-    for (const QString& f : args) app.openByExtension(f);
+    for (const QString& f : args) {
+        // on_startup_args: un script se abre en el editor y se ejecuta (".flatscript" o ".tcl" en el nombre).
+        if (f.toLower().contains(".flatscript") || f.toLower().contains(".tcl")) {
+            app.onFileOpenScript(f);
+            app.ui()->plot_tab_area->setCurrentWidget(app.ui()->plot_tab);
+            app.onFileRunScript(f);
+        } else {
+            app.openByExtension(f);
+        }
+    }
     if (!select.isEmpty()) {
         if (auto* o = app.collection()->byName(select)) {
             app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(o));

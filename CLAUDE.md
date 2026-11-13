@@ -18,7 +18,7 @@ máquina del usuario.
 
 **Lo que hay que saber para retomar (el detalle está en `AGENTS.md`, sección 12).**
 
-- **Tests:** 2.765 casos de `ctest` (2.663 del núcleo, de los que 2.251 son los casos de los postprocesadores, y 102 de la GUI; 1
+- **Tests:** 2.772 casos de `ctest` (2.663 del núcleo, de los que 2.251 son los casos de los postprocesadores, y 109 de la GUI; 1
   lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
   y Qt 6.12 en el Mac del usuario (M4, AppleClang). micromamba: `old` (Shapely 1.8.4, GEOS 3.11, PyQt5 5.15, para oráculos y para
   volcar la interfaz original), `sh2`, `geos312`, `geos311` (`AGENTS.md`, secciones 6 y 12.4). El build con GEOS 3.12 va en
@@ -29,7 +29,7 @@ máquina del usuario.
   aplicar la nivelación no hace nada y el botón solo se ve en el nivel Avanzado). Cada una con su oráculo (`oracle_rules`,
   `oracle_solderpaste`, `oracle_pcbwizard`, `oracle_calibration`, `oracle_film`, `oracle_autolevel`). Builds extra:
   `/tmp/b312` (GEOS 3.12) y `/tmp/b311` (3.11, la del oráculo: Film sale byte por byte). **Lo que falta hacia la 1.0.0:**
-  ítem 4 (textos con fuentes y los objetos Script y Documento; ya están el SVG del CNC Job, `oracle_cnc_svg.py`,
+  ítem 4 (textos con fuentes; ya están los objetos Script y Documento con su editor de texto, `oracle_script_document.py`, el SVG del CNC Job, `oracle_cnc_svg.py`,
   importar imagen, `oracle_image.py` en el entorno `raster`, importar PDF, `oracle_pdf.py`, e imprimir a PDF,
   `oracle_print_pdf.py`). macOS limpia `/tmp` cada día: `/tmp/b311` y `/tmp/b312` se rearman con el comando de la sección 6, consola Tcl (ítem 7), editor de
   G-code, nivel Avanzado, marcadores, objetos vacíos de Archivo -> Nuevo, cierre (13.9) y corregir la sección 14.

@@ -1,33 +1,41 @@
 /**
  * @file DocumentObject.h
- * @brief El objeto Documento (`appObjects/FlatCAMDocument.py`, en su forma más simple): un texto (HTML) que se ve en
- * solo lectura en la pestaña Propiedades. Lo crea, por ejemplo, la Verificación de reglas con su informe.
+ * @brief El objeto Documento (`appObjects/FlatCAMDocument.py`): un texto con formato (HTML) que se edita en una
+ * pestaña "Editor de Documentos" del área de dibujo, con el panel `DocumentObjectUI` (fuente, tamaño, negrita,
+ * alineación, colores, tabulación). Lo crean Archivo -> Nuevo -> Documento y, con su informe, la Verificación de reglas.
  */
 #pragma once
 
-#include "gui/objects/FlatCAMObj.h"
+#include "gui/generated/DocumentObjectUIBase.h"
+#include "gui/objects/ScriptObject.h"
 
 namespace flatcam::gui {
 
-/** @brief Un Documento: texto sin geometría. */
-class DocumentObject : public FlatCAMObj {
+/** @brief El panel `DocumentObjectUI` de la pestaña Propiedades. */
+class DocumentObjectUI : public DocumentObjectUIBase {
     Q_OBJECT
 public:
-    /** @brief Crea el documento. @param name Nombre. @param text El texto (`source_file`). @param readOnly Solo lectura. */
-    DocumentObject(QString name, QString text, bool readOnly = true);
-    /** @brief El texto. @return El texto. */
-    const QString& text() const { return text_; }
-    /** @brief `read_only`. @return Si es de solo lectura. */
+    /** @brief Crea y arma el panel (con la fuente de cada sistema, como el original). @param parent Padre. */
+    explicit DocumentObjectUI(QWidget* parent = nullptr);
+};
+
+/** @brief Un Documento (`DocumentObject`). */
+class DocumentObject : public TextObject {
+    Q_OBJECT
+public:
+    /** @brief Crea el documento. @param name Nombre. @param text El texto (`source_file`). @param readOnly `read_only`. */
+    DocumentObject(QString name, QString text, bool readOnly = false);
+    /** @brief `read_only` (el original lo guarda pero el editor nunca queda de solo lectura). @return El valor. */
     bool readOnly() const { return readOnly_; }
-    /** @brief No dibuja nada. @return Vacío. */
-    PlotLayerData plotData() const override { return {}; }
-    /** @brief Sin geometría. @return Vacío. */
-    QRectF bounds() const override { return {}; }
-    /** @brief El texto en un visor. @return El panel. */
-    QWidget* propertiesUi() override;
+    /** @brief `set_ui` del Documento: editor con formato, los controles del panel y el texto (HTML o plano). @param app Aplicación. */
+    void setUi(App* app) override;
+    /** @brief `build_ui`: agrega la pestaña "Editor de Documentos" si no estaba y la muestra. */
+    void buildUi() override;
+    /** @brief El panel. @return El panel. */
+    DocumentObjectUI* ui() const { return static_cast<DocumentObjectUI*>(ui_.get()); }
 
 private:
-    QString text_;
+    void onTabSizeChange(std::optional<int> val);
     bool readOnly_;
 };
 

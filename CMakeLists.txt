@@ -39,7 +39,12 @@ add_subdirectory(src)
 # Interfaz gráfica (Qt6). El núcleo no depende de Qt; si Qt6 no está, solo se compila el núcleo.
 # ---------------------------------------------------------------------------
 if(FLATCAM_BUILD_GUI)
-    find_package(Qt6 6.2 QUIET COMPONENTS Widgets OpenGLWidgets Svg)
+    find_package(Qt6 6.2 QUIET COMPONENTS Widgets OpenGLWidgets Svg PrintSupport)
+    # QtPrintSupport (imprimir desde el editor de texto) arrastra Cups::Cups, que en macOS agrega la carpeta
+    # usr/include del SDK como -isystem y rompe los encabezados de libc++: se la quita (el SDK ya está en la ruta).
+    if(APPLE AND TARGET Cups::Cups)
+        set_property(TARGET Cups::Cups PROPERTY INTERFACE_INCLUDE_DIRECTORIES "")
+    endif()
     if(Qt6_FOUND)
         add_subdirectory(src/gui)
     else()

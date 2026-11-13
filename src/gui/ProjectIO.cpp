@@ -6,6 +6,7 @@
 
 #include "gui/objects/CNCJobObject.h"
 #include "gui/objects/GeometryObject.h"
+#include "gui/objects/DocumentObject.h"
 
 namespace flatcam::gui {
 
@@ -345,6 +346,11 @@ std::unique_ptr<FlatCAMObj> ProjectIO::objectFrom(const JsonValue& d, QString& w
             std::optional<BoundingBox> src;
             if (boundsOf && name.endsWith("_cnc")) src = boundsOf(name.chopped(4));
             obj = cncFrom(d, name, rebuildStartGcode(d, src));
+        } else if (kind == "script") {
+            // from_dict: options, kind y source_file.
+            obj = std::make_unique<ScriptObject>(name, str(d["source_file"]));
+        } else if (kind == "document") {
+            obj = std::make_unique<DocumentObject>(name, str(d["source_file"]));
         }
     } catch (const std::exception& e) {
         warning = QString("%1: %2").arg(name, QString::fromUtf8(e.what()));
@@ -399,6 +405,31 @@ JsonValue objectOptions(const FlatCAMObj& obj, const char* kind, const JsonValue
     o.set("xmax", real(b.right()));
     o.set("ymax", real(b.bottom()));
     return o;
+}
+
+/// to_dict del Script y del Documento: options, kind y source_file (sin límites: new_object no los agrega).
+JsonValue textDict(const TextObject& obj, const JsonValue& app) {
+    const bool script = obj.kind() == ObjectKind::Script;
+    JsonValue o = obj.projectData["options"].isObject() ? obj.projectData["options"] : JsonValue::object();
+    if (!obj.projectData["options"].isObject()) {
+        // FlatCAMObj.__init__ (name), ScriptObject.__init__ (plot, type, source_file) y new_object (script_* /
+        // document_*).
+        o.set("name", JsonValue::string(obj.name().toStdString()));
+        if (script) {
+            o.set("plot", JsonValue::boolean(true));
+            o.set("type", JsonValue::string("Script"));
+            o.set("source_file", JsonValue::string(""));
+        }
+        const std::string pre = script ? "script_" : "document_";
+        for (const auto& [k, v] : app.members())
+            if (k.rfind(pre, 0) == 0) o.set(k.substr(pre.size()), v);
+    }
+    o.set("name", JsonValue::string(obj.name().toStdString()));
+    JsonValue d = JsonValue::object();
+    d.set("options", o);
+    d.set("kind", JsonValue::string(script ? "script" : "document"));
+    d.set("source_file", JsonValue::string(obj.sourceFile().toStdString()));
+    return d;
 }
 
 /// Partida del diccionario: lo que vino del proyecto, o vacío.
@@ -739,8 +770,10 @@ JsonValue ProjectIO::toDict(const FlatCAMObj& obj, const JsonValue& appOptions) 
         case ObjectKind::Excellon: return excellonDict(static_cast<const ExcellonObject&>(obj), appOptions);
         case ObjectKind::Geometry: return geometryDict(static_cast<const GeometryObject&>(obj), appOptions);
         case ObjectKind::CNCJob: return cncDict(static_cast<const CNCJobObject&>(obj), appOptions);
-        default: return base(obj);
+        case ObjectKind::Script:
+        case ObjectKind::Document: return textDict(static_cast<const TextObject&>(obj), appOptions);
     }
+    return base(obj);
 }
 
 JsonValue ProjectIO::projectDict(const std::vector<FlatCAMObj*>& objs, const JsonValue& appOptions) {

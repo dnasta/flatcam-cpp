@@ -1,0 +1,271 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "ScriptObjectUI",
+  "name": null,
+  "props": {
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": null,
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QHBoxLayout",
+      "py": "QHBoxLayout",
+      "name": "title_box",
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "icon",
+         "props": {
+          "pixmap": {
+           "t": "QPixmap",
+           "v": ":/images/script_new24.png"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "title_label",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "<font size=5><b>Objeto de script</b></font>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "level",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "BASIC es adecuado para un principiante. Muchos parámetros\nestán ocultos para el usuario en este modo.\nEl modo AVANZADO pondrá a disposición todos los parámetros.\n\nPara cambiar el NIVEL de la aplicación, vaya a:\nEditar -> Preferencias -> General y verificar:\n'APP. NIVEL 'botón de radio."
+          },
+          "text": {
+           "t": "str",
+           "v": "<span style=\"color:green;\"><b>BASIC</b></span>"
+          },
+          "alignment": {
+           "t": "int",
+           "v": 130
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QVBoxLayout",
+      "py": "QVBoxLayout",
+      "name": "custom_box",
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "stretch": 0,
+        "layout": {
+         "qt": "QHBoxLayout",
+         "py": "QHBoxLayout",
+         "name": "name_hlay",
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "items": [
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": null,
+            "props": {
+             "text": {
+              "t": "str",
+              "v": "<b>Nombre:</b>"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QLineEdit",
+            "py": "FCEntry",
+            "name": "name_entry",
+            "props": {
+             "text": {
+              "t": "str",
+              "v": "x"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "align": 128,
+        "stretch": 0,
+        "layout": {
+         "qt": "QHBoxLayout",
+         "py": "QHBoxLayout",
+         "name": null,
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "items": [
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QCheckBox",
+            "py": "FCCheckBox",
+            "name": "autocomplete_cb",
+            "props": {
+             "font": {
+              "t": "QFont",
+              "v": {
+               "bold": true
+              }
+             },
+             "toolTip": {
+              "t": "str",
+              "v": "Esto selecciona si el autocompletador está habilitado en el Editor de secuencias de comandos."
+             },
+             "styleSheet": {
+              "t": "str",
+              "v": "\n\t\t\tQCheckBox {font-weight: bold; color: black}\n\t\t\t"
+             },
+             "text": {
+              "t": "str",
+              "v": "Autocompletador"
+             },
+             "checked": {
+              "t": "bool",
+              "v": true
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "stretch": 0,
+           "spacer": [
+            0,
+            0,
+            7,
+            1
+           ]
+          }
+         ]
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "plot_cb",
+         "props": {
+          "layoutDirection": {
+           "t": "int",
+           "v": 1
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "spacer": [
+         0,
+         0,
+         1,
+         7
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "ScriptObjectUI"
+}

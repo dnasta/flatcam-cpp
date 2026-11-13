@@ -24,7 +24,9 @@ import fc_runtime as fr  # noqa: E402
 CLASSES = {"gerber": ("appObjects.FlatCAMGerber", "GerberObject", "GerberObjectUI"),
            "excellon": ("appObjects.FlatCAMExcellon", "ExcellonObject", "ExcellonObjectUI"),
            "geometry": ("appObjects.FlatCAMGeometry", "GeometryObject", "GeometryObjectUI"),
-           "cncjob": ("appObjects.FlatCAMCNCJob", "CNCJobObject", "CNCObjectUI")}
+           "cncjob": ("appObjects.FlatCAMCNCJob", "CNCJobObject", "CNCObjectUI"),
+           "script": ("appObjects.FlatCAMScript", "ScriptObject", "ScriptObjectUI"),
+           "document": ("appObjects.FlatCAMDocument", "DocumentObject", "DocumentObjectUI")}
 
 
 def main(path):
@@ -34,6 +36,7 @@ def main(path):
     fr.import_original("appObjects.FlatCAMObj").FlatCAMObj.app = fa
     pp = fr.import_original("appPreProcessor")
     fa.preprocessors = pp.load_preprocessors()
+    fa.myKeywords = []  # el AppTextEditor de los Script y Documentos
     with open(path, "rb") as f:
         magic = f.read(6)
     opener = lzma.open if magic == b"\xfd7zXZ\x00" else open
@@ -51,6 +54,8 @@ def main(path):
                     obj.options[option[len(kind) + 1:]] = fa.options[option]
             obj.from_dict(od)
             b = obj.bounds()
+            if None in b:  # Script y Documento: sin límites
+                b = (0.0, 0.0, 0.0, 0.0)
             obj.set_ui(getattr(ou, ui)(app=fa))
             obj.build_ui()
             extra = ""

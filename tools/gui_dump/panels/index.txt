@@ -2,6 +2,8 @@ GerberObjectUI
 ExcellonObjectUI
 GeometryObjectUI
 CNCObjectUI
+ScriptObjectUI
+DocumentObjectUI
 NccToolUI
 PaintToolUI
 DrillingToolUI

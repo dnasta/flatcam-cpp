@@ -7,6 +7,7 @@
 #include "gui/App.h"
 #include "gui/Preferences.h"
 #include "gui/Translation.h"
+#include "gui/tools/ImageTool.h"
 #include "io/ProjectFile.h"
 
 namespace flatcam::gui {
@@ -107,6 +108,10 @@ void App::setupRecentItems() {
             else if (k == "cncjob") openGcode(f);
             else if (k == "svg") importSvg(f, false);
             else if (k == "dxf" || k == "geometry") importDxf(f, false);
+            else if (k == "script") openScript(f);
+            else if (k == "pdf") openPdf(f);
+            else if (k == "image") imageTool->importImage(f);
+            else if (k == "document") return;  // "document": None en el original (el clic falla sin hacer nada)
             else ui_->inform("[WARNING_NOTCL] " + tr_("Unsupported file type") + ": " + k);
         });
     }
