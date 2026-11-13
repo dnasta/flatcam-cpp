@@ -19,6 +19,8 @@
 #include "gui/Translation.h"
 #include "gui/objects/CNCJobObject.h"
 #include "gui/objects/GeometryObject.h"
+#include "gui/objects/DocumentObject.h"
+#include "gui/AppTextEditor.h"
 
 namespace flatcam::gui {
 
@@ -112,6 +114,12 @@ void App::updateProjectMenu() {
         if (k != ObjectKind::Geometry) menuProjectGenerateCnc->setVisible(false);
         if (k != ObjectKind::Gerber && k != ObjectKind::Excellon && k != ObjectKind::CNCJob)
             menuProjectViewSource->setVisible(false);
+        if (k == ObjectKind::Script || k == ObjectKind::Document) {
+            // Como el original: estas cuatro no vuelven a aparecer (solo "Editar" se vuelve a mostrar arriba).
+            for (QAction* a : {menuProjectEnable, menuProjectDisable, menuProjectEdit, menuProjectProperties})
+                a->setVisible(false);
+            menuProjectGenerateCnc->setVisible(false);
+        }
     }
 }
 
@@ -173,22 +181,42 @@ void App::setSelectedColor(const QString& action) {
 }
 
 void App::viewSource(FlatCAMObj* obj) {
-    std::string text;
-    if (auto* g = dynamic_cast<GerberObject*>(obj)) text = g->gerber().sourceFile();
-    else if (auto* e = dynamic_cast<ExcellonObject*>(obj)) text = e->excellon().sourceFile();
-    else if (auto* c = dynamic_cast<CNCJobObject*>(obj)) text = c->exportText();
-    else {
+    if (!obj) {
         ui_->inform("[WARNING_NOTCL] " + tr_("Select an Gerber or Excellon file to view it's source file."));
         return;
     }
     ui_->inform(tr_("Viewing the source code of the selected object."));
-    // on_view_source abre un editor de texto (AppTextEditor) en una pestaña del área de dibujo; acá, solo lectura.
-    auto* editor = new QPlainTextEdit(QString::fromStdString(text));
-    editor->setReadOnly(true);
-    editor->setObjectName("source_editor_tab");
-    editor->setLineWrapMode(QPlainTextEdit::NoWrap);
-    const int idx = ui_->plot_tab_area->addTab(editor, tr_("Source Editor"));
-    ui_->plot_tab_area->setCurrentIndex(idx);
+    QString flt = "All Files (*.*)";
+    if (obj->kind() == ObjectKind::Gerber) flt = "Gerber Files .gbr (*.GBR);;PDF Files .pdf (*.PDF);;All Files (*.*)";
+    else if (obj->kind() == ObjectKind::Excellon)
+        flt = "Excellon Files .drl (*.DRL);;PDF Files .pdf (*.PDF);;All Files (*.*)";
+    else if (obj->kind() == ObjectKind::CNCJob) flt = "GCode Files .nc (*.NC);;PDF Files .pdf (*.PDF);;All Files (*.*)";
+    // on_view_source: un editor de texto plano nuevo en la pestaña "Editor de fuente" (aunque después falle).
+    auto* ed = new AppTextEditor(this, true);
+    ed->setModelData(keywords());
+    FCDetachableTab2* area = ui_->plot_tab_area;
+    area->addTab(ed, tr_("Source Editor"));
+    ed->setObjectName("source_editor_tab");
+    ui_->coords_toolbar->hide();
+    ui_->delta_coords_toolbar->hide();
+    ed->setCompleterEnabled(false);
+    ed->buttonRun->hide();
+    area->setCurrentWidget(ed);
+    ed->onOpen = [ed, flt] { ed->handleOpen(flt); };
+    ed->onSave = [ed, flt] { ed->handleSaveGCode({}, flt); };
+    QString text;
+    if (auto* g = dynamic_cast<GerberObject*>(obj)) text = QString::fromStdString(g->gerber().sourceFile());
+    else if (auto* e = dynamic_cast<ExcellonObject*>(obj)) text = QString::fromStdString(e->excellon().sourceFile());
+    else if (auto* c = dynamic_cast<CNCJobObject*>(obj)) text = QString::fromStdString(c->exportText());
+    else if (auto* t = dynamic_cast<TextObject*>(obj)) text = t->sourceFile();
+    else {
+        // Una Geometría no tiene source_file (AttributeError): el aviso y la pestaña queda vacía.
+        ui_->inform("[WARNING_NOTCL] " + tr_("There is no selected object for which to see it's source file code."));
+        return;
+    }
+    ed->t_frame->hide();
+    ed->loadText(text, true);
+    ed->t_frame->show();
 }
 
 std::vector<FlatCAMObj*> App::copySelected() {
@@ -254,6 +282,14 @@ void App::saveSelected() {
     FlatCAMObj* o = activeObject();
     if (auto* c = dynamic_cast<CNCJobObject*>(o)) {
         exportGcode(c);
+        return;
+    }
+    if (o && o->kind() == ObjectKind::Script) {
+        onFileSaveScript();
+        return;
+    }
+    if (o && o->kind() == ObjectKind::Document) {
+        onFileSaveDocument();
         return;
     }
     std::string source;

@@ -1,0 +1,1001 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "DocumentObjectUI",
+  "name": null,
+  "props": {
+   "autoFillBackground": {
+    "t": "bool",
+    "v": true
+   }
+  },
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": null,
+   "props": {},
+   "margins": [
+    9,
+    9,
+    9,
+    9
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QHBoxLayout",
+      "py": "QHBoxLayout",
+      "name": "title_box",
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "icon",
+         "props": {
+          "pixmap": {
+           "t": "QPixmap",
+           "v": ":/images/notes16_1.png"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 1,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "title_label",
+         "props": {
+          "text": {
+           "t": "str",
+           "v": "<font size=5><b>Objeto de Documento</b></font>"
+          }
+         }
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QLabel",
+         "py": "FCLabel",
+         "name": "level",
+         "props": {
+          "toolTip": {
+           "t": "str",
+           "v": "BASIC es adecuado para un principiante. Muchos parámetros\nestán ocultos para el usuario en este modo.\nEl modo AVANZADO pondrá a disposición todos los parámetros.\n\nPara cambiar el NIVEL de la aplicación, vaya a:\nEditar -> Preferencias -> General y verificar:\n'APP. NIVEL 'botón de radio."
+          },
+          "text": {
+           "t": "str",
+           "v": "<span style=\"color:green;\"><b>BASIC</b></span>"
+          },
+          "alignment": {
+           "t": "int",
+           "v": 130
+          }
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "layout": {
+      "qt": "QVBoxLayout",
+      "py": "QVBoxLayout",
+      "name": "custom_box",
+      "props": {},
+      "margins": [
+       0,
+       0,
+       0,
+       0
+      ],
+      "spacing": 6,
+      "items": [
+       {
+        "align": 0,
+        "stretch": 0,
+        "layout": {
+         "qt": "QHBoxLayout",
+         "py": "QHBoxLayout",
+         "name": "name_hlay",
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "items": [
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": null,
+            "props": {
+             "text": {
+              "t": "str",
+              "v": "<b>Nombre:</b>"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QLineEdit",
+            "py": "FCEntry",
+            "name": "name_entry",
+            "props": {
+             "text": {
+              "t": "str",
+              "v": "x"
+             }
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "widget": {
+         "qt": "QCheckBox",
+         "py": "FCCheckBox",
+         "name": "plot_cb",
+         "props": {
+          "layoutDirection": {
+           "t": "int",
+           "v": 1
+          },
+          "hidden": {
+           "t": "bool",
+           "v": true
+          }
+         }
+        }
+       },
+       {
+        "align": 128,
+        "stretch": 0,
+        "layout": {
+         "qt": "QHBoxLayout",
+         "py": "QHBoxLayout",
+         "name": null,
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "items": [
+          {
+           "align": 0,
+           "stretch": 0,
+           "widget": {
+            "qt": "QCheckBox",
+            "py": "FCCheckBox",
+            "name": "autocomplete_cb",
+            "props": {
+             "font": {
+              "t": "QFont",
+              "v": {
+               "bold": true
+              }
+             },
+             "toolTip": {
+              "t": "str",
+              "v": "Esto selecciona si el autocompletador está habilitado en el Editor de Documentos."
+             },
+             "styleSheet": {
+              "t": "str",
+              "v": "\n\t\t\tQCheckBox {font-weight: bold; color: black}\n\t\t\t"
+             },
+             "text": {
+              "t": "str",
+              "v": "Autocompletador"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "stretch": 0,
+           "spacer": [
+            0,
+            0,
+            7,
+            1
+           ]
+          }
+         ]
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "layout": {
+         "qt": "QFormLayout",
+         "py": "QFormLayout",
+         "name": "form_box",
+         "props": {},
+         "margins": [
+          0,
+          0,
+          0,
+          0
+         ],
+         "spacing": 6,
+         "hspacing": 6,
+         "vspacing": 6,
+         "items": [
+          {
+           "align": 0,
+           "row": 0,
+           "role": 0,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": "font_type_label",
+            "props": {
+             "text": {
+              "t": "str",
+              "v": "Tipo de Fuente:"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 0,
+           "role": 1,
+           "widget": {
+            "qt": "QFontComboBox",
+            "py": "QFontComboBox",
+            "name": "font_type_cb",
+            "props": {
+             "currentText": {
+              "t": "str",
+              "v": "Helvetica Neue"
+             },
+             "currentFont": {
+              "t": "QFont",
+              "v": {
+               "family": "Helvetica Neue"
+              }
+             }
+            },
+            "items": [
+             "Academy Engraved LET",
+             "Al Bayan",
+             "Al Nile",
+             "Al Tarikh",
+             "American Typewriter",
+             "Andale Mono",
+             "Apple Braille",
+             "Apple Chancery",
+             "Apple Color Emoji",
+             "Apple SD Gothic Neo",
+             "Apple Symbols",
+             "AppleGothic",
+             "AppleMyungjo",
+             "Arial",
+             "Arial Black",
+             "Arial Hebrew",
+             "Arial Hebrew Scholar",
+             "Arial Narrow",
+             "Arial Rounded MT Bold",
+             "Arial Unicode MS",
+             "Avenir",
+             "Avenir Next",
+             "Avenir Next Condensed",
+             "Ayuthaya",
+             "Baghdad",
+             "Bangla MN",
+             "Bangla Sangam MN",
+             "Baskerville",
+             "Beirut",
+             "Big Caslon",
+             "Bodoni 72",
+             "Bodoni 72 Oldstyle",
+             "Bodoni 72 Smallcaps",
+             "Bodoni Ornaments",
+             "Bradley Hand",
+             "Brush Script MT",
+             "Chalkboard",
+             "Chalkboard SE",
+             "Chalkduster",
+             "Charter",
+             "Cochin",
+             "Comic Sans MS",
+             "Copperplate",
+             "Corsiva Hebrew",
+             "Courier New",
+             "Damascus",
+             "DecoType Naskh",
+             "Devanagari MT",
+             "Devanagari Sangam MN",
+             "Didot",
+             "DIN Alternate",
+             "DIN Condensed",
+             "Diwan Kufi",
+             "Diwan Thuluth",
+             "Euphemia UCAS",
+             "Farah",
+             "Farisi",
+             "Futura",
+             "Galvji",
+             "GB18030 Bitmap",
+             "Geeza Pro",
+             "Geneva",
+             "Georgia",
+             "Gill Sans",
+             "Grantha Sangam MN",
+             "Gujarati MT",
+             "Gujarati Sangam MN",
+             "Gurmukhi MN",
+             "Gurmukhi MT",
+             "Gurmukhi Sangam MN",
+             "Heiti SC",
+             "Heiti TC",
+             "Helvetica",
+             "Helvetica Neue",
+             "Herculanum",
+             "Hiragino Maru Gothic ProN",
+             "Hiragino Mincho ProN",
+             "Hiragino Sans",
+             "Hiragino Sans GB",
+             "Hoefler Text",
+             "Impact",
+             "InaiMathi",
+             "ITF Devanagari",
+             "ITF Devanagari Marathi",
+             "Kailasa",
+             "Kannada MN",
+             "Kannada Sangam MN",
+             "Kefa III",
+             "Khmer MN",
+             "Khmer Sangam MN",
+             "Kohinoor Bangla",
+             "Kohinoor Devanagari",
+             "Kohinoor Gujarati",
+             "Kohinoor Telugu",
+             "Kokonor",
+             "Krungthep",
+             "KufiStandardGK",
+             "Lao MN",
+             "Lao Sangam MN",
+             "Lucida Grande",
+             "Luminari",
+             "Malayalam MN",
+             "Malayalam Sangam MN",
+             "Marker Felt",
+             "Menlo",
+             "Microsoft Sans Serif",
+             "Mishafi",
+             "Mishafi Gold",
+             "Monaco",
+             "Mshtakan",
+             "Mukta Mahee",
+             "Muna",
+             "Myanmar MN",
+             "Myanmar Sangam MN",
+             "Nadeem",
+             "New Peninim MT",
+             "Noteworthy",
+             "Noto Nastaliq Urdu",
+             "Noto Sans Armenian",
+             "Noto Sans Batak",
+             "Noto Sans Kannada",
+             "Noto Sans Myanmar",
+             "Noto Sans NKo",
+             "Noto Sans Oriya",
+             "Noto Sans Sunuwar",
+             "Noto Sans Syriac",
+             "Noto Sans Tagalog",
+             "Noto Sans Zawgyi",
+             "Noto Serif Myanmar",
+             "Optima",
+             "Oriya MN",
+             "Oriya Sangam MN",
+             "Palatino",
+             "Papyrus",
+             "Party LET",
+             "Phosphate",
+             "PingFang HK",
+             "PingFang MO",
+             "PingFang SC",
+             "PingFang TC",
+             "Plantagenet Cherokee",
+             "PT Mono",
+             "PT Sans",
+             "PT Sans Caption",
+             "PT Sans Narrow",
+             "PT Serif",
+             "PT Serif Caption",
+             "Raanana",
+             "Sana",
+             "Sathu",
+             "Savoye LET",
+             "Shree Devanagari 714",
+             "SignPainter",
+             "Silom",
+             "Sinhala MN",
+             "Sinhala Sangam MN",
+             "Skia",
+             "Snell Roundhand",
+             "Songti SC",
+             "Songti TC",
+             "STIX Two Math",
+             "STIX Two Text",
+             "STSong",
+             "Sukhumvit Set",
+             "Symbol",
+             "Tahoma",
+             "Tamil MN",
+             "Tamil Sangam MN",
+             "Telugu MN",
+             "Telugu Sangam MN",
+             "Thonburi",
+             "Times New Roman",
+             "Trattatello",
+             "Trebuchet MS",
+             "Verdana",
+             "Waseem",
+             "Webdings",
+             "Wingdings",
+             "Wingdings 2",
+             "Wingdings 3",
+             "Zapf Dingbats",
+             "Zapfino"
+            ],
+            "currentIndex": 73
+           }
+          },
+          {
+           "align": 0,
+           "row": 1,
+           "role": 0,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": "font_size_label",
+            "props": {
+             "text": {
+              "t": "str",
+              "v": "Tamaño de Fuente:"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 1,
+           "role": 1,
+           "layout": {
+            "qt": "QHBoxLayout",
+            "py": "QHBoxLayout",
+            "name": null,
+            "props": {},
+            "margins": [
+             0,
+             0,
+             0,
+             0
+            ],
+            "spacing": 6,
+            "items": [
+             {
+              "align": 0,
+              "stretch": 0,
+              "widget": {
+               "qt": "QComboBox",
+               "py": "FCComboBox",
+               "name": "font_size_cb",
+               "props": {
+                "maximumSize": {
+                 "t": "QSize",
+                 "v": [
+                  70,
+                  16777215
+                 ]
+                },
+                "focusPolicy": {
+                 "t": "int",
+                 "v": 15
+                },
+                "editable": {
+                 "t": "bool",
+                 "v": true
+                },
+                "currentText": {
+                 "t": "str",
+                 "v": "12"
+                },
+                "minimumContentsLength": {
+                 "t": "int",
+                 "v": 3
+                }
+               },
+               "items": [
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "18",
+                "20",
+                "22",
+                "24",
+                "26",
+                "28",
+                "32",
+                "36",
+                "40",
+                "44",
+                "48",
+                "54",
+                "60",
+                "66",
+                "72",
+                "80",
+                "88",
+                "96"
+               ],
+               "currentIndex": 6
+              }
+             },
+             {
+              "align": 0,
+              "stretch": 0,
+              "spacer": [
+               0,
+               0,
+               7,
+               1
+              ]
+             },
+             {
+              "align": 0,
+              "stretch": 0,
+              "widget": {
+               "qt": "QToolButton",
+               "py": "QToolButton",
+               "name": "font_bold_tb",
+               "props": {
+                "icon": {
+                 "t": "QIcon",
+                 "v": ":/images/bold32.png"
+                },
+                "checkable": {
+                 "t": "bool",
+                 "v": true
+                }
+               }
+              }
+             },
+             {
+              "align": 0,
+              "stretch": 0,
+              "widget": {
+               "qt": "QToolButton",
+               "py": "QToolButton",
+               "name": "font_italic_tb",
+               "props": {
+                "icon": {
+                 "t": "QIcon",
+                 "v": ":/images/italic32.png"
+                },
+                "checkable": {
+                 "t": "bool",
+                 "v": true
+                }
+               }
+              }
+             },
+             {
+              "align": 0,
+              "stretch": 0,
+              "widget": {
+               "qt": "QToolButton",
+               "py": "QToolButton",
+               "name": "font_under_tb",
+               "props": {
+                "icon": {
+                 "t": "QIcon",
+                 "v": ":/images/underline32.png"
+                },
+                "checkable": {
+                 "t": "bool",
+                 "v": true
+                }
+               }
+              }
+             }
+            ]
+           }
+          },
+          {
+           "align": 0,
+           "row": 2,
+           "role": 0,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": "alignment_label",
+            "props": {
+             "text": {
+              "t": "str",
+              "v": "Alineación:"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 2,
+           "role": 1,
+           "layout": {
+            "qt": "QHBoxLayout",
+            "py": "QHBoxLayout",
+            "name": null,
+            "props": {},
+            "margins": [
+             0,
+             0,
+             0,
+             0
+            ],
+            "spacing": 6,
+            "items": [
+             {
+              "align": 0,
+              "stretch": 0,
+              "widget": {
+               "qt": "QToolButton",
+               "py": "QToolButton",
+               "name": "al_left_tb",
+               "props": {
+                "toolTip": {
+                 "t": "str",
+                 "v": "Alinear a la izquierda"
+                },
+                "icon": {
+                 "t": "QIcon",
+                 "v": ":/images/align_left32.png"
+                }
+               }
+              }
+             },
+             {
+              "align": 0,
+              "stretch": 0,
+              "widget": {
+               "qt": "QToolButton",
+               "py": "QToolButton",
+               "name": "al_center_tb",
+               "props": {
+                "toolTip": {
+                 "t": "str",
+                 "v": "Centrar"
+                },
+                "icon": {
+                 "t": "QIcon",
+                 "v": ":/images/align_center32.png"
+                }
+               }
+              }
+             },
+             {
+              "align": 0,
+              "stretch": 0,
+              "widget": {
+               "qt": "QToolButton",
+               "py": "QToolButton",
+               "name": "al_right_tb",
+               "props": {
+                "toolTip": {
+                 "t": "str",
+                 "v": "Alinear a la derecha"
+                },
+                "icon": {
+                 "t": "QIcon",
+                 "v": ":/images/align_right32.png"
+                }
+               }
+              }
+             },
+             {
+              "align": 0,
+              "stretch": 0,
+              "widget": {
+               "qt": "QToolButton",
+               "py": "QToolButton",
+               "name": "al_justify_tb",
+               "props": {
+                "toolTip": {
+                 "t": "str",
+                 "v": "Alinear Justificar"
+                },
+                "icon": {
+                 "t": "QIcon",
+                 "v": ":/images/align_justify32.png"
+                }
+               }
+              }
+             }
+            ]
+           }
+          },
+          {
+           "align": 0,
+           "row": 3,
+           "role": 0,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": "font_color_label",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Establecer el color de fuente para el texto seleccionado"
+             },
+             "text": {
+              "t": "str",
+              "v": "Color de Fuente:"
+             }
+            }
+           }
+          },
+          {
+           "align": 129,
+           "row": 3,
+           "role": 1,
+           "layout": {
+            "qt": "QHBoxLayout",
+            "py": "QHBoxLayout",
+            "name": "form_box_child_1",
+            "props": {},
+            "margins": [
+             0,
+             0,
+             0,
+             0
+            ],
+            "spacing": 6,
+            "items": [
+             {
+              "align": 0,
+              "stretch": 0,
+              "widget": {
+               "qt": "QLineEdit",
+               "py": "FCEntry",
+               "name": "font_color_entry",
+               "props": {
+                "text": {
+                 "t": "str",
+                 "v": "#000000"
+                }
+               }
+              }
+             },
+             {
+              "align": 0,
+              "stretch": 0,
+              "widget": {
+               "qt": "QPushButton",
+               "py": "FCButton",
+               "name": "font_color_button",
+               "props": {
+                "minimumSize": {
+                 "t": "QSize",
+                 "v": [
+                  15,
+                  15
+                 ]
+                },
+                "maximumSize": {
+                 "t": "QSize",
+                 "v": [
+                  15,
+                  15
+                 ]
+                },
+                "styleSheet": {
+                 "t": "str",
+                 "v": "background-color:#000000"
+                }
+               }
+              }
+             }
+            ]
+           }
+          },
+          {
+           "align": 0,
+           "row": 4,
+           "role": 0,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": "sel_color_label",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Establezca el color de selección al hacer la selección de texto."
+             },
+             "text": {
+              "t": "str",
+              "v": "Color de seleccion:"
+             }
+            }
+           }
+          },
+          {
+           "align": 129,
+           "row": 4,
+           "role": 1,
+           "layout": {
+            "qt": "QHBoxLayout",
+            "py": "QHBoxLayout",
+            "name": "form_box_child_2",
+            "props": {},
+            "margins": [
+             0,
+             0,
+             0,
+             0
+            ],
+            "spacing": 6,
+            "items": [
+             {
+              "align": 0,
+              "stretch": 0,
+              "widget": {
+               "qt": "QLineEdit",
+               "py": "FCEntry",
+               "name": "sel_color_entry",
+               "props": {
+                "text": {
+                 "t": "str",
+                 "v": "#0055ff"
+                }
+               }
+              }
+             },
+             {
+              "align": 0,
+              "stretch": 0,
+              "widget": {
+               "qt": "QPushButton",
+               "py": "FCButton",
+               "name": "sel_color_button",
+               "props": {
+                "minimumSize": {
+                 "t": "QSize",
+                 "v": [
+                  15,
+                  15
+                 ]
+                },
+                "maximumSize": {
+                 "t": "QSize",
+                 "v": [
+                  15,
+                  15
+                 ]
+                },
+                "styleSheet": {
+                 "t": "str",
+                 "v": "background-color:#0055ff"
+                }
+               }
+              }
+             }
+            ]
+           }
+          },
+          {
+           "align": 0,
+           "row": 5,
+           "role": 0,
+           "widget": {
+            "qt": "QLabel",
+            "py": "FCLabel",
+            "name": "tab_size_label",
+            "props": {
+             "toolTip": {
+              "t": "str",
+              "v": "Establece el tamaño de la pestaña. En píxeles El valor predeterminado es 80 píxeles."
+             },
+             "text": {
+              "t": "str",
+              "v": "Tamaño de Pestaña:"
+             }
+            }
+           }
+          },
+          {
+           "align": 0,
+           "row": 5,
+           "role": 1,
+           "widget": {
+            "qt": "QSpinBox",
+            "py": "FCSpinner",
+            "name": "tab_size_spinner",
+            "props": {
+             "maximum": {
+              "t": "int",
+              "v": 1000
+             },
+             "value": {
+              "t": "int",
+              "v": 80
+             }
+            }
+           }
+          }
+         ],
+         "formRows": true
+        }
+       },
+       {
+        "align": 0,
+        "stretch": 0,
+        "spacer": [
+         0,
+         0,
+         1,
+         7
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "DocumentObjectUI"
+}

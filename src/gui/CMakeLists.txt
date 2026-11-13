@@ -16,6 +16,12 @@ add_library(flatcam_gui STATIC
     AppHelp.cpp
     AppExport.cpp
     AppImport.cpp
+    AppScripts.cpp
+    AppTextEditor.cpp
+    objects/ScriptObject.cpp
+    generated/ScriptObjectUIBase.cpp
+    generated/DocumentObjectUIBase.cpp
+    widgets/FCTextEdits.cpp
     CanvasPicker.cpp
     ExclusionAreasManager.cpp
     ToolsDatabase.cpp
@@ -135,7 +141,7 @@ target_include_directories(flatcam_gui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)
 # El núcleo usa identificadores como `slots` (ExcellonTool::slots, como en FlatCAM): sin las palabras clave de Qt no se
 # convierten en macros y las estructuras del núcleo tienen el mismo tamaño en la GUI. Se usa Q_SIGNALS/Q_SLOTS/Q_EMIT.
 target_compile_definitions(flatcam_gui PUBLIC QT_NO_KEYWORDS)
-target_link_libraries(flatcam_gui PUBLIC flatcam::core Qt6::Widgets Qt6::OpenGLWidgets Qt6::Svg)
+target_link_libraries(flatcam_gui PUBLIC flatcam::core Qt6::Widgets Qt6::OpenGLWidgets Qt6::Svg Qt6::PrintSupport)
 # GRBL de la autonivelación: QtSerialPort es opcional (sin él, no se listan ni abren puertos).
 find_package(Qt6 QUIET COMPONENTS SerialPort)
 if(TARGET Qt6::SerialPort)

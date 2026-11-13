@@ -10,6 +10,7 @@
 #include <cmath>
 
 #include "gui/App.h"
+#include "gui/AppTextEditor.h"
 #include "gui/MainGUI.h"
 #include "gui/objects/ObjectCollection.h"
 #include "gui/PlotCanvas.h"
@@ -1195,9 +1196,11 @@ TEST(GuiProjectMenu, ContextMenuActions) {
     app.menuProjectViewSource->trigger();
     ASSERT_EQ(app.ui()->plot_tab_area->count(), tabs + 1);
     EXPECT_EQ(app.ui()->plot_tab_area->tabText(tabs), QString::fromUtf8("Editor de fuente"));
-    auto* src = qobject_cast<QPlainTextEdit*>(app.ui()->plot_tab_area->widget(tabs));
+    auto* src = qobject_cast<AppTextEditor*>(app.ui()->plot_tab_area->widget(tabs));
     ASSERT_NE(src, nullptr);
+    EXPECT_EQ(src->objectName(), "source_editor_tab");
     EXPECT_TRUE(src->toPlainText().startsWith("%TF.GenerationSoftware,KiCad"));
+    EXPECT_TRUE(src->buttonRun->isHidden());
 
     // Copiar: "<nombre>_copy", con la misma geometría.
     const std::vector<FlatCAMObj*> copies = app.copySelected();
@@ -3179,7 +3182,7 @@ TEST(GuiRules, ChecksTheRulesAndCreatesTheReport) {
     ASSERT_NE(doc, nullptr);
     EXPECT_EQ(doc->name(), "Rules_check_results");
     EXPECT_EQ(doc->kind(), ObjectKind::Document);
-    const QString txt = static_cast<DocumentObject*>(doc)->text();
+    const QString txt = static_cast<DocumentObject*>(doc)->sourceFile();
     EXPECT_TRUE(txt.contains("0.8000, 1.0000, ")) << txt.toStdString();  // los diámetros chicos
     // Con "Cobre a cobre" el original falla (self.copper_t_cb no existe): no hay informe.
     t->clearance_copper2copper_cb->setChecked(true);

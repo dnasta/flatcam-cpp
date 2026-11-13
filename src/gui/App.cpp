@@ -46,6 +46,8 @@
 #include <QProcess>
 #include "gui/tools/ClearingTools.h"
 #include "gui/objects/ObjectUIs.h"
+#include "gui/objects/DocumentObject.h"
+#include "gui/AppTextEditor.h"
 
 namespace flatcam::gui {
 
@@ -258,6 +260,16 @@ void App::connectSignals() {
     connect(ui_->file_open_gerber_btn, &QAction::triggered, this, [this] { onFileOpenGerber(); });
     connect(ui_->menufileopenexcellon, &QAction::triggered, this, [this] { onFileOpenExcellon(); });
     connect(ui_->menufileopengcode, &QAction::triggered, this, [this] { onFileOpenGcode(); });
+    // Scripts y documentos (Archivo -> Nuevo / Scripting y la barra de scripts).
+    for (QAction* a : {ui_->menufilenewscript, ui_->new_script_btn})
+        connect(a, &QAction::triggered, this, [this] { onFileNewScript(); });
+    for (QAction* a : {ui_->menufileopenscript, ui_->open_script_btn})
+        connect(a, &QAction::triggered, this, [this] { onFileOpenScript(); });
+    connect(ui_->menufileopenscriptexample, &QAction::triggered, this, [this] { onFileOpenScriptExample(); });
+    for (QAction* a : {ui_->menufilerunscript, ui_->run_script_btn})
+        connect(a, &QAction::triggered, this, [this] { onFileRunScript(); });
+    connect(ui_->menufilenewdoc, &QAction::triggered, this, [this] { newDocumentObject(); });
+    connect(ui_->menuview_toggle_code_editor, &QAction::triggered, this, [this] { onToggleCodeEditor(); });
     connect(ui_->menufileexportgerber, &QAction::triggered, this, [this] { onFileExport(ObjectKind::Gerber); });
     connect(ui_->menufileexportexcellon, &QAction::triggered, this, [this] { onFileExport(ObjectKind::Excellon); });
     connect(ui_->menufileexportsvg, &QAction::triggered, this, [this] { onFileExportSvg(); });
@@ -734,6 +746,14 @@ FlatCAMObj* App::openByExtension(const QString& filename) {
     if (kGcodeExt.contains(ext)) return openGcode(filename);
     if (ext == "svg") return importSvg(filename, false);
     if (ext == "dxf") return importDxf(filename, false);
+    if (ext == "pdf") {
+        const auto objs = openPdf(filename);
+        return objs.empty() ? nullptr : objs.front();
+    }
+    if (ext == "flatconfig") {
+        openConfigFile(filename);
+        return nullptr;
+    }
     if (ext == "flatprj") {
         openProject(filename);
         return nullptr;
@@ -859,6 +879,9 @@ bool App::exportGcode(CNCJobObject* job, QString filename) {
 FlatCAMObj* App::addObject(std::unique_ptr<FlatCAMObj> o) {
     FlatCAMObj* obj = collection_->append(std::move(o));
     shouldWeSave_ = true;
+    // ObjectCollection.append -> set_ui: el Script y el Documento arman su panel y su pestaña de editor.
+    auto* text = dynamic_cast<TextObject*>(obj);
+    if (text) text->setUi(this);
     // ObjectCollection.append: se expande el grupo y, con global_project_autohide, se abre el panel izquierdo.
     ui_->collection_view->setExpanded(collection_->groupIndex(obj->kind()), true);
     ui_->splitter->setSizes({1, 1});
@@ -869,7 +892,7 @@ FlatCAMObj* App::addObject(std::unique_ptr<FlatCAMObj> o) {
     ui_->plotCanvas()->setLayer(obj->id(), obj->plotData());
     ui_->plotCanvas()->setLayerVisible(obj->id(), obj->plotEnabled());
     ui_->plotCanvas()->setLayerOrder(collection_->drawOrder());
-    onZoomFit();
+    if (!text) onZoomFit();  // new_object(..., plot=False): no se dibujan ni se encuadra
     return obj;
 }
 
@@ -983,6 +1006,7 @@ void App::showProperties(FlatCAMObj* obj) {
         }
     }
     area->setWidget(panel);
+    if (auto* t = dynamic_cast<TextObject*>(obj)) t->buildUi();
     // FlatCAMObj.set_ui: Enter en el campo Nombre renombra el objeto (on_name_activate, sin mensaje).
     if (obj && !panel->property("nameConnected").toBool()) {
         FCEntry* entry = nullptr;
@@ -990,6 +1014,8 @@ void App::showProperties(FlatCAMObj* obj) {
         else if (auto* p2 = qobject_cast<ExcellonObjectUI*>(panel)) entry = p2->name_entry;
         else if (auto* p3 = qobject_cast<GeometryObjectUI*>(panel)) entry = p3->name_entry;
         else if (auto* p4 = qobject_cast<CNCObjectUI*>(panel)) entry = p4->name_entry;
+        else if (auto* p5 = qobject_cast<ScriptObjectUI*>(panel)) entry = p5->name_entry;
+        else if (auto* p6 = qobject_cast<DocumentObjectUI*>(panel)) entry = p6->name_entry;
         if (entry) {
             connect(entry, &QLineEdit::returnPressed, this, [this, obj, entry] { collection_->rename(obj, entry->text()); });
             panel->setProperty("nameConnected", true);
@@ -1062,7 +1088,13 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
             case Qt::Key_C: copySelected(); return true;
             case Qt::Key_D: openToolsDatabase(); return true;
             case Qt::Key_E: onFileOpenExcellon(); return true;
-            case Qt::Key_G: onFileOpenGerber(); return true;
+            case Qt::Key_G: {
+                // En un editor de texto, ir a una línea; si no, abrir un Gerber.
+                QWidget* w = ui->plot_tab_area->currentWidget();
+                if (w && w->objectName().toLower().contains("editor")) gotoTextLine();
+                else onFileOpenGerber();
+                return true;
+            }
             case Qt::Key_M: distanceTool->run(); return true;
             case Qt::Key_N: onFileNewClick(); return true;
             case Qt::Key_O: onFileOpenProject(); return true;
@@ -1091,6 +1123,7 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
                 ui->inform(tr_("Name copied to clipboard ..."));
                 return true;
             }
+            case Qt::Key_E: onToggleCodeEditor(); return true;
             case Qt::Key_G: ui->onToggleGridLines(); return true;
             case Qt::Key_H: ui->onToggleHud(); return true;
             case Qt::Key_J: onLocate(); return true;
