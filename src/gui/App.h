@@ -334,6 +334,7 @@ public:
     ThievingTool* thievingTool;            ///< Panel de Robo de cobre.
     RulesTool* rulesTool;                  ///< Panel de Verificación de reglas.
     SolderPasteTool* solderPasteTool;      ///< Panel de Pasta de soldar.
+    PcbWizardTool* pcbWizardTool;          ///< Panel del Asistente de PCB.
     QRCodeTool* qrcodeTool;                ///< Panel del código QR.
     class TransformTool* transformTool;  ///< Panel de Transformaciones.
     class DistanceTool* distanceTool;  ///< Herramienta Distancia.
@@ -483,6 +484,8 @@ public:
     void refreshSourceFile(FlatCAMObj* obj);
     /** @brief La última carpeta usada para guardar (`get_last_save_folder`). @return La carpeta. */
     QString lastFolder() const;
+    /** @brief Cambia la última carpeta usada (`global_last_folder`). @param folder Carpeta. */
+    void setLastFolder(const QString& folder) { lastFolder_ = folder; }
     /** @brief Exporta un Gerber o Excellon a un archivo. @param obj Objeto. @param filename Archivo. @return Si se escribió. */
     bool exportObject(FlatCAMObj* obj, const QString& filename);
     /** @brief Archivo -> Exportar -> Gerber / Excellon (`on_file_exportgerber`, `on_file_exportexcellon`). @param kind Tipo. */
