@@ -3435,3 +3435,57 @@ TEST(GuiCalibration, FreePointsAndRightClickCancels) {
     EXPECT_TRUE(t->clickPoints().empty());
     EXPECT_EQ(t->tgt[0]->text(), "");
 }
+
+TEST(GuiFilm, ExportsSvgPngPdfAndThePunchedFilm) {
+    App app;
+    FlatCAMObj* edge = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-Edge_Cuts.gbr");
+    FlatCAMObj* drl = app.openExcellon(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-PTH.drl");
+    ASSERT_NE(edge, nullptr);
+    ASSERT_NE(drl, nullptr);
+    QKeyEvent alt(QEvent::KeyPress, Qt::Key_L, Qt::AltModifier);
+    QApplication::sendEvent(app.ui(), &alt);
+    FilmTool* t = app.filmTool;
+    EXPECT_EQ(t->film_type->value().toString(), "neg");
+    EXPECT_EQ(t->tf_object_combo->currentText(), edge->name());
+    EXPECT_EQ(t->exc_combo->currentText(), drl->name());
+    EXPECT_TRUE(t->punch_cb->isHidden());
+    QTemporaryDir dir;
+    // Negativa en SVG: lo mismo que el núcleo (verificado contra el original en test_film.cpp).
+    t->setSaveFileOverride(dir.filePath("neg.svg"));
+    ASSERT_EQ(t->createFilm(), dir.filePath("neg.svg"));
+    const flatcam::ShapeList edgeShapes = static_cast<GerberObject*>(edge)->gerber().solidGeometry();
+    const QRectF b = edge->bounds();
+    flatcam::FilmOptions o;
+    const flatcam::FilmResult want = filmSvg(edgeShapes, edgeShapes, {b.left(), b.top(), b.right(), b.bottom()}, "mm", o);
+    QFile f(dir.filePath("neg.svg"));
+    ASSERT_TRUE(f.open(QIODevice::ReadOnly));
+    EXPECT_EQ(f.readAll().toStdString(), want.svg);
+    EXPECT_NE(want.svg.find("id=\"neg_rect\""), std::string::npos);
+    // PNG: el dibujo en puntos (72 dpi).
+    t->file_type_radio->setValue(QString("png"));
+    t->setSaveFileOverride(dir.filePath("neg.png"));
+    ASSERT_FALSE(t->createFilm().isEmpty());
+    QImage img(dir.filePath("neg.png"));
+    ASSERT_FALSE(img.isNull());
+    EXPECT_GT(img.width(), 100);
+    // PDF en A4 apaisada (positiva).
+    t->film_type->setValue(QString("pos"));
+    t->file_type_radio->setValue(QString("pdf"));
+    t->orientation_radio->setValue(QString("l"));
+    t->setSaveFileOverride(dir.filePath("pos.pdf"));
+    ASSERT_FALSE(t->createFilm().isEmpty());
+    QFile pdf(dir.filePath("pos.pdf"));
+    ASSERT_TRUE(pdf.open(QIODevice::ReadOnly));
+    EXPECT_TRUE(pdf.read(5) == "%PDF-");
+    // Perforada con el Excellon: el Gerber nuevo queda 25,4 veces más grande, como en el original.
+    t->file_type_radio->setValue(QString("svg"));
+    t->punch_cb->setChecked(true);
+    t->setSaveFileOverride(dir.filePath("punched.svg"));
+    ASSERT_FALSE(t->createFilm().isEmpty());
+    FlatCAMObj* punched = app.collection()->byName(edge->name() + "_punched");
+    ASSERT_NE(punched, nullptr);
+    EXPECT_NEAR(punched->bounds().right(), b.right() * 25.4, 1e-6);
+    // Cancelar el diálogo (sin archivo) no escribe nada.
+    t->punch_cb->setChecked(false);
+    t->setSaveFileOverride(QString());
+}

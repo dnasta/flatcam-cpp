@@ -39,7 +39,7 @@ add_subdirectory(src)
 # Interfaz gráfica (Qt6). El núcleo no depende de Qt; si Qt6 no está, solo se compila el núcleo.
 # ---------------------------------------------------------------------------
 if(FLATCAM_BUILD_GUI)
-    find_package(Qt6 6.2 QUIET COMPONENTS Widgets OpenGLWidgets)
+    find_package(Qt6 6.2 QUIET COMPONENTS Widgets OpenGLWidgets Svg)
     if(Qt6_FOUND)
         add_subdirectory(src/gui)
     else()

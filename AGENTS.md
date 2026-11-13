@@ -147,6 +147,8 @@ src/tools/              Herramientas de FlatCAM (sin Qt)
   SolderPaste.*          Pasta de soldar: trazos por boquilla (`on_create_geo`) y G-code con Paste_1
   PcbWizard.*            Asistente de PCB: el `.INF` de PcbWizard (`load_inf`) y la cabecera agregada al Excellon
   Calibration.*          Calibración: G-code de verificación, factores (`calculate_factors`) y puntos escalados/inclinados
+  Film.*                 Film: el SVG positivo o negativo (`export_positive` / `export_negative` + `Geometry.export_svg`,
+                         con lxml y minidom imitados) y el perforado con un Excellon o con el centro de los pads
 src/editors/            Modelos de los editores (sin Qt)
   EditorStorage.*        FlatCAMRTreeStorage + DrawToolShape.get_pts: figuras e índice de vértices (tomado al insertar)
   GeoEditorModel.*       Editor de Geometría: figuras de las herramientas de dibujo, elección, unir, intersecar, restar,
@@ -222,6 +224,7 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   tools/SolderPasteTool.* Pasta de soldar (ToolSolderPaste, Alt+K): boquillas, `<objeto>_solderpaste` y su CNC Job
   tools/CalibrationTool.* Calibración (ToolCalibration, sin atajo): los cuatro puntos con el mouse, el "Visor de Gcode" y
                          `<objeto>_calibrated`
+  tools/FilmTool.*       Film (ToolFilm, Alt+L): SVG; PNG y PDF dibujando ese SVG con QtSvg (Qt6::Svg)
   tools/PcbWizardTool.*  Asistente de PCB (ToolPcbWizard, Archivo -> Importar): cargar el Excellon y el `.INF`, importar
   tools/QRCodeTool.*     Código QR (ToolQRCode, Alt+Q) sobre src/tools/QrCode: vista previa, clic, PNG y SVG
   tools/ThievingTool.*   Robo de cobre (ToolCopperThieving, Alt+J) sobre src/tools/CopperThieving; el área con CanvasPicker
@@ -462,6 +465,13 @@ fijan con sentido físico (micras), no en el último bit.
   `calculate_factors`, `target_values_in_table`, `on_scale_button`, `on_skew_button` y `check_points` originales (7
   escenarios: los dos órdenes del segundo punto, Z cero con X,Y de cambio en pulgadas, factores con y sin lo medido,
   escalar e inclinar encadenados, una división por cero y 2 decimales): campos, puntos y G-code idénticos.
+- `tests/tools/oracle_film.py` genera `tests/golden_film.h`: ejecuta `on_film_creation` original completo (con los
+  `generate_*_film`, `export_negative` / `export_positive`, el lxml real y el diálogo, los hilos, `new_object` y
+  svglib/reportlab simulados; ojo: `oracle_common` reemplaza `lxml` por un simulacro, hay que importarlo antes) sobre "luz
+  de noche" y `tests/data/film/pads.gbr` (14 casos: negativa y positiva, escala, inclinación con cada referencia, espejo,
+  PNG con otra densidad de pantalla, PDF, una Geometría como caja, sin caja, perforado con Excellon y con pads, y sus
+  fallas). Con GEOS 3.11 los SVG grandes salen idénticos byte por byte y los chicos a menos de 1e-12 (el redondeo de
+  `a*x + b*y + xoff`); con 3.12/3.15 cambia el vértice inicial de algunos anillos (se compara sin los trayectos).
 - `tests/tools/oracle_fiducials.py` genera `tests/golden_fiducials.h`: ejecuta `add_fiducials`, `add_fiducials_geo` y
   `add_soldermask_opening` originales sobre el cobre de "luz de noche" (11 casos: las tres formas, los tres segundos puntos,
   márgenes 0 y negativo, aperturas que ya existen, cruces superpuestas que fallan, la máscara): los mismos puntos, textos,
@@ -1184,7 +1194,10 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    `tools/CalibrationTool.*`, Herramienta -> Calibración y su botón, sin atajo (`install` dice Alt+E pero `keyPressEvent`
    no la usa); `oracle_calibration.py`: idéntica. Desvíos: la tabla de puntos se arma a mano (el volcador no recorre los
    widgets de las celdas); el "Visor de Gcode" es un texto con "Guardar" en vez del `AppTextEditor`; los campos
-   `EvalEntry` solo evalúan números). **Siguen:** Film (Alt+L) y Autonivelación (del CNC Job).
+   `EvalEntry` solo evalúan números). ~~Film~~ (hecho: `src/tools/Film.*`, `tools/FilmTool.*`, Alt+L;
+   `oracle_film.py`: idéntico. Desvíos: PNG y PDF se dibujan con QtSvg a partir del mismo SVG en vez de svglib/reportlab
+   (mismo tamaño en puntos, 72 dpi, fondo blanco, la misma hoja y el mismo desplazamiento); el SVG se escribe en el
+   hilo de la interfaz). **Sigue:** Autonivelación (del CNC Job).
 6. **Preferencias** (`appGUI/preferences/`, ~19.000 líneas). **Hecho:** la pestaña completa generada del original (485 campos),
    guardar/cargar `current_defaults.FlatConfig` y `factory_defaults.FlatConfig`, Guardar/Aplicar/Cerrar/Restaurar/Abrir
    carpeta/Borrar ajustes, Editar -> Preferencias, Shift+P, el rótulo de la barra de estado, los manejadores de cada grupo
@@ -1310,6 +1323,15 @@ encontrar uno nuevo, agregarlo acá con su sección. Ya corregidos a pedido del 
   (`bot_right_dy + origin_y`) en vez de restarlo; un punto con la X o la Y del origen divide por cero y corta la cuenta;
   un clic sobre dos figuras agrega dos puntos (también después del cuarto); el botón derecho con cuatro puntos no hace
   nada.
+- **Film** (sección 13, ítem 5): el texto de `ET.tostring` (bytes) se pega con `str()`, así que el SVG lleva `b'` y `'`
+  como texto dentro del grupo; si el objeto es un solo polígono no hay hijos que recolorear y la negativa mete el
+  rectángulo negro dentro del `<path>` (no se dibuja: la negativa sale casi vacía); en `export_svg` cada transformación
+  parte de la geometría original (el espejo anula la inclinación y esta a la escala) mientras que la caja las acumula;
+  en PNG, si la densidad de la pantalla no es la del campo, le **suma** la relación al factor de escala (en macOS, 72 dpi
+  contra 96, la película sale 2,33 veces más grande); el Gerber `_punched` nace en `gerber_def_units` (pulgadas) y al
+  pasarlo a mm queda 25,4 veces más grande; el perforado con pads falla (`KeyError`) con cualquier apertura que no sea
+  C, R u O (regiones, macros, polígonos), y su chequeo de tamaño usa el ancho y el alto de R/O; la negativa en PDF usa
+  siempre mm (compara las unidades con 'INCH'); "sin caja" avisa con la representación del objeto.
 - **Editor de Geometría** (sección 13, ítem 8): la herramienta Buffer no se puede abrir (`BufferSelectionTool` falla con
   `'%S:'`); Explotar falla con cualquier figura que no sea un polígono (los polígonos abiertos se cargan como anillos) y
   con agujeros; transformar o borrar con la goma no actualiza el índice de vértices (elegir y ajustar a esquinas usan los

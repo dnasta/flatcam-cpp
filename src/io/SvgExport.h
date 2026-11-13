@@ -6,6 +6,8 @@
 #pragma once
 
 #include <string>
+#include <utility>
+#include <vector>
 
 #include "core/Shape.h"
 
@@ -28,5 +30,26 @@ std::string shapelySvg(const Shape& geom, double scaleFactor, const std::string&
  * @return El texto, o vacío si no hay figuras.
  */
 std::string exportSvg(const ShapeList& shapes, const std::string& units, double scaleStrokeFactor = 0.0);
+
+/** @brief Un nodo del XML mínimo de este módulo (elemento, o texto si `tag` está vacío). */
+struct XmlNode {
+    std::string tag;                                          ///< Nombre del elemento; vacío: es un texto.
+    std::vector<std::pair<std::string, std::string>> attrs;   ///< Atributos, en orden.
+    std::vector<XmlNode> children;                            ///< Hijos.
+    std::string text;                                         ///< El texto (solo en los nodos de texto).
+    /** @brief `element.set(name, value)` de lxml: reemplaza en su lugar o agrega al final. @param name Nombre.
+     *  @param value Valor. */
+    void set(const std::string& name, const std::string& value);
+};
+
+/** @brief Lee el XML que arman estas funciones (sin entidades ni comentarios). @param s El texto.
+ *  @return El elemento raíz. */
+XmlNode parseMiniXml(const std::string& s);
+
+/** @brief `parseString(doc).toprettyxml()` de minidom. @param root La raíz. @return El texto, con su declaración. */
+std::string prettyMiniXml(const XmlNode& root);
+
+/** @brief `etree.tostring(element)` de lxml (sin espacio antes de "/>"). @param n El elemento. @return El texto. */
+std::string lxmlToString(const XmlNode& n);
 
 }  // namespace flatcam

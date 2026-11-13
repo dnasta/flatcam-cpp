@@ -40,6 +40,7 @@ add_library(flatcam_core STATIC
     tools/SolderPaste.cpp
     tools/PcbWizard.cpp
     tools/Calibration.cpp
+    tools/Film.cpp
     editors/EditorStorage.cpp
     editors/GeoEditorModel.cpp
     editors/ExcEditorModel.cpp
