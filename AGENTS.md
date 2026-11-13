@@ -79,7 +79,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.760 casos de `ctest` (2.659 del núcleo y 100 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.763 casos de `ctest` (2.661 del núcleo y 101 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -113,6 +113,8 @@ src/core/              Núcleo (biblioteca estática flatcam_core, namespace fla
 src/parsers/           Lectores de archivos (sin Qt, derivan de Geometry)
   ApertureMacro.*        Macros de apertura de Gerber (`%AM`), con su evaluador de expresiones
   DxfImport.*            Importar DXF (ParseDXF + ParseDXF_Spline + import_dxf_as_geo/as_gerber), lector DXF propio
+  PdfImport.*            Importar PDF (PdfParser.parse_pdf y las capas de ToolPDF): los operadores del contenido, una capa por
+                         color de trazo y la 0 con los rellenos blancos (agujeros)
   ImageImport.*          Importar imagen (Geometry.import_image): la unión de los píxeles que pasan el umbral
   Hpgl2.*                Importar HPGL2 (ParseHPGL2), con sus rarezas
   SvgImport.*            Importar SVG (ParseSVG + svg.path 7.1 + Geometry/Gerber.import_svg), con un lector XML mínimo
@@ -253,7 +255,8 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   AppEditMenu.cpp        Archivo -> Nuevo proyecto, menús Editar y Ver y el menú del canvas (popMenu, con las grillas)
   widgets/DialogBoxRadio.* Diálogos de "Saltar a" (DialogBoxRadio), "Ubicar" (DialogBoxChoice) y FCInputDoubleSpinner
   AppJoin.cpp / AppConvert.cpp  Editar -> Unir y Editar -> Convertir
-  AppImport.cpp          Archivo -> Importar -> SVG como Geometría o Gerber
+  AppImport.cpp          Archivo -> Importar -> SVG como Geometría o Gerber, DXF, HPGL2 y PDF (`openPdf`: los streams FlateDecode
+                         con qUncompress, Ctrl+Q)
   AppExport.cpp          Archivo -> Exportar -> Gerber / Excellon (sobre src/io/FileExport) y el texto fuente regenerado
   Preferences.*          Preferencias (FlatCAMDefaults + PreferencesUIManager): app.defaults, current_defaults.FlatConfig y
                          factory_defaults.FlatConfig en la carpeta de datos, la pestaña (generated/PreferencesTabUIBase, de
@@ -495,6 +498,11 @@ fijan con sentido físico (micras), no en el último bit.
   `tests/data/images/` (gris con agujero y píxeles en diagonal, RGB, RGBA, con paleta, BMP) y ejecuta `import_image`
   original (con `ast`): las bandas que lee rasterio (el port las lee igual con `QImage`: índices en las de paleta, una
   banda en las grises) y el resultado (área, límites, polígonos y agujeros) idénticos.
+- `tests/tools/oracle_pdf.py` genera `tests/golden_pdf.h` y los PDF de `tests/data/pdf/` (streams FlateDecode con colores,
+  `cm` con `q`/`Q`, `m`, `l`, `h`, `c`, `v`, `y`, `re`, `w`, `S`, `f`, `B`, `W n` y rellenos blancos en dos páginas): ejecuta
+  `parse_pdf`, `layer_rendering_as_gerber` y `layer_rendering_as_excellon` originales (con `ast`). Las capas, las aperturas
+  (en orden, con su tamaño, elementos y áreas), el Gerber de cada capa y las herramientas del Excellon: idénticos, con GEOS
+  3.11, 3.12 y 3.15. Ojo: un trazo de grosor 0 hace caer al original (ver la sección 14).
 - `tests/tools/oracle_fiducials.py` genera `tests/golden_fiducials.h`: ejecuta `add_fiducials`, `add_fiducials_geo` y
   `add_soldermask_opening` originales sobre el cobre de "luz de noche" (11 casos: las tres formas, los tres segundos puntos,
   márgenes 0 y negativo, aperturas que ya existen, cruces superpuestas que fallan, la máscara): los mismos puntos, textos,
@@ -971,7 +979,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.760 casos de test** (`ctest`): 2.660 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 100 de la GUI;
+- **2.763 casos de test** (`ctest`): 2.662 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 101 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -999,7 +1007,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.760 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.763 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -1171,7 +1179,11 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    `oracle_hpgl2.py` sobre `tests/data/hpgl2/`: idéntico, también en sus fallas). ~~Importar imagen~~ (hecho: `src/parsers/ImageImport.*`, `tools/ImageTool.*`;
    `oracle_image.py`: idéntico. Como `rasterio.features.shapes` + `unary_union`, el resultado es la unión de los píxeles
    elegidos: el port la arma con un rectángulo por tramo de fila; las coordenadas son las mismas, `col * 25,4 / dpi` y
-   `-(fila * 25,4 / dpi)`). Falta: importar PDF (`ParsePDF`, `ToolPDF`), los textos de SVG y DXF (`ParseFont`), abrir/guardar scripts,
+   `-(fila * 25,4 / dpi)`). ~~Importar PDF~~ (hecho: `src/parsers/PdfImport.*`, `App::openPdf`,
+   Archivo -> Importar -> PDF y Ctrl+Q; `oracle_pdf.py`: idéntico. Desvíos: la pila de estados gráficos se vacía en cada
+   archivo (en el original es del analizador y queda de un PDF al siguiente si no están balanceados los `q`/`Q`); un trazo
+   de grosor 0 da un elemento vacío (el original se cae, ver la sección 14); se lee en el hilo de la interfaz). Falta: los
+   textos de SVG y DXF (`ParseFont`), abrir/guardar scripts,
    imprimir a PDF (`on_file_save_objects_pdf`) y los objetos Script y Documento (`FlatCAMScript`, `FlatCAMDocument`).
    **Decidido por el usuario:** en HPGL2 se corrigen las cuatro fallas del original (sección 11.12 w).
 5. **Herramientas restantes** (`appTools/`). ~~Fresado~~ (hecho): `ToolMilling` no se instala en la 2024.4 (no está en
@@ -1373,6 +1385,13 @@ encontrar uno nuevo, agregarlo acá con su sección. Ya corregidos a pedido del 
   `send_grbl_command` compara `'ok'` con líneas en bytes y falla (`TypeError`) en cuanto GRBL responde, así que el cero de
   los ejes, el avance de dos pasos y el sondeo con GRBL se cortan en el primer comando con respuesta; en el sondeo,
   `output + '\n'` falla también si `output` es una lista; aplicar la nivelación no hace nada.
+- **Importar PDF** (sección 13, ítem 4): un trazo de grosor 0 (después de un `Q` el grosor vuelve al guardado, que de
+  entrada es 0) da un engrosado vacío y Shapely 1.8 se cae al copiarlo (`segfault`: se cierra FlatCAM entero); `y` no marca
+  el trazado como curva; al ancho y al alto de `re` se les suma el desplazamiento; en `cm` el desplazamiento no se escala y
+  solo se toma si `b` y `c` son 0; la escala solo si `a` y `d` son distintos de 1; cualquier línea con una `Q` restaura el
+  estado; el número de apertura nueva sube una sola vez (puede pisar una existente); `B` sobre un trazado de un punto
+  corta todo el archivo (`LineString` sin `try`), igual que una curva sin punto actual; con cualquier stream que no sea
+  texto UTF-8 (fuentes, imágenes) no se abre nada; el archivo reciente se registra como Gerber o Excellon.
 - **Editor de Geometría** (sección 13, ítem 8): la herramienta Buffer no se puede abrir (`BufferSelectionTool` falla con
   `'%S:'`); Explotar falla con cualquier figura que no sea un polígono (los polígonos abiertos se cargan como anillos) y
   con agujeros; transformar o borrar con la goma no actualiza el índice de vértices (elegir y ajustar a esquinas usan los

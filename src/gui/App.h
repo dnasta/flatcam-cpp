@@ -513,6 +513,14 @@ public:
      * @param asGerber Como Gerber. @return El objeto, o nulo si falló.
      */
     FlatCAMObj* importSvg(const QString& filename, bool asGerber);
+    /**
+     * @brief `ToolPDF.open_pdf` + el armado de las capas: los streams FlateDecode descomprimidos, `parse_pdf` y un
+     * Gerber por capa de color (`<archivo>_<n>`) más un Excellon con los rellenos blancos (`<archivo>_0`).
+     * @param filename Archivo. @return Los objetos creados (vacío si falla).
+     */
+    std::vector<FlatCAMObj*> openPdf(const QString& filename);
+    /** @brief `on_open_pdf_click`: el diálogo y `openPdf` de cada archivo. */
+    void onFileOpenPdf();
     /** @brief Archivo -> Importar -> SVG (`on_file_importsvg`). @param asGerber Como Gerber. */
     void onFileImportSvg(bool asGerber);
     /**

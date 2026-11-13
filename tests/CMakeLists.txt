@@ -42,6 +42,7 @@ add_executable(core_tests
     test_film.cpp
     test_autolevel.cpp
     test_image_import.cpp
+    test_pdf_import.cpp
     test_geo_editor.cpp
     test_exc_editor.cpp
     test_grb_editor.cpp
