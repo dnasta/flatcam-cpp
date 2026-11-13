@@ -46,12 +46,7 @@ std::string pointSvg(const Shape& p, double sf, std::string fill) {
 
 // ---------------------------------------------------------------- un XML mínimo para imitar minidom.toprettyxml
 
-struct Node {
-    std::string tag;                                      // vacío: texto
-    std::vector<std::pair<std::string, std::string>> attrs;
-    std::vector<Node> children;
-    std::string text;
-};
+using Node = XmlNode;
 
 /// Lee el XML que arma este archivo (elementos con atributos entre comillas dobles, sin entidades ni comentarios).
 struct MiniParser {
@@ -141,7 +136,54 @@ void write(const Node& n, const std::string& indent, std::string& out) {
     out += indent + "</" + n.tag + ">\n";
 }
 
+std::string escapeLxml(const std::string& v) {
+    std::string o;
+    for (char c : v) {
+        if (c == '&') o += "&amp;";
+        else if (c == '<') o += "&lt;";
+        else if (c == '"') o += "&quot;";
+        else if (c == '>') o += "&gt;";
+        else o += c;
+    }
+    return o;
+}
+
 }  // namespace
+
+void XmlNode::set(const std::string& name, const std::string& value) {
+    for (auto& [k, v] : attrs)
+        if (k == name) {
+            v = value;
+            return;
+        }
+    attrs.push_back({name, value});
+}
+
+XmlNode parseMiniXml(const std::string& s) {
+    MiniParser p{s};
+    while (p.i < s.size() && s[p.i] != '<') ++p.i;
+    return p.parseElement();
+}
+
+std::string prettyMiniXml(const XmlNode& root) {
+    std::string out = "<?xml version=\"1.0\" ?>\n";
+    write(root, "", out);
+    return out;
+}
+
+std::string lxmlToString(const XmlNode& n) {
+    if (n.tag.empty()) {
+        std::string o;  // el texto: lxml no cambia las comillas
+        for (char c : n.text) o += c == '&' ? "&amp;" : c == '<' ? "&lt;" : c == '>' ? "&gt;" : std::string(1, c);
+        return o;
+    }
+    std::string out = "<" + n.tag;
+    for (const auto& [k, v] : n.attrs) out += " " + k + "=\"" + escapeLxml(v) + "\"";
+    if (n.children.empty()) return out + "/>";
+    out += ">";
+    for (const XmlNode& c : n.children) out += lxmlToString(c);
+    return out + "</" + n.tag + ">";
+}
 
 std::string shapelySvg(const Shape& geom, double sf, const std::string& color) {
     switch (geom.type()) {

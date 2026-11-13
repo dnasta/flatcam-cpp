@@ -136,6 +136,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     solderPasteTool = new SolderPasteTool(this, ui_.get());
     pcbWizardTool = new PcbWizardTool(this, ui_.get());
     calibrationTool = new CalibrationTool(this, ui_.get());
+    filmTool = new FilmTool(this, ui_.get());
     geoEditor = new GeoEditor(this);
     excEditor = new ExcEditor(this);
     grbEditor = new GrbEditor(this);
@@ -146,7 +147,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     moveTool = new MoveTool(this, this);
     propertiesTool = new PropertiesTool(this, ui_.get());
     isolationTool = new IsolationTool(this, ui_.get());
-    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool, panelizeTool, invertTool, calculatorsTool, cornersTool, extractDrillsTool, punchTool, subTool, optimalTool, etchTool, alignTool, fiducialsTool, thievingTool, rulesTool, solderPasteTool, pcbWizardTool, calibrationTool, qrcodeTool, transformTool,
+    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool, panelizeTool, invertTool, calculatorsTool, cornersTool, extractDrillsTool, punchTool, subTool, optimalTool, etchTool, alignTool, fiducialsTool, thievingTool, rulesTool, solderPasteTool, pcbWizardTool, calibrationTool, filmTool, qrcodeTool, transformTool,
                                                       isolationTool, distanceTool, distanceMinTool, propertiesTool})
         w->hide();
     connectSignals();
@@ -326,6 +327,11 @@ void App::connectSignals() {
         connect(a, &QAction::triggered, this, [this] {
             runTool(solderPasteTool, SolderPasteTool::info());
             solderPasteTool->setToolUi();
+        });
+    for (QAction* a : {ui_->film_tool_menuAction, ui_->film_btn})
+        connect(a, &QAction::triggered, this, [this] {
+            runTool(filmTool, FilmTool::info());
+            filmTool->setToolUi();
         });
     for (QAction* a : {ui_->cal_exc_tool_menuAction, ui_->cal_btn})
         connect(a, &QAction::triggered, this, [this] {
@@ -1103,6 +1109,7 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
             case Qt::Key_J: return tool(ui->copperfill_btn);
             case Qt::Key_R: return tool(ui->rules_btn);
             case Qt::Key_K: return tool(ui->solder_btn);
+            case Qt::Key_L: return tool(ui->film_btn);
             case Qt::Key_N: return tool(ui->ncc_btn);
             case Qt::Key_P: return tool(ui->paint_btn);
             case Qt::Key_S: viewSource(activeObject()); return true;
