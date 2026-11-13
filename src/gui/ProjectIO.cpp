@@ -686,7 +686,11 @@ JsonValue ProjectIO::gcodeParse(const std::string& gcode, bool laser, double dri
         geometry.push(seg);
         path = {path.back()};
     };
-    for (const QString& line : QString::fromStdString(gcode).split('\n')) {
+    // gcode.splitlines(): también separa en "\r\n" y "\r" (los .nc de Windows); float() ignora los espacios de los
+    // costados, así que un "\r" pegado al número no lo anula.
+    QString text = QString::fromStdString(gcode);
+    text.replace("\r\n", "\n").replace('\r', '\n');
+    for (const QString& line : text.split('\n')) {
         std::map<char, double> g;
         if (laser) {
             if (const auto m = laserXY.match(line); m.hasMatch()) {
@@ -697,7 +701,7 @@ JsonValue ProjectIO::gcodeParse(const std::string& gcode, bool laser, double dri
         } else {
             QString rest = line;
             for (auto m = code.match(rest); m.hasMatch(); m = code.match(rest)) {
-                g[m.captured(1).at(0).toLatin1()] = m.captured(2).remove(' ').toDouble();
+                g[m.captured(1).at(0).toLatin1()] = m.captured(2).remove(' ').trimmed().toDouble();
                 rest = rest.mid(m.capturedEnd());
             }
         }

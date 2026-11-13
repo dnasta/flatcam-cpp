@@ -31,6 +31,17 @@ std::string shapelySvg(const Shape& geom, double scaleFactor, const std::string&
  */
 std::string exportSvg(const ShapeList& shapes, const std::string& units, double scaleStrokeFactor = 0.0);
 
+/**
+ * @brief El SVG de un CNC Job (`CNCjob.export_svg` + `App.export_svg`): los viajes en `#F0E24D` debajo y los cortes en
+ * `#5E6CFF`, cada grupo unido.
+ * @param travels Trazados de viaje (`kind[0] == 'T'`). @param cuts Trazados de corte (`'C'`).
+ * @param bounds `obj.bounds()`. @param units `obj.units.lower()`.
+ * @param scaleStrokeFactor Factor del trazo (`tooldia / 2`; 0 pasa a 0,01).
+ * @return El documento, o vacío si falla como el original (una unión con polígonos no acepta `stroke_color`).
+ */
+std::string exportCncSvg(const ShapeList& travels, const ShapeList& cuts, const BoundingBox& bounds,
+                         const std::string& units, double scaleStrokeFactor);
+
 /** @brief Un nodo del XML mínimo de este módulo (elemento, o texto si `tag` está vacío). */
 struct XmlNode {
     std::string tag;                                          ///< Nombre del elemento; vacío: es un texto.

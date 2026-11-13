@@ -9,11 +9,15 @@
 #include <QMessageBox>
 
 #include "gui/App.h"
+
+#include "gui/ProjectIO.h"
 #include "gui/MainGUI.h"
 #include "gui/PlotCanvas.h"
 #include "gui/Translation.h"
 #include "gui/objects/FlatCAMObj.h"
+#include "gui/objects/CNCJobObject.h"
 #include "gui/objects/GeometryObject.h"
+#include "gui/Preferences.h"
 #include "io/DxfExport.h"
 #include "io/FileExport.h"
 #include "io/SvgExport.h"
@@ -113,8 +117,36 @@ void App::onFileExport(ObjectKind kind) {
     exportObject(obj, f);
 }
 
+std::string App::cncSvgText(const CNCJobObject* job) const {
+    // export_svg usa self.gcode_parsed: el del último G-code generado (en un G-code abierto, el de todo el archivo).
+    const auto& tools = job->tools();
+    const auto& gcodes = job->job().toolGcodes();
+    const bool drilling = job->isDrilling();
+    const std::string gcode = gcodes.empty() ? job->job().gcode() : gcodes.back();
+    const CncToolRow* last = tools.empty() ? nullptr : &tools.back();
+    const bool laser =
+        last && last->data[drilling ? "tools_drill_ppname_e" : "ppname_g"].text().find("laser") != std::string::npos;
+    const JsonValue parsed = ProjectIO::gcodeParse(gcode, laser, drilling && last ? last->dia : 0.0);
+    ShapeList travels, cuts, all;
+    for (const JsonValue& seg : parsed.items()) {
+        const Shape g = Shape::fromWkt(seg["geom"]["__inst__"].text());
+        all.push_back(g);
+        const std::string k = seg["kind"].items().empty() ? std::string() : seg["kind"].items()[0].text();
+        if (k == "C") cuts.push_back(g);
+        if (k == "T") travels.push_back(g);
+    }
+    // bounds(): un trabajo de una herramienta (G-code abierto) usa solid_geometry = la unión de todo lo interpretado; uno
+    // multiherramienta, los cortes de su última herramienta (CNCjob.bounds reinicia los mínimos en cada una).
+    const ShapeList& forBounds = tools.empty() ? all : cuts;
+    if (forBounds.empty()) return {};
+    const BoundingBox b = Shape::unaryUnion(forBounds).bounds().value_or(BoundingBox{});
+    const double tooldia = tools.empty() ? defNum("cncjob_tooldia", 1.0) : last->dia;
+    return exportCncSvg(travels, cuts, b, job->header().units == "IN" ? "in" : "mm", tooldia / 2);
+}
+
 bool App::exportSvgFile(FlatCAMObj* obj, const QString& filename) {
-    const std::string text = exportSvg(obj->solidShapes(), "mm");
+    const auto* job = dynamic_cast<const CNCJobObject*>(obj);
+    const std::string text = job ? cncSvgText(job) : exportSvg(obj->solidShapes(), "mm");
     if (text.empty()) {
         ui_->inform("[ERROR_NOTCL] " + tr_("Could not export."));
         return false;
@@ -134,11 +166,6 @@ void App::onFileExportSvg() {
     FlatCAMObj* obj = activeObject();
     if (!obj) {
         ui_->inform("[WARNING_NOTCL] " + tr_("No object is selected."));
-        return;
-    }
-    if (obj->kind() == ObjectKind::CNCJob) {
-        // Desvío: el SVG de un CNC Job sale de su G-code interpretado (gcode_parsed), que el port no guarda todavía.
-        ui_->inform("[WARNING_NOTCL] Exportar un CNC Job a SVG todavía no está en el port.");
         return;
     }
     const QString f = QFileDialog::getSaveFileName(ui_.get(), tr_("Export SVG"), lastFolder() + "/" + obj->name() + "_svg",

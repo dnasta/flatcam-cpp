@@ -1,5 +1,6 @@
 #include "io/SvgExport.h"
 
+#include <cmath>
 #include <vector>
 
 #include "cam/PyNumber.h"
@@ -149,6 +150,30 @@ std::string escapeLxml(const std::string& v) {
 }
 
 }  // namespace
+
+std::string exportCncSvg(const ShapeList& travels, const ShapeList& cuts, const BoundingBox& b, const std::string& units,
+                         double sf) {
+    if (sf == 0) sf = 0.01;
+    auto group = [&](const ShapeList& l, const std::string& color, std::string& out) {
+        if (l.empty()) return true;
+        const Shape u = Shape::unaryUnion(l);
+        // Solo las líneas tienen stroke_color en Shapely 1.8; con cualquier otra figura: TypeError.
+        if (u.type() != ShapeType::LineString && u.type() != ShapeType::LinearRing &&
+            u.type() != ShapeType::MultiLineString)
+            return false;
+        out += shapelySvg(u, sf, color);
+        return true;
+    };
+    std::string elem;
+    if (!group(travels, "#F0E24D", elem) || !group(cuts, "#5E6CFF", elem)) return {};
+    const double w = std::abs(b.xmax - b.xmin), h = std::abs(b.ymax - b.ymin);
+    const std::string svgw = pyFloatRepr(w), svgh = pyFloatRepr(h);
+    std::string doc = "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" ";
+    doc += "width=\"" + svgw + units + "\" height=\"" + svgh + units + "\" viewBox=\"" + pyFloatRepr(b.xmin) + " " +
+           pyFloatRepr(b.ymin - h) + " " + svgw + " " + svgh + "\">";
+    doc += "<g transform=\"scale(1,-1)\">" + elem + "</g> </svg>";
+    return prettyMiniXml(parseMiniXml(doc));
+}
 
 void XmlNode::set(const std::string& name, const std::string& value) {
     for (auto& [k, v] : attrs)
