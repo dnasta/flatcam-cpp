@@ -53,6 +53,7 @@ add_library(flatcam_gui STATIC
     tools/RulesTool.cpp
     tools/SolderPasteTool.cpp
     tools/PcbWizardTool.cpp
+    tools/CalibrationTool.cpp
     generated/RulesToolUIBase.cpp
     generated/SolderPasteToolUIBase.cpp
     generated/PcbWizardToolUIBase.cpp

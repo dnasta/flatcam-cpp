@@ -143,6 +143,10 @@ src/tools/              Herramientas de FlatCAM (sin Qt)
   CornerMarkers.*        Marcas de esquina (`add_corners_geo`) y sus taladros (`on_create_drill_object`)
   InvertGerber.*         Invertir un Gerber (`on_grb_invert`): la caja con margen menos el cobre
   ExcellonMilling.*      Fresar agujeros y ranuras de un Excellon (`generate_milling_drills` / `_slots` de FlatCAMExcellon)
+  RulesCheck.*           Verificación de reglas (`check_*` de ToolRulesCheck) y el informe HTML (`on_tool_finished`)
+  SolderPaste.*          Pasta de soldar: trazos por boquilla (`on_create_geo`) y G-code con Paste_1
+  PcbWizard.*            Asistente de PCB: el `.INF` de PcbWizard (`load_inf`) y la cabecera agregada al Excellon
+  Calibration.*          Calibración: G-code de verificación, factores (`calculate_factors`) y puntos escalados/inclinados
 src/editors/            Modelos de los editores (sin Qt)
   EditorStorage.*        FlatCAMRTreeStorage + DrawToolShape.get_pts: figuras e índice de vértices (tomado al insertar)
   GeoEditorModel.*       Editor de Geometría: figuras de las herramientas de dibujo, elección, unir, intersecar, restar,
@@ -213,6 +217,12 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   editors/GeoEditor.*    Editor de Geometría (AppGeoEditor) y sus paneles de Pintar, Transformar y Texto (generados)
   editors/ExcEditor.*    Editor de Excellon (AppExcEditor): tabla de herramientas, agujeros, ranuras, grillas
   editors/GrbEditor.*    Editor de Gerber (AppGerberEditor): tabla de aperturas y sus herramientas
+  tools/RulesTool.*      Verificación de reglas (ToolRulesCheck, Alt+R): el informe en un Documento `Rules_check_results`
+  objects/DocumentObject.* Objeto Documento mínimo (texto HTML en un QTextBrowser)
+  tools/SolderPasteTool.* Pasta de soldar (ToolSolderPaste, Alt+K): boquillas, `<objeto>_solderpaste` y su CNC Job
+  tools/CalibrationTool.* Calibración (ToolCalibration, sin atajo): los cuatro puntos con el mouse, el "Visor de Gcode" y
+                         `<objeto>_calibrated`
+  tools/PcbWizardTool.*  Asistente de PCB (ToolPcbWizard, Archivo -> Importar): cargar el Excellon y el `.INF`, importar
   tools/QRCodeTool.*     Código QR (ToolQRCode, Alt+Q) sobre src/tools/QrCode: vista previa, clic, PNG y SVG
   tools/ThievingTool.*   Robo de cobre (ToolCopperThieving, Alt+J) sobre src/tools/CopperThieving; el área con CanvasPicker
   tools/FiducialsTool.*  Fiduciales (ToolFiducials, Alt+F) sobre src/tools/Fiducials: automático o con clics
@@ -438,6 +448,20 @@ fijan con sentido físico (micras), no en el último bit.
   (la del oráculo) todo coincide exacto** (polígonos, vértices, áreas, aperturas en orden); con 3.12 y 3.15 cambian
   hasta 2 % de los vértices de los engrosados y, en el relleno con líneas, cuántos polígonos superpuestos une el engrosado
   de un `MultiPolygon` inválido (ahí el test compara las aperturas y lo agregado). `Shape::geosVersion` dice cuál corre.
+- `tests/tools/oracle_rules.py` genera `tests/golden_rules.h`: ejecuta los `check_*` originales de `ToolRulesCheck` (con
+  `ast`) sobre los archivos de las dos placas (12 casos: pistas, separación interna, entre Gerber, tamaño y separación de
+  agujeros, anillo mínimo): las mismas violaciones como conjunto (el punto representativo difiere ~22 nm, tolerancia 1e-4).
+- `tests/tools/oracle_solderpaste.py` genera `tests/golden_solderpaste.h`: `on_create_geo` y
+  `generate_gcode_from_solderpaste_geo` originales con Paste_1 sobre la máscara del dosificador: los mismos trazos (como
+  conjunto: cambia el orden de los pads) y el mismo G-code (con empates de `rtree`, como conjunto de líneas).
+- `tests/tools/oracle_pcbwizard.py` genera `tests/golden_pcbwizard.h`: `load_inf`, `load_excellon`, `on_file_loaded` y
+  `update_params` originales sobre `tests/data/pcbwizard/` (5 casos: pulgadas, métrico con CRLF y una herramienta repetida,
+  ceros TZ, formato sin unidades, `.INF` sin herramientas) y el parser original sobre el texto armado: el texto idéntico y
+  los mismos agujeros.
+- `tests/tools/oracle_calibration.py` genera `tests/golden_calibration.h`: `gcode_header`, `generate_verification_gcode`,
+  `calculate_factors`, `target_values_in_table`, `on_scale_button`, `on_skew_button` y `check_points` originales (7
+  escenarios: los dos órdenes del segundo punto, Z cero con X,Y de cambio en pulgadas, factores con y sin lo medido,
+  escalar e inclinar encadenados, una división por cero y 2 decimales): campos, puntos y G-code idénticos.
 - `tests/tools/oracle_fiducials.py` genera `tests/golden_fiducials.h`: ejecuta `add_fiducials`, `add_fiducials_geo` y
   `add_soldermask_opening` originales sobre el cobre de "luz de noche" (11 casos: las tres formas, los tres segundos puntos,
   márgenes 0 y negativo, aperturas que ya existen, cruces superpuestas que fallan, la máscara): los mismos puntos, textos,
@@ -1151,9 +1175,16 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    clic; el PNG sale siempre en 8 bits por canal (PIL usa 1 bit con los colores "black"/"white"), con los mismos píxeles). ~~Robo de cobre~~ (hecho: `src/tools/CopperThieving.*`, `tools/ThievingTool.*`, Alt+J;
    `oracle_thieving.py`: idéntico con GEOS 3.11. Desvíos: el texto fuente de una máscara con separación negativa sale
    completo (el original guarda `clear: []` en cada elemento y su `export_gerber` corta cada apertura en el primero); los
-   demás atajos del teclado siguen activos mientras se elige el área (en el original solo G, I, J y otros pocos)). Siguen: Film, Calculators, Copper Thieving, Fiducials, Corners, Extract
-   Drills, Punch Gerber, Invert Gerber, Align Objects, Subtract (`ToolSub`), QR Code, Rules Check, Optimal, Solder Paste,
-   Calibration, Etch Compensation, PCB Wizard, Levelling (autonivelación del CNC Job).
+   demás atajos del teclado siguen activos mientras se elige el área (en el original solo G, I, J y otros pocos)).
+   ~~Verificación de reglas~~ (hecha: `src/tools/RulesCheck.*`, `tools/RulesTool.*`, Alt+R, `oracle_rules.py`; desvío: los
+   puntos se listan en el orden en que aparecen, el original usa un `set`). ~~Pasta de soldar~~ (hecha:
+   `src/tools/SolderPaste.*`, `tools/SolderPasteTool.*`, Alt+K, `oracle_solderpaste.py`; desvío: los valores del formulario
+   valen para todas las boquillas). ~~Asistente de PCB~~ (hecho: `src/tools/PcbWizard.*`, `tools/PcbWizardTool.*`, Archivo ->
+   Importar, sin atajo; `oracle_pcbwizard.py`: idéntico). ~~Calibración~~ (hecha: `src/tools/Calibration.*`,
+   `tools/CalibrationTool.*`, Herramienta -> Calibración y su botón, sin atajo (`install` dice Alt+E pero `keyPressEvent`
+   no la usa); `oracle_calibration.py`: idéntica. Desvíos: la tabla de puntos se arma a mano (el volcador no recorre los
+   widgets de las celdas); el "Visor de Gcode" es un texto con "Guardar" en vez del `AppTextEditor`; los campos
+   `EvalEntry` solo evalúan números). **Siguen:** Film (Alt+L) y Autonivelación (del CNC Job).
 6. **Preferencias** (`appGUI/preferences/`, ~19.000 líneas). **Hecho:** la pestaña completa generada del original (485 campos),
    guardar/cargar `current_defaults.FlatConfig` y `factory_defaults.FlatConfig`, Guardar/Aplicar/Cerrar/Restaurar/Abrir
    carpeta/Borrar ajustes, Editar -> Preferencias, Shift+P, el rótulo de la barra de estado, los manejadores de cada grupo
@@ -1263,6 +1294,22 @@ encontrar uno nuevo, agregarlo acá con su sección. Ya corregidos a pedido del 
   relleno que al achicarse (separación negativa) se parte en varios hace fallar todo (`exterior` de un `MultiPolygon`),
   una máscara sin aperturas falla (`max()` vacío), el nombre de un objeto sin punto queda `_plating_mask.<nombre>` y el
   nombre del objeto se registra como archivo reciente (no es un archivo).
+- **Verificación de reglas** (sección 13, ítem 5): las reglas cobre-cobre y serigrafía-serigrafía hacen fallar toda la
+  verificación (`self.copper_t_cb` / `self.ss_t_cb` no existen; el port no hace nada, el mismo efecto visible), y la de
+  máscara depende de la de serigrafía; serigrafía-contorno usa el valor de cobre-contorno; en el tamaño de pistas y de
+  agujeros solo entra el primer cobre / Excellon; el informe del anillo mínimo falla si un agujero toca el borde del pad (un
+  `Point` en vez de coordenadas); la separación interna con borrados solo mira los sólidos que contienen un borrado.
+- **Pasta de soldar** (sección 13, ítem 5): si la boquilla no entra, el pad reusa la línea del pad anterior; el nombre del
+  CNC Job se corta en el primer "_".
+- **Asistente de PCB** (sección 13, ítem 5): la segunda importación del mismo texto sale vacía (se le pasa el mismo
+  `StringIO`, ya leído) y avisa "No geometry found"; las herramientas de un `.INF` se suman a las del anterior (solo se
+  vacían al abrir la herramienta); el archivo reciente que registra es el nombre, no la ruta (no se puede abrir).
+- **Calibración** (sección 13, ítem 5): calibrar un Excellon falla siempre (`initialize_excellon` copia `obj.drills`, que
+  la 2024.4 no tiene); los factores comparan el delta medido con la coordenada del objetivo, así que sin medir nada dan
+  factores si los puntos no están redondeados (después de escalar o inclinar); la inclinación en Y suma el origen
+  (`bot_right_dy + origin_y`) en vez de restarlo; un punto con la X o la Y del origen divide por cero y corta la cuenta;
+  un clic sobre dos figuras agrega dos puntos (también después del cuarto); el botón derecho con cuatro puntos no hace
+  nada.
 - **Editor de Geometría** (sección 13, ítem 8): la herramienta Buffer no se puede abrir (`BufferSelectionTool` falla con
   `'%S:'`); Explotar falla con cualquier figura que no sea un polígono (los polígonos abiertos se cargan como anillos) y
   con agujeros; transformar o borrar con la goma no actualiza el índice de vértices (elegir y ajustar a esquinas usan los
