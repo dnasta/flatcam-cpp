@@ -51,6 +51,7 @@ add_library(flatcam_gui STATIC
     AppEditors.cpp
     objects/DocumentObject.cpp
     tools/RulesTool.cpp
+    tools/SolderPasteTool.cpp
     generated/RulesToolUIBase.cpp
     generated/SolderPasteToolUIBase.cpp
     generated/CalibrationToolUIBase.cpp

@@ -3179,6 +3179,31 @@ TEST(GuiRules, ChecksTheRulesAndCreatesTheReport) {
     EXPECT_EQ(t->execute(), nullptr);
 }
 
+TEST(GuiSolderPaste, CreatesTheGeometryAndTheCncJob) {
+    App app;
+    FlatCAMObj* mask = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/PCB principal-B_Mask.gbs");
+    ASSERT_NE(mask, nullptr);
+    QKeyEvent alt(QEvent::KeyPress, Qt::Key_K, Qt::AltModifier);
+    QApplication::sendEvent(app.ui(), &alt);
+    SolderPasteTool* t = app.solderPasteTool;
+    EXPECT_EQ(t->tools_table->rowCount(), 2);  // tools_solderpaste_tools = "1.0, 0.3"
+    t->obj_combo->setValue(mask->name());
+    FlatCAMObj* geo = t->createGeometry();
+    ASSERT_NE(geo, nullptr);
+    EXPECT_EQ(geo->name(), mask->name() + "_solderpaste");
+    // golden_solderpaste.h: con 1,0 y 0,3 todos los pads quedan en la boquilla de 1,0 (192 trazos).
+    ASSERT_EQ(static_cast<GeometryObject*>(geo)->tools().size(), 1u);
+    EXPECT_EQ(static_cast<GeometryObject*>(geo)->tools().at(1).solidGeometry.size(), 192u);
+    FlatCAMObj* cnc = t->createGcode();
+    ASSERT_NE(cnc, nullptr);
+    // name.partition("_")[0]: corta en el primer "_" del nombre de la Geometría.
+    EXPECT_EQ(cnc->name(), "PCB principal-B_cnc_solderpaste");
+
+    const std::string txt = static_cast<CNCJobObject*>(cnc)->exportText();
+    EXPECT_NE(txt.find("(TOOL DIAMETER: 1.0 mm)"), std::string::npos);
+    EXPECT_NE(txt.find("G4 P1.0"), std::string::npos);
+}
+
 TEST(GuiThieving, FillsAddsTheRobberBarAndThePlatingMask) {
     App app;
     FlatCAMObj* cu = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-B_Cu.gbr");

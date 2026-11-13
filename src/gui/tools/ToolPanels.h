@@ -23,6 +23,7 @@
 #include "gui/tools/FiducialsTool.h"
 #include "gui/tools/ThievingTool.h"
 #include "gui/tools/RulesTool.h"
+#include "gui/tools/SolderPasteTool.h"
 #include "gui/tools/QRCodeTool.h"
 #include "gui/tools/ToolInfo.h"
 #include "gui/tools/TransformTool.h"
