@@ -49,6 +49,7 @@
 
 #include "gui/objects/CNCAutolevel.h"
 #include "golden_cnc_svg.h"
+#include "golden_image.h"
 #include <QTimer>
 #include <QImage>
 #include <QCloseEvent>
@@ -3611,4 +3612,39 @@ TEST(GuiCncSvg, ExportsTheCncJobLikeTheOriginal) {
             EXPECT_NEAR(c1, c2, 1e-6);
         }
     }
+}
+
+TEST(GuiImage, ReadsTheBandsLikeRasterioAndImports) {
+    // golden_image.h: las bandas que lee rasterio de cada archivo.
+    for (const auto& [file, want] : golden_image::kBands) {
+        SCOPED_TRACE(file);
+        bool ok = false;
+        const flatcam::ImageBands b = readImageBands(QString(FLATCAM_TEST_DATA_DIR) + "/images/" + file.c_str(), &ok);
+        ASSERT_TRUE(ok);
+        EXPECT_EQ(b.width, want.width);
+        EXPECT_EQ(b.height, want.height);
+        EXPECT_EQ(b.red, want.bands[0]);
+        EXPECT_EQ(b.green.empty() ? 1u : 3u, want.bands.size() >= 3 ? 3u : 1u);
+        if (want.bands.size() >= 3) {
+            EXPECT_EQ(b.green, want.bands[1]);
+            EXPECT_EQ(b.blue, want.bands[2]);
+        }
+    }
+    App app;
+    app.ui()->image_tool_menuAction->trigger();
+    ImageTool* t = app.imageTool;
+    EXPECT_EQ(t->dpi_entry->value(), 96);
+    t->mask_bw_entry->setValue(128);
+    FlatCAMObj* g = t->importImage(QString(FLATCAM_TEST_DATA_DIR) + "/images/gray.png");
+    ASSERT_NE(g, nullptr);
+    EXPECT_EQ(g->name(), "gray.png");
+    EXPECT_EQ(g->kind(), ObjectKind::Gerber);
+    // Primer caso de golden_image.h (gray.png, mm, 96 dpi, 128).
+    double area = 0;
+    for (const flatcam::Shape& p : static_cast<GerberObject*>(g)->gerber().solidGeometry()) area += p.area();
+    EXPECT_NEAR(area, golden_image::kCases[0].area, 1e-12);
+    t->tf_type_obj_combo->setCurrentIndex(1);
+    FlatCAMObj* geo = t->importImage(QString(FLATCAM_TEST_DATA_DIR) + "/images/rgb.png");
+    ASSERT_NE(geo, nullptr);
+    EXPECT_EQ(geo->kind(), ObjectKind::Geometry);
 }

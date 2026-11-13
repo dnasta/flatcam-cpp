@@ -139,6 +139,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     pcbWizardTool = new PcbWizardTool(this, ui_.get());
     calibrationTool = new CalibrationTool(this, ui_.get());
     filmTool = new FilmTool(this, ui_.get());
+    imageTool = new ImageTool(this, ui_.get());
     geoEditor = new GeoEditor(this);
     excEditor = new ExcEditor(this);
     grbEditor = new GrbEditor(this);
@@ -149,7 +150,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     moveTool = new MoveTool(this, this);
     propertiesTool = new PropertiesTool(this, ui_.get());
     isolationTool = new IsolationTool(this, ui_.get());
-    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool, panelizeTool, invertTool, calculatorsTool, cornersTool, extractDrillsTool, punchTool, subTool, optimalTool, etchTool, alignTool, fiducialsTool, thievingTool, rulesTool, solderPasteTool, pcbWizardTool, calibrationTool, filmTool, qrcodeTool, transformTool,
+    for (QWidget* w : std::initializer_list<QWidget*>{nccTool, paintTool, drillingTool, cutoutTool, dblsidedTool, panelizeTool, invertTool, calculatorsTool, cornersTool, extractDrillsTool, punchTool, subTool, optimalTool, etchTool, alignTool, fiducialsTool, thievingTool, rulesTool, solderPasteTool, pcbWizardTool, calibrationTool, filmTool, imageTool, qrcodeTool, transformTool,
                                                       isolationTool, distanceTool, distanceMinTool, propertiesTool})
         w->hide();
     connectSignals();
@@ -330,6 +331,10 @@ void App::connectSignals() {
             runTool(solderPasteTool, SolderPasteTool::info());
             solderPasteTool->setToolUi();
         });
+    connect(ui_->image_tool_menuAction, &QAction::triggered, this, [this] {
+        runTool(imageTool, ImageTool::info());
+        imageTool->setToolUi();
+    });
     for (QAction* a : {ui_->film_tool_menuAction, ui_->film_btn})
         connect(a, &QAction::triggered, this, [this] {
             runTool(filmTool, FilmTool::info());

@@ -55,6 +55,8 @@ add_library(flatcam_gui STATIC
     tools/PcbWizardTool.cpp
     tools/CalibrationTool.cpp
     tools/FilmTool.cpp
+    tools/ImageTool.cpp
+    generated/ImageToolUIBase.cpp
     objects/CNCAutolevel.cpp
     generated/RulesToolUIBase.cpp
     generated/SolderPasteToolUIBase.cpp

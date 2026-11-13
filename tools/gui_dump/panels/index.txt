@@ -30,6 +30,7 @@ SolderPasteToolUI
 CalibrationToolUI
 PcbWizardToolUI
 FilmToolUI
+ImageToolUI
 ToolsDB2UI
 AboutDialogUI
 HowtoDialogUI

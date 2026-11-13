@@ -48,7 +48,7 @@ TOOLS = {"ncclear_tool": "NccToolUI", "paint_tool": "PaintToolUI", "drilling_too
          "panelize_tool": "PanelizeToolUI", "invert_tool": "InvertToolUI",
          "calculator_tool": "CalculatorsToolUI", "corners_tool": "CornersToolUI",
          "edrills_tool": "ExtractDrillsToolUI", "punch_tool": "PunchToolUI",
-         "sub_tool": "SubToolUI", "optimal_tool": "OptimalToolUI", "etch_tool": "EtchToolUI", "align_objects_tool": "AlignToolUI", "fiducial_tool": "FiducialsToolUI", "qrcode_tool": "QRCodeToolUI", "copper_thieving_tool": "ThievingToolUI", "rules_tool": "RulesToolUI", "paste_tool": "SolderPasteToolUI", "cal_exc_tool": "CalibrationToolUI", "pcb_wizard_tool": "PcbWizardToolUI", "film_tool": "FilmToolUI"}
+         "sub_tool": "SubToolUI", "optimal_tool": "OptimalToolUI", "etch_tool": "EtchToolUI", "align_objects_tool": "AlignToolUI", "fiducial_tool": "FiducialsToolUI", "qrcode_tool": "QRCodeToolUI", "copper_thieving_tool": "ThievingToolUI", "rules_tool": "RulesToolUI", "paste_tool": "SolderPasteToolUI", "cal_exc_tool": "CalibrationToolUI", "pcb_wizard_tool": "PcbWizardToolUI", "film_tool": "FilmToolUI", "image_tool": "ImageToolUI"}
 
 
 def main():
