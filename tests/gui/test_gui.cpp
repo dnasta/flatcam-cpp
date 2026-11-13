@@ -51,6 +51,7 @@
 #include "golden_cnc_svg.h"
 #include "golden_image.h"
 #include "golden_pdf.h"
+#include "golden_print_pdf.h"
 #include <QTimer>
 #include <QImage>
 #include <QCloseEvent>
@@ -3674,4 +3675,26 @@ TEST(GuiPdf, OpensThePdfLayersLikeTheOriginal) {
             EXPECT_NEAR(area, L.area, 1e-6);
         }
     }
+}
+
+TEST(GuiPrintPdf, PrintsTheSelectedObjectsLikeTheOriginal) {
+    App app;
+    FlatCAMObj* edge = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-Edge_Cuts.gbr");
+    FlatCAMObj* pth = app.openExcellon(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-PTH.drl");
+    ASSERT_NE(edge, nullptr);
+    ASSERT_NE(pth, nullptr);
+    edge->fillColor = QColor("#BBF268");
+    edge->fillColor.setAlpha(0xBF);
+    pth->fillColor = QColor("#C40000");
+    pth->fillColor.setAlpha(0xBF);
+    QTemporaryDir dir;
+    std::string svg;
+    ASSERT_TRUE(app.printPdf(dir.filePath("print.pdf"), {edge, pth}, &svg));
+    // golden_print_pdf.h, primer caso: mismo encabezado y mismos atributos (los trayectos dependen de la GEOS).
+    const std::string& want = golden_print_pdf::kCases[0].svg;
+    EXPECT_EQ(svg.substr(0, svg.find("<path")), want.substr(0, want.find("<path")));
+    EXPECT_EQ(std::count(svg.begin(), svg.end(), '\n'), std::count(want.begin(), want.end(), '\n'));
+    QFile pdf(dir.filePath("print.pdf"));
+    ASSERT_TRUE(pdf.open(QIODevice::ReadOnly));
+    EXPECT_TRUE(pdf.read(5) == "%PDF-");
 }
