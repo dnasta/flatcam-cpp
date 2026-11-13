@@ -429,6 +429,10 @@ std::string Shape::geosVersion() { return GEOSversion(); }
 
 Shape Shape::envelope() const { return wrap(GEOSEnvelope_r(H(), raw(*this)), "envelope"); }
 
+Shape Shape::voronoiDiagram(const Shape& env, double tolerance) const {
+    return wrap(GEOSVoronoiDiagram_r(H(), raw(*this), env.isEmpty() ? nullptr : raw(env), tolerance, 0), "voronoi");
+}
+
 std::vector<Point2D> Shape::triangulate() const {
     std::vector<Point2D> out;
     if (isEmpty()) return out;

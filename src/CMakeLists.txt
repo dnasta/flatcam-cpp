@@ -41,6 +41,7 @@ add_library(flatcam_core STATIC
     tools/PcbWizard.cpp
     tools/Calibration.cpp
     tools/Film.cpp
+    cam/Autolevel.cpp
     editors/EditorStorage.cpp
     editors/GeoEditorModel.cpp
     editors/ExcEditorModel.cpp

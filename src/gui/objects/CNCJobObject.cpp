@@ -1,6 +1,8 @@
 #include "gui/Preferences.h"
 #include "gui/objects/CNCJobObject.h"
 
+#include "gui/objects/CNCAutolevel.h"
+
 #include <QDateTime>
 #include <QFile>
 #include <QLocale>
@@ -151,6 +153,11 @@ PlotLayerData CNCJobObject::plotData() const {
 }
 
 QRectF CNCJobObject::bounds() const { return plotData().bounds; }
+
+CNCAutolevel* CNCJobObject::autolevel(App* app) {
+    if (!autolevel_) autolevel_ = new CNCAutolevel(app, this);
+    return autolevel_;
+}
 
 QWidget* CNCJobObject::propertiesUi() {
     if (!ui_) ui_ = std::make_unique<CNCObjectUI>();

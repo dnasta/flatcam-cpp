@@ -49,6 +49,11 @@ public:
     /** @brief Datos de la cabecera del archivo (nombre, tipo, unidades...). @return Los datos. */
     const GcodeHeaderInfo& header() const { return header_; }
 
+    /** @brief La autonivelación del trabajo (se crea al pedirla). @param app La aplicación. @return El controlador. */
+    class CNCAutolevel* autolevel(class App* app);
+    /** @brief La autonivelación, si ya se creó. @return El controlador o nulo. */
+    class CNCAutolevel* autolevelIfAny() const { return autolevel_; }
+
     /** @brief Herramientas usadas. @return Las filas. */
     const std::vector<CncToolRow>& tools() const { return tools_; }
 
@@ -96,6 +101,7 @@ public:
 private:
     std::unique_ptr<CncJob> job_;
     GcodeHeaderInfo header_;
+    class CNCAutolevel* autolevel_{nullptr};  ///< Hijo de este objeto (QObject).
     std::vector<CncToolRow> tools_;
     std::optional<std::string> storedHeader_;
 };

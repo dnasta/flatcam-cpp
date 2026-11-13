@@ -73,13 +73,13 @@ logo) y **CutOut** → **CNC Job** con G-code. Taladros y alineación con **PCB 
 | 2 | Parsers de Gerber y Excellon con tests contra archivos reales | **Hecha** |
 | 3 | Herramientas (NCC, Paint, Drilling, PCB a 2 caras, CutOut, Isolation) y G-code | **Hecha**: transformaciones de Gerber, postprocesadores, G-code de taladrado y de geometrías, CutOut, capa de láser, Paint, NCC, PCB a 2 caras e Isolation |
 | 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas, paneles) | **En curso**: ventana principal idéntica a la original (generada desde la interfaz Python real), widgets de `GUIElements`, canvas `QOpenGLWidget` (ejes, grilla, HUD, zoom, paneo y dibujo de objetos con buffers de vértices), abrir Gerber y Excellon (menú, barra, arrastrar y soltar, línea de comandos) con el árbol del Proyecto; Propiedades de Gerber y Excellon (paneles generados + `build_ui`); paneles de NCC, Paint, Perforación y Corte en la pestaña Herramienta (generados). **Perforación completa:** objeto → tabla de herramientas → parámetros por herramienta → CNC Job (objeto, dibujo y Propiedades) → "Guardar código CNC"; desde la interfaz reproduce el `.nc` de la 2024.4 del usuario (salvo fecha y orden de agujeros). **Corte completo:** Corte libre o rectangular → objeto Geometría (Propiedades con su tabla y parámetros por herramienta) → "Generar objeto CNCJob" → exportar; reproduce el `.nc` del contorno de la 2024.4 **línea por línea salvo la fecha**. **Agregado pedido por el usuario:** los objetos de cada grupo del Proyecto se reordenan arrastrándolos y ese orden es el de dibujo (el primero queda arriba). **Paint y NCC completos** (método estándar, "Todos" / "Sí mismo"): el flujo del usuario sobre Logo y B_Cu da sus `.nc` de la 2024.4 (Paint: mismas líneas salvo la variante del láser y últimas cifras de GEOS; NCC: misma cabecera y los mismos trazados ±2 %). **Reflejar:** Opciones → Voltear en el eje X / Y y las teclas X / Y (también desde el árbol), alrededor del centro de la caja de los objetos elegidos; con las cuatro capas de "luz de noche" elegidas da exactamente el reflejo en x = 0 de los `.nc` del usuario. **PCB a 2 caras:** panel generado y lógica completa (reflejar con punto, caja o agujero elegido con el mouse; límites de lo elegido; agujeros de alineación "Alignment Drills"). **Isolation:** panel generado (nivel Básico) y lógica sobre `src/tools/Isolation`: combinado (`_iso_combined`), pasadas separadas (`_<diá>_isoN`), resto (`_iso_rest`), resta de otro objeto y objeto de referencia. **Abrir proyectos** `.FlatPrj` de la versión Python (también el real del usuario, 535 MB comprimido / 1,7 GB: 24 s y 1,8 GB de memoria): lectura en streaming (`src/io/`) que descarta `gcode_parsed` y las copias de geometría que no se usan. **Guardar proyectos** (Archivo → Guardar proyecto / Guardar como, comprimido con XZ como el original): cada objeto como su `to_dict` original, conservando lo que vino del proyecto; el FlatCAM en Python abre lo que guarda el port (`tests/tools/check_project_in_original.py`) |
-| 5 | Herramientas secundarias y postprocesadores restantes | **En curso** (plan en la sección 13): ítems 1, 2 y 3 hechos (Transformaciones, Mover, Distancia, Distancia mínima, Propiedades, escala y desplazamiento del panel de cada objeto; distancia recorrida y tiempo estimado del CNC Job, idénticos al original); **los 20 postprocesadores hechos**; Preferencias en curso (pestaña, archivos y manejadores hechos), cada método idéntico al original (2.251 casos) y de punta a punta en geometrías (39 escenarios más) y taladrado (17 postprocesadores) |
+| 5 | Herramientas secundarias y postprocesadores restantes | **En curso** (plan en la sección 13): ítems 1, 2, 3, 5 (todas las herramientas) y 8 (editores de Gerber, Excellon y Geometría) hechos (Transformaciones, Mover, Distancia, Distancia mínima, Propiedades, escala y desplazamiento del panel de cada objeto; distancia recorrida y tiempo estimado del CNC Job, idénticos al original); **los 20 postprocesadores hechos**; Preferencias en curso (pestaña, archivos y manejadores hechos), cada método idéntico al original (2.251 casos) y de punta a punta en geometrías (39 escenarios más) y taladrado (17 postprocesadores) |
 
 Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (AppleClang, GEOS 3.15). Doxygen genera
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.755 casos de `ctest` (2.657 del núcleo y 97 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.757 casos de `ctest` (2.658 del núcleo y 98 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -171,6 +171,8 @@ src/cam/                Generación de G-code (sin Qt)
                          Toolchange_Manual, Toolchange_Probe_MACH3, Z_laser) y la cabecera/cambio de herramienta comunes
   internal/PpCommon.h    Ayudantes (formato como Python, `StartStyle` de la cabecera, `pyFormat` de las plantillas)
   generated/PreprocessorTemplates.h  Plantillas multilínea originales tal cual (GENERADO por tools/gen_pp_templates.py)
+  Autolevel.*            Autonivelación: grilla de puntos de sondeo, celdas de Voronoi (Shape::voronoiDiagram), G-code de
+                         sondeo (MACH3/MACH4/LinuxCNC), mapa de alturas y comandos de avance de GRBL
   ExclusionAreas.*       Áreas de exclusión: `travel_coordinates` (rodear o pasar por encima), usado en los viajes del CNC Job
   PathOptimizer.*        Orden de los agujeros (vecino más cercano + 2-opt; reemplaza a OR-Tools)
   EndpointStorage.*      Almacén de líneas por extremos con `nearest` y borrado (`FlatCAMRTreeStorage`, con una grilla)
@@ -263,6 +265,8 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   tools/CutOutTool.*     Corte completo (port de ToolCutOut: libre y rectangular → `<objeto>_cutout`)
   tools/DrillingTool.*   Perforación completa (port de ToolDrilling: tabla, almacén de parámetros con el tipo de Python de
                          cada valor, formulario, postprocesador, generar el CNC Job)
+  objects/CNCAutolevel.* Autonivelación del panel del CNC Job: puntos en grilla o con clics, tabla, celdas en el canvas,
+                         guardar/ver el G-code de sondeo, mapa de alturas y GRBL por QSerialPort (opcional)
   objects/CNCJobObject.* Objeto CNC Job: G-code, dibujo (viajes, cortes, agujeros), exportación con la cabecera de la 2024.4
   resources/             Íconos de FlatCAM (extraídos de resources.py), es.json y flatcam.qrc (generados)
   main.cpp               Arranque; estilo Fusion por defecto; --screenshot <png> [ancho alto] para pruebas
@@ -315,7 +319,8 @@ Reglas de calidad (deben cumplirse antes de dar una tanda por terminada):
   `Doxyfile.in` pone entre comillas las rutas por los espacios; mantenerlo así.
 - Los `.cpp` no se procesan con Doxygen: la API se documenta en los encabezados.
 
-**Interfaz (Qt6):** `brew install qt` (Qt 6.12 en el Mac del usuario); CMake la encuentra solo y arma `build/src/gui/FlatCAM.app`
+**Interfaz (Qt6):** `brew install qt` (Qt 6.12 en el Mac del usuario; trae QtSvg, que usa Film, y QtSerialPort, opcional, para
+GRBL); CMake la encuentra solo y arma `build/src/gui/FlatCAM.app`
 y `gui_tests` (corren con `QT_QPA_PLATFORM=offscreen`). Sin Qt6 se compila solo el núcleo (`-DFLATCAM_BUILD_GUI=OFF` lo fuerza).
 Para regenerar la ventana principal desde el original: `MAMBA_ROOT_PREFIX=$HOME/.local/share/mamba micromamba run -n old python
 tools/gui_dump/dump_tree.py` (desde `tools/gui_dump/`) y después `python3 tools/gui_dump/gen_cpp.py`. Íconos y traducción:
@@ -472,6 +477,11 @@ fijan con sentido físico (micras), no en el último bit.
   PNG con otra densidad de pantalla, PDF, una Geometría como caja, sin caja, perforado con Excellon y con pads, y sus
   fallas). Con GEOS 3.11 los SVG grandes salen idénticos byte por byte y los chicos a menos de 1e-12 (el redondeo de
   `a*x + b*y + xoff`); con 3.12/3.15 cambia el vértice inicial de algunos anillos (se compara sin los trayectos).
+- `tests/tools/oracle_autolevel.py` genera `tests/golden_autolevel.h`: `on_add_al_probepoints` (grilla), los dos
+  métodos, `probing_gcode`, `import_height_map` y `on_grbl_jog` originales sobre líneas de corte sintéticas: grillas
+  4x4 (MACH3), 3x2 en pulgadas (LinuxCNC), 1x3 bilineal (MACH4) y 2x2 con GRBL (sin G-code), puntos a mano (el primero
+  queda sin celda) y el mapa de alturas: los mismos puntos, celdas (área y límites) y G-code; los comandos de avance,
+  idénticos (con la tupla del original).
 - `tests/tools/oracle_fiducials.py` genera `tests/golden_fiducials.h`: ejecuta `add_fiducials`, `add_fiducials_geo` y
   `add_soldermask_opening` originales sobre el cobre de "luz de noche" (11 casos: las tres formas, los tres segundos puntos,
   márgenes 0 y negativo, aperturas que ya existen, cruces superpuestas que fallan, la máscara): los mismos puntos, textos,
@@ -948,7 +958,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.755 casos de test** (`ctest`): 2.658 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 90 de la GUI;
+- **2.757 casos de test** (`ctest`): 2.659 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 98 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -976,7 +986,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.743 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.757 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -1197,7 +1207,12 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    `EvalEntry` solo evalúan números). ~~Film~~ (hecho: `src/tools/Film.*`, `tools/FilmTool.*`, Alt+L;
    `oracle_film.py`: idéntico. Desvíos: PNG y PDF se dibujan con QtSvg a partir del mismo SVG en vez de svglib/reportlab
    (mismo tamaño en puntos, 72 dpi, fondo blanco, la misma hoja y el mismo desplazamiento); el SVG se escribe en el
-   hilo de la interfaz). **Sigue:** Autonivelación (del CNC Job).
+   hilo de la interfaz). ~~Autonivelación~~ (hecha: `src/cam/Autolevel.*`, `objects/CNCAutolevel.*`, en el panel del CNC
+   Job con el botón de autonivelación, que como en el original solo se ve en el nivel Avanzado; `oracle_autolevel.py`:
+   idéntica. En el original aplicar la nivelación al G-code no está hecho (`autolevell_*` son `pass` y "aplicar" solo
+   muestra "Finished autolevelling."), así que el port tampoco lo hace. Desvíos: los mensajes de GRBL van a la barra de
+   estado (la consola Tcl todavía no está, ítem 7); los puertos se listan con `QSerialPortInfo`; sin QtSerialPort no se
+   puede conectar). **Ítem 5 completo.**
 6. **Preferencias** (`appGUI/preferences/`, ~19.000 líneas). **Hecho:** la pestaña completa generada del original (485 campos),
    guardar/cargar `current_defaults.FlatConfig` y `factory_defaults.FlatConfig`, Guardar/Aplicar/Cerrar/Restaurar/Abrir
    carpeta/Borrar ajustes, Editar -> Preferencias, Shift+P, el rótulo de la barra de estado, los manejadores de cada grupo
@@ -1332,6 +1347,12 @@ encontrar uno nuevo, agregarlo acá con su sección. Ya corregidos a pedido del 
   pasarlo a mm queda 25,4 veces más grande; el perforado con pads falla (`KeyError`) con cualquier apertura que no sea
   C, R u O (regiones, macros, polígonos), y su chequeo de tamaño usa el ancho y el alto de R/O; la negativa en PDF usa
   siempre mm (compara las unidades con 'INCH'); "sin caja" avisa con la representación del objeto.
+- **Autonivelación** (sección 13, ítem 5): en el modo manual el primer punto es `(xmin, xmin)` (repite xmin) y suele
+  quedar fuera de la zona (sin celda); el avance manual de GRBL manda `X(5.0,)` porque `step` es una tupla (coma al final
+  de la línea); conectar siempre da "conectado" si el puerto abre (un FIXME reemplaza la respuesta por `['ok']`);
+  `send_grbl_command` compara `'ok'` con líneas en bytes y falla (`TypeError`) en cuanto GRBL responde, así que el cero de
+  los ejes, el avance de dos pasos y el sondeo con GRBL se cortan en el primer comando con respuesta; en el sondeo,
+  `output + '\n'` falla también si `output` es una lista; aplicar la nivelación no hace nada.
 - **Editor de Geometría** (sección 13, ítem 8): la herramienta Buffer no se puede abrir (`BufferSelectionTool` falla con
   `'%S:'`); Explotar falla con cualquier figura que no sea un polígono (los polígonos abiertos se cargan como anillos) y
   con agujeros; transformar o borrar con la goma no actualiza el índice de vértices (elegir y ajustar a esquinas usan los

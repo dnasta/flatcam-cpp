@@ -38,7 +38,8 @@ reference/       Fuentes originales de FlatCAM 2024.4 (solo lectura)
 ## Compilar
 
 Requisitos: compilador C++17, CMake 3.20 o superior, GEOS 3.11 o superior, Qt 6.2 o superior para la interfaz y,
-opcionalmente, Doxygen. Sin Qt6 se compila solo el núcleo (y sus tests).
+opcionalmente, Doxygen. Sin Qt6 se compila solo el núcleo (y sus tests). La interfaz usa QtWidgets, QtOpenGLWidgets y
+QtSvg (Film); QtSerialPort es opcional (GRBL en la autonivelación).
 
 **macOS (Homebrew)**
 ```zsh
@@ -51,7 +52,7 @@ open build/src/gui/FlatCAM.app      # la aplicación
 
 **Linux (Ubuntu/Debian)**
 ```bash
-sudo apt install build-essential cmake ninja-build libgeos-dev doxygen libgtest-dev qt6-base-dev
+sudo apt install build-essential cmake ninja-build libgeos-dev liblzma-dev doxygen libgtest-dev qt6-base-dev qt6-svg-dev qt6-serialport-dev
 cmake -S . -B build -G Ninja
 cmake --build build
 ctest --test-dir build --output-on-failure
@@ -59,7 +60,7 @@ ctest --test-dir build --output-on-failure
 
 **Windows (vcpkg + Visual Studio)**
 ```bat
-vcpkg install geos gtest qtbase
+vcpkg install geos gtest liblzma qtbase qtsvg qtserialport
 cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake
 cmake --build build --config Release
 ctest --test-dir build -C Release --output-on-failure

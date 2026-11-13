@@ -55,6 +55,7 @@ add_library(flatcam_gui STATIC
     tools/PcbWizardTool.cpp
     tools/CalibrationTool.cpp
     tools/FilmTool.cpp
+    objects/CNCAutolevel.cpp
     generated/RulesToolUIBase.cpp
     generated/SolderPasteToolUIBase.cpp
     generated/PcbWizardToolUIBase.cpp
@@ -133,6 +134,12 @@ target_include_directories(flatcam_gui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)
 # convierten en macros y las estructuras del núcleo tienen el mismo tamaño en la GUI. Se usa Q_SIGNALS/Q_SLOTS/Q_EMIT.
 target_compile_definitions(flatcam_gui PUBLIC QT_NO_KEYWORDS)
 target_link_libraries(flatcam_gui PUBLIC flatcam::core Qt6::Widgets Qt6::OpenGLWidgets Qt6::Svg)
+# GRBL de la autonivelación: QtSerialPort es opcional (sin él, no se listan ni abren puertos).
+find_package(Qt6 QUIET COMPONENTS SerialPort)
+if(TARGET Qt6::SerialPort)
+    target_link_libraries(flatcam_gui PUBLIC Qt6::SerialPort)
+    target_compile_definitions(flatcam_gui PRIVATE FLATCAM_HAVE_SERIALPORT)
+endif()
 if(MSVC)
     target_compile_options(flatcam_gui PRIVATE /W4 /permissive- /utf-8)
 else()
