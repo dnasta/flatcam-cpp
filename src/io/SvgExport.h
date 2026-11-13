@@ -42,6 +42,21 @@ std::string exportSvg(const ShapeList& shapes, const std::string& units, double 
 std::string exportCncSvg(const ShapeList& travels, const ShapeList& cuts, const BoundingBox& bounds,
                          const std::string& units, double scaleStrokeFactor);
 
+/** @brief Un objeto para imprimir (`save_pdf`): sus figuras y el color y la opacidad que le pone el original. */
+struct PrintSvgItem {
+    ShapeList shapes;      ///< `flatten()` del objeto.
+    std::string color;     ///< `fill_color[:-2]` (Gerber, Excellon) o `global_draw_color` (Geometría).
+    std::string opacity;   ///< `fill_color[-2:]` (el alfa en hexadecimal, tal cual) o el del objeto anterior.
+};
+
+/**
+ * @brief El SVG de `save_pdf` (Archivo -> Imprimir): cada objeto como `export_svg` con sus hijos recoloreados, pegados
+ * con `str()` de los bytes (`b'...'`), dentro de la caja de todos agrandada 1 mm (o 0,0393701 pulgadas).
+ * @param items Los objetos. @param bounds La caja de todos. @param uom `units.lower()` del primero.
+ * @return El documento (`toprettyxml`).
+ */
+std::string exportPrintSvg(const std::vector<PrintSvgItem>& items, const BoundingBox& bounds, const std::string& uom);
+
 /** @brief Un nodo del XML mínimo de este módulo (elemento, o texto si `tag` está vacío). */
 struct XmlNode {
     std::string tag;                                          ///< Nombre del elemento; vacío: es un texto.

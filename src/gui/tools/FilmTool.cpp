@@ -77,6 +77,31 @@ QSizeF pageSize(const QString& name) {
 
 }  // namespace
 
+bool renderSvgToPdf(const QByteArray& svg, const QString& filename, const QSizeF& drawing, const QString& p,
+                    bool portrait, const QPointF& atIn) {
+    QSvgRenderer renderer(svg);
+    QSizeF page = drawing;
+    QPointF at(0, 0);
+    if (p != "Bounds") {
+        page = pageSize(p);
+        if (page.isEmpty()) return false;
+        const double w = portrait ? std::min(page.width(), page.height()) : std::max(page.width(), page.height());
+        const double h = portrait ? std::max(page.width(), page.height()) : std::min(page.width(), page.height());
+        page = {w, h};
+        at = atIn;
+    }
+    QPdfWriter pdf(filename);
+    pdf.setPageSize(QPageSize(page, QPageSize::Point));
+    pdf.setPageMargins(QMarginsF(0, 0, 0, 0));
+    pdf.setResolution(72);
+    QPainter painter(&pdf);
+    if (!painter.isActive()) return false;
+    // reportlab tiene el origen abajo a la izquierda.
+    renderer.render(&painter, QRectF(QPointF(at.x(), page.height() - at.y() - drawing.height()), drawing));
+    painter.end();
+    return true;
+}
+
 FilmTool::FilmTool(App* app, QWidget* parent) : FilmToolUIBase(parent), app_(app) {
     setupUi();
     connect(film_object_button, &QPushButton::clicked, this, [this] { createFilm(); });
@@ -331,25 +356,10 @@ QString FilmTool::exportFilm(bool negative, const QString& objName, const QStrin
         } else {
             // La negativa usa siempre mm (compara self.units con 'INCH'); la positiva, pulgadas si son las unidades.
             const double unit = !negative && appUnits().toUpper() == "IN" ? 72.0 : 72.0 / 25.4;
-            const QString p = pagesize_combo->currentText();
-            QSizeF page = drawing;
-            QPointF at(0, 0);
-            if (p != "Bounds") {
-                page = pageSize(p);
-                const bool portrait = orientation_radio->value().toString() == "p";
-                const double w = portrait ? std::min(page.width(), page.height()) : std::max(page.width(), page.height());
-                const double h = portrait ? std::max(page.width(), page.height()) : std::min(page.width(), page.height());
-                page = {w, h};
-                at = {r.bounds.xmin * unit, r.bounds.ymin * unit};
-            }
-            QPdfWriter pdf(filename);
-            pdf.setPageSize(QPageSize(page, QPageSize::Point));
-            pdf.setPageMargins(QMarginsF(0, 0, 0, 0));
-            pdf.setResolution(72);
-            QPainter painter(&pdf);
-            // reportlab tiene el origen abajo a la izquierda.
-            renderer.render(&painter, QRectF(QPointF(at.x(), page.height() - at.y() - drawing.height()), drawing));
-            painter.end();
+            if (!renderSvgToPdf(svg, filename, drawing, pagesize_combo->currentText(),
+                                orientation_radio->value().toString() == "p",
+                                {r.bounds.xmin * unit, r.bounds.ymin * unit}))
+                return QString();
         }
     }
     app_->setLastFolder(QFileInfo(filename).absolutePath());

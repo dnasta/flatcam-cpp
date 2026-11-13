@@ -5,6 +5,8 @@
  */
 #pragma once
 
+#include <QPointF>
+#include <QSizeF>
 #include <QString>
 
 #include "gui/generated/FilmToolUIBase.h"
@@ -15,6 +17,17 @@ namespace flatcam::gui {
 
 class App;
 class FlatCAMObj;
+
+/**
+ * @brief Dibuja un SVG en un PDF como svglib + reportlab: el dibujo mide lo que dice el SVG (en puntos); con una hoja,
+ * se lo ubica con su esquina inferior izquierda en `at` (puntos desde abajo a la izquierda); con "Bounds", la hoja es
+ * el dibujo.
+ * @param svg El SVG. @param filename Archivo. @param drawing Tamaño del dibujo en puntos.
+ * @param page Nombre de la hoja (`A4`, `LETTER`... o `Bounds`). @param portrait Vertical.
+ * @param at Desplazamiento (`my_canvas.translate`). @return Si se escribió.
+ */
+bool renderSvgToPdf(const QByteArray& svg, const QString& filename, const QSizeF& drawing, const QString& page,
+                    bool portrait, const QPointF& at);
 
 /** @brief El panel de Film. */
 class FilmTool : public FilmToolUIBase {

@@ -175,6 +175,29 @@ std::string exportCncSvg(const ShapeList& travels, const ShapeList& cuts, const 
     return prettyMiniXml(parseMiniXml(doc));
 }
 
+std::string exportPrintSvg(const std::vector<PrintSvgItem>& items, const BoundingBox& b, const std::string& uom) {
+    const double boundary = std::string("mm").find(uom) != std::string::npos ? 1.0 : 0.0393701;
+    const double w = b.xmax - b.xmin, h = b.ymax - b.ymin;
+    const std::string svgw = pyFloatRepr(w + 2 * boundary), svgh = pyFloatRepr(h + 2 * boundary);
+    std::string doc = "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" ";
+    doc += "width=\"" + svgw + uom + "\" height=\"" + svgh + uom + "\" viewBox=\"" + pyFloatRepr(b.xmin - boundary) +
+           " -" + pyFloatRepr(b.ymin + boundary + h) + " " + svgw + " " + svgh + "\" >";
+    doc += "<g transform=\"scale(1,-1)\">";
+    for (const PrintSvgItem& it : items) {
+        // Geometry.export_svg sin transformaciones: la unión, con el trazo de 0,01.
+        XmlNode root = parseMiniXml(shapelySvg(Shape::unaryUnion(it.shapes), 0.01));
+        for (XmlNode& c : root.children) {
+            if (c.tag.empty()) continue;
+            c.set("fill", it.color);
+            c.set("opacity", it.opacity);
+            c.set("stroke", it.color);
+        }
+        doc += "b'" + lxmlToString(root) + "'";
+    }
+    doc += "</g> </svg>";
+    return prettyMiniXml(parseMiniXml(doc));
+}
+
 void XmlNode::set(const std::string& name, const std::string& value) {
     for (auto& [k, v] : attrs)
         if (k == name) {

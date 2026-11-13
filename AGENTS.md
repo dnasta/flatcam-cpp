@@ -79,7 +79,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.763 casos de `ctest` (2.661 del núcleo y 101 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.765 casos de `ctest` (2.662 del núcleo y 102 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -503,6 +503,10 @@ fijan con sentido físico (micras), no en el último bit.
   `parse_pdf`, `layer_rendering_as_gerber` y `layer_rendering_as_excellon` originales (con `ast`). Las capas, las aperturas
   (en orden, con su tamaño, elementos y áreas), el Gerber de cada capa y las herramientas del Excellon: idénticos, con GEOS
   3.11, 3.12 y 3.15. Ojo: un trazo de grosor 0 hace caer al original (ver la sección 14).
+- `tests/tools/oracle_print_pdf.py` genera `tests/golden_print_pdf.h`: ejecuta `save_pdf` original (Archivo -> Imprimir,
+  con `ast`) con el contorno y el taladro de "luz de noche" y captura el SVG que le pasa a svglib, la hoja y el
+  desplazamiento (3 casos: dos objetos en A4 vertical, uno en A4 apaisada, uno en carta). Con GEOS 3.11 idéntico a menos de
+  1e-12; con 3.12/3.15, igual salvo los trayectos.
 - `tests/tools/oracle_fiducials.py` genera `tests/golden_fiducials.h`: ejecuta `add_fiducials`, `add_fiducials_geo` y
   `add_soldermask_opening` originales sobre el cobre de "luz de noche" (11 casos: las tres formas, los tres segundos puntos,
   márgenes 0 y negativo, aperturas que ya existen, cruces superpuestas que fallan, la máscara): los mismos puntos, textos,
@@ -979,7 +983,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.763 casos de test** (`ctest`): 2.662 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 101 de la GUI;
+- **2.765 casos de test** (`ctest`): 2.663 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 102 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -1007,7 +1011,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.763 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.765 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -1184,7 +1188,9 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    archivo (en el original es del analizador y queda de un PDF al siguiente si no están balanceados los `q`/`Q`); un trazo
    de grosor 0 da un elemento vacío (el original se cae, ver la sección 14); se lee en el hilo de la interfaz). Falta: los
    textos de SVG y DXF (`ParseFont`), abrir/guardar scripts,
-   imprimir a PDF (`on_file_save_objects_pdf`) y los objetos Script y Documento (`FlatCAMScript`, `FlatCAMDocument`).
+   ~~imprimir a PDF~~ (hecho: `exportPrintSvg` en `src/io/SvgExport.*`,
+   `App::printPdf` / `onFilePrintPdf`, Archivo -> Imprimir y Ctrl+P; `oracle_print_pdf.py`: idéntico; el PDF se dibuja
+   con QtSvg, como Film, con `renderSvgToPdf` de `tools/FilmTool.h`) y los objetos Script y Documento (`FlatCAMScript`, `FlatCAMDocument`).
    **Decidido por el usuario:** en HPGL2 se corrigen las cuatro fallas del original (sección 11.12 w).
 5. **Herramientas restantes** (`appTools/`). ~~Fresado~~ (hecho): `ToolMilling` no se instala en la 2024.4 (no está en
    `install_tools` y su botón "Herramienta de fresado" del panel del Excellon está deshabilitado; su código usa la estructura
@@ -1392,6 +1398,10 @@ encontrar uno nuevo, agregarlo acá con su sección. Ya corregidos a pedido del 
   estado; el número de apertura nueva sube una sola vez (puede pisar una existente); `B` sobre un trazado de un punto
   corta todo el archivo (`LineString` sin `try`), igual que una curva sin punto actual; con cualquier stream que no sea
   texto UTF-8 (fuentes, imágenes) no se abre nada; el archivo reciente se registra como Gerber o Excellon.
+- **Imprimir a PDF** (sección 13, ítem 4): como en Film, el SVG lleva `b'` y `'` como texto y un objeto de un solo
+  polígono no se recolorea; la opacidad es el alfa en hexadecimal tal cual (`"BF"`, que no es un valor válido de SVG); una
+  Geometría usa el color de dibujo y la opacidad del objeto anterior; con un CNC Job elegido no se imprime nada
+  (`export_svg` no acepta los factores); el registro del archivo usa el tipo "pdf".
 - **Editor de Geometría** (sección 13, ítem 8): la herramienta Buffer no se puede abrir (`BufferSelectionTool` falla con
   `'%S:'`); Explotar falla con cualquier figura que no sea un polígono (los polígonos abiertos se cargan como anillos) y
   con agujeros; transformar o borrar con la goma no actualiza el índice de vértices (elegir y ajustar a esquinas usan los

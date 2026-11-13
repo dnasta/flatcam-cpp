@@ -211,3 +211,31 @@ TEST(Film, MatchesTheOriginal) {
         EXPECT_EQ(std::string(g.at("pos_punch_pad_regions")->error), "KeyError");
     }
 }
+
+#include "golden_print_pdf.h"
+#include "io/SvgExport.h"
+
+TEST(PrintPdf, MatchesTheOriginal) {
+    // Archivo -> Imprimir (save_pdf): el SVG que se le pasa a svglib.
+    Inputs in;
+    const ShapeList edge = flat(in.edge.solidGeometry()), pth = flat(in.pth.solidGeometry());
+    auto bboxOf = [](std::initializer_list<const ShapeList*> lists) {
+        BoundingBox b{1e300, 1e300, -1e300, -1e300};
+        for (const ShapeList* l : lists) {
+            const BoundingBox o = boundsOf(*l);
+            b = {std::min(b.xmin, o.xmin), std::min(b.ymin, o.ymin), std::max(b.xmax, o.xmax), std::max(b.ymax, o.ymax)};
+        }
+        return b;
+    };
+    const PrintSvgItem e{edge, "#BBF268", "BF"}, p{pth, "#C40000", "BF"};
+    std::map<std::string, std::string> got = {
+        {"edge_pth", exportPrintSvg({e, p}, bboxOf({&edge, &pth}), "mm")},
+        {"pth", exportPrintSvg({p}, bboxOf({&pth}), "mm")},
+        {"edge", exportPrintSvg({e}, bboxOf({&edge}), "mm")}};
+    for (const auto& c : golden_print_pdf::kCases) {
+        SCOPED_TRACE(c.name);
+        const std::string& svg = got.at(c.name);
+        if (exactGeos()) EXPECT_TRUE(similar(svg, c.svg, 1e-12));
+        else EXPECT_TRUE(similar(stripPaths(svg), stripPaths(c.svg), 1e-6));
+    }
+}
