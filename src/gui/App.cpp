@@ -1,4 +1,6 @@
 #include "gui/App.h"
+
+#include "gui/objects/CNCAutolevel.h"
 #include "gui/editors/ExcEditor.h"
 #include "gui/editors/GeoEditor.h"
 #include "gui/editors/GrbEditor.h"
@@ -947,6 +949,7 @@ void App::showProperties(FlatCAMObj* obj) {
     if (obj && obj->kind() == ObjectKind::CNCJob) {
         auto* job = static_cast<CNCJobObject*>(obj);
         static_cast<CNCObjectUI*>(panel)->onExport = [this, job] { exportGcode(job); };
+        job->autolevel(this)->attach(static_cast<CNCObjectUI*>(panel));
     } else if (obj && obj->kind() == ObjectKind::Excellon) {
         auto* exc = static_cast<ExcellonObject*>(obj);
         auto* gui = static_cast<ExcellonObjectUI*>(panel);
@@ -1029,6 +1032,10 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
     if (callSource_ == "geo_editor") return geoEditor->handleKey(key, modifiers);
     if (callSource_ == "exc_editor") return excEditor->handleKey(key, modifiers);
     if (callSource_ == "grb_editor") return grbEditor->handleKey(key, modifiers);
+    // Agregando puntos de sondeo de la autonivelación (on_key_press del CNC Job).
+    for (FlatCAMObj* o : collection_->objects())
+        if (auto* c = dynamic_cast<CNCJobObject*>(o))
+            if (CNCAutolevel* al = c->autolevelIfAny(); al && al->isPicking()) return al->handleKey(key);
     // MainGUI.keyPressEvent con call_source == 'app' (en el Mac, Ctrl es la tecla Cmd). Los atajos de herramientas o
     // funciones que el port todavía no tiene no hacen nada.
     MainGUI* ui = ui_.get();

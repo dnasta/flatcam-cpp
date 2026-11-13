@@ -312,6 +312,14 @@ public:
     Shape envelope() const;
 
     /**
+     * @brief Diagrama de Voronoi de los puntos de la figura (`shapely.ops.voronoi_diagram`, GEOSVoronoiDiagram).
+     * @param envelope Recorte que se le pasa a GEOS (puede quedar más grande).
+     * @param tolerance Tolerancia de GEOS.
+     * @return Una colección con un polígono por punto.
+     */
+    Shape voronoiDiagram(const Shape& envelope, double tolerance = 0.0) const;
+
+    /**
      * @brief Triángulos que cubren exactamente la superficie de los polígonos (para rellenarlos al dibujar).
      *
      * Usa la triangulación de Delaunay restringida de GEOS, que respeta los bordes y los agujeros. Las líneas y los
