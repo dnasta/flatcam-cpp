@@ -195,8 +195,14 @@ public:
     /** @brief `convert_units` del Gerber. @param units Unidades. @return El factor. */
     double convertUnits(Units units) override;
 
+    /** @brief Dibujar la geometría de seguimiento (`follow`, casilla "Seguir" del nivel Avanzado). @param on Si se dibuja. */
+    void setPlotFollow(bool on) { plotFollow_ = on; }
+    /** @brief Si se dibuja la geometría de seguimiento. @return `true` si se dibuja. */
+    bool plotFollow() const { return plotFollow_; }
+
 private:
     std::unique_ptr<Gerber> gerber_;
+    bool plotFollow_{false};
 };
 
 /** @brief Objeto Excellon (`ExcellonObject`): taladros y ranuras de cada herramienta. */

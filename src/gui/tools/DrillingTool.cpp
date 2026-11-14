@@ -3,6 +3,8 @@
 
 #include <QHeaderView>
 #include <QTimer>
+#include <QRegularExpression>
+#include "gui/ToolsDatabase.h"
 #include <algorithm>
 #include <cmath>
 #include <set>
@@ -126,6 +128,16 @@ void DrillingTool::setToolUi() {
     }
     pp_excellon_name_cb->setValue(pp.isEmpty() ? defStr("tools_drill_ppname_e") : pp);
     order_radio->setValue(defVariant("tools_drill_tool_order"));
+    // Las opciones avanzadas (global_app_level): la Z de inicio y taladrar las ranuras.
+    level->setText(appLevelLabel());
+    const bool basic = appLevelBasic();
+    estartz_label->setVisible(!basic);
+    estartz_entry->setVisible(!basic);
+    drill_overlap_label->hide();
+    drill_overlap_entry->hide();
+    last_drill_cb->hide();
+    drill_slots_cb->setVisible(!basic);
+    drill_slots_cb->setChecked(basic ? false : defBool("tools_drill_drill_slots"));
     muted_ = false;
     onPpChanged();
     onObjectChanged();
@@ -150,6 +162,9 @@ void DrillingTool::onObjectChanged() {
     if (excellon_) {
         for (const auto& [id, t] : excellon_->excellon().drillTools()) storage_[id] = defaultToolData();
     }
+    diaOverride_.clear();
+    // excellon_autoload_db ("Cargar automáticamente de la base", nivel Avanzado): on_tool_db_load + replace_tools.
+    if (excellon_ && defBool("excellon_autoload_db")) loadToolsFromDb();
     exc_param_frame->setDisabled(excellon_ == nullptr);
     buildToolUi();
 }
@@ -180,7 +195,7 @@ void DrillingTool::buildToolUi() {
         totDrills += drills;
         totSlots += slots;
         tools_table->setItem(row, 0, item(QString::number(row + 1), sel));  // se renumeran según el orden
-        tools_table->setItem(row, 1, item(pyStr(t.tooldia), sel));
+        tools_table->setItem(row, 1, item(pyStr(toolDia(tableOrder_[row])), sel));
         tools_table->setItem(row, 2, item(QString::number(drills), Qt::ItemIsEnabled | Qt::ItemIsDragEnabled));
         // La columna oculta lleva el número renumerado (la fila + 1), como excellon_tools del original.
         tools_table->setItem(row, 3, new QTableWidgetItem(QString::number(row + 1)));
@@ -240,6 +255,96 @@ void DrillingTool::rebuildUi() {
         }
     baseOrder_ = order;
     QTimer::singleShot(20, this, [this] { buildToolUi(); });
+}
+
+void DrillingTool::loadToolsFromDb() {
+    JsonValue db;
+    QString error;
+    if (!ToolsDatabase::load(ToolsDatabase::fileName(app_->dataPath()), db, error)) {
+        app_->ui()->inform("[ERROR] " + tr_(error.toStdString().c_str()));
+        return;
+    }
+    if (!db.isObject() || db.members().empty()) {
+        app_->ui()->inform("[ERROR_NOTCL] " + tr_("Tools DB empty."));
+        return;
+    }
+    // Un número de la base con el tipo de Python (int o float); los textos se evalúan como en el formulario.
+    auto num = [](const JsonValue& v) -> std::optional<PyNumber> {
+        JsonValue n = v.isString() ? pyEvalLiteral(QString::fromStdString(v.text())) : v;
+        if (!n.isNumber()) return std::nullopt;
+        return n.isInteger() ? PyNumber(static_cast<int>(n.toDouble())) : PyNumber(n.toDouble());
+    };
+    auto pair = [](const JsonValue& v) -> std::optional<std::array<double, 2>> {
+        if (v.isArray() && v.items().size() == 2) return std::array<double, 2>{v.items()[0].toDouble(), v.items()[1].toDouble()};
+        if (v.isString()) {
+            const QStringList p = QString::fromStdString(v.text()).remove(QRegularExpression("[()\\[\\]]")).split(',');
+            if (p.size() == 2) return std::array<double, 2>{p[0].trimmed().toDouble(), p[1].trimmed().toDouble()};
+        }
+        return std::nullopt;
+    };
+    auto apply = [&](ToolData& d, const JsonValue& data) {
+        DrillToolSettings& s = d.s;
+        for (const auto& [k, v] : data.members()) {
+            if (k == "tools_drill_cutz") { if (auto n = num(v)) s.cutZ = *n; }
+            else if (k == "tools_drill_multidepth") s.multidepth = v.toBool();
+            else if (k == "tools_drill_depthperpass") { if (auto n = num(v)) s.depthPerPass = *n; }
+            else if (k == "tools_drill_travelz") { if (auto n = num(v)) s.travelZ = *n; }
+            else if (k == "tools_drill_feedrate_z") { if (auto n = num(v)) s.feedrateZ = *n; }
+            else if (k == "tools_drill_feedrate_rapid") { if (auto n = num(v)) s.feedrateRapid = *n; }
+            else if (k == "tools_drill_spindlespeed") s.spindleSpeed = num(v);
+            else if (k == "tools_drill_spindledir") s.spindleDir = v.text();
+            else if (k == "tools_drill_dwell") s.dwell = v.toBool();
+            else if (k == "tools_drill_dwelltime") { if (auto n = num(v)) s.dwellTime = *n; }
+            else if (k == "tools_drill_offset") { if (auto n = num(v)) s.offsetZ = *n; }
+            else if (k == "tools_drill_toolchangez") { if (auto n = num(v)) s.toolchangeZ = *n; }
+            else if (k == "tools_drill_toolchangexy") s.toolchangeXY = pair(v);
+            else if (k == "tools_drill_startz") s.startZ = num(v);
+            else if (k == "tools_drill_endz") { if (auto n = num(v)) s.endZ = *n; }
+            else if (k == "tools_drill_endxy") s.endXY = pair(v);
+            else if (k == "tools_drill_z_pdepth") { if (auto n = num(v)) s.zPdepth = *n; }
+            else if (k == "tools_drill_feedrate_probe") { if (auto n = num(v)) s.feedrateProbe = *n; }
+            else if (k == "tools_drill_f_plunge") s.fPlunge = v.toBool();
+            else if (k == "tools_drill_f_retract") s.fRetract = v.toBool();
+            else if (k == "tools_drill_drill_slots") d.drillSlots = v.toBool();
+            else if (k == "tools_drill_drill_overlap") d.drillOverlap = v.toDouble();
+            else if (k == "tools_drill_last_drill") d.lastDrill = v.toBool();
+        }
+    };
+    // replace_tools: la herramienta de la base con el mismo diámetro, o la que lo tiene dentro de su tolerancia (y
+    // entonces el diámetro pasa a ser el de la base). Si a una le corresponden varias, no cambia nada.
+    std::map<int, ToolData> next = storage_;
+    std::map<int, double> dias;
+    for (const auto& [id, t] : excellon_->excellon().drillTools()) {
+        int found = 0;
+        for (const auto& [key, dbTool] : db.members()) {
+            const double dbDia = dbTool["tooldia"].toDouble();
+            const JsonValue& data = dbTool["data"];
+            const double lo = data["tol_min"].isString() ? QString::fromStdString(data["tol_min"].text()).toDouble()
+                                                         : data["tol_min"].toDouble();
+            const double hi = data["tol_max"].isString() ? QString::fromStdString(data["tol_max"].text()).toDouble()
+                                                         : data["tol_max"].toDouble();
+            if (t.tooldia == dbDia) {
+                ++found;
+                apply(next.at(id), data);
+            } else if (hi >= t.tooldia && t.tooldia >= lo) {
+                ++found;
+                dias[id] = dbDia;
+                apply(next.at(id), data);
+            }
+        }
+        if (found > 1) {
+            app_->ui()->inform("[WARNING_NOTCL] " + tr_("Cancelled.\nMultiple tools for one tool diameter found in Tools "
+                                                       "Database."));
+            return;
+        }
+    }
+    storage_ = std::move(next);
+    diaOverride_ = std::move(dias);
+}
+
+double DrillingTool::toolDia(int id) const {
+    const auto it = diaOverride_.find(id);
+    return it != diaOverride_.end() ? it->second : excellon_->excellon().drillTools().at(id).tooldia;
 }
 
 std::vector<int> DrillingTool::selectedToolIds() const {
@@ -367,14 +472,35 @@ JsonValue DrillingTool::drillDataJson(const ToolData& d, const std::string& pp) 
     return j;
 }
 
+std::vector<Point2D> DrillingTool::slotAsDrills(const Point2D& start, const Point2D& stop, double overlap,
+                                               bool addLastPoint) {
+    // process_slot_as_drills: el inicio y cada `overlap` sobre la ranura mientras el punto quede dentro de la línea
+    // (within con GEOS: un punto interpolado que no cae exacto sobre una ranura diagonal corta la serie, como en el
+    // original); con "Último taladro", también el final si está a overlap / 10 o más del anterior.
+    std::vector<Point2D> out{start};
+    const Shape line = Shape::lineString({start, stop});
+    for (int i = 1; overlap > 0; ++i) {
+        const Shape p = line.interpolate(overlap * i);
+        if (!p.within(line)) break;
+        const auto b = p.bounds();
+        out.push_back({b->xmin, b->ymin});
+    }
+    if (addLastPoint && std::hypot(stop.x - out.back().x, stop.y - out.back().y) >= overlap / 10) out.push_back(stop);
+    return out;
+}
+
 FlatCAMObj* DrillingTool::generateCnc() {
     if (!excellon_) {
         app_->ui()->inform(QString("[ERROR_NOTCL] %1.").arg(tr_("Object not found")));
         return nullptr;
     }
-    bool hasDrills = false;
-    for (const auto& [id, t] : excellon_->excellon().drillTools()) hasDrills = hasDrills || !t.drills.empty();
-    if (!hasDrills) {
+    // is_valid_excellon: sin agujeros vale si hay ranuras y "Taladrar ranuras" está marcado.
+    bool hasDrills = false, hasSlots = false;
+    for (const auto& [id, t] : excellon_->excellon().drillTools()) {
+        hasDrills = hasDrills || !t.drills.empty();
+        hasSlots = hasSlots || !t.slots.empty();
+    }
+    if (!hasDrills && !(drill_slots_cb->isChecked() && hasSlots)) {
         app_->ui()->inform(QString("[ERROR_NOTCL] %1...").arg(tr_("The loaded Excellon file has no drills")));
         return nullptr;
     }
@@ -402,7 +528,7 @@ FlatCAMObj* DrillingTool::generateCnc() {
     js.decimals = appDecimals();
     std::vector<CncToolRow> rows;
     // excellon_tools está renumerado en el orden de la tabla: el número T de cada herramienta es su fila + 1.
-    const Excellon renumbered = excellon_->excellon().renumbered(tableOrder_);
+    Excellon renumbered = excellon_->excellon().renumbered(tableOrder_);
     for (std::size_t pos = 0; pos < tableOrder_.size(); ++pos) {
         const int id = tableOrder_[pos];
         if (std::find(sel.begin(), sel.end(), id) == sel.end()) continue;
@@ -412,9 +538,21 @@ FlatCAMObj* DrillingTool::generateCnc() {
         const ExcellonTool& t = excellon_->excellon().drillTools().at(id);
         CncToolRow row;
         row.tool = newId;
-        row.dia = t.tooldia;
-        row.drills = static_cast<int>(t.drills.size());
-        row.slots = static_cast<int>(t.slots.size());
+        row.dia = toolDia(id);
+        if (diaOverride_.count(id)) renumbered.setToolDiameter(newId, row.dia);
+        // create_drill_points: con "Taladrar ranuras" (de la herramienta) cada ranura pasa a ser una fila de agujeros.
+        const ToolData& d = storage_.at(id);
+        std::vector<Point2D> converted;
+        if (d.drillSlots) {
+            const double step = (1 - drill_overlap_entry->value() / 100.0) * toolDia(id);
+            for (const auto& slot : t.slots) {
+                const auto pts = slotAsDrills(slot.first, slot.second, step, last_drill_cb->isChecked());
+                converted.insert(converted.end(), pts.begin(), pts.end());
+            }
+            renumbered.appendDrills(newId, converted);
+        }
+        row.drills = static_cast<int>(t.drills.size() + converted.size());
+        row.slots = d.drillSlots ? 0 : static_cast<int>(t.slots.size());
         row.cutZ = storage_.at(id).s.cutZ.value() - storage_.at(id).s.offsetZ.value();
         row.data = drillDataJson(storage_.at(id), pp_excellon_name_cb->currentText().toStdString());
         rows.push_back(std::move(row));
