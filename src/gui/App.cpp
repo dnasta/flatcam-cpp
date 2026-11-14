@@ -1016,6 +1016,30 @@ void App::showProperties(FlatCAMObj* obj) {
     QScrollArea* area = ui_->properties_scroll_area;
     area->takeWidget();  // no se destruye: es del objeto o el panel vacío
     QWidget* panel = obj ? obj->propertiesUi() : defaultProperties_;
+    // on_plot_cb_click: "Dibujar" muestra u oculta el objeto (y marca igual las casillas de la tabla). Una sola vez por
+    // panel.
+    if (obj && panel && !panel->property("plotConnected").toBool()) {
+        QCheckBox* plot = nullptr;
+        QTableWidget* table = nullptr;
+        int column = -1;
+        if (auto* g = qobject_cast<GerberObjectUI*>(panel)) plot = g->plot_cb;
+        else if (auto* e = qobject_cast<ExcellonObjectUI*>(panel)) plot = e->plot_cb, table = e->tools_table, column = 5;
+        else if (auto* m = qobject_cast<GeometryObjectUI*>(panel)) plot = m->plot_cb, table = m->geo_tools_table, column = 6;
+        else if (auto* c = qobject_cast<CNCObjectUI*>(panel)) plot = c->plot_cb, table = c->cnc_tools_table, column = 6;
+        if (plot) {
+            panel->setProperty("plotConnected", true);
+            connect(plot, &QCheckBox::toggled, this, [this, obj, table, column](bool on) {
+                if (on == obj->plotEnabled()) return;  // build_ui (muted_ui)
+                obj->setPlotEnabled(on);
+                ui_->plotCanvas()->setLayerVisible(obj->id(), on);
+                if (table)
+                    for (int r = 0; r < table->rowCount(); ++r)
+                        if (auto* cb = qobject_cast<QCheckBox*>(table->cellWidget(r, column))) cb->setChecked(on);
+            });
+        }
+        if (auto* g = qobject_cast<GerberObjectUI*>(panel))
+            g->onReplot = [this, obj] { ui_->plotCanvas()->setLayer(obj->id(), obj->plotData()); };
+    }
     if (obj && obj->kind() == ObjectKind::CNCJob) {
         auto* job = static_cast<CNCJobObject*>(obj);
         auto* cui = static_cast<CNCObjectUI*>(panel);

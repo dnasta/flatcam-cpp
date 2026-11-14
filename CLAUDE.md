@@ -18,7 +18,7 @@ máquina del usuario.
 
 **Lo que hay que saber para retomar (el detalle está en `AGENTS.md`, sección 12).**
 
-- **Tests:** 2.785 casos de `ctest` (2.663 del núcleo, de los que 2.251 son los casos de los postprocesadores, y 122 de la GUI; 1
+- **Tests:** 2.788 casos de `ctest` (2.663 del núcleo, de los que 2.251 son los casos de los postprocesadores, y 125 de la GUI; 1
   lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
   y Qt 6.12 en el Mac del usuario (M4, AppleClang). micromamba: `old` (Shapely 1.8.4, GEOS 3.11, PyQt5 5.15, para oráculos y para
   volcar la interfaz original), `sh2`, `geos312`, `geos311` (`AGENTS.md`, secciones 6 y 12.4). El build con GEOS 3.12 va en
@@ -31,9 +31,8 @@ máquina del usuario.
   `/tmp/b312` (GEOS 3.12) y `/tmp/b311` (3.11, la del oráculo: Film sale byte por byte). **Lo que falta hacia la 1.0.0:**
   ítem 4 (textos con fuentes; ya están los objetos Script y Documento con su editor de texto, `oracle_script_document.py`, el SVG del CNC Job, `oracle_cnc_svg.py`,
   importar imagen, `oracle_image.py` en el entorno `raster`, importar PDF, `oracle_pdf.py`, e imprimir a PDF,
-  `oracle_print_pdf.py`). macOS limpia `/tmp` cada día: `/tmp/b311` y `/tmp/b312` se rearman con el comando de la sección 6, consola Tcl (ítem 7), nivel
-  Avanzado, cierre (13.9) (hechos además los objetos vacíos de Archivo -> Nuevo, los marcadores, arrastrar filas en
-  las tablas de herramientas y la numeración T de Perforación como el original, `AGENTS.md` 11.12 ab y ac) y corregir la sección 14.
+  `oracle_print_pdf.py`). macOS limpia `/tmp` cada día: `/tmp/b311` y `/tmp/b312` se rearman con el comando de la sección 6, consola Tcl (ítem 7), cierre (13.9) (hechos además los objetos vacíos de Archivo -> Nuevo, los marcadores, arrastrar filas en
+  las tablas de herramientas, la numeración T de Perforación y el nivel Avanzado, `AGENTS.md` 11.12 ab, ac y ad) y corregir la sección 14.
 - **Editores hechos (fase 5, ítem 8):** Geometría, Excellon y Gerber (`src/editors/` sin Qt y `src/gui/editors/`), contra el
   original con `oracle_geo_editor.py`, `oracle_exc_editor.py` y `oracle_grb_editor.py`; entrar y salir con E, Editar, el menú
   del Proyecto y del canvas (`App::objectToEditor` / `editorToObject`). También el editor de G-code de los CNC Job
@@ -52,7 +51,7 @@ máquina del usuario.
   (con las preferencias) y los marcadores. **Ítem 4 en curso:** hechos abrir G-code, exportar Gerber/Excellon (idéntico al
   original), exportar e importar SVG y DXF (idénticos al original) exportar PNG e importar HPGL2 (con cuatro fallas del original corregidas a
   pedido del usuario, `AGENTS.md` 11.12 w); siguen importar PDF/imagen, Script y Documento. Corregido: Gerber/Excellon en pulgadas
-  no se convertían a mm al abrirlos. **Plan hacia la 1.0.0** en `AGENTS.md` 13.9: el usuario decidió **incluir los editores** (8 a 9 sesiones). En curso: **Preferencias** (ítem 6): hechos la pestaña (485 campos, idéntica al original con `oracle_preferences.py`), `current_defaults.FlatConfig`, Guardar/Aplicar/Cerrar/Restaurar y los manejadores de los grupos; las herramientas ya leen `app.defaults` y se cambian las unidades (idéntico al original con `oracle_units.py`); también área de trabajo, cursor e importar/exportar; falta el nivel Avanzado (`AGENTS.md` 11.12 x). **Ítem 5 en curso:** hecho el fresado de agujeros y ranuras del Excellon (idéntico al original con `oracle_milling.py`; `ToolMilling` no se instala en la 2024.4); también Panelizar, Invertir Gerber, Calculadoras, Marcas de esquina, Extraer taladros, Perforar Gerber, Restar, Óptimo, Compensación de grabado, Alinear objetos, Fiduciales, Código QR y Robo de cobre (contra el original con `oracle_panelize.py`, `oracle_invert.py`, `oracle_corners.py`, `oracle_extract_drills.py`, `oracle_punch.py`, `oracle_sub.py`, `oracle_optimal.py`, `oracle_etch.py`, `oracle_align.py`, `oracle_fiducials.py`, `oracle_qrcode.py`, este con la biblioteca `qrcode` 7.4.2 portada, y `oracle_thieving.py`); siguen Film y el resto. Corregido: "Acerca de" mostraba un `MagicMock` en lugar de la dirección de FlatCAM.
+  no se convertían a mm al abrirlos. **Plan hacia la 1.0.0** en `AGENTS.md` 13.9: el usuario decidió **incluir los editores** (8 a 9 sesiones). En curso: **Preferencias** (ítem 6): hechos la pestaña (485 campos, idéntica al original con `oracle_preferences.py`), `current_defaults.FlatConfig`, Guardar/Aplicar/Cerrar/Restaurar y los manejadores de los grupos; las herramientas ya leen `app.defaults` y se cambian las unidades (idéntico al original con `oracle_units.py`); también área de trabajo, cursor e importar/exportar; y el nivel Avanzado (`AGENTS.md` 11.12 x y ad). **Ítem 5 en curso:** hecho el fresado de agujeros y ranuras del Excellon (idéntico al original con `oracle_milling.py`; `ToolMilling` no se instala en la 2024.4); también Panelizar, Invertir Gerber, Calculadoras, Marcas de esquina, Extraer taladros, Perforar Gerber, Restar, Óptimo, Compensación de grabado, Alinear objetos, Fiduciales, Código QR y Robo de cobre (contra el original con `oracle_panelize.py`, `oracle_invert.py`, `oracle_corners.py`, `oracle_extract_drills.py`, `oracle_punch.py`, `oracle_sub.py`, `oracle_optimal.py`, `oracle_etch.py`, `oracle_align.py`, `oracle_fiducials.py`, `oracle_qrcode.py`, este con la biblioteca `qrcode` 7.4.2 portada, y `oracle_thieving.py`); siguen Film y el resto. Corregido: "Acerca de" mostraba un `MagicMock` en lugar de la dirección de FlatCAM.
 - **Hecho (fases 1, 2 y 3 completas):** parsers, transformaciones, postprocesadores, G-code de taladrado y de geometrías, CutOut,
   Paint, NCC, PCB a 2 caras e Isolation. **Verificado contra el ejecutable FlatCAM 2024.4 del usuario** (placa "luz de noche",
   `tests/data/luz_de_noche/`, `tests/test_luz_de_noche.cpp`): CutOut byte por byte, Paint idéntico con GEOS 3.11, NCC 272 = 272

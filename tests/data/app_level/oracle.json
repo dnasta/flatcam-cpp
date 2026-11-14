@@ -1,0 +1,2919 @@
+{
+ "a": {
+  "CNCObjectUI": {
+   "add_bd_button": {
+    "hidden": false
+   },
+   "al_add_button": {
+    "hidden": false
+   },
+   "al_columns_entry": {
+    "hidden": false
+   },
+   "al_columns_label": {
+    "hidden": false
+   },
+   "al_controller_combo": {
+    "hidden": false,
+    "value": "MACH3"
+   },
+   "al_controller_label": {
+    "hidden": false
+   },
+   "al_frame": {
+    "hidden": true
+   },
+   "al_method_lbl": {
+    "hidden": false
+   },
+   "al_method_radio": {
+    "hidden": false,
+    "value": "v"
+   },
+   "al_mode_radio": {
+    "hidden": false,
+    "value": "grid"
+   },
+   "al_probe_points_table": {
+    "hidden": false,
+    "hiddenCols": []
+   },
+   "al_rows_entry": {
+    "hidden": false
+   },
+   "al_rows_label": {
+    "hidden": false
+   },
+   "al_toolbar": {
+    "hidden": false
+   },
+   "annotation_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "baudrates_list_combo": {
+    "hidden": false,
+    "value": "115200"
+   },
+   "baudrates_list_label": {
+    "hidden": false
+   },
+   "cnc_tools_table": {
+    "hidden": false,
+    "hiddenCols": [
+     5
+    ]
+   },
+   "cnc_tools_table_label": {
+    "hidden": false
+   },
+   "cncplot_method_combo": {
+    "hidden": false,
+    "value": "all"
+   },
+   "cncplot_method_label": {
+    "hidden": false
+   },
+   "com_connect_button": {
+    "hidden": false
+   },
+   "com_list_combo": {
+    "hidden": false,
+    "value": ""
+   },
+   "com_list_label": {
+    "hidden": false
+   },
+   "com_search_button": {
+    "hidden": false
+   },
+   "controller_reset_button": {
+    "hidden": false
+   },
+   "del_bd_button": {
+    "hidden": false
+   },
+   "editor_button": {
+    "hidden": false
+   },
+   "exc_cnc_tools_table": {
+    "hidden": false,
+    "hiddenCols": [
+     4
+    ]
+   },
+   "export_gcode_button": {
+    "hidden": false
+   },
+   "export_gcode_label": {
+    "hidden": false
+   },
+   "feedrate_probe_entry": {
+    "hidden": false
+   },
+   "feedrate_probe_label": {
+    "hidden": false
+   },
+   "gr_conn_tab": {
+    "hidden": false
+   },
+   "gr_ctrl_tab": {
+    "hidden": true
+   },
+   "gr_send_tab": {
+    "hidden": true
+   },
+   "grbl_command_entry": {
+    "hidden": false
+   },
+   "grbl_command_label": {
+    "hidden": false
+   },
+   "grbl_frame": {
+    "hidden": true
+   },
+   "grbl_get_heightmap_button": {
+    "hidden": false
+   },
+   "grbl_get_param_button": {
+    "hidden": false
+   },
+   "grbl_get_param_label": {
+    "hidden": false
+   },
+   "grbl_parameter_entry": {
+    "hidden": false
+   },
+   "grbl_report_button": {
+    "hidden": false
+   },
+   "grbl_save_height_map_button": {
+    "hidden": false
+   },
+   "grbl_send_button": {
+    "hidden": false
+   },
+   "h_gcode_button": {
+    "hidden": false
+   },
+   "icon": {
+    "hidden": false
+   },
+   "import_heights_button": {
+    "hidden": false
+   },
+   "jog_fr_entry": {
+    "hidden": false
+   },
+   "jog_fr_label": {
+    "hidden": false
+   },
+   "jog_step_entry": {
+    "hidden": false
+   },
+   "jog_step_label": {
+    "hidden": false
+   },
+   "jog_wdg": {
+    "hidden": false
+   },
+   "level": {
+    "hidden": false,
+    "value": "<span style=\"color:red;\"><b>Avanzado</b></span>"
+   },
+   "name_entry": {
+    "hidden": false
+   },
+   "new_baudrate_entry": {
+    "hidden": false
+   },
+   "new_bd_label": {
+    "hidden": false
+   },
+   "offset_button": {
+    "hidden": true
+   },
+   "offsetvector_entry": {
+    "hidden": true
+   },
+   "pause_resume_button": {
+    "hidden": false
+   },
+   "pdepth_entry": {
+    "hidden": false
+   },
+   "pdepth_label": {
+    "hidden": false
+   },
+   "plot_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "plot_probing_pts_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "probe_gc_label": {
+    "hidden": false
+   },
+   "properties_button": {
+    "hidden": false
+   },
+   "properties_frame": {
+    "hidden": true
+   },
+   "ptravelz_entry": {
+    "hidden": false
+   },
+   "ptravelz_label": {
+    "hidden": false
+   },
+   "review_gcode_button": {
+    "hidden": false
+   },
+   "sal_btn": {
+    "hidden": false
+   },
+   "scale_button": {
+    "hidden": true
+   },
+   "scale_entry": {
+    "hidden": true
+   },
+   "show_al_table": {
+    "hidden": false,
+    "value": true
+   },
+   "snippets_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "t_distance_entry": {
+    "hidden": true
+   },
+   "t_distance_label": {
+    "hidden": true
+   },
+   "t_time_entry": {
+    "hidden": true
+   },
+   "t_time_label": {
+    "hidden": true
+   },
+   "title_label": {
+    "hidden": false
+   },
+   "tooldia_entry": {
+    "hidden": false
+   },
+   "transform_label": {
+    "hidden": true
+   },
+   "transformations_button": {
+    "hidden": true
+   },
+   "treeWidget": {
+    "hidden": false
+   },
+   "units_label": {
+    "hidden": false
+   },
+   "units_time_label": {
+    "hidden": false
+   },
+   "updateplot_button": {
+    "hidden": false
+   },
+   "view_h_gcode_button": {
+    "hidden": false
+   },
+   "zero_axs_wdg": {
+    "hidden": false
+   }
+  },
+  "DocumentObjectUI": {
+   "al_center_tb": {
+    "hidden": false
+   },
+   "al_justify_tb": {
+    "hidden": false
+   },
+   "al_left_tb": {
+    "hidden": false
+   },
+   "al_right_tb": {
+    "hidden": false
+   },
+   "alignment_label": {
+    "hidden": false
+   },
+   "autocomplete_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "font_bold_tb": {
+    "hidden": false
+   },
+   "font_color_button": {
+    "hidden": false
+   },
+   "font_color_entry": {
+    "hidden": false
+   },
+   "font_color_label": {
+    "hidden": false
+   },
+   "font_italic_tb": {
+    "hidden": false
+   },
+   "font_size_cb": {
+    "hidden": false,
+    "value": "12"
+   },
+   "font_size_label": {
+    "hidden": false
+   },
+   "font_type_cb": {
+    "hidden": false,
+    "value": "Helvetica Neue"
+   },
+   "font_type_label": {
+    "hidden": false
+   },
+   "font_under_tb": {
+    "hidden": false
+   },
+   "icon": {
+    "hidden": false
+   },
+   "level": {
+    "hidden": false,
+    "value": "<span style=\"color:red;\"><b>Avanzado</b></span>"
+   },
+   "name_entry": {
+    "hidden": false
+   },
+   "plot_cb": {
+    "hidden": true,
+    "value": false
+   },
+   "sel_color_button": {
+    "hidden": false
+   },
+   "sel_color_entry": {
+    "hidden": false
+   },
+   "sel_color_label": {
+    "hidden": false
+   },
+   "tab_size_label": {
+    "hidden": false
+   },
+   "tab_size_spinner": {
+    "hidden": false
+   },
+   "title_label": {
+    "hidden": false
+   }
+  },
+  "DrillingToolUI": {
+   "add_area_button": {
+    "hidden": false
+   },
+   "apply_param_to_all": {
+    "hidden": false
+   },
+   "area_shape_radio": {
+    "hidden": false,
+    "value": "polygon"
+   },
+   "cutz_entry": {
+    "hidden": false
+   },
+   "cutzlabel": {
+    "hidden": false
+   },
+   "delete_area_button": {
+    "hidden": false
+   },
+   "delete_sel_area_button": {
+    "hidden": false
+   },
+   "drill_overlap_entry": {
+    "hidden": true
+   },
+   "drill_overlap_label": {
+    "hidden": true
+   },
+   "drill_slots_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "dwell_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "dwelltime_entry": {
+    "hidden": false
+   },
+   "endxy_entry": {
+    "hidden": false
+   },
+   "endz_entry": {
+    "hidden": false
+   },
+   "endz_label": {
+    "hidden": false
+   },
+   "estartz_entry": {
+    "hidden": false
+   },
+   "estartz_label": {
+    "hidden": false
+   },
+   "exc_param_frame": {
+    "hidden": false
+   },
+   "exclusion_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "exclusion_frame": {
+    "hidden": true
+   },
+   "exclusion_table": {
+    "hidden": false,
+    "hiddenCols": []
+   },
+   "feedrate_probe_entry": {
+    "hidden": true
+   },
+   "feedrate_probe_label": {
+    "hidden": true
+   },
+   "feedrate_rapid_entry": {
+    "hidden": true
+   },
+   "feedrate_rapid_label": {
+    "hidden": true
+   },
+   "feedrate_z_entry": {
+    "hidden": false
+   },
+   "frzlabel": {
+    "hidden": false
+   },
+   "gen_param_label": {
+    "hidden": false
+   },
+   "generate_cnc_button": {
+    "hidden": false
+   },
+   "last_drill_cb": {
+    "hidden": true,
+    "value": true
+   },
+   "level": {
+    "hidden": false,
+    "value": "<span style=\"color:red;\"><b>Avanzado</b></span>"
+   },
+   "maxdepth_entry": {
+    "hidden": false
+   },
+   "mpass_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "obj_combo_label": {
+    "hidden": false
+   },
+   "object_combo": {
+    "hidden": false,
+    "value": ""
+   },
+   "offset_entry": {
+    "hidden": false
+   },
+   "order_label": {
+    "hidden": false
+   },
+   "order_radio": {
+    "hidden": false,
+    "value": "no"
+   },
+   "over_z_entry": {
+    "hidden": false
+   },
+   "over_z_label": {
+    "hidden": false
+   },
+   "pdepth_entry": {
+    "hidden": true
+   },
+   "pdepth_label": {
+    "hidden": true
+   },
+   "pp_excellon_name_cb": {
+    "hidden": false,
+    "value": ""
+   },
+   "reset_button": {
+    "hidden": false
+   },
+   "search_load_db_btn": {
+    "hidden": false
+   },
+   "spindle_label": {
+    "hidden": false
+   },
+   "spindlespeed_entry": {
+    "hidden": false
+   },
+   "strategy_label": {
+    "hidden": false
+   },
+   "strategy_radio": {
+    "hidden": false,
+    "value": "over"
+   },
+   "tool_data_label": {
+    "hidden": false
+   },
+   "tool_offset_label": {
+    "hidden": false
+   },
+   "toolchange_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "toolchangez_entry": {
+    "hidden": false
+   },
+   "toolchangez_label": {
+    "hidden": false
+   },
+   "tools_frame": {
+    "hidden": false
+   },
+   "tools_table": {
+    "hidden": false,
+    "hiddenCols": [
+     3
+    ]
+   },
+   "travelz_entry": {
+    "hidden": false
+   },
+   "travelzlabel": {
+    "hidden": false
+   }
+  },
+  "ExcellonObjectUI": {
+   "autoload_db_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "drill_button": {
+    "hidden": false
+   },
+   "drills_frame": {
+    "hidden": false
+   },
+   "editor_button": {
+    "hidden": false
+   },
+   "generate_milling_button": {
+    "hidden": false
+   },
+   "generate_milling_slots_button": {
+    "hidden": false
+   },
+   "icon": {
+    "hidden": false
+   },
+   "level": {
+    "hidden": false,
+    "value": "<span style=\"color:red;\"><b>Avanzado</b></span>"
+   },
+   "mill_hole_label": {
+    "hidden": false
+   },
+   "milling_button": {
+    "hidden": false
+   },
+   "multicolored_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "name_entry": {
+    "hidden": false
+   },
+   "offset_button": {
+    "hidden": false
+   },
+   "offsetvector_entry": {
+    "hidden": false
+   },
+   "plot_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "plot_options_label": {
+    "hidden": false
+   },
+   "properties_button": {
+    "hidden": false
+   },
+   "properties_frame": {
+    "hidden": true
+   },
+   "scale_button": {
+    "hidden": false
+   },
+   "scale_entry": {
+    "hidden": false
+   },
+   "slot_tooldia_entry": {
+    "hidden": false
+   },
+   "solid_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "table_visibility_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "tdlabel": {
+    "hidden": false
+   },
+   "title_label": {
+    "hidden": false
+   },
+   "tool_lbl": {
+    "hidden": false
+   },
+   "tooldia_entry": {
+    "hidden": false
+   },
+   "tools_table": {
+    "hidden": false,
+    "hiddenCols": []
+   },
+   "tools_table_label": {
+    "hidden": false
+   },
+   "transform_label": {
+    "hidden": false
+   },
+   "transformations_button": {
+    "hidden": false
+   },
+   "treeWidget": {
+    "hidden": false
+   },
+   "util_button": {
+    "hidden": false
+   },
+   "util_frame": {
+    "hidden": true
+   }
+  },
+  "GeometryObjectUI": {
+   "add_area_button": {
+    "hidden": false
+   },
+   "addtool_entry": {
+    "hidden": false
+   },
+   "addtool_entry_lbl": {
+    "hidden": false
+   },
+   "addtool_from_db_btn": {
+    "hidden": false
+   },
+   "apply_param_to_all": {
+    "hidden": false
+   },
+   "area_shape_radio": {
+    "hidden": false,
+    "value": "polygon"
+   },
+   "cncfeedrate_entry": {
+    "hidden": false
+   },
+   "cncspindlespeed_entry": {
+    "hidden": false
+   },
+   "cutz_entry": {
+    "hidden": false
+   },
+   "cutzlabel": {
+    "hidden": false
+   },
+   "delete_area_button": {
+    "hidden": false
+   },
+   "delete_sel_area_button": {
+    "hidden": false
+   },
+   "deltool_btn": {
+    "hidden": false
+   },
+   "dwell_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "dwelltime_entry": {
+    "hidden": false
+   },
+   "e_cut_entry": {
+    "hidden": false
+   },
+   "editor_button": {
+    "hidden": false
+   },
+   "endxy_entry": {
+    "hidden": false
+   },
+   "endz_entry": {
+    "hidden": false
+   },
+   "endz_label": {
+    "hidden": false
+   },
+   "exclusion_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "exclusion_frame": {
+    "hidden": true
+   },
+   "exclusion_table": {
+    "hidden": false,
+    "hiddenCols": []
+   },
+   "extracut_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "feedrate_probe_entry": {
+    "hidden": true
+   },
+   "feedrate_probe_label": {
+    "hidden": true
+   },
+   "feedrate_rapid_entry": {
+    "hidden": true
+   },
+   "feedrate_z_entry": {
+    "hidden": false
+   },
+   "fr_rapidlabel": {
+    "hidden": true
+   },
+   "frlabel": {
+    "hidden": false
+   },
+   "frzlabel": {
+    "hidden": false
+   },
+   "gen_param_label": {
+    "hidden": false
+   },
+   "generate_cnc_button": {
+    "hidden": false
+   },
+   "generate_ncc_button": {
+    "hidden": false
+   },
+   "geo_param_frame": {
+    "hidden": false
+   },
+   "geo_table_frame": {
+    "hidden": false
+   },
+   "geo_tools_frame": {
+    "hidden": false
+   },
+   "geo_tools_table": {
+    "hidden": false,
+    "hiddenCols": [
+     5
+    ]
+   },
+   "icon": {
+    "hidden": false
+   },
+   "level": {
+    "hidden": false,
+    "value": "<span style=\"color:red;\"><b>Avanzado</b></span>"
+   },
+   "maxdepth_entry": {
+    "hidden": false
+   },
+   "milling_button": {
+    "hidden": false
+   },
+   "mpass_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "multicolored_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "name_entry": {
+    "hidden": false
+   },
+   "offset_button": {
+    "hidden": false
+   },
+   "offsetvector_entry": {
+    "hidden": false
+   },
+   "over_z_entry": {
+    "hidden": false
+   },
+   "over_z_label": {
+    "hidden": false
+   },
+   "paint_tool_button": {
+    "hidden": false
+   },
+   "pdepth_entry": {
+    "hidden": true
+   },
+   "pdepth_label": {
+    "hidden": true
+   },
+   "plot_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "plot_options_label": {
+    "hidden": false
+   },
+   "polish_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "polish_dia_entry": {
+    "hidden": true
+   },
+   "polish_dia_lbl": {
+    "hidden": true
+   },
+   "polish_margin_entry": {
+    "hidden": true
+   },
+   "polish_margin_lbl": {
+    "hidden": true
+   },
+   "polish_method_combo": {
+    "hidden": true,
+    "value": "Estándar"
+   },
+   "polish_method_lbl": {
+    "hidden": true
+   },
+   "polish_over_entry": {
+    "hidden": true
+   },
+   "polish_over_lbl": {
+    "hidden": true
+   },
+   "polish_pressure_entry": {
+    "hidden": true
+   },
+   "polish_pressure_lbl": {
+    "hidden": true
+   },
+   "polish_travelz_entry": {
+    "hidden": true
+   },
+   "polish_travelz_lbl": {
+    "hidden": true
+   },
+   "pp_geometry_name_cb": {
+    "hidden": false,
+    "value": ""
+   },
+   "properties_button": {
+    "hidden": false
+   },
+   "properties_frame": {
+    "hidden": true
+   },
+   "scale_button": {
+    "hidden": false
+   },
+   "scale_entry": {
+    "hidden": false
+   },
+   "search_and_add_btn": {
+    "hidden": false
+   },
+   "spindle_label": {
+    "hidden": false
+   },
+   "strategy_label": {
+    "hidden": false
+   },
+   "strategy_radio": {
+    "hidden": false,
+    "value": "over"
+   },
+   "tipangle_entry": {
+    "hidden": true
+   },
+   "tipanglelabel": {
+    "hidden": true
+   },
+   "tipdia_entry": {
+    "hidden": true
+   },
+   "tipdialabel": {
+    "hidden": true
+   },
+   "title_label": {
+    "hidden": false
+   },
+   "tool_data_label": {
+    "hidden": false
+   },
+   "tool_offset_entry": {
+    "hidden": true
+   },
+   "tool_offset_lbl": {
+    "hidden": true
+   },
+   "tool_sel_label": {
+    "hidden": false
+   },
+   "toolchangeg_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "toolchangez_entry": {
+    "hidden": false
+   },
+   "tools_label": {
+    "hidden": false
+   },
+   "tools_table_label": {
+    "hidden": false
+   },
+   "transform_label": {
+    "hidden": false
+   },
+   "transformations_button": {
+    "hidden": false
+   },
+   "travelz_entry": {
+    "hidden": false
+   },
+   "travelzlabel": {
+    "hidden": false
+   },
+   "treeWidget": {
+    "hidden": false
+   }
+  },
+  "GerberObjectUI": {
+   "aperture_table_visibility_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "apertures_table": {
+    "hidden": true,
+    "hiddenCols": []
+   },
+   "apertures_table_label": {
+    "hidden": false
+   },
+   "bbmargin_entry": {
+    "hidden": false
+   },
+   "bbrounded_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "boundingbox_label": {
+    "hidden": false
+   },
+   "create_buffer_button": {
+    "hidden": true
+   },
+   "editor_button": {
+    "hidden": false
+   },
+   "follow_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "generate_bb_button": {
+    "hidden": false
+   },
+   "generate_cutout_button": {
+    "hidden": false
+   },
+   "generate_ncc_button": {
+    "hidden": false
+   },
+   "generate_noncopper_button": {
+    "hidden": false
+   },
+   "icon": {
+    "hidden": false
+   },
+   "iso_button": {
+    "hidden": false
+   },
+   "level": {
+    "hidden": false,
+    "value": "<span style=\"color:red;\"><b>Avanzado</b></span>"
+   },
+   "mark_all_cb": {
+    "hidden": true,
+    "value": false
+   },
+   "multicolored_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "name_entry": {
+    "hidden": false
+   },
+   "noncopper_label": {
+    "hidden": false
+   },
+   "noncopper_margin_entry": {
+    "hidden": false
+   },
+   "noncopper_rounded_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "offset_button": {
+    "hidden": false
+   },
+   "offsetvector_entry": {
+    "hidden": false
+   },
+   "plot_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "plot_lbl": {
+    "hidden": false
+   },
+   "plot_options_label": {
+    "hidden": false
+   },
+   "properties_button": {
+    "hidden": false
+   },
+   "properties_frame": {
+    "hidden": true
+   },
+   "scale_button": {
+    "hidden": false
+   },
+   "scale_entry": {
+    "hidden": false
+   },
+   "solid_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "title_label": {
+    "hidden": false
+   },
+   "tool_lbl": {
+    "hidden": false
+   },
+   "transform_label": {
+    "hidden": false
+   },
+   "transformations_button": {
+    "hidden": false
+   },
+   "treeWidget": {
+    "hidden": false
+   },
+   "util_button": {
+    "hidden": false
+   },
+   "util_frame": {
+    "hidden": true
+   }
+  },
+  "IsolationToolUI": {
+   "addtool_from_db_btn": {
+    "hidden": false
+   },
+   "apply_param_to_all": {
+    "hidden": false
+   },
+   "area_shape_label": {
+    "hidden": true
+   },
+   "area_shape_radio": {
+    "hidden": true,
+    "value": "square"
+   },
+   "combine_passes_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "create_buffer_button": {
+    "hidden": true
+   },
+   "deltool_btn": {
+    "hidden": false
+   },
+   "exc_obj_combo": {
+    "hidden": true,
+    "value": ""
+   },
+   "except_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "find_optimal_button": {
+    "hidden": false
+   },
+   "follow_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "follow_label": {
+    "hidden": false
+   },
+   "forced_rest_iso_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "gen_param_label": {
+    "hidden": false
+   },
+   "generate_iso_button": {
+    "hidden": false
+   },
+   "iso_overlap_entry": {
+    "hidden": false
+   },
+   "iso_type_label": {
+    "hidden": false
+   },
+   "iso_type_radio": {
+    "hidden": false,
+    "value": "full"
+   },
+   "level": {
+    "hidden": false,
+    "value": "<span style=\"color:red;\"><b>Avanzado</b></span>"
+   },
+   "milling_type_label": {
+    "hidden": false
+   },
+   "milling_type_radio": {
+    "hidden": false,
+    "value": "cl"
+   },
+   "new_tooldia_entry": {
+    "hidden": false
+   },
+   "new_tooldia_lbl": {
+    "hidden": false
+   },
+   "obj_combo_label": {
+    "hidden": false
+   },
+   "object_combo": {
+    "hidden": false,
+    "value": ""
+   },
+   "order_label": {
+    "hidden": false
+   },
+   "order_radio": {
+    "hidden": false,
+    "value": "rev"
+   },
+   "passes_entry": {
+    "hidden": false
+   },
+   "poly_int_cb": {
+    "hidden": true,
+    "value": false
+   },
+   "reference_combo": {
+    "hidden": true,
+    "value": ""
+   },
+   "reference_combo_type": {
+    "hidden": true,
+    "value": "Gerber"
+   },
+   "reference_combo_type_label": {
+    "hidden": true
+   },
+   "reset_button": {
+    "hidden": false
+   },
+   "rest_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "search_and_add_btn": {
+    "hidden": false
+   },
+   "select_combo": {
+    "hidden": false,
+    "value": "Todos"
+   },
+   "select_label": {
+    "hidden": false
+   },
+   "tool_data_label": {
+    "hidden": false
+   },
+   "tool_sel_label": {
+    "hidden": false
+   },
+   "tools_frame": {
+    "hidden": false
+   },
+   "tools_table": {
+    "hidden": false,
+    "hiddenCols": [
+     3
+    ]
+   },
+   "tools_table_label": {
+    "hidden": false
+   },
+   "type_excobj_radio": {
+    "hidden": true,
+    "value": "gerber"
+   },
+   "valid_cb": {
+    "hidden": false,
+    "value": false
+   }
+  },
+  "ScriptObjectUI": {
+   "autocomplete_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "icon": {
+    "hidden": false
+   },
+   "level": {
+    "hidden": false,
+    "value": "<span style=\"color:red;\"><b>Avanzado</b></span>"
+   },
+   "name_entry": {
+    "hidden": false
+   },
+   "plot_cb": {
+    "hidden": true,
+    "value": false
+   },
+   "title_label": {
+    "hidden": false
+   }
+  }
+ },
+ "b": {
+  "CNCObjectUI": {
+   "add_bd_button": {
+    "hidden": false
+   },
+   "al_add_button": {
+    "hidden": false
+   },
+   "al_columns_entry": {
+    "hidden": false
+   },
+   "al_columns_label": {
+    "hidden": false
+   },
+   "al_controller_combo": {
+    "hidden": false,
+    "value": "MACH3"
+   },
+   "al_controller_label": {
+    "hidden": false
+   },
+   "al_frame": {
+    "hidden": true
+   },
+   "al_method_lbl": {
+    "hidden": false
+   },
+   "al_method_radio": {
+    "hidden": false,
+    "value": "v"
+   },
+   "al_mode_radio": {
+    "hidden": false,
+    "value": "grid"
+   },
+   "al_probe_points_table": {
+    "hidden": false,
+    "hiddenCols": []
+   },
+   "al_rows_entry": {
+    "hidden": false
+   },
+   "al_rows_label": {
+    "hidden": false
+   },
+   "al_toolbar": {
+    "hidden": false
+   },
+   "annotation_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "baudrates_list_combo": {
+    "hidden": false,
+    "value": "115200"
+   },
+   "baudrates_list_label": {
+    "hidden": false
+   },
+   "cnc_tools_table": {
+    "hidden": false,
+    "hiddenCols": [
+     5
+    ]
+   },
+   "cnc_tools_table_label": {
+    "hidden": false
+   },
+   "cncplot_method_combo": {
+    "hidden": false,
+    "value": "all"
+   },
+   "cncplot_method_label": {
+    "hidden": false
+   },
+   "com_connect_button": {
+    "hidden": false
+   },
+   "com_list_combo": {
+    "hidden": false,
+    "value": ""
+   },
+   "com_list_label": {
+    "hidden": false
+   },
+   "com_search_button": {
+    "hidden": false
+   },
+   "controller_reset_button": {
+    "hidden": false
+   },
+   "del_bd_button": {
+    "hidden": false
+   },
+   "editor_button": {
+    "hidden": false
+   },
+   "exc_cnc_tools_table": {
+    "hidden": false,
+    "hiddenCols": [
+     4
+    ]
+   },
+   "export_gcode_button": {
+    "hidden": false
+   },
+   "export_gcode_label": {
+    "hidden": false
+   },
+   "feedrate_probe_entry": {
+    "hidden": false
+   },
+   "feedrate_probe_label": {
+    "hidden": false
+   },
+   "gr_conn_tab": {
+    "hidden": false
+   },
+   "gr_ctrl_tab": {
+    "hidden": true
+   },
+   "gr_send_tab": {
+    "hidden": true
+   },
+   "grbl_command_entry": {
+    "hidden": false
+   },
+   "grbl_command_label": {
+    "hidden": false
+   },
+   "grbl_frame": {
+    "hidden": true
+   },
+   "grbl_get_heightmap_button": {
+    "hidden": false
+   },
+   "grbl_get_param_button": {
+    "hidden": false
+   },
+   "grbl_get_param_label": {
+    "hidden": false
+   },
+   "grbl_parameter_entry": {
+    "hidden": false
+   },
+   "grbl_report_button": {
+    "hidden": false
+   },
+   "grbl_save_height_map_button": {
+    "hidden": false
+   },
+   "grbl_send_button": {
+    "hidden": false
+   },
+   "h_gcode_button": {
+    "hidden": false
+   },
+   "icon": {
+    "hidden": false
+   },
+   "import_heights_button": {
+    "hidden": false
+   },
+   "jog_fr_entry": {
+    "hidden": false
+   },
+   "jog_fr_label": {
+    "hidden": false
+   },
+   "jog_step_entry": {
+    "hidden": false
+   },
+   "jog_step_label": {
+    "hidden": false
+   },
+   "jog_wdg": {
+    "hidden": false
+   },
+   "level": {
+    "hidden": false,
+    "value": "<span style=\"color:green;\"><b>BASIC</b></span>"
+   },
+   "name_entry": {
+    "hidden": false
+   },
+   "new_baudrate_entry": {
+    "hidden": false
+   },
+   "new_bd_label": {
+    "hidden": false
+   },
+   "offset_button": {
+    "hidden": true
+   },
+   "offsetvector_entry": {
+    "hidden": true
+   },
+   "pause_resume_button": {
+    "hidden": false
+   },
+   "pdepth_entry": {
+    "hidden": false
+   },
+   "pdepth_label": {
+    "hidden": false
+   },
+   "plot_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "plot_probing_pts_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "probe_gc_label": {
+    "hidden": false
+   },
+   "properties_button": {
+    "hidden": false
+   },
+   "properties_frame": {
+    "hidden": true
+   },
+   "ptravelz_entry": {
+    "hidden": false
+   },
+   "ptravelz_label": {
+    "hidden": false
+   },
+   "review_gcode_button": {
+    "hidden": false
+   },
+   "sal_btn": {
+    "hidden": true
+   },
+   "scale_button": {
+    "hidden": true
+   },
+   "scale_entry": {
+    "hidden": true
+   },
+   "show_al_table": {
+    "hidden": false,
+    "value": true
+   },
+   "snippets_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "t_distance_entry": {
+    "hidden": true
+   },
+   "t_distance_label": {
+    "hidden": true
+   },
+   "t_time_entry": {
+    "hidden": true
+   },
+   "t_time_label": {
+    "hidden": true
+   },
+   "title_label": {
+    "hidden": false
+   },
+   "tooldia_entry": {
+    "hidden": false
+   },
+   "transform_label": {
+    "hidden": true
+   },
+   "transformations_button": {
+    "hidden": true
+   },
+   "treeWidget": {
+    "hidden": false
+   },
+   "units_label": {
+    "hidden": false
+   },
+   "units_time_label": {
+    "hidden": false
+   },
+   "updateplot_button": {
+    "hidden": false
+   },
+   "view_h_gcode_button": {
+    "hidden": false
+   },
+   "zero_axs_wdg": {
+    "hidden": false
+   }
+  },
+  "DocumentObjectUI": {
+   "al_center_tb": {
+    "hidden": false
+   },
+   "al_justify_tb": {
+    "hidden": false
+   },
+   "al_left_tb": {
+    "hidden": false
+   },
+   "al_right_tb": {
+    "hidden": false
+   },
+   "alignment_label": {
+    "hidden": false
+   },
+   "autocomplete_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "font_bold_tb": {
+    "hidden": false
+   },
+   "font_color_button": {
+    "hidden": false
+   },
+   "font_color_entry": {
+    "hidden": false
+   },
+   "font_color_label": {
+    "hidden": false
+   },
+   "font_italic_tb": {
+    "hidden": false
+   },
+   "font_size_cb": {
+    "hidden": false,
+    "value": "12"
+   },
+   "font_size_label": {
+    "hidden": false
+   },
+   "font_type_cb": {
+    "hidden": false,
+    "value": "Helvetica Neue"
+   },
+   "font_type_label": {
+    "hidden": false
+   },
+   "font_under_tb": {
+    "hidden": false
+   },
+   "icon": {
+    "hidden": false
+   },
+   "level": {
+    "hidden": false,
+    "value": "<span style=\"color:green;\"><b>BASIC</b></span>"
+   },
+   "name_entry": {
+    "hidden": false
+   },
+   "plot_cb": {
+    "hidden": true,
+    "value": false
+   },
+   "sel_color_button": {
+    "hidden": false
+   },
+   "sel_color_entry": {
+    "hidden": false
+   },
+   "sel_color_label": {
+    "hidden": false
+   },
+   "tab_size_label": {
+    "hidden": false
+   },
+   "tab_size_spinner": {
+    "hidden": false
+   },
+   "title_label": {
+    "hidden": false
+   }
+  },
+  "DrillingToolUI": {
+   "add_area_button": {
+    "hidden": false
+   },
+   "apply_param_to_all": {
+    "hidden": false
+   },
+   "area_shape_radio": {
+    "hidden": false,
+    "value": "polygon"
+   },
+   "cutz_entry": {
+    "hidden": false
+   },
+   "cutzlabel": {
+    "hidden": false
+   },
+   "delete_area_button": {
+    "hidden": false
+   },
+   "delete_sel_area_button": {
+    "hidden": false
+   },
+   "drill_overlap_entry": {
+    "hidden": true
+   },
+   "drill_overlap_label": {
+    "hidden": true
+   },
+   "drill_slots_cb": {
+    "hidden": true,
+    "value": false
+   },
+   "dwell_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "dwelltime_entry": {
+    "hidden": false
+   },
+   "endxy_entry": {
+    "hidden": false
+   },
+   "endz_entry": {
+    "hidden": false
+   },
+   "endz_label": {
+    "hidden": false
+   },
+   "estartz_entry": {
+    "hidden": true
+   },
+   "estartz_label": {
+    "hidden": true
+   },
+   "exc_param_frame": {
+    "hidden": false
+   },
+   "exclusion_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "exclusion_frame": {
+    "hidden": true
+   },
+   "exclusion_table": {
+    "hidden": false,
+    "hiddenCols": []
+   },
+   "feedrate_probe_entry": {
+    "hidden": true
+   },
+   "feedrate_probe_label": {
+    "hidden": true
+   },
+   "feedrate_rapid_entry": {
+    "hidden": true
+   },
+   "feedrate_rapid_label": {
+    "hidden": true
+   },
+   "feedrate_z_entry": {
+    "hidden": false
+   },
+   "frzlabel": {
+    "hidden": false
+   },
+   "gen_param_label": {
+    "hidden": false
+   },
+   "generate_cnc_button": {
+    "hidden": false
+   },
+   "last_drill_cb": {
+    "hidden": true,
+    "value": true
+   },
+   "level": {
+    "hidden": false,
+    "value": "<span style=\"color:green;\"><b>BASIC</b></span>"
+   },
+   "maxdepth_entry": {
+    "hidden": false
+   },
+   "mpass_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "obj_combo_label": {
+    "hidden": false
+   },
+   "object_combo": {
+    "hidden": false,
+    "value": ""
+   },
+   "offset_entry": {
+    "hidden": false
+   },
+   "order_label": {
+    "hidden": false
+   },
+   "order_radio": {
+    "hidden": false,
+    "value": "no"
+   },
+   "over_z_entry": {
+    "hidden": false
+   },
+   "over_z_label": {
+    "hidden": false
+   },
+   "pdepth_entry": {
+    "hidden": true
+   },
+   "pdepth_label": {
+    "hidden": true
+   },
+   "pp_excellon_name_cb": {
+    "hidden": false,
+    "value": ""
+   },
+   "reset_button": {
+    "hidden": false
+   },
+   "search_load_db_btn": {
+    "hidden": false
+   },
+   "spindle_label": {
+    "hidden": false
+   },
+   "spindlespeed_entry": {
+    "hidden": false
+   },
+   "strategy_label": {
+    "hidden": false
+   },
+   "strategy_radio": {
+    "hidden": false,
+    "value": "over"
+   },
+   "tool_data_label": {
+    "hidden": false
+   },
+   "tool_offset_label": {
+    "hidden": false
+   },
+   "toolchange_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "toolchangez_entry": {
+    "hidden": false
+   },
+   "toolchangez_label": {
+    "hidden": false
+   },
+   "tools_frame": {
+    "hidden": false
+   },
+   "tools_table": {
+    "hidden": false,
+    "hiddenCols": [
+     3
+    ]
+   },
+   "travelz_entry": {
+    "hidden": false
+   },
+   "travelzlabel": {
+    "hidden": false
+   }
+  },
+  "ExcellonObjectUI": {
+   "autoload_db_cb": {
+    "hidden": true,
+    "value": false
+   },
+   "drill_button": {
+    "hidden": false
+   },
+   "drills_frame": {
+    "hidden": false
+   },
+   "editor_button": {
+    "hidden": false
+   },
+   "generate_milling_button": {
+    "hidden": false
+   },
+   "generate_milling_slots_button": {
+    "hidden": false
+   },
+   "icon": {
+    "hidden": false
+   },
+   "level": {
+    "hidden": false,
+    "value": "<span style=\"color:green;\"><b>BASIC</b></span>"
+   },
+   "mill_hole_label": {
+    "hidden": false
+   },
+   "milling_button": {
+    "hidden": false
+   },
+   "multicolored_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "name_entry": {
+    "hidden": false
+   },
+   "offset_button": {
+    "hidden": false
+   },
+   "offsetvector_entry": {
+    "hidden": false
+   },
+   "plot_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "plot_options_label": {
+    "hidden": false
+   },
+   "properties_button": {
+    "hidden": false
+   },
+   "properties_frame": {
+    "hidden": true
+   },
+   "scale_button": {
+    "hidden": false
+   },
+   "scale_entry": {
+    "hidden": false
+   },
+   "slot_tooldia_entry": {
+    "hidden": false
+   },
+   "solid_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "table_visibility_cb": {
+    "hidden": true,
+    "value": true
+   },
+   "tdlabel": {
+    "hidden": false
+   },
+   "title_label": {
+    "hidden": false
+   },
+   "tool_lbl": {
+    "hidden": false
+   },
+   "tooldia_entry": {
+    "hidden": false
+   },
+   "tools_table": {
+    "hidden": false,
+    "hiddenCols": [
+     4,
+     5
+    ]
+   },
+   "tools_table_label": {
+    "hidden": false
+   },
+   "transform_label": {
+    "hidden": false
+   },
+   "transformations_button": {
+    "hidden": false
+   },
+   "treeWidget": {
+    "hidden": false
+   },
+   "util_button": {
+    "hidden": false
+   },
+   "util_frame": {
+    "hidden": true
+   }
+  },
+  "GeometryObjectUI": {
+   "add_area_button": {
+    "hidden": false
+   },
+   "addtool_entry": {
+    "hidden": true
+   },
+   "addtool_entry_lbl": {
+    "hidden": true
+   },
+   "addtool_from_db_btn": {
+    "hidden": false
+   },
+   "apply_param_to_all": {
+    "hidden": false
+   },
+   "area_shape_radio": {
+    "hidden": false,
+    "value": "polygon"
+   },
+   "cncfeedrate_entry": {
+    "hidden": false
+   },
+   "cncspindlespeed_entry": {
+    "hidden": false
+   },
+   "cutz_entry": {
+    "hidden": false
+   },
+   "cutzlabel": {
+    "hidden": false
+   },
+   "delete_area_button": {
+    "hidden": false
+   },
+   "delete_sel_area_button": {
+    "hidden": false
+   },
+   "deltool_btn": {
+    "hidden": true
+   },
+   "dwell_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "dwelltime_entry": {
+    "hidden": false
+   },
+   "e_cut_entry": {
+    "hidden": true
+   },
+   "editor_button": {
+    "hidden": false
+   },
+   "endxy_entry": {
+    "hidden": false
+   },
+   "endz_entry": {
+    "hidden": false
+   },
+   "endz_label": {
+    "hidden": false
+   },
+   "exclusion_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "exclusion_frame": {
+    "hidden": true
+   },
+   "exclusion_table": {
+    "hidden": false,
+    "hiddenCols": []
+   },
+   "extracut_cb": {
+    "hidden": true,
+    "value": false
+   },
+   "feedrate_probe_entry": {
+    "hidden": true
+   },
+   "feedrate_probe_label": {
+    "hidden": true
+   },
+   "feedrate_rapid_entry": {
+    "hidden": true
+   },
+   "feedrate_z_entry": {
+    "hidden": false
+   },
+   "fr_rapidlabel": {
+    "hidden": true
+   },
+   "frlabel": {
+    "hidden": false
+   },
+   "frzlabel": {
+    "hidden": false
+   },
+   "gen_param_label": {
+    "hidden": false
+   },
+   "generate_cnc_button": {
+    "hidden": false
+   },
+   "generate_ncc_button": {
+    "hidden": false
+   },
+   "geo_param_frame": {
+    "hidden": false
+   },
+   "geo_table_frame": {
+    "hidden": false
+   },
+   "geo_tools_frame": {
+    "hidden": false
+   },
+   "geo_tools_table": {
+    "hidden": false,
+    "hiddenCols": [
+     2,
+     3,
+     5
+    ]
+   },
+   "icon": {
+    "hidden": false
+   },
+   "level": {
+    "hidden": false,
+    "value": "<span style=\"color:green;\"><b>BASIC</b></span>"
+   },
+   "maxdepth_entry": {
+    "hidden": false
+   },
+   "milling_button": {
+    "hidden": false
+   },
+   "mpass_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "multicolored_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "name_entry": {
+    "hidden": false
+   },
+   "offset_button": {
+    "hidden": false
+   },
+   "offsetvector_entry": {
+    "hidden": false
+   },
+   "over_z_entry": {
+    "hidden": false
+   },
+   "over_z_label": {
+    "hidden": false
+   },
+   "paint_tool_button": {
+    "hidden": false
+   },
+   "pdepth_entry": {
+    "hidden": true
+   },
+   "pdepth_label": {
+    "hidden": true
+   },
+   "plot_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "plot_options_label": {
+    "hidden": false
+   },
+   "polish_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "polish_dia_entry": {
+    "hidden": true
+   },
+   "polish_dia_lbl": {
+    "hidden": true
+   },
+   "polish_margin_entry": {
+    "hidden": true
+   },
+   "polish_margin_lbl": {
+    "hidden": true
+   },
+   "polish_method_combo": {
+    "hidden": true,
+    "value": "Estándar"
+   },
+   "polish_method_lbl": {
+    "hidden": true
+   },
+   "polish_over_entry": {
+    "hidden": true
+   },
+   "polish_over_lbl": {
+    "hidden": true
+   },
+   "polish_pressure_entry": {
+    "hidden": true
+   },
+   "polish_pressure_lbl": {
+    "hidden": true
+   },
+   "polish_travelz_entry": {
+    "hidden": true
+   },
+   "polish_travelz_lbl": {
+    "hidden": true
+   },
+   "pp_geometry_name_cb": {
+    "hidden": false,
+    "value": ""
+   },
+   "properties_button": {
+    "hidden": false
+   },
+   "properties_frame": {
+    "hidden": true
+   },
+   "scale_button": {
+    "hidden": false
+   },
+   "scale_entry": {
+    "hidden": false
+   },
+   "search_and_add_btn": {
+    "hidden": true
+   },
+   "spindle_label": {
+    "hidden": false
+   },
+   "strategy_label": {
+    "hidden": false
+   },
+   "strategy_radio": {
+    "hidden": false,
+    "value": "over"
+   },
+   "tipangle_entry": {
+    "hidden": true
+   },
+   "tipanglelabel": {
+    "hidden": true
+   },
+   "tipdia_entry": {
+    "hidden": true
+   },
+   "tipdialabel": {
+    "hidden": true
+   },
+   "title_label": {
+    "hidden": false
+   },
+   "tool_data_label": {
+    "hidden": false
+   },
+   "tool_offset_entry": {
+    "hidden": true
+   },
+   "tool_offset_lbl": {
+    "hidden": true
+   },
+   "tool_sel_label": {
+    "hidden": false
+   },
+   "toolchangeg_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "toolchangez_entry": {
+    "hidden": false
+   },
+   "tools_label": {
+    "hidden": false
+   },
+   "tools_table_label": {
+    "hidden": false
+   },
+   "transform_label": {
+    "hidden": false
+   },
+   "transformations_button": {
+    "hidden": false
+   },
+   "travelz_entry": {
+    "hidden": false
+   },
+   "travelzlabel": {
+    "hidden": false
+   },
+   "treeWidget": {
+    "hidden": false
+   }
+  },
+  "GerberObjectUI": {
+   "aperture_table_visibility_cb": {
+    "hidden": true,
+    "value": false
+   },
+   "apertures_table": {
+    "hidden": true,
+    "hiddenCols": []
+   },
+   "apertures_table_label": {
+    "hidden": true
+   },
+   "bbmargin_entry": {
+    "hidden": false
+   },
+   "bbrounded_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "boundingbox_label": {
+    "hidden": false
+   },
+   "create_buffer_button": {
+    "hidden": true
+   },
+   "editor_button": {
+    "hidden": false
+   },
+   "follow_cb": {
+    "hidden": true,
+    "value": false
+   },
+   "generate_bb_button": {
+    "hidden": false
+   },
+   "generate_cutout_button": {
+    "hidden": false
+   },
+   "generate_ncc_button": {
+    "hidden": false
+   },
+   "generate_noncopper_button": {
+    "hidden": false
+   },
+   "icon": {
+    "hidden": false
+   },
+   "iso_button": {
+    "hidden": false
+   },
+   "level": {
+    "hidden": false,
+    "value": "<span style=\"color:green;\"><b>BASIC</b></span>"
+   },
+   "mark_all_cb": {
+    "hidden": true,
+    "value": false
+   },
+   "multicolored_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "name_entry": {
+    "hidden": false
+   },
+   "noncopper_label": {
+    "hidden": false
+   },
+   "noncopper_margin_entry": {
+    "hidden": false
+   },
+   "noncopper_rounded_cb": {
+    "hidden": false,
+    "value": false
+   },
+   "offset_button": {
+    "hidden": false
+   },
+   "offsetvector_entry": {
+    "hidden": false
+   },
+   "plot_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "plot_lbl": {
+    "hidden": false
+   },
+   "plot_options_label": {
+    "hidden": false
+   },
+   "properties_button": {
+    "hidden": false
+   },
+   "properties_frame": {
+    "hidden": true
+   },
+   "scale_button": {
+    "hidden": false
+   },
+   "scale_entry": {
+    "hidden": false
+   },
+   "solid_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "title_label": {
+    "hidden": false
+   },
+   "tool_lbl": {
+    "hidden": false
+   },
+   "transform_label": {
+    "hidden": false
+   },
+   "transformations_button": {
+    "hidden": false
+   },
+   "treeWidget": {
+    "hidden": false
+   },
+   "util_button": {
+    "hidden": false
+   },
+   "util_frame": {
+    "hidden": true
+   }
+  },
+  "IsolationToolUI": {
+   "addtool_from_db_btn": {
+    "hidden": false
+   },
+   "apply_param_to_all": {
+    "hidden": false
+   },
+   "area_shape_label": {
+    "hidden": true
+   },
+   "area_shape_radio": {
+    "hidden": true,
+    "value": "square"
+   },
+   "combine_passes_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "create_buffer_button": {
+    "hidden": true
+   },
+   "deltool_btn": {
+    "hidden": false
+   },
+   "exc_obj_combo": {
+    "hidden": true,
+    "value": ""
+   },
+   "except_cb": {
+    "hidden": true,
+    "value": false
+   },
+   "find_optimal_button": {
+    "hidden": false
+   },
+   "follow_cb": {
+    "hidden": true,
+    "value": false
+   },
+   "follow_label": {
+    "hidden": true
+   },
+   "forced_rest_iso_cb": {
+    "hidden": true,
+    "value": true
+   },
+   "gen_param_label": {
+    "hidden": false
+   },
+   "generate_iso_button": {
+    "hidden": false
+   },
+   "iso_overlap_entry": {
+    "hidden": false
+   },
+   "iso_type_label": {
+    "hidden": true
+   },
+   "iso_type_radio": {
+    "hidden": true,
+    "value": "full"
+   },
+   "level": {
+    "hidden": false,
+    "value": "<span style=\"color:green;\"><b>BASIC</b></span>"
+   },
+   "milling_type_label": {
+    "hidden": true
+   },
+   "milling_type_radio": {
+    "hidden": true,
+    "value": "cl"
+   },
+   "new_tooldia_entry": {
+    "hidden": false
+   },
+   "new_tooldia_lbl": {
+    "hidden": false
+   },
+   "obj_combo_label": {
+    "hidden": false
+   },
+   "object_combo": {
+    "hidden": false,
+    "value": ""
+   },
+   "order_label": {
+    "hidden": false
+   },
+   "order_radio": {
+    "hidden": false,
+    "value": "rev"
+   },
+   "passes_entry": {
+    "hidden": false
+   },
+   "poly_int_cb": {
+    "hidden": true,
+    "value": false
+   },
+   "reference_combo": {
+    "hidden": true,
+    "value": ""
+   },
+   "reference_combo_type": {
+    "hidden": true,
+    "value": "Gerber"
+   },
+   "reference_combo_type_label": {
+    "hidden": true
+   },
+   "reset_button": {
+    "hidden": false
+   },
+   "rest_cb": {
+    "hidden": true,
+    "value": false
+   },
+   "search_and_add_btn": {
+    "hidden": false
+   },
+   "select_combo": {
+    "hidden": true,
+    "value": "Todos"
+   },
+   "select_label": {
+    "hidden": true
+   },
+   "tool_data_label": {
+    "hidden": false
+   },
+   "tool_sel_label": {
+    "hidden": false
+   },
+   "tools_frame": {
+    "hidden": false
+   },
+   "tools_table": {
+    "hidden": false,
+    "hiddenCols": [
+     3
+    ]
+   },
+   "tools_table_label": {
+    "hidden": false
+   },
+   "type_excobj_radio": {
+    "hidden": true,
+    "value": "gerber"
+   },
+   "valid_cb": {
+    "hidden": false,
+    "value": false
+   }
+  },
+  "ScriptObjectUI": {
+   "autocomplete_cb": {
+    "hidden": false,
+    "value": true
+   },
+   "icon": {
+    "hidden": false
+   },
+   "level": {
+    "hidden": false,
+    "value": "<span style=\"color:green;\"><b>BASIC</b></span>"
+   },
+   "name_entry": {
+    "hidden": false
+   },
+   "plot_cb": {
+    "hidden": true,
+    "value": false
+   },
+   "title_label": {
+    "hidden": false
+   }
+  }
+ },
+ "slots": [
+  {
+   "drills": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0
+    ],
+    [
+     2.0,
+     0.0
+    ],
+    [
+     3.0,
+     0.0
+    ],
+    [
+     4.0,
+     0.0
+    ],
+    [
+     5.0,
+     0.0
+    ],
+    [
+     6.0,
+     0.0
+    ],
+    [
+     7.0,
+     0.0
+    ],
+    [
+     8.0,
+     0.0
+    ],
+    [
+     9.0,
+     0.0
+    ]
+   ],
+   "last": false,
+   "overlap": 1.0,
+   "slot": [
+    0,
+    0,
+    10,
+    0
+   ]
+  },
+  {
+   "drills": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0
+    ],
+    [
+     2.0,
+     0.0
+    ],
+    [
+     3.0,
+     0.0
+    ],
+    [
+     4.0,
+     0.0
+    ],
+    [
+     5.0,
+     0.0
+    ],
+    [
+     6.0,
+     0.0
+    ],
+    [
+     7.0,
+     0.0
+    ],
+    [
+     8.0,
+     0.0
+    ],
+    [
+     9.0,
+     0.0
+    ],
+    [
+     10.0,
+     0.0
+    ]
+   ],
+   "last": true,
+   "overlap": 1.0,
+   "slot": [
+    0,
+    0,
+    10,
+    0
+   ]
+  },
+  {
+   "drills": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0
+    ],
+    [
+     2.0,
+     0.0
+    ],
+    [
+     3.0,
+     0.0
+    ],
+    [
+     4.0,
+     0.0
+    ],
+    [
+     5.0,
+     0.0
+    ],
+    [
+     6.0,
+     0.0
+    ],
+    [
+     7.0,
+     0.0
+    ],
+    [
+     8.0,
+     0.0
+    ],
+    [
+     9.0,
+     0.0
+    ],
+    [
+     10.0,
+     0.0
+    ],
+    [
+     10.3,
+     0.0
+    ]
+   ],
+   "last": true,
+   "overlap": 1.0,
+   "slot": [
+    0,
+    0,
+    10.3,
+    0
+   ]
+  },
+  {
+   "drills": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     -0.4
+    ],
+    [
+     0.0,
+     -0.8
+    ],
+    [
+     0.0,
+     -1.2000000000000002
+    ],
+    [
+     0.0,
+     -1.6
+    ],
+    [
+     0.0,
+     -2.0
+    ],
+    [
+     0.0,
+     -2.4000000000000004
+    ],
+    [
+     0.0,
+     -2.8000000000000003
+    ],
+    [
+     0.0,
+     -3.2
+    ],
+    [
+     0.0,
+     -3.6
+    ],
+    [
+     0.0,
+     -4.0
+    ],
+    [
+     0.0,
+     -4.4
+    ],
+    [
+     0.0,
+     -4.800000000000001
+    ],
+    [
+     0.0,
+     -5.2
+    ],
+    [
+     0.0,
+     -5.6000000000000005
+    ],
+    [
+     0.0,
+     -6.0
+    ],
+    [
+     0.0,
+     -6.4
+    ],
+    [
+     0.0,
+     -6.800000000000001
+    ],
+    [
+     0.0,
+     -7.2
+    ]
+   ],
+   "last": false,
+   "overlap": 0.4,
+   "slot": [
+    0,
+    0,
+    0,
+    -7.5
+   ]
+  },
+  {
+   "drills": [
+    [
+     1.0,
+     2.0
+    ]
+   ],
+   "last": false,
+   "overlap": 0.5,
+   "slot": [
+    1,
+    2,
+    4,
+    6
+   ]
+  },
+  {
+   "drills": [
+    [
+     1.0,
+     2.0
+    ],
+    [
+     4.0,
+     6.0
+    ]
+   ],
+   "last": true,
+   "overlap": 0.5,
+   "slot": [
+    1,
+    2,
+    4,
+    6
+   ]
+  },
+  {
+   "drills": [
+    [
+     0.1,
+     0.2
+    ],
+    [
+     3.7,
+     1.9
+    ]
+   ],
+   "last": true,
+   "overlap": 0.25,
+   "slot": [
+    0.1,
+    0.2,
+    3.7,
+    1.9
+   ]
+  },
+  {
+   "drills": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     2.0,
+     0.0
+    ]
+   ],
+   "last": true,
+   "overlap": 0.0,
+   "slot": [
+    0,
+    0,
+    2,
+    0
+   ]
+  }
+ ]
+}

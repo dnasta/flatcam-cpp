@@ -79,7 +79,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.785 casos de `ctest` (2.662 del núcleo y 122 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.788 casos de `ctest` (2.662 del núcleo y 125 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -536,6 +536,11 @@ fijan con sentido físico (micras), no en el último bit.
   `tests/data/excellon_samples/renumber.drl` (T5, T2 y T9 en ese orden): la tabla, las líneas `T`/`M6` y
   `exc_cnc_tools`, idénticos (`GuiDrillRenumber.*`). Ojo: la herramienta guarda el `dec_format` de la aplicación
   simulada (un `MagicMock`): hay que ponerle el real; y `abort_flag` tiene que ser `False` o el analizador sale.
+- `tests/tools/oracle_app_level.py` escribe `tests/data/app_level/oracle.json`: los paneles de Gerber, Excellon,
+  Geometría, CNC Job, Script, Documento, Isolation y Perforación armados por el original (`set_ui` / `run`) con el nivel
+  Básico y con el Avanzado (qué se ve, las columnas escondidas, los valores, el rótulo) y `process_slot_as_drills`
+  sobre 8 ranuras (con la Shapely real, antes de `build_app`, que reemplaza módulos y rompe a Shapely): idénticos
+  (`GuiAppLevel.*`).
 - `tests/tools/oracle_print_pdf.py` genera `tests/golden_print_pdf.h`: ejecuta `save_pdf` original (Archivo -> Imprimir,
   con `ast`) con el contorno y el taladro de "luz de noche" y captura el SVG que le pasa a svglib, la hoja y el
   desplazamiento (3 casos: dos objetos en A4 vertical, uno en A4 apaisada, uno en carta). Con GEOS 3.11 idéntico a menos de
@@ -948,8 +953,7 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     cursor con su tipo (cruz chica de `global_cursor_size` / `global_cursor_width` o la grande), su color o negro.
     **Importar/exportar preferencias** (Archivo -> Copia de seguridad). "Opciones -> Transferir opciones" está comentado
     en el original (no se porta). **Corregido en el port:** "Archivos recientes" mostraba los tipos que el original no
-    muestra (PNG, preferencias: `icons[kind]` da KeyError y no aparecen). Falta: el nivel Avanzado (`global_app_level`; los
-    paneles se generaron en Básico).
+    muestra (PNG, preferencias: `icons[kind]` da KeyError y no aparecen). El nivel Avanzado se hizo después (11.12 ad).
     (z) **Script, Documento y el editor de texto** (ítem 4). Desvíos: la pestaña de cada objeto se busca por el propio
     editor, no por `objectName` == nombre (en el original, después de renombrar, elegir el objeto agregaría la misma
     pestaña otra vez y borrarlo no la cerraría); guardar el editor a PDF dibuja el texto con Helvetica 10 / 12 puntos
@@ -991,6 +995,18 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     herramientas del mismo diámetro `build_tool_ui` las duplica (cada diámetro encuentra a las dos); con cambio de
     herramienta `total_gcode` no se vacía y el dibujo de la segunda generación de la sesión suma la anterior (el archivo
     exportado sale bien).
+    (ad) **Nivel Avanzado** (`global_app_level = 'a'`, Preferencias -> General). Como cada `set_ui` / `run` del
+    original (`oracle_app_level.py`): el rótulo "Básico"/"Avanzado" (`appLevelLabel`), y en Avanzado se ven: en el
+    Gerber la casilla de la tabla de aperturas y "Seguir" (dibuja la geometría de seguimiento); en el Excellon las
+    columnas 4 y 5, "Mostrar la tabla" y "Cargar automáticamente de la base"; en la Geometría las columnas de
+    desplazamiento y tipo, agregar/buscar/borrar herramientas y el corte extra; en Isolation el tipo de fresado, el de
+    aislamiento, "Seguir", el resto, "Excepto" y la selección (con sus valores de las preferencias); en Perforación la Z
+    de inicio y "Taladrar ranuras"; en el CNC Job la autonivelación. **Faltaban y se agregaron:** "Taladrar ranuras"
+    (`process_slot_as_drills`: el inicio y cada `(1 - solape) * diámetro` mientras el punto quede *dentro* de la ranura,
+    con `within` de GEOS) y la carga automática desde la base en Perforación (`on_tool_db_load` + `replace_tools`: el
+    mismo diámetro o uno dentro de la tolerancia, que pasa a ser el diámetro de la herramienta). **Error del port
+    corregido:** la casilla "Dibujar" (`plot_cb`) de las Propiedades no estaba conectada (no mostraba ni ocultaba el
+    objeto); ahora es `on_plot_cb_click` (también las casillas de la tabla).
     (y) **Error del port corregido (volcador):** el diálogo "Acerca de" mostraba `<MagicMock name='app_url' ...>` en vez de
     `http://flatcam.org`, porque la aplicación simulada de `fc_runtime.py` no tenía `app_url`.
     (m) Errores del original que se reproducen a propósito en Isolation: la herramienta nueva tiene tipo `"           Iso"`
@@ -1057,7 +1073,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.785 casos de test** (`ctest`): 2.663 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 122 de la GUI;
+- **2.788 casos de test** (`ctest`): 2.663 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 125 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -1085,7 +1101,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.785 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.788 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -1333,7 +1349,8 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    carpeta/Borrar ajustes, Editar -> Preferencias, Shift+P, el rótulo de la barra de estado, los manejadores de cada grupo
    (11.12 x, `oracle_preferences.py`). También: las herramientas y los objetos leen sus valores de `app.defaults`.
    También: cambiar las unidades (tecla Q, Editar y la pestaña, `oracle_units.py`).
-   También: área de trabajo, cursor e importar/exportar preferencias. **Falta:** el nivel Avanzado.
+   También: área de trabajo, cursor e importar/exportar preferencias. ~~El nivel Avanzado~~ (hecho, 11.12 ad).
+   **Ítem 6 completo.**
 7. **Consola Tcl** (`ToolShell`, `tclCommands/`, 68 comandos) y scripts.
 9. **Hacia la 1.0.0** (pedido del usuario; estimación dada: unas 6 sesiones sin editores y 8 a 9 con editores):
    (a) preferencias y unidades (ítem 6); (b) herramientas (ítem 5) en dos o tres sesiones; (c) lo que queda de archivos
@@ -1502,6 +1519,11 @@ encontrar uno nuevo, agregarlo acá con su sección. Ya corregidos a pedido del 
 - **Tablas que se arrastran** (11.12 ac): `dragEnterEvent` bloquea las señales de la tabla hasta soltar (si se cancela
   el arrastre quedan bloqueadas); en la Geometría, `rebuild_ui` renumera las herramientas pero no rehace la tabla (la
   columna oculta queda con los números viejos y las filas apuntan a otras herramientas).
+- **Nivel Avanzado** (11.12 ad): "Taladrar ranuras" en una ranura diagonal da solo sus extremos (el punto interpolado
+  no cae exacto sobre la línea y `within` corta la serie; en una horizontal o vertical sí funciona); el solape y "Último
+  taladro" están siempre escondidos (se usan los de las preferencias); `replace_tools` compara el diámetro exacto
+  (`==` de coma flotante) y, con dos herramientas de la base para un diámetro, cancela todo; "Cargar automáticamente
+  de la base" cambia una opción de la aplicación (vale para todos los Excellon).
 - **Imprimir a PDF** (sección 13, ítem 4): como en Film, el SVG lleva `b'` y `'` como texto y un objeto de un solo
   polígono no se recolorea; la opacidad es el alfa en hexadecimal tal cual (`"BF"`, que no es un valor válido de SVG); una
   Geometría usa el color de dibujo y la opacidad del objeto anterior; con un CNC Job elegido no se imprime nada

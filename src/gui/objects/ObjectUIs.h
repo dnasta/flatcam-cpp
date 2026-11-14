@@ -32,6 +32,9 @@ public:
      */
     void build(GerberObject& obj);
 
+    /** @brief Qué hacer para volver a dibujar el objeto (lo fija la aplicación). */
+    std::function<void()> onReplot;
+
 private:
     void buildAperturesTable(GerberObject& obj);
     GerberObject* obj_{nullptr};

@@ -34,6 +34,16 @@ QString fmt(double v) { return QString::number(v, 'f', kDecimals); }
 
 GerberObjectUI::GerberObjectUI(QWidget* parent) : GerberObjectUIBase(parent) {
     setupUi();
+    // set_ui: lo que depende del nivel (global_app_level).
+    level->setText(appLevelLabel());
+    for (QWidget* w : std::initializer_list<QWidget*>{apertures_table_label, aperture_table_visibility_cb, follow_cb})
+        w->setVisible(!appLevelBasic());
+    // on_follow_cb_click: se dibuja la geometría de seguimiento en vez de la sólida.
+    connect(follow_cb, &QCheckBox::toggled, this, [this](bool on) {
+        if (!obj_) return;
+        obj_->setPlotFollow(on);
+        if (onReplot) onReplot();
+    });
     connect(aperture_table_visibility_cb, &QCheckBox::toggled, this, [this](bool on) {
         // on_aperture_table_visibility_change: muestra la tabla (y la arma la primera vez).
         apertures_table->setVisible(on);
@@ -95,6 +105,28 @@ void GerberObjectUI::buildAperturesTable(GerberObject& obj) {
 
 ExcellonObjectUI::ExcellonObjectUI(QWidget* parent) : ExcellonObjectUIBase(parent) {
     setupUi();
+    // set_ui: lo que depende del nivel. to_form deja autoload_db como excellon_autoload_db.
+    level->setText(appLevelLabel());
+    autoload_db_cb->setChecked(defBool("excellon_autoload_db"));
+    if (appLevelBasic()) {
+        tools_table->setColumnHidden(4, true);
+        tools_table->setColumnHidden(5, true);
+        table_visibility_cb->setChecked(true);
+        table_visibility_cb->hide();
+        autoload_db_cb->setChecked(false);
+        autoload_db_cb->hide();
+    } else {
+        tools_table->setColumnHidden(4, false);
+        tools_table->setColumnHidden(5, false);
+        table_visibility_cb->show();
+        table_visibility_cb->setChecked(defBool("excellon_tools_table_display"));
+        tools_table->setVisible(table_visibility_cb->isChecked());  // on_table_visibility_toggle
+        autoload_db_cb->show();
+    }
+    connect(table_visibility_cb, &QCheckBox::toggled, this, [this](bool on) { tools_table->setVisible(on); });
+    // on_autoload_db_toggled: es una opción de la aplicación (la usa Perforación al elegir el objeto).
+    connect(autoload_db_cb, &QCheckBox::toggled, this,
+            [](bool on) { setAppDefault("excellon_autoload_db", JsonValue::boolean(on)); });
     // to_form con las opciones del objeto (excellon_tooldia y excellon_slot_tooldia de las preferencias).
     tooldia_entry->setValue(defNum("excellon_tooldia"));
     slot_tooldia_entry->setValue(defNum("excellon_slot_tooldia"));
@@ -219,6 +251,15 @@ void ExcellonObjectUI::build(ExcellonObject& obj) {
 
 GeometryObjectUI::GeometryObjectUI(QWidget* parent) : GeometryObjectUIBase(parent) {
     setupUi();
+    // set_ui: en Básico se esconden las columnas de desplazamiento y tipo y lo que agrega o borra herramientas; en
+    // Avanzado el original no muestra nada a mano (lo que depende del postprocesador lo decide on_pp_changed).
+    level->setText(appLevelLabel());
+    const bool basic = appLevelBasic();
+    geo_tools_table->setColumnHidden(2, basic);
+    geo_tools_table->setColumnHidden(3, basic);
+    for (QWidget* w : std::initializer_list<QWidget*>{addtool_entry_lbl, addtool_entry, search_and_add_btn, deltool_btn,
+                                                      extracut_cb, e_cut_entry})
+        w->setVisible(!basic);
     // FCTable(drag_drop=True) y rebuild_ui: las herramientas se renumeran en el orden de la tabla, pero la tabla no se
     // vuelve a armar (la columna oculta conserva los números viejos, como en el original).
     geo_tools_table->setDragDrop(true);

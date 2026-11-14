@@ -364,6 +364,17 @@ Units appUnitsKind() { return appUnits() == "IN" ? Units::Inches : Units::Millim
 
 int appDecimals() { return defInt(appUnits() == "MM" ? "decimals_metric" : "decimals_inch", 4); }
 
+void setAppDefault(const std::string& key, JsonValue v) {
+    if (gInstance) const_cast<Preferences*>(gInstance)->set(key, std::move(v));
+}
+
+bool appLevelBasic() { return defStr("global_app_level") == "b"; }
+
+QString appLevelLabel() {
+    return appLevelBasic() ? QString("<span style=\"color:green;\"><b>%1</b></span>").arg(tr_("Basic"))
+                           : QString("<span style=\"color:red;\"><b>%1</b></span>").arg(tr_("Advanced"));
+}
+
 std::optional<PyNumber> defPy(const std::string& key) {
     const JsonValue& v = appDefaults()[key];
     JsonValue n = v;

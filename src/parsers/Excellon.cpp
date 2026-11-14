@@ -603,4 +603,14 @@ Excellon Excellon::renumbered(const std::vector<int>& order) const {
     return out;
 }
 
+void Excellon::appendDrills(int id, const std::vector<Point2D>& drills) {
+    auto it = drillTools_.find(id);
+    if (it != drillTools_.end()) it->second.drills.insert(it->second.drills.end(), drills.begin(), drills.end());
+}
+
+void Excellon::setToolDiameter(int id, double dia) {
+    auto it = drillTools_.find(id);
+    if (it != drillTools_.end()) it->second.tooldia = dia;
+}
+
 }  // namespace flatcam
