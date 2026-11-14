@@ -272,6 +272,9 @@ void App::connectSignals() {
     for (QAction* a : {ui_->menufilerunscript, ui_->run_script_btn})
         connect(a, &QAction::triggered, this, [this] { onFileRunScript(); });
     connect(ui_->menufilenewdoc, &QAction::triggered, this, [this] { newDocumentObject(); });
+    connect(ui_->menufilenewgeo, &QAction::triggered, this, [this] { newGeometryObject(); });
+    connect(ui_->menufilenewgrb, &QAction::triggered, this, [this] { newGerberObject(); });
+    connect(ui_->menufilenewexc, &QAction::triggered, this, [this] { newExcellonObject(); });
     connect(ui_->menuview_toggle_code_editor, &QAction::triggered, this, [this] { onToggleCodeEditor(); });
     connect(ui_->menufileexportgerber, &QAction::triggered, this, [this] { onFileExport(ObjectKind::Gerber); });
     connect(ui_->menufileexportexcellon, &QAction::triggered, this, [this] { onFileExport(ObjectKind::Excellon); });
@@ -910,7 +913,7 @@ AppTextEditor* App::reviewGcode(CNCJobObject* job) {
     return ed;
 }
 
-FlatCAMObj* App::addObject(std::unique_ptr<FlatCAMObj> o) {
+FlatCAMObj* App::addObject(std::unique_ptr<FlatCAMObj> o, bool plot) {
     FlatCAMObj* obj = collection_->append(std::move(o));
     shouldWeSave_ = true;
     // ObjectCollection.append -> set_ui: el Script y el Documento arman su panel y su pestaña de editor.
@@ -928,7 +931,7 @@ FlatCAMObj* App::addObject(std::unique_ptr<FlatCAMObj> o) {
     ui_->plotCanvas()->setLayer(obj->id(), obj->plotData());
     ui_->plotCanvas()->setLayerVisible(obj->id(), obj->plotEnabled());
     ui_->plotCanvas()->setLayerOrder(collection_->drawOrder());
-    if (!text) onZoomFit();  // new_object(..., plot=False): no se dibujan ni se encuadra
+    if (!text && plot) onZoomFit();  // new_object(..., plot=False): no se dibujan ni se encuadra
     return obj;
 }
 
@@ -1280,8 +1283,12 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
             setActive(all[static_cast<std::size_t>(key == Qt::Key_Up ? (idx + n - 1) % n : (idx + 1) % n)], true);
             return true;
         }
+        case Qt::Key_B: newGerberObject(); return true;
+        case Qt::Key_D: newDocumentObject(); return true;
         case Qt::Key_G: ui->grid_snap_btn->trigger(); return true;
         case Qt::Key_J: onJumpTo(); return true;
+        case Qt::Key_L: newExcellonObject(); return true;
+        case Qt::Key_N: newGeometryObject(); return true;
         case Qt::Key_M: moveTool->toggle(); return true;
         case Qt::Key_O: onSetOrigin(); return true;
         case Qt::Key_P: propertiesTool->run(true); return true;
