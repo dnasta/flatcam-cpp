@@ -67,6 +67,18 @@ QString appUnits();
 Units appUnitsKind();
 /** @brief `app.decimals`: `decimals_metric` o `decimals_inch` según las unidades. @return Los decimales. */
 int appDecimals();
+/** @brief `global_app_level == 'b'`: el nivel Básico (si no, Avanzado). @return `true` en Básico. */
+bool appLevelBasic();
+/**
+ * @brief Cambia una opción de la aplicación (`app.defaults[key] = v`) desde donde no se tiene la aplicación.
+ * @param key Clave. @param v Valor.
+ */
+void setAppDefault(const std::string& key, JsonValue v);
+/**
+ * @brief El rótulo `level` de los paneles: "Básico" en verde o "Avanzado" en rojo, como cada `set_ui` del original.
+ * @return El HTML.
+ */
+QString appLevelLabel();
 /** @brief `eval()` de Python para números, tuplas y listas (los `NumericalEval*Entry`). @param text Texto. @return El valor, o nulo. */
 JsonValue pyEvalLiteral(const QString& text);
 ///@}

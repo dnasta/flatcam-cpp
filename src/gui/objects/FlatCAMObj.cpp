@@ -152,7 +152,8 @@ PlotLayerData GerberObject::plotData() const {
     d.lineColor = outlineColor;
     d.fillColor = fillColor;
     // GerberObject.plot con options["solid"] verdadero: polígonos y líneas; los puntos no se dibujan.
-    for (const Shape& g : gerber_->solidGeometry()) addShape(g, d);
+    // Con "Seguir" (follow_cb), la geometría de seguimiento.
+    for (const Shape& g : plotFollow_ ? gerber_->followGeometry() : gerber_->solidGeometry()) addShape(g, d);
     return d;
 }
 

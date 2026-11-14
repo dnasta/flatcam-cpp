@@ -132,6 +132,14 @@ public:
      */
     std::vector<int> toolIdsInOrder() const;
 
+    /**
+     * @brief Agrega agujeros al final de una herramienta (las ranuras que Perforación convierte en agujeros).
+     * @param id Número de la herramienta (tiene que existir). @param drills Posiciones.
+     */
+    void appendDrills(int id, const std::vector<Point2D>& drills);
+    /** @brief Cambia el diámetro de una herramienta. @param id Número. @param dia Diámetro. */
+    void setToolDiameter(int id, double dia);
+
     /** @brief Supresión de ceros leída (`"L"`, `"T"` o vacío). @return El valor. */
     const std::string& zeros() const { return zeros_; }
     /** @brief Cambia la supresión de ceros (`zeros`, por ejemplo al panelizar). @param z El valor. */

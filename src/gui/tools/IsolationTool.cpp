@@ -103,13 +103,28 @@ void IsolationTool::setToolUi() {
         if (o->kind() == ObjectKind::Gerber) object_combo->addItem(o->name());
     if (FlatCAMObj* active = app_->activeObject(); active && active->kind() == ObjectKind::Gerber)
         object_combo->setValue(active->name());
-    // Nivel Básico (global_app_level = 'b'): lo que esconde el original ya viene escondido en el panel generado.
-    level->setText(QString("<span style=\"color:green;\"><b>%1</b></span>").arg(tr_("Basic")));
-    iso_type_radio->setValue("full");
-    follow_cb->setChecked(false);
-    rest_cb->setChecked(false);
-    except_cb->setChecked(false);
-    select_combo->setCurrentIndex(0);
+    // Las opciones avanzadas (global_app_level): en Básico, escondidas y con sus valores de fábrica fijos.
+    level->setText(appLevelLabel());
+    const bool basic = appLevelBasic();
+    for (QWidget* w : std::initializer_list<QWidget*>{milling_type_label, milling_type_radio, iso_type_label, iso_type_radio,
+                                                      follow_cb, follow_label, rest_cb, forced_rest_iso_cb, except_cb,
+                                                      select_combo, select_label})
+        w->setVisible(!basic);
+    if (basic) {
+        iso_type_radio->setValue("full");
+        follow_cb->setChecked(false);
+        rest_cb->setChecked(false);
+        except_cb->setChecked(false);
+        type_excobj_radio->hide();
+        exc_obj_combo->hide();
+        select_combo->setCurrentIndex(0);
+    } else {
+        iso_type_radio->setValue(defVariant("tools_iso_isotype"));
+        follow_cb->setChecked(defBool("tools_iso_follow"));
+        rest_cb->setChecked(defBool("tools_iso_rest"));
+        except_cb->setChecked(defBool("tools_iso_isoexcept"));
+        select_combo->setValue(defStr("tools_iso_selection"));
+    }
     // tools_iso_* de las preferencias (de fábrica: 1 pasada, 10 %, combinar, 0.1).
     order_radio->setValue(defVariant("tools_iso_order"));
     passes_entry->setValue(defInt("tools_iso_passes"));

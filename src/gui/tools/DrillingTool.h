@@ -70,6 +70,21 @@ private:
     /// El orden de `excellon_tools` del original: lo deja cada `build_tool_ui` (y `rebuild_ui` al arrastrar filas).
     std::vector<int> baseOrder_;
     void rebuildUi();
+    void loadToolsFromDb();
+    double toolDia(int id) const;
+    std::map<int, double> diaOverride_;  ///< Diámetros que cambió la base de herramientas (replace_tools).
+
+public:
+    /**
+     * @brief `process_slot_as_drills`: los agujeros con que se taladra una ranura.
+     * @param start Inicio. @param stop Fin. @param overlap Paso entre agujeros (`(1 - solape) * diámetro`).
+     * @param addLastPoint "Último taladro": agregar el final.
+     * @return Las posiciones.
+     */
+    static std::vector<Point2D> slotAsDrills(const Point2D& start, const Point2D& stop, double overlap,
+                                             bool addLastPoint);
+
+private:
     bool muted_{false};
 };
 
