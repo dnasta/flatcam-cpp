@@ -1253,7 +1253,9 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    de `MainGUI.keyPressEvent` (Ctrl, Shift, Alt y sin modificador, salvo los de herramientas o funciones sin portar).
    ~~Cambiar las unidades~~ (hecho con el ítem 6) y ~~los objetos vacíos de Archivo -> Nuevo~~ (hechos:
    `App::newGeometryObject` / `newGerberObject` / `newExcellonObject`, menú Archivo, menú del canvas y teclas N, B y L;
-   también D para un Documento; 11.12 ab). ~~El administrador de marcadores~~ (hecho, 11.12 ac). **3b completo.** "Guardar copia del proyecto" está comentado en el original.
+   también D para un Documento; 11.12 ab). ~~El administrador de marcadores~~ (hecho, 11.12 ac). **Falta** (encontrado al portar el nivel Avanzado): la
+   tecla T sin modificador (`on_tool_add_keypress`: agregar una herramienta en la Geometría, NCC, Paint, Pasta de
+   soldar, Isolation o la base de herramientas; hoy no hace nada). "Guardar copia del proyecto" está comentado en el original.
 4. **Archivos:** ~~abrir G-code como CNC Job~~ (hecho: `App::openGcode`, menú, arrastrar y soltar, recientes; el texto tal
    cual, sin '%' ni MOIN/MOMM), ~~exportar Gerber y Excellon~~ (hecho: `src/io/FileExport.*`, idéntico al original en 15
    Gerber y 8 Excellon con `oracle_export.py`; mover o fijar el origen regenera el texto fuente como el original),
