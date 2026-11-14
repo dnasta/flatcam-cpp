@@ -162,6 +162,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     setupProjectMenu();
     setupCanvasMenu();
     setupHelpMenu();
+    setupBookmarks();
     // Archivo -> Salir y cerrar la ventana: final_save.
     disconnect(ui_->menufile_exit, nullptr, nullptr, nullptr);
     connect(ui_->menufile_exit, &QAction::triggered, this, [this] {
