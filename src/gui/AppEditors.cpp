@@ -10,6 +10,8 @@
 #include "gui/editors/ExcEditor.h"
 #include "gui/editors/GeoEditor.h"
 #include "gui/editors/GrbEditor.h"
+#include "gui/editors/GCodeEditor.h"
+#include "gui/objects/CNCJobObject.h"
 #include "gui/objects/GeometryObject.h"
 #include "gui/objects/ObjectCollection.h"
 #include "gui/objects/ObjectUIs.h"
@@ -64,8 +66,11 @@ void App::objectToEditor() {
         if (ui->splitter->sizes().value(0) == 0) ui->splitter->setSizes({1, 1});
         grbEditor->edit(grb);
         callSource_ = "grb_editor";
+    } else if (auto* cnc = dynamic_cast<CNCJobObject*>(obj)) {
+        if (ui->splitter->sizes().value(0) == 0) ui->splitter->setSizes({1, 1});
+        callSource_ = "gcode_editor";
+        gcodeEditor->edit(cnc);
     } else {
-        // El editor de G-code (appGCodeEditor) no forma parte de este paso del port.
         ui->inform("[WARNING_NOTCL] " + tr_("Select a Geometry, Gerber, Excellon or CNCJob Object to edit."));
         return;
     }
@@ -137,6 +142,12 @@ bool App::editorToObject(std::optional<bool> save, bool cleanup) {
                 type = "Excellon";
                 excEditor->save(exc);
                 ui->tool_scroll_area->takeWidget();
+            } else if (auto* cnc = dynamic_cast<CNCJobObject*>(obj)) {
+                type = "CNCJob";
+                gcodeEditor->save(cnc);
+                ui->tool_scroll_area->takeWidget();
+                showProperties(cnc);  // build_ui
+                gcodeEditor->closeTab();
             }
             ui->inform("[success] " + tr_("Editor exited. Editor content saved."));
             ui->inform(QString("[selected] %1 %2").arg(type, tr_("is updated, returning to App...")));
@@ -146,6 +157,10 @@ bool App::editorToObject(std::optional<bool> save, bool cleanup) {
             if (callSource_ == "geo_editor") geoEditor->deactivate();
             else if (callSource_ == "grb_editor") grbEditor->deactivate();
             else if (callSource_ == "exc_editor") excEditor->deactivate();
+            else if (callSource_ == "gcode_editor") {
+                gcodeEditor->deactivate();
+                gcodeEditor->closeTab();
+            }
             if (obj) {
                 ui->plotCanvas()->setLayerVisible(obj->id(), obj->plotEnabled());
                 showProperties(obj);

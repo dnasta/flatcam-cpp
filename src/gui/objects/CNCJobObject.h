@@ -59,16 +59,45 @@ public:
 
     /**
      * @brief Texto completo del archivo, con la cabecera de FlatCAM y la fecha actual (`export_gcode`).
+     *
+     * Como el original: un fragmento vacío se reemplaza por el de las Preferencias (`cncjob_prepend` /
+     * `cncjob_append`); con `cncjob_footer` termina en `M02`; los postprocesadores sin cabecera (`include_header =
+     * False`: Roland_MDX_20 e ISEL_ICP_CNC) dan solo los fragmentos y el cuerpo, y con hpgl las órdenes `PA` pasan a
+     * coordenadas enteras.
+     * @param preamble Fragmento del principio (`preamble`).
+     * @param postamble Fragmento del final (`postamble`).
      * @return El G-code.
      */
-    std::string exportText() const;
+    std::string exportText(std::string preamble = {}, std::string postamble = {}) const;
 
     /**
-     * @brief Guarda el G-code en un archivo, con los fines de línea del sistema como el original.
+     * @brief Guarda el G-code en un archivo (`export_gcode` con `filename`): con los fines de línea del sistema, o
+     * `\r\n` si `cncjob_line_ending` está activo.
      * @param filename Ruta.
+     * @param preamble Fragmento del principio.
+     * @param postamble Fragmento del final.
      * @return `true` si se pudo escribir.
      */
-    bool saveTo(const QString& filename) const;
+    bool saveTo(const QString& filename, const std::string& preamble = {}, const std::string& postamble = {}) const;
+
+    /** @brief El postprocesador de la primera herramienta (`ppname_g` / `tools_drill_ppname_e`). @return El nombre. */
+    std::string preprocessorName() const;
+
+    /**
+     * @brief `set_ui`: toma los fragmentos de las Preferencias y arma `source_file` con `export_gcode` (lo que carga el
+     * editor de G-code). Lo llama la aplicación al agregar el objeto.
+     */
+    void initSourceFile();
+    /** @brief `source_file`: el G-code que carga el editor de G-code (y que este reemplaza al guardar). @return Texto. */
+    const QString& sourceFile() const { return sourceFile_; }
+    /** @brief Cambia `source_file`. @param s Texto. */
+    void setSourceFile(const QString& s) { sourceFile_ = s; }
+    /** @brief La cabecera con que se armó `source_file` (`gc_header`). @return Texto. */
+    const std::string& sourceHeader() const { return sourceHeader_; }
+    /** @brief `prepend_snippet`. @return Texto. */
+    const QString& prependSnippet() const { return prependSnippet_; }
+    /** @brief `append_snippet`. @return Texto. */
+    const QString& appendSnippet() const { return appendSnippet_; }
 
     /**
      * @brief Cabecera del archivo (`gc_header`): la guardada en el proyecto o una nueva con la fecha actual.
@@ -104,6 +133,12 @@ private:
     class CNCAutolevel* autolevel_{nullptr};  ///< Hijo de este objeto (QObject).
     std::vector<CncToolRow> tools_;
     std::optional<std::string> storedHeader_;
+    QString sourceFile_;
+    std::string sourceHeader_;
+    QString prependSnippet_;
+    QString appendSnippet_;
+    /** Arma el archivo con una cabecera dada. */
+    std::string compose(const std::string& header, std::string preamble, std::string postamble) const;
 };
 
 }  // namespace flatcam::gui

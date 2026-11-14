@@ -611,8 +611,9 @@ JsonValue cncDict(const CNCJobObject& obj, const JsonValue& app) {
         const JsonValue& v = first[drilling ? drillKey : geoKey];
         return v.isNull() ? def : v;
     };
-    setIfMissing(d, "append_snippet", JsonValue::string(""));
-    setIfMissing(d, "prepend_snippet", JsonValue::string(""));
+    // set_ui los toma de las Preferencias (también en un objeto leído de un proyecto).
+    d.set("append_snippet", JsonValue::string(obj.appendSnippet().toStdString()));
+    d.set("prepend_snippet", JsonValue::string(obj.prependSnippet().toStdString()));
     setIfMissing(d, "dwell", pick("dwell", "tools_drill_dwell", JsonValue::boolean(false)));
     setIfMissing(d, "dwelltime", pick("dwelltime", "tools_drill_dwelltime", real(1.0)));
     setIfMissing(d, "feedrate", pick("feedrate", "tools_drill_feedrate_z", real(120.0)));

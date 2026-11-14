@@ -35,17 +35,82 @@ std::string CNCJobObject::headerText() const {
     return CncJob::gcodeHeader(h);
 }
 
-std::string CNCJobObject::exportText() const {
-    // export_gcode: gc_header + gc_start + '\n' + gcode + '\n' (un trabajo abierto de un proyecto trae su cabecera).
-    return headerText() + job_->startGcode() + "\n" + job_->gcode() + "\n";
+std::string CNCJobObject::preprocessorName() const {
+    if (tools_.empty()) return {};
+    const JsonValue& v = tools_.front().data[isDrilling() ? "tools_drill_ppname_e" : "ppname_g"];
+    return v.isString() ? v.text() : std::string();
 }
 
-bool CNCJobObject::saveTo(const QString& filename) const {
+std::string CNCJobObject::exportText(std::string preamble, std::string postamble) const {
+    return compose(headerText(), std::move(preamble), std::move(postamble));
+}
+
+std::string CNCJobObject::compose(const std::string& header, std::string preamble, std::string postamble) const {
+    // export_gcode.
+    if (preamble.empty()) preamble = defStr("cncjob_prepend").toStdString();
+    if (postamble.empty()) postamble = defStr("cncjob_append").toStdString();
+    const std::string pp = preprocessorName();
+    const bool drilling = isDrilling();
+    // include_header = False solo en Roland_MDX_20 e ISEL_ICP_CNC.
+    const bool includeHeader = pp != "Roland_MDX_20" && pp != "ISEL_ICP_CNC";
+    std::string gcode = job_->gcode();
+    if (!includeHeader) {
+        // Un taladrado es multitool y esta rama solo suma los G-code de cnc_tools (vacío en un taladrado): sale sin
+        // cuerpo, como el original.
+        if (drilling) gcode.clear();
+        return preamble + "\n" + gcode + "\n" + postamble;
+    }
+    const std::string end = defBool("cncjob_footer") ? "M02" : "";
+    // hpgl: solo se mira en los trabajos de geometría (en uno de taladrado el original recorre cnc_tools, vacío).
+    if (!drilling && pp.find("hpgl") != std::string::npos) {
+        static const QRegularExpression pa(R"(^PA\s*(-?\d+\.\d*),?\s*(-?\d+\.\d*)*;?$)");
+        std::string body;
+        // str.splitlines: también corta en \r.
+        const QStringList lines = QString::fromStdString(gcode).split(QRegularExpression("\r\n|\r|\n"));
+        for (int i = 0; i < lines.size(); ++i) {
+            if (i == lines.size() - 1 && lines[i].isEmpty()) break;  // splitlines no da la línea vacía final
+            const QRegularExpressionMatch m = pa.match(lines[i]);
+            if (m.hasMatch())
+                body += QString::asprintf("PA%d,%d;\n", int(m.captured(1).toDouble()), int(m.captured(2).toDouble()))
+                            .toStdString();
+            else
+                body += lines[i].toStdString() + "\n";
+        }
+        return header + "\n" + job_->startGcode() + "\n" + preamble + "\n" + body + "\n" + postamble + end;
+    }
+    std::string g;
+    if (!preamble.empty() && !postamble.empty())
+        g = header + job_->startGcode() + "\n" + preamble + "\n" + gcode + "\n" + postamble + "\n" + end;
+    if (preamble.empty()) g = header + job_->startGcode() + "\n" + gcode + "\n" + postamble + "\n" + end;
+    if (postamble.empty()) g = header + job_->startGcode() + "\n" + preamble + "\n" + gcode + "\n" + end;
+    if (preamble.empty() && postamble.empty()) g = header + job_->startGcode() + "\n" + gcode + "\n" + end;
+    return g;
+}
+
+void CNCJobObject::initSourceFile() {
+    prependSnippet_ = defStr("cncjob_prepend");
+    appendSnippet_ = defStr("cncjob_append");
+    sourceHeader_ = headerText();
+    sourceFile_ = QString::fromStdString(compose(sourceHeader_, prependSnippet_.toStdString(),
+                                                 appendSnippet_.toStdString()));
+}
+
+bool CNCJobObject::saveTo(const QString& filename, const std::string& preamble, const std::string& postamble) const {
     QFile f(filename);
-    // Modo texto: fines de línea del sistema, como el `open(filename, 'w')` de Python (en Windows, \r\n).
-    if (!f.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) return false;
+    // cncjob_line_ending fuerza \r\n fuera de Windows (open(newline='\r\n')); si no, modo texto: fines de línea del
+    // sistema, como el `open(filename, 'w')` de Python.
+#ifdef Q_OS_WIN
+    const bool crlf = false;
+#else
+    const bool crlf = defBool("cncjob_line_ending");
+#endif
+    QIODevice::OpenMode mode = QIODevice::WriteOnly | QIODevice::Truncate;
+    if (!crlf) mode |= QIODevice::Text;
+    if (!f.open(mode)) return false;
+    QString text = QString::fromStdString(exportText(preamble, postamble));
+    if (crlf) text.replace("\n", "\r\n");
     QTextStream out(&f);
-    out << QString::fromStdString(exportText());
+    out << text;
     return out.status() == QTextStream::Ok;
 }
 
@@ -160,7 +225,12 @@ CNCAutolevel* CNCJobObject::autolevel(App* app) {
 }
 
 QWidget* CNCJobObject::propertiesUi() {
-    if (!ui_) ui_ = std::make_unique<CNCObjectUI>();
+    if (!ui_) {
+        auto* panel = new CNCObjectUI();
+        ui_.reset(panel);
+        // set_ui: con algún fragmento en las Preferencias se marca "Usar fragmentos de código CNC".
+        if (!appendSnippet_.isEmpty() || !prependSnippet_.isEmpty()) panel->snippets_cb->setChecked(true);
+    }
     static_cast<CNCObjectUI*>(ui_.get())->build(*this);
     return ui_.get();
 }

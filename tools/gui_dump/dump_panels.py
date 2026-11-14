@@ -155,6 +155,9 @@ def dump_editors(fa, written):
     panels.append(("GrbEditorUI", grb.ui.grb_edit_widget, (grb.ui, grb)))
     grb.transform_tool.run(toggle=False)
     panels.append(("GrbTransformToolUI", grb.transform_tool, (grb.transform_tool,)))
+    # El editor de G-code (appGCodeEditor): su panel de Propiedades (edit_widget).
+    gce = fr.import_original("appEditors.appGCodeEditor").AppGCodeEditor(fa)
+    panels.append(("GCodeEditorUI", gce.ui.edit_widget, (gce.ui, gce)))
     for cls, root, srcs in panels:
         data = dump_widget(root, *srcs)
         data["class"] = cls

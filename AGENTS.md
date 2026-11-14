@@ -79,7 +79,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.772 casos de `ctest` (2.662 del núcleo y 109 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.776 casos de `ctest` (2.662 del núcleo y 113 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -224,6 +224,8 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   editors/GeoEditor.*    Editor de Geometría (AppGeoEditor) y sus paneles de Pintar, Transformar y Texto (generados)
   editors/ExcEditor.*    Editor de Excellon (AppExcEditor): tabla de herramientas, agujeros, ranuras, grillas
   editors/GrbEditor.*    Editor de Gerber (AppGerberEditor): tabla de aperturas y sus herramientas
+  editors/GCodeEditor.*  Editor de G-code de los CNC Job (appGCodeEditor): `source_file` en una pestaña "Editor de código",
+                         la tabla de herramientas que elige su G-code en el texto y los fragmentos (panel generado)
   tools/RulesTool.*      Verificación de reglas (ToolRulesCheck, Alt+R): el informe en un Documento `Rules_check_results`
   objects/ScriptObject.* Objeto Script (FlatCAMScript) y la base TextObject: el texto, el panel generado y la pestaña
                          "Editor de guiones" (AppTextEditor con "Ejecutar")
@@ -516,6 +518,13 @@ fijan con sentido físico (micras), no en el último bit.
   `source_file`) y el `AppTextEditor` (botones, buscar, reemplazar uno y "Todos", Ctrl+/, paréntesis automáticos,
   guardar a `.txt`): idénticos (`GuiScript.*`, `GuiDocument.*`, `GuiTextEditor.*`). `check_project_in_original.py`
   abre ahora también Script y Documento (el original abre los que guarda el port).
+- `tests/tools/oracle_gcode_editor.py` escribe `tests/data/gcode_editor/oracle.json`: con la interfaz PyQt5 real abre
+  los dos CNC Job del proyecto del usuario (con el `gc_start` de sus `.nc`, que el port reconstruye) y ejecuta
+  `edit_fcgcode` (pestaña, texto, tablas), `on_row_selection_change` con 13 combinaciones de filas (selección y
+  subrayados, también los fallos de un trabajo leído de un proyecto), `on_toggle_all_rows`, `update_fcgcode` y
+  `on_review_code_click`, y lo mismo con claves numéricas (un trabajo creado en la sesión): idénticos, posición por
+  posición (`GuiGCodeEditor.*`). Ojo: la aplicación simulada de `fc_runtime` no trae `dec_format` (es un `MagicMock`, y
+  sus resultados son todos iguales entre sí); el oráculo le pone el de `app_Main`.
 - `tests/tools/oracle_print_pdf.py` genera `tests/golden_print_pdf.h`: ejecuta `save_pdf` original (Archivo -> Imprimir,
   con `ast`) con el contorno y el taladro de "luz de noche" y captura el SVG que le pasa a svglib, la hoja y el
   desplazamiento (3 casos: dos objetos en A4 vertical, uno en A4 apaisada, uno en carta). Con GEOS 3.11 idéntico a menos de
@@ -939,6 +948,19 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     `.pdf` o un `.FlatConfig` en la ventana no hacía nada (el original los abre); Archivos recientes no abría los
     scripts, PDF ni imágenes; "Ver fuente" era un texto de solo lectura (ahora es el `AppTextEditor`). En macOS,
     QtPrintSupport arrastra `Cups::Cups`, que mete el `usr/include` del SDK y rompe libc++: el `CMakeLists` lo quita.
+    (aa) **Editor de G-code y exportación del CNC Job** (ítem 8). Como el original: entrar (E, Editar, el botón "Editor
+    de código G" del panel, el menú del Proyecto) abre una pestaña nueva y protegida "Editor de código" con `source_file`
+    (el G-code armado al crear el objeto, con los fragmentos de las Preferencias); la tabla elige en el texto el G-code
+    completo, la cabecera, el código de inicio o el de cada herramienta (subrayado); Ctrl+S o "Salir del editor"
+    preguntan si se guarda y lo guardado queda en `source_file` (que nada más usa: exportar arma el G-code de nuevo). El
+    botón de revisar el código abre una pestaña "Revisión de código" de solo lectura. Desvío: la pestaña cerrada se libera
+    (`deleteLater`). **Errores del port corregidos:** exportar no usaba los fragmentos (`cncjob_prepend` /
+    `cncjob_append` y los del objeto con "Usar fragmentos de código CNC"), ni `cncjob_footer` (`M02`), ni
+    `cncjob_line_ending` (`\r\n`), ni la regla de Roland_MDX_20 e ISEL_ICP_CNC (`include_header = False`: sin
+    cabecera), ni el paso de hpgl que deja enteras las coordenadas de `PA`; los botones de revisar el código y del editor
+    no hacían nada; el proyecto guardaba `append_snippet`/`prepend_snippet` vacíos en vez de los de las Preferencias
+    (`set_ui`). En Qt 6 `selectAll` emite `cursorPositionChanged` (en Qt 5 no): "Todo GCode" conserva el resaltado de la
+    línea como el original.
     (y) **Error del port corregido (volcador):** el diálogo "Acerca de" mostraba `<MagicMock name='app_url' ...>` en vez de
     `http://flatcam.org`, porque la aplicación simulada de `fc_runtime.py` no tenía `app_url`.
     (m) Errores del original que se reproducen a propósito en Isolation: la herramienta nueva tiene tipo `"           Iso"`
@@ -1005,7 +1027,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.772 casos de test** (`ctest`): 2.663 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 109 de la GUI;
+- **2.776 casos de test** (`ctest`): 2.663 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 113 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -1033,7 +1055,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.772 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.776 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -1302,8 +1324,8 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    objeto original (el original le resta los borrados y le cambia las unidades aunque no se guarde); cambiar el diámetro
    de varias herramientas a la vez las recorre en orden creciente (el original, en el orden de un `set` de Python); el
    panel de Transformaciones del editor de Gerber solo usa el origen o el centro de lo elegido; marcar área no escribe
-   las áreas en el canvas; la edición de una apertura desde la tabla del editor de Gerber no está. Falta el editor de
-   G-code (`appGCodeEditor`, editar un CNC Job avisa).
+   las áreas en el canvas; la edición de una apertura desde la tabla del editor de Gerber no está. ~~Editor de
+   G-code~~ (hecho: `editors/GCodeEditor.*`, `oracle_gcode_editor.py`, 11.12 aa).
 
 ## 14. Errores del FlatCAM original que el port reproduce a propósito (corregir al terminar el proyecto)
 
@@ -1431,6 +1453,15 @@ encontrar uno nuevo, agregarlo acá con su sección. Ya corregidos a pedido del 
   sobre un Script o Documento, "Activar/Desactivar dibujo", "Editar" y "Propiedades" quedan ocultos para todos los
   objetos el resto de la sesión (solo "Editar" se vuelve a mostrar); `read_only` no hace nada; Ctrl+G en la pestaña de un
   script abre un Gerber (su `objectName` es el nombre del objeto, sin "editor"); la carpeta de ejemplos lleva `\\`.
+- **Editor de G-code y exportación** (11.12 aa): "Insertar código" no hace nada (`insert_gcode` es `pass`) y el
+  segundo botón no está conectado; el nombre del panel no se usa; en un CNC Job leído de un proyecto elegir una
+  herramienta en la tabla falla (las claves de `cnc_tools` / `exc_cnc_tools` son textos: `KeyError` en geometría,
+  `TypeError` de `dec_format` en un taladrado) y no se selecciona nada; lo guardado del editor queda en `source_file`,
+  que no se exporta ni se guarda en el proyecto (solo sirve el botón Guardar de la pestaña); al vaciar la tabla con el
+  encabezado, la selección del texto se borra en una copia del cursor (queda); exportar un taladrado con Roland_MDX_20
+  o ISEL_ICP_CNC da solo los fragmentos (la rama sin cabecera suma los G-code de `cnc_tools`, vacío en un taladrado);
+  con la casilla de fragmentos apagada igual se usan los de las Preferencias (un fragmento vacío se reemplaza por el
+  de `cncjob_prepend` / `cncjob_append`); cada clic en "Revisar código" agrega otra pestaña.
 - **Imprimir a PDF** (sección 13, ítem 4): como en Film, el SVG lleva `b'` y `'` como texto y un objeto de un solo
   polígono no se recolorea; la opacidad es el alfa en hexadecimal tal cual (`"BF"`, que no es un valor válido de SVG); una
   Geometría usa el color de dibujo y la opacidad del objeto anterior; con un CNC Job elegido no se imprime nada

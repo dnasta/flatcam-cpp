@@ -126,6 +126,10 @@ public:
 
     /** @brief Qué hacer al apretar "Guardar código CNC" (lo fija la aplicación). */
     std::function<void()> onExport;
+    /** @brief Qué hacer al apretar "Revisar código CNC" (`on_review_code_click`). */
+    std::function<void()> onReview;
+    /** @brief Qué hacer al apretar "Editor de código G" (`object2editor`). */
+    std::function<void()> onEdit;
 };
 
 }  // namespace flatcam::gui

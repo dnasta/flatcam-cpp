@@ -606,6 +606,12 @@ CNCObjectUI::CNCObjectUI(QWidget* parent) : CNCObjectUIBase(parent) {
     connect(export_gcode_button, &QPushButton::clicked, this, [this] {
         if (onExport) onExport();
     });
+    connect(review_gcode_button, &QToolButton::clicked, this, [this] {
+        if (onReview) onReview();
+    });
+    connect(editor_button, &QPushButton::clicked, this, [this] {
+        if (onEdit) onEdit();
+    });
 }
 
 void CNCObjectUI::build(CNCJobObject& obj) {
