@@ -132,6 +132,7 @@ public:
     class GeoEditor* geoEditor{nullptr};  ///< `geo_editor`.
     class ExcEditor* excEditor{nullptr};  ///< `exc_editor`.
     class GrbEditor* grbEditor{nullptr};  ///< `grb_editor`.
+    class GCodeEditor* gcodeEditor{nullptr};  ///< `gcode_editor`.
     ///@}
 
     /** @brief Copia los Gerber, Excellon y Geometrías elegidos como `<nombre>_copy` (`on_copy_command`). @return Las copias. */
@@ -295,6 +296,13 @@ public:
      * @return `true` si se guardó.
      */
     bool exportGcode(class CNCJobObject* job, QString filename = QString());
+    /**
+     * @brief `on_review_code_click` del CNC Job: el G-code (con sus fragmentos) en una pestaña "Revisión de código" de
+     * solo lectura, sin guardar, abrir ni reemplazar.
+     * @param job Objeto.
+     * @return La pestaña.
+     */
+    class AppTextEditor* reviewGcode(class CNCJobObject* job);
 
     /**
      * @brief Abre la pestaña "Base de datos de herramientas" (`on_tools_database`); si ya está abierta no hace nada.

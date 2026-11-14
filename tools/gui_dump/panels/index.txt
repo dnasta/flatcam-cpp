@@ -43,4 +43,5 @@ GeoTextToolUI
 ExcEditorUI
 GrbEditorUI
 GrbTransformToolUI
+GCodeEditorUI
 PreferencesTabUI
