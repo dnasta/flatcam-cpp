@@ -12,6 +12,7 @@
 #include <QLocale>
 #include <QTextBlock>
 #include <QTextStream>
+#include <QRegularExpression>
 
 #include "gui/App.h"
 #include "gui/AppTextEditor.h"
@@ -20,6 +21,7 @@
 #include "gui/objects/DocumentObject.h"
 #include "gui/objects/GeometryObject.h"
 #include "gui/objects/ScriptObject.h"
+#include "gui/shell/FCShell.h"
 
 namespace flatcam::gui {
 
@@ -132,16 +134,42 @@ void App::onFileRunScript(const QString& name) {
         ui_->inform("[WARNING_NOTCL] " + tr_("Cancelled."));
         return;
     }
+    if (ui_->shell_dock->isHidden()) ui_->shell_dock->show();
+    // El archivo entero de una vez (exec_command). Desvío: si no se puede leer, el original sale del programa
+    // (sys.exit(2)); el port avisa.
     const auto text = readText(filename);
-    if (!text) return;
-    runScriptCode(*text);
+    if (!text) {
+        ui_->inform(QString("[ERROR_NOTCL] %1: %2").arg(tr_("Failed to open file"), filename));
+        return;
+    }
+    shell_->execCommand(*text);
+    ui_->inform("[success] " + tr_("TCL script file opened in Code Editor and executed."));
 }
 
 void App::runScriptCode(const QString& code) {
-    // handle_run_code / exec_command: muestran la consola Tcl y le pasan el texto.
-    (void)code;
+    // ScriptObject.handle_run_code: línea por línea, salteando las vacías y los comentarios; una línea que da error se
+    // junta con las siguientes (así se escriben las órdenes de varias líneas) y, si al final queda algo sin
+    // ejecutar, se muestra el errorInfo.
     if (ui_->shell_dock->isHidden()) ui_->shell_dock->show();
-    ui_->inform("[WARNING_NOTCL] La consola Tcl todavía no está en el port: el script no se ejecutó.");
+    shell_->openProcessing();
+    QString oldLine;
+    for (QString line : code.split(QRegularExpression("\r\n|\r|\n"))) {  // splitlines
+        if (line.startsWith('#') || line.isEmpty()) continue;
+#ifdef Q_OS_WIN
+        if (line.contains("open")) line.replace('\\', '/');
+#endif
+        const QString command = oldLine.isEmpty() ? line : oldLine + line + "\n";
+        bool ok = true;
+        const QString result = shell_->eval(command, &ok);
+        if (ok) {
+            if (result != "None") shell_->appendOutput(result + "\n");
+            oldLine.clear();
+        } else {
+            oldLine += line + "\n";
+        }
+    }
+    if (!oldLine.isEmpty()) shell_->appendError("ERROR: " + shell_->eval("set errorInfo") + "\n");
+    shell_->closeProcessing();
 }
 
 FlatCAMObj* App::newDocumentObject() { return addObject(std::make_unique<DocumentObject>("new_document", QString())); }

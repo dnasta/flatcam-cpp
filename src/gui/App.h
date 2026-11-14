@@ -498,6 +498,24 @@ public:
     void openUrl(const QString& url);
     /** @brief Reemplaza al navegador al abrir enlaces (para las pruebas). */
     std::function<void(const QString&)> urlOpener;
+
+    /** @brief Elige o deja de elegir un objeto en el árbol del Proyecto. @param obj Objeto. @param active Elegido. */
+    void setActive(FlatCAMObj* obj, bool active);
+    /** @brief La consola Tcl (`app.shell`). @return La consola. */
+    class FCShell* shell() const { return shell_; }
+    /**
+     * @brief `shell_message`: un mensaje en la consola (con el estilo de su nivel) y, con @p show, la muestra.
+     * @param msg Mensaje. @param show Mostrar la consola. @param style `out`, `err`, `warning`, `success` o `selected`.
+     * @param newLine Con un fin de línea.
+     */
+    void shellMessage(const QString& msg, bool show = false, const QString& style = "out", bool newLine = true);
+    /** @brief `toggle_shell_ui`: muestra u oculta la consola Tcl. */
+    void toggleShell();
+    /**
+     * @brief `save_to_file`: guarda un texto en HTML o texto plano (Guardar registro de la consola).
+     * @param html El HTML. @param text El texto. @param filename Archivo (vacío: se pregunta).
+     */
+    void saveToFile(const QString& html, const QString& text, QString filename = {});
     /**
      * @brief `final_save`: antes de salir, si hay cambios sin guardar pregunta si se guarda el proyecto.
      * @return `true` si se puede salir (se guardó, se eligió "No" o no había cambios); `false` con "Cancelar".
@@ -640,6 +658,8 @@ private:
     ObjectCollection* collection_;
     QString lastFolder_;
     QPointer<class BookmarkManager> bookTab_;  ///< `book_dialog_tab`.
+    class FCShell* shell_{nullptr};  ///< `shell` (dentro de `shell_dock`).
+    void info(const QString& msg);
     QPointer<class AppTextEditor> codeEditor_;  ///< La pestaña "Editor de código" (`text_editor_tab`).
     QString projectFilename_;
     QString dataPath_;
@@ -695,7 +715,6 @@ private:
     QMetaObject::Connection setOriginConnection_;
     void selectionAreaHandler(const QPointF& start, const QPointF& end, bool enclosure);
     void selectedMessage(FlatCAMObj* obj);
-    void setActive(FlatCAMObj* obj, bool active);
     void redrawSelectionShapes();
     std::vector<PlotGroup> selShapes_;                ///< Recuadros de selección (y el rectángulo que se arrastra).
     std::optional<PlotGroup> movingSelection_;        ///< Rectángulo que se está arrastrando.

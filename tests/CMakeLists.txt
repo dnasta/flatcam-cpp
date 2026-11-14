@@ -74,7 +74,7 @@ gtest_discover_tests(core_tests)
 
 # Tests de la interfaz (solo si se compila la GUI). Corren sin pantalla: plataforma "offscreen" de Qt.
 if(TARGET flatcam_gui)
-    add_executable(gui_tests gui/test_gui.cpp gui/test_preferences.cpp gui/test_scripts.cpp gui/test_gcode_editor.cpp gui/test_new_objects.cpp gui/test_bookmarks.cpp gui/test_drill_renumber.cpp gui/test_app_level.cpp)
+    add_executable(gui_tests gui/test_gui.cpp gui/test_preferences.cpp gui/test_scripts.cpp gui/test_gcode_editor.cpp gui/test_new_objects.cpp gui/test_bookmarks.cpp gui/test_drill_renumber.cpp gui/test_app_level.cpp gui/test_tcl_shell.cpp)
     target_link_libraries(gui_tests PRIVATE flatcam_gui GTest::gtest)
     target_include_directories(gui_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     target_compile_definitions(gui_tests PRIVATE FLATCAM_TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data")

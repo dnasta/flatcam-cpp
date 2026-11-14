@@ -5,9 +5,11 @@
 #include "gui/editors/GeoEditor.h"
 #include "gui/editors/GrbEditor.h"
 #include "gui/editors/GCodeEditor.h"
+#include "gui/shell/FCShell.h"
 #include "gui/AppTextEditor.h"
 
 #include <QClipboard>
+#include <QTimer>
 #include <QRegularExpression>
 #include <QMessageBox>
 #include <QPushButton>
@@ -120,6 +122,14 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     excAreas_ = new ExclusionAreasManager(ui_.get(), picker_, this);
     setupPreferences();  // app.defaults: antes que las herramientas
     ToolsDatabase::ensureFile(dataPath());  // tools_db.FlatDB vacío si no existe
+    // La consola Tcl va primero: las herramientas escriben en ella (app.inform -> shell_message).
+    shell_ = new FCShell(this, Preferences::version());
+    ui_->shell_dock->setWidget(shell_);
+    connect(ui_.get(), &MainGUI::informed, this, [this](const QString& m) { info(m); });
+    // toggle_shell_ui: Herramientas -> Línea de comandos, el botón de la barra y el ícono de la barra de estado.
+    for (QAction* a : {ui_->menutoolshell, ui_->shell_btn}) connect(a, &QAction::triggered, this, [this] { toggleShell(); });
+    connect(ui_->shell_status_label, &FCLabel::clicked, this, [this] { toggleShell(); });
+    if (defBool("global_shell_at_startup")) ui_->shell_dock->show();
     // Las herramientas (install_tools): sus paneles viven mientras viva la ventana.
     nccTool = new NccTool(this, ui_.get());
     paintTool = new PaintTool(this, ui_.get());
@@ -1311,6 +1321,7 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
         case Qt::Key_B: newGerberObject(); return true;
         case Qt::Key_D: newDocumentObject(); return true;
         case Qt::Key_G: ui->grid_snap_btn->trigger(); return true;
+        case Qt::Key_S: toggleShell(); return true;  // la consola Tcl
         case Qt::Key_J: onJumpTo(); return true;
         case Qt::Key_L: newExcellonObject(); return true;
         case Qt::Key_N: newGeometryObject(); return true;
@@ -1379,6 +1390,71 @@ bool App::eventFilter(QObject* obj, QEvent* ev) {
         }
     }
     return QObject::eventFilter(obj, ev);
+}
+
+void App::info(const QString& msg) {
+    // App.info: además de la barra de estado, el mensaje va a la consola con el estilo de su nivel; [ERROR] y
+    // [WARNING] (los que no son _NOTCL) la muestran.
+    static const QRegularExpression re(R"(\[(.*)\](.*))", QRegularExpression::DotMatchesEverythingOption);
+    const auto m = re.match(msg);
+    if (!m.hasMatch()) {
+        if (!msg.isEmpty()) shellMessage(msg);
+        return;
+    }
+    const QString level = m.captured(1).toLower();
+    if (level == "error") shellMessage(msg, true, "err");
+    else if (level == "warning") shellMessage(msg, true, "warning");
+    else if (level == "error_notcl") shellMessage(msg, false, "err");
+    else if (level == "warning_notcl") shellMessage(msg, false, "warning");
+    else if (level == "success") shellMessage(msg, false, "success");
+    else if (level == "selected") shellMessage(msg, false, "selected");
+    else shellMessage(msg);
+}
+
+void App::shellMessage(const QString& msg, bool show, const QString& style, bool newLine) {
+    if (show) ui_->shell_dock->show();
+    if (!shell_) return;
+    const QString text = msg + (newLine ? "\n" : "");
+    if (style == "err") shell_->appendError(text);
+    else if (style == "warning") shell_->appendWarning(text);
+    else if (style == "success") shell_->appendSuccess(text);
+    else if (style == "selected") shell_->appendSelected(text);
+    else shell_->appendOutput(text);
+}
+
+void App::toggleShell() {
+    if (ui_->shell_dock->isVisible()) {
+        ui_->shell_dock->hide();
+        ui_->plotCanvas()->setFocus();
+    } else {
+        ui_->shell_dock->show();
+        QTimer::singleShot(0, this, [this] { shell_->commandLine()->setFocus(); });
+    }
+}
+
+void App::saveToFile(const QString& html, const QString& text, QString filename) {
+    if (filename.isEmpty()) {
+        // "file_" con la fecha (sin ':' ni '-', '_' en vez del espacio) en la última carpeta de guardado.
+        const QDateTime now = QDateTime::currentDateTime();
+        const QString date = now.time().msec() == 0 ? QString() : now.toString("yyyyMMdd_HHmmss");
+        const JsonValue& last = appDefaults()["global_last_save_folder"];
+        const QString dir = last.isString() ? QString::fromStdString(last.text()) : dataPath();
+        filename = QFileDialog::getSaveFileName(ui_.get(), tr_("Save to file"), dir + "/file_" + date,
+                                                "HTML File .html (*.html);;TXT File .txt (*.txt);;All Files (*.*)");
+    }
+    if (filename.isEmpty()) {
+        ui_->inform("[WARNING_NOTCL] " + tr_("Cancelled."));
+        return;
+    }
+    QFile f(filename);
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
+        ui_->inform("[WARNING] " + tr_("Permission denied, saving not possible.\n"
+                                       "Most likely another app is holding the file open and not accessible."));
+        return;
+    }
+    // Con extensión .html, el HTML; si no, el texto.
+    f.write((filename.section('.', -1).toLower() == "html" ? html : text).toUtf8());
+    ui_->inform(QString("[success] %1: %2").arg(tr_("Exported file to"), filename));
 }
 
 }  // namespace flatcam::gui

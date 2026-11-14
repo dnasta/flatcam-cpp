@@ -44,7 +44,7 @@ def main():
         f.write('<!DOCTYPE RCC>\n<!-- ARCHIVO GENERADO por tools/gui_dump/extract_resources.py - no editar a mano. -->\n')
         f.write('<RCC version="1.0">\n<qresource prefix="/">\n')
         for rel in files + ["es.json", "factory_defaults.json", "preferences_fields.json", "shortcuts.json",
-                               "tcl_keywords.json"]:
+                               "tcl_keywords.json", "tcl_commands.json"]:
             f.write("    <file>%s</file>\n" % rel)
         f.write("</qresource>\n</RCC>\n")
     print("%d archivos y %d traducciones en %s" % (len(files), len(fr.SPANISH), OUT))

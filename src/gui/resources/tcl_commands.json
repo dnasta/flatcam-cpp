@@ -1,0 +1,3916 @@
+{
+ "commands": [
+  {
+   "class": "TclCommandAddCircle",
+   "base": "TclCommand",
+   "aliases": [
+    "add_circle"
+   ],
+   "description": "-- Creates a circle in the given Geometry object.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ],
+    [
+     "center_x",
+     "float"
+    ],
+    [
+     "center_y",
+     "float"
+    ],
+    [
+     "radius",
+     "float"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "name",
+    "center_x",
+    "center_y",
+    "radius"
+   ],
+   "help": {
+    "main": "Creates a circle in the given Geometry object.",
+    "args": [
+     [
+      "name",
+      "Name of the geometry object to which to append the circle."
+     ],
+     [
+      "center_x",
+      "X coordinate of the center of the circle."
+     ],
+     [
+      "center_y",
+      "Y coordinates of the center of the circle."
+     ],
+     [
+      "radius",
+      "Radius of the circle."
+     ]
+    ],
+    "examples": [
+     "add_circle geo_name 1.0 2.0 3"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandAddPolygon",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "add_polygon",
+    "add_poly"
+   ],
+   "description": "-- Creates a polygon in the given Geometry object.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Creates a polygon in the given Geometry object.",
+    "args": [
+     [
+      "name",
+      "Name of the Geometry object to which to append the polygon."
+     ],
+     [
+      "xi, yi",
+      "Coordinates of points in the polygon."
+     ]
+    ],
+    "examples": [
+     "add_polygon <name> <x0> <y0> <x1> <y1> <x2> <y2> [x3 y3 [...]]"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandAddPolyline",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "add_polyline"
+   ],
+   "description": "-- Creates a polyline in the given Geometry object.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Creates a polyline in the given Geometry object.",
+    "args": [
+     [
+      "name",
+      "Name of the Geometry object to which to append the polyline."
+     ],
+     [
+      "xi, yi",
+      "Coordinates of points in the polyline."
+     ]
+    ],
+    "examples": [
+     "add_polyline <name> <x0> <y0> <x1> <y1> <x2> <y2> [x3 y3 [...]]"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandAddRectangle",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "add_rectangle"
+   ],
+   "description": "-- Creates a rectangle in the given Geometry object.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ],
+    [
+     "x0",
+     "float"
+    ],
+    [
+     "y0",
+     "float"
+    ],
+    [
+     "x1",
+     "float"
+    ],
+    [
+     "y1",
+     "float"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "name",
+    "x0",
+    "y0",
+    "x1",
+    "y1"
+   ],
+   "help": {
+    "main": "Creates a rectangle in the given Geometry object.",
+    "args": [
+     [
+      "name",
+      "Name of the Geometry object in which to add the rectangle."
+     ],
+     [
+      "x0 y0",
+      "Bottom left corner coordinates."
+     ],
+     [
+      "x1 y1",
+      "Top right corner coordinates."
+     ]
+    ],
+    "examples": [
+     "add_rectangle geo_name 0 0 10 10"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandAlignDrill",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "aligndrill"
+   ],
+   "description": "-- Create an Excellon object with drills for alignment.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "box",
+     "str"
+    ],
+    [
+     "axis",
+     "str"
+    ],
+    [
+     "holes",
+     "str"
+    ],
+    [
+     "grid",
+     "float"
+    ],
+    [
+     "minoffset",
+     "float"
+    ],
+    [
+     "gridoffset",
+     "float"
+    ],
+    [
+     "axisoffset",
+     "float"
+    ],
+    [
+     "dia",
+     "float"
+    ],
+    [
+     "dist",
+     "float"
+    ],
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "required": [
+    "name",
+    "axis"
+   ],
+   "help": {
+    "main": "Create an Excellon object with drills for alignment.",
+    "args": [
+     [
+      "name",
+      "Name of the object (Gerber or Excellon) to mirror."
+     ],
+     [
+      "dia",
+      "Tool diameter"
+     ],
+     [
+      "box",
+      "Name of object which act as box (cutout for example.)"
+     ],
+     [
+      "holes",
+      "Tuple of tuples where each tuple it is a set of x, y coordinates. E.g: (x0, y0), (x1, y1), ... "
+     ],
+     [
+      "grid",
+      "Aligning to grid, for those, who have aligning pinsinside table in grid (-5,0),(5,0),(15,0)..."
+     ],
+     [
+      "gridoffset",
+      "offset of grid from 0 position."
+     ],
+     [
+      "minoffset",
+      "min and max distance between align hole and pcb."
+     ],
+     [
+      "axisoffset",
+      "Offset on second axis before aligment holes"
+     ],
+     [
+      "axis",
+      "Mirror axis parallel to the X or Y axis."
+     ],
+     [
+      "dist",
+      "Distance of the mirror axis to the X or Y axis."
+     ],
+     [
+      "outname",
+      "Name of the resulting Excellon object."
+     ]
+    ],
+    "examples": [
+     "aligndrill my_object -axis X -box my_object -dia 3.125 -grid 1 -gridoffset 0 -minoffset 2 -axisoffset 2"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandAlignDrillGrid",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "aligndrillgrid"
+   ],
+   "description": "-- Create an Excellon object with drills for alignment arranged in a grid.",
+   "arg_names": [],
+   "option_types": [
+    [
+     "dia",
+     "float"
+    ],
+    [
+     "gridx",
+     "float"
+    ],
+    [
+     "gridoffsetx",
+     "float"
+    ],
+    [
+     "gridy",
+     "float"
+    ],
+    [
+     "gridoffsety",
+     "float"
+    ],
+    [
+     "columns",
+     "int"
+    ],
+    [
+     "rows",
+     "int"
+    ],
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "required": [
+    "gridx",
+    "gridy",
+    "columns",
+    "rows"
+   ],
+   "help": {
+    "main": "Create an Excellon object with drills for alignment arranged in a grid.",
+    "args": [
+     [
+      "dia",
+      "Tool diameter."
+     ],
+     [
+      "gridx",
+      "Grid size in X axis."
+     ],
+     [
+      "gridoffsetx",
+      "Move grid  from origin."
+     ],
+     [
+      "gridy",
+      "Grid size in Y axis."
+     ],
+     [
+      "gridoffsety",
+      "Move grid  from origin."
+     ],
+     [
+      "colums",
+      "Number of grid holes on X axis."
+     ],
+     [
+      "rows",
+      "Number of grid holes on Y axis."
+     ],
+     [
+      "outname",
+      "Name of the object to create."
+     ]
+    ],
+    "examples": [
+     "aligndrillgrid -rows 2 -columns 2 -gridoffsetx 10 -gridoffsety 10 -gridx 2.54 -gridy 5.08"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandBbox",
+   "base": "TclCommand",
+   "aliases": [
+    "bounding_box",
+    "bbox"
+   ],
+   "description": "-- Creates a rectangular Geometry object that surrounds the object.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "outname",
+     "str"
+    ],
+    [
+     "margin",
+     "float"
+    ],
+    [
+     "rounded",
+     "str"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Creates a rectangular Geometry object that surrounds the object.",
+    "args": [
+     [
+      "name",
+      "Object name for which to create bounding box. String"
+     ],
+     [
+      "margin",
+      "Distance of the edges of the box to the nearest polygon.Float number."
+     ],
+     [
+      "rounded",
+      "If the bounding box has to have rounded corners their radius is equal to the margin. True (1) or False (0)."
+     ],
+     [
+      "outname",
+      "Name of the resulting Geometry object. String."
+     ]
+    ],
+    "examples": [
+     "bbox name -outname name_bbox"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandBounds",
+   "base": "TclCommand",
+   "aliases": [
+    "get_bounds",
+    "bounds"
+   ],
+   "description": "-- Return in the console a list of bounds values for a list of objects.",
+   "arg_names": [
+    [
+     "objects",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [],
+   "help": {
+    "main": "Will return a list of bounds values, each set of bound values is a list itself: [xmin, ymin, xmax, ymax] corresponding to each of the provided objects.",
+    "args": [
+     [
+      "objects",
+      "A list of object names separated by comma without spaces."
+     ]
+    ],
+    "examples": [
+     "bounds a_obj.GTL,b_obj.DRL"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandClearShell",
+   "base": "TclCommand",
+   "aliases": [
+    "clear"
+   ],
+   "description": "-- Clear the text in the Tcl Shell.",
+   "arg_names": [],
+   "option_types": [],
+   "required": [],
+   "help": {
+    "main": "Clear the text in the Tcl Shell.",
+    "args": [],
+    "examples": [
+     "clear"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandCncjob",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "cncjob"
+   ],
+   "description": "-- Generates a CNC Job object from a Geometry Object.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "dia",
+     "float"
+    ],
+    [
+     "z_cut",
+     "float"
+    ],
+    [
+     "z_move",
+     "float"
+    ],
+    [
+     "feedrate",
+     "float"
+    ],
+    [
+     "feedrate_z",
+     "float"
+    ],
+    [
+     "feedrate_rapid",
+     "float"
+    ],
+    [
+     "extracut_length",
+     "float"
+    ],
+    [
+     "dpp",
+     "float"
+    ],
+    [
+     "toolchangez",
+     "float"
+    ],
+    [
+     "toolchangexy",
+     "str"
+    ],
+    [
+     "startz",
+     "float"
+    ],
+    [
+     "endz",
+     "float"
+    ],
+    [
+     "endxy",
+     "str"
+    ],
+    [
+     "spindlespeed",
+     "int"
+    ],
+    [
+     "dwelltime",
+     "float"
+    ],
+    [
+     "pp",
+     "str"
+    ],
+    [
+     "muted",
+     "str"
+    ],
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "required": [],
+   "help": {
+    "main": "Generates a CNC Job object from a Geometry Object.",
+    "args": [
+     [
+      "name",
+      "Name of the source object."
+     ],
+     [
+      "dia",
+      "Tool diameter to show on screen."
+     ],
+     [
+      "z_cut",
+      "Z-axis cutting position."
+     ],
+     [
+      "z_move",
+      "Z-axis moving position."
+     ],
+     [
+      "feedrate",
+      "Moving speed on X-Y plane when cutting."
+     ],
+     [
+      "feedrate_z",
+      "Moving speed on Z plane when cutting."
+     ],
+     [
+      "feedrate_rapid",
+      "Rapid moving at speed when cutting."
+     ],
+     [
+      "extracut_length",
+      "The value for extra cnccut over the first point in path,in the job end; float"
+     ],
+     [
+      "dpp",
+      "If present then use multidepth cnc cut. Height of one layer for multidepth."
+     ],
+     [
+      "toolchangez",
+      "Z distance for toolchange (example: 30.0).\nIf used in the command then a toolchange event will be included in gcode"
+     ],
+     [
+      "toolchangexy",
+      "The X,Y coordinates at Toolchange event in format (x, y) (example: (30.0, 15.2) or without parenthesis like: 0.3,1.0). WARNING: no spaces allowed in the value."
+     ],
+     [
+      "startz",
+      "Height before the first move."
+     ],
+     [
+      "endz",
+      "Height where the last move will park."
+     ],
+     [
+      "endxy",
+      "The X,Y coordinates at job end in format (x, y) (example: (2.0, 1.2) or without parenthesislike: 0.3,1.0). WARNING: no spaces allowed in the value."
+     ],
+     [
+      "spindlespeed",
+      "Speed of the spindle in rpm (example: 4000)."
+     ],
+     [
+      "dwelltime",
+      "Time to pause to allow the spindle to reach the full speed.\nIf it is not used in command then it will not be included"
+     ],
+     [
+      "outname",
+      "Name of the resulting Geometry object."
+     ],
+     [
+      "pp",
+      "Name of the Geometry preprocessor. No quotes, case sensitive"
+     ],
+     [
+      "muted",
+      "It will not put errors in the Shell. Can be True (1) or False (0)"
+     ]
+    ],
+    "examples": [
+     "cncjob geo_name -dia 0.5 -z_cut -1.7 -z_move 2 -feedrate 120 -pp default"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandCopperClear",
+   "base": "TclCommand",
+   "aliases": [
+    "ncc_clear",
+    "ncc"
+   ],
+   "description": "-- Clear excess copper.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "tooldia",
+     "str"
+    ],
+    [
+     "overlap",
+     "float"
+    ],
+    [
+     "order",
+     "str"
+    ],
+    [
+     "margin",
+     "float"
+    ],
+    [
+     "method",
+     "str"
+    ],
+    [
+     "connect",
+     "str"
+    ],
+    [
+     "contour",
+     "str"
+    ],
+    [
+     "offset",
+     "float"
+    ],
+    [
+     "rest",
+     "str"
+    ],
+    [
+     "all",
+     "int"
+    ],
+    [
+     "ref",
+     "str"
+    ],
+    [
+     "box",
+     "str"
+    ],
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Clear excess copper in polygons. Basically it's a negative Paint.",
+    "args": [
+     [
+      "name",
+      "Name of the source Geometry object. String."
+     ],
+     [
+      "tooldia",
+      "Diameter of the tool to be used. Can be a comma separated list of diameters.\nWARNING: No space is allowed between tool diameters. E.g: correct: 0.5,1 / incorrect: 0.5, 1"
+     ],
+     [
+      "overlap",
+      "Percentage of tool diameter to overlap current pass over previous pass. Float [0, 99.9999]\nE.g: for a 25% from tool diameter overlap use -overlap 25"
+     ],
+     [
+      "margin",
+      "Bounding box margin. Float number."
+     ],
+     [
+      "order",
+      "Can have the values: \"no\", \"fwd\" and \"rev\". String.It is useful when there are multiple tools in tooldia parameter.\"no\" -> the order used is the one provided.\"fwd\" -> tools are ordered from smallest to biggest.\"rev\" -> tools are ordered from biggest to smallest."
+     ],
+     [
+      "method",
+      "Algorithm for copper clearing. Can be: \"standard\", \"seed\" or \"lines\"."
+     ],
+     [
+      "connect",
+      "Draw lines to minimize tool lifts. True (1) or False (0)"
+     ],
+     [
+      "contour",
+      "Cut around the perimeter of the painting. True (1) or False (0)"
+     ],
+     [
+      "rest",
+      "Use rest-machining. True (1) or False (0)"
+     ],
+     [
+      "offset",
+      "If used, the copper clearing will finish to a distance from copper features. Float number."
+     ],
+     [
+      "all",
+      "If used will copper clear the whole object. Either \"-all\" or \"-box <value>\" has to be used."
+     ],
+     [
+      "box",
+      "Name of the object to be used as reference. Either \"-all\" or \"-box <value>\" has to be used. String."
+     ],
+     [
+      "outname",
+      "Name of the resulting Geometry object. String. No spaces."
+     ]
+    ],
+    "examples": [
+     "ncc obj_name -tooldia 0.3,1 -overlap 10 -margin 1.0 -method 'lines' -all"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandCutout",
+   "base": "TclCommand",
+   "aliases": [
+    "cutout"
+   ],
+   "description": "-- Creates board cutout from an object (Gerber or Geometry) with a rectangular shape.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "dia",
+     "float"
+    ],
+    [
+     "margin",
+     "float"
+    ],
+    [
+     "gapsize",
+     "float"
+    ],
+    [
+     "gaps",
+     "str"
+    ],
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Creates board cutout from an object (Gerber or Geometry) with a rectangular shape.",
+    "args": [
+     [
+      "name",
+      "Name of the object."
+     ],
+     [
+      "dia",
+      "Tool diameter."
+     ],
+     [
+      "margin",
+      "Margin over bounds."
+     ],
+     [
+      "gapsize",
+      "Size of gap."
+     ],
+     [
+      "gaps",
+      "Type of gaps. Can be: 'tb' = top-bottom, 'lr' = left-right and '4' = one each side."
+     ],
+     [
+      "outname",
+      "Name of the object to create."
+     ]
+    ],
+    "examples": [
+     "cutout new_geo -dia 1.2 -margin 0.1 -gapsize 1 -gaps \"tb\" -outname cut_geo"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandDelete",
+   "base": "TclCommand",
+   "aliases": [
+    "delete",
+    "del"
+   ],
+   "description": "-- Deletes the given object. If no name is given will delete all objects.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "f",
+     "str"
+    ]
+   ],
+   "required": [],
+   "help": {
+    "main": "Deletes the given object. If no name is given will delete all objects.",
+    "args": [
+     [
+      "name",
+      "Name of the Object."
+     ],
+     [
+      "f",
+      "Use this parameter to force deletion.\nCan be used without value which will be auto assumed to be True.\nOr it can have a value: True (1) or False (0)."
+     ]
+    ],
+    "examples": [
+     "del new_geo -f True\ndelete new_geo -f 1\ndel new_geo -f\ndel new_geo"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandDrillcncjob",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "drillcncjob"
+   ],
+   "description": "-- Generates a Drill CNC Job object from a Excellon Object.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "drilled_dias",
+     "str"
+    ],
+    [
+     "drillz",
+     "float"
+    ],
+    [
+     "dpp",
+     "float"
+    ],
+    [
+     "travelz",
+     "float"
+    ],
+    [
+     "feedrate_z",
+     "float"
+    ],
+    [
+     "feedrate_rapid",
+     "float"
+    ],
+    [
+     "spindlespeed",
+     "int"
+    ],
+    [
+     "toolchangez",
+     "float"
+    ],
+    [
+     "toolchangexy",
+     "str"
+    ],
+    [
+     "startz",
+     "float"
+    ],
+    [
+     "endz",
+     "float"
+    ],
+    [
+     "endxy",
+     "str"
+    ],
+    [
+     "dwelltime",
+     "float"
+    ],
+    [
+     "pp",
+     "str"
+    ],
+    [
+     "opt_type",
+     "str"
+    ],
+    [
+     "diatol",
+     "float"
+    ],
+    [
+     "muted",
+     "str"
+    ],
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Generates a Drill CNC Job from a Excellon Object.",
+    "args": [
+     [
+      "name",
+      "Name of the source object."
+     ],
+     [
+      "drilled_dias",
+      "Comma separated tool diameters of the drills to be drilled (example: 0.6,1.0 or 3.125). WARNING: No space allowed"
+     ],
+     [
+      "drillz",
+      "Drill depth into material (example: -2.0). Negative value."
+     ],
+     [
+      "dpp",
+      "Progressive drilling into material with a specified step (example: 0.7). Positive value."
+     ],
+     [
+      "travelz",
+      "Travel distance above material (example: 2.0)."
+     ],
+     [
+      "feedrate_z",
+      "Drilling feed rate. It is the speed on the Z axis."
+     ],
+     [
+      "feedrate_rapid",
+      "Rapid drilling feed rate."
+     ],
+     [
+      "spindlespeed",
+      "Speed of the spindle in rpm (example: 4000)."
+     ],
+     [
+      "toolchangez",
+      "Z distance for toolchange (example: 30.0).\nIf used in the command then a toolchange event will be included in gcode"
+     ],
+     [
+      "toolchangexy",
+      "The X,Y coordinates at Toolchange event in format (x, y) (example: (30.0, 15.2) or without parenthesis like: 0.3,1.0). WARNING: no spaces allowed in the value."
+     ],
+     [
+      "startz",
+      "The Z coordinate at job start (example: 30.0)."
+     ],
+     [
+      "endz",
+      "The Z coordinate at job end (example: 30.0)."
+     ],
+     [
+      "endxy",
+      "The X,Y coordinates at job end in format (x, y) (example: (2.0, 1.2) or without parenthesislike: 0.3,1.0). WARNING: no spaces allowed in the value."
+     ],
+     [
+      "dwelltime",
+      "Time to pause to allow the spindle to reach the full speed.\nIf it is not used in command then it will not be included"
+     ],
+     [
+      "pp",
+      "This is the Excellon preprocessor name: case_sensitive, no_quotes"
+     ],
+     [
+      "opt_type",
+      "Name of move optimization type. B by default for Basic OR-Tools, M for Metaheuristic OR-ToolsT from Travelling Salesman Algorithm. B and M works only for 64bit version of FlatCAM and T works only for 32bit version of FlatCAM"
+     ],
+     [
+      "diatol",
+      "Tolerance. Percentange (0.0 ... 100.0) within which dias in drilled_dias will be judged to be the same as the ones in the tools from the Excellon object. E.g: if in drill_dias we have a diameter with value 1.0, in the Excellon we have a tool with dia = 1.05 and we set a tolerance diatol = 5.0 then the drills with the dia = (0.95 ... 1.05) in Excellon will be processed. Float number."
+     ],
+     [
+      "muted",
+      "It will not put errors in the Shell or status bar. Can be True (1) or False (0)."
+     ],
+     [
+      "outname",
+      "Name of the resulting Geometry object."
+     ]
+    ],
+    "examples": [
+     "drillcncjob test.TXT -drillz -1.5 -travelz 14 -feedrate_z 222 -feedrate_rapid 456 -spindlespeed 777 -toolchangez 33 -endz 22 -pp default\nUsage of -feedrate_rapid matter only when the preprocessor is using it, like -marlin-.",
+     "drillcncjob test.DRL -drillz -1.7 -dpp 0.5 -travelz 2 -feedrate_z 800 -endxy 3,3"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandExportDXF",
+   "base": "TclCommand",
+   "aliases": [
+    "export_dxf",
+    "edxf"
+   ],
+   "description": "-- Export a Geometry object as a DXF File.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ],
+    [
+     "filename",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "obj_name"
+   ],
+   "help": {
+    "main": "Export a Geometry object as a DXF File.",
+    "args": [
+     [
+      "name",
+      "Name of the Geometry object to export."
+     ],
+     [
+      "filename",
+      "Absolute path to file to export.\nWARNING: no spaces are allowed. If unsure enclose the entire path with quotes."
+     ]
+    ],
+    "examples": [
+     "export_dxf my_geo path/my_file.dxf",
+     "export_dxf my_geo D:/my_file.dxf"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandExportExcellon",
+   "base": "TclCommand",
+   "aliases": [
+    "export_exc",
+    "ee",
+    "export_excellon"
+   ],
+   "description": "-- Export a Excellon object as a Excellon File.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ],
+    [
+     "filename",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Export a Excellon object as a Excellon File.",
+    "args": [
+     [
+      "name",
+      "Name of the Excellon object to export."
+     ],
+     [
+      "filename",
+      "Absolute path to file to export.\nWARNING: no spaces are allowed. If unsure enclose the entire path with quotes."
+     ]
+    ],
+    "examples": [
+     "export_excellon my_excellon path/my_file.drl",
+     "export_excellon My_Excellon D:/drill_file.DRL"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandExportGcode",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "export_gcode"
+   ],
+   "description": "-- Return Gcode into console output.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ],
+    [
+     "preamble",
+     "str"
+    ],
+    [
+     "postamble",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Export gcode into console output.",
+    "args": [
+     [
+      "name",
+      "Name of the source Geometry object. Required."
+     ],
+     [
+      "preamble",
+      "Prepend GCode to the original GCode."
+     ],
+     [
+      "postamble",
+      "Append GCode o the original GCode."
+     ]
+    ],
+    "examples": [
+     "export_gcode geo_name -preamble \"G01 X10 Y10\" -postamble \"G00 X20 Y20\nM04\""
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandExportGerber",
+   "base": "TclCommand",
+   "aliases": [
+    "export_grb",
+    "egr",
+    "export_gerber"
+   ],
+   "description": "-- Export a Gerber object as a Gerber File.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ],
+    [
+     "filename",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "obj_name"
+   ],
+   "help": {
+    "main": "Export a Gerber Object as a Gerber File.",
+    "args": [
+     [
+      "name",
+      "Name of the object to export. Required."
+     ],
+     [
+      "filename",
+      "Absolute path to file to export.\nWARNING: no spaces are allowed. If unsure enclose the entire path with quotes."
+     ]
+    ],
+    "examples": [
+     "export_gerber my_gerber path/my_file.gbr"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandExportSVG",
+   "base": "TclCommand",
+   "aliases": [
+    "export_svg"
+   ],
+   "description": "-- Export a Geometry object as a SVG File.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ],
+    [
+     "filename",
+     "str"
+    ],
+    [
+     "scale_stroke_factor",
+     "float"
+    ]
+   ],
+   "option_types": [
+    [
+     "scale_stroke_factor",
+     "float"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Export a Geometry object as a SVG File.",
+    "args": [
+     [
+      "name",
+      "Name of the object export. Required."
+     ],
+     [
+      "filename",
+      "Absolute path to file to export.\nWARNING: no spaces are allowed. If unsure enclose the entire path with quotes."
+     ],
+     [
+      "scale_stroke_factor",
+      "Multiplication factor used for scaling line widths during export."
+     ]
+    ],
+    "examples": [
+     "export_svg my_geometry my_file.svg"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandExteriors",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "exteriors",
+    "ext"
+   ],
+   "description": "-- Get exteriors of polygons from a Geometry object and from them create a new Geometry object.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Get exteriors of polygons from a Geometry object and from them create a new Geometry object.",
+    "args": [
+     [
+      "name",
+      "Name of the source Geometry object. Required."
+     ],
+     [
+      "outname",
+      "Name of the resulting Geometry object."
+     ]
+    ],
+    "examples": [
+     "ext geo_source_name -outname \"final_geo\""
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandFollow",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "follow"
+   ],
+   "description": "-- Creates a Geometry object following Gerber paths.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Creates a Geometry object following Gerber paths.",
+    "args": [
+     [
+      "name",
+      "Object name to follow. Required."
+     ],
+     [
+      "outname",
+      "Name of the resulting Geometry object."
+     ]
+    ],
+    "examples": [
+     "follow name -outname \"name_follow\""
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandGeoCutout",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "geocutout",
+    "geoc"
+   ],
+   "description": "-- Creates board cutout from an object (Gerber or Geometry) of any shape.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "dia",
+     "float"
+    ],
+    [
+     "margin",
+     "float"
+    ],
+    [
+     "gapsize",
+     "float"
+    ],
+    [
+     "gaps",
+     "str"
+    ],
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Creates board cutout from an object (Gerber or Geometry) of any shape.",
+    "args": [
+     [
+      "name",
+      "Name of the object to be cutout. Required"
+     ],
+     [
+      "dia",
+      "Tool diameter."
+     ],
+     [
+      "margin",
+      "Margin over bounds."
+     ],
+     [
+      "gapsize",
+      "size of gap."
+     ],
+     [
+      "gaps",
+      "type of gaps. Can be: 'tb' = top-bottom, 'lr' = left-right, '2tb' = 2top-2bottom, '2lr' = 2left-2right, '4' = 4 cuts, '8' = 8 cuts"
+     ],
+     [
+      "outname",
+      "Name of the resulting Geometry object."
+     ]
+    ],
+    "examples": [
+     "      #isolate margin for example from Fritzing arduino shield or any svg etc\n      isolate BCu_margin -dia 3 -overlap 1\n\n      #create exteriors from isolated object\n      exteriors BCu_margin_iso -outname BCu_margin_iso_exterior\n\n      #delete isolated object if you dond need id anymore\n      delete BCu_margin_iso\n\n      #finally cut holding gaps\n      geocutout BCu_margin_iso_exterior -dia 3 -gapsize 0.6 -gaps 4 -outname cutout_geo\n"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandGeoUnion",
+   "base": "TclCommand",
+   "aliases": [
+    "geo_union"
+   ],
+   "description": "-- Run the Union (join) geometry operation on the elements of a Geometry object.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Runs a union operation (addition) on the components of the geometry object. For example, if it contains 2 intersecting polygons, this operation adds them intoa single larger polygon.",
+    "args": [
+     [
+      "name",
+      "Name of the Geometry Object that contain the components to be joined. Required."
+     ]
+    ],
+    "examples": [
+     "geo_union target_geo"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandGetNames",
+   "base": "TclCommand",
+   "aliases": [
+    "get_names"
+   ],
+   "description": "-- Return to TCL the list of the project objects names as a string with names separated by the '\\n' char.",
+   "arg_names": [],
+   "option_types": [],
+   "required": [],
+   "help": {
+    "main": "Lists the names of objects in the project. It returns a string with names separated by \"\\n\" character",
+    "args": [],
+    "examples": [
+     "get_names"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandGetPath",
+   "base": "TclCommand",
+   "aliases": [
+    "get_path"
+   ],
+   "description": "-- Get the default Tcl Shell folder path.",
+   "arg_names": [],
+   "option_types": [],
+   "required": [],
+   "help": {
+    "main": "Will get the folder path used as a fallback path for opening files.",
+    "args": [],
+    "examples": [
+     "get_path"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandGetSys",
+   "base": "TclCommand",
+   "aliases": [
+    "get_sys",
+    "getsys"
+   ],
+   "description": "-- Returns to TCL the value for the entered system variable.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Returns to TCL the value for the entered system variable.",
+    "args": [
+     [
+      "name",
+      "Name of the system variable. Required."
+     ]
+    ],
+    "examples": [
+     "get_sys excellon_zeros"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandHelp",
+   "base": "TclCommand",
+   "aliases": [
+    "help"
+   ],
+   "description": "-- PRINTS to TCL the HELP.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [],
+   "help": {
+    "main": "Returns to TCL the value for the entered system variable.",
+    "args": [
+     [
+      "name",
+      "Name of a Tcl Command for which to display the Help."
+     ]
+    ],
+    "examples": [
+     "help add_circle"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandImportSvg",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "import_svg"
+   ],
+   "description": "-- Import a SVG file as a Geometry (or Gerber) Object.",
+   "arg_names": [
+    [
+     "filename",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "type",
+     "str"
+    ],
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "required": [
+    "filename"
+   ],
+   "help": {
+    "main": "Import a SVG file as a Geometry (or Gerber) Object.",
+    "args": [
+     [
+      "filename",
+      "Absolute path to file to open. Required.\nWARNING: no spaces are allowed. If unsure enclose the entire path with quotes."
+     ],
+     [
+      "type",
+      "Import as a Gerber or Geometry (default) object. Values can be: \"geometry\" or \"gerber\""
+     ],
+     [
+      "outname",
+      "Name of the resulting Geometry object."
+     ]
+    ],
+    "examples": [
+     "import_svg D:\\my_beautiful_svg_file.SVG"
+    ]
+   },
+   "registered": false
+  },
+  {
+   "class": "TclCommandInteriors",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "interiors"
+   ],
+   "description": "-- Create a new Geometry object with the 'interiors' geo elements of the source object.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Create a new Geometry object with the 'interiors' geometric elements of the specified source Geometry object.",
+    "args": [
+     [
+      "name",
+      "Name of the source Geometry object. Required."
+     ],
+     [
+      "outname",
+      "Name of the resulting Geometry object."
+     ]
+    ],
+    "examples": [
+     "interiors my_geo_name -outname \"outputed_geo\""
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandIsolate",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "isolate"
+   ],
+   "description": "-- Creates isolation routing Geometry for the specified Gerber object.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "dia",
+     "float"
+    ],
+    [
+     "passes",
+     "int"
+    ],
+    [
+     "overlap",
+     "float"
+    ],
+    [
+     "combine",
+     "str"
+    ],
+    [
+     "outname",
+     "str"
+    ],
+    [
+     "follow",
+     "str"
+    ],
+    [
+     "iso_type",
+     "int"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Creates isolation routing Geometry for the specified Gerber object.",
+    "args": [
+     [
+      "name",
+      "Name of the Gerber source object to be isolated. Required."
+     ],
+     [
+      "dia",
+      "Tool diameter."
+     ],
+     [
+      "passes",
+      "Passes of tool width."
+     ],
+     [
+      "overlap",
+      "Percentage of tool diameter to overlap current pass over previous pass. Float [0, 99.9999]\nE.g: for a 25% from tool diameter overlap use -overlap 25"
+     ],
+     [
+      "combine",
+      "Combine all passes into one geometry. Can be True (1) or False (0)"
+     ],
+     [
+      "outname",
+      "Name of the resulting Geometry object."
+     ],
+     [
+      "follow",
+      "Create a Geometry that follows the Gerber path. Can be True (1) or False (0)."
+     ],
+     [
+      "iso_type",
+      "A value of 0 will isolate exteriors, a value of 1 will isolate interiors and a value of 2 will do full isolation."
+     ]
+    ],
+    "examples": [
+     "isolate my_gerber -dia 0.1 -passes 2 -overlap 10 -combine True -iso_type 2 -outname out_geo"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandJoinExcellon",
+   "base": "TclCommand",
+   "aliases": [
+    "join_excellon",
+    "join_excellons"
+   ],
+   "description": "-- Merge two or more Excellon objects drills and create a new Excellon object with them.",
+   "arg_names": [
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "outname"
+   ],
+   "help": {
+    "main": "Runs a merge operation (join) on the Excellon objects.\nThe names of the Excellon objects to be merged will be entered after the outname,\nseparated by spaces. See the example below.\nWARNING: if the name of an Excellon objects has spaces, enclose the name with quotes.",
+    "args": [
+     [
+      "outname",
+      "Name of the new Excellon Object made by joining of other Excellon objects. Required"
+     ]
+    ],
+    "examples": [
+     "join_excellons merged_new_excellon exc_name_1 \"exc name_2\""
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandJoinGeometry",
+   "base": "TclCommand",
+   "aliases": [
+    "join_geometries",
+    "join_geometry"
+   ],
+   "description": "-- Merge two or more Geometry objects and create a new Geometry object.",
+   "arg_names": [
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "outname"
+   ],
+   "help": {
+    "main": "Runs a merge operation (join) on the Geometry objects.\nThe names of the Geometry objects to be merged will be entered after the outname,\nseparated by spaces. See the example below.\nWARNING: if the name of an Geometry objects has spaces, enclose the name with quotes.",
+    "args": [
+     [
+      "outname",
+      "Name of the new Geometry Object made by joining of other Geometry objects. Required"
+     ]
+    ],
+    "examples": [
+     "join_geometry merged_new_geo geo_name_1 \"geo name_2\""
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandListSys",
+   "base": "TclCommand",
+   "aliases": [
+    "list_sys",
+    "listsys"
+   ],
+   "description": "-- Outputs in Tcl Shell the list with the names of system variables.",
+   "arg_names": [
+    [
+     "selection",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [],
+   "help": {
+    "main": "Returns the list of the names of system variables.\nWithout an argument it will list all the system parameters. As an argument use first letter or first letters from the name of the system variable.\nIn that case it will list only the system variables that starts with that string.\nMain categories start with: gerber or excellon or geometry or cncjob or global.\nNote: Use 'get_sys system variable' to get the value and 'set_sys system variable value' to set it.\n",
+    "args": [],
+    "examples": [
+     "list_sys",
+     "list_sys ser",
+     "list_sys gerber",
+     "list_sys cncj"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandMillDrills",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "milldrills",
+    "milld"
+   ],
+   "description": "-- Create a Geometry Object for milling drill holes from Excellon.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "milled_dias",
+     "str"
+    ],
+    [
+     "outname",
+     "str"
+    ],
+    [
+     "tooldia",
+     "float"
+    ],
+    [
+     "use_thread",
+     "str"
+    ],
+    [
+     "diatol",
+     "float"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Create a Geometry Object for milling drill holes from Excellon.",
+    "args": [
+     [
+      "name",
+      "Name of the Excellon Object. Required."
+     ],
+     [
+      "milled_dias",
+      "Comma separated tool diameters of the drills to be milled (example: 0.6, 1.0 or 3.125).\nException: if you enter \"all\" then the drills for all tools will be milled.\nWARNING: no spaces are allowed in the list of tools.\nAs a precaution you can enclose them with quotes."
+     ],
+     [
+      "tooldia",
+      "Diameter of the milling tool (example: 0.1)."
+     ],
+     [
+      "outname",
+      "Name of Geometry object to be created holding the milled geometries."
+     ],
+     [
+      "use_thread",
+      "If to use multithreading: True (1) or False (0)."
+     ],
+     [
+      "diatol",
+      "Tolerance. Percentange (0.0 ... 100.0) within which dias in milled_dias will be judged to be the same as the ones in the tools from the Excellon object. E.g: if in milled_dias we have a diameter with value 1.0, in the Excellon we have a tool with dia = 1.05 and we set a tolerance diatol = 5.0 then the drills with the dia = (0.95 ... 1.05) in Excellon will be processed. Float number."
+     ]
+    ],
+    "examples": [
+     "milldrills mydrills -milled_dias \"0.6,0.8\" -tooldia 0.1 -diatol 10 -outname milled_holes",
+     "milld my_excellon.drl"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandMillSlots",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "millslots",
+    "mills"
+   ],
+   "description": "-- Create a Geometry Object for milling slot holes from Excellon.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "milled_dias",
+     "str"
+    ],
+    [
+     "outname",
+     "str"
+    ],
+    [
+     "tooldia",
+     "float"
+    ],
+    [
+     "use_thread",
+     "str"
+    ],
+    [
+     "diatol",
+     "float"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Create a Geometry Object for milling slot holes from Excellon.",
+    "args": [
+     [
+      "name",
+      "Name of the Excellon Object. Required."
+     ],
+     [
+      "milled_dias",
+      "Comma separated tool diameters of the slots to be milled (example: 0.6, 1.0 or 3.125).\nException: if you enter \"all\" then the slots for all tools will be milled.\nWARNING: no spaces are allowed in the list of tools.\nAs a precaution you can enclose them with quotes."
+     ],
+     [
+      "tooldia",
+      "Diameter of the milling tool (example: 0.1)."
+     ],
+     [
+      "outname",
+      "Name of object to be created holding the milled geometries."
+     ],
+     [
+      "use_thread",
+      "If to use multithreading: True (1) or False (0)."
+     ],
+     [
+      "diatol",
+      "Tolerance. Percentange (0.0 ... 100.0) within which dias in milled_dias will be judged to be the same as the ones in the tools from the Excellon object. E.g: if in milled_dias we have a diameter with value 1.0, in the Excellon we have a tool with dia = 1.05 and we set a tolerance diatol = 5.0 then the slots with the dia = (0.95 ... 1.05) in Excellon will be processed. Float number."
+     ]
+    ],
+    "examples": [
+     "millslots myslots -milled_dias \"0.6,0.8\" -tooldia 0.1 -diatol 10 -outname milled_slots",
+     "mills my_excellon.drl"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandMirror",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "mirror"
+   ],
+   "description": "-- Will mirror the geometry of a named object. Does not create a new object.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "axis",
+     "str"
+    ],
+    [
+     "box",
+     "str"
+    ],
+    [
+     "origin",
+     "str"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Will mirror the geometry of a named object. Does not create a new object.",
+    "args": [
+     [
+      "name",
+      "Name of the object (Gerber, Geometry or Excellon) to be mirrored. Required."
+     ],
+     [
+      "axis",
+      "Mirror axis parallel to the X or Y axis."
+     ],
+     [
+      "box",
+      "Name of object which act as box (cutout for example.)"
+     ],
+     [
+      "origin",
+      "Reference point . It is used only if the box is not used. Format (x,y).\nComma will separate the X and Y coordinates.\nWARNING: no spaces are allowed. If uncertain enclose the two values inside parenthesis.\nSee the example."
+     ]
+    ],
+    "examples": [
+     "mirror obj_name -box box_geo -axis X -origin 3.2,4.7"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandNew",
+   "base": "TclCommand",
+   "aliases": [
+    "new"
+   ],
+   "description": "-- Starts a new project. Clears objects from memory.",
+   "arg_names": [],
+   "option_types": [],
+   "required": [],
+   "help": {
+    "main": "Starts a new project. Clears objects from memory.",
+    "args": [],
+    "examples": [
+     "new"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandNewExcellon",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "new_excellon"
+   ],
+   "description": "-- Creates a new empty Excellon object.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [],
+   "help": {
+    "main": "Creates a new empty Excellon object.",
+    "args": [
+     [
+      "name",
+      "New object name."
+     ]
+    ],
+    "examples": [
+     "new_excellon my_excellon",
+     "new_excellon"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandNewGeometry",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "new_geometry"
+   ],
+   "description": "-- Creates a new empty Geometry object.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [],
+   "help": {
+    "main": "Creates a new empty Geometry object.",
+    "args": [
+     [
+      "name",
+      "New object name."
+     ]
+    ],
+    "examples": [
+     "new_geometry\nnew_geometry my_new_geo"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandNewGerber",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "new_gerber"
+   ],
+   "description": "-- Creates a new empty Gerber object.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [],
+   "help": {
+    "main": "Creates a new empty Gerber object.",
+    "args": [
+     [
+      "name",
+      "New object name."
+     ]
+    ],
+    "examples": [
+     "new_gerber",
+     "new_gerber my_new_gerber_name"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandNregions",
+   "base": "TclCommand",
+   "aliases": [
+    "non_copper_regions",
+    "ncr"
+   ],
+   "description": "-- Creates a Geometry object with the non-copper regions.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "outname",
+     "str"
+    ],
+    [
+     "margin",
+     "float"
+    ],
+    [
+     "rounded",
+     "str"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Creates a Geometry object with the non-copper regions.",
+    "args": [
+     [
+      "name",
+      "Object name for which to create non-copper regions. String. Required."
+     ],
+     [
+      "outname",
+      "Name of the resulting Geometry object. String."
+     ],
+     [
+      "margin",
+      "Specify the edge of the PCB by drawing a box around all objects with this minimum distance. Float number."
+     ],
+     [
+      "rounded",
+      "Resulting geometry will have rounded corners. True (1) or False (0)."
+     ]
+    ],
+    "examples": [
+     "ncr name -margin 0.1 -rounded True -outname name_ncr"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandOffset",
+   "base": "TclCommand",
+   "aliases": [
+    "offset"
+   ],
+   "description": "-- Will offset the geometry of a named object. Does not create a new object.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ],
+    [
+     "x",
+     "float"
+    ],
+    [
+     "y",
+     "float"
+    ]
+   ],
+   "option_types": [
+    [
+     "x",
+     "float"
+    ],
+    [
+     "y",
+     "float"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Changes the position of the object on X and/or Y axis.",
+    "args": [
+     [
+      "name",
+      "Name of the object to offset. Required."
+     ],
+     [
+      "x",
+      "Offset distance in the X axis. If it is not used it will be assumed to be 0.0"
+     ],
+     [
+      "y",
+      "Offset distance in the Y axis. If it is not used it will be assumed to be 0.0"
+     ]
+    ],
+    "examples": [
+     "offset my_geometry -x 1.2 -y -0.3",
+     "offset my_geometry -x 1.0"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandOpenDXF",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "open_dxf"
+   ],
+   "description": "-- Open a DXF file as a Geometry (or Gerber) Object.",
+   "arg_names": [
+    [
+     "filename",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "type",
+     "str"
+    ],
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "required": [
+    "filename"
+   ],
+   "help": {
+    "main": "Open a DXF file as a Geometry (or Gerber) Object.",
+    "args": [
+     [
+      "filename",
+      "Absolute path to file to open. Required.\nWARNING: no spaces are allowed. If unsure enclose the entire path with quotes."
+     ],
+     [
+      "type",
+      "Open as a Gerber or Geometry (default) object. Values can be: \"geometry\" or \"gerber\""
+     ],
+     [
+      "outname",
+      "Name of the resulting Geometry object."
+     ]
+    ],
+    "examples": [
+     "open_dxf D:\\my_beautiful_svg_file.SVG"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandOpenExcellon",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "open_excellon"
+   ],
+   "description": "-- Opens an Excellon file, parse it and create a Excellon object from it.",
+   "arg_names": [
+    [
+     "filename",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "required": [
+    "filename"
+   ],
+   "help": {
+    "main": "Opens an Excellon file, parse it and create a Excellon object from it.",
+    "args": [
+     [
+      "filename",
+      "Absolute path to file to open. Required.\nWARNING: no spaces are allowed. If unsure enclose the entire path with quotes."
+     ],
+     [
+      "outname",
+      "Name of the resulting Excellon object."
+     ]
+    ],
+    "examples": [
+     "open_excellon D:\\my_excellon_file.DRL",
+     "open_excellon \"D:\\my_excellon_file with spaces in the name.DRL\"",
+     "open_excellon path_to_file"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandOpenGCode",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "open_gcode"
+   ],
+   "description": "-- Opens an GCode file, parse it and create a GCode object from it.",
+   "arg_names": [
+    [
+     "filename",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "required": [
+    "filename"
+   ],
+   "help": {
+    "main": "Opens an GCode file, parse it and create a GCode object from it.",
+    "args": [
+     [
+      "filename",
+      "Absolute path to file to open. Required.\nWARNING: no spaces are allowed. If unsure enclose the entire path with quotes."
+     ],
+     [
+      "outname",
+      "Name of the resulting CNCJob object."
+     ]
+    ],
+    "examples": [
+     "open_gcode D:\\my_gcode_file.NC",
+     "open_gcode \"D:\\my_gcode_file with spaces in the name.TXT\""
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandOpenGerber",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "open_gerber"
+   ],
+   "description": "-- Opens an Gerber file, parse it and create a Gerber object from it.",
+   "arg_names": [
+    [
+     "filename",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "required": [
+    "filename"
+   ],
+   "help": {
+    "main": "Opens a Gerber file.",
+    "args": [
+     [
+      "filename",
+      "Absolute path to file to open. Required.\nWARNING: no spaces are allowed. If unsure enclose the entire path with quotes."
+     ],
+     [
+      "outname",
+      "Name of the resulting Gerber object."
+     ]
+    ],
+    "examples": [
+     "open_gerber gerber_object_path -outname bla",
+     "open_gerber \"D:\\my_gerber_file with spaces in the name.GRB\""
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandOpenProject",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "open_project"
+   ],
+   "description": "-- Opens an FlatCAm project file, parse it and recreate all the objects.",
+   "arg_names": [
+    [
+     "filename",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "filename"
+   ],
+   "help": {
+    "main": "Opens an FlatCAm project file, parse it and recreate all the objects.",
+    "args": [
+     [
+      "filename",
+      "Absolute path to file to open. Required.\nWARNING: no spaces are allowed. If unsure enclose the entire path with quotes."
+     ]
+    ],
+    "examples": [
+     "open_project D:\\my_project_file.FlatPrj",
+     "open_project \"D:\\my_project_file with spaces in the name.FlatPrj\""
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandOpenSVG",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "open_svg"
+   ],
+   "description": "-- Open a SVG file as a Geometry (or Gerber) Object.",
+   "arg_names": [
+    [
+     "filename",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "type",
+     "str"
+    ],
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "required": [
+    "filename"
+   ],
+   "help": {
+    "main": "Open a SVG file as a Geometry (or Gerber) Object.",
+    "args": [
+     [
+      "filename",
+      "Absolute path to file to open. Required.\nWARNING: no spaces are allowed. If unsure enclose the entire path with quotes."
+     ],
+     [
+      "type",
+      "Open as a Gerber or Geometry (default) object. Values can be: \"geometry\" or \"gerber\""
+     ],
+     [
+      "outname",
+      "Name of the resulting Geometry object."
+     ]
+    ],
+    "examples": [
+     "open_svg D:\\my_beautiful_svg_file.SVG"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandOptions",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "options"
+   ],
+   "description": "-- Will return the options (settings) for an object as a string with values separated by \\n.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Will return the options (settings) for an object as a string with values separated by \\n.",
+    "args": [
+     [
+      "name",
+      "Object name for which to return the options. Required."
+     ]
+    ],
+    "examples": [
+     "options obj_name"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandPaint",
+   "base": "TclCommand",
+   "aliases": [
+    "paint"
+   ],
+   "description": "-- Paint polygons in the specified object by covering them with toolpaths.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "tooldia",
+     "str"
+    ],
+    [
+     "overlap",
+     "float"
+    ],
+    [
+     "order",
+     "str"
+    ],
+    [
+     "offset",
+     "float"
+    ],
+    [
+     "method",
+     "str"
+    ],
+    [
+     "connect",
+     "str"
+    ],
+    [
+     "contour",
+     "str"
+    ],
+    [
+     "all",
+     "str"
+    ],
+    [
+     "single",
+     "str"
+    ],
+    [
+     "ref",
+     "str"
+    ],
+    [
+     "box",
+     "str"
+    ],
+    [
+     "outname",
+     "str"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Paint polygons in the specified object by covering them with toolpaths.\nCan use only one of the parameters: 'all', 'box', 'single'.",
+    "args": [
+     [
+      "name",
+      "Name of the source Geometry object. String."
+     ],
+     [
+      "tooldia",
+      "Diameter of the tools to be used. Can be a comma separated list of diameters.\nWARNING: No space is allowed between tool diameters. E.g: correct: 0.5,1 / incorrect: 0.5, 1"
+     ],
+     [
+      "overlap",
+      "Percentage of tool diameter to overlap current pass over previous pass. Float [0, 99.9999]\nE.g: for a 25% from tool diameter overlap use -overlap 25"
+     ],
+     [
+      "offset",
+      "Distance from the polygon border where painting starts. Float number."
+     ],
+     [
+      "order",
+      "Can have the values: \"no\", \"fwd\" and \"rev\". String.\nIt is useful when there are multiple tools in tooldia parameter.\n\"no\" -> the order used is the one provided.\n\"fwd\" -> tools are ordered from smallest to biggest.\n\"rev\" -> tools are ordered from biggest to smallest."
+     ],
+     [
+      "method",
+      "Algorithm for painting. Can be: \"standard\", \"seed\", \"lines\", \"laser_lines\", \"combo\"."
+     ],
+     [
+      "connect",
+      "Draw lines to minimize tool lifts. True (1) or False (0)"
+     ],
+     [
+      "contour",
+      "Cut around the perimeter of the painting. True (1) or False (0)"
+     ],
+     [
+      "all",
+      "If used, paint all polygons in the object."
+     ],
+     [
+      "box",
+      "name of the object to be used as paint reference. String."
+     ],
+     [
+      "single",
+      "Value is in format x,y or (x,y). Example: 2.0,1.1\nIf used will paint a single polygon specified by \"x\" and \"y\" values.\nWARNING: No spaces allowed in the value. Use dot decimals separator."
+     ],
+     [
+      "outname",
+      "Name of the resulting Geometry object. String. No spaces."
+     ]
+    ],
+    "examples": [
+     "paint obj_name -tooldia 0.3 -offset 0.1 -method 'seed' -all",
+     "paint obj_name -tooldia 0.3 -offset 0.1 -method 'seed' -single 3.3,2.0"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandPanelize",
+   "base": "TclCommand",
+   "aliases": [
+    "panelize",
+    "pan",
+    "panel"
+   ],
+   "description": "-- Create a new object with an array of duplicates of the original geometry, arranged in a grid.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "rows",
+     "int"
+    ],
+    [
+     "columns",
+     "int"
+    ],
+    [
+     "spacing_columns",
+     "float"
+    ],
+    [
+     "spacing_rows",
+     "float"
+    ],
+    [
+     "box",
+     "str"
+    ],
+    [
+     "outname",
+     "str"
+    ],
+    [
+     "use_thread",
+     "str"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Create a new object with an array of duplicates of the original geometry, arranged in a grid.",
+    "args": [
+     [
+      "name",
+      "Name of the object to panelize."
+     ],
+     [
+      "box",
+      "Name of object which acts as box (cutout for example.)for cutout boundary. Object from name is used if not specified."
+     ],
+     [
+      "spacing_columns",
+      "Spacing between columns."
+     ],
+     [
+      "spacing_rows",
+      "Spacing between rows."
+     ],
+     [
+      "columns",
+      "Number of columns."
+     ],
+     [
+      "rows",
+      "Number of rows;"
+     ],
+     [
+      "outname",
+      "Name of the new geometry object."
+     ],
+     [
+      "use_thread",
+      "False (0) = non-threaded execution or True (1) = threaded execution"
+     ]
+    ],
+    "examples": [
+     "panelize obj_name",
+     "panel obj_name -rows 2 -columns 2 -spacing_columns 0.4 -spacing_rows 1.3 -box box_obj_name -outname panelized_name",
+     "panel obj_name -columns 2 -box box_obj_name -outname panelized_name"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandPlotAll",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "plot_all"
+   ],
+   "description": "-- Plots all objects on appGUI.",
+   "arg_names": [],
+   "option_types": [
+    [
+     "plot_status",
+     "str"
+    ],
+    [
+     "use_thread",
+     "str"
+    ]
+   ],
+   "required": [],
+   "help": {
+    "main": "Plots all objects on appGUI.",
+    "args": [
+     [
+      "plot_status",
+      "If to display or not the objects: True (1) or False (0)."
+     ],
+     [
+      "use_thread",
+      "If to use multithreading: True (1) or False (0)."
+     ]
+    ],
+    "examples": [
+     "plot_all",
+     "plot_all -plot_status False"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandPlotObjects",
+   "base": "TclCommand",
+   "aliases": [
+    "plot_objects"
+   ],
+   "description": "-- Plot a specified list of objects in appGUI.",
+   "arg_names": [
+    [
+     "names",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "plot_status",
+     "str"
+    ]
+   ],
+   "required": [
+    "names"
+   ],
+   "help": {
+    "main": "Plot a specified list of objects in appGUI.",
+    "args": [
+     [
+      "names",
+      "A list of object names to be plotted separated by comma. Required.\nWARNING: no spaces are allowed. If unsure enclose the entire list with quotes."
+     ],
+     [
+      "plot_status",
+      "If to display or not the objects: True (1) or False (0)."
+     ]
+    ],
+    "examples": [
+     "plot_objects gerber_obj.GRB,excellon_obj.DRL"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandQuit",
+   "base": "TclCommand",
+   "aliases": [
+    "quit_flatcam"
+   ],
+   "description": "-- Tcl shell command to quit FlatCAM from Tcl shell.",
+   "arg_names": [],
+   "option_types": [],
+   "required": [],
+   "help": {
+    "main": "Tcl shell command to quit FlatCAM from Tcl shell.",
+    "args": [],
+    "examples": [
+     "quit_flatcam"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandSaveProject",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "save_project"
+   ],
+   "description": "-- Saves the FlatCAM project to file.",
+   "arg_names": [
+    [
+     "filename",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "filename"
+   ],
+   "help": {
+    "main": "Saves the FlatCAM project to file.",
+    "args": [
+     [
+      "filename",
+      "Absolute path to file to save. Required.\nWARNING: no spaces are allowed. If unsure enclose the entire path with quotes."
+     ]
+    ],
+    "examples": [
+     "save_project D:\\my_project_file.FlatPrj",
+     "save_project \"D:\\my_project_file with spaces in the name.FlatPrj\"",
+     "save_project path_to_where_the_file_is_stored"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandSaveSys",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "save_sys",
+    "save"
+   ],
+   "description": "-- Saves the FlatCAM system parameters to defaults file.",
+   "arg_names": [],
+   "option_types": [],
+   "required": [],
+   "help": {
+    "main": "Saves the FlatCAM system parameters to defaults file.",
+    "args": [],
+    "examples": [
+     "save_sys"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandScale",
+   "base": "TclCommand",
+   "aliases": [
+    "scale"
+   ],
+   "description": "-- Will scale the geometry of a named object. Does not create a new object.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ],
+    [
+     "factor",
+     "float"
+    ]
+   ],
+   "option_types": [
+    [
+     "x",
+     "float"
+    ],
+    [
+     "y",
+     "float"
+    ],
+    [
+     "origin",
+     "str"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Resizes the object by a factor on X axis and a factor on Y axis, having as scale origin the point ",
+    "args": [
+     [
+      "name",
+      "Name of the object (Gerber, Geometry or Excellon) to be resized. Required."
+     ],
+     [
+      "factor",
+      "Fraction by which to scale on both axis."
+     ],
+     [
+      "x",
+      "Fraction by which to scale on X axis. If \"factor\" is used then this parameter is ignored"
+     ],
+     [
+      "y",
+      "Fraction by which to scale on Y axis. If \"factor\" is used then this parameter is ignored"
+     ],
+     [
+      "origin",
+      "Reference used for scale.\nThe reference point can be:\n- \"origin\" which means point (0, 0)\n- \"min_bounds\" which means the lower left point of the bounding box\n- \"center\" which means the center point of the bounding box of the object.\n- a tuple in format (x,y) with the X and Y coordinates separated by a comma. NO SPACES ALLOWED"
+     ]
+    ],
+    "examples": [
+     "scale my_geometry 4.2",
+     "scale my_geo -x 3.1 -y 2.8",
+     "scale my_geo 1.2 -origin min_bounds",
+     "scale my_geometry -x 2 -origin 3.0,2.1"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandSetActive",
+   "base": "TclCommand",
+   "aliases": [
+    "set_active"
+   ],
+   "description": "-- Sets a FlatCAM object as active (selected).",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Sets a FlatCAM object as active (selected).",
+    "args": [
+     [
+      "name",
+      "Name of the FlatCAM object to be set as active (selected). Required."
+     ]
+    ],
+    "examples": [
+     "set_active object_name"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandSetOrigin",
+   "base": "TclCommand",
+   "aliases": [
+    "set_origin",
+    "origin"
+   ],
+   "description": "-- Set the origin at the specified x,y location.",
+   "arg_names": [
+    [
+     "loc",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "auto",
+     "str"
+    ]
+   ],
+   "required": [],
+   "help": {
+    "main": "Will set the origin at the specified x,y location.\nIf it is called without arguments it will set origin at (0, 0)",
+    "args": [
+     [
+      "loc",
+      "Location to offset all the selected objects. NO SPACES ALLOWED in X and Y pair.\nUse like this: 2,3"
+     ],
+     [
+      "auto",
+      "If set to True it will set the origin to the minimum x, y of the object selection bounding box.-auto=True is not correct but -auto 1 or -auto True is correct. True (1) or False (0)."
+     ]
+    ],
+    "examples": [
+     "set_origin 3,2",
+     "set_origin -auto 1",
+     "origin"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandSetPath",
+   "base": "TclCommand",
+   "aliases": [
+    "set_path"
+   ],
+   "description": "-- Set the folder path to the specified path.",
+   "arg_names": [
+    [
+     "path",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "path"
+   ],
+   "help": {
+    "main": "Will set the folder path to the specified path.\nBy using this command there is no need for usage of the absolute path to the files.",
+    "args": [
+     [
+      "path",
+      "A folder path to where the user is supposed to have the file that he will work with.\nWARNING: No spaces allowed. Use quotes around the path if it contains spaces."
+     ]
+    ],
+    "examples": [
+     "set_path D:\\Project_storage_path"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandSetSys",
+   "base": "TclCommand",
+   "aliases": [
+    "set_sys",
+    "setsys"
+   ],
+   "description": "-- Sets the value of the specified system variable.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ],
+    [
+     "value",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "name",
+    "value"
+   ],
+   "help": {
+    "main": "Sets the value of the specified system variable.",
+    "args": [
+     [
+      "name",
+      "Name of the system variable. Required."
+     ],
+     [
+      "value",
+      "Value to set."
+     ]
+    ],
+    "examples": [
+     "set_sys global_gridx 1.0"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandSkew",
+   "base": "TclCommand",
+   "aliases": [
+    "skew"
+   ],
+   "description": "-- Will deform (skew) the geometry of a named object. Does not create a new object.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "x",
+     "float"
+    ],
+    [
+     "y",
+     "float"
+    ]
+   ],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Shear/Skew an object along x and y dimensions. The reference point is the left corner of the bounding box of the object.",
+    "args": [
+     [
+      "name",
+      "Name of the object (Gerber, Geometry or Excellon) to be deformed (skewed). Required."
+     ],
+     [
+      "x",
+      "Angle in degrees by which to skew on the X axis. If it is not used it will be assumed to be 0.0"
+     ],
+     [
+      "y",
+      "Angle in degrees by which to skew on the Y axis. If it is not used it will be assumed to be 0.0"
+     ]
+    ],
+    "examples": [
+     "skew my_geometry -x 10.2 -y 3.5",
+     "skew my_geo -x 3.0"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandSubtractPoly",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "subtract_poly"
+   ],
+   "description": "-- Subtract polygon from the given Geometry object. The coordinates are provided in X Y pairs.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Subtract polygon from the given Geometry object. The coordinates are provided in X Y pairs.\nIf the number of coordinates is not even then the 'Incomplete coordinate' error is raised.\nIf last coordinates are not the same as the first ones, the polygon will be completed automatically.",
+    "args": [
+     [
+      "name",
+      "Name of the Geometry object from which to subtract. Required."
+     ],
+     [
+      "x0 y0 x1 y1 x2 y2 ...",
+      "Points defining the polygon."
+     ]
+    ],
+    "examples": [
+     "subtract_poly my_geo 0 0 2 1 3 3 4 4 0 0"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandSubtractRectangle",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "subtract_rectangle"
+   ],
+   "description": "-- Subtract a rectangle from the given Geometry object. The coordinates are provided in X Y pairs.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ]
+   ],
+   "option_types": [],
+   "required": [
+    "name"
+   ],
+   "help": {
+    "main": "Subtract a rectangle from the given Geometry object. The coordinates are provided in X Y pairs.\nIf the number of coordinates is not even then the 'Incomplete coordinates' error is raised.",
+    "args": [
+     [
+      "name",
+      "Name of the Geometry object from which to subtract. Required."
+     ],
+     [
+      "x0 y0",
+      "Bottom left corner coordinates."
+     ],
+     [
+      "x1 y1",
+      "Top right corner coordinates."
+     ]
+    ],
+    "examples": [
+     "subtract_rectangle geo_obj 8 8 15 15"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandVersion",
+   "base": "TclCommand",
+   "aliases": [
+    "version"
+   ],
+   "description": "-- Checks the program version.",
+   "arg_names": [],
+   "option_types": [],
+   "required": [],
+   "help": {
+    "main": "Checks the program version.",
+    "args": [],
+    "examples": [
+     "version"
+    ]
+   },
+   "registered": true
+  },
+  {
+   "class": "TclCommandWriteGCode",
+   "base": "TclCommandSignaled",
+   "aliases": [
+    "write_gcode"
+   ],
+   "description": "-- Saves G-code of a CNC Job object to file.",
+   "arg_names": [
+    [
+     "name",
+     "str"
+    ],
+    [
+     "filename",
+     "str"
+    ]
+   ],
+   "option_types": [
+    [
+     "preamble",
+     "str"
+    ],
+    [
+     "postamble",
+     "str"
+    ],
+    [
+     "muted",
+     "str"
+    ]
+   ],
+   "required": [
+    "name",
+    "filename"
+   ],
+   "help": {
+    "main": "Saves G-code of a CNC Job object to file.",
+    "args": [
+     [
+      "name",
+      "Source CNC Job object. Required."
+     ],
+     [
+      "filename",
+      "Output filename. Required."
+     ],
+     [
+      "preamble",
+      "Text to append at the beginning."
+     ],
+     [
+      "postamble",
+      "Text to append at the end."
+     ],
+     [
+      "muted",
+      "It will not put errors in the Shell or status bar. True (1) or False (0)"
+     ]
+    ],
+    "examples": [
+     "write_gcode name c:\\\\gcode_repo"
+    ]
+   },
+   "registered": true
+  }
+ ],
+ "defaults_order": [
+  "version",
+  "first_run",
+  "global_serial",
+  "global_stats",
+  "global_tabs_detachable",
+  "global_coordsbar_show",
+  "global_delta_coordsbar_show",
+  "global_statusbar_show",
+  "global_jump_ref",
+  "global_locate_pt",
+  "global_toolbar_view",
+  "global_background_timeout",
+  "global_verbose_error_level",
+  "global_grid_context_menu",
+  "global_last_folder",
+  "global_last_save_folder",
+  "global_def_win_x",
+  "global_def_win_y",
+  "global_def_win_w",
+  "global_def_win_h",
+  "global_def_notebook_width",
+  "global_defaults_save_period_ms",
+  "global_shell_shape",
+  "global_recent_limit",
+  "fit_key",
+  "zoom_out_key",
+  "zoom_in_key",
+  "grid_toggle_key",
+  "global_zoom_ratio",
+  "global_point_clipboard_format",
+  "global_zdownrate",
+  "global_tcl_path",
+  "units",
+  "decimals_inch",
+  "decimals_metric",
+  "global_graphic_engine",
+  "global_app_level",
+  "global_portable",
+  "global_language",
+  "global_systray_icon",
+  "global_shell_at_startup",
+  "global_project_at_startup",
+  "global_version_check",
+  "global_send_stats",
+  "global_worker_number",
+  "global_tolerance",
+  "global_save_compressed",
+  "global_compression_level",
+  "global_autosave",
+  "global_autosave_timeout",
+  "global_tpdf_tmargin",
+  "global_tpdf_bmargin",
+  "global_tpdf_lmargin",
+  "global_tpdf_rmargin",
+  "global_theme",
+  "global_gray_icons",
+  "global_layout",
+  "global_hover",
+  "global_selection_shape",
+  "global_sel_fill",
+  "global_sel_line",
+  "global_alt_sel_fill",
+  "global_alt_sel_line",
+  "global_draw_color",
+  "global_sel_draw_color",
+  "global_proj_item_color",
+  "global_proj_item_dis_color",
+  "global_project_autohide",
+  "global_gridbar_show",
+  "global_gridx",
+  "global_gridy",
+  "global_snap_max",
+  "global_workspace",
+  "global_workspaceT",
+  "global_workspace_orientation",
+  "global_axis",
+  "global_hud",
+  "global_grid_lines",
+  "global_grid_snap",
+  "global_cursor_type",
+  "global_cursor_size",
+  "global_cursor_width",
+  "global_cursor_color",
+  "global_cursor_color_enabled",
+  "global_pan_button",
+  "global_mselect_key",
+  "global_delete_confirmation",
+  "global_allow_edit_in_project_tab",
+  "global_open_style",
+  "global_toggle_tooltips",
+  "global_machinist_setting",
+  "global_bookmarks",
+  "global_bookmarks_limit",
+  "global_activity_icon",
+  "gerber_plot",
+  "gerber_solid",
+  "gerber_multicolored",
+  "gerber_color_list",
+  "gerber_store_color_list",
+  "gerber_circle_steps",
+  "gerber_use_buffer_for_union",
+  "gerber_clean_apertures",
+  "gerber_extra_buffering",
+  "gerber_plot_fill",
+  "gerber_plot_line",
+  "gerber_def_units",
+  "gerber_def_zeros",
+  "gerber_save_filters",
+  "gerber_noncoppermargin",
+  "gerber_noncopperrounded",
+  "gerber_bboxmargin",
+  "gerber_bboxrounded",
+  "gerber_aperture_display",
+  "gerber_aperture_scale_factor",
+  "gerber_aperture_buffer_factor",
+  "gerber_follow",
+  "gerber_buffering",
+  "gerber_delayed_buffering",
+  "gerber_simplification",
+  "gerber_simp_tolerance",
+  "gerber_exp_units",
+  "gerber_exp_integer",
+  "gerber_exp_decimals",
+  "gerber_exp_zeros",
+  "gerber_editor_sel_limit",
+  "gerber_editor_newcode",
+  "gerber_editor_newsize",
+  "gerber_editor_newtype",
+  "gerber_editor_newdim",
+  "gerber_editor_array_size",
+  "gerber_editor_lin_axis",
+  "gerber_editor_lin_pitch",
+  "gerber_editor_lin_angle",
+  "gerber_editor_circ_dir",
+  "gerber_editor_circ_angle",
+  "gerber_editor_scale_f",
+  "gerber_editor_buff_f",
+  "gerber_editor_ma_low",
+  "gerber_editor_ma_high",
+  "excellon_plot",
+  "excellon_solid",
+  "excellon_multicolored",
+  "excellon_merge_fuse_tools",
+  "excellon_format_upper_in",
+  "excellon_format_lower_in",
+  "excellon_format_upper_mm",
+  "excellon_format_lower_mm",
+  "excellon_zeros",
+  "excellon_units",
+  "excellon_update",
+  "excellon_optimization_type",
+  "excellon_search_time",
+  "excellon_save_filters",
+  "excellon_plot_fill",
+  "excellon_plot_line",
+  "excellon_operation",
+  "excellon_milling_type",
+  "excellon_milling_dia",
+  "excellon_tooldia",
+  "excellon_slot_tooldia",
+  "excellon_tools_table_display",
+  "excellon_autoload_db",
+  "excellon_exp_units",
+  "excellon_exp_format",
+  "excellon_exp_integer",
+  "excellon_exp_decimals",
+  "excellon_exp_zeros",
+  "excellon_exp_slot_type",
+  "excellon_editor_sel_limit",
+  "excellon_editor_newdia",
+  "excellon_editor_array_size",
+  "excellon_editor_lin_dir",
+  "excellon_editor_lin_pitch",
+  "excellon_editor_lin_angle",
+  "excellon_editor_circ_dir",
+  "excellon_editor_circ_angle",
+  "excellon_editor_slot_direction",
+  "excellon_editor_slot_angle",
+  "excellon_editor_slot_length",
+  "excellon_editor_slot_array_size",
+  "excellon_editor_slot_lin_dir",
+  "excellon_editor_slot_lin_pitch",
+  "excellon_editor_slot_lin_angle",
+  "excellon_editor_slot_circ_dir",
+  "excellon_editor_slot_circ_angle",
+  "geometry_plot",
+  "geometry_multicolored",
+  "geometry_circle_steps",
+  "geometry_cnctooldia",
+  "geometry_merge_fuse_tools",
+  "geometry_plot_line",
+  "geometry_optimization_type",
+  "geometry_search_time",
+  "geometry_cutz",
+  "geometry_vtipdia",
+  "geometry_vtipangle",
+  "geometry_multidepth",
+  "geometry_depthperpass",
+  "geometry_travelz",
+  "geometry_toolchange",
+  "geometry_toolchangez",
+  "geometry_endz",
+  "geometry_endxy",
+  "geometry_feedrate",
+  "geometry_feedrate_z",
+  "geometry_spindlespeed",
+  "geometry_dwell",
+  "geometry_dwelltime",
+  "geometry_ppname_g",
+  "geometry_toolchangexy",
+  "geometry_startz",
+  "geometry_feedrate_rapid",
+  "geometry_extracut",
+  "geometry_extracut_length",
+  "geometry_z_pdepth",
+  "geometry_f_plunge",
+  "geometry_spindledir",
+  "geometry_feedrate_probe",
+  "geometry_segx",
+  "geometry_segy",
+  "geometry_area_exclusion",
+  "geometry_area_shape",
+  "geometry_area_strategy",
+  "geometry_area_overz",
+  "geometry_polish",
+  "geometry_polish_dia",
+  "geometry_polish_pressure",
+  "geometry_polish_travelz",
+  "geometry_polish_margin",
+  "geometry_polish_overlap",
+  "geometry_polish_method",
+  "geometry_editor_sel_limit",
+  "geometry_editor_milling_type",
+  "cncjob_plot",
+  "cncjob_tooldia",
+  "cncjob_coords_type",
+  "cncjob_coords_decimals",
+  "cncjob_fr_decimals",
+  "cncjob_steps_per_circle",
+  "cncjob_footer",
+  "cncjob_line_ending",
+  "cncjob_save_filters",
+  "cncjob_plot_line",
+  "cncjob_plot_fill",
+  "cncjob_travel_line",
+  "cncjob_travel_fill",
+  "cncjob_plot_kind",
+  "cncjob_annotation",
+  "cncjob_annotation_fontsize",
+  "cncjob_annotation_fontcolor",
+  "cncjob_al_status",
+  "cncjob_al_mode",
+  "cncjob_al_method",
+  "cncjob_al_rows",
+  "cncjob_al_columns",
+  "cncjob_al_travelz",
+  "cncjob_al_probe_depth",
+  "cncjob_al_probe_fr",
+  "cncjob_al_controller",
+  "cncjob_al_grbl_jog_step",
+  "cncjob_al_grbl_jog_fr",
+  "cncjob_al_grbl_travelz",
+  "cncjob_prepend",
+  "cncjob_append",
+  "tools_iso_tooldia",
+  "tools_iso_order",
+  "tools_iso_tool_type",
+  "tools_iso_tool_vtipdia",
+  "tools_iso_tool_vtipangle",
+  "tools_iso_tool_cutz",
+  "tools_iso_newdia",
+  "tools_iso_passes",
+  "tools_iso_overlap",
+  "tools_iso_milling_type",
+  "tools_iso_follow",
+  "tools_iso_isotype",
+  "tools_iso_rest",
+  "tools_iso_combine_passes",
+  "tools_iso_check_valid",
+  "tools_iso_isoexcept",
+  "tools_iso_selection",
+  "tools_iso_poly_ints",
+  "tools_iso_force",
+  "tools_iso_area_shape",
+  "tools_iso_plotting",
+  "tools_drill_tool_order",
+  "tools_drill_cutz",
+  "tools_drill_multidepth",
+  "tools_drill_depthperpass",
+  "tools_drill_travelz",
+  "tools_drill_endz",
+  "tools_drill_endxy",
+  "tools_drill_feedrate_z",
+  "tools_drill_spindlespeed",
+  "tools_drill_dwell",
+  "tools_drill_dwelltime",
+  "tools_drill_toolchange",
+  "tools_drill_toolchangez",
+  "tools_drill_ppname_e",
+  "tools_drill_drill_slots",
+  "tools_drill_drill_overlap",
+  "tools_drill_last_drill",
+  "tools_drill_offset",
+  "tools_drill_toolchangexy",
+  "tools_drill_startz",
+  "tools_drill_feedrate_rapid",
+  "tools_drill_z_pdepth",
+  "tools_drill_feedrate_probe",
+  "tools_drill_spindledir",
+  "tools_drill_f_plunge",
+  "tools_drill_f_retract",
+  "tools_drill_area_exclusion",
+  "tools_drill_area_shape",
+  "tools_drill_area_strategy",
+  "tools_drill_area_overz",
+  "tools_ncc_tools",
+  "tools_ncc_order",
+  "tools_ncc_operation",
+  "tools_ncc_overlap",
+  "tools_ncc_margin",
+  "tools_ncc_method",
+  "tools_ncc_connect",
+  "tools_ncc_contour",
+  "tools_ncc_rest",
+  "tools_ncc_offset_choice",
+  "tools_ncc_offset_value",
+  "tools_ncc_ref",
+  "tools_ncc_area_shape",
+  "tools_ncc_milling_type",
+  "tools_ncc_tool_type",
+  "tools_ncc_cutz",
+  "tools_ncc_tipdia",
+  "tools_ncc_tipangle",
+  "tools_ncc_newdia",
+  "tools_ncc_plotting",
+  "tools_ncc_check_valid",
+  "tools_cutout_tooldia",
+  "tools_cutout_kind",
+  "tools_cutout_margin",
+  "tools_cutout_z",
+  "tools_cutout_depthperpass",
+  "tools_cutout_mdepth",
+  "tools_cutout_gapsize",
+  "tools_cutout_gaps_ff",
+  "tools_cutout_convexshape",
+  "tools_cutout_big_cursor",
+  "tools_cutout_gap_type",
+  "tools_cutout_gap_depth",
+  "tools_cutout_mb_dia",
+  "tools_cutout_mb_spacing",
+  "tools_paint_tooldia",
+  "tools_paint_order",
+  "tools_paint_overlap",
+  "tools_paint_offset",
+  "tools_paint_method",
+  "tools_paint_selectmethod",
+  "tools_paint_area_shape",
+  "tools_paint_connect",
+  "tools_paint_contour",
+  "tools_paint_plotting",
+  "tools_paint_rest",
+  "tools_paint_tool_type",
+  "tools_paint_cutz",
+  "tools_paint_tipdia",
+  "tools_paint_tipangle",
+  "tools_paint_newdia",
+  "tools_2sided_mirror_axis",
+  "tools_2sided_axis_loc",
+  "tools_2sided_drilldia",
+  "tools_2sided_allign_axis",
+  "tools_film_type",
+  "tools_film_boundary",
+  "tools_film_scale_stroke",
+  "tools_film_color",
+  "tools_film_scale_cb",
+  "tools_film_scale_x_entry",
+  "tools_film_scale_y_entry",
+  "tools_film_skew_cb",
+  "tools_film_skew_x_entry",
+  "tools_film_skew_y_entry",
+  "tools_film_skew_ref_radio",
+  "tools_film_mirror_cb",
+  "tools_film_mirror_axis_radio",
+  "tools_film_file_type_radio",
+  "tools_film_orientation",
+  "tools_film_pagesize",
+  "tools_film_png_dpi",
+  "tools_panelize_spacing_columns",
+  "tools_panelize_spacing_rows",
+  "tools_panelize_columns",
+  "tools_panelize_rows",
+  "tools_panelize_optimization",
+  "tools_panelize_constrain",
+  "tools_panelize_constrainx",
+  "tools_panelize_constrainy",
+  "tools_panelize_panel_type",
+  "tools_calc_vshape_tip_dia",
+  "tools_calc_vshape_tip_angle",
+  "tools_calc_vshape_cut_z",
+  "tools_calc_electro_length",
+  "tools_calc_electro_width",
+  "tools_calc_electro_area",
+  "tools_calc_electro_cdensity",
+  "tools_calc_electro_growth",
+  "tools_transform_reference",
+  "tools_transform_ref_object",
+  "tools_transform_ref_point",
+  "tools_transform_rotate",
+  "tools_transform_skew_x",
+  "tools_transform_skew_y",
+  "tools_transform_skew_link",
+  "tools_transform_scale_x",
+  "tools_transform_scale_y",
+  "tools_transform_scale_link",
+  "tools_transform_offset_x",
+  "tools_transform_offset_y",
+  "tools_transform_buffer_dis",
+  "tools_transform_buffer_factor",
+  "tools_transform_buffer_corner",
+  "tools_solderpaste_tools",
+  "tools_solderpaste_new",
+  "tools_solderpaste_z_start",
+  "tools_solderpaste_z_dispense",
+  "tools_solderpaste_z_stop",
+  "tools_solderpaste_z_travel",
+  "tools_solderpaste_z_toolchange",
+  "tools_solderpaste_xy_toolchange",
+  "tools_solderpaste_frxy",
+  "tools_solderpaste_frz",
+  "tools_solderpaste_frz_dispense",
+  "tools_solderpaste_speedfwd",
+  "tools_solderpaste_dwellfwd",
+  "tools_solderpaste_speedrev",
+  "tools_solderpaste_dwellrev",
+  "tools_solderpaste_pp",
+  "tools_sub_close_paths",
+  "tools_sub_delete_sources",
+  "tools_dist_snap_center",
+  "tools_corners_thickness",
+  "tools_corners_length",
+  "tools_corners_margin",
+  "tools_corners_type",
+  "tools_corners_drill_dia",
+  "tools_opt_precision",
+  "tools_cr_trace_size",
+  "tools_cr_trace_size_val",
+  "tools_cr_c2c",
+  "tools_cr_c2c_val",
+  "tools_cr_c2o",
+  "tools_cr_c2o_val",
+  "tools_cr_s2s",
+  "tools_cr_s2s_val",
+  "tools_cr_s2sm",
+  "tools_cr_s2sm_val",
+  "tools_cr_s2o",
+  "tools_cr_s2o_val",
+  "tools_cr_sm2sm",
+  "tools_cr_sm2sm_val",
+  "tools_cr_ri",
+  "tools_cr_ri_val",
+  "tools_cr_h2h",
+  "tools_cr_h2h_val",
+  "tools_cr_dh",
+  "tools_cr_dh_val",
+  "tools_qrcode_version",
+  "tools_qrcode_error",
+  "tools_qrcode_box_size",
+  "tools_qrcode_border_size",
+  "tools_qrcode_qrdata",
+  "tools_qrcode_polarity",
+  "tools_qrcode_rounded",
+  "tools_qrcode_fill_color",
+  "tools_qrcode_back_color",
+  "tools_qrcode_sel_limit",
+  "tools_copper_thieving_clearance",
+  "tools_copper_thieving_margin",
+  "tools_copper_thieving_area",
+  "tools_copper_thieving_reference",
+  "tools_copper_thieving_box_type",
+  "tools_copper_thieving_circle_steps",
+  "tools_copper_thieving_fill_type",
+  "tools_copper_thieving_dots_dia",
+  "tools_copper_thieving_dots_spacing",
+  "tools_copper_thieving_squares_size",
+  "tools_copper_thieving_squares_spacing",
+  "tools_copper_thieving_lines_size",
+  "tools_copper_thieving_lines_spacing",
+  "tools_copper_thieving_rb_margin",
+  "tools_copper_thieving_rb_thickness",
+  "tools_copper_thieving_mask_clearance",
+  "tools_copper_thieving_geo_choice",
+  "tools_fiducials_dia",
+  "tools_fiducials_margin",
+  "tools_fiducials_mode",
+  "tools_fiducials_second_pos",
+  "tools_fiducials_type",
+  "tools_fiducials_line_thickness",
+  "tools_cal_calsource",
+  "tools_cal_travelz",
+  "tools_cal_verz",
+  "tools_cal_zeroz",
+  "tools_cal_toolchangez",
+  "tools_cal_toolchange_xy",
+  "tools_cal_sec_point",
+  "tools_edrills_hole_type",
+  "tools_edrills_hole_fixed_dia",
+  "tools_edrills_hole_prop_factor",
+  "tools_edrills_circular_ring",
+  "tools_edrills_oblong_ring",
+  "tools_edrills_square_ring",
+  "tools_edrills_rectangular_ring",
+  "tools_edrills_others_ring",
+  "tools_edrills_circular",
+  "tools_edrills_oblong",
+  "tools_edrills_square",
+  "tools_edrills_rectangular",
+  "tools_edrills_others",
+  "tools_punch_hole_type",
+  "tools_punch_hole_fixed_dia",
+  "tools_punch_hole_prop_factor",
+  "tools_punch_circular_ring",
+  "tools_punch_oblong_ring",
+  "tools_punch_square_ring",
+  "tools_punch_rectangular_ring",
+  "tools_punch_others_ring",
+  "tools_punch_circular",
+  "tools_punch_oblong",
+  "tools_punch_square",
+  "tools_punch_rectangular",
+  "tools_punch_others",
+  "tools_align_objects_align_type",
+  "tools_invert_margin",
+  "tools_invert_join_style",
+  "fa_excellon",
+  "fa_gcode",
+  "fa_gerber",
+  "util_autocomplete_keywords",
+  "script_autocompleter",
+  "script_text",
+  "script_plot",
+  "script_source_file",
+  "document_autocompleter",
+  "document_text",
+  "document_plot",
+  "document_source_file",
+  "document_font_color",
+  "document_sel_color",
+  "document_font_size",
+  "document_tab_size"
+ ]
+}
