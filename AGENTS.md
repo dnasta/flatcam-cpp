@@ -79,7 +79,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.788 casos de `ctest` (2.662 del núcleo y 125 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.793 casos de `ctest` (2.662 del núcleo y 130 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -235,6 +235,11 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   widgets/FCTextEdits.*  FCTextAreaExtended, FCPlainTextAreaExtended, FCTextAreaLineNumber y MyCompleter de GUIElements
   BookmarkManager.*      Ayuda -> Marcadores (install_bookmarks, on_backup_site) y la pestaña "Administrador de marcadores"
                          (Bookmark.py): agregar, quitar, ordenar arrastrando, exportar e importar
+  shell/FCShell.*        La consola Tcl (ToolShell: TermWidget + FCShell, _BrowserTextEdit, _ExpandableTextEdit) con el
+                         intérprete Tcl real (Tcl_CreateInterp) y `puts` redefinido como el original
+  shell/TclCommand.*     Base de los comandos (TclCommand): datos de resources/tcl_commands.json (extract_tcl_commands.py),
+                         parse_arguments / check_args con las conversiones float() / int() de Python, get_decorated_help
+  shell/TclCommands*.cpp El registro (register_all_commands; los que faltan portar avisan) y las tandas de comandos
   AppScripts.cpp         Archivo -> Nuevo/Abrir/Ejecutar script, Nuevo documento, save_source_file, Editor de código
                          (Shift+E), ir a una línea (Ctrl+G en un editor), open_config_file
   tools/SolderPasteTool.* Pasta de soldar (ToolSolderPaste, Alt+K): boquillas, `<objeto>_solderpaste` y su CNC Job
@@ -338,6 +343,9 @@ Reglas de calidad (deben cumplirse antes de dar una tanda por terminada):
 **Interfaz (Qt6):** `brew install qt` (Qt 6.12 en el Mac del usuario; trae QtSvg, que usa Film, y QtSerialPort, opcional, para
 GRBL); CMake la encuentra solo y arma `build/src/gui/FlatCAM.app`
 y `gui_tests` (corren con `QT_QPA_PLATFORM=offscreen`). Sin Qt6 se compila solo el núcleo (`-DFLATCAM_BUILD_GUI=OFF` lo fuerza).
+**Consola Tcl:** la GUI necesita Tcl 8.6 o 9 (decisión del usuario: el intérprete Tcl real): `brew install tcl-tk` (Tcl 9.1 en el
+Mac del usuario; CMake lo busca con pkg-config en `/opt/homebrew/opt/tcl-tk`), `apt install tcl-dev`, vcpkg `tcl`. El FlatCAM en
+Python usa el Tcl 8.6.13 de `tkinter`; el port solo usa la API común a los dos.
 Para regenerar la ventana principal desde el original: `MAMBA_ROOT_PREFIX=$HOME/.local/share/mamba micromamba run -n old python
 tools/gui_dump/dump_tree.py` (desde `tools/gui_dump/`) y después `python3 tools/gui_dump/gen_cpp.py`. Íconos y traducción:
 `micromamba run -n old python tools/gui_dump/extract_resources.py`. Captura para comparar con el original:
@@ -541,6 +549,12 @@ fijan con sentido físico (micras), no en el último bit.
   Básico y con el Avanzado (qué se ve, las columnas escondidas, los valores, el rótulo) y `process_slot_as_drills`
   sobre 8 ranuras (con la Shapely real, antes de `build_app`, que reemplaza módulos y rompe a Shapely): idénticos
   (`GuiAppLevel.*`).
+- `tests/tools/oracle_tcl_shell.py` escribe `tests/data/tcl_shell/oracle.json`: la consola original (`FCShell` con el Tcl 8.6
+  de `tkinter`) con la aplicación simulada: la ayuda y la descripción de los 89 alias, el texto de la consola después de 31
+  órdenes escritas como el usuario (Tcl puro, `help`, errores de argumentos, de tipo y de comando, `get_sys` / `set_sys` /
+  `list_sys`, `get_names`, `clear`), `exec_command` sin eco y `ScriptObject.handle_run_code` con un script de varias líneas
+  y errores: idénticos con el Tcl 9.1 del port (`GuiTclShell.*`). Ojo: hay que guardar `app_Main.App` antes de cambiarlo
+  por la clase simulada (el `isinstance` de `TclCommand.__init__`) y darle `propagate_defaults` a las opciones.
 - `tests/tools/oracle_print_pdf.py` genera `tests/golden_print_pdf.h`: ejecuta `save_pdf` original (Archivo -> Imprimir,
   con `ast`) con el contorno y el taladro de "luz de noche" y captura el SVG que le pasa a svglib, la hoja y el
   desplazamiento (3 casos: dos objetos en A4 vertical, uno en A4 apaisada, uno en carta). Con GEOS 3.11 idéntico a menos de
@@ -1007,6 +1021,18 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     mismo diámetro o uno dentro de la tolerancia, que pasa a ser el diámetro de la herramienta). **Error del port
     corregido:** la casilla "Dibujar" (`plot_cb`) de las Propiedades no estaba conectada (no mostraba ni ocultaba el
     objeto); ahora es `on_plot_cb_click` (también las casillas de la tabla).
+    (ae) **Consola Tcl** (ítem 7, decisión del usuario: el intérprete Tcl real). Como el original: el dock "TCL Shell" con
+    el visor y la línea de comandos (historial, autocompletado con `myKeywords`), Herramientas -> Línea de comandos, el
+    botón, el ícono de la barra de estado y la tecla S; los mensajes de `inform` van también a la consola con el estilo de
+    su nivel y [ERROR] / [WARNING] la muestran (`App.info` / `shell_message`); el botón "Ejecutar" de un script
+    (`handle_run_code`, línea por línea) y Archivo -> Ejecutar script (el archivo entero) ejecutan de verdad. Están los
+    66 comandos del original con su ayuda; los de esta tanda son help, version, get_sys, set_sys, list_sys, save_sys,
+    get_names, set_active, clear, new, quit_flatcam, get_path, set_path, plot_all y plot_objects; los demás responden "El
+    comando ... todavía no está en el port.". `import_svg` no existe en la consola (el original no lo importa en
+    `tclCommands/__init__.py`). Desvíos: `version` no se conecta a flatcam.org (el original manda el número de serie y
+    estadísticas); avisa lo mismo que el original sin conexión. Si Archivo -> Ejecutar script no puede leer el archivo, el
+    original cierra el programa (`sys.exit(2)`); el port avisa. Un error de Python que no es `TclErrorException` se
+    muestra sin el traceback de Python.
     (y) **Error del port corregido (volcador):** el diálogo "Acerca de" mostraba `<MagicMock name='app_url' ...>` en vez de
     `http://flatcam.org`, porque la aplicación simulada de `fc_runtime.py` no tenía `app_url`.
     (m) Errores del original que se reproducen a propósito en Isolation: la herramienta nueva tiene tipo `"           Iso"`
@@ -1073,7 +1099,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.788 casos de test** (`ctest`): 2.663 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 125 de la GUI;
+- **2.793 casos de test** (`ctest`): 2.663 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 130 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -1101,7 +1127,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.788 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.793 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -1353,7 +1379,10 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    También: cambiar las unidades (tecla Q, Editar y la pestaña, `oracle_units.py`).
    También: área de trabajo, cursor e importar/exportar preferencias. ~~El nivel Avanzado~~ (hecho, 11.12 ad).
    **Ítem 6 completo.**
-7. **Consola Tcl** (`ToolShell`, `tclCommands/`, 68 comandos) y scripts.
+7. **Consola Tcl** (`ToolShell`, `tclCommands/`, 66 comandos) y scripts. **En curso** (11.12 ae): hechos la consola, el
+   intérprete Tcl real, la base de los comandos con su ayuda, ejecutar scripts y la primera tanda (15 comandos de la
+   aplicación). Faltan: abrir y exportar archivos, transformar y crear objetos (add_*, offset, scale, mirror...) y los de
+   CAM (cncjob, drillcncjob, write_gcode, isolate, ncc, paint, cutout, geocutout, panelize, mill*, aligndrill*...).
 9. **Hacia la 1.0.0** (pedido del usuario; estimación dada: unas 6 sesiones sin editores y 8 a 9 con editores):
    (a) preferencias y unidades (ítem 6); (b) herramientas (ítem 5) en dos o tres sesiones; (c) lo que queda de archivos
    (ítem 4: PDF, imagen, textos con fuentes, SVG del CNC Job, Script, Documento, imprimir a PDF) y la consola Tcl (ítem 7);
@@ -1526,6 +1555,10 @@ encontrar uno nuevo, agregarlo acá con su sección. Ya corregidos a pedido del 
   taladro" están siempre escondidos (se usan los de las preferencias); `replace_tools` compara el diámetro exacto
   (`==` de coma flotante) y, con dos herramientas de la base para un diámetro, cancela todo; "Cargar automáticamente
   de la base" cambia una opción de la aplicación (vale para todos los Excellon).
+- **Consola Tcl** (11.12 ae): `handle_run_code` junta cada línea que da error con las siguientes (una orden que falla
+  se vuelve a intentar pegada a la próxima, y el error que se muestra al final es el del último intento); `set_path`
+  manda sus errores a la consola sin el estilo de error (`inform_shell`); `import_svg` está escrito pero no se
+  registra; `plot_all` y `plot_objects` evalúan `plot_status` con `eval` de Python.
 - **Imprimir a PDF** (sección 13, ítem 4): como en Film, el SVG lleva `b'` y `'` como texto y un objeto de un solo
   polígono no se recolorea; la opacidad es el alfa en hexadecimal tal cual (`"BF"`, que no es un valor válido de SVG); una
   Geometría usa el color de dibujo y la opacidad del objeto anterior; con un CNC Job elegido no se imprime nada

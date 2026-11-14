@@ -18,6 +18,10 @@ add_library(flatcam_gui STATIC
     AppImport.cpp
     AppScripts.cpp
     BookmarkManager.cpp
+    shell/FCShell.cpp
+    shell/TclCommand.cpp
+    shell/TclCommands.cpp
+    shell/TclCommandsApp.cpp
     AppTextEditor.cpp
     objects/ScriptObject.cpp
     generated/ScriptObjectUIBase.cpp
@@ -145,6 +149,27 @@ target_include_directories(flatcam_gui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)
 # convierten en macros y las estructuras del núcleo tienen el mismo tamaño en la GUI. Se usa Q_SIGNALS/Q_SLOTS/Q_EMIT.
 target_compile_definitions(flatcam_gui PUBLIC QT_NO_KEYWORDS)
 target_link_libraries(flatcam_gui PUBLIC flatcam::core Qt6::Widgets Qt6::OpenGLWidgets Qt6::Svg Qt6::PrintSupport)
+# La consola Tcl (ToolShell) usa el intérprete Tcl real (8.6 o 9; el FlatCAM en Python usa el 8.6 de tkinter).
+# pkg-config `tcl` (en macOS, el tcl-tk de Homebrew); si no, FindTCL de CMake.
+find_package(PkgConfig QUIET)
+if(APPLE AND EXISTS "/opt/homebrew/opt/tcl-tk/lib/pkgconfig")
+    set(ENV{PKG_CONFIG_PATH} "/opt/homebrew/opt/tcl-tk/lib/pkgconfig:$ENV{PKG_CONFIG_PATH}")
+endif()
+if(PkgConfig_FOUND)
+    pkg_check_modules(FLATCAM_TCL QUIET IMPORTED_TARGET tcl)
+endif()
+if(TARGET PkgConfig::FLATCAM_TCL)
+    target_link_libraries(flatcam_gui PUBLIC PkgConfig::FLATCAM_TCL)
+    message(STATUS "Tcl ${FLATCAM_TCL_VERSION} (pkg-config) para la consola Tcl")
+else()
+    find_package(TCL)
+    if(NOT TCL_FOUND)
+        message(FATAL_ERROR "Falta Tcl (8.6 o 9) para la consola Tcl: brew install tcl-tk / apt install tcl-dev / vcpkg tcl")
+    endif()
+    target_include_directories(flatcam_gui PUBLIC ${TCL_INCLUDE_PATH})
+    target_link_libraries(flatcam_gui PUBLIC ${TCL_LIBRARY})
+    message(STATUS "Tcl (FindTCL): ${TCL_LIBRARY}")
+endif()
 # GRBL de la autonivelación: QtSerialPort es opcional (sin él, no se listan ni abren puertos).
 find_package(Qt6 QUIET COMPONENTS SerialPort)
 if(TARGET Qt6::SerialPort)

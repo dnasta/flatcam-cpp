@@ -351,5 +351,6 @@
     <file>preferences_fields.json</file>
     <file>shortcuts.json</file>
     <file>tcl_keywords.json</file>
+    <file>tcl_commands.json</file>
 </qresource>
 </RCC>

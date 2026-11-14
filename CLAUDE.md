@@ -18,7 +18,7 @@ máquina del usuario.
 
 **Lo que hay que saber para retomar (el detalle está en `AGENTS.md`, sección 12).**
 
-- **Tests:** 2.788 casos de `ctest` (2.663 del núcleo, de los que 2.251 son los casos de los postprocesadores, y 125 de la GUI; 1
+- **Tests:** 2.793 casos de `ctest` (2.663 del núcleo, de los que 2.251 son los casos de los postprocesadores, y 130 de la GUI; 1
   lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
   y Qt 6.12 en el Mac del usuario (M4, AppleClang). micromamba: `old` (Shapely 1.8.4, GEOS 3.11, PyQt5 5.15, para oráculos y para
   volcar la interfaz original), `sh2`, `geos312`, `geos311` (`AGENTS.md`, secciones 6 y 12.4). El build con GEOS 3.12 va en
@@ -31,7 +31,7 @@ máquina del usuario.
   `/tmp/b312` (GEOS 3.12) y `/tmp/b311` (3.11, la del oráculo: Film sale byte por byte). **Lo que falta hacia la 1.0.0:**
   ítem 4 (textos con fuentes; ya están los objetos Script y Documento con su editor de texto, `oracle_script_document.py`, el SVG del CNC Job, `oracle_cnc_svg.py`,
   importar imagen, `oracle_image.py` en el entorno `raster`, importar PDF, `oracle_pdf.py`, e imprimir a PDF,
-  `oracle_print_pdf.py`). macOS limpia `/tmp` cada día: `/tmp/b311` y `/tmp/b312` se rearman con el comando de la sección 6, consola Tcl (ítem 7), cierre (13.9) (hechos además los objetos vacíos de Archivo -> Nuevo, los marcadores, arrastrar filas en
+  `oracle_print_pdf.py`). macOS limpia `/tmp` cada día: `/tmp/b311` y `/tmp/b312` se rearman con el comando de la sección 6, consola Tcl (ítem 7: en curso, hechos la consola, ejecutar scripts y 15 de los 66 comandos, `AGENTS.md` 11.12 ae), cierre (13.9) (hechos además los objetos vacíos de Archivo -> Nuevo, los marcadores, arrastrar filas en
   las tablas de herramientas, la numeración T de Perforación y el nivel Avanzado, `AGENTS.md` 11.12 ab, ac y ad) y corregir la sección 14.
 - **Editores hechos (fase 5, ítem 8):** Geometría, Excellon y Gerber (`src/editors/` sin Qt y `src/gui/editors/`), contra el
   original con `oracle_geo_editor.py`, `oracle_exc_editor.py` y `oracle_grb_editor.py`; entrar y salir con E, Editar, el menú
@@ -61,7 +61,8 @@ máquina del usuario.
   `.nc` de láser es la variante 8.994 (la predeterminada); los 746 contra 723 trazados del dosificador eran de la 8.994.
 - **Decisiones del usuario vigentes:** G-code del láser como la 8.994 (con `G00 Z0`, sin `G00 Z` final); optimizador propio de
   agujeros; método estándar de Paint/NCC; capas inferiores y taladros reflejados en X; Isolation dentro del alcance; el (0, 0) de
-  `Alinea` no se genera; canvas `QOpenGLWidget`; los datos de "luz de noche" pueden estar en el repo público.
+  `Alinea` no se genera; canvas `QOpenGLWidget`; los datos de "luz de noche" pueden estar en el repo público; la consola Tcl
+  usa el intérprete Tcl real (dependencia nueva: `brew install tcl-tk`, Tcl 8.6 o 9).
 - **Regla de entrega:** correr toda la suite con GEOS 3.12 **y** 3.15.0 antes de dar algo por terminado; tolerancias en micras, no en el
   último bit (`AGENTS.md`, sección 6). Verificar y corregir apenas se detecte un problema. Actualizar este archivo y `AGENTS.md` antes
   del mensaje final de cada respuesta.
