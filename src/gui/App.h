@@ -481,6 +481,23 @@ public:
     void onShortcutList();
     /** @brief Abre en el navegador el manual (0, F1) o los videos (1, F4). @param which Cuál. */
     void openHelpLink(int which);
+    /** @brief Los marcadores (`global_bookmarks`), en el orden del diccionario. @return Clave y marcador. */
+    std::vector<std::pair<QString, std::pair<QString, QString>>> bookmarks() const;
+    /** @brief Cambia `global_bookmarks`. @param dict Los marcadores. */
+    void setBookmarks(const std::vector<std::pair<QString, std::pair<QString, QString>>>& dict);
+    /**
+     * @brief `install_bookmarks`: los marcadores en Ayuda -> Marcadores (los primeros `global_bookmarks_limit`).
+     * @param dict Los marcadores nuevos (vacío: se agregan FlatCAM y el sitio de respaldo a los que hay).
+     */
+    void installBookmarks(std::optional<std::vector<std::pair<QString, std::pair<QString, QString>>>> dict = std::nullopt);
+    /** @brief `on_bookmarks_manager`: la pestaña "Administrador de marcadores" (una sola). @return La pestaña o nulo. */
+    class BookmarkManager* onBookmarksManager();
+    /** @brief `on_backup_site`: el aviso del sitio de respaldo. */
+    void onBackupSite();
+    /** @brief Abre un enlace en el navegador (`webbrowser.open`), o con @ref urlOpener si está puesto. @param url Enlace. */
+    void openUrl(const QString& url);
+    /** @brief Reemplaza al navegador al abrir enlaces (para las pruebas). */
+    std::function<void(const QString&)> urlOpener;
     /**
      * @brief `final_save`: antes de salir, si hay cambios sin guardar pregunta si se guarda el proyecto.
      * @return `true` si se puede salir (se guardó, se eligió "No" o no había cambios); `false` con "Cancelar".
@@ -622,6 +639,7 @@ private:
     QWidget* defaultProperties_{nullptr};  ///< Panel de Propiedades sin objeto (`setup_default_properties_tab`).
     ObjectCollection* collection_;
     QString lastFolder_;
+    QPointer<class BookmarkManager> bookTab_;  ///< `book_dialog_tab`.
     QPointer<class AppTextEditor> codeEditor_;  ///< La pestaña "Editor de código" (`text_editor_tab`).
     QString projectFilename_;
     QString dataPath_;
@@ -643,6 +661,7 @@ private:
     void selectObjects(bool multisel);
     void setupCanvasMenu();
     void setupHelpMenu();
+    void setupBookmarks();
     bool shouldWeSave_{false};  ///< `should_we_save`: hay cambios sin guardar.
     QString callSource_{"app"};          ///< `call_source`.
     QColor oldTabTextColor_;             ///< `old_tab_text_color`.

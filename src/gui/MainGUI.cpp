@@ -173,6 +173,7 @@ void MainGUI::inform(const QString& msg) {
     const auto m = re.match(msg);
     if (m.hasMatch()) fcinfo->setStatus(m.captured(2), m.captured(1));
     else fcinfo->setStatus(msg, "info");
+    Q_EMIT informed(msg);
 }
 
 }  // namespace flatcam::gui

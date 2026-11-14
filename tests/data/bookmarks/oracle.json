@@ -1,0 +1,2074 @@
+{
+ "tab": {
+  "title": "Administrador de Marcadores",
+  "name": "bookmarks_tab",
+  "headers": [
+   "#",
+   "Título",
+   "Enlace Web"
+  ],
+  "tips": [
+   "Índice.\nLas filas en color gris llenarán el menú Marcadores.\nEl número de filas de color gris se establece en Preferencias.",
+   "Descripción del enlace que se establece como una acción de menú.\nIntenta mantenerlo corto porque está instalado como un elemento del menú.",
+   "Enlace web. P.ej: https://your_website.org "
+  ],
+  "link": "http://",
+  "buttons": [
+   "Añadir entrada",
+   "Remueva la entrada",
+   "Exportar la lista",
+   "Importar la lista"
+  ],
+  "labels": [
+   "<b>Nuevo Marcador</b>",
+   "Título:",
+   "Enlace Web:"
+  ]
+ },
+ "exported": "1:['FlatCAM', 'http://flatcam.org']\n2:['Sitio de respaldo', '']\n3:['Docs', 'https://docs.example']\n",
+ "steps": [
+  {
+   "step": "install",
+   "menu": [
+    {
+     "text": "FlatCAM",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Sitio de respaldo",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Administrador de Marcadores\t",
+     "separator": false,
+     "manager": true
+    }
+   ],
+   "dict": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ]
+   ],
+   "msgs": []
+  },
+  {
+   "step": "manager",
+   "menu": [
+    {
+     "text": "FlatCAM",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Sitio de respaldo",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Administrador de Marcadores\t",
+     "separator": false,
+     "manager": true
+    }
+   ],
+   "dict": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ]
+   ],
+   "msgs": [],
+   "table": [
+    [
+     "1",
+     "FlatCAM",
+     "http://flatcam.org",
+     "#808080"
+    ],
+    [
+     "2",
+     "Sitio de respaldo",
+     "",
+     "#808080"
+    ]
+   ],
+   "bm": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ]
+   ]
+  },
+  {
+   "step": "add Foro https://foro.example/",
+   "menu": [
+    {
+     "text": "FlatCAM",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Sitio de respaldo",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Foro",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Administrador de Marcadores\t",
+     "separator": false,
+     "manager": true
+    }
+   ],
+   "dict": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Foro",
+      "https://foro.example"
+     ]
+    ]
+   ],
+   "msgs": [
+    "[success] Marcador agregado."
+   ],
+   "table": [
+    [
+     "1",
+     "FlatCAM",
+     "http://flatcam.org",
+     "#808080"
+    ],
+    [
+     "2",
+     "Sitio de respaldo",
+     "",
+     "#808080"
+    ],
+    [
+     "3",
+     "Foro",
+     "https://foro.example",
+     "#808080"
+    ]
+   ],
+   "bm": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Foro",
+      "https://foro.example"
+     ]
+    ]
+   ]
+  },
+  {
+   "step": "add  https://x.example",
+   "menu": [
+    {
+     "text": "FlatCAM",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Sitio de respaldo",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Foro",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Administrador de Marcadores\t",
+     "separator": false,
+     "manager": true
+    }
+   ],
+   "dict": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Foro",
+      "https://foro.example"
+     ]
+    ]
+   ],
+   "msgs": [
+    "[ERROR_NOTCL] La entrada del título está vacía."
+   ],
+   "table": [
+    [
+     "1",
+     "FlatCAM",
+     "http://flatcam.org",
+     "#808080"
+    ],
+    [
+     "2",
+     "Sitio de respaldo",
+     "",
+     "#808080"
+    ],
+    [
+     "3",
+     "Foro",
+     "https://foro.example",
+     "#808080"
+    ]
+   ],
+   "bm": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Foro",
+      "https://foro.example"
+     ]
+    ]
+   ]
+  },
+  {
+   "step": "add Otro http://",
+   "menu": [
+    {
+     "text": "FlatCAM",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Sitio de respaldo",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Foro",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Administrador de Marcadores\t",
+     "separator": false,
+     "manager": true
+    }
+   ],
+   "dict": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Foro",
+      "https://foro.example"
+     ]
+    ]
+   ],
+   "msgs": [
+    "[ERROR_NOTCL] La entrada del enlace web está vacía."
+   ],
+   "table": [
+    [
+     "1",
+     "FlatCAM",
+     "http://flatcam.org",
+     "#808080"
+    ],
+    [
+     "2",
+     "Sitio de respaldo",
+     "",
+     "#808080"
+    ],
+    [
+     "3",
+     "Foro",
+     "https://foro.example",
+     "#808080"
+    ]
+   ],
+   "bm": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Foro",
+      "https://foro.example"
+     ]
+    ]
+   ]
+  },
+  {
+   "step": "add Foro https://y.example",
+   "menu": [
+    {
+     "text": "FlatCAM",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Sitio de respaldo",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Foro",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Administrador de Marcadores\t",
+     "separator": false,
+     "manager": true
+    }
+   ],
+   "dict": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Foro",
+      "https://foro.example"
+     ]
+    ]
+   ],
+   "msgs": [
+    "[ERROR_NOTCL] Ya sea el Título o el Enlace web ya en la tabla."
+   ],
+   "table": [
+    [
+     "1",
+     "FlatCAM",
+     "http://flatcam.org",
+     "#808080"
+    ],
+    [
+     "2",
+     "Sitio de respaldo",
+     "",
+     "#808080"
+    ],
+    [
+     "3",
+     "Foro",
+     "https://foro.example",
+     "#808080"
+    ]
+   ],
+   "bm": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Foro",
+      "https://foro.example"
+     ]
+    ]
+   ]
+  },
+  {
+   "step": "add Z http://flatcam.org",
+   "menu": [
+    {
+     "text": "FlatCAM",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Sitio de respaldo",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Foro",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Administrador de Marcadores\t",
+     "separator": false,
+     "manager": true
+    }
+   ],
+   "dict": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Foro",
+      "https://foro.example"
+     ]
+    ]
+   ],
+   "msgs": [
+    "[ERROR_NOTCL] Ya sea el Título o el Enlace web ya en la tabla."
+   ],
+   "table": [
+    [
+     "1",
+     "FlatCAM",
+     "http://flatcam.org",
+     "#808080"
+    ],
+    [
+     "2",
+     "Sitio de respaldo",
+     "",
+     "#808080"
+    ],
+    [
+     "3",
+     "Foro",
+     "https://foro.example",
+     "#808080"
+    ]
+   ],
+   "bm": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Foro",
+      "https://foro.example"
+     ]
+    ]
+   ]
+  },
+  {
+   "step": "add Docs https://docs.example",
+   "menu": [
+    {
+     "text": "FlatCAM",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Sitio de respaldo",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Foro",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Docs",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Administrador de Marcadores\t",
+     "separator": false,
+     "manager": true
+    }
+   ],
+   "dict": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Foro",
+      "https://foro.example"
+     ]
+    ],
+    [
+     "4",
+     [
+      "Docs",
+      "https://docs.example"
+     ]
+    ]
+   ],
+   "msgs": [
+    "[success] Marcador agregado."
+   ],
+   "table": [
+    [
+     "1",
+     "FlatCAM",
+     "http://flatcam.org",
+     "#808080"
+    ],
+    [
+     "2",
+     "Sitio de respaldo",
+     "",
+     "#808080"
+    ],
+    [
+     "3",
+     "Foro",
+     "https://foro.example",
+     "#808080"
+    ],
+    [
+     "4",
+     "Docs",
+     "https://docs.example",
+     "#808080"
+    ]
+   ],
+   "bm": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Foro",
+      "https://foro.example"
+     ]
+    ],
+    [
+     "4",
+     [
+      "Docs",
+      "https://docs.example"
+     ]
+    ]
+   ]
+  },
+  {
+   "step": "remove FlatCAM",
+   "menu": [
+    {
+     "text": "FlatCAM",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Sitio de respaldo",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Foro",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Docs",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Administrador de Marcadores\t",
+     "separator": false,
+     "manager": true
+    }
+   ],
+   "dict": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Foro",
+      "https://foro.example"
+     ]
+    ],
+    [
+     "4",
+     [
+      "Docs",
+      "https://docs.example"
+     ]
+    ]
+   ],
+   "msgs": [
+    "[WARNING_NOTCL] Este marcador no se puede eliminar."
+   ],
+   "table": [
+    [
+     "1",
+     "FlatCAM",
+     "http://flatcam.org",
+     "#808080"
+    ],
+    [
+     "2",
+     "Sitio de respaldo",
+     "",
+     "#808080"
+    ],
+    [
+     "3",
+     "Foro",
+     "https://foro.example",
+     "#808080"
+    ],
+    [
+     "4",
+     "Docs",
+     "https://docs.example",
+     "#808080"
+    ]
+   ],
+   "bm": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Foro",
+      "https://foro.example"
+     ]
+    ],
+    [
+     "4",
+     [
+      "Docs",
+      "https://docs.example"
+     ]
+    ]
+   ]
+  },
+  {
+   "step": "remove Foro",
+   "menu": [
+    {
+     "text": "FlatCAM",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Sitio de respaldo",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Docs",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Administrador de Marcadores\t",
+     "separator": false,
+     "manager": true
+    }
+   ],
+   "dict": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Docs",
+      "https://docs.example"
+     ]
+    ]
+   ],
+   "msgs": [
+    "[success] Marcador eliminado."
+   ],
+   "table": [
+    [
+     "1",
+     "FlatCAM",
+     "http://flatcam.org",
+     "#808080"
+    ],
+    [
+     "2",
+     "Sitio de respaldo",
+     "",
+     "#808080"
+    ],
+    [
+     "3",
+     "Docs",
+     "https://docs.example",
+     "#808080"
+    ]
+   ],
+   "bm": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Docs",
+      "https://docs.example"
+     ]
+    ]
+   ]
+  },
+  {
+   "step": "remove nothing",
+   "menu": [
+    {
+     "text": "FlatCAM",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Sitio de respaldo",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Docs",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Administrador de Marcadores\t",
+     "separator": false,
+     "manager": true
+    }
+   ],
+   "dict": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Docs",
+      "https://docs.example"
+     ]
+    ]
+   ],
+   "msgs": [
+    "[success] Marcador eliminado."
+   ],
+   "table": [
+    [
+     "1",
+     "FlatCAM",
+     "http://flatcam.org",
+     "#808080"
+    ],
+    [
+     "2",
+     "Sitio de respaldo",
+     "",
+     "#808080"
+    ],
+    [
+     "3",
+     "Docs",
+     "https://docs.example",
+     "#808080"
+    ]
+   ],
+   "bm": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Docs",
+      "https://docs.example"
+     ]
+    ]
+   ]
+  },
+  {
+   "step": "export",
+   "menu": [
+    {
+     "text": "FlatCAM",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Sitio de respaldo",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Docs",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Administrador de Marcadores\t",
+     "separator": false,
+     "manager": true
+    }
+   ],
+   "dict": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Docs",
+      "https://docs.example"
+     ]
+    ]
+   ],
+   "msgs": [
+    "[success] Marcadores exportados a: <DATA>/exported.txt"
+   ],
+   "table": [
+    [
+     "1",
+     "FlatCAM",
+     "http://flatcam.org",
+     "#808080"
+    ],
+    [
+     "2",
+     "Sitio de respaldo",
+     "",
+     "#808080"
+    ],
+    [
+     "3",
+     "Docs",
+     "https://docs.example",
+     "#808080"
+    ]
+   ],
+   "bm": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Docs",
+      "https://docs.example"
+     ]
+    ]
+   ]
+  },
+  {
+   "step": "import",
+   "menu": [
+    {
+     "text": "FlatCAM",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Sitio de respaldo",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Docs",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Uno",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Dos",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Tres",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Cuatro",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Administrador de Marcadores\t",
+     "separator": false,
+     "manager": true
+    }
+   ],
+   "dict": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Docs",
+      "https://docs.example"
+     ]
+    ],
+    [
+     "4",
+     [
+      "Uno",
+      "http://uno.example\n"
+     ]
+    ],
+    [
+     "5",
+     [
+      "Dos",
+      "http://dos.example/\n"
+     ]
+    ],
+    [
+     "6",
+     [
+      "Tres",
+      "http://\n"
+     ]
+    ],
+    [
+     "7",
+     [
+      "Cuatro",
+      "http://cuatro.example"
+     ]
+    ]
+   ],
+   "msgs": [
+    "[success] Marcador agregado.",
+    "[success] Marcador agregado.",
+    "[ERROR_NOTCL] Ya sea el Título o el Enlace web ya en la tabla.",
+    "[success] Marcador agregado.",
+    "[ERROR_NOTCL] Ya sea el Título o el Enlace web ya en la tabla.",
+    "[ERROR_NOTCL] La entrada del título está vacía.",
+    "[success] Marcador agregado.",
+    "[success] Marcadores importados de: <DATA>/import.txt"
+   ],
+   "table": [
+    [
+     "1",
+     "FlatCAM",
+     "http://flatcam.org",
+     "#808080"
+    ],
+    [
+     "2",
+     "Sitio de respaldo",
+     "",
+     "#808080"
+    ],
+    [
+     "3",
+     "Docs",
+     "https://docs.example",
+     "#808080"
+    ],
+    [
+     "4",
+     "Uno",
+     "http://uno.example ",
+     "#808080"
+    ],
+    [
+     "5",
+     "Dos",
+     "http://dos.example/ ",
+     "#808080"
+    ],
+    [
+     "6",
+     "Tres",
+     "http:// ",
+     "#808080"
+    ],
+    [
+     "7",
+     "Cuatro",
+     "http://cuatro.example",
+     "#808080"
+    ]
+   ],
+   "bm": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Docs",
+      "https://docs.example"
+     ]
+    ],
+    [
+     "4",
+     [
+      "Uno",
+      "http://uno.example\n"
+     ]
+    ],
+    [
+     "5",
+     [
+      "Dos",
+      "http://dos.example/\n"
+     ]
+    ],
+    [
+     "6",
+     [
+      "Tres",
+      "http://\n"
+     ]
+    ],
+    [
+     "7",
+     [
+      "Cuatro",
+      "http://cuatro.example"
+     ]
+    ]
+   ]
+  },
+  {
+   "step": "import blank",
+   "menu": [
+    {
+     "text": "FlatCAM",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Sitio de respaldo",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Docs",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Uno",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Dos",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Tres",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Cuatro",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Cinco",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Seis",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Administrador de Marcadores\t",
+     "separator": false,
+     "manager": true
+    }
+   ],
+   "dict": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Docs",
+      "https://docs.example"
+     ]
+    ],
+    [
+     "4",
+     [
+      "Uno",
+      "http://uno.example\n"
+     ]
+    ],
+    [
+     "5",
+     [
+      "Dos",
+      "http://dos.example/\n"
+     ]
+    ],
+    [
+     "6",
+     [
+      "Tres",
+      "http://\n"
+     ]
+    ],
+    [
+     "7",
+     [
+      "Cuatro",
+      "http://cuatro.example"
+     ]
+    ],
+    [
+     "8",
+     [
+      "Cinco",
+      "http://cinco.example\n"
+     ]
+    ],
+    [
+     "9",
+     [
+      "Seis",
+      "http://seis.example\n"
+     ]
+    ]
+   ],
+   "msgs": [
+    "[success] Marcador agregado.",
+    "[ERROR_NOTCL] Ya sea el Título o el Enlace web ya en la tabla.",
+    "[success] Marcador agregado.",
+    "[success] Marcadores importados de: <DATA>/import2.txt"
+   ],
+   "table": [
+    [
+     "1",
+     "FlatCAM",
+     "http://flatcam.org",
+     "#808080"
+    ],
+    [
+     "2",
+     "Sitio de respaldo",
+     "",
+     "#808080"
+    ],
+    [
+     "3",
+     "Docs",
+     "https://docs.example",
+     "#808080"
+    ],
+    [
+     "4",
+     "Uno",
+     "http://uno.example ",
+     "#808080"
+    ],
+    [
+     "5",
+     "Dos",
+     "http://dos.example/ ",
+     "#808080"
+    ],
+    [
+     "6",
+     "Tres",
+     "http:// ",
+     "#808080"
+    ],
+    [
+     "7",
+     "Cuatro",
+     "http://cuatro.example",
+     "#808080"
+    ],
+    [
+     "8",
+     "Cinco",
+     "http://cinco.example ",
+     "#808080"
+    ],
+    [
+     "9",
+     "Seis",
+     "http://seis.example ",
+     "#808080"
+    ]
+   ],
+   "bm": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Docs",
+      "https://docs.example"
+     ]
+    ],
+    [
+     "4",
+     [
+      "Uno",
+      "http://uno.example\n"
+     ]
+    ],
+    [
+     "5",
+     [
+      "Dos",
+      "http://dos.example/\n"
+     ]
+    ],
+    [
+     "6",
+     [
+      "Tres",
+      "http://\n"
+     ]
+    ],
+    [
+     "7",
+     [
+      "Cuatro",
+      "http://cuatro.example"
+     ]
+    ],
+    [
+     "8",
+     [
+      "Cinco",
+      "http://cinco.example\n"
+     ]
+    ],
+    [
+     "9",
+     [
+      "Seis",
+      "http://seis.example\n"
+     ]
+    ]
+   ]
+  },
+  {
+   "step": "rebuild",
+   "menu": [
+    {
+     "text": "FlatCAM",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Sitio de respaldo",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Docs",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Uno",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Dos",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Tres",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Cuatro",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Cinco",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Seis",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Administrador de Marcadores\t",
+     "separator": false,
+     "manager": true
+    }
+   ],
+   "dict": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Docs",
+      "https://docs.example"
+     ]
+    ],
+    [
+     "4",
+     [
+      "Uno",
+      "http://uno.example "
+     ]
+    ],
+    [
+     "5",
+     [
+      "Dos",
+      "http://dos.example/ "
+     ]
+    ],
+    [
+     "6",
+     [
+      "Tres",
+      "http:// "
+     ]
+    ],
+    [
+     "7",
+     [
+      "Cuatro",
+      "http://cuatro.example"
+     ]
+    ],
+    [
+     "8",
+     [
+      "Cinco",
+      "http://cinco.example "
+     ]
+    ],
+    [
+     "9",
+     [
+      "Seis",
+      "http://seis.example "
+     ]
+    ]
+   ],
+   "msgs": [],
+   "table": [
+    [
+     "1",
+     "FlatCAM",
+     "http://flatcam.org",
+     "#808080"
+    ],
+    [
+     "2",
+     "Sitio de respaldo",
+     "",
+     "#808080"
+    ],
+    [
+     "3",
+     "Docs",
+     "https://docs.example",
+     "#808080"
+    ],
+    [
+     "4",
+     "Uno",
+     "http://uno.example ",
+     "#808080"
+    ],
+    [
+     "5",
+     "Dos",
+     "http://dos.example/ ",
+     "#808080"
+    ],
+    [
+     "6",
+     "Tres",
+     "http:// ",
+     "#808080"
+    ],
+    [
+     "7",
+     "Cuatro",
+     "http://cuatro.example",
+     "#808080"
+    ],
+    [
+     "8",
+     "Cinco",
+     "http://cinco.example ",
+     "#808080"
+    ],
+    [
+     "9",
+     "Seis",
+     "http://seis.example ",
+     "#808080"
+    ]
+   ],
+   "bm": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "Docs",
+      "https://docs.example"
+     ]
+    ],
+    [
+     "4",
+     [
+      "Uno",
+      "http://uno.example "
+     ]
+    ],
+    [
+     "5",
+     [
+      "Dos",
+      "http://dos.example/ "
+     ]
+    ],
+    [
+     "6",
+     [
+      "Tres",
+      "http:// "
+     ]
+    ],
+    [
+     "7",
+     [
+      "Cuatro",
+      "http://cuatro.example"
+     ]
+    ],
+    [
+     "8",
+     [
+      "Cinco",
+      "http://cinco.example "
+     ]
+    ],
+    [
+     "9",
+     [
+      "Seis",
+      "http://seis.example "
+     ]
+    ]
+   ]
+  },
+  {
+   "step": "install limit 3",
+   "menu": [
+    {
+     "text": "M1",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "M10",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "M11",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Administrador de Marcadores\t",
+     "separator": false,
+     "manager": true
+    }
+   ],
+   "dict": [
+    [
+     "1",
+     [
+      "M1",
+      "http://m1.example"
+     ]
+    ],
+    [
+     "10",
+     [
+      "M10",
+      "http://m10.example"
+     ]
+    ],
+    [
+     "11",
+     [
+      "M11",
+      "http://m11.example"
+     ]
+    ],
+    [
+     "12",
+     [
+      "M12",
+      "http://m12.example"
+     ]
+    ],
+    [
+     "2",
+     [
+      "M2",
+      "http://m2.example"
+     ]
+    ],
+    [
+     "3",
+     [
+      "M3",
+      "http://m3.example"
+     ]
+    ],
+    [
+     "4",
+     [
+      "M4",
+      "http://m4.example"
+     ]
+    ],
+    [
+     "5",
+     [
+      "M5",
+      "http://m5.example"
+     ]
+    ],
+    [
+     "6",
+     [
+      "M6",
+      "http://m6.example"
+     ]
+    ],
+    [
+     "7",
+     [
+      "M7",
+      "http://m7.example"
+     ]
+    ],
+    [
+     "8",
+     [
+      "M8",
+      "http://m8.example"
+     ]
+    ],
+    [
+     "9",
+     [
+      "M9",
+      "http://m9.example"
+     ]
+    ]
+   ],
+   "msgs": []
+  },
+  {
+   "step": "install again",
+   "menu": [
+    {
+     "text": "FlatCAM",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Sitio de respaldo",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "M3",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "M4",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "M5",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "M6",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "M7",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "M10",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "M11",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "M12",
+     "separator": false,
+     "manager": false
+    },
+    {
+     "text": "Administrador de Marcadores\t",
+     "separator": false,
+     "manager": true
+    }
+   ],
+   "dict": [
+    [
+     "1",
+     [
+      "FlatCAM",
+      "http://flatcam.org"
+     ]
+    ],
+    [
+     "10",
+     [
+      "M10",
+      "http://m10.example"
+     ]
+    ],
+    [
+     "11",
+     [
+      "M11",
+      "http://m11.example"
+     ]
+    ],
+    [
+     "12",
+     [
+      "M12",
+      "http://m12.example"
+     ]
+    ],
+    [
+     "2",
+     [
+      "Sitio de respaldo",
+      ""
+     ]
+    ],
+    [
+     "3",
+     [
+      "M3",
+      "http://m3.example"
+     ]
+    ],
+    [
+     "4",
+     [
+      "M4",
+      "http://m4.example"
+     ]
+    ],
+    [
+     "5",
+     [
+      "M5",
+      "http://m5.example"
+     ]
+    ],
+    [
+     "6",
+     [
+      "M6",
+      "http://m6.example"
+     ]
+    ],
+    [
+     "7",
+     [
+      "M7",
+      "http://m7.example"
+     ]
+    ],
+    [
+     "8",
+     [
+      "M8",
+      "http://m8.example"
+     ]
+    ],
+    [
+     "9",
+     [
+      "M9",
+      "http://m9.example"
+     ]
+    ]
+   ],
+   "msgs": []
+  }
+ ]
+}

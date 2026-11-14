@@ -219,6 +219,13 @@ void ExcellonObjectUI::build(ExcellonObject& obj) {
 
 GeometryObjectUI::GeometryObjectUI(QWidget* parent) : GeometryObjectUIBase(parent) {
     setupUi();
+    // FCTable(drag_drop=True) y rebuild_ui: las herramientas se renumeran en el orden de la tabla, pero la tabla no se
+    // vuelve a armar (la columna oculta conserva los números viejos, como en el original).
+    geo_tools_table->setDragDrop(true);
+    connect(geo_tools_table, &FCTable::dragDropped, this, [this] {
+        if (!obj_) return;
+        if (auto t = reorderToolsByTable(geo_tools_table, 5, obj_->tools())) obj_->tools() = std::move(*t);
+    });
     // set_ui: los postprocesadores, con el nombre como tooltip; "default" es geometry_ppname_g.
     for (const QString& n : preprocessorNames()) {
         pp_geometry_name_cb->addItem(n);
