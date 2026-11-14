@@ -224,9 +224,10 @@ public:
      * @brief Agrega un objeto creado por una herramienta (`new_object` → `on_object_created`): al árbol, lo dibuja y
      * encuadra.
      * @param obj Objeto.
+     * @param plot `plot` de `new_object`: con `false` no se encuadra (los objetos vacíos de Archivo -> Nuevo).
      * @return El objeto agregado.
      */
-    FlatCAMObj* addObject(std::unique_ptr<FlatCAMObj> obj);
+    FlatCAMObj* addObject(std::unique_ptr<FlatCAMObj> obj, bool plot = true);
 
     /**
      * @brief Lleva el cursor a un punto (`on_jump_to` con `custom_location`): mueve el puntero, opcionalmente centra la
@@ -573,6 +574,12 @@ public:
     void runScriptCode(const QString& code);
     /** @brief `new_document_object`: un Documento vacío `new_document`. @return El objeto. */
     FlatCAMObj* newDocumentObject();
+    /** @brief `new_geometry_object`: Geometría vacía `new_geo` con una herramienta (Archivo -> Nuevo, tecla N). @return El objeto. */
+    FlatCAMObj* newGeometryObject();
+    /** @brief `new_gerber_object`: Gerber vacío `new_grb` (Archivo -> Nuevo, tecla B). @return El objeto. */
+    FlatCAMObj* newGerberObject();
+    /** @brief `new_excellon_object`: Excellon vacío `new_exc` (Archivo -> Nuevo, tecla L). @return El objeto. */
+    FlatCAMObj* newExcellonObject();
     /**
      * @brief `save_source_file`: el texto guardado de un objeto, con la cabecera `G04` del original.
      * @param obj El objeto. @param filename Archivo. @return Si se escribió (falla con el texto vacío).

@@ -234,8 +234,8 @@ void GrbEditor::save(GerberObject* obj) {
     app_->refreshSourceFile(lastCreated_);
     deactivate();
     app_->ui()->plotCanvas()->setLayerVisible(obj->id(), obj->plotEnabled());
-    // Un Gerber que quedó sin geometría se borra al salir (editor2object).
-    if (static_cast<GerberObject*>(lastCreated_)->gerber().solidGeometry().empty()) app_->requestDeleteEditedObject();
+    // editor2object: el Gerber de origen sin geometría (uno vacío de Archivo -> Nuevo) se borra al salir.
+    if (obj->gerber().solidGeometry().empty()) app_->requestDeleteEditedObject();
     app_->ui()->inform("[success] " + tr_("Done."));
 }
 

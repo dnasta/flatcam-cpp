@@ -235,6 +235,10 @@ void ExcEditor::save(ExcellonObject* obj) {
     deactivate();
     app_->ui()->plotCanvas()->setLayerVisible(obj->id(), obj->plotEnabled());
     app_->ui()->inform("[success] " + tr_("Excellon editing finished."));
+    // editor2object: el Excellon de origen sin agujeros ni ranuras (uno vacío de Archivo -> Nuevo) se borra.
+    bool any = false;
+    for (const auto& [id, t] : obj->excellon().drillTools()) any = any || !t.drills.empty() || !t.slots.empty();
+    if (!any) app_->requestDeleteEditedObject();
 }
 
 void ExcEditor::buildUi() {

@@ -559,8 +559,9 @@ void App::setupCanvasMenu() {
     connect(save, &QAction::triggered, this, [this] { editorToObject(); });
     connect(disable, &QAction::triggered, this, [this] { togglePlots(); });
     connect(panel, &QAction::triggered, ui_.get(), &MainGUI::onToggleNotebook);
-    auto notPorted = [this] { ui_->inform("[WARNING_NOTCL] Los objetos vacíos para los editores no forman parte del port."); };
-    for (QAction* a : {newGeo, newGrb, newExc}) connect(a, &QAction::triggered, this, notPorted);
+    connect(newGeo, &QAction::triggered, this, [this] { newGeometryObject(); });
+    connect(newGrb, &QAction::triggered, this, [this] { newGerberObject(); });
+    connect(newExc, &QAction::triggered, this, [this] { newExcellonObject(); });
     connect(newPrj, &QAction::triggered, this, [this] { onFileNew(); });
     connect(zoomfit, &QAction::triggered, this, [this] { onZoomFit(); });
     connect(clearplot, &QAction::triggered, this, [this] { clearPlots(); });

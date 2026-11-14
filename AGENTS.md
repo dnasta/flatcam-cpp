@@ -79,7 +79,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.776 casos de `ctest` (2.662 del núcleo y 113 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.780 casos de `ctest` (2.662 del núcleo y 117 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -861,7 +861,7 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     elegido); con varios objetos bajo el clic, cada clic pasa al siguiente. Las Propiedades siguen ahora al cambio de selección
     (`selectionChanged`, como `on_list_selection_change`) y el objeto activo es el primero elegido (`get_active`), no el índice
     actual del árbol. Desvíos: los submenús de los editores del menú del canvas no se agregan (solo existen dentro de un
-    editor); "Nuevo -> Geometría/Gerber/Excellon" (objetos vacíos para editar) avisa; el área de trabajo usa A4 vertical (sin
+    editor); "Nuevo -> Geometría/Gerber/Excellon" (objetos vacíos para editar) se hizo después (11.12 ab); el área de trabajo usa A4 vertical (sin
     preferencias); el diálogo de "Saltar a" no se abre en el constructor (se llama a `exec()`, así se prueba); mover al origen y
     fijar el origen no mueven los CNC Job (ver 11.12 p). **Volcador:** ahora guarda `objectName` (antes lo descartaba); el
     original usa algunos (`plotarea_tab`, `default_properties`, los `e_*` de Perforación...).
@@ -961,6 +961,11 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     no hacían nada; el proyecto guardaba `append_snippet`/`prepend_snippet` vacíos en vez de los de las Preferencias
     (`set_ui`). En Qt 6 `selectAll` emite `cursorPositionChanged` (en Qt 5 no): "Todo GCode" conserva el resaltado de la
     línea como el original.
+    (ab) **Objetos vacíos de Archivo -> Nuevo** (`new_geometry_object`, `new_gerber_object`, `new_excellon_object`):
+    `new_geo` con una herramienta de `geometry_cnctooldia` sin geometría, `new_grb` y `new_exc` sin nada; se agregan sin
+    encuadrar (`plot=False`) y se completan con su editor. **Error del port corregido:** al guardar desde el editor de
+    Gerber o de Excellon el original borra el objeto **de origen** si estaba vacío (sin geometría; sin agujeros ni
+    ranuras); el port miraba si el Gerber **nuevo** había quedado vacío y en el Excellon no borraba nada.
     (y) **Error del port corregido (volcador):** el diálogo "Acerca de" mostraba `<MagicMock name='app_url' ...>` en vez de
     `http://flatcam.org`, porque la aplicación simulada de `fc_runtime.py` no tenía `app_url`.
     (m) Errores del original que se reproducen a propósito en Isolation: la herramienta nueva tiene tipo `"           Iso"`
@@ -1027,7 +1032,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.776 casos de test** (`ctest`): 2.663 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 113 de la GUI;
+- **2.780 casos de test** (`ctest`): 2.663 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 117 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -1055,7 +1060,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.776 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.780 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -1205,8 +1210,9 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    ~~Ayuda~~ (`AppHelp.cpp`: Acerca de y Cómo empezar generados del original, enlaces, lista de atajos con los textos del
    original en `resources/shortcuts.json`), ~~salir con `final_save`~~ (con `should_we_save`) y ~~los atajos de la aplicación~~
    de `MainGUI.keyPressEvent` (Ctrl, Shift, Alt y sin modificador, salvo los de herramientas o funciones sin portar).
-   **Falta:** cambiar las unidades (Q; va con las preferencias, ítem 6), el administrador de marcadores (Ayuda), los objetos
-   vacíos de Archivo -> Nuevo (para los editores, ítem 8). "Guardar copia del proyecto" está comentado en el original.
+   ~~Cambiar las unidades~~ (hecho con el ítem 6) y ~~los objetos vacíos de Archivo -> Nuevo~~ (hechos:
+   `App::newGeometryObject` / `newGerberObject` / `newExcellonObject`, menú Archivo, menú del canvas y teclas N, B y L;
+   también D para un Documento; 11.12 ab). **Falta:** el administrador de marcadores (Ayuda). "Guardar copia del proyecto" está comentado en el original.
 4. **Archivos:** ~~abrir G-code como CNC Job~~ (hecho: `App::openGcode`, menú, arrastrar y soltar, recientes; el texto tal
    cual, sin '%' ni MOIN/MOMM), ~~exportar Gerber y Excellon~~ (hecho: `src/io/FileExport.*`, idéntico al original en 15
    Gerber y 8 Excellon con `oracle_export.py`; mover o fijar el origen regenera el texto fuente como el original),

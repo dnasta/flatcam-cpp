@@ -18,6 +18,7 @@
 #include "gui/Preferences.h"
 #include "gui/Translation.h"
 #include "gui/objects/DocumentObject.h"
+#include "gui/objects/GeometryObject.h"
 #include "gui/objects/ScriptObject.h"
 
 namespace flatcam::gui {
@@ -144,6 +145,27 @@ void App::runScriptCode(const QString& code) {
 }
 
 FlatCAMObj* App::newDocumentObject() { return addObject(std::make_unique<DocumentObject>("new_document", QString())); }
+
+FlatCAMObj* App::newGeometryObject() {
+    // new_geometry_object: multiherramienta, con la herramienta 1 de geometry_cnctooldia (sin geometría).
+    auto geo = std::make_unique<GeometryObject>("new_geo");
+    GeometryTool t = defaultGeometryTool();
+    t.offset = "Path";
+    t.offsetValue = 0.0;
+    t.type = "Rough";
+    t.toolType = "C1";
+    geo->tools()[1] = t;
+    return addObject(std::move(geo), false);
+}
+
+FlatCAMObj* App::newGerberObject() {
+    // new_gerber_object: sin aperturas ni geometría.
+    return addObject(std::make_unique<GerberObject>("new_grb", std::make_unique<Gerber>()), false);
+}
+
+FlatCAMObj* App::newExcellonObject() {
+    return addObject(std::make_unique<ExcellonObject>("new_exc", std::make_unique<Excellon>()), false);
+}
 
 bool App::saveSourceFile(FlatCAMObj* obj, const QString& filename) {
     auto* t = dynamic_cast<TextObject*>(obj);
