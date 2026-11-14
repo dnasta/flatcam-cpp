@@ -83,6 +83,10 @@ public:
      */
     void updateCoordinates(QPointF world);
 
+Q_SIGNALS:
+    /** @brief Se mostró un mensaje con @ref inform (el texto completo, con su nivel). @param msg Mensaje. */
+    void informed(const QString& msg);
+
 private:
     void connectSignals();
 

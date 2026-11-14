@@ -17,6 +17,7 @@ add_library(flatcam_gui STATIC
     AppExport.cpp
     AppImport.cpp
     AppScripts.cpp
+    BookmarkManager.cpp
     AppTextEditor.cpp
     objects/ScriptObject.cpp
     generated/ScriptObjectUIBase.cpp

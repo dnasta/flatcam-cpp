@@ -18,7 +18,7 @@ máquina del usuario.
 
 **Lo que hay que saber para retomar (el detalle está en `AGENTS.md`, sección 12).**
 
-- **Tests:** 2.780 casos de `ctest` (2.663 del núcleo, de los que 2.251 son los casos de los postprocesadores, y 117 de la GUI; 1
+- **Tests:** 2.785 casos de `ctest` (2.663 del núcleo, de los que 2.251 son los casos de los postprocesadores, y 122 de la GUI; 1
   lenta con `FLATCAM_SLOW_TESTS=1`). Pasan con GEOS 3.12 y 3.15.0
   y Qt 6.12 en el Mac del usuario (M4, AppleClang). micromamba: `old` (Shapely 1.8.4, GEOS 3.11, PyQt5 5.15, para oráculos y para
   volcar la interfaz original), `sh2`, `geos312`, `geos311` (`AGENTS.md`, secciones 6 y 12.4). El build con GEOS 3.12 va en
@@ -32,7 +32,8 @@ máquina del usuario.
   ítem 4 (textos con fuentes; ya están los objetos Script y Documento con su editor de texto, `oracle_script_document.py`, el SVG del CNC Job, `oracle_cnc_svg.py`,
   importar imagen, `oracle_image.py` en el entorno `raster`, importar PDF, `oracle_pdf.py`, e imprimir a PDF,
   `oracle_print_pdf.py`). macOS limpia `/tmp` cada día: `/tmp/b311` y `/tmp/b312` se rearman con el comando de la sección 6, consola Tcl (ítem 7), nivel
-  Avanzado, marcadores, cierre (13.9) (hechos además los objetos vacíos de Archivo -> Nuevo, `AGENTS.md` 11.12 ab) y corregir la sección 14.
+  Avanzado, cierre (13.9) (hechos además los objetos vacíos de Archivo -> Nuevo, los marcadores, arrastrar filas en
+  las tablas de herramientas y la numeración T de Perforación como el original, `AGENTS.md` 11.12 ab y ac) y corregir la sección 14.
 - **Editores hechos (fase 5, ítem 8):** Geometría, Excellon y Gerber (`src/editors/` sin Qt y `src/gui/editors/`), contra el
   original con `oracle_geo_editor.py`, `oracle_exc_editor.py` y `oracle_grb_editor.py`; entrar y salir con E, Editar, el menú
   del Proyecto y del canvas (`App::objectToEditor` / `editorToObject`). También el editor de G-code de los CNC Job

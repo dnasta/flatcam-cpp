@@ -1,0 +1,7 @@
+Uno: http://uno.example
+Dos:http://dos.example/
+sin dos puntos
+Tres:http://
+Uno:http://otro.example
+:http://vacio.example
+Cuatro:http://cuatro.example

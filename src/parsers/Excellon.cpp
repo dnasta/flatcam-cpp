@@ -182,9 +182,9 @@ bool Excellon::parseLines(const std::vector<std::string>& elines) {
     std::string eline;
 
     auto toolKey = [&]() { return currentTool.value_or(0); };
-    auto addDrill = [&](double x, double y) { drillTools_[toolKey()].drills.push_back({x, y}); };
+    auto addDrill = [&](double x, double y) { toolRef(toolKey()).drills.push_back({x, y}); };
     auto addSlot = [&](double x0, double y0, double x1, double y1) {
-        drillTools_[toolKey()].slots.push_back({{x0, y0}, {x1, y1}});
+        toolRef(toolKey()).slots.push_back({{x0, y0}, {x1, y1}});
     };
     auto contains = [](const std::string& s, const char* what) { return s.find(what) != std::string::npos; };
 
@@ -221,7 +221,7 @@ bool Excellon::parseLines(const std::vector<std::string>& elines) {
                     if (tu[2].matched && tu[2].length() > 0) {
                         ++nameTool;
                         const double dia = std::stod(tu[2].str());
-                        drillTools_[nameTool].tooldia = (lineUnits == "MILS") ? dia / 1000 : dia;
+                        toolRef(nameTool).tooldia = (lineUnits == "MILS") ? dia / 1000 : dia;
                         continue;
                     }
                 }
@@ -283,8 +283,8 @@ bool Excellon::parseLines(const std::vector<std::string>& elines) {
                                     diam = (options_.toollessDiameter + (*currentTool - 1) / 100.0) / 25.4;
                                 }
                             }
-                            drillTools_[name].tooldia = diam;
-                            drillTools_[name].solidGeometry.clear();
+                            toolRef(name).tooldia = diam;
+                            toolRef(name).solidGeometry.clear();
                         }
                     }
                     continue;
@@ -427,8 +427,8 @@ bool Excellon::parseLines(const std::vector<std::string>& elines) {
             if (inHeader) {
                 if (const auto ts = matchToolSet(eline)) {
                     if (!ts->hasDiameter) throw std::runtime_error("float() argument must be a string or a number, not 'NoneType'");
-                    drillTools_[ts->tool].tooldia = std::stod(ts->diameter);
-                    drillTools_[ts->tool].solidGeometry.clear();
+                    toolRef(ts->tool).tooldia = std::stod(ts->diameter);
+                    toolRef(ts->tool).solidGeometry.clear();
                     continue;
                 }
                 std::smatch um;
@@ -490,7 +490,7 @@ bool Excellon::parseLines(const std::vector<std::string>& elines) {
 
 void Excellon::addDrillTool(int id, double diameter, const std::vector<Point2D>& drills,
                             const std::vector<std::pair<Point2D, Point2D>>& slots) {
-    ExcellonTool& t = drillTools_[id];
+    ExcellonTool& t = toolRef(id);
     t.tooldia = diameter;
     t.drills = drills;
     t.slots = slots;
@@ -573,6 +573,34 @@ void Excellon::buffer(double distance, JoinStyle, bool factor) {
         else t.tooldia += distance;
     }
     createGeometry();
+}
+
+ExcellonTool& Excellon::toolRef(int id) {
+    // Como el diccionario de Python: se recuerda el orden en que aparece cada herramienta.
+    if (drillTools_.find(id) == drillTools_.end()) definitionOrder_.push_back(id);
+    return drillTools_[id];
+}
+
+std::vector<int> Excellon::toolIdsInOrder() const {
+    std::vector<int> out;
+    for (int id : definitionOrder_)
+        if (drillTools_.count(id) && std::find(out.begin(), out.end(), id) == out.end()) out.push_back(id);
+    for (const auto& [id, t] : drillTools_)
+        if (std::find(out.begin(), out.end(), id) == out.end()) out.push_back(id);
+    return out;
+}
+
+Excellon Excellon::renumbered(const std::vector<int>& order) const {
+    Excellon out(*this);
+    out.drillTools_.clear();
+    int id = 0;
+    for (int old : order) {
+        const auto it = drillTools_.find(old);
+        if (it != drillTools_.end()) out.drillTools_[++id] = it->second;
+    }
+    out.definitionOrder_.clear();
+    for (const auto& [k, t] : out.drillTools_) out.definitionOrder_.push_back(k);
+    return out;
 }
 
 }  // namespace flatcam

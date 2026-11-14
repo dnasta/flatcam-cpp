@@ -117,6 +117,21 @@ public:
     /** @brief Herramientas de taladrado por número. @return El mapa de herramientas. */
     const std::map<int, ExcellonTool>& drillTools() const { return drillTools_; }
 
+    /**
+     * @brief Una copia con las herramientas renumeradas 1, 2, 3... en el orden dado (lo que hace `build_tool_ui` de
+     * Perforación con `excellon_tools` antes de generar el G-code: el número `T` es la posición en la tabla).
+     * @param order Números de las herramientas, en el orden nuevo (las que no están se descartan).
+     * @return La copia.
+     */
+    Excellon renumbered(const std::vector<int>& order) const;
+
+    /**
+     * @brief Los números de las herramientas en el orden en que aparecen en el archivo (el del diccionario `tools` del
+     * original; el mapa de @ref drillTools va por número).
+     * @return Los números.
+     */
+    std::vector<int> toolIdsInOrder() const;
+
     /** @brief Supresión de ceros leída (`"L"`, `"T"` o vacío). @return El valor. */
     const std::string& zeros() const { return zeros_; }
     /** @brief Cambia la supresión de ceros (`zeros`, por ejemplo al panelizar). @param z El valor. */
@@ -165,6 +180,8 @@ private:
 
     ExcellonOptions options_;
     std::map<int, ExcellonTool> drillTools_;
+    std::vector<int> definitionOrder_;  ///< Orden en que aparecieron las herramientas.
+    ExcellonTool& toolRef(int id);
     std::string zeros_;
     std::optional<Units> unitsFound_;
     std::string excellonUnits_;

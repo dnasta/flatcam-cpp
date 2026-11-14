@@ -67,6 +67,9 @@ private:
     ExcellonObject* excellon_{nullptr};
     std::map<int, ToolData> storage_;   ///< Por número de herramienta del Excellon.
     std::vector<int> tableOrder_;       ///< Herramienta de cada fila de la tabla.
+    /// El orden de `excellon_tools` del original: lo deja cada `build_tool_ui` (y `rebuild_ui` al arrastrar filas).
+    std::vector<int> baseOrder_;
+    void rebuildUi();
     bool muted_{false};
 };
 

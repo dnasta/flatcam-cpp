@@ -1,3 +1,5 @@
+#include <QTimer>
+
 #include "gui/Preferences.h"
 #include "gui/tools/IsolationTool.h"
 
@@ -27,6 +29,13 @@ IsolationTool::IsolationTool(App* app, QWidget* parent) : IsolationToolUIBase(pa
     connect(generate_iso_button, &QPushButton::clicked, this, [this] { isolate(); });
     connect(reset_button, &QPushButton::clicked, this, [this] { setToolUi(); });
     connect(order_radio, &RadioSet::activatedCustom, this, [this] { rebuild(); });
+    // FCTable(drag_drop=True): arrastrar filas renumera las herramientas en ese orden (rebuild_ui) y, a los 20 ms,
+    // vuelve a armar la tabla (build_ui).
+    tools_table->setDragDrop(true);
+    connect(tools_table, &FCTable::dragDropped, this, [this] {
+        if (auto t = reorderToolsByTable(tools_table, 3, tools_)) tools_ = std::move(*t);
+        QTimer::singleShot(20, this, [this] { rebuild(); });
+    });
     connect(rest_cb, &QCheckBox::toggled, this, [this](bool on) { onRestMachiningCheck(on); });
     connect(select_combo, &QComboBox::currentIndexChanged, this, [this] { onToggleReference(); });
     connect(reference_combo_type, &QComboBox::currentIndexChanged, this, [this] { onToggleReference(); });

@@ -10,6 +10,8 @@
 #include <optional>
 #include <vector>
 
+#include <QTableWidget>
+
 #include "gui/objects/GeometryObject.h"
 #include "io/JsonValue.h"
 
@@ -72,6 +74,27 @@ void buildClearingTable(QTableWidget* table, const std::map<int, ClearingTool>& 
  * @return Los identificadores.
  */
 std::vector<int> selectedClearingTools(const QTableWidget* table);
+
+/**
+ * @brief `rebuild_ui` después de arrastrar filas: las herramientas renumeradas 1, 2, 3... en el orden de la tabla.
+ * @param table Tabla. @param uidColumn Columna (oculta) con el identificador. @param tools Herramientas.
+ * @return Las herramientas en el orden nuevo, o vacío si una fila no tiene herramienta (el original falla con
+ * `KeyError` y no cambia nada).
+ */
+template <class T>
+std::optional<std::map<int, T>> reorderToolsByTable(const QTableWidget* table, int uidColumn,
+                                                    const std::map<int, T>& tools) {
+    std::map<int, T> out;
+    int next = 0;
+    for (int r = 0; r < table->rowCount(); ++r) {
+        const QTableWidgetItem* it = table->item(r, uidColumn);
+        if (!it) return std::nullopt;
+        const auto found = tools.find(it->text().toInt());
+        if (found == tools.end()) return std::nullopt;
+        out[++next] = found->second;
+    }
+    return out;
+}
 
 /** @brief Qué hacer al agregar una herramienta por diámetro, según la base de datos (`on_tool_add`). */
 enum class DbAddResult {

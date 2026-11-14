@@ -2,6 +2,7 @@
 #include "gui/tools/DrillingTool.h"
 
 #include <QHeaderView>
+#include <QTimer>
 #include <algorithm>
 #include <cmath>
 #include <set>
@@ -48,6 +49,9 @@ DrillingTool::DrillingTool(App* app, QWidget* parent) : DrillingToolUIBase(paren
     setupUi();
     connect(object_combo, &QComboBox::currentTextChanged, this, [this] { onObjectChanged(); });
     connect(order_radio, &RadioSet::activatedCustom, this, [this] { buildToolUi(); });
+    // FCTable(drag_drop=True): arrastrar filas cambia el orden de las herramientas (drag_drop_sig -> rebuild_ui).
+    tools_table->setDragDrop(true);
+    connect(tools_table, &FCTable::dragDropped, this, [this] { rebuildUi(); });
     connect(tools_table, &QTableWidget::itemSelectionChanged, this, [this] { onRowSelectionChange(); });
     connect(generate_cnc_button, &QPushButton::clicked, this, [this] { generateCnc(); });
     connect(pp_excellon_name_cb, &QComboBox::currentTextChanged, this, [this] { onPpChanged(); });
@@ -142,6 +146,7 @@ void DrillingTool::onObjectChanged() {
     FlatCAMObj* o = app_->collection()->byName(object_combo->currentText());
     excellon_ = (o && o->kind() == ObjectKind::Excellon) ? static_cast<ExcellonObject*>(o) : nullptr;
     storage_.clear();
+    baseOrder_.clear();
     if (excellon_) {
         for (const auto& [id, t] : excellon_->excellon().drillTools()) storage_[id] = defaultToolData();
     }
@@ -154,13 +159,16 @@ void DrillingTool::buildToolUi() {
     tableOrder_.clear();
     const auto* tools = excellon_ ? &excellon_->excellon().drillTools() : nullptr;
     if (tools) {
-        for (const auto& [id, t] : *tools) tableOrder_.push_back(id);
+        // build_tool_ui ordena y renumera excellon_tools: el orden que dejó la vez anterior es la base de esta.
+        if (baseOrder_.size() == tools->size()) tableOrder_ = baseOrder_;
+        else tableOrder_ = excellon_->excellon().toolIdsInOrder();  // el orden del diccionario del original
         const QString order = order_radio->value().toString();
         auto byDia = [tools](int a, int b) {
             return std::round(tools->at(a).tooldia * 1e4) < std::round(tools->at(b).tooldia * 1e4);
         };
         if (order == "fwd") std::stable_sort(tableOrder_.begin(), tableOrder_.end(), byDia);
         else if (order == "rev") std::stable_sort(tableOrder_.begin(), tableOrder_.end(), [&](int a, int b) { return byDia(b, a); });
+        baseOrder_ = tableOrder_;
     }
     const int n = static_cast<int>(tableOrder_.size());
     tools_table->setRowCount(n + 2);
@@ -174,7 +182,8 @@ void DrillingTool::buildToolUi() {
         tools_table->setItem(row, 0, item(QString::number(row + 1), sel));  // se renumeran según el orden
         tools_table->setItem(row, 1, item(pyStr(t.tooldia), sel));
         tools_table->setItem(row, 2, item(QString::number(drills), Qt::ItemIsEnabled | Qt::ItemIsDragEnabled));
-        tools_table->setItem(row, 3, new QTableWidgetItem(QString::number(tableOrder_[row])));
+        // La columna oculta lleva el número renumerado (la fila + 1), como excellon_tools del original.
+        tools_table->setItem(row, 3, new QTableWidgetItem(QString::number(row + 1)));
         tools_table->setItem(row, 4, item(slots > 0 ? QString::number(slots) : QString(),
                                           Qt::ItemIsEnabled | Qt::ItemIsDragEnabled));
     }
@@ -219,6 +228,18 @@ void DrillingTool::buildToolUi() {
     for (int row = 0; row < n; ++row) tools_table->selectRow(row);
     tools_table->setSelectionMode(QAbstractItemView::ExtendedSelection);
     onRowSelectionChange();
+}
+
+void DrillingTool::rebuildUi() {
+    // rebuild_ui: el orden de la tabla (las filas de los totales no tienen número) y, después, build_tool_ui.
+    std::vector<int> order;
+    for (int r = 0; r < tools_table->rowCount(); ++r)
+        if (const QTableWidgetItem* it = tools_table->item(r, 3)) {
+            const int pos = it->text().toInt() - 1;
+            if (pos >= 0 && pos < static_cast<int>(tableOrder_.size())) order.push_back(tableOrder_[pos]);
+        }
+    baseOrder_ = order;
+    QTimer::singleShot(20, this, [this] { buildToolUi(); });
 }
 
 std::vector<int> DrillingTool::selectedToolIds() const {
@@ -380,13 +401,17 @@ FlatCAMObj* DrillingTool::generateCnc() {
     js.frDecimals = defInt("cncjob_fr_decimals", 2);
     js.decimals = appDecimals();
     std::vector<CncToolRow> rows;
-    for (int id : tableOrder_) {
+    // excellon_tools está renumerado en el orden de la tabla: el número T de cada herramienta es su fila + 1.
+    const Excellon renumbered = excellon_->excellon().renumbered(tableOrder_);
+    for (std::size_t pos = 0; pos < tableOrder_.size(); ++pos) {
+        const int id = tableOrder_[pos];
         if (std::find(sel.begin(), sel.end(), id) == sel.end()) continue;
-        js.toolOrder.push_back(id);
-        js.tools[id] = storage_.at(id).s;
+        const int newId = static_cast<int>(pos) + 1;
+        js.toolOrder.push_back(newId);
+        js.tools[newId] = storage_.at(id).s;
         const ExcellonTool& t = excellon_->excellon().drillTools().at(id);
         CncToolRow row;
-        row.tool = id;
+        row.tool = newId;
         row.dia = t.tooldia;
         row.drills = static_cast<int>(t.drills.size());
         row.slots = static_cast<int>(t.slots.size());
@@ -398,7 +423,7 @@ FlatCAMObj* DrillingTool::generateCnc() {
     // check_intersection: ningún agujero (con su radio) puede tocar un área de exclusión.
     js.exclusionAreas = app_->excAreas()->areas();
     for (int id : js.toolOrder) {
-        const ExcellonTool& t = excellon_->excellon().drillTools().at(id);
+        const ExcellonTool& t = renumbered.drillTools().at(id);
         for (const Point2D& pt : t.drills) {
             const Shape buf = Shape::point(pt).buffer(t.tooldia / 2.0);
             for (const ExclusionArea& a : js.exclusionAreas) {
@@ -410,7 +435,7 @@ FlatCAMObj* DrillingTool::generateCnc() {
         }
     }
     auto job = std::make_unique<CncJob>(js);
-    if (!job->generateFromExcellon(excellon_->excellon())) {
+    if (!job->generateFromExcellon(renumbered)) {
         app_->ui()->inform("[ERROR_NOTCL] " + QString::fromStdString(job->lastError()));
         return nullptr;
     }

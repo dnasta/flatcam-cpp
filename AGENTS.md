@@ -79,7 +79,7 @@ Fase 1: 46 tests (GoogleTest) pasan en Linux (GEOS 3.12) y en macOS arm64 (Apple
 la documentación sin warnings propios (queda uno informativo: la traducción al español de Doxygen está vieja).
 Fase 2: 84 tests pasan en Linux (GEOS 3.12) y en macOS arm64 (1,2 s; `B_Cu` se parsea en 0,6 s). Los parsers coinciden
 con los originales de FlatCAM sobre los 5 Gerber y el Excellon reales y sobre 7 Excellon sintéticos (ver sección 7).
-**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.780 casos de `ctest` (2.662 del núcleo y 117 de la GUI pasan; 1, la
+**Última confirmación en el Mac del usuario (M4, AppleClang):** 2.785 casos de `ctest` (2.662 del núcleo y 122 de la GUI pasan; 1, la
 lenta del NCC del dosificador, queda saltada a propósito), con GEOS 3.15.0 (Homebrew) y con GEOS 3.12 (micromamba, solo el núcleo), y Qt 6.12.
 
 **Contra el FlatCAM 2024.4 real del usuario** (placa "luz de noche", `tests/test_luz_de_noche.cpp`, ver sección 7): CutOut idéntico
@@ -233,6 +233,8 @@ src/gui/               Interfaz Qt6 (biblioteca flatcam_gui y ejecutable FlatCAM
   AppTextEditor.*        El editor de texto (appEditors/AppTextEditor): buscar, reemplazar, imprimir, abrir, guardar (texto
                          o PDF); lo usan Script, Documento, Ver fuente y el Editor de código (Qt6::PrintSupport)
   widgets/FCTextEdits.*  FCTextAreaExtended, FCPlainTextAreaExtended, FCTextAreaLineNumber y MyCompleter de GUIElements
+  BookmarkManager.*      Ayuda -> Marcadores (install_bookmarks, on_backup_site) y la pestaña "Administrador de marcadores"
+                         (Bookmark.py): agregar, quitar, ordenar arrastrando, exportar e importar
   AppScripts.cpp         Archivo -> Nuevo/Abrir/Ejecutar script, Nuevo documento, save_source_file, Editor de código
                          (Shift+E), ir a una línea (Ctrl+G en un editor), open_config_file
   tools/SolderPasteTool.* Pasta de soldar (ToolSolderPaste, Alt+K): boquillas, `<objeto>_solderpaste` y su CNC Job
@@ -525,6 +527,15 @@ fijan con sentido físico (micras), no en el último bit.
   `on_review_code_click`, y lo mismo con claves numéricas (un trabajo creado en la sesión): idénticos, posición por
   posición (`GuiGCodeEditor.*`). Ojo: la aplicación simulada de `fc_runtime` no trae `dec_format` (es un `MagicMock`, y
   sus resultados son todos iguales entre sí); el oráculo le pone el de `app_Main`.
+- `tests/tools/oracle_bookmarks.py` escribe `tests/data/bookmarks/oracle.json`: `install_bookmarks`,
+  `on_bookmarks_manager` y `BookmarkManager` originales en 17 pasos encadenados (agregar con los campos, con "/" final,
+  vacío, repetido; quitar FlatCAM y otro; exportar; importar líneas raras; el límite de 3 con claves "10" antes que
+  "2"; `rebuild_actions`): el menú, `global_bookmarks`, la tabla (con el gris) y los avisos, idénticos (`GuiBookmarks.*`).
+- `tests/tools/oracle_drill_renumber.py` escribe `tests/data/drill_renumber/oracle.json`: `ToolDrilling` original
+  (`build_tool_ui` con los cuatro órdenes y `on_cnc_button_click` con cambio de herramienta) sobre
+  `tests/data/excellon_samples/renumber.drl` (T5, T2 y T9 en ese orden): la tabla, las líneas `T`/`M6` y
+  `exc_cnc_tools`, idénticos (`GuiDrillRenumber.*`). Ojo: la herramienta guarda el `dec_format` de la aplicación
+  simulada (un `MagicMock`): hay que ponerle el real; y `abort_flag` tiene que ser `False` o el analizador sale.
 - `tests/tools/oracle_print_pdf.py` genera `tests/golden_print_pdf.h`: ejecuta `save_pdf` original (Archivo -> Imprimir,
   con `ast`) con el contorno y el taladro de "luz de noche" y captura el SVG que le pasa a svglib, la hoja y el
   desplazamiento (3 casos: dos objetos en A4 vertical, uno en A4 apaisada, uno en carta). Con GEOS 3.11 idéntico a menos de
@@ -966,6 +977,20 @@ cantidad de trazados, orden, orientación y distancia de micras (ver la sección
     encuadrar (`plot=False`) y se completan con su editor. **Error del port corregido:** al guardar desde el editor de
     Gerber o de Excellon el original borra el objeto **de origen** si estaba vacío (sin geometría; sin agujeros ni
     ranuras); el port miraba si el Gerber **nuevo** había quedado vacío y en el Excellon no borraba nada.
+    (ac) **Marcadores, arrastrar filas y números de Perforación.** Ayuda -> Marcadores y su administrador, como el
+    original (`oracle_bookmarks.py`); los enlaces se abren con `QDesktopServices` (`App::openUrl`; en las pruebas,
+    `App::urlOpener`). `FCTable::setDragDrop` es `FCTable(drag_drop=True)`: las filas elegidas se mueven arrastrándolas
+    (`moveSelectedRows`, la copia de celdas de `dropEvent`: los combos y casillas se recrean, otros widgets de celda se
+    pierden) y emite `dragDropped` (`drag_drop_sig`). Desvío: no se llama después al `dropEvent` de `QTableWidget` (Qt
+    movería las celdas otra vez). **Errores del port corregidos:** (1) las tablas de herramientas de NCC, Paint,
+    Isolation, Perforación y Geometría no se podían reordenar arrastrando (en el original cambia el orden y la
+    numeración de las herramientas, `rebuild_ui`); (2) **Perforación numeraba las herramientas del G-code con el número
+    del archivo**: el original las renumera 1, 2, 3... en el orden de la tabla (`build_tool_ui`), así que un Excellon con
+    T5, T2, T9 sale con T1, T2, T3; con "no" el orden es el de definición en el archivo (`Excellon::toolIdsInOrder`), no
+    el numérico. Con los archivos de KiCad (T1, T2... en orden) no cambiaba nada. Desvíos (no se reproducen): con dos
+    herramientas del mismo diámetro `build_tool_ui` las duplica (cada diámetro encuentra a las dos); con cambio de
+    herramienta `total_gcode` no se vacía y el dibujo de la segunda generación de la sesión suma la anterior (el archivo
+    exportado sale bien).
     (y) **Error del port corregido (volcador):** el diálogo "Acerca de" mostraba `<MagicMock name='app_url' ...>` en vez de
     `http://flatcam.org`, porque la aplicación simulada de `fc_runtime.py` no tenía `app_url`.
     (m) Errores del original que se reproducen a propósito en Isolation: la herramienta nueva tiene tipo `"           Iso"`
@@ -1032,7 +1057,7 @@ Esta sección es para empezar una sesión nueva sin haber visto la conversación
 
 ### 12.1 Dónde estamos (al cerrar la sesión del chat)
 
-- **2.780 casos de test** (`ctest`): 2.663 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 117 de la GUI;
+- **2.785 casos de test** (`ctest`): 2.663 del núcleo (2.251 son los casos parametrizados de los postprocesadores) y 122 de la GUI;
   todos pasan salvo 1 lenta (`NccEndToEnd`, ~100 s) que queda saltada salvo con `FLATCAM_SLOW_TESTS=1`.
   Pasan con GEOS 3.12 y 3.15.0, en Linux y en el Mac del usuario. La GEOS 3.11 solo se usa para separar diferencias de versión.
 - Fases 1, 2 y 3 hechas. Las herramientas portadas, todas verificadas contra el código **original** de 2024.4 con
@@ -1060,7 +1085,7 @@ trazados; taladro con los mismos agujeros (sección 7).
 ### 12.2 Lo primero que hay que hacer
 
 1. `cd` al repo (la ruta tiene espacios: siempre entre comillas), `git pull`, `cmake -S . -B build -G Ninja`, `cmake --build build`,
-   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.780 casos, 1 saltado.
+   `ctest --test-dir build --output-on-failure`. Tienen que dar 2.785 casos, 1 saltado.
 2. Fase 4 en curso: seguir con los pendientes de la sección 11.13. Las capturas del usuario están en
    `docs/fase4_gui_referencia.md`.
 3. Qt6 todavía no está en el `CMakeLists.txt`: la GUI va en una biblioteca/ejecutable aparte (`src/gui/`), el núcleo sigue sin Qt.
@@ -1212,7 +1237,7 @@ de trabajo (de lo que más afecta al G-code a lo accesorio). Marcar cada ítem a
    de `MainGUI.keyPressEvent` (Ctrl, Shift, Alt y sin modificador, salvo los de herramientas o funciones sin portar).
    ~~Cambiar las unidades~~ (hecho con el ítem 6) y ~~los objetos vacíos de Archivo -> Nuevo~~ (hechos:
    `App::newGeometryObject` / `newGerberObject` / `newExcellonObject`, menú Archivo, menú del canvas y teclas N, B y L;
-   también D para un Documento; 11.12 ab). **Falta:** el administrador de marcadores (Ayuda). "Guardar copia del proyecto" está comentado en el original.
+   también D para un Documento; 11.12 ab). ~~El administrador de marcadores~~ (hecho, 11.12 ac). **3b completo.** "Guardar copia del proyecto" está comentado en el original.
 4. **Archivos:** ~~abrir G-code como CNC Job~~ (hecho: `App::openGcode`, menú, arrastrar y soltar, recientes; el texto tal
    cual, sin '%' ni MOIN/MOMM), ~~exportar Gerber y Excellon~~ (hecho: `src/io/FileExport.*`, idéntico al original en 15
    Gerber y 8 Excellon con `oracle_export.py`; mover o fijar el origen regenera el texto fuente como el original),
@@ -1468,6 +1493,15 @@ encontrar uno nuevo, agregarlo acá con su sección. Ya corregidos a pedido del 
   o ISEL_ICP_CNC da solo los fragmentos (la rama sin cabecera suma los G-code de `cnc_tools`, vacío en un taladrado);
   con la casilla de fragmentos apagada igual se usan los de las Preferencias (un fragmento vacío se reemplaza por el
   de `cncjob_prepend` / `cncjob_append`); cada clic en "Revisar código" agrega otra pestaña.
+- **Marcadores** (11.12 ac): al arrancar se pisan las claves "1" y "2" con FlatCAM y el sitio de respaldo; el
+  separador del menú se borra; exportar escribe `clave:['título', 'enlace']` (`str()` de la lista), que importar no
+  entiende; importar deja el `\n` en el enlace (se ve con un espacio al final); "Quitar" sin nada elegido avisa que
+  quitó; el límite del menú se cuenta antes de ordenar (las claves como texto: "10" antes que "2") y al agregar entra
+  solo si quedan menos que el límite; una fila arrastrada pierde su enlace y al cerrar el administrador falla
+  (`AttributeError`: el menú no se rehace y las barras de coordenadas quedan ocultas); `protected_rows` no se usa.
+- **Tablas que se arrastran** (11.12 ac): `dragEnterEvent` bloquea las señales de la tabla hasta soltar (si se cancela
+  el arrastre quedan bloqueadas); en la Geometría, `rebuild_ui` renumera las herramientas pero no rehace la tabla (la
+  columna oculta queda con los números viejos y las filas apuntan a otras herramientas).
 - **Imprimir a PDF** (sección 13, ítem 4): como en Film, el SVG lleva `b'` y `'` como texto y un objeto de un solo
   polígono no se recolorea; la opacidad es el alfa en hexadecimal tal cual (`"BF"`, que no es un valor válido de SVG); una
   Geometría usa el color de dibujo y la opacidad del objeto anterior; con un CNC Job elegido no se imprime nada
