@@ -4,6 +4,8 @@
 #include "gui/editors/ExcEditor.h"
 #include "gui/editors/GeoEditor.h"
 #include "gui/editors/GrbEditor.h"
+#include "gui/editors/GCodeEditor.h"
+#include "gui/AppTextEditor.h"
 
 #include <QClipboard>
 #include <QRegularExpression>
@@ -145,6 +147,7 @@ App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
     geoEditor = new GeoEditor(this);
     excEditor = new ExcEditor(this);
     grbEditor = new GrbEditor(this);
+    gcodeEditor = new GCodeEditor(this);
     qrcodeTool = new QRCodeTool(this, ui_.get());
     transformTool = new TransformTool(this, ui_.get());
     distanceTool = new DistanceTool(this, ui_.get());
@@ -867,7 +870,14 @@ bool App::exportGcode(CNCJobObject* job, QString filename) {
         const QModelIndex idx = collection_->indexOf(job);
         collection_->setData(idx, newName, Qt::EditRole);
     }
-    if (!job->saveTo(filename)) {
+    // export_gcode_handler: los fragmentos del objeto solo con "Usar fragmentos de código CNC" (si quedan vacíos,
+    // export_gcode igual usa los de las Preferencias).
+    std::string preamble, postamble;
+    if (auto* cui = qobject_cast<CNCObjectUI*>(job->builtUi()); cui && cui->snippets_cb->isChecked()) {
+        preamble = job->prependSnippet().toStdString();
+        postamble = job->appendSnippet().toStdString();
+    }
+    if (!job->saveTo(filename, preamble, postamble)) {
         ui_->inform(QString("[ERROR_NOTCL] %1: %2").arg(tr_("Failed to open file"), filename));
         return false;
     }
@@ -876,12 +886,38 @@ bool App::exportGcode(CNCJobObject* job, QString filename) {
     return true;
 }
 
+AppTextEditor* App::reviewGcode(CNCJobObject* job) {
+    auto* ed = new AppTextEditor(this, true);
+    ui_->plot_tab_area->addTab(ed, tr_("Code Review"));
+    ed->setObjectName("code_editor_tab");
+    ui_->position_label->setText("");
+    ui_->rel_position_label->setText("");
+    ed->setCompleterEnabled(false);
+    ed->buttonRun->hide();
+    ui_->plot_tab_area->setCurrentWidget(ed);
+    ed->t_frame->hide();
+    ed->loadText(QString::fromStdString(job->exportText(job->prependSnippet().toStdString(),
+                                                        job->appendSnippet().toStdString())),
+                 true, false, true);
+    ed->t_frame->show();
+    ed->buttonSave->hide();
+    ed->buttonOpen->hide();
+    ed->buttonReplace->hide();
+    ed->sel_all_cb->hide();
+    ed->entryReplace->hide();
+    ed->plainEditor()->setReadOnly(true);
+    ui_->inform(QString("[success] %1...").arg(tr_("Loaded Machine Code into Code Editor")));
+    return ed;
+}
+
 FlatCAMObj* App::addObject(std::unique_ptr<FlatCAMObj> o) {
     FlatCAMObj* obj = collection_->append(std::move(o));
     shouldWeSave_ = true;
     // ObjectCollection.append -> set_ui: el Script y el Documento arman su panel y su pestaña de editor.
     auto* text = dynamic_cast<TextObject*>(obj);
     if (text) text->setUi(this);
+    // CNCJobObject.set_ui: los fragmentos y source_file.
+    if (auto* cnc = dynamic_cast<CNCJobObject*>(obj)) cnc->initSourceFile();
     // ObjectCollection.append: se expande el grupo y, con global_project_autohide, se abre el panel izquierdo.
     ui_->collection_view->setExpanded(collection_->groupIndex(obj->kind()), true);
     ui_->splitter->setSizes({1, 1});
@@ -978,7 +1014,10 @@ void App::showProperties(FlatCAMObj* obj) {
     QWidget* panel = obj ? obj->propertiesUi() : defaultProperties_;
     if (obj && obj->kind() == ObjectKind::CNCJob) {
         auto* job = static_cast<CNCJobObject*>(obj);
-        static_cast<CNCObjectUI*>(panel)->onExport = [this, job] { exportGcode(job); };
+        auto* cui = static_cast<CNCObjectUI*>(panel);
+        cui->onExport = [this, job] { exportGcode(job); };
+        cui->onReview = [this, job] { reviewGcode(job); };
+        cui->onEdit = [this] { objectToEditor(); };
         job->autolevel(this)->attach(static_cast<CNCObjectUI*>(panel));
     } else if (obj && obj->kind() == ObjectKind::Excellon) {
         auto* exc = static_cast<ExcellonObject*>(obj);
@@ -1065,6 +1104,14 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
     if (callSource_ == "geo_editor") return geoEditor->handleKey(key, modifiers);
     if (callSource_ == "exc_editor") return excEditor->handleKey(key, modifiers);
     if (callSource_ == "grb_editor") return grbEditor->handleKey(key, modifiers);
+    if (callSource_ == "gcode_editor") {
+        // Solo Ctrl+S: guarda y vuelve a la aplicación.
+        if (modifiers == Qt::ControlModifier && key == Qt::Key_S) {
+            editorToObject();
+            return true;
+        }
+        return false;
+    }
     // Agregando puntos de sondeo de la autonivelación (on_key_press del CNC Job).
     for (FlatCAMObj* o : collection_->objects())
         if (auto* c = dynamic_cast<CNCJobObject*>(o))

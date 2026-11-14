@@ -1,0 +1,436 @@
+{
+ "root": {
+  "qt": "QWidget",
+  "py": "QWidget",
+  "name": null,
+  "props": {},
+  "layout": {
+   "qt": "QVBoxLayout",
+   "py": "QVBoxLayout",
+   "name": null,
+   "props": {},
+   "margins": [
+    11,
+    11,
+    11,
+    11
+   ],
+   "spacing": 6,
+   "items": [
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QFrame",
+      "py": "QFrame",
+      "name": "edit_frame",
+      "props": {},
+      "layout": {
+       "qt": "QVBoxLayout",
+       "py": "QVBoxLayout",
+       "name": "edit_box",
+       "props": {},
+       "margins": [
+        0,
+        0,
+        0,
+        0
+       ],
+       "spacing": 6,
+       "items": [
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QHBoxLayout",
+          "py": "QHBoxLayout",
+          "name": "title_box",
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "items": [
+           {
+            "align": 0,
+            "stretch": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "icon",
+             "props": {
+              "pixmap": {
+               "t": "QPixmap",
+               "v": ":/images/flatcam_icon32.png"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "stretch": 1,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": "title_label",
+             "props": {
+              "text": {
+               "t": "str",
+               "v": "<font size=5><b>Editor de código G</b></font>"
+              }
+             }
+            }
+           }
+          ]
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "layout": {
+          "qt": "QHBoxLayout",
+          "py": "QHBoxLayout",
+          "name": "name_box",
+          "props": {},
+          "margins": [
+           0,
+           0,
+           0,
+           0
+          ],
+          "spacing": 6,
+          "items": [
+           {
+            "align": 0,
+            "stretch": 0,
+            "widget": {
+             "qt": "QLabel",
+             "py": "QLabel",
+             "name": null,
+             "props": {
+              "text": {
+               "t": "str",
+               "v": "Nombre:"
+              }
+             }
+            }
+           },
+           {
+            "align": 0,
+            "stretch": 0,
+            "widget": {
+             "qt": "QLineEdit",
+             "py": "FCEntry",
+             "name": "name_entry",
+             "props": {}
+            }
+           }
+          ]
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QFrame",
+          "py": "QFrame",
+          "name": null,
+          "props": {
+           "sizePolicy": {
+            "t": "QSizePolicy",
+            "v": [
+             1,
+             0,
+             0,
+             0
+            ]
+           },
+           "frameShape": {
+            "t": "int",
+            "v": 4
+           },
+           "frameShadow": {
+            "t": "int",
+            "v": 48
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QTableWidget",
+          "py": "FCTable",
+          "name": "cnc_tools_table",
+          "props": {
+           "selectionBehavior": {
+            "t": "int",
+            "v": 1
+           },
+           "columnCount": {
+            "t": "int",
+            "v": 6
+           }
+          },
+          "table": {
+           "cols": 6,
+           "labels": [
+            "#",
+            "Dia",
+            "Compensar",
+            "Tipo",
+            "TT",
+            ""
+           ],
+           "hheader": true,
+           "vheader": true,
+           "resize": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+           ],
+           "stretchLast": false,
+           "hiddenCols": [
+            5
+           ]
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QTableWidget",
+          "py": "FCTable",
+          "name": "exc_cnc_tools_table",
+          "props": {
+           "selectionBehavior": {
+            "t": "int",
+            "v": 1
+           },
+           "columnCount": {
+            "t": "int",
+            "v": 6
+           }
+          },
+          "table": {
+           "cols": 6,
+           "labels": [
+            "#",
+            "Dia",
+            "Taladros",
+            "Muesca",
+            "",
+            "Corte Z"
+           ],
+           "hheader": true,
+           "vheader": true,
+           "resize": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+           ],
+           "stretchLast": false,
+           "hiddenCols": [
+            4
+           ]
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QFrame",
+          "py": "QFrame",
+          "name": null,
+          "props": {
+           "sizePolicy": {
+            "t": "QSizePolicy",
+            "v": [
+             1,
+             0,
+             0,
+             0
+            ]
+           },
+           "frameShape": {
+            "t": "int",
+            "v": 4
+           },
+           "frameShadow": {
+            "t": "int",
+            "v": 48
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QLabel",
+          "py": "QLabel",
+          "name": null,
+          "props": {
+           "toolTip": {
+            "t": "str",
+            "v": "Fragmento de código definido en Preferencias."
+           },
+           "text": {
+            "t": "str",
+            "v": "Fragmento de código CNC 1:"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QPlainTextEdit",
+          "py": "FCTextArea",
+          "name": "prepend_text",
+          "props": {
+           "placeholderText": {
+            "t": "str",
+            "v": "Escriba aquí los comandos de código G que desee\nme gusta insertar en la ubicación del cursor."
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QPushButton",
+          "py": "FCButton",
+          "name": "update_gcode_button",
+          "props": {
+           "toolTip": {
+            "t": "str",
+            "v": "Inserte el código de arriba en la ubicación del cursor."
+           },
+           "text": {
+            "t": "str",
+            "v": "Insertar codigo"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QLabel",
+          "py": "QLabel",
+          "name": null,
+          "props": {
+           "toolTip": {
+            "t": "str",
+            "v": "Fragmento de código definido en Preferencias."
+           },
+           "text": {
+            "t": "str",
+            "v": "Fragmento de código CNC 2:"
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QPlainTextEdit",
+          "py": "FCTextArea",
+          "name": "append_text",
+          "props": {
+           "placeholderText": {
+            "t": "str",
+            "v": "Escriba aquí los comandos de código G que desee\nme gusta insertar en la ubicación del cursor."
+           }
+          }
+         }
+        },
+        {
+         "align": 0,
+         "stretch": 0,
+         "widget": {
+          "qt": "QPushButton",
+          "py": "FCButton",
+          "name": "update_gcode_sec_button",
+          "props": {
+           "toolTip": {
+            "t": "str",
+            "v": "Inserte el código de arriba en la ubicación del cursor."
+           },
+           "text": {
+            "t": "str",
+            "v": "Insertar codigo"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "spacer": [
+      0,
+      0,
+      1,
+      7
+     ]
+    },
+    {
+     "align": 0,
+     "stretch": 0,
+     "widget": {
+      "qt": "QPushButton",
+      "py": "FCButton",
+      "name": "exit_editor_button",
+      "props": {
+       "font": {
+        "t": "QFont",
+        "v": {
+         "bold": true
+        }
+       },
+       "toolTip": {
+        "t": "str",
+        "v": "Salida del editor."
+       },
+       "styleSheet": {
+        "t": "str",
+        "v": "\n\t\t\t\t\t\t\t\t\t\t  QPushButton\n\t\t\t\t\t\t\t\t\t\t  {\n\t\t\t\t\t\t\t\t\t\t\t  font-weight: bold;\n\t\t\t\t\t\t\t\t\t\t  }\n\t\t\t\t\t\t\t\t\t\t  "
+       },
+       "text": {
+        "t": "str",
+        "v": "Salir del editor"
+       },
+       "icon": {
+        "t": "QIcon",
+        "v": ":/images/power16.png"
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ "actions": {},
+ "class": "GCodeEditorUI"
+}

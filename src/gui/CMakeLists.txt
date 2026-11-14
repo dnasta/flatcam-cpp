@@ -72,12 +72,14 @@ add_library(flatcam_gui STATIC
     editors/GeoEditor.cpp
     editors/ExcEditor.cpp
     editors/GrbEditor.cpp
+    editors/GCodeEditor.cpp
     generated/GeoEditorUIBase.cpp
     generated/GeoPaintToolUIBase.cpp
     generated/GeoTextToolUIBase.cpp
     generated/GeoTransformToolUIBase.cpp
     generated/ExcEditorUIBase.cpp
     generated/GrbEditorUIBase.cpp
+    generated/GCodeEditorUIBase.cpp
     generated/GrbTransformToolUIBase.cpp
     tools/QRCodeTool.cpp
     generated/QRCodeToolUIBase.cpp
