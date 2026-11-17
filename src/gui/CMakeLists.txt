@@ -22,6 +22,7 @@ add_library(flatcam_gui STATIC
     shell/TclCommand.cpp
     shell/TclCommands.cpp
     shell/TclCommandsApp.cpp
+    shell/TclCommandsObjects.cpp
     AppTextEditor.cpp
     objects/ScriptObject.cpp
     generated/ScriptObjectUIBase.cpp

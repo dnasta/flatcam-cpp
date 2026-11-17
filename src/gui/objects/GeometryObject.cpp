@@ -108,7 +108,12 @@ QRectF GeometryObject::bounds() const { return plotData().bounds; }
 
 bool GeometryObject::mirror(Axis axis, const Point2D& point) {
     const AffineTransform m = AffineTransform::mirror(axis, point);
+    aliased_ = false;
     for (Shape& s : solid_) s = s.transform(m);
+    if (singleGeo_) {
+        syncSingleGeo();
+        return true;
+    }
     for (auto& [uid, t] : tools_)
         for (Shape& s : t.solidGeometry) s = s.transform(m);
     return true;
@@ -116,9 +121,60 @@ bool GeometryObject::mirror(Axis axis, const Point2D& point) {
 
 template <typename Fn>
 void GeometryObject::applyToAll(Fn fn) {
+    aliased_ = false;
     for (Shape& s : solid_) s = fn(s);
+    if (singleGeo_) {
+        syncSingleGeo();
+        return;
+    }
     for (auto& [uid, t] : tools_)
         for (Shape& s : t.solidGeometry) s = fn(s);
+}
+
+void GeometryObject::setSingleGeo(bool sharesList) {
+    singleGeo_ = true;
+    aliased_ = sharesList;
+    toolNone_ = !sharesList;
+    solidNotList_ = false;
+    syncSingleGeo();
+}
+
+void GeometryObject::syncSingleGeo() {
+    if (!singleGeo_) return;
+    auto it = tools_.find(1);
+    if (it != tools_.end()) it->second.solidGeometry = solid_;
+}
+
+void GeometryObject::setSolidGeometry(ShapeList shapes, bool asList) {
+    solid_ = std::move(shapes);
+    aliased_ = false;
+    solidNotList_ = !asList;
+    syncSingleGeo();
+}
+
+std::optional<QString> GeometryObject::addShapeLikeTheOriginal(const Shape& shape, bool circle) {
+    static const char* const names[] = {"Point", "LineString", "LinearRing", "Polygon", "MultiPoint",
+                                         "MultiLineString", "MultiPolygon", "GeometryCollection"};
+    if (solidNotList_) {
+        // solid_geometry es una figura: add_circle hace append (AttributeError, solo atrapa TypeError);
+        // add_polygon / add_polyline la unen con la nueva.
+        const Shape cur = solid_.empty() ? Shape() : solid_.front();
+        if (circle)
+            return QString("'%1' object has no attribute 'append'").arg(names[static_cast<int>(cur.type())]);
+        solid_ = {cur.unite(shape)};
+    } else {
+        solid_.push_back(shape);
+        if (aliased_) solid_.push_back(shape);  // la herramienta 1 es la misma lista
+    }
+    auto it = tools_.find(1);
+    if (it == tools_.end()) return QString("1");  // KeyError: 1
+    if (toolNone_) {
+        syncSingleGeo();
+        return QString("'NoneType' object has no attribute 'append'");  // tools[1]['solid_geometry'] es None
+    }
+    if (singleGeo_) syncSingleGeo();
+    else it->second.solidGeometry.push_back(shape);
+    return std::nullopt;
 }
 
 bool GeometryObject::rotate(double angle, const Point2D& p) {

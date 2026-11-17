@@ -7,6 +7,7 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 
 #include "cam/CncJob.h"
 #include "gui/objects/FlatCAMObj.h"
@@ -124,11 +125,45 @@ public:
     /** @brief Color de las líneas (`geometry_plot_line`). @return El color. */
     static QColor plotLineColor();
 
+    /**
+     * @brief Marca el objeto como de una sola geometría (`multigeo = False`), como los que crea `new_object` sin
+     * herramientas (los comandos `new_geometry`, `exteriors`, `interiors`): en el original lo que vale es
+     * `solid_geometry`; el port lo muestra y lo corta con la herramienta 1, que pasa a ser una copia de esa lista.
+     * `set_ui` le pone a la herramienta 1 `'solid_geometry': self.solid_geometry`: con una lista (`exteriors`,
+     * `interiors`) es **la misma lista** y lo que se agregue queda dos veces mientras dure el vínculo (transformar o
+     * reemplazar la geometría lo corta: el original reasigna); con `None` (`new_geometry`), agregar falla (ver
+     * @ref addShapeLikeTheOriginal).
+     * @param sharesList Si `solid_geometry` era una lista al crear la herramienta (si no, era `None`).
+     */
+    void setSingleGeo(bool sharesList);
+    /** @brief Si es de una sola geometría (@ref setSingleGeo). @return `true` si lo es. */
+    bool isSingleGeo() const { return singleGeo_; }
+    /**
+     * @brief Reemplaza `solid_geometry` (`union`, `subtract_polygon`).
+     * @param shapes Las figuras.
+     * @param asList `false` si en el original queda una figura y no una lista (`subtract_polygon` asigna
+     * `unary_union(...)`): entonces `add_circle` falla y `add_polygon` / `add_polyline` unen.
+     */
+    void setSolidGeometry(ShapeList shapes, bool asList = true);
+    /**
+     * @brief `Geometry.add_circle` / `add_polygon` / `add_polyline`: agrega la figura a `solid_geometry` y a la
+     * herramienta 1, como el original (dos veces si las dos listas son la misma, @ref setSingleGeo).
+     * @param shape Figura.
+     * @param circle Si es `add_circle` (con `solid_geometry` que no es una lista falla en vez de unir).
+     * @return El error de Python que da el original (`KeyError: 1` sin herramienta 1, `AttributeError`), o vacío.
+     */
+    std::optional<QString> addShapeLikeTheOriginal(const Shape& shape, bool circle);
+
 private:
     template <typename Fn> void applyToAll(Fn fn);
     ShapeList solid_;
     std::map<int, GeometryTool> tools_;
     Units units_{Units::Millimeters};
+    void syncSingleGeo();
+    bool singleGeo_{false};
+    bool aliased_{false};
+    bool toolNone_{false};
+    bool solidNotList_{false};
 };
 
 }  // namespace flatcam::gui

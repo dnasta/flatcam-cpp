@@ -443,18 +443,29 @@ public:
     void onMove2Origin();
     /** @brief Espera un clic y lo convierte en el origen (`on_set_origin`): mueve todos los objetos. */
     void onSetOrigin();
-    /** @brief Mueve todos los objetos para que el punto pase a ser el origen (`on_set_zero_click`). @param p Punto. */
-    void setOriginAt(const QPointF& p);
+    /**
+     * @brief Mueve todos los objetos para que el punto pase a ser el origen (`on_set_zero_click`).
+     * @param p Punto.
+     * @param replot Si redibuja todo y encuadra (`noplot = False`; el comando `set_origin` no redibuja).
+     */
+    void setOriginAt(const QPointF& p, bool replot = true);
+    /**
+     * @brief Los avisos que dan los métodos de transformación de cada objeto en el original: `GeometryObject.scale` /
+     * `offset` ("Done."), `camlib.Geometry.mirror` / `rotate` / `skew` ("Object was mirrored/rotated/skewed...") y
+     * todos los del Gerber ("Done."); los del Excellon no avisan.
+     * @param o Objeto. @param op `scale`, `offset`, `mirror`, `rotate` o `skew`.
+     */
+    void informTransformed(const FlatCAMObj* o, const QString& op);
     /** @brief Editar -> Saltar a (`on_jump_to`): pide la posición con `DialogBoxRadio`. */
     void onJumpTo();
     /** @brief Editar -> Ubicar (`on_locate`): una esquina o el centro del objeto activo. */
     void onLocate();
-    /** @brief Editar -> Unir Geo/Gerber/Exc -> Geo (`on_edit_join`). @return La Geometría nueva, o nulo si falló. */
-    FlatCAMObj* joinGeometry();
-    /** @brief Editar -> Unir Exc -> Exc (`on_edit_join_exc`). @return El Excellon nuevo, o nulo si falló. */
-    FlatCAMObj* joinExcellon();
-    /** @brief Editar -> Unir Gerber -> Gerber (`on_edit_join_grb`). @return El Gerber nuevo, o nulo si falló. */
-    FlatCAMObj* joinGerber();
+    /** @brief Editar -> Unir Geo/Gerber/Exc -> Geo (`on_edit_join`). @param given Los objetos (vacío: los elegidos; desde Tcl, sin dibujar). @param outname Nombre (vacío: el del original). @return La Geometría nueva, o nulo si falló. */
+    FlatCAMObj* joinGeometry(const std::vector<FlatCAMObj*>* given = nullptr, const QString& outname = {});
+    /** @brief Editar -> Unir Exc -> Exc (`on_edit_join_exc`). @param given Los objetos (vacío: los elegidos). @param outname Nombre. @return El Excellon nuevo, o nulo si falló. */
+    FlatCAMObj* joinExcellon(const std::vector<FlatCAMObj*>* given = nullptr, const QString& outname = {});
+    /** @brief Editar -> Unir Gerber -> Gerber (`on_edit_join_grb`). @param given Los objetos (vacío: los elegidos). @param outname Nombre. @return El Gerber nuevo, o nulo si falló. */
+    FlatCAMObj* joinGerber(const std::vector<FlatCAMObj*>* given = nullptr, const QString& outname = {});
     /** @brief Editar -> Convertir -> a Geometría (`convert_any2geo`), un `<nombre>_conv` por objeto. @return Los nuevos. */
     std::vector<FlatCAMObj*> convertToGeometry();
     /** @brief Editar -> Convertir -> a Gerber (`convert_any2gerber`): Geometría o Excellon. @return Los nuevos. */
