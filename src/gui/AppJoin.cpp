@@ -24,8 +24,8 @@ QString tooFew(std::size_t n) {
 
 }  // namespace
 
-FlatCAMObj* App::joinGeometry() {
-    const std::vector<FlatCAMObj*> objs = selectedObjects();
+FlatCAMObj* App::joinGeometry(const std::vector<FlatCAMObj*>* given, const QString& outname) {
+    const std::vector<FlatCAMObj*> objs = given ? *given : selectedObjects();
     if (objs.size() < 2) {
         ui_->inform(tooFew(objs.size()));
         return nullptr;
@@ -90,13 +90,14 @@ FlatCAMObj* App::joinGeometry() {
         t.solidGeometry = geo->solidGeometry();
         geo->tools()[1] = t;
     }
-    FlatCAMObj* out = addObject(std::move(geo));
+    if (!outname.isEmpty()) geo->setName(outname);
+    FlatCAMObj* out = addObject(std::move(geo), !given);
     ui_->inform("[success] " + tr_("Geometry merging finished") + ".");
     return out;
 }
 
-FlatCAMObj* App::joinExcellon() {
-    const std::vector<FlatCAMObj*> objs = selectedObjects();
+FlatCAMObj* App::joinExcellon(const std::vector<FlatCAMObj*>* given, const QString& outname) {
+    const std::vector<FlatCAMObj*> objs = given ? *given : selectedObjects();
     for (FlatCAMObj* o : objs)
         if (o->kind() != ObjectKind::Excellon) {
             ui_->inform("[ERROR_NOTCL] " + tr_("Failed. Excellon joining works only on Excellon objects."));
@@ -133,13 +134,14 @@ FlatCAMObj* App::joinExcellon() {
     auto ex = std::make_unique<Excellon>();
     for (const auto& [tid, t] : fused) ex->addDrillTool(tid, t.dia, t.drills, t.slots);
     ex->createGeometry();
-    FlatCAMObj* out = addObject(std::make_unique<ExcellonObject>("Combo_Excellon", std::move(ex)));
+    const QString name = outname.isEmpty() ? QString("Combo_Excellon") : outname;
+    FlatCAMObj* out = addObject(std::make_unique<ExcellonObject>(name, std::move(ex)), !given);
     ui_->inform("[success] " + tr_("Excellon merging finished") + ".");
     return out;
 }
 
-FlatCAMObj* App::joinGerber() {
-    const std::vector<FlatCAMObj*> objs = selectedObjects();
+FlatCAMObj* App::joinGerber(const std::vector<FlatCAMObj*>* given, const QString& outname) {
+    const std::vector<FlatCAMObj*> objs = given ? *given : selectedObjects();
     for (FlatCAMObj* o : objs)
         if (o->kind() != ObjectKind::Gerber) {
             ui_->inform("[ERROR_NOTCL] " + tr_("Failed. Gerber joining works only on Gerber objects."));
@@ -173,7 +175,8 @@ FlatCAMObj* App::joinGerber() {
     }
     auto g = std::make_unique<Gerber>();
     g->restore(std::move(solid), std::move(follow), std::move(apertures), intDigits, fracDigits, std::string());
-    FlatCAMObj* out = addObject(std::make_unique<GerberObject>("Combo_Gerber", std::move(g)));
+    const QString name = outname.isEmpty() ? QString("Combo_Gerber") : outname;
+    FlatCAMObj* out = addObject(std::make_unique<GerberObject>(name, std::move(g)), !given);
     ui_->inform("[success] " + tr_("Gerber merging finished") + ".");
     return out;
 }

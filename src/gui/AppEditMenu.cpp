@@ -250,8 +250,10 @@ void App::onMove2Origin() {
         x = std::min(x, b.left());
         y = std::min(y, b.top());
     }
-    for (FlatCAMObj* o : objs)
+    for (FlatCAMObj* o : objs) {
         if (o->offset(-x, -y)) objectChanged(o);  // un CNC Job no se mueve (ver MoveTool)
+        if (x != 0.0 || y != 0.0) informTransformed(o, "offset");
+    }
     for (FlatCAMObj* o : objs) refreshSourceFile(o);
     ui_->inform("[success] " + tr_("Origin set") + "...");
 }
@@ -268,12 +270,27 @@ void App::onSetOrigin() {
     });
 }
 
-void App::setOriginAt(const QPointF& p) {
-    for (FlatCAMObj* o : collection_->objects())
+void App::setOriginAt(const QPointF& p, bool replot) {
+    for (FlatCAMObj* o : collection_->objects()) {
         if (o->offset(-p.x(), -p.y())) objectChanged(o);
+        if (p.x() != 0.0 || p.y() != 0.0) informTransformed(o, "offset");  // offset((0, 0)) sale antes
+    }
     for (FlatCAMObj* o : collection_->objects()) refreshSourceFile(o);
     ui_->inform("[success] " + tr_("Origin set") + "...");
-    plotAll();  // origin_replot: dibuja todo y encuadra
+    if (replot) plotAll();  // origin_replot: dibuja todo y encuadra
+}
+
+void App::informTransformed(const FlatCAMObj* o, const QString& op) {
+    QString msg;
+    if (o->kind() == ObjectKind::Gerber) {
+        msg = tr_("Done.");
+    } else if (o->kind() == ObjectKind::Geometry) {
+        if (op == "mirror") msg = tr_("Object was mirrored") + "...";
+        else if (op == "rotate") msg = tr_("Object was rotated") + "...";
+        else if (op == "skew") msg = tr_("Object was skewed") + "...";
+        else msg = tr_("Done.");
+    }
+    if (!msg.isEmpty()) ui_->inform("[success] " + msg);
 }
 
 void App::onJumpTo() {
