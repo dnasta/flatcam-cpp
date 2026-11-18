@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <sstream>
+#include <algorithm>
 
 #include "golden_ncc_isolation.h"
 #include "parsers/Gerber.h"

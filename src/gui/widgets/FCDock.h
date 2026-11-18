@@ -6,6 +6,7 @@
 
 #include <QDockWidget>
 #include <functional>
+#include <utility>
 
 namespace flatcam::gui {
 

@@ -2,6 +2,7 @@
 // (así `help` lista lo mismo que el original).
 #include "gui/shell/TclCommands.h"
 
+#include <algorithm>
 #include <set>
 
 #include "gui/shell/TclCommand.h"

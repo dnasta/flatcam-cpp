@@ -1,6 +1,7 @@
 // Ayudantes internos de los postprocesadores (formato de números como Python y bloques comunes). No es API pública.
 #pragma once
 
+#include <algorithm>
 #include <cctype>
 #include <cmath>
 #include <cstdio>

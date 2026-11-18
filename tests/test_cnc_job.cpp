@@ -5,6 +5,7 @@
 #include <fstream>
 #include <map>
 #include <sstream>
+#include <cctype>
 
 #include "cam/CncJob.h"
 #include "cam/PathOptimizer.h"

@@ -2,6 +2,7 @@
 #include "gui/tools/DistanceTool.h"
 
 #include <QSplitter>
+#include <algorithm>
 #include <cmath>
 
 #include "gui/App.h"

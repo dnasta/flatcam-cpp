@@ -3,6 +3,7 @@
 #include "cam/generated/PreprocessorTemplates.h"
 #include "cam/internal/PpCommon.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 

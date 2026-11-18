@@ -1,5 +1,6 @@
 #include "tools/Paint.h"
 
+#include <algorithm>
 #include <stdexcept>
 
 namespace flatcam {

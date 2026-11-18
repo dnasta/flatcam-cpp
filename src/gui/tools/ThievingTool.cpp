@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "gui/tools/ThievingTool.h"
 
 #include "cam/PyNumber.h"

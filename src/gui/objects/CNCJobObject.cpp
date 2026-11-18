@@ -10,6 +10,7 @@
 #include <QRegularExpression>
 #include <QStringList>
 #include <QTextStream>
+#include <algorithm>
 #include <cmath>
 
 #include "gui/objects/ObjectUIs.h"

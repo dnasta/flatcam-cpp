@@ -21,6 +21,7 @@
 #include <QPointer>
 #include <QString>
 #include <memory>
+#include <algorithm>
 
 #include "gui/MainGUI.h"
 #include "gui/objects/ObjectCollection.h"

@@ -4,9 +4,10 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
-#include <QLocale>
 #include <QImage>
+#include <QLocale>
 #include <QMessageBox>
+#include <algorithm>
 
 #include "gui/App.h"
 

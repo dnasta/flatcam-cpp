@@ -13,6 +13,7 @@
 #include <QObject>
 #include <QPointer>
 #include <QPointF>
+#include <algorithm>
 
 #include "editors/GrbEditorModel.h"
 #include "gui/generated/GrbEditorUIBase.h"

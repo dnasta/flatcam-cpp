@@ -9,6 +9,7 @@
 #include <QPdfWriter>
 #include <QScreen>
 #include <QSvgRenderer>
+#include <algorithm>
 
 #include "gui/App.h"
 #include "gui/MainGUI.h"

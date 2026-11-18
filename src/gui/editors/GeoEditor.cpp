@@ -8,6 +8,8 @@
 #include <QSplitter>
 #include <QTabWidget>
 #include <QTreeWidgetItemIterator>
+#include <algorithm>
+#include <limits>
 
 #include "cam/PyNumber.h"
 #include "core/ArcMath.h"

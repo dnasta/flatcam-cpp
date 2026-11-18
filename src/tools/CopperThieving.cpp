@@ -1,5 +1,6 @@
 #include "tools/CopperThieving.h"
 
+#include <algorithm>
 #include <memory>
 
 #include "core/GeometryError.h"

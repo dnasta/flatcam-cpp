@@ -3,6 +3,7 @@
 #include <QRegularExpression>
 #include <QTextBlockFormat>
 #include <QTextCursor>
+#include <algorithm>
 
 #include "cam/PyNumber.h"
 #include "gui/App.h"

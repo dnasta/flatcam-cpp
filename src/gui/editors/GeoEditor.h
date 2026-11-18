@@ -12,6 +12,7 @@
 #include <QObject>
 #include <QPointer>
 #include <QPointF>
+#include <algorithm>
 
 #include "editors/GeoEditorModel.h"
 #include "parsers/FontParser.h"

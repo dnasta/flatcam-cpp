@@ -14,6 +14,7 @@
 #include <QObject>
 #include <QPointF>
 #include <QStringList>
+#include <algorithm>
 
 #include "cam/Autolevel.h"
 

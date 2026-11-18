@@ -4,6 +4,7 @@
 #include <cmath>
 #include <set>
 #include <string>
+#include <algorithm>
 
 #include "editors/ExcEditorModel.h"
 #include "golden_exc_editor.h"

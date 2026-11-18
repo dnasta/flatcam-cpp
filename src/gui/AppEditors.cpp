@@ -3,6 +3,7 @@
 #include <QScrollArea>
 #include <QSplitter>
 #include <QTabBar>
+#include <algorithm>
 
 #include "gui/App.h"
 #include "gui/MainGUI.h"

@@ -3,6 +3,7 @@
 
 #include <QApplication>
 #include <QClipboard>
+#include <algorithm>
 #include <limits>
 
 #include "gui/App.h"

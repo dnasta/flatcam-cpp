@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QFile>
 #include <QStringList>
+#include <algorithm>
 #include <cmath>
 
 #include "gui/ProjectIO.h"

@@ -4,6 +4,7 @@
 #include <QMenu>
 #include <QTabBar>
 #include <QTreeWidgetItem>
+#include <algorithm>
 #include <cmath>
 
 #include "gui/App.h"

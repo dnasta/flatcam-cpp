@@ -13,6 +13,7 @@
 #include <limits>
 
 #include <map>
+#include <tuple>
 #include "gui/widgets/FCPrefWidgets.h"
 #include "gui/widgets/FCLabel.h"
 #include "gui/widgets/RadioSet.h"

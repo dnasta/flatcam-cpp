@@ -4,6 +4,7 @@
 #include <cmath>
 #include <fstream>
 #include <sstream>
+#include <cstdio>
 
 #include "cam/CncJob.h"
 #include "cam/EndpointStorage.h"

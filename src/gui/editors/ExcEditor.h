@@ -12,6 +12,7 @@
 #include <QObject>
 #include <QPointer>
 #include <QPointF>
+#include <algorithm>
 
 #include "editors/ExcEditorModel.h"
 #include "gui/generated/ExcEditorUIBase.h"

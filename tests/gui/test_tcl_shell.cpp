@@ -7,6 +7,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <limits>
 
 #include "gui/App.h"
 #include "gui/MainGUI.h"

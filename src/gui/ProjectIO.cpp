@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QRegularExpression>
 #include <QString>
+#include <algorithm>
 
 #include "gui/objects/CNCJobObject.h"
 #include "gui/objects/GeometryObject.h"

@@ -1,10 +1,13 @@
 #include "parsers/SvgImport.h"
 
 #include <algorithm>
+#include <cctype>
 #include <cmath>
+#include <cstdlib>
 #include <functional>
 #include <regex>
 #include <stdexcept>
+#include <utility>
 
 namespace flatcam {
 

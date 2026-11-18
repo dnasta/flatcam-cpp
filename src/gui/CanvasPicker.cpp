@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "gui/Preferences.h"
 #include "gui/CanvasPicker.h"
 

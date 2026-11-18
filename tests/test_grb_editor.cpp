@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include <string>
+#include <algorithm>
 
 #include "editors/GrbEditorModel.h"
 #include "golden_grb_editor.h"

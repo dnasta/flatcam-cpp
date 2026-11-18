@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <sstream>
+#include <cstdio>
 
 #include "cam/CncJob.h"
 #include "golden_ncc.h"
