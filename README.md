@@ -51,6 +51,10 @@ ctest --test-dir build --output-on-failure
 open build/src/gui/FlatCAM.app      # la aplicación
 ```
 
+Para llevar la aplicación a otra Mac (sin Homebrew): `tools/package_macos.sh` arma `build/dist/FlatCAM.app`
+autocontenido (Qt, GEOS, FreeType, Tcl con su biblioteca de scripts) y `build/dist/FlatCAM-<versión>-macOS-arm64.dmg`.
+La firma es ad hoc: la primera vez macOS pide abrirla con clic derecho -> Abrir (no está notarizada).
+
 **Linux (Ubuntu/Debian)**
 ```bash
 sudo apt install build-essential cmake ninja-build libgeos-dev liblzma-dev doxygen libgtest-dev qt6-base-dev qt6-svg-dev qt6-serialport-dev tcl-dev libfreetype-dev

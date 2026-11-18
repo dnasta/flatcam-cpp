@@ -92,6 +92,7 @@ int main(int argc, char* argv[]) {
             app.onZoomFit();
             QApplication::processEvents();
             app.ui()->grab().save(shotPath);
+            app.discardChanges();  // sin preguntar si se guarda el proyecto
             QApplication::quit();
         });
     }

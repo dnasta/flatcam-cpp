@@ -1,0 +1,2 @@
+// Ícono del ejecutable en Windows (el mismo de FlatCAM).
+IDI_ICON1 ICON "images/flatcam_icon256.ico"

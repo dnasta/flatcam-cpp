@@ -5,7 +5,9 @@
 #include <QAbstractItemView>
 #include <QApplication>
 #include <QClipboard>
+#include <QCoreApplication>
 #include <QDateTime>
+#include <QDir>
 #include <QFile>
 #include <QFileDialog>
 #include <QHBoxLayout>
@@ -242,7 +244,17 @@ FCShell::FCShell(App* app, const QString& version) : app_(app) {
 
     // FCShell: init_tcl + setup_shell.
     interp_ = Tcl_CreateInterp();
-    Tcl_Init(interp_);  // la biblioteca de scripts de Tcl (init.tcl), como tkinter.Tcl()
+    // La biblioteca de scripts de Tcl (init.tcl), como tkinter.Tcl(). En un paquete armado con
+    // tools/package_macos.sh (o una instalación que la copie al lado del ejecutable) va dentro de la aplicación, para
+    // no depender de la Tcl instalada; si no está, Tcl la busca donde la instaló el sistema.
+    const QString appDir = QCoreApplication::applicationDirPath();
+    for (const QString& dir : {appDir + "/../Resources/tcl" TCL_VERSION, appDir + "/tcl" TCL_VERSION,
+                               appDir + "/../share/flatcam/tcl" TCL_VERSION})
+        if (QFile::exists(dir + "/init.tcl")) {
+            Tcl_SetVar(interp_, "tcl_library", QDir(dir).absolutePath().toUtf8().constData(), TCL_GLOBAL_ONLY);
+            break;
+        }
+    Tcl_Init(interp_);
     commands_ = createTclCommands(app);
     for (const auto& c : commands_)
         for (const QString& alias : c->meta().aliases) {
