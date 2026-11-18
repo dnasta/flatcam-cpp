@@ -1,3 +1,4 @@
+#include "gui/QtCompat.h"
 #include "gui/tools/ExtractDrillsTool.h"
 
 #include "gui/App.h"
@@ -21,8 +22,8 @@ ExtractDrillsTool::ExtractDrillsTool(App* app, QWidget* parent) : ExtractDrillsT
                                                       {other_cb, other_ring_entry}};
     for (const auto& link : links) {
         QWidget* entry = link.second;
-        connect(link.first, &QCheckBox::checkStateChanged, this,
-                [entry](Qt::CheckState s) { entry->setDisabled(s == Qt::Unchecked); });
+        connect(link.first, FC_CHECK_STATE_CHANGED, this,
+                [entry](CheckStateArg s) { entry->setDisabled(s == Qt::Unchecked); });
     }
 }
 

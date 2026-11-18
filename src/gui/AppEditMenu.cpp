@@ -14,6 +14,7 @@
 
 #include <map>
 #include <tuple>
+#include "gui/QtCompat.h"
 #include "gui/widgets/FCPrefWidgets.h"
 #include "gui/widgets/FCLabel.h"
 #include "gui/widgets/RadioSet.h"
@@ -439,7 +440,7 @@ void App::setupCanvasMenu() {
     connect(pt->general_app_set_group_wk_cb, &QComboBox::currentIndexChanged, this, [this] { onWorkspaceModified(); });
     connect(pt->general_app_set_group_wk_orientation_radio, &RadioSet::activatedCustom, this,
             [this] { onWorkspaceModified(); });
-    connect(pt->general_app_set_group_workspace_cb, &QCheckBox::checkStateChanged, this, [this] {
+    connect(pt->general_app_set_group_workspace_cb, FC_CHECK_STATE_CHANGED, this, [this] {
         if (!workspaceCbMuted_) onWorkspace();
     });
     if (defBool("global_workspace")) drawWorkspace();  // PlotCanvas.__init__
@@ -451,7 +452,7 @@ void App::setupCanvasMenu() {
         cursorBig_ = v != "small";  // new_cursor(big=...)
         applyCursorPreferences();
     });
-    connect(pt->general_app_set_group_mouse_cursor_color_cb, &QCheckBox::checkStateChanged, this, [this, pt] {
+    connect(pt->general_app_set_group_mouse_cursor_color_cb, FC_CHECK_STATE_CHANGED, this, [this, pt] {
         cursorColorEnabled_ = pt->general_app_set_group_mouse_cursor_color_cb->isChecked();
         applyCursorPreferences();
     });

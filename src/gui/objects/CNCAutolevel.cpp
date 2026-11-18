@@ -1,3 +1,4 @@
+#include "gui/QtCompat.h"
 #include "gui/objects/CNCAutolevel.h"
 
 #include <QApplication>
@@ -120,12 +121,12 @@ void CNCAutolevel::attach(CNCObjectUI* ui) {
         ui_->al_frame->setVisible(on);
         if (Preferences* p = app_->preferences()) p->set("cncjob_al_status", JsonValue::boolean(on));
     });
-    connect(ui->show_al_table, &QCheckBox::checkStateChanged, this,
+    connect(ui->show_al_table, FC_CHECK_STATE_CHANGED, this,
             [this] { ui_->al_probe_points_table->setVisible(ui_->show_al_table->isChecked()); });
     connect(ui->al_mode_radio, &RadioSet::activatedCustom, this, [this](const QString& v) { onModeRadio(v); });
     connect(ui->al_method_radio, &RadioSet::activatedCustom, this, [this](const QString& v) { onMethodRadio(v); });
     connect(ui->al_controller_combo, &QComboBox::currentIndexChanged, this, [this] { onControllerChange(); });
-    connect(ui->plot_probing_pts_cb, &QCheckBox::checkStateChanged, this,
+    connect(ui->plot_probing_pts_cb, FC_CHECK_STATE_CHANGED, this,
             [this] { showProbingGeo(ui_->plot_probing_pts_cb->isChecked()); });
     connect(ui->al_add_button, &QPushButton::clicked, this, [this] { addProbePoints(); });
     connect(ui->h_gcode_button, &QPushButton::clicked, this, [this] {

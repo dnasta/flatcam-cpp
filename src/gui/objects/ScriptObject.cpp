@@ -1,3 +1,4 @@
+#include "gui/QtCompat.h"
 #include "gui/objects/ScriptObject.h"
 
 #include "gui/App.h"
@@ -52,8 +53,8 @@ void ScriptObject::setUi(App* app) {
     // handle_run_code: ejecuta el texto del editor en la consola Tcl.
     connect(ed, &AppTextEditor::runRequested, this, [this] { app_->runScriptCode(editor_->toPlainText()); });
     ed->handleTextChanged();
-    connect(panel->autocomplete_cb, &QCheckBox::checkStateChanged, this,
-            [this](Qt::CheckState s) { if (editor_) editor_->setCompleterEnabled(s != Qt::Unchecked); });
+    connect(panel->autocomplete_cb, FC_CHECK_STATE_CHANGED, this,
+            [this](CheckStateArg s) { if (editor_) editor_->setCompleterEnabled(s != Qt::Unchecked); });
     // Cargar el texto (con el cursor al final).
     ed->t_frame->hide();
     ed->loadText(sourceFile(), false, true);

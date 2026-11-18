@@ -1,3 +1,4 @@
+#include "gui/QtCompat.h"
 #include "gui/tools/QRCodeTool.h"
 
 #include <QColorDialog>
@@ -17,7 +18,7 @@ namespace flatcam::gui {
 QRCodeTool::QRCodeTool(App* app, QWidget* parent) : QRCodeToolUIBase(parent), app_(app) {
     setupUi();
     connect(qrcode_button, &QPushButton::clicked, this, [this] { execute(); });
-    connect(export_cb, &QCheckBox::checkStateChanged, this, [this](Qt::CheckState state) {
+    connect(export_cb, FC_CHECK_STATE_CHANGED, this, [this](CheckStateArg state) {
         export_frame->setVisible(state != Qt::Unchecked);
         qrcode_button->setVisible(state == Qt::Unchecked);
     });
@@ -57,8 +58,8 @@ QRCodeTool::QRCodeTool(App* app, QWidget* parent) : QRCodeToolUIBase(parent), ap
     };
     colorButton(fill_color_entry, fill_color_button);
     colorButton(back_color_entry, back_color_button);
-    connect(transparent_cb, &QCheckBox::checkStateChanged, this,
-            [this](Qt::CheckState s) { onTransparent(s != Qt::Unchecked); });
+    connect(transparent_cb, FC_CHECK_STATE_CHANGED, this,
+            [this](CheckStateArg s) { onTransparent(s != Qt::Unchecked); });
     connect(reset_button, &QPushButton::clicked, this, [this] { setToolUi(); });
 }
 

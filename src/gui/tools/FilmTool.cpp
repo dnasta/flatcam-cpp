@@ -1,3 +1,4 @@
+#include "gui/QtCompat.h"
 #include "gui/tools/FilmTool.h"
 
 #include <QFile>
@@ -116,7 +117,7 @@ FilmTool::FilmTool(App* app, QWidget* parent) : FilmToolUIBase(parent), app_(app
     connect(reset_button, &QPushButton::clicked, this, [this] { setToolUi(); });
     // OptionalHideInputSection
     for (FCCheckBox* cb : {film_scale_cb, film_skew_cb, film_mirror_cb, punch_cb})
-        connect(cb, &QCheckBox::checkStateChanged, this, [this] { updateSections(); });
+        connect(cb, FC_CHECK_STATE_CHANGED, this, [this] { updateSections(); });
     updateSections();
 }
 

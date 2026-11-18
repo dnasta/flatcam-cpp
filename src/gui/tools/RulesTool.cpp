@@ -1,5 +1,6 @@
 #include <tuple>
 
+#include "gui/QtCompat.h"
 #include "gui/tools/RulesTool.h"
 
 #include "gui/App.h"
@@ -20,12 +21,12 @@ RulesTool::RulesTool(App* app, QWidget* parent) : RulesToolUIBase(parent), app_(
         {out_cb, outline_object},       {e1_cb, e1_object},             {e2_cb, e2_object}};
     for (const auto& [cb, w] : objCbs) {
         QWidget* target = w;
-        connect(cb, &QCheckBox::checkStateChanged, this, [target](Qt::CheckState s) { target->setDisabled(s == Qt::Unchecked); });
+        connect(cb, FC_CHECK_STATE_CHANGED, this, [target](CheckStateArg s) { target->setDisabled(s == Qt::Unchecked); });
     }
-    connect(all_obj_cb, &QCheckBox::checkStateChanged, this, [objCbs](Qt::CheckState s) {
+    connect(all_obj_cb, FC_CHECK_STATE_CHANGED, this, [objCbs](CheckStateArg s) {
         for (const auto& [cb, w] : objCbs) cb->setChecked(s != Qt::Unchecked);
     });
-    connect(all_cb, &QCheckBox::checkStateChanged, this, [this](Qt::CheckState s) {
+    connect(all_cb, FC_CHECK_STATE_CHANGED, this, [this](CheckStateArg s) {
         for (FCCheckBox* cb : {trace_size_cb, clearance_copper2copper_cb, clearance_copper2ol_cb, clearance_silk2silk_cb,
                                clearance_silk2sm_cb, clearance_silk2ol_cb, clearance_sm2sm_cb, ring_integrity_cb,
                                clearance_d2d_cb, drill_size_cb})
