@@ -10,9 +10,11 @@
 #include <optional>
 
 #include <QObject>
+#include <QPointer>
 #include <QPointF>
 
 #include "editors/GeoEditorModel.h"
+#include "parsers/FontParser.h"
 #include "gui/generated/GeoEditorUIBase.h"
 #include "gui/generated/GeoPaintToolUIBase.h"
 #include "gui/generated/GeoTextToolUIBase.h"
@@ -95,12 +97,30 @@ class GeoTextTool : public GeoTextToolUIBase {
 public:
     /** @brief Crea el panel. @param ed El editor. @param parent Padre. */
     GeoTextTool(GeoEditor* ed, QWidget* parent = nullptr);
-    /** @brief `on_apply_button`: arma el texto con la fuente elegida. */
+    /** @brief `on_apply_button`: arma el texto con la fuente elegida (`ParseFont.font_to_geometry`). */
     void onApply();
     /** @brief `text_path`: el texto armado (vacío si no hay). */
     ShapeList textPath;
+    /**
+     * @brief Si el último "Aplicar" no encontró la fuente: en el original `text_path` queda con el texto
+     * "flatcam font parse failed" y el clic avisa del error.
+     */
+    bool textFailed{false};
     bool fontBold{false};    ///< `font_bold`.
     bool fontItalic{false};  ///< `font_italic`.
+    QString fontName;        ///< `font_name`: la familia elegida en el combo.
+
+    /**
+     * @brief Las fuentes instaladas por tipo (`ParseFont.get_fonts_by_types`), leídas una sola vez (el original las
+     * lee cada vez que se elige la herramienta).
+     * @return El lector de fuentes.
+     */
+    static FontParser& fonts();
+    /**
+     * @brief Usa estas carpetas en vez de las del sistema y vuelve a leer las fuentes (para las pruebas).
+     * @param dirs Carpetas.
+     */
+    static void setFontDirectories(const std::vector<std::string>& dirs);
 
 private:
     GeoEditor* ed_;
@@ -205,10 +225,10 @@ private:
     void cleanUpActive();
 
     App* app_;
-    GeoEditorUIBase* panel_;
-    GeoPaintTool* paintTool_;
-    GeoTransformTool* transformTool_;
-    GeoTextTool* textTool_;
+    QPointer<GeoEditorUIBase> panel_;
+    QPointer<GeoPaintTool> paintTool_;
+    QPointer<GeoTransformTool> transformTool_;
+    QPointer<GeoTextTool> textTool_;
     GeoEditorModel model_;
     std::unique_ptr<Tool> tool_;
     std::map<QString, QAction*> buttons_;

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="100mm" height="50mm" viewBox="0 0 100 50">
+  <rect x="5" y="5" width="20" height="10"/>
+  <text x="30" y="20"><tspan x="30" y="20">Hola</tspan></text>
+</svg>

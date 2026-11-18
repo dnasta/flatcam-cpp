@@ -4,7 +4,6 @@
 #include <QClipboard>
 #include <QFont>
 #include <QHeaderView>
-#include <QPainterPath>
 #include <QScrollArea>
 #include <QSplitter>
 #include <QTabWidget>
@@ -359,38 +358,97 @@ void GeoTransformTool::onSkewYKey() {
     ed_->app()->ui()->inform("[success] " + tr_("Skew on Y axis done") + "...");
 }
 
+namespace {
+
+std::optional<std::vector<std::string>>& fontDirsOverride() {
+    static std::optional<std::vector<std::string>> dirs;
+    return dirs;
+}
+
+std::unique_ptr<FontParser>& fontParser() {
+    static std::unique_ptr<FontParser> p;
+    return p;
+}
+
+}  // namespace
+
+FontParser& GeoTextTool::fonts() {
+    auto& p = fontParser();
+    if (!p) {
+        p = std::make_unique<FontParser>();
+        p->loadFonts(FontParser::fontFiles(fontDirsOverride() ? *fontDirsOverride()
+                                                              : FontParser::systemFontDirectories()));
+    }
+    return *p;
+}
+
+void GeoTextTool::setFontDirectories(const std::vector<std::string>& dirs) {
+    fontDirsOverride() = dirs;
+    fontParser().reset();
+}
+
 GeoTextTool::GeoTextTool(GeoEditor* ed, QWidget* parent) : GeoTextToolUIBase(parent), ed_(ed) {
     setupUi();
+    // f_current: la fuente inicial de cada sistema.
+#if defined(Q_OS_WIN)
+    const QFont current("Arial");
+#elif defined(Q_OS_LINUX)
+    const QFont current("FreeMono");
+#else
+    const QFont current("Helvetica Neue");
+#endif
+    fontName = current.family();
+    font_type_cb->setCurrentFont(current);
+    text_input_entry->setCurrentFont(current);
+    text_input_entry->setFontPointSize(10);
     connect(apply_button, &QPushButton::clicked, this, [this] { onApply(); });
-    connect(font_bold_tb, &QToolButton::clicked, this, [this] { fontBold = font_bold_tb->isChecked(); });
-    connect(font_italic_tb, &QToolButton::clicked, this, [this] { fontItalic = font_italic_tb->isChecked(); });
+    connect(font_type_cb, &QFontComboBox::currentFontChanged, this, [this](QFont font) {
+        // font_family
+        text_input_entry->selectAll();
+        font.setPointSizeF(font_size_cb->currentText().toDouble());
+        text_input_entry->setCurrentFont(font);
+        fontName = font_type_cb->currentFont().family();
+    });
+    connect(font_size_cb, QOverload<int>::of(&QComboBox::activated), this, [this] {
+        text_input_entry->selectAll();
+        text_input_entry->setFontPointSize(font_size_cb->currentText().toDouble());
+    });
+    connect(font_bold_tb, &QToolButton::clicked, this, [this] {
+        fontBold = font_bold_tb->isChecked();
+        text_input_entry->selectAll();
+        text_input_entry->setFontWeight(fontBold ? QFont::Bold : QFont::Normal);
+    });
+    connect(font_italic_tb, &QToolButton::clicked, this, [this] {
+        fontItalic = font_italic_tb->isChecked();
+        text_input_entry->selectAll();
+        text_input_entry->setFontItalic(fontItalic);
+    });
 }
 
 void GeoTextTool::onApply() {
-    // font_to_geometry: cada contorno de cada letra es un polígono aparte (también los agujeros), escalado a
-    // 0,0080187969924812 mm por unidad 26.6 de FreeType con el tamaño en puntos (en pulgadas, 0,00031570066).
-    // El port toma los contornos de Qt (curvas aplanadas) en vez de los puntos de control de FreeType.
     // El original elige 'bold' antes que 'bi': con negrita y cursiva sale negrita.
-    QFont f = font_type_cb->currentFont();
-    f.setBold(fontBold);
-    f.setItalic(!fontBold && fontItalic);
-    f.setPixelSize(1000);
-    const double size = font_size_cb->currentText().toDouble();
-    const double unit = defStr("units").toUpper() == "MM" ? 0.0080187969924812 : 0.00031570066;
-    const double k = size * 64.0 / 1000.0 * unit;
-    QPainterPath path;
-    path.addText(0, 0, f, text_input_entry->toPlainText());
-    textPath.clear();
-    for (const QPolygonF& poly : path.toSubpathPolygons()) {
-        if (poly.size() < 3) continue;
-        std::vector<Point2D> pts;
-        for (const QPointF& p : poly) pts.push_back({p.x() * k, -p.y() * k});
-        if (!(pts.front() == pts.back())) pts.push_back(pts.front());
-        if (pts.size() < 4) continue;
-        try {
-            textPath.push_back(Shape::polygon(pts));
-        } catch (const GeometryError&) {
-        }
+    const char* type = fontBold ? "bold" : fontItalic ? "italic" : "regular";
+    bool ok = false;
+    const int size = font_size_cb->currentText().toInt(&ok);  // int(font_size)
+    const QString text = text_input_entry->toPlainText();
+    FontParser& fp = fonts();
+    const std::string name = fontName.toStdString();
+    const auto& dict = fontBold ? fp.bold : fontItalic ? fp.italic : fp.regular;
+    if (!dict.count(name) || !FontParser::available()) {
+        ed_->app()->ui()->inform("[ERROR_NOTCL] " + tr_("Font not supported, try another one."));
+        textPath.clear();
+        textFailed = true;
+        return;
+    }
+    if (!ok) return;  // ValueError: text_path queda como estaba
+    try {
+        const auto r = fp.fontToGeometry(text.toStdString(), name, type, size, defStr("units").toUpper() == "MM");
+        if (!r) return;
+        textPath = *r;
+        textFailed = false;
+    } catch (const std::exception&) {
+        // FreeType no pudo con la fuente (o una letra dio un anillo inválido): el original sale del manejador con la
+        // excepción y text_path queda como estaba.
     }
 }
 
@@ -617,6 +675,7 @@ void GeoEditor::newTool(const QString& name) {
     } else if (name == "text") {
         ui->inform(tr_("Click on 1st point ..."));
         textTool_->textPath.clear();
+        textTool_->textFailed = false;
         textTool_->text_tool_frame->show();
         app_->runTool(textTool_, {tr_("Text Input Tool"), tr_("Text Tool")}, false);
     } else if (name == "buffer") {
@@ -762,6 +821,18 @@ void GeoEditor::onPress(const QPointF& world, Qt::MouseButton button) {
         ui->inform("[success] " + tr_("Done."));
         return;
     } else if (n == "text") {
+        if (textTool_->textFailed) {
+            // affinity.translate sobre el texto "flatcam font parse failed".
+            ui->inform("[ERROR] " + tr_("Font not supported. Only Regular, Bold, Italic and BoldItalic are supported. Error") +
+                       ": 'str' object has no attribute 'is_empty'");
+            textTool_->textPath.clear();
+            textTool_->textFailed = false;
+            textTool_->text_tool_frame->hide();
+            ui->notebook->setCurrentWidget(ui->properties_tab);
+            ui->notebook->setTabText(2, tr_("Tool"));
+            selectTool("select");
+            return;
+        }
         if (textTool_->textPath.empty()) {
             ui->inform("[WARNING_NOTCL] " + tr_("No text to add."));
             return;

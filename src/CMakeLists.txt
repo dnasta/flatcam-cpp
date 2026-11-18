@@ -14,6 +14,7 @@ add_library(flatcam_core STATIC
     parsers/Hpgl2.cpp
     parsers/ImageImport.cpp
     parsers/PdfImport.cpp
+    parsers/FontParser.cpp
     parsers/Excellon.cpp
     cam/PyNumber.cpp
     io/FileExport.cpp
@@ -62,6 +63,16 @@ add_library(flatcam::core ALIAS flatcam_core)
 target_include_directories(flatcam_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(flatcam_core PUBLIC GEOS::geos_c LibLZMA::LibLZMA)
 target_compile_features(flatcam_core PUBLIC cxx_std_17)
+
+# FreeType (opcional): los textos con fuentes del editor de Geometría (parsers/FontParser). Sin ella no hay textos.
+find_package(Freetype QUIET)
+if(FREETYPE_FOUND)
+    target_link_libraries(flatcam_core PRIVATE Freetype::Freetype)
+    target_compile_definitions(flatcam_core PRIVATE FLATCAM_HAVE_FREETYPE)
+    message(STATUS "FreeType ${FREETYPE_VERSION_STRING}: textos con fuentes")
+else()
+    message(STATUS "Sin FreeType: el editor de Geometría no puede escribir textos")
+endif()
 
 if(MSVC)
     target_compile_options(flatcam_core PRIVATE /W4 /permissive-)

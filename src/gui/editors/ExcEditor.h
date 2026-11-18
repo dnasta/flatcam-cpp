@@ -10,6 +10,7 @@
 #include <optional>
 
 #include <QObject>
+#include <QPointer>
 #include <QPointF>
 
 #include "editors/ExcEditorModel.h"
@@ -95,7 +96,7 @@ private:
     std::optional<double> lastToolDia() const;
 
     App* app_;
-    ExcEditorUIBase* ui_;
+    QPointer<ExcEditorUIBase> ui_;
     ExcEditorModel model_;
     std::unique_ptr<Tool> tool_;
     std::map<QString, QAction*> buttons_;

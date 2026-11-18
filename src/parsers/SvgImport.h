@@ -68,7 +68,11 @@ struct SvgImportResult {
     bool ok{false};        ///< Si se pudo leer.
     std::string error;     ///< El error, si no.
     ShapeList geometry;    ///< Las figuras (ya invertidas en Y y corridas el alto, como `flip=True`).
-    bool hadText{false};   ///< Si había textos (`tspan`), que el port no importa.
+    /**
+     * @brief Si algún `tspan` sin hijos tiene un padre sin `style`: `getsvgtext` lee `style` fuera de su `try`, así que
+     * la importación como Geometría falla con `KeyError: 'style'`.
+     */
+    bool textWithoutStyle{false};
 };
 
 /**

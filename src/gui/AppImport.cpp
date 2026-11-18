@@ -62,8 +62,8 @@ FlatCAMObj* App::importSvg(const QString& filename, bool asGerber, const QString
     lastFolder_ = QFileInfo(filename).absolutePath();
     registerRecent("svg", filename);
     ui_->inform(QString("[success] %1: %2").arg(tr_("Opened"), filename));
-    // Desvío: los textos (tspan) se dibujan con fuentes TTF en el original (ParseFont); el port todavía no los importa.
-    if (r.hadText) ui_->inform("[WARNING_NOTCL] El SVG tiene textos: el port todavía no los importa.");
+    // Los textos (tspan) no se importan, como en el original: getsvgtext llama a ParseFont() sin la aplicación y el
+    // error queda atrapado.
     return obj;
 }
 

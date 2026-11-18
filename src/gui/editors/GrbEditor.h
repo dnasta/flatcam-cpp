@@ -11,6 +11,7 @@
 #include <optional>
 
 #include <QObject>
+#include <QPointer>
 #include <QPointF>
 
 #include "editors/GrbEditorModel.h"
@@ -90,8 +91,8 @@ private:
     void transform(const QString& op);
 
     App* app_;
-    GrbEditorUIBase* ui_;
-    GrbTransformToolUIBase* transformUi_;
+    QPointer<GrbEditorUIBase> ui_;
+    QPointer<GrbTransformToolUIBase> transformUi_;
     GrbEditorModel model_;
     std::unique_ptr<Tool> tool_;
     std::map<QString, QAction*> buttons_;
