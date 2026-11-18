@@ -79,3 +79,7 @@ src/tools/QrCode.* y src/tools/generated/QrTables.h son un port de la biblioteca
   # The word "QR Code" is registered trademark of
   # DENSO WAVE INCORPORATED
   #   http://www.denso-wave.com/qrcode/faqpatent-e.html
+
+tests/data/fonts/ trae copias reducidas (solo algunas letras) de las fuentes DejaVu (https://dejavu-fonts.github.io/),
+que se usan únicamente en los tests de los textos con fuentes. Su licencia (fuentes Bitstream Vera con los cambios de
+DejaVu en el dominio público) está en tests/data/fonts/LICENSE.

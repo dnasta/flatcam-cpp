@@ -3071,6 +3071,61 @@ TEST(GuiGeoEditor, DrawsMovesAndSavesBack) {
     EXPECT_TRUE(app.ui()->project_frame->isEnabled());
 }
 
+TEST(GuiGeoEditor, TextToolUsesTheFontPointsLikeTheOriginal) {
+    // La herramienta Texto con las fuentes de tests/data/fonts (oracle_fonts.py: "FlatCAM" en DejaVu Sans de 10).
+    if (!flatcam::FontParser::available()) GTEST_SKIP() << "compilado sin FreeType";
+    GeoTextTool::setFontDirectories({std::string(FLATCAM_TEST_DATA_DIR) + "/fonts"});
+    QStringList msgs;  // antes que App: la aplicación avisa también al cerrarse
+    App app;
+    QObject::connect(app.ui(), &MainGUI::informed, [&msgs](const QString& m) { msgs << m; });
+    auto g = std::make_unique<GeometryObject>("geo");
+    g->tools()[1] = defaultGeometryTool();
+    FlatCAMObj* obj = app.addObject(std::move(g));
+    app.ui()->collection_view->selectionModel()->select(app.collection()->indexOf(obj), QItemSelectionModel::Select);
+    app.objectToEditor();
+    GeoEditor* ed = app.geoEditor;
+    ASSERT_TRUE(ed->active());
+    ed->selectTool("text");
+    GeoTextTool* t = ed->textTool();
+    t->fontName = "DejaVu Sans";
+    t->text_input_entry->setPlainText("FlatCAM");
+    t->onApply();
+    ASSERT_EQ(t->textPath.size(), 9u);  // F, l, a (2), t, C, A (2), M
+    EXPECT_TRUE(t->textPath.size() > 0 && !t->textFailed);
+    EXPECT_NEAR(t->textPath[0].exterior().coordinates()[0].x, 0.5051842105263156, 1e-12);
+    EXPECT_NEAR(t->textPath[0].exterior().coordinates()[0].y, 3.592421052631577, 1e-12);
+    double expected = 1e9;
+    for (const auto& p : t->textPath) expected = std::min(expected, p.bounds()->xmin);
+    ed->onPress({10, 5}, Qt::LeftButton);
+    EXPECT_TRUE(t->textPath.empty());
+    // on_shape_complete guarda cada polígono por separado.
+    ASSERT_EQ(ed->model().storage.size(), 9u);
+    double xmin = 1e9;
+    for (const auto& sh : ed->model().storage.objects()) xmin = std::min(xmin, sh->geo.bounds()->xmin);
+    EXPECT_NEAR(xmin, expected + 10, 1e-9);
+    EXPECT_TRUE(msgs.contains("[success]" + tr_("Done.")));
+    // Una fuente que no está: avisa al aplicar y el clic falla como el original (`translate` de un texto).
+    ed->selectTool("text");
+    t->fontName = "No Existe";
+    t->onApply();
+    EXPECT_TRUE(msgs.contains("[ERROR_NOTCL] " + tr_("Font not supported, try another one.")));
+    ed->onPress({0, 0}, Qt::LeftButton);
+    EXPECT_EQ(ed->model().storage.size(), 9u);
+    EXPECT_TRUE(msgs.last().startsWith("[ERROR] ")) << msgs.last().toStdString();
+    EXPECT_TRUE(msgs.last().endsWith(": 'str' object has no attribute 'is_empty'"));
+    EXPECT_EQ(ed->activeToolName(), "select");
+    // La cursiva "DejaVu Sans Oblique" quedó guardada con ese nombre (falla del original): con la familia no está.
+    ed->selectTool("text");
+    t->fontName = "DejaVu Sans";
+    t->fontItalic = true;
+    t->onApply();
+    EXPECT_TRUE(t->textFailed);
+    t->fontItalic = false;
+    GeoTextTool::setFontDirectories(flatcam::FontParser::systemFontDirectories());
+    // Se cierra la aplicación con el editor abierto: el panel de Texto quedó en la pestaña Herramienta y la ventana
+    // lo borra antes que el editor (antes se liberaba dos veces y se caía).
+}
+
 TEST(GuiExcEditor, AddsADrillAndSavesANewExcellon) {
     App app;
     FlatCAMObj* exc = app.openExcellon(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-PTH.drl");

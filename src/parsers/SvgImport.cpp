@@ -722,10 +722,12 @@ const XmlElement* findById(const XmlElement& node, const std::string& id) {
     return nullptr;
 }
 
-bool hasTspan(const XmlElement& n) {
-    if (n.tag == "tspan") return true;
-    for (const XmlElement& c : n.children)
-        if (hasTspan(c)) return true;
+/// getsvgtext: un `tspan` sin hijos cuyo padre no tiene `style` (lo lee fuera del `try`).
+bool tspanWithoutStyle(const XmlElement& n) {
+    for (const XmlElement& c : n.children) {
+        if (c.tag == "tspan" && c.children.empty() && !n.get("style")) return true;
+        if (tspanWithoutStyle(c)) return true;
+    }
     return false;
 }
 
@@ -824,7 +826,7 @@ SvgImportResult readSvg(const std::string& text, int res, ShapeList& geos) {
         const Geos g = getsvggeo(*root, *root, res, factor);
         if (!g) throw SvgError("'NoneType' object is not iterable");
         for (const Shape& s : *g) geos.push_back(s.scale(1.0, -1.0, Point2D{0, 0}).translate(0, h));
-        r.hadText = hasTspan(*root);
+        r.textWithoutStyle = tspanWithoutStyle(*root);
         r.ok = true;
     } catch (const std::exception& e) {
         r.error = e.what();
@@ -845,6 +847,12 @@ SvgImportResult importSvgAsGeometry(const std::string& svgText, int circleSteps)
     ShapeList geos;
     SvgImportResult r = readSvg(svgText, circleSteps, geos);
     if (!r.ok) return r;
+    if (r.textWithoutStyle) {
+        // Geometry.import_svg llama a getsvgtext (Gerber.import_svg no).
+        r.ok = false;
+        r.error = "'style'";
+        return r;
+    }
     // Primero los polígonos; las demás figuras se unen con linemerge.
     ShapeList lines;
     for (const Shape& g : geos) {

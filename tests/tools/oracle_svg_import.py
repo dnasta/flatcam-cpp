@@ -14,7 +14,7 @@ from oracle_common import DATA, REF, ROOT, FakeApp, install_stubs, load  # noqa:
 from oracle_geometry_modes import cs  # noqa: E402
 
 OUT = os.path.join(ROOT, "tests", "golden_svg_import.h")
-FILES = ["paths.svg", "shapes.svg", "factor.svg", "single.svg"]
+FILES = ["paths.svg", "shapes.svg", "factor.svg", "single.svg", "text.svg", "text_nostyle.svg"]
 
 
 def main():
