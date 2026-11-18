@@ -8,6 +8,7 @@
 #include "gui/shell/FCShell.h"
 #include "gui/AppTextEditor.h"
 
+#include <QElapsedTimer>
 #include <QClipboard>
 #include <QTimer>
 #include <QRegularExpression>
@@ -925,6 +926,15 @@ AppTextEditor* App::reviewGcode(CNCJobObject* job) {
 }
 
 FlatCAMObj* App::addObject(std::unique_ptr<FlatCAMObj> o, bool plot) {
+    // AppObject.new_object: el aviso en la consola con el nombre pedido (antes de que la colección lo cambie si se
+    // repite) y lo que tardó `initialize` (acá ya está hecho: se mide solo lo que falta).
+    QElapsedTimer timer;
+    timer.start();
+    const QString requested = o->name();
+    // options['xmin'...] = obj.bounds(): en un objeto de una sola geometría quedan así hasta el próximo add_*.
+    if (auto* g = dynamic_cast<GeometryObject*>(o.get()); g && g->isSingleGeo()) g->captureOptionBounds();
+    shellMessage(QString("%1 %2. %3 seconds executing initialize().")
+                     .arg(tr_("New object with name:"), requested, QString::number(timer.nsecsElapsed() / 1e9, 'f', 6)));
     FlatCAMObj* obj = collection_->append(std::move(o));
     shouldWeSave_ = true;
     // ObjectCollection.append -> set_ui: el Script y el Documento arman su panel y su pestaña de editor.
@@ -982,14 +992,14 @@ FlatCAMObj* App::generateCncJob(GeometryObject* geo, const std::vector<int>& too
         geo->tools()[uid] = t;
         ids.push_back(uid);
     }
-    std::unique_ptr<CNCJobObject> job = geo->makeCncJob(ids, error, excAreas_->areas());
+    QStringList messages;
+    std::unique_ptr<CNCJobObject> job = geo->makeCncJob(ids, error, excAreas_->areas(), nullptr, &messages);
+    for (const QString& m : messages) ui_->inform(m);
     if (!job) {
         ui_->inform(error);
         return nullptr;
     }
-    FlatCAMObj* obj = addObject(std::move(job));
-    ui_->inform("[success] " + tr_("Finished G-Code processing") + "...");
-    return obj;
+    return addObject(std::move(job));
 }
 
 FlatCAMObj* App::millExcellon(ExcellonObject* exc, const std::vector<int>& tools, double tooldia, bool slots) {

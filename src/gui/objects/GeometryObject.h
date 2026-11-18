@@ -5,12 +5,14 @@
  */
 #pragma once
 
+#include <array>
 #include <map>
 #include <memory>
 #include <optional>
 
 #include "cam/CncJob.h"
 #include "gui/objects/FlatCAMObj.h"
+#include "io/JsonValue.h"
 
 namespace flatcam::gui {
 
@@ -117,10 +119,16 @@ public:
      * @param toolIds Herramientas, en el orden de la tabla.
      * @param[out] error Motivo si falla.
      * @param exclusionAreas Áreas de exclusión de la aplicación (los viajes las esquivan).
+     * @param toolsDict Las herramientas que se usan (`tools_dict`, una copia con otros parámetros, como la del comando
+     * Tcl `cncjob`), o nada para las del objeto.
+     * @param messages Si no es nulo, recibe los avisos de cada herramienta en orden (los del generador, "G-Code
+     * parsing in progress...", los de `gcode_parse`, "G-Code parsing finished..." y "Finished G-Code processing...").
      * @return El objeto, o `nullptr` si falló.
      */
     std::unique_ptr<CNCJobObject> makeCncJob(const std::vector<int>& toolIds, QString& error,
-                                             const std::vector<ExclusionArea>& exclusionAreas = {}) const;
+                                             const std::vector<ExclusionArea>& exclusionAreas = {},
+                                             const std::map<int, GeometryTool>* toolsDict = nullptr,
+                                             QStringList* messages = nullptr) const;
 
     /** @brief Color de las líneas (`geometry_plot_line`). @return El color. */
     static QColor plotLineColor();
@@ -136,6 +144,14 @@ public:
      * @param sharesList Si `solid_geometry` era una lista al crear la herramienta (si no, era `None`).
      */
     void setSingleGeo(bool sharesList);
+    /**
+     * @brief Como @ref setSingleGeo, pero con `solid_geometry` una figura sola y no una lista (`geo_obj.solid_geometry =
+     * figura` de `bounding_box` y `non_copper_regions`): la herramienta 1 recibe la misma figura, así que agregar le
+     * falla a las dos (`add_circle` antes de agregar; `add_polygon` / `add_polyline` unen y fallan al agregar a la
+     * herramienta).
+     * @param shape La figura.
+     */
+    void setSingleGeoShape(const Shape& shape);
     /** @brief Si es de una sola geometría (@ref setSingleGeo). @return `true` si lo es. */
     bool isSingleGeo() const { return singleGeo_; }
     /**
@@ -154,6 +170,21 @@ public:
      */
     std::optional<QString> addShapeLikeTheOriginal(const Shape& shape, bool circle);
 
+    /**
+     * @brief Guarda los límites en las opciones (`options['xmin'...] = self.bounds()`), como `new_object` y los
+     * `add_*` que salen bien. En un objeto de una sola geometría el original no los vuelve a calcular al transformarlo
+     * desde la consola, así que `options` y la cabecera del G-code de `cncjob` muestran los guardados.
+     * Como `Geometry.bounds`: con `solid_geometry = None` da los enteros 0; con una lista sin figuras, infinitos.
+     */
+    void captureOptionBounds();
+    /**
+     * @brief Los límites guardados por @ref captureOptionBounds (con el tipo de Python: enteros o reales).
+     * @return xmin, ymin, xmax, ymax, o nada si no se guardaron (entonces valen los actuales).
+     */
+    const std::optional<std::array<JsonValue, 4>>& optionBounds() const { return optionBounds_; }
+    /** @brief Los límites de las opciones: los guardados o, si no hay, los actuales. @return xmin, ymin, xmax, ymax. */
+    BoundingBox optionBoundsBox() const;
+
 private:
     template <typename Fn> void applyToAll(Fn fn);
     ShapeList solid_;
@@ -162,8 +193,10 @@ private:
     void syncSingleGeo();
     bool singleGeo_{false};
     bool aliased_{false};
-    bool toolNone_{false};
+    QString toolAppendError_;  ///< Lo que da `tools[1]['solid_geometry'].append` si no es una lista.
     bool solidNotList_{false};
+    std::optional<std::array<JsonValue, 4>> optionBounds_;
+    BoundingBox optionBoundsBox_{};
 };
 
 }  // namespace flatcam::gui

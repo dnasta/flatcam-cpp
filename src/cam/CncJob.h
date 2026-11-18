@@ -123,6 +123,66 @@ struct GeometryJobSettings {
     std::vector<ExclusionArea> exclusionAreas;  ///< Áreas que esquivan los viajes al inicio de cada trazado.
 };
 
+/**
+ * @brief Parámetros de @ref CncJob::generateFromGeometry2 (`generate_from_geometry_2`, el G-code de una Geometría de una
+ * sola geometría que crea el comando Tcl `cncjob`), ya resueltos como los deja `GeometryObject.generatecncjob`.
+ *
+ * Los números son los que recibe el original; los controles de las Z (signo, cero) los hace el generador.
+ */
+struct Geometry2Settings {
+    std::string preprocessor{"default"};     ///< Postprocesador (`pp_geometry_name`; vacío es `default`).
+    std::string units{"MM"};                 ///< `"MM"` o `"IN"`.
+    int coordsDecimals{4};                   ///< Decimales de las coordenadas.
+    int decimals{4};                         ///< Decimales generales (`current_tooldia`).
+    int frDecimals{2};                       ///< Decimales de los avances.
+    int stepsPerCircle{64};                  ///< Pasos por circunferencia (cabecera).
+    double toolDia{0.0};                     ///< Diámetro (`tooldia`).
+    PyNumber toolDiaOption;                  ///< `options['tool_dia']` tal como llegó (cabecera).
+    double offset{0.0};                      ///< Desplazamiento (`offset`): engrosa cada figura con esquinas en inglete.
+    double tolerance{0.0};                   ///< Tolerancia de simplificación (`global_tolerance / 20`).
+    double cutZ{0.0};                        ///< Z de corte.
+    double travelZ{0.0};                     ///< Z de viaje.
+    double feedrate{0.0};                    ///< Avance X-Y.
+    double feedrateZ{0.0};                   ///< Avance Z.
+    double feedrateRapid{0.0};               ///< Avance de rápidos.
+    std::optional<int> spindleSpeed;         ///< `int(spindlespeed)`, o nada con 0.
+    std::string spindleDir{"CW"};            ///< Sentido del husillo (`spindledir`, siempre "CW" desde `generatecncjob`).
+    bool dwell{false};                       ///< Espera tras encender el husillo.
+    double dwellTime{0.0};                   ///< Tiempo de espera.
+    bool multidepth{false};                  ///< Profundidad múltiple.
+    double depthPerPass{0.0};                ///< Profundidad por pasada (0 = toda la Z de corte).
+    bool toolchange{false};                  ///< Cambio de herramienta al empezar.
+    double toolchangeZ{0.0};                 ///< Z de cambio.
+    std::optional<std::array<double, 2>> toolchangeXY;  ///< X,Y de cambio.
+    bool extracut{false};                    ///< Corte extra en los anillos.
+    double extracutLength{0.1};              ///< Largo del corte extra.
+    std::optional<double> startZ;            ///< Z inicial.
+    double endZ{0.0};                        ///< Z final.
+    std::optional<std::array<double, 2>> endXY;  ///< X,Y final.
+    double segX{0.0};                        ///< Segmentación en X (`segx`).
+    double segY{0.0};                        ///< Segmentación en Y (`segy`).
+    bool fPlunge{false};                     ///< `geometry_f_plunge`.
+    double zPdepth{-0.02};                   ///< Profundidad de la sonda (`z_pdepth` del objeto).
+    double feedrateProbe{75.0};              ///< Avance de la sonda (`feedrate_probe` del objeto).
+    bool machinist{false};                   ///< `machinist_setting`: sin los controles de las Z.
+    std::optional<BoundingBox> headerBounds; ///< `options['xmin']`... del objeto de origen.
+    std::string geometryName;                ///< Nombre de la Geometría (mensaje de la Z de corte en cero).
+    std::string jobName;                     ///< Nombre del CNC Job (mensaje de la Z de viaje en cero).
+    std::vector<ExclusionArea> exclusionAreas;  ///< Áreas de exclusión de la aplicación (`app.exc_areas`).
+};
+
+/**
+ * @brief Un aviso del generador para la aplicación (`app.inform.emit`): `[nivel] ` + texto + agregado + texto2 +
+ * agregado2, con los textos en inglés (la aplicación los traduce).
+ */
+struct CncMessage {
+    std::string level;    ///< `WARNING`, `ERROR_NOTCL`, `ERROR`... (vacío: sin nivel).
+    std::string text;     ///< Texto del original (sin traducir).
+    std::string suffix;   ///< Lo que va después, tal cual (`": " + nombre`), o vacío.
+    std::string text2;    ///< Segundo texto para traducir, o vacío.
+    std::string suffix2;  ///< Lo que va al final, tal cual.
+};
+
 /** @brief Resumen de una herramienta de un Excellon para la cabecera del postprocesador. */
 struct DrillToolSummary {
     int id{0};       ///< Número de herramienta.
@@ -207,6 +267,20 @@ public:
     bool generateFromGeometryTools(const std::vector<GeometryToolJob>& tools);
 
     /**
+     * @brief `generate_from_geometry_2`: el G-code de una Geometría de una sola geometría (comando Tcl `cncjob`).
+     *
+     * Como el original: recorre los trazados desde (0, 0) eligiendo siempre el extremo más cercano (invierte la línea si
+     * es el final) y sigue desde el final del trazado recorrido; los controles de la Z de corte (positiva se invierte,
+     * cero sin láser cancela) y de viaje (negativa se invierte, cero cancela) sí se aplican; la cabecera no tiene variante
+     * de versión (la de `GRBL_laser` es la del fuente). Deja el cuerpo en @ref gcode y el comienzo en @ref startGcode.
+     * @param solid `solid_geometry` de la Geometría.
+     * @param s Parámetros.
+     * @param messages Los avisos para la aplicación, en orden.
+     * @return `false` si el original devuelve `'fail'`.
+     */
+    bool generateFromGeometry2(const ShapeList& solid, const Geometry2Settings& s, std::vector<CncMessage>& messages);
+
+    /**
      * @brief Restaura un trabajo guardado en un proyecto: su G-code tal como quedó (no se vuelve a generar).
      * @param startGcode Código de inicio (en los proyectos de FlatCAM no se guarda: queda vacío).
      * @param toolGcodes G-code de cada herramienta, en orden.
@@ -244,6 +318,12 @@ public:
 
     /** @brief Mensaje del último error. @return El mensaje, vacío si no hubo. */
     const std::string& lastError() const { return lastError_; }
+    /**
+     * @brief Los avisos de cada herramienta del último @ref generateFromGeometryTools (los `app.inform.emit` de
+     * `geometry_tool_gcode_gen`: el comienzo con el diámetro y, en la última, la cantidad de trazados).
+     * @return Uno por herramienta, en orden.
+     */
+    const std::vector<std::vector<CncMessage>>& toolMessages() const { return toolMessages_; }
     /**
      * @brief Distancia recorrida (`travel_distance`): en un taladrado, los viajes entre agujeros (desde el X,Y de
      * cambio de herramienta) y hasta el X,Y final (`measured_distance` de `ToolDrilling`); en una geometría, los viajes
@@ -298,6 +378,7 @@ private:
     std::string gcode_;
     std::vector<std::string> toolGcodes_;
     std::string lastError_;
+    std::vector<std::vector<CncMessage>> toolMessages_;  ///< Avisos de cada herramienta (trabajos de geometría).
     double travelDistance_{0.0};        ///< `travel_distance`.
     double routingTime_{0.0};           ///< `routing_time`.
     double measuredDistance_{0.0};      ///< `measured_distance` (taladrado).

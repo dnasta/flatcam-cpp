@@ -2,6 +2,7 @@
 #include "gui/objects/CNCJobObject.h"
 
 #include "gui/objects/CNCAutolevel.h"
+#include "gui/Translation.h"
 
 #include <QDateTime>
 #include <QFile>
@@ -14,6 +15,27 @@
 #include "gui/objects/ObjectUIs.h"
 
 namespace flatcam::gui {
+
+QStringList cncMessagesText(const std::vector<CncMessage>& msgs) {
+    QStringList out;
+    for (const CncMessage& m : msgs) {
+        QString t = tr_(QString::fromStdString(m.text)) + QString::fromStdString(m.suffix);
+        if (!m.text2.empty()) t += tr_(QString::fromStdString(m.text2)) + QString::fromStdString(m.suffix2);
+        if (!m.level.empty()) t = "[" + QString::fromStdString(m.level) + "] " + t;
+        out << t;
+    }
+    return out;
+}
+
+QStringList gcodeParseMessages(const std::string& gcode) {
+    // str.splitlines: corta en \n, \r y \r\n, sin la línea vacía final.
+    const QStringList lines = QString::fromStdString(gcode).split(QRegularExpression("\r\n|\r|\n"));
+    qsizetype n = lines.size();
+    if (n > 0 && lines.back().isEmpty()) --n;
+    return {QString("%1: %2").arg(tr_("Parsing GCode file. Number of lines")).arg(n),
+            tr_("Creating Geometry from the parsed GCode file. ") + "..."};
+}
+
 
 CNCJobObject::CNCJobObject(QString name, std::unique_ptr<CncJob> job, GcodeHeaderInfo header,
                            std::vector<CncToolRow> tools)

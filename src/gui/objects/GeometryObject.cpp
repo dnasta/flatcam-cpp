@@ -134,8 +134,19 @@ void GeometryObject::applyToAll(Fn fn) {
 void GeometryObject::setSingleGeo(bool sharesList) {
     singleGeo_ = true;
     aliased_ = sharesList;
-    toolNone_ = !sharesList;
+    toolAppendError_ = sharesList ? QString() : QString("'NoneType' object has no attribute 'append'");
     solidNotList_ = false;
+    syncSingleGeo();
+}
+
+void GeometryObject::setSingleGeoShape(const Shape& shape) {
+    static const char* const names[] = {"Point", "LineString", "LinearRing", "Polygon", "MultiPoint",
+                                         "MultiLineString", "MultiPolygon", "GeometryCollection"};
+    singleGeo_ = true;
+    aliased_ = false;
+    solid_ = {shape};
+    solidNotList_ = true;
+    toolAppendError_ = QString("'%1' object has no attribute 'append'").arg(names[static_cast<int>(shape.type())]);
     syncSingleGeo();
 }
 
@@ -168,13 +179,46 @@ std::optional<QString> GeometryObject::addShapeLikeTheOriginal(const Shape& shap
     }
     auto it = tools_.find(1);
     if (it == tools_.end()) return QString("1");  // KeyError: 1
-    if (toolNone_) {
+    if (!toolAppendError_.isEmpty()) {
         syncSingleGeo();
-        return QString("'NoneType' object has no attribute 'append'");  // tools[1]['solid_geometry'] es None
+        return toolAppendError_;  // tools[1]['solid_geometry'] es None o una figura
     }
     if (singleGeo_) syncSingleGeo();
     else it->second.solidGeometry.push_back(shape);
+    if (singleGeo_) captureOptionBounds();  // add_*: "calculate bounds"
     return std::nullopt;
+}
+
+void GeometryObject::captureOptionBounds() {
+    if (solid_.empty() && toolAppendError_.startsWith("'NoneType'")) {
+        // solid_geometry is None: return 0, 0, 0, 0
+        optionBounds_ = {JsonValue::integer(0), JsonValue::integer(0), JsonValue::integer(0), JsonValue::integer(0)};
+        optionBoundsBox_ = {0, 0, 0, 0};
+        return;
+    }
+    const double inf = std::numeric_limits<double>::infinity();
+    BoundingBox b{inf, inf, -inf, -inf};
+    for (const Shape& sh : solid_) {
+        if (sh.isEmpty()) continue;
+        const auto r = sh.bounds();
+        if (!r) continue;
+        b.xmin = std::min(b.xmin, r->xmin);
+        b.ymin = std::min(b.ymin, r->ymin);
+        b.xmax = std::max(b.xmax, r->xmax);
+        b.ymax = std::max(b.ymax, r->ymax);
+    }
+    const auto num = [](double v) {
+        // str(np.inf) es "inf"; JSON no tiene infinitos: se guarda el texto.
+        return std::isinf(v) ? JsonValue::number(v > 0 ? "inf" : "-inf") : JsonValue::real(v);
+    };
+    optionBounds_ = {num(b.xmin), num(b.ymin), num(b.xmax), num(b.ymax)};
+    optionBoundsBox_ = b;
+}
+
+BoundingBox GeometryObject::optionBoundsBox() const {
+    if (optionBounds_) return optionBoundsBox_;
+    const QRectF r = bounds();
+    return BoundingBox{r.left(), r.top(), r.right(), r.bottom()};
 }
 
 bool GeometryObject::rotate(double angle, const Point2D& p) {
@@ -210,14 +254,17 @@ QWidget* GeometryObject::propertiesUi() {
 }
 
 std::unique_ptr<CNCJobObject> GeometryObject::makeCncJob(const std::vector<int>& toolIds, QString& error,
-                                                         const std::vector<ExclusionArea>& exclusionAreas) const {
+                                                         const std::vector<ExclusionArea>& exclusionAreas,
+                                                         const std::map<int, GeometryTool>* toolsDict,
+                                                         QStringList* messages) const {
+    const std::map<int, GeometryTool>& tools = toolsDict ? *toolsDict : tools_;
     if (toolIds.empty()) {
         error = "[ERROR_NOTCL] " + tr_("Failed. No tool selected in the tool table ...");
         return nullptr;
     }
     bool empty = true;
     for (int id : toolIds)
-        for (const Shape& sh : tools_.at(id).solidGeometry) empty = empty && sh.isEmpty();
+        for (const Shape& sh : tools.at(id).solidGeometry) empty = empty && sh.isEmpty();
     if (empty) {
         error = "[ERROR_NOTCL] " + tr_("Cancelled. Empty file, it has no geometry") + "...";
         return nullptr;
@@ -227,7 +274,7 @@ std::unique_ptr<CNCJobObject> GeometryObject::makeCncJob(const std::vector<int>&
     std::vector<GeometryToolJob> jobs;
     std::vector<CncToolRow> rows;
     for (int id : toolIds) {
-        const GeometryTool& t = tools_.at(id);
+        const GeometryTool& t = tools.at(id);
         if (!makePreprocessor(t.ppname.toStdString())) {
             error = QString("[ERROR_NOTCL] %1: %2").arg(tr_("Preprocessor"), t.ppname);
             return nullptr;
@@ -267,7 +314,19 @@ std::unique_ptr<CNCJobObject> GeometryObject::makeCncJob(const std::vector<int>&
         rows.push_back(row);
     }
     auto job = std::make_unique<CncJob>();
-    if (!job->generateFromGeometryTools(jobs)) {
+    const bool ok = job->generateFromGeometryTools(jobs);
+    if (messages) {
+        // mtool_gen_cncjob, por herramienta: lo que avisa geometry_tool_gcode_gen y el análisis del G-code.
+        for (std::size_t i = 0; i < job->toolMessages().size(); ++i) {
+            *messages << cncMessagesText(job->toolMessages()[i]);
+            if (i >= job->toolGcodes().size()) break;
+            *messages << "[success] " + tr_("G-Code parsing in progress...");
+            *messages << gcodeParseMessages(job->toolGcodes()[i]);
+            *messages << "[success] " + tr_("G-Code parsing finished...");
+            *messages << "[success] " + tr_("Finished G-Code processing") + "...";
+        }
+    }
+    if (!ok) {
         error = "[ERROR_NOTCL] " + QString::fromStdString(job->lastError());
         return nullptr;
     }

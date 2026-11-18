@@ -394,6 +394,9 @@ struct GeoContext {
     const std::vector<ExclusionArea>* areas{nullptr};  ///< Áreas de exclusión.
     bool inches{false};
     Point2D oldPoint{0, 0};  ///< `old_point`: de dónde sale el viaje al comienzo del trazado.
+    /// El `z_move` que reciben `linear2gcode` / `linear2gcode_extra` como argumento (sus subidas `lift_code(...,
+    /// z_move=z_move)`); NaN si es el del trabajo. En `generate_from_geometry_2` es el que se pidió, sin corregir.
+    double zMoveArg{std::numeric_limits<double>::quiet_NaN()};
 };
 
 /// Equivale a `Decimal(x).quantize(Decimal('0.000000001'))`, expresado en unidades de 1e-9.
@@ -510,6 +513,17 @@ std::string lift(GeoContext& c, double x, double y) {
     return c.pp.liftCode(c.p) + "\n";
 }
 
+/// `lift_code` con `z_move=z_move`: la Z que recibió la función (@ref GeoContext::zMoveArg).
+std::string liftKw(GeoContext& c, double x, double y) {
+    if (std::isnan(c.zMoveArg)) return lift(c, x, y);
+    c.p.x = x;
+    c.p.y = y;
+    c.p.zMove = PyNumber(c.zMoveArg);
+    std::string g = c.pp.liftCode(c.p) + "\n";
+    c.p.zMove = PyNumber(c.ts.travelZ);
+    return g;
+}
+
 /// `CNCjob.linear2gcode`: recorre una línea a la Z indicada.
 std::string linear2gcode(GeoContext& c, const std::vector<Point2D>& line, double zCut, bool down, bool up) {
     std::vector<Point2D> target = line;
@@ -519,7 +533,7 @@ std::string linear2gcode(GeoContext& c, const std::vector<Point2D>& line, double
     std::string g = travelTo(c, path.front().x, path.front().y);
     if (down) g += plunge(c, path.front().x, path.front().y, zCut);
     for (std::size_t i = 1; i < path.size(); ++i) g += linearTo(c, path[i].x, path[i].y, zCut);
-    if (up) g += lift(c, path.back().x, path.back().y);
+    if (up) g += liftKw(c, path.back().x, path.back().y);
     return g;
 }
 
@@ -543,7 +557,7 @@ std::string linear2gcodeExtra(GeoContext& c, const std::vector<Point2D>& line, d
     double extraLen = c.ts.extracutLength;
     if (extraLen == 0.0) {
         const std::vector<Point2D> extra{path.back(), path.front(), path.at(1)};
-        g += lift(c, prev.x, prev.y);
+        g += liftKw(c, prev.x, prev.y);
         g += travelTo(c, extra[0].x, extra[0].y);
         g += plunge(c, extra[0].x, extra[0].y, zCut);
         for (std::size_t i = 1; i < extra.size(); ++i) {
@@ -556,7 +570,7 @@ std::string linear2gcodeExtra(GeoContext& c, const std::vector<Point2D>& line, d
         if (extraLen >= length) extraLen = length;
         const double startLength = length - (extraLen * 0.5);
         std::vector<Point2D> extra = target.substring(startLength, length).coordinates();
-        g += lift(c, prev.x, prev.y);
+        g += liftKw(c, prev.x, prev.y);
         g += travelTo(c, extra[0].x, extra[0].y);
         g += plunge(c, extra[0].x, extra[0].y, zCut);
         for (std::size_t i = 1; i < extra.size(); ++i) {
@@ -574,7 +588,7 @@ std::string linear2gcodeExtra(GeoContext& c, const std::vector<Point2D>& line, d
             last = extra[i];
         }
     }
-    if (up) g += lift(c, last.x, last.y);
+    if (up) g += liftKw(c, last.x, last.y);
     return g;
 }
 
@@ -633,6 +647,7 @@ bool CncJob::generateFromGeometryTools(const std::vector<GeometryToolJob>& tools
     startGcode_.clear();
     gcode_.clear();
     toolGcodes_.clear();
+    toolMessages_.clear();
     travelDistance_ = routingTime_ = 0.0;
     if (tools.empty()) {
         lastError_ = "No hay herramientas";
@@ -642,6 +657,7 @@ bool CncJob::generateFromGeometryTools(const std::vector<GeometryToolJob>& tools
     // inicio sale de la primera y el de cierre, de la última.
     for (std::size_t i = 0; i < tools.size(); ++i) {
         std::string t, start;
+        toolMessages_.emplace_back();
         if (!geometryToolGcode(tools[i].geometry, tools[i].settings, i == 0, i + 1 == tools.size(), t, start))
             return false;
         if (i == 0) startGcode_ = start;
@@ -768,6 +784,13 @@ bool CncJob::geometryToolGcode(const ShapeList& geometry, const GeometryJobSetti
         }
         g += pp->feedrateCode(p) + "\n";
 
+        {
+            // current_tooldia = float('%.*f' % (decimals, tooldia))
+            char buf[64];
+            std::snprintf(buf, sizeof buf, "%.*f", js.decimals, ts.toolDia);
+            toolMessages_.back().push_back({"", "Starting G-Code for tool with diameter",
+                                            ": " + pyFloatRepr(std::strtod(buf, nullptr)) + js.units + ".", "", ""});
+        }
         GeoContext ctx{*pp, p, ts, &js.exclusionAreas, js.units == "IN"};
         Point2D current{0, 0};
         double totalTravel = 0.0, totalCut = 0.0;  // Measurements
@@ -803,8 +826,256 @@ bool CncJob::geometryToolGcode(const ShapeList& geometry, const GeometryJobSetti
             p.x = 0;
             p.y = 0;
             g += pp->endCode(p) + "\n";
+            toolMessages_.back().push_back(
+                {"", "Finished G-Code generation", "... " + std::to_string(order.size()) + " ", "paths traced", "."});
         }
         tGcode = g;
+    } catch (const std::exception& e) {
+        lastError_ = std::string("Error al generar el G-code de la geometría: ") + e.what();
+        Logger::error(lastError_);
+        return false;
+    }
+    return true;
+}
+
+bool CncJob::generateFromGeometry2(const ShapeList& solid, const Geometry2Settings& s,
+                                   std::vector<CncMessage>& messages) {
+    lastError_.clear();
+    startGcode_.clear();
+    gcode_.clear();
+    toolGcodes_.clear();
+    const auto inform = [&](const std::string& level, const std::string& text, const std::string& suffix = {},
+                            const std::string& text2 = {}, const std::string& suffix2 = {}) {
+        messages.push_back({level, text, suffix, text2, suffix2});
+    };
+    // if not geometry.solid_geometry
+    bool any = false;
+    for (const Shape& g : solid) any = any || !g.isEmpty();
+    if (solid.empty() || (solid.size() == 1 && !any)) {
+        inform("ERROR_NOTCL", "Trying to generate a CNC Job from a Geometry object without solid_geometry.");
+        lastError_ = "fail";
+        return false;
+    }
+    try {
+        // ---- offset: cada figura engrosada con esquinas en inglete (los anillos cerrados como polígonos)
+        ShapeList temp;
+        if (s.offset != 0.0) {
+            double use = s.offset;
+            if (s.offset < 0) {
+                double a = 1e300, b = 1e300, c = -1e300, d = -1e300;
+                for (const Shape& g : solid) {
+                    const std::optional<BoundingBox> ob = g.bounds();
+                    if (!ob) continue;
+                    const BoundingBox& bb = *ob;
+                    a = std::min(a, bb.xmin);
+                    b = std::min(b, bb.ymin);
+                    c = std::max(c, bb.xmax);
+                    d = std::max(d, bb.ymax);
+                }
+                if (-s.offset > (c - a) / 2 || -s.offset > (d - b) / 2) {
+                    inform("ERROR_NOTCL", "The Tool Offset value is too negative to use for the current_geometry.\n"
+                                          "Raise the value (in module) and try again.");
+                    lastError_ = "fail";
+                    return false;
+                }
+                if (-s.offset == (c - a) / 2 || -s.offset == (d - b) / 2) use = s.offset - 0.0000000001;
+            }
+            for (const Shape& it : solid) {
+                Shape base = it;
+                if ((it.type() == ShapeType::LineString || it.type() == ShapeType::LinearRing)) {
+                    const auto co = it.coordinates();
+                    if (!co.empty() && co.front() == co.back()) base = Shape::polygon(co);
+                }
+                temp.push_back(base.buffer(use, 16, JoinStyle::Mitre));
+            }
+        } else {
+            temp = solid;
+        }
+        ShapeList flat;
+        for (const Shape& g : temp)
+            if (!g.isEmpty()) flattenPaths(g, flat);
+
+        // ---- los parámetros, con los controles de la Z
+        const bool laser = s.preprocessor.find("laser") != std::string::npos;
+        const std::string ppName = s.preprocessor.empty() ? "default" : s.preprocessor;
+        double zCut = s.cutZ, zMove = s.travelZ;
+        double perCut = s.depthPerPass != 0 ? s.depthPerPass : std::fabs(zCut);
+        if (!s.machinist) {
+            if (zCut > 0) {
+                inform("WARNING", "The Cut Z parameter has positive value. It is the depth value to cut into material.\n"
+                                  "The Cut Z parameter needs to have a negative value, assuming it is a typo therefore "
+                                  "the app will convert the value to negative.Check the resulting CNC code (Gcode etc).");
+                zCut = -zCut;
+            } else if (zCut == 0 && !laser) {
+                inform("WARNING", "The Cut Z parameter is zero. There will be no cut, skipping file", ": " + s.geometryName);
+                lastError_ = "fail";
+                return false;
+            }
+            if (zMove < 0) {
+                inform("WARNING", "The Travel Z parameter has negative value. It is the height value to travel between "
+                                  "cuts.\nThe Z Travel parameter needs to have a positive value, assuming it is a typo "
+                                  "therefore the app will convert the value to positive.Check the resulting CNC code "
+                                  "(Gcode etc).");
+                zMove = -zMove;
+            } else if (zMove == 0) {
+                inform("WARNING", "The Z Travel parameter is zero. This is dangerous, skipping file", ": " + s.jobName);
+                lastError_ = "fail";
+                return false;
+            }
+        }
+        if (std::fabs(zCut) < perCut) perCut = std::fabs(zCut);
+
+        const auto pp = makePreprocessor(ppName, GcodeFlavor::FlatCAM2024_4);
+        GeometryToolSettings ts;
+        ts.toolDia = s.toolDia;
+        ts.cutZ = zCut;
+        ts.multidepth = s.multidepth;
+        ts.depthPerPass = perCut;
+        ts.travelZ = zMove;
+        ts.feedrate = s.feedrate;
+        ts.feedrateZ = s.feedrateZ;
+        ts.feedrateRapid = s.feedrateRapid;
+        ts.dwell = s.dwell;
+        ts.dwellTime = s.dwellTime;
+        ts.extracut = s.extracut;
+        ts.extracutLength = s.extracutLength;
+        ts.tolerance = s.tolerance;
+        ts.segX = s.segX;
+        ts.segY = s.segY;
+
+        PreprocessorParams p;
+        p.units = s.units;
+        p.coordsDecimals = s.coordsDecimals;
+        p.decimals = s.decimals;
+        p.frDecimals = s.frDecimals;
+        p.feedrate = PyNumber(s.feedrate);
+        p.zFeedrate = PyNumber(s.feedrateZ);
+        p.feedrateRapid = PyNumber(s.feedrateRapid);
+        p.zCut = PyNumber(zCut);
+        p.multidepth = s.multidepth;
+        p.zDepthPerCut = PyNumber(perCut);
+        p.zMove = PyNumber(zMove);
+        p.useUi = false;
+        p.toolchange = false;  // self.toolchange no se actualiza
+        p.zToolchange = PyNumber(s.toolchangeZ);
+        p.xyToolchange = toPyPair(s.toolchangeXY);
+        if (s.startZ) p.startZ = PyNumber(*s.startZ);
+        p.zEnd = PyNumber(s.endZ);
+        p.xyEnd = toPyPair(s.endXY);
+        p.stepsPerCircle = s.stepsPerCircle;
+        p.ppGeometryName = ppName;
+        if (s.spindleSpeed) p.spindleSpeed = PyNumber(*s.spindleSpeed);
+        p.spindleDir = s.spindleDir;
+        p.dwellTime = PyNumber(s.dwellTime);
+        p.tool = 1;
+        p.toolC = PyNumber(s.toolDia);
+        p.fPlunge = s.fPlunge;
+        p.options.type = "Geometry";
+        p.options.toolDia = s.toolDiaOption;
+        p.zPdepth = PyNumber(s.zPdepth);
+        p.feedrateProbe = PyNumber(s.feedrateProbe);
+        if (s.headerBounds) {
+            p.options.xmin = PyNumber(s.headerBounds->xmin);
+            p.options.ymin = PyNumber(s.headerBounds->ymin);
+            p.options.xmax = PyNumber(s.headerBounds->xmax);
+            p.options.ymax = PyNumber(s.headerBounds->ymax);
+        }
+
+        // ---- los trazados, en el almacén por sus extremos
+        std::vector<PathItem> items;
+        EndpointStorage storage;
+        inform("", "Indexing geometry before generating G-Code...");
+        for (const Shape& sh : flat) {
+            if (sh.isEmpty()) continue;
+            PathItem item;
+            if (sh.type() == ShapeType::Point) {
+                item.isPoint = true;
+            } else if (sh.type() == ShapeType::LineString || sh.type() == ShapeType::LinearRing) {
+                item.isLinearRing = sh.type() == ShapeType::LinearRing;
+                item.isRing = sh.isRing();
+            } else {
+                continue;
+            }
+            item.coords = sh.coordinates();
+            storage.insert(item.coords, false);
+            items.push_back(std::move(item));
+        }
+        if (!pp) {  // self.app.preprocessors[self.pp_geometry_name], después de indexar: KeyError
+            lastError_ = "'" + ppName + "'";
+            return false;
+        }
+
+        std::string g;
+        startGcode_ = pp->startCode(p) + "\n";
+        g += pp->feedrateCode(p) + "\n";
+        if (!s.toolchange) {
+            p.x = 0;
+            p.y = 0;
+            g += pp->liftCode(p) + "\n";
+            g += pp->startzCode(p) + "\n";
+        }
+        if (s.toolchange) {
+            g += pp->toolchangeCode(p) + "\n";
+            if (!laser) {
+                g += pp->spindleCode(p) + "\n";
+            } else {
+                p.x = 0;
+                p.y = 0;
+                g += pp->liftCode(p) + "\n";
+            }
+            if (s.dwell) g += pp->dwellCode(p) + "\n";
+        } else {
+            if (!laser) g += pp->spindleCode(p) + "\n";
+            if (s.dwell) g += pp->dwellCode(p) + "\n";
+        }
+        inform("", "Starting G-Code", "...");
+        char buf[64];
+        std::snprintf(buf, sizeof buf, "%.*f", s.decimals, s.toolDia);  // float('%.*f' % (decimals, tooldia))
+        const double currentDia = std::strtod(buf, nullptr);
+        inform("", "Starting G-Code for tool with diameter", ": " + pyFloatRepr(currentDia) + s.units + ".");
+
+        GeoContext ctx{*pp, p, ts, &s.exclusionAreas, s.units == "IN"};
+        ctx.zMoveArg = s.travelZ;  // create_gcode_*(..., z_move=z_move): el pedido, sin corregir
+        Point2D current{0, 0};
+        double totalTravel = 0.0, totalCut = 0.0;
+        int pathCount = 0;
+        if (items.empty()) throw std::runtime_error("StopIteration");  // storage.nearest fuera del try
+        while (auto nearest = storage.nearest(current)) {
+            ++pathCount;
+            storage.remove(nearest->index);
+            PathItem& item = items[nearest->index];
+            const Point2D pt = nearest->point;
+            if (!(pt == item.coords.front()) && pt == item.coords.back())
+                std::reverse(item.coords.begin(), item.coords.end());
+            ctx.oldPoint = current;
+            double length = 0.0;
+            for (std::size_t k = 1; k < item.coords.size(); ++k)
+                length += std::hypot(item.coords[k].x - item.coords[k - 1].x, item.coords[k].y - item.coords[k - 1].y);
+            if (!s.multidepth) {
+                totalCut += length;
+                g += singlePass(ctx, item);
+            } else {
+                int nrCuts = 0;
+                for (double depth = std::fabs(zCut); depth > 0; depth -= perCut) {
+                    ++nrCuts;
+                    if (perCut <= 0) break;
+                }
+                totalCut += length * nrCuts;
+                g += multiPass(ctx, item, current);
+            }
+            totalTravel += std::hypot(current.x - pt.x, current.y - pt.y);
+            current = item.coords.back();
+        }
+        totalTravel += std::hypot(current.x, current.y);
+        travelDistance_ += totalTravel + totalCut;
+        routingTime_ += totalCut / s.feedrate;
+        g += pp->spindleStopCode(p) + "\n";
+        g += lift(ctx, current.x, current.y);
+        p.x = 0;
+        p.y = 0;
+        g += pp->endCode(p) + "\n";
+        inform("", "Finished G-Code generation", "... " + std::to_string(pathCount) + " ", "paths traced", ".");
+        gcode_ = g;
     } catch (const std::exception& e) {
         lastError_ = std::string("Error al generar el G-code de la geometría: ") + e.what();
         Logger::error(lastError_);
