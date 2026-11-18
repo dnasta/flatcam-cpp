@@ -44,6 +44,13 @@ public:
     void setToolUi();
 
     /**
+     * @brief `self.units` de la herramienta: vacío hasta que se abre por primera vez (lo usan los avisos de `paint` de la
+     * consola Tcl, que pasan por `paint_geo`).
+     * @return Las unidades en mayúsculas, o vacío.
+     */
+    const QString& toolUnits() const { return units_; }
+
+    /**
      * @brief Pinta (`on_paint_button_click`). Con "Selección de polígono" o "Selección de área" empieza a elegir en el
      * canvas y pinta al terminar (devuelve `nullptr`).
      * @return La Geometría creada, o `nullptr` si falló o si se está eligiendo en el canvas.
@@ -78,6 +85,7 @@ public:
     bool addDbTool(const JsonValue& tool, double dia, const std::string& prefix);
 
 private:
+    QString units_;  ///< `self.units`.
     void onTypeObjChanged();
     void onRestMachiningCheck(bool state);
     void fillReferenceCombo();

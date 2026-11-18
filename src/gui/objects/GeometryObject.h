@@ -154,6 +154,8 @@ public:
     void setSingleGeoShape(const Shape& shape);
     /** @brief Si es de una sola geometría (@ref setSingleGeo). @return `true` si lo es. */
     bool isSingleGeo() const { return singleGeo_; }
+    /** @brief Si `solid_geometry` es una lista (y no una figura sola, @ref setSingleGeoShape). @return `true` si lo es. */
+    bool solidIsList() const { return !solidNotList_; }
     /**
      * @brief Reemplaza `solid_geometry` (`union`, `subtract_polygon`).
      * @param shapes Las figuras.

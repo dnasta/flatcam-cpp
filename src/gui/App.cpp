@@ -657,6 +657,14 @@ FlatCAMObj* App::openGerber(const QString& filename, const QString& outname) {
     const bool ok = gerber->parseFile(filename.toStdString());
     QApplication::restoreOverrideCursor();
     ui_->activity_view->setIdle();
+    // Los avisos de progreso de parse_lines (también van a la consola).
+    const Gerber::ParseReport& rep = gerber->parseReport();
+    if (rep.lines > 0 || ok)
+        ui_->inform(QString("%1 %2 %3.").arg(tr_("Gerber processing. Parsing")).arg(rep.lines).arg(tr_("Lines").toLower()));
+    if (rep.joined >= 0) {
+        ui_->inform(QString("%1: %2.").arg(tr_("Gerber processing. Joining polygons")).arg(rep.joined));
+        if (rep.darkPolarity) ui_->inform(tr_("Gerber processing. Applying Gerber polarity."));
+    }
     if (!ok || gerber->solidGeometry().empty()) {
         ui_->inform(QString("[ERROR_NOTCL]%1").arg(tr_("Open Gerber failed. Probable not a Gerber file.")));
         return nullptr;

@@ -5,6 +5,8 @@
  */
 #pragma once
 
+#include <cmath>
+
 #include <QString>
 
 #include "cam/PyNumber.h"
@@ -30,6 +32,16 @@ inline QString pyType(const FlatCAMObj* o) {
 }
 
 /**
+ * @brief El nombre de la clase de un objeto (`type(obj).__name__`), como en los `AttributeError` de Python.
+ * @param o Objeto (nulo: `NoneType`). @return El nombre.
+ */
+inline QString pyClassName(const FlatCAMObj* o) {
+    if (!o) return "NoneType";
+    const QString t = pyType(o);
+    return t.mid(t.lastIndexOf('.') + 1).chopped(2);
+}
+
+/**
  * @brief `bool(eval(texto))` para los textos que usan los comandos: `True`, `False`, `None` o un número (otro nombre
  * es un error, como el `NameError` de Python).
  * @param t Texto. @return El valor.
@@ -50,6 +62,10 @@ inline bool pyTruthCapitalized(QString t) {
 }
 
 /** @brief Un `float` como lo escribe Tcl (igual que `repr` de Python). @param v Valor. @return El texto. */
-inline QString tclFloat(double v) { return QString::fromStdString(pyFloatRepr(v)); }
+inline QString tclFloat(double v) {
+    if (std::isinf(v)) return v > 0 ? "Inf" : "-Inf";
+    if (std::isnan(v)) return "NaN";
+    return QString::fromStdString(pyFloatRepr(v));
+}
 
 }  // namespace flatcam::gui::tclhelpers

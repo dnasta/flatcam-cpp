@@ -144,6 +144,107 @@ SESSION = [
     "drillcncjob no_existe",
     "drillcncjob no_existe -muted 1",
     "drillcncjob PTH -drillz 2",
+    # milldrills / millslots: obj.drills / obj.slots no existen en la 2024.4.
+    "milldrills pth",
+    "millslots pth -tooldia 0.5",
+    "milldrills no_existe",
+    # cutout (rectangular, sin puentes finos) y isolate sobre el contorno de "luz de noche".
+    "open_gerber {@DATA@/luz_de_noche/luz de noche Pascual-Edge_Cuts.gbr} -outname ec",
+    "cutout ec",
+    "cutout ec -gaps tb -dia 1 -margin 0.5 -gapsize 1 -outname ec2",
+    "cutout ec -gaps lr -outname ec3",
+    "cutout ec -gaps 8 -outname ec4",
+    "cutout no_existe",
+    "cutout pth -outname ec5",
+    "isolate ec",
+    "isolate ec -combine 1 -dia 0.2 -passes 2 -overlap 10 -outname i1",
+    "isolate ec -combine 0 -passes 2",
+    "isolate ec -combine 0 -dia 0.3 -outname i3",
+    "isolate ec -combine 1 -iso_type 0 -outname i4",
+    "isolate ec -combine 1 -iso_type 1 -outname i5",
+    "isolate ec -combine True -follow 1 -outname i6",
+    "isolate ec -combine 1 -iso_type 5 -outname i7",
+    "isolate ec -combine 0 -iso_type 5 -outname i8",
+    "isolate pth -combine 1",
+    # geocutout: de un Gerber (el aislamiento exterior con ingletes) y de una Geometría, con cada tipo de puentes.
+    "geocutout ec -dia 1.2 -outname g1",
+    "geocutout ec -gaps lr -outname g2",
+    "geocutout ec -gaps tb -margin 1 -gapsize 2 -outname g3",
+    "geocutout ec -gaps 2lr -outname g4",
+    "geocutout ec -gaps 2tb -outname g5",
+    "geocutout ec -gaps 8 -outname g6",
+    "geocutout i1 -gaps 4 -outname g7",
+    "geocutout ec -gaps 3",
+    "geocutout ec -dia 0",
+    "geocutout pth",
+    "geocutout no_existe",
+    # panelize: Gerber, Geometría de una sola geometría y multigeo, y Excellon; con caja y espaciados enteros.
+    "panelize ec -rows 2 -columns 3 -outname pa1",
+    "panelize ec_cutout -rows 1 -columns 2 -spacing_columns 2.7 -outname pa2",
+    "panelize i1 -columns 2 -box ec -spacing_rows 1 -outname pa3",
+    "panelize i1 -columns 2 -rows 2 -box ec -spacing_rows 1 -outname pa7",
+    "panelize pth -rows 2 -columns 1 -outname pa4",
+    "bounds pth",
+    # aligndrill y aligndrillgrid: Excellon de alineación (los agujeros pedidos y sus reflejos, o una grilla).
+    "aligndrill ec -axis X -holes (1,2),(3,4) -dia 1 -outname a1",
+    "aligndrill ec -axis y -holes (1.5,-2) -dia 0.8 -dist 5 -outname a2",
+    "aligndrill ec -axis X -box ec -grid 10 -gridoffset 0 -minoffset 2 -dia 1 -outname a3",
+    "aligndrill ec -axis Y -box ec -grid 7 -gridoffset 1 -minoffset 0 -axisoffset 3 -dia 1.2 -outname a4",
+    "aligndrill ec -axis X -box ec -holes (0,10) -dia 1 -outname a5",
+    "aligndrill ec -axis X -grid 10 -gridoffset 0 -dia 1 -outname a6",
+    "aligndrill ec -axis X -box ec -grid 10 -gridoffset 0 -dia 1 -outname a7",
+    "aligndrill i1 -axis X -holes (1,2) -dia 1",
+    "aligndrill ec -holes (1,2) -dia 1",
+    "aligndrill ec -axis X -dia 1",
+    "aligndrill ec -axis X -holes (1,2)",
+    "aligndrill ec -axis Z -holes (1,2) -dia 1",
+    "aligndrill ec -axis X -holes (1,2) -dia 1 -box no_existe",
+    "aligndrill c_cnc -axis X -holes (1,2) -dia 1",
+    "aligndrill no_existe -axis X",
+    "aligndrillgrid -dia 1 -gridx 2 -gridy 3 -columns 3 -rows 2 -outname ag1",
+    "aligndrillgrid -dia 0.5 -gridx 2.5 -gridy 3 -columns 2 -rows 1 -gridoffsetx 5 -gridoffsety -1",
+    "aligndrillgrid -gridx 2 -gridy 3 -columns 2 -rows 1",
+    "aligndrillgrid -dia 1 -gridx 2 -columns 2 -rows 1 -outname ag3",
+    # ncc_clear (clear_copper_tcl). Con un solo polígono, "sí mismo" no usa la envolvente convexa: se limpian las
+    # franjas del margen a los dos lados del contorno (rectángulos: las pasadas caen sobre sus bordes y la intersección
+    # depende de la versión de GEOS, y el contorno es simétrico respecto de x = 0, así que paint_connect elige entre
+    # empates exactos de rtree.nearest). Los casos con varias herramientas van sobre el logo, sin esas coincidencias.
+    "ncc_clear ec -tooldia 2 -margin 5 -all 1 -outname n1",
+    "open_gerber {@DATA@/luz_de_noche/luz de noche Pascual-Logo.gbr} -outname lg",
+    "ncc_clear lg -tooldia 1,0.6 -overlap 20 -margin 0.5 -order fwd -all 1 -outname n2",
+    "ncc_clear lg -tooldia 1,0.6 -order rev -margin 0.5 -connect 0 -contour 0 -all 1 -outname n3",
+    "ncc_clear lg -tooldia 1,0.6 -margin 0.5 -rest 1 -all 1 -outname n4",
+    "ncc_clear lg -tooldia 0.8 -margin 0.5 -offset 0.2 -all 1 -outname n5",
+    "ncc_clear ec -tooldia 3 -all 1 -outname n6",
+    "isolate lg -combine 1 -dia 0.5 -outname lgi",
+    "ncc_clear lg -tooldia 0.4 -margin 0.3 -box lgi -outname n7",
+    "ncc_clear ec -tooldia 3 -box ec -outname n8",
+    "ncc_clear ec -tooldia 3 -box pth -outname n9",
+    "ncc_clear ec -tooldia 3 -box no_existe -outname n10",
+    "ncc_clear ec -tooldia 3",
+    "ncc_clear ec_cutout -tooldia 3 -margin 2 -all 1 -outname n11",
+    "ncc_clear pth -tooldia 3 -all 1 -outname n12",
+    "ncc_clear lg -tooldia 0.8 -margin 0.5 -rest 1 -offset 0.2 -all 1 -outname n13",
+    "ncc_clear no_existe -all 1",
+    "ncc_clear pth -tooldia 3 -rest 1 -all 1 -outname n14",
+    # paint: el método llega como texto y paint_polygon_worker lo compara con números: nunca pinta.
+    "paint ec -all 1 -outname pt1",
+    "paint ec -tooldia 2,1 -method lines -offset 0.5 -all 1 -outname pt2",
+    "paint ec -tooldia 2 -offset 50 -all 1 -outname pt3",
+    "paint ec_cutout -all 1 -outname pt4",
+    "paint ec -single 0,0 -outname pt5",
+    "paint ec -single 34.975,0 -outname pt6",
+    "paint ec -single , -outname pt10",
+    "paint ec -single 1,2,3",
+    "paint ec -box g1 -outname pt7",
+    "paint ec -box ec -outname pt8",
+    "paint ec -box no_existe -outname pt9",
+    "paint ec -tooldia 1",
+    "paint no_existe -all 1",
+    "panelize ec -outname pa5",
+    "panelize ec -rows 1 -box no_existe",
+    "panelize no_existe -rows 1",
+    "isolate nada -combine 1",
 ]
 
 
@@ -159,6 +260,10 @@ class Collection:
             return next((o for o in self.objs if o.options["name"] == name), None)
         return next((o for o in self.objs if o.options["name"].lower() == name.lower()), None)
 
+    def promise(self, name):
+        # ObjectCollection.promise: solo anota el nombre que se va a crear.
+        pass
+
     def get_names(self):
         return [o.options["name"] for o in self.objs]
 
@@ -166,6 +271,15 @@ class Collection:
         return list(self.objs)
 
     def append(self, obj):
+        import re
+        name = obj.options["name"]
+        while name in self.get_names():  # ObjectCollection.append: "Prevent same name"
+            match = re.search(r'(.*[^\d])?(\d+)$', name)
+            if match:
+                name = (match.group(1) or '') + str(int(match.group(2)) + 1)
+            else:
+                name += "_1"
+        obj.options["name"] = name
         self.objs.append(obj)
         obj.set_ui(obj.ui_type(app=self.app))  # ObjectCollection.append
 
@@ -181,11 +295,20 @@ class Collection:
         self.active = []
 
 
+def flat(lst):
+    for g in lst:
+        if isinstance(g, list):
+            yield from flat(g)
+        else:
+            yield g
+
+
 def geo_state(geo):
     if geo is None:
         return None
     if isinstance(geo, list):
-        return [wkt(g) if hasattr(g, "wkt") else repr(g) for g in geo]
+        # Las listas anidadas (panelize) se aplanan, como la ShapeList del port.
+        return [wkt(g) if hasattr(g, "wkt") else repr(g) for g in flat(geo)]
     return {"single": wkt(geo)}
 
 
@@ -211,6 +334,7 @@ def main():
 
     cnc_mod = fr.import_original("appObjects.FlatCAMCNCJob")
     exc_mod = fr.import_original("appObjects.FlatCAMExcellon")
+    grb_mod = fr.import_original("appObjects.FlatCAMGerber")
 
     class FileHandlers:
         """MenuFileHandlers.open_excellon original sobre la aplicación simulada."""
@@ -219,6 +343,9 @@ def main():
 
         def open_excellon(self, *a, **k):
             return app_main.MenuFileHandlers.open_excellon(self, *a, **k)
+
+        def open_gerber(self, *a, **k):
+            return app_main.MenuFileHandlers.open_gerber(self, *a, **k)
     fa.f_handlers = FileHandlers()
     # OR-Tools no está en el entorno: los órdenes 'B' y 'M' quedan en el orden del archivo (el port usa su propio
     # optimizador, así que de esos trabajos solo se comparan los avisos).
@@ -227,9 +354,9 @@ def main():
     camlib.CNCjob.optimized_ortools_meta = lambda self, locations, opt_time=None: list(range(len(locations)))
 
     def new_object(kind, name, initialize, plot=True, autoselected=True, callback=None, callback_params=None):
-        assert kind in ("geometry", "cncjob", "excellon")
+        assert kind in ("geometry", "cncjob", "excellon", "gerber")
         obj = (geo_mod.GeometryObject(name) if kind == "geometry" else cnc_mod.CNCJobObject(name) if kind == "cncjob"
-               else exc_mod.ExcellonObject(name))
+               else exc_mod.ExcellonObject(name) if kind == "excellon" else grb_mod.GerberObject(name))
         for option, value in fa.options.items():
             if option.startswith(kind + "_"):
                 obj.options[option[len(kind) + 1:]] = value
@@ -257,7 +384,7 @@ def main():
         except Exception:
             return "fail"
         if kind == "cncjob":
-            coll.objs.append(obj)  # sin set_ui (el CNC Job no lo necesita para exportar)
+            coll.objs.append(obj)  # (los nombres de los CNC Job de esta sesión no se repiten)  # sin set_ui (el CNC Job no lo necesita para exportar)
         else:
             coll.append(obj)
     fa.app_obj.new_object = new_object
@@ -270,6 +397,16 @@ def main():
     # Las áreas de exclusión con el travel_coordinates original (un MagicMock no devuelve viajes).
     from oracle_exclusion import exc_areas
     fa.exc_areas = exc_areas(fa, [])
+    # La herramienta NCC original sin su interfaz (clear_copper_tcl de ncc_clear), como la deja __init__.
+    ncc_mod = fr.import_original("appTools.ToolNCC")
+    nt = ncc_mod.NonCopperClear.__new__(ncc_mod.NonCopperClear)
+    nt.app = fa
+    nt.decimals = 4
+    ncc_mod.Gerber.__init__(nt, steps_per_circle=fa.defaults["gerber_circle_steps"])
+    nt.obj_name, nt.ncc_obj, nt.sel_rect = "", None, []
+    nt.circle_steps = int(fa.defaults["gerber_circle_steps"])
+    fa.ncclear_tool = nt
+    fa.abort_flag = False
 
     fa.on_set_zero_click = lambda *a, **k: real_app.on_set_zero_click(fa, *a, **k)
 
@@ -301,6 +438,7 @@ def main():
     out = {"session": []}
     import tempfile
     tmp = tempfile.mkdtemp()
+    last = {}
     for cmd in SESSION:
         written = set(os.listdir(tmp))
         cmd_real = cmd.replace("@DIR@", tmp).replace("@DATA@", DATA)
@@ -317,13 +455,28 @@ def main():
         objs = []
         for o in coll.objs:
             if o.kind not in ("geometry",):
-                objs.append({"name": o.options["name"], "kind": o.kind})
+                st = {"name": o.options["name"], "kind": o.kind}
+                if o.kind == "excellon" and o.options["name"] != "pth":
+                    # Los Excellon que crean los comandos: diámetro, agujeros y área de cada herramienta.
+                    st["tools"] = [{"key": str(k), "tooldia": t.get("tooldia"),
+                                    "drills": [[p.x, p.y] for p in t.get("drills", [])],
+                                    "area": sum(g.area for g in t.get("solid_geometry", []))}
+                                   for k, t in o.tools.items()]
+                objs.append(st)
                 continue
-            t1 = o.tools.get(1, {}).get("solid_geometry") if o.tools else None
+            t1 = o.tools.get(1, o.tools.get('1', {})).get("solid_geometry") if o.tools else None
             objs.append({"name": o.options["name"], "multigeo": bool(o.multigeo),
                          "solid": geo_state(o.solid_geometry), "tool1": geo_state(t1),
                          "tool1_is_solid": bool(o.tools) and 1 in o.tools and
-                         o.tools[1]["solid_geometry"] is o.solid_geometry})
+                         o.tools[1]["solid_geometry"] is o.solid_geometry,
+                         "tool_keys": [str(k) for k in o.tools] if o.tools else []})
+        for o in objs:
+            # Los trazados del NCC (paint_connect elige entre empates exactos de rtree.nearest, que el port no
+            # reproduce): se comparan los totales.
+            if cmd.startswith("ncc_clear") and o["name"] not in last and "solid" in o:
+                o["relaxed"] = True
+            elif o["name"] in last and '"relaxed": true' in last[o["name"]]:
+                o["relaxed"] = True
         added = after[len(before):] if after.startswith(before) else after
         added = added.replace(tmp, "@DIR@").replace(DATA, "@DATA@")
         # El traceback de Python (rutas locales) no se guarda: el port no lo muestra.
@@ -331,7 +484,11 @@ def main():
         out["session"].append({"cmd": cmd, "added": added if cut < 0 else added[:cut + 1], "traceback": cut >= 0,
                                # on_delete está simulado: sus avisos no son los del original
                                "simulated": cmd.startswith("delete ") and "failed" not in added,
-                               "objects": objs, "files": files})
+                               # los nombres de todos y el estado de los que cambiaron (el test recuerda el resto)
+                               "names": [o["name"] for o in objs],
+                               "objects": [o for o in objs if last.get(o["name"]) != json.dumps(o, sort_keys=True)],
+                               "files": files})
+        last = {o["name"]: json.dumps(o, sort_keys=True) for o in objs}
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
