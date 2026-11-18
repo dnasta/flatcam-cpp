@@ -9,6 +9,7 @@
 #include <QTextEdit>
 #include <QUrl>
 #include <QVBoxLayout>
+#include <algorithm>
 #include <geos_c.h>
 #include <lzma.h>
 

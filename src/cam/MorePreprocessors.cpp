@@ -1,7 +1,9 @@
 // Los postprocesadores de FlatCAM 2024.4 que no son `default` ni `GRBL_laser` (`preprocessors/*.py`). Cada uno reproduce el
 // texto del original; las plantillas multilínea salen de src/cam/generated/PreprocessorTemplates.h (tools/gen_pp_templates.py).
 // Verificados contra el original con tests/tools/oracle_preprocessors.py.
+#include <algorithm>
 #include <memory>
+#include <utility>
 
 #include "cam/Preprocessor.h"
 #include "cam/generated/PreprocessorTemplates.h"

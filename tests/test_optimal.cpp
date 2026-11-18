@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <string>
+#include <iterator>
 
 #include "cam/PyNumber.h"
 #include "golden_optimal.h"

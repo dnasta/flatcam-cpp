@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <cmath>
+#include <cctype>
 
 #include "golden_excellon.h"
 #include "parsers/Excellon.h"

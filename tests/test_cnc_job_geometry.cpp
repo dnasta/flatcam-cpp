@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 #include "cam/CncJob.h"
 #include "golden_geometry.h"

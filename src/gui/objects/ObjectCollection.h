@@ -6,6 +6,7 @@
 
 #include <QAbstractItemModel>
 #include <QPixmap>
+#include <algorithm>
 #include <array>
 #include <memory>
 #include <vector>

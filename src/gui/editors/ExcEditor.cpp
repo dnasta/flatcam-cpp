@@ -6,6 +6,7 @@
 #include <QSplitter>
 #include <QTabWidget>
 #include <QTimer>
+#include <algorithm>
 
 #include "cam/PyNumber.h"
 #include "core/ArcMath.h"

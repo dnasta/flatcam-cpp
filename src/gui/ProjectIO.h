@@ -6,6 +6,7 @@
 #pragma once
 
 #include <QStringList>
+#include <algorithm>
 #include <functional>
 #include <memory>
 #include <optional>

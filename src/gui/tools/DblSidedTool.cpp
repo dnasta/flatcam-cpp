@@ -2,6 +2,7 @@
 #include "gui/tools/DblSidedTool.h"
 
 #include <QRegularExpression>
+#include <algorithm>
 #include <cmath>
 #include <limits>
 

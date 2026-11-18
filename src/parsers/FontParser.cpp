@@ -10,6 +10,7 @@
 
 #ifdef FLATCAM_HAVE_FREETYPE
 #include <ft2build.h>
+#include <cctype>
 #include FT_FREETYPE_H
 #endif
 

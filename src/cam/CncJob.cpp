@@ -2,6 +2,10 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <limits>
+#include <stdexcept>
 
 #include "cam/PathOptimizer.h"
 #include "core/Logger.h"

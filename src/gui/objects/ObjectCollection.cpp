@@ -2,6 +2,7 @@
 
 #include <QMimeData>
 #include <QRegularExpression>
+#include <algorithm>
 
 #include "gui/Translation.h"
 

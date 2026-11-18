@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include <cmath>
+#include <algorithm>
 
 #include "golden_rest_machining.h"
 #include "tools/Ncc.h"

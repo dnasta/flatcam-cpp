@@ -1,3 +1,5 @@
+#include <tuple>
+
 #include "gui/tools/RulesTool.h"
 
 #include "gui/App.h"

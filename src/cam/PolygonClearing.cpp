@@ -1,6 +1,7 @@
 #include "cam/PolygonClearing.h"
 
 #include <algorithm>
+#include <utility>
 
 namespace flatcam {
 

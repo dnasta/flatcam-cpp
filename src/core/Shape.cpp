@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
+#include <utility>
 
 #include "GeometryError.h"
 #include "internal/GeosContext.h"

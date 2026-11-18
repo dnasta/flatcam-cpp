@@ -33,6 +33,13 @@ endif()
 # liblzma (xz): los proyectos de FlatCAM (.FlatPrj) se guardan comprimidos con XZ.
 find_package(LibLZMA REQUIRED)
 
+# MSVC: los fuentes están en UTF-8 (textos en español), los archivos generados son grandes, M_PI no está definida
+# por defecto y windows.h define min/max como macros.
+if(MSVC)
+    add_compile_options(/utf-8 /bigobj)
+    add_compile_definitions(_USE_MATH_DEFINES NOMINMAX)
+endif()
+
 add_subdirectory(src)
 
 # ---------------------------------------------------------------------------

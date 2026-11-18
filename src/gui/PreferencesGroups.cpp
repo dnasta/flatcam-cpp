@@ -2,6 +2,7 @@
 // `__init_color_pickers` de PreferencesUIManager y las asociaciones de archivos y palabras clave de app_Main).
 #include <QSettings>
 #include <QStringList>
+#include <memory>
 
 #include "gui/MainGUI.h"
 #include "gui/Preferences.h"

@@ -5,6 +5,7 @@
 #include <QScrollArea>
 #include <QSplitter>
 #include <QTabWidget>
+#include <algorithm>
 
 #include "cam/PyNumber.h"
 #include "core/ArcMath.h"

@@ -17,6 +17,8 @@
 #include <memory>
 #include <optional>
 #include <vector>
+#include <algorithm>
+#include <utility>
 
 namespace flatcam::gui {
 

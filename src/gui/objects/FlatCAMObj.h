@@ -8,9 +8,10 @@
 #include <QColor>
 #include <QObject>
 #include <QPointer>
-#include <QWidget>
 #include <QRectF>
 #include <QString>
+#include <QWidget>
+#include <algorithm>
 #include <memory>
 
 #include "gui/PlotCanvas.h"

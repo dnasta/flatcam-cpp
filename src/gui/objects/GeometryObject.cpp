@@ -1,3 +1,6 @@
+#include <algorithm>
+#include <limits>
+
 #include "gui/objects/GeometryObject.h"
 #include "gui/Preferences.h"
 

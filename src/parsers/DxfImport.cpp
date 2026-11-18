@@ -1,9 +1,11 @@
 #include "parsers/DxfImport.h"
 
+#include <cctype>
 #include <cmath>
 #include <map>
 #include <sstream>
 #include <stdexcept>
+#include <utility>
 #include <vector>
 
 namespace flatcam {

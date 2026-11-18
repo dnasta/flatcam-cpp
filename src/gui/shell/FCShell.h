@@ -9,6 +9,7 @@
 #include <QStringListModel>
 #include <QTextEdit>
 #include <QWidget>
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <optional>

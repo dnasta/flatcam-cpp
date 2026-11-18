@@ -1,5 +1,6 @@
 #include "gui/tools/MoveTool.h"
 
+#include <algorithm>
 #include <limits>
 
 #include "gui/App.h"

@@ -6,6 +6,7 @@
 #include <limits>
 
 #include <QFileInfo>
+#include <algorithm>
 
 #include "cam/PyNumber.h"
 #include "gui/App.h"

@@ -3,6 +3,7 @@
 #include <QFileInfo>
 #include <QMenu>
 #include <QStandardPaths>
+#include <algorithm>
 
 #include "gui/App.h"
 #include "gui/Preferences.h"

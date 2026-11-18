@@ -3,6 +3,7 @@
 #include <functional>
 #include <map>
 #include <string>
+#include <cctype>
 
 #include "golden_gerber_ops.h"
 #include "parsers/Gerber.h"

@@ -3,6 +3,7 @@
 #include <QHeaderView>
 #include <QScrollArea>
 #include <QTextBlock>
+#include <algorithm>
 #include <set>
 
 #include "gui/App.h"

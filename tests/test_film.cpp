@@ -4,6 +4,8 @@
 #include <cmath>
 #include <cstdlib>
 #include <map>
+#include <algorithm>
+#include <cctype>
 
 #include "golden_film.h"
 #include "parsers/Excellon.h"

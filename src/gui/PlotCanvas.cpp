@@ -12,6 +12,7 @@
 #include <QVector4D>
 #include <QWheelEvent>
 #include <cmath>
+#include <utility>
 
 namespace flatcam::gui {
 

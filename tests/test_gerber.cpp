@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <set>
+#include <cctype>
 
 #include "golden_gerber.h"
 #include "parsers/Gerber.h"

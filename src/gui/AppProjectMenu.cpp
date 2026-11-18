@@ -10,6 +10,7 @@
 #include <QMessageBox>
 #include <QPlainTextEdit>
 #include <QPushButton>
+#include <algorithm>
 #include <cmath>
 
 #include "gui/Preferences.h"

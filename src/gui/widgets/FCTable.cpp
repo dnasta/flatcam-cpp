@@ -8,6 +8,7 @@
 #include "gui/widgets/FCCheckBox.h"
 #include "gui/widgets/FCComboBox.h"
 #include <QMouseEvent>
+#include <utility>
 
 #include "gui/widgets/FCEntry.h"
 

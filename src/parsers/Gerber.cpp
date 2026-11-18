@@ -1,8 +1,10 @@
 #include "parsers/Gerber.h"
 
 #include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <fstream>
+#include <iterator>
 #include <regex>
 #include <stdexcept>
 

@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "tools/Ncc.h"
 
 #include "core/GeometryError.h"

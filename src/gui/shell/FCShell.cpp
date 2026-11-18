@@ -18,6 +18,7 @@
 #include <QScrollBar>
 #include <QTextBlock>
 #include <QVBoxLayout>
+#include <algorithm>
 
 #include "gui/App.h"
 #include "gui/MainGUI.h"

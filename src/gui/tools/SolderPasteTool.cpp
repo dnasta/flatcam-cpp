@@ -1,6 +1,7 @@
 #include "gui/tools/SolderPasteTool.h"
 
 #include <QTableWidgetItem>
+#include <algorithm>
 
 #include "cam/PyNumber.h"
 #include "gui/App.h"

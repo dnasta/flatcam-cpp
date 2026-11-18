@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include <string>
+#include <algorithm>
 
 #include "golden_panelize.h"
 #include "parsers/Excellon.h"
