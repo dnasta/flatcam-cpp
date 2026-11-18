@@ -649,7 +649,8 @@ void App::onFileOpenExcellon() {
     for (const QString& f : files) openExcellon(f);
 }
 
-FlatCAMObj* App::openGerber(const QString& filename) {
+FlatCAMObj* App::openGerber(const QString& filename, const QString& outname) {
+    const QString objName = outname.isEmpty() ? QFileInfo(filename).fileName() : outname;
     ui_->activity_view->setBusy(tr_("Opening ..."));
     QApplication::setOverrideCursor(Qt::WaitCursor);
     auto gerber = std::make_unique<Gerber>();
@@ -666,13 +667,14 @@ FlatCAMObj* App::openGerber(const QString& filename) {
         ui_->inform(tr_("Converting units to ") + ": " + appUnits());
         gerber->convertUnits(appUnitsKind());
     }
-    FlatCAMObj* obj = addObject(std::make_unique<GerberObject>(QFileInfo(filename).fileName(), std::move(gerber)));
+    FlatCAMObj* obj = addObject(std::make_unique<GerberObject>(objName, std::move(gerber)));
     registerRecent("gerber", filename);
     ui_->inform(QString("[success] %1: %2").arg(tr_("Opened"), filename));
     return obj;
 }
 
-FlatCAMObj* App::openExcellon(const QString& filename) {
+FlatCAMObj* App::openExcellon(const QString& filename, const QString& outname) {
+    const QString objName = outname.isEmpty() ? QFileInfo(filename).fileName() : outname;
     ui_->activity_view->setBusy(tr_("Opening ..."));
     QApplication::setOverrideCursor(Qt::WaitCursor);
     auto exc = std::make_unique<Excellon>();
@@ -690,13 +692,14 @@ FlatCAMObj* App::openExcellon(const QString& filename) {
         ui_->inform(tr_("Converting units to ") + ": " + appUnits());
         exc->convertUnits(appUnitsKind());
     }
-    FlatCAMObj* obj = addObject(std::make_unique<ExcellonObject>(QFileInfo(filename).fileName(), std::move(exc)));
+    FlatCAMObj* obj = addObject(std::make_unique<ExcellonObject>(objName, std::move(exc)));
     registerRecent("excellon", filename);
     ui_->inform(QString("[success] %1: %2").arg(tr_("Opened"), filename));
     return obj;
 }
 
-FlatCAMObj* App::openGcode(const QString& filename) {
+FlatCAMObj* App::openGcode(const QString& filename, const QString& outname) {
+    const QString objName = outname.isEmpty() ? QFileInfo(filename).fileName() : outname;
     // open_gcode: el texto tal cual en un CNC Job; gcode_parse falla si alguna línea tiene '%' (o MOIN/MOMM).
     QFile f(filename);
     if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -724,9 +727,9 @@ FlatCAMObj* App::openGcode(const QString& filename) {
     h.versionDate = "2024/04/15";
     h.type = "Geometry";  // options['type'] de un CNCJobObject nuevo
     h.units = units.toStdString();
-    h.name = QFileInfo(filename).fileName().toStdString();
+    h.name = objName.toStdString();
     lastFolder_ = QFileInfo(filename).absolutePath();
-    FlatCAMObj* obj = addObject(std::make_unique<CNCJobObject>(QFileInfo(filename).fileName(), std::move(job), h,
+    FlatCAMObj* obj = addObject(std::make_unique<CNCJobObject>(objName, std::move(job), h,
                                                                std::vector<CncToolRow>{}));
     registerRecent("cncjob", filename);
     ui_->inform(QString("[success] %1: %2").arg(tr_("Opened"), filename));

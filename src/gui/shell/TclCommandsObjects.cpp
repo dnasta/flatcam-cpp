@@ -23,12 +23,6 @@ namespace {
 
 using namespace tclhelpers;
 
-/** Cambia el nombre de un objeto recién creado (el `outname` del original). */
-void rename(App* app, FlatCAMObj* o, const QString& name) {
-    if (o && !name.isEmpty() && o->name() != name)
-        app->collection()->setData(app->collection()->indexOf(o), name, Qt::EditRole);
-}
-
 /**
  * Abre con el abridor y, si falla, otra vez desde la carpeta de `set_path` (`global_tcl_path`), como el original desde
  * Tcl.
@@ -51,8 +45,7 @@ protected:
                           "the Tcl Command isolate()");
         const QString filename = args.str("filename");
         const QString outname = args.has("outname") ? args.str("outname") : baseName(filename);
-        FlatCAMObj* o = openWithTclPath(filename, outname, [this](const QString& f) { return app_->openGerber(f); });
-        rename(app_, o, outname);
+        openWithTclPath(filename, outname, [this, &outname](const QString& f) { return app_->openGerber(f, outname); });
         return std::nullopt;
     }
 };
@@ -65,8 +58,7 @@ protected:
     std::optional<QString> execute(const TclArgs& args) override {
         const QString filename = args.str("filename");
         const QString outname = args.has("outname") ? args.str("outname") : baseName(filename);
-        FlatCAMObj* o = openWithTclPath(filename, outname, [this](const QString& f) { return app_->openExcellon(f); });
-        rename(app_, o, outname);
+        openWithTclPath(filename, outname, [this, &outname](const QString& f) { return app_->openExcellon(f, outname); });
         return std::nullopt;
     }
 };
@@ -79,8 +71,7 @@ protected:
     std::optional<QString> execute(const TclArgs& args) override {
         const QString filename = args.str("filename");
         const QString outname = args.has("outname") ? args.str("outname") : baseName(filename);
-        FlatCAMObj* o = openWithTclPath(filename, outname, [this](const QString& f) { return app_->openGcode(f); });
-        rename(app_, o, outname);
+        openWithTclPath(filename, outname, [this, &outname](const QString& f) { return app_->openGcode(f, outname); });
         return std::nullopt;
     }
 };
@@ -120,8 +111,8 @@ protected:
         const QString type = args.has("type") ? args.str("type").toLower() : QString("geometry");
         if (type != "geometry" && type != "gerber")
             raiseTclError(QString("Option type can be 'geometry' or 'gerber' only, got '%1'.").arg(type));
-        auto open = [this, &type](const QString& f) {
-            return dxf_ ? app_->importDxf(f, type == "gerber") : app_->importSvg(f, type == "gerber");
+        auto open = [this, &type, &outname](const QString& f) {
+            return dxf_ ? app_->importDxf(f, type == "gerber", outname) : app_->importSvg(f, type == "gerber", outname);
         };
         QString used = filename;
         FlatCAMObj* o = open(filename);
@@ -133,7 +124,6 @@ protected:
                 return QString("Failed. The %1 command was used but could not open the %2 file")
                     .arg(dxf_ ? "OpenDXF" : "OpenSVG", dxf_ ? "DXF" : "SVG");
         }
-        rename(app_, o, outname);
         app_->ui()->inform("Opened: " + used);
         return std::nullopt;
     }
