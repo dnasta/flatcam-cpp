@@ -52,21 +52,24 @@ public:
     /**
      * @brief Abre un Gerber (`open_gerber`): lo lee, crea el objeto, lo dibuja y encuadra.
      * @param filename Ruta del archivo.
+     * @param outname Nombre del objeto (`outname`); vacío: el del archivo.
      * @return El objeto creado, o `nullptr` si falló (el motivo queda en la barra de estado).
      */
-    FlatCAMObj* openGerber(const QString& filename);
+    FlatCAMObj* openGerber(const QString& filename, const QString& outname = QString());
 
     /**
      * @brief Abre un Excellon (`open_excellon`).
      * @param filename Ruta del archivo.
+     * @param outname Nombre del objeto (`outname`); vacío: el del archivo.
      * @return El objeto creado, o `nullptr` si falló.
      */
-    FlatCAMObj* openExcellon(const QString& filename);
+    FlatCAMObj* openExcellon(const QString& filename, const QString& outname = QString());
     /**
      * @brief Abre un G-code como CNC Job (`open_gcode`): el texto tal cual (al exportarlo se le agrega la cabecera).
-     * @param filename Archivo. @return El objeto, o nulo si no es G-code (una línea con '%', MOIN o MOMM).
+     * @param filename Archivo. @param outname Nombre del objeto; vacío: el del archivo.
+     * @return El objeto, o nulo si no es G-code (una línea con '%', MOIN o MOMM).
      */
-    FlatCAMObj* openGcode(const QString& filename);
+    FlatCAMObj* openGcode(const QString& filename, const QString& outname = QString());
     /** @brief Archivo -> Abrir G-Code (`on_fileopengcode`). */
     void onFileOpenGcode();
 
@@ -566,9 +569,10 @@ public:
     void onFileExportPng();
     /**
      * @brief Importa un SVG (`import_svg`) como Geometría o como Gerber. @param filename Archivo.
-     * @param asGerber Como Gerber. @return El objeto, o nulo si falló.
+     * @param asGerber Como Gerber. @param outname Nombre del objeto; vacío: el del archivo.
+     * @return El objeto, o nulo si falló.
      */
-    FlatCAMObj* importSvg(const QString& filename, bool asGerber);
+    FlatCAMObj* importSvg(const QString& filename, bool asGerber, const QString& outname = QString());
     /**
      * @brief `ToolPDF.open_pdf` + el armado de las capas: los streams FlateDecode descomprimidos, `parse_pdf` y un
      * Gerber por capa de color (`<archivo>_<n>`) más un Excellon con los rellenos blancos (`<archivo>_0`).
@@ -589,9 +593,10 @@ public:
     void onFileImportSvg(bool asGerber);
     /**
      * @brief Importa un DXF (`import_dxf`) como Geometría o como Gerber. @param filename Archivo.
-     * @param asGerber Como Gerber. @return El objeto, o nulo si falló.
+     * @param asGerber Como Gerber. @param outname Nombre del objeto; vacío: el del archivo.
+     * @return El objeto, o nulo si falló.
      */
-    FlatCAMObj* importDxf(const QString& filename, bool asGerber);
+    FlatCAMObj* importDxf(const QString& filename, bool asGerber, const QString& outname = QString());
     /** @brief Archivo -> Importar -> DXF (`on_file_importdxf`). @param asGerber Como Gerber. */
     void onFileImportDxf(bool asGerber);
     /** @brief Abre un HPGL2 como Geometría (`open_hpgl2`). @param filename Archivo. @return El objeto, o nulo. */

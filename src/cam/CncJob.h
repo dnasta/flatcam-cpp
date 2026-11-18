@@ -124,6 +124,42 @@ struct GeometryJobSettings {
 };
 
 /**
+ * @brief Los parámetros de `CNCjob.generate_from_excellon_by_tool` sin la interfaz (`use_ui = False`), como los arma el
+ * comando Tcl `drillcncjob`: valen para todas las herramientas.
+ */
+struct ExcellonByToolSettings {
+    std::string preprocessor{"default"};  ///< `pp_excellon_name` (si no existe, falla como el `KeyError` del original).
+    std::string units{"MM"};              ///< `"MM"` o `"IN"`.
+    int coordsDecimals{4};                ///< Decimales de las coordenadas.
+    int decimals{4};                      ///< Decimales generales.
+    int frDecimals{2};                    ///< Decimales de los avances.
+    int stepsPerCircle{64};               ///< Pasos por circunferencia.
+    PyNumber zCut;                        ///< `z_cut` (`float(drillz)`).
+    PyNumber zMove;                       ///< `z_move` (Z de viaje).
+    PyNumber feedrate;                    ///< `feedrate` (el comando le pone el avance Z).
+    PyNumber zFeedrate;                   ///< `z_feedrate`.
+    PyNumber feedrateRapid;               ///< `feedrate_rapid`.
+    std::optional<PyNumber> spindleSpeed; ///< `spindlespeed` (`None` sin el argumento).
+    std::string spindleDir{"CW"};         ///< `spindledir`.
+    bool dwell{false};                    ///< `dwell`.
+    PyNumber dwellTime;                   ///< `dwelltime`.
+    bool multidepth{false};               ///< `multidepth`.
+    PyNumber depthPerCut;                 ///< `z_depthpercut`.
+    bool toolchange{false};               ///< `toolchange`.
+    PyNumber zToolchange;                 ///< `z_toolchange`.
+    std::string xyToolchange;             ///< `xy_toolchange`, el texto ("x, y" o vacío).
+    std::optional<PyNumber> startZ;       ///< `startz`.
+    PyNumber endZ;                        ///< `endz`.
+    std::string xyEnd;                    ///< `xy_end`, el texto.
+    std::string optType{"B"};             ///< `excellon_optimization_type`: "M", "B" (OR-Tools: el port usa su optimizador), "T" u otro.
+    bool machinist{false};                ///< `machinist_setting`: sin él se controla la Z de corte (`check_zcut`).
+    PyNumber zPdepth{-0.02};              ///< Profundidad de la sonda.
+    PyNumber feedrateProbe{75};           ///< Avance de la sonda.
+    std::optional<BoundingBox> bounds;    ///< Límites del Excellon (`options['xmin'...]`).
+    std::vector<ExclusionArea> exclusionAreas;  ///< `app.exc_areas`.
+};
+
+/**
  * @brief Parámetros de @ref CncJob::generateFromGeometry2 (`generate_from_geometry_2`, el G-code de una Geometría de una
  * sola geometría que crea el comando Tcl `cncjob`), ya resueltos como los deja `GeometryObject.generatecncjob`.
  *
@@ -279,6 +315,24 @@ public:
      * @return `false` si el original devuelve `'fail'`.
      */
     bool generateFromGeometry2(const ShapeList& solid, const Geometry2Settings& s, std::vector<CncMessage>& messages);
+
+    /**
+     * @brief `CNCjob.generate_from_excellon_by_tool` con `tools = "all"`, `order = 'fwd'`, `is_first = False` y
+     * `use_ui = False` (el comando Tcl `drillcncjob`): el G-code queda en @ref gcode y el de inicio vacío.
+     *
+     * Como el original: las herramientas van por diámetro creciente; con cambio de herramienta cada una con su `T`, y
+     * sin él todos los agujeros juntos con la herramienta 1; el orden "T" es el vecino más cercano de
+     * `optimized_travelling_salesman`, que **repite el primer agujero**; "B" y "M" (OR-Tools) usan @ref PathOptimizer
+     * (desvío); con otro orden falla al indexar (`list indices must be integers or slices, not tuple`). Sin
+     * `machinist`, `check_zcut` pasa a negativa una Z positiva, falla con cero y **deja `None` una Z negativa**: entonces
+     * falla al sumarle el desplazamiento (`unsupported operand type(s) for +: 'int' and 'NoneType'`).
+     * @param ex El Excellon.
+     * @param s Los parámetros.
+     * @param messages Los avisos para la aplicación, en orden.
+     * @return `false` si falla: @ref lastError es `"fail"` si el original devuelve `'fail'` y, si no, el texto de la
+     * excepción de Python.
+     */
+    bool generateFromExcellonByTool(const Excellon& ex, const ExcellonByToolSettings& s, std::vector<CncMessage>& messages);
 
     /**
      * @brief Restaura un trabajo guardado en un proyecto: su G-code tal como quedó (no se vuelve a generar).

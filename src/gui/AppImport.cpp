@@ -20,7 +20,7 @@
 
 namespace flatcam::gui {
 
-FlatCAMObj* App::importSvg(const QString& filename, bool asGerber) {
+FlatCAMObj* App::importSvg(const QString& filename, bool asGerber, const QString& outname) {
     QFile f(filename);
     if (!f.open(QIODevice::ReadOnly)) {
         ui_->inform("[ERROR_NOTCL]" + tr_("Import failed."));
@@ -32,7 +32,7 @@ FlatCAMObj* App::importSvg(const QString& filename, bool asGerber) {
         ui_->inform("[ERROR_NOTCL]" + tr_("Import failed."));
         return nullptr;
     }
-    const QString name = QFileInfo(filename).fileName();
+    const QString name = outname.isEmpty() ? QFileInfo(filename).fileName() : outname;
     FlatCAMObj* obj = nullptr;
     if (asGerber) {
         // Gerber.import_svg: todo en la apertura "0" (REG, tamaño 0), con el contorno como línea de seguimiento.
@@ -77,7 +77,7 @@ void App::onFileImportSvg(bool asGerber) {
     for (const QString& f : files) importSvg(f, asGerber);
 }
 
-FlatCAMObj* App::importDxf(const QString& filename, bool asGerber) {
+FlatCAMObj* App::importDxf(const QString& filename, bool asGerber, const QString& outname) {
     QFile f(filename);
     if (!f.open(QIODevice::ReadOnly)) {
         ui_->inform("[ERROR_NOTCL]" + tr_("Import failed."));
@@ -89,7 +89,7 @@ FlatCAMObj* App::importDxf(const QString& filename, bool asGerber) {
         ui_->inform("[ERROR_NOTCL]" + tr_("Import failed."));
         return nullptr;
     }
-    const QString name = QFileInfo(filename).fileName();
+    const QString name = outname.isEmpty() ? QFileInfo(filename).fileName() : outname;
     FlatCAMObj* obj = nullptr;
     if (asGerber) {
         // import_dxf_as_gerber: la geometría sólida es la unión; cada figura va a la apertura "0" (solid = follow).

@@ -447,6 +447,127 @@ protected:
     }
 };
 
+/** drillcncjob: el G-code de un Excellon con generate_from_excellon_by_tool (sin la interfaz). */
+class Drillcncjob : public TclCommand {
+public:
+    explicit Drillcncjob(App* a) : TclCommand(a, "TclCommandDrillcncjob") {}
+
+protected:
+    std::optional<QString> execute(const TclArgs& args) override {
+        const QString name = args.str("name");
+        FlatCAMObj* o = app_->collection()->byName(name);  // get_by_name(name): distingue mayúsculas
+        const QString outname = args.has("outname") ? args.str("outname") : name + "_cnc";
+        const bool muted = args.has("muted") && args.hasValue("muted") && pyTruthCapitalized(args.str("muted"));
+        if (!o) {
+            if (!muted) raiseTclError("Object not found: " + name);
+            return QString("fail");
+        }
+        if (o->kind() != ObjectKind::Excellon) {
+            if (!muted) raiseTclError(QString("Expected ExcellonObject, got %1 %2.").arg(name, pyType(o)));
+            return QString("fail");
+        }
+        auto* exc = static_cast<ExcellonObject*>(o);
+        const Excellon& ex = exc->excellon();
+        // job_init: lo que falla adentro lo atrapa new_object ("Object (cncjob) failed because: ...").
+        try {
+            const auto has = [&](const char* k) { return args.has(k) && args.hasValue(k); };
+            // Los valores "truthy" de Python: un 0 toma el de las preferencias.
+            const auto num = [&](const char* k, const char* def) {
+                if (has(k) && args.num(k) != 0) return PyNumber(args.num(k));
+                return defPy(def).value_or(PyNumber(0));
+            };
+            if (args.has("drilled_dias") && args.str("drilled_dias") != "all") {
+                // obj.tools[tool]["C"]: en la 2024.4 las herramientas no tienen "C" (KeyError: 'C').
+                QString err = !ex.drillTools().empty() && !args.str("drilled_dias").split(',', Qt::SkipEmptyParts).isEmpty()
+                                  ? "'C'"
+                                  : "'diatol'";
+                if (args.has("diatol") && err == "'diatol'") err = "invalid syntax";
+                throw TclError("Bad tools: " + err);
+            }
+            ExcellonByToolSettings s;
+            s.zCut = has("drillz") ? PyNumber(args.num("drillz")) : defPy("tools_drill_cutz").value_or(PyNumber(0));
+            if (args.has("toolchangez")) {
+                s.toolchange = true;
+                s.zToolchange = has("toolchangez") ? PyNumber(args.num("toolchangez"))
+                                                   : defPy("tools_drill_toolchangez").value_or(PyNumber(0));
+            } else {
+                s.toolchange = defBool("tools_drill_toolchange");
+                s.zToolchange = PyNumber(defNum("tools_drill_toolchangez"));
+            }
+            // `args["tools_drill_toolchangexy"]`: la clave que no existe (KeyError).
+            if (args.has("toolchangexy")) throw TclError("'tools_drill_toolchangexy'");
+            const QString xyTc = defaultXY("tools_drill_toolchangexy");
+            parseXY(xyTc, "The entered value for 'toolchangexy' needs to have the format x,y or in format (x, y) - no "
+                          "spaces allowed. But always two comma separated values.");
+            s.xyToolchange = xyTc.toStdString();
+            // El comando guarda la Z final en job_obj.endz, que nadie lee: end_code usa z_end, el 2.0 del constructor.
+            s.endZ = PyNumber(2.0);
+            const QString xyEnd = has("endxy") && !args.str("endxy").isEmpty() ? args.str("endxy")
+                                                                               : defaultXY("tools_drill_endxy");
+            parseXY(xyEnd, "The entered value for 'xy_end' needs to have the format x,y or in format (x, y) - no spaces "
+                           "allowed. But always two comma separated values.");
+            s.xyEnd = xyEnd.toStdString();
+            s.optType = has("opt_type") && !args.str("opt_type").isEmpty() ? args.str("opt_type").toStdString() : "B";
+            s.preprocessor = has("pp") && !args.str("pp").isEmpty() ? args.str("pp").toStdString()
+                                                                    : defStr("tools_drill_ppname_e").toStdString();
+            if (args.has("dpp")) {
+                s.multidepth = true;
+                if (!has("dpp")) throw TclError("'dpp'");  // obj.options["dpp"]
+                s.depthPerCut = PyNumber(args.num("dpp"));
+            } else {
+                s.multidepth = defBool("tools_drill_multidepth");
+                s.depthPerCut = defPy("tools_drill_depthperpass").value_or(PyNumber(0));
+            }
+            s.zMove = num("travelz", "tools_drill_travelz");
+            s.feedrate = s.zFeedrate = num("feedrate_z", "tools_drill_feedrate_z");
+            s.feedrateRapid = num("feedrate_rapid", "tools_drill_feedrate_rapid");
+            if (args.has("spindlespeed")) s.spindleSpeed = PyNumber(has("spindlespeed") ? args.num("spindlespeed") : 0.0);
+            s.spindleDir = defStr("tools_drill_spindledir").toStdString();
+            if (args.has("dwelltime")) {
+                s.dwell = true;
+                s.dwellTime = has("dwelltime") ? PyNumber(args.num("dwelltime")) : PyNumber(defNum("tools_drill_dwelltime"));
+            } else {
+                s.dwell = defBool("tools_drill_dwell");
+                s.dwellTime = defPy("tools_drill_dwelltime").value_or(PyNumber(0));
+            }
+            if (has("startz")) s.startZ = PyNumber(args.num("startz"));
+            else if (auto d = defPy("tools_drill_startz"); d && d->value() != 0) s.startZ = d;
+            else s.startZ = defPy("tools_drill_travelz");
+            s.units = appUnits().toStdString();
+            s.decimals = appDecimals();
+            s.coordsDecimals = defInt("cncjob_coords_decimals", 4);
+            s.frDecimals = defInt("cncjob_fr_decimals", 2);
+            s.stepsPerCircle = defInt("cncjob_steps_per_circle", 64);
+            s.machinist = defBool("global_machinist_setting");
+            const QRectF b = exc->bounds();
+            s.bounds = BoundingBox{b.left(), b.top(), b.right(), b.bottom()};
+            s.exclusionAreas = app_->excAreas()->areas();
+            auto job = std::make_unique<CncJob>();
+            std::vector<CncMessage> msgs;
+            const bool ok = job->generateFromExcellonByTool(ex, s, msgs);
+            informMessages(app_, cncMessagesText(msgs));
+            if (!ok) {
+                if (job->lastError() != "fail") throw TclError(QString::fromStdString(job->lastError()));
+                // initialize devolvió 'fail': new_object avisa igual y no crea nada.
+                app_->shellMessage(QString("%1 %2. %3 seconds executing initialize().")
+                                       .arg(tr_("New object with name:"), outname, QString::number(0.0, 'f', 6)));
+                return std::nullopt;
+            }
+            informMessages(app_, gcodeParseMessages(job->gcode()));
+            GcodeHeaderInfo h;
+            h.version = "2024.4";
+            h.versionDate = "2024/04/15";
+            h.type = "Geometry";  // gc_header se arma en CNCJobObject.__init__, antes de options['type'] = 'Excellon'
+            h.units = appUnits().toStdString();
+            app_->addObject(std::make_unique<CNCJobObject>(outname, std::move(job), h, std::vector<CncToolRow>{}),
+                            false);
+        } catch (const TclError& e) {
+            informInitializeFailed(app_, "cncjob", e.text());
+        }
+        return std::nullopt;
+    }
+};
+
 }  // namespace
 
 void addCamTclCommands(App* app, std::vector<std::unique_ptr<TclCommand>>& out) {
@@ -455,6 +576,7 @@ void addCamTclCommands(App* app, std::vector<std::unique_ptr<TclCommand>>& out) 
     out.push_back(std::make_unique<BoxRegion>(app, false));
     out.push_back(std::make_unique<BoxRegion>(app, true));
     out.push_back(std::make_unique<Cncjob>(app));
+    out.push_back(std::make_unique<Drillcncjob>(app));
     out.push_back(std::make_unique<WriteGCode>(app));
 }
 

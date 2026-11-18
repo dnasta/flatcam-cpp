@@ -90,11 +90,14 @@ TEST(GuiTclObjects, SessionLikeTheOriginal) {
         const QJsonObject s = v.toObject();
         SCOPED_TRACE(s["cmd"].toString().toStdString());
         const QString before = sh->browser()->toPlainText();
-        sh->commandLine()->setPlainText(s["cmd"].toString().replace("@DIR@", tmp.path()));
+        const QString data = QString(FLATCAM_TEST_DATA_DIR);
+        sh->commandLine()->setPlainText(s["cmd"].toString().replace("@DIR@", tmp.path()).replace("@DATA@", data));
         sh->execCurrentCommand();
         const QString after = sh->browser()->toPlainText();
         const QString added =
-            withoutTimes(after.startsWith(before) ? after.mid(before.size()) : after).replace(tmp.path(), "@DIR@");
+            withoutTimes(after.startsWith(before) ? after.mid(before.size()) : after)
+                .replace(tmp.path(), "@DIR@")
+                .replace(data, "@DATA@");
         if (s["simulated"].toBool()) {
             // App.on_delete está simulado en el oráculo (no avisa): solo la orden.
             EXPECT_EQ(added.section('\n', 0, 0).toStdString(), s["added"].toString().section('\n', 0, 0).toStdString());
@@ -123,10 +126,10 @@ TEST(GuiTclObjects, SessionLikeTheOriginal) {
         for (const QJsonValue& ov : objs) {
             const QJsonObject oo = ov.toObject();
             SCOPED_TRACE(oo["name"].toString().toStdString());
-            if (oo.contains("kind")) {  // un CNC Job: solo que exista y sea de ese tipo
+            if (oo.contains("kind")) {  // un CNC Job o un Excellon: solo que exista y sea de ese tipo
                 const FlatCAMObj* o = app.collection()->byName(oo["name"].toString());
                 ASSERT_NE(o, nullptr);
-                EXPECT_EQ(o->kind(), ObjectKind::CNCJob);
+                EXPECT_EQ(o->kind(), oo["kind"].toString() == "excellon" ? ObjectKind::Excellon : ObjectKind::CNCJob);
                 continue;
             }
             auto* geo = dynamic_cast<GeometryObject*>(app.collection()->byName(oo["name"].toString()));

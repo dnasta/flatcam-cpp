@@ -1084,4 +1084,273 @@ bool CncJob::generateFromGeometry2(const ShapeList& solid, const Geometry2Settin
     return true;
 }
 
+namespace {
+
+/// `re.sub('[()\[\]]', '', texto)` y `[float(eval(a)) for a in texto.split(",")]` (solo números).
+std::optional<std::vector<double>> parseXYText(const std::string& text) {
+    std::string t;
+    for (char c : text)
+        if (c != '(' && c != ')' && c != '[' && c != ']') t += c;
+    if (t.empty()) return std::nullopt;
+    std::vector<double> out;
+    std::size_t start = 0;
+    while (true) {
+        const std::size_t k = t.find(',', start);
+        const std::string part = t.substr(start, k == std::string::npos ? std::string::npos : k - start);
+        char* end = nullptr;
+        const double v = std::strtod(part.c_str(), &end);
+        out.push_back(v);
+        if (k == std::string::npos) break;
+        start = k + 1;
+    }
+    return out;
+}
+
+}  // namespace
+
+bool CncJob::generateFromExcellonByTool(const Excellon& ex, const ExcellonByToolSettings& s,
+                                        std::vector<CncMessage>& messages) {
+    lastError_.clear();
+    startGcode_.clear();
+    gcode_.clear();
+    toolGcodes_.clear();
+    toolMessages_.clear();
+    travelDistance_ = routingTime_ = 0.0;
+    const auto inform = [&](const std::string& level, const std::string& text, const std::string& suffix = {},
+                            const std::string& text2 = {}, const std::string& suffix2 = {}) {
+        messages.push_back({level, text, suffix, text2, suffix2});
+    };
+    const auto fail = [&](const std::string& error) {
+        lastError_ = error;
+        return false;
+    };
+
+    // ---- check_zcut (sin machinist_setting): una Z negativa queda en None
+    std::optional<double> zCut = s.zCut.value();
+    if (!s.machinist) {
+        if (*zCut > 0) {
+            inform("WARNING", "The Cut Z parameter has positive value. It is the depth value to drill into material.\n"
+                              "The Cut Z parameter needs to have a negative value, assuming it is a typo therefore the "
+                              "app will convert the value to negative. Check the resulting CNC code (Gcode etc).");
+            zCut = -*zCut;
+        } else if (*zCut == 0) {
+            inform("WARNING", "The Cut Z parameter is zero. There will be no cut, aborting", ".");
+            return fail("fail");
+        } else {
+            zCut.reset();
+        }
+    }
+
+    // ---- X,Y de cambio y final
+    std::optional<std::vector<double>> xyToolchange = parseXYText(s.xyToolchange);
+    if (xyToolchange && xyToolchange->size() != 2) {
+        inform("ERROR", "The Toolchange X,Y field in Edit -> Preferences has to be in the format (x, y) \nbut now "
+                        "there is only one value, not two. ");
+        return fail("fail");
+    }
+    std::optional<std::vector<double>> xyEnd = parseXYText(s.xyEnd);
+    if (xyEnd && xyEnd->size() < 2) {
+        inform("ERROR", "The End Move X,Y field in Edit -> Preferences has to be in the format (x, y) but now there "
+                        "is only one value, not two.");
+        return fail("fail");
+    }
+    const auto pp = makePreprocessor(s.preprocessor, GcodeFlavor::FlatCAM2024_4);
+    if (!pp) return fail("'" + s.preprocessor + "'");  // KeyError de app.preprocessors
+
+    // ---- las herramientas, por diámetro creciente (sorted es estable: los empates quedan en el orden del archivo)
+    const std::vector<int> fileOrder = ex.toolIdsInOrder();
+    std::vector<int> tools = fileOrder;
+    std::stable_sort(tools.begin(), tools.end(), [&](int a, int b) {
+        return ex.drillTools().at(a).tooldia < ex.drillTools().at(b).tooldia;
+    });
+
+    inform("", "Creating a list of points to drill...");
+    std::map<int, std::vector<Point2D>> points;
+    std::vector<int> pointsOrder;  // el orden del diccionario points (el de exc_tools)
+    for (int t : fileOrder) {
+        const auto& d = ex.drillTools().at(t).drills;
+        if (d.empty()) continue;
+        points[t] = d;
+        pointsOrder.push_back(t);
+    }
+    for (int t : pointsOrder)
+        for (const Point2D& pt : points[t])
+            for (const ExclusionArea& a : s.exclusionAreas) {
+                const Shape buf = Shape::point(pt).buffer(ex.drillTools().at(t).tooldia / 2.0);
+                if (buf.within(a.shape) || buf.intersects(a.shape)) {
+                    inform("ERROR_NOTCL", "Failed. Drill points inside the exclusion zones.");
+                    return fail("fail");
+                }
+            }
+
+    PreprocessorParams p;
+    p.units = s.units;
+    p.coordsDecimals = s.coordsDecimals;
+    p.decimals = s.decimals;
+    p.frDecimals = s.frDecimals;
+    p.feedrate = s.feedrate;
+    p.zFeedrate = s.zFeedrate;
+    p.feedrateRapid = s.feedrateRapid;
+    if (zCut) p.zCut = PyNumber(*zCut);
+    p.multidepth = s.multidepth;
+    p.zDepthPerCut = s.depthPerCut;
+    p.zMove = s.zMove;
+    p.useUi = false;
+    p.toolchange = s.toolchange;
+    p.zToolchange = s.zToolchange;
+    if (xyToolchange) p.xyToolchange = std::array<PyNumber, 2>{PyNumber((*xyToolchange)[0]), PyNumber((*xyToolchange)[1])};
+    p.startZ = s.startZ;
+    p.zEnd = s.endZ;
+    if (xyEnd) p.xyEnd = std::array<PyNumber, 2>{PyNumber((*xyEnd)[0]), PyNumber((*xyEnd)[1])};
+    p.stepsPerCircle = s.stepsPerCircle;
+    p.ppExcellonName = s.preprocessor;
+    p.spindleSpeed = s.spindleSpeed;
+    p.spindleDir = s.spindleDir;
+    p.dwellTime = s.dwellTime;
+    p.fPlunge = false;  // f_plunge = None
+    p.zPdepth = s.zPdepth;
+    p.feedrateProbe = s.feedrateProbe;
+    p.options.type = "Excellon";
+    if (s.bounds) {
+        p.options.xmin = PyNumber(s.bounds->xmin);
+        p.options.ymin = PyNumber(s.bounds->ymin);
+        p.options.xmax = PyNumber(s.bounds->xmax);
+        p.options.ymax = PyNumber(s.bounds->ymax);
+    }
+    // options['Tools_in_use'] la arma el comando con textos y un encabezado: el cambio de herramienta nunca encuentra
+    // la herramienta y escribe "Total drills ... = 1".
+
+    std::string g;
+    g += pp->zFeedrateCode(p) + "\n";  // use_ui is False
+    if (!s.toolchange) {
+        p.x = xyToolchange ? (*xyToolchange)[0] : 0.0;
+        p.y = xyToolchange ? (*xyToolchange)[1] : 0.0;
+        g += pp->liftCode(p) + "\n";
+        g += pp->startzCode(p) + "\n";
+    }
+    double oldx = xyToolchange ? (*xyToolchange)[0] : 0.0, oldy = xyToolchange ? (*xyToolchange)[1] : 0.0;
+    double measured = 0, down = 0, lift = 0;
+    inform("", "Starting G-Code", "...");
+    if (points.empty()) {
+        inform("ERROR_NOTCL", "The loaded Excellon file has no drills", "...");
+        return fail("fail");
+    }
+    const bool optimized = s.optType == "M" || s.optType == "B";
+    const bool salesman = s.optType == "T";
+
+    // El orden de los agujeros; `false` si el original falla al recorrerlos (locations[tupla]).
+    const auto orderPoints = [&](const std::vector<Point2D>& pts, std::vector<Point2D>& out) {
+        out.clear();
+        if (optimized) {
+            for (std::size_t i : PathOptimizer::order(pts, {oldx, oldy})) out.push_back(pts[i]);
+        } else if (salesman) {
+            // optimized_travelling_salesman: arranca en el primero y lo vuelve a visitar (sigue en must_visit)
+            std::vector<Point2D> must = pts;
+            out.push_back(pts.front());
+            while (!must.empty()) {
+                const Point2D last = out.back();
+                std::size_t best = 0;
+                double bestD = 0;
+                for (std::size_t i = 0; i < must.size(); ++i) {
+                    const double dx = last.x - must[i].x, dy = last.y - must[i].y;
+                    const double dd = std::sqrt(dx * dx + dy * dy);
+                    if (i == 0 || dd < bestD) {
+                        best = i;
+                        bestD = dd;
+                    }
+                }
+                out.push_back(must[best]);
+                must.erase(must.begin() + static_cast<std::ptrdiff_t>(best));
+            }
+        } else {
+            out = pts;
+        }
+    };
+    const auto drillPoints = [&](const std::vector<Point2D>& path, double toolDia) -> bool {
+        if (!optimized && !salesman) return false;  // locations[point] con una tupla
+        for (const Point2D& pt : path) {
+            g += exclusionTravel(*pp, p, &s.exclusionAreas, {oldx, oldy}, pt, toolDia, s.units == "IN", s.zMove.value());
+            p.x = pt.x;
+            p.y = pt.y;
+            const double zm = std::fabs(s.zMove.value());
+            if (s.multidepth && std::fabs(*zCut) > std::fabs(s.depthPerCut.value())) {
+                const double doc = *zCut;
+                double z = 0.0;
+                while (std::fabs(z) < std::fabs(doc)) {
+                    z -= s.depthPerCut.value();
+                    if (std::fabs(doc) < std::fabs(z) && std::fabs(z) < std::fabs(doc) + s.depthPerCut.value()) z = doc;
+                    p.zCut = PyNumber(z);
+                    g += pp->downCode(p) + "\n";
+                    down += std::fabs(z) + zm;
+                    lift += std::fabs(z) + zm;  // f_retract = None
+                    g += pp->liftCode(p) + "\n";
+                }
+                p.zCut = PyNumber(doc);
+            } else {
+                g += pp->downCode(p) + "\n";
+                down += std::fabs(*zCut) + zm;
+                lift += std::fabs(*zCut) + zm;
+                g += pp->liftCode(p) + "\n";
+            }
+            measured += std::sqrt((pt.x - oldx) * (pt.x - oldx) + (pt.y - oldy) * (pt.y - oldy));
+            oldx = pt.x;
+            oldy = pt.y;
+        }
+        return true;
+    };
+    const auto startTool = [&](int tool) -> bool {
+        // "Starting G-Code for tool with diameter" y z_cut = z_offset + old_zcut (z_offset = 0: sin tools_drill_offset)
+        char buf[64];
+        std::snprintf(buf, sizeof buf, "%.*f", s.decimals, ex.drillTools().at(tool).tooldia);
+        inform("", "Starting G-Code for tool with diameter",
+               ": " + pyFloatRepr(std::strtod(buf, nullptr)) + s.units + ".");
+        if (!zCut) {
+            lastError_ = "unsupported operand type(s) for +: 'int' and 'NoneType'";
+            return false;
+        }
+        p.zCut = PyNumber(*zCut);
+        return true;
+    };
+
+    std::vector<Point2D> path;
+    if (s.toolchange) {
+        for (int tool : tools) {
+            if (!points.count(tool)) continue;
+            p.tool = tool;
+            p.toolC = PyNumber(ex.drillTools().at(tool).tooldia);
+            orderPoints(points[tool], path);
+            p.oldX = oldx;
+            p.oldY = oldy;
+            g += pp->toolchangeCode(p) + "\n";
+            g += pp->spindleCode(p) + "\n";
+            if (s.dwell) g += pp->dwellCode(p) + "\n";
+            if (!startTool(tool)) return false;
+            if (!drillPoints(path, std::round(ex.drillTools().at(tool).tooldia * 1e4) / 1e4))
+                return fail("list indices must be integers or slices, not tuple");
+        }
+    } else {
+        std::vector<Point2D> all;
+        for (int t : pointsOrder) all.insert(all.end(), points[t].begin(), points[t].end());
+        if (!ex.drillTools().count(1)) return fail("1");  // self.exc_tools[one_tool]: KeyError
+        p.tool = 1;
+        p.toolC = PyNumber(ex.drillTools().at(1).tooldia);
+        orderPoints(all, path);
+        g += pp->spindleCode(p) + "\n";
+        if (s.dwell) g += pp->dwellCode(p) + "\n";
+        if (!startTool(1)) return false;
+        if (!drillPoints(path, std::round(ex.drillTools().at(1).tooldia * 1e4) / 1e4))
+            return fail("list indices must be integers or slices, not tuple");
+    }
+    g += pp->spindleStopCode(p) + "\n";
+    p.x = 0;
+    p.y = 0;
+    g += pp->endCode(p) + "\n";
+    measured += std::sqrt(oldx * oldx + oldy * oldy);
+    travelDistance_ = measured;
+    routingTime_ = down / s.feedrate.value() + lift / s.feedrateRapid.value() + measured / s.feedrateRapid.value();
+    inform("", "Finished G-Code generation", " ...");
+    gcode_ = g;
+    return true;
+}
+
 }  // namespace flatcam
