@@ -293,6 +293,8 @@ bool Gerber::parseFile(const std::string& path, bool /*follow*/) {
 
 bool Gerber::parseLines(const std::vector<std::string>& glines) {
     lastError_.clear();
+    report_ = ParseReport{};
+    report_.lines = static_cast<int>(glines.size());
     const int steps = options_.circleSteps;
     const int quad = steps / 4;  // segmentos por cuarto de círculo de los trazos
 
@@ -828,6 +830,8 @@ bool Gerber::parseLines(const std::vector<std::string>& glines) {
         }
 
         // ---- unión final y polaridad
+        report_.joined = static_cast<int>(polyBuffer.size());
+        report_.darkPolarity = currentPolarity == 'D';
         Shape newPoly;
         if (options_.useBufferForUnion) {
             newPoly = Shape::collection(polyBuffer);

@@ -129,6 +129,7 @@ void PaintTool::onTypeObjChanged() {
 
 void PaintTool::setToolUi() {
     muted_ = true;
+    units_ = defStr("units").toUpper();
     // tools_paint_* de las preferencias (de fábrica: 20 %, estándar, "Todos", 0.3).
     order_radio->setValue(defVariant("tools_paint_order"));
     offset_entry->setValue(defNum("tools_paint_offset"));

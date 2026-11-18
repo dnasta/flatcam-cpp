@@ -137,11 +137,11 @@ std::optional<double> Isolation::safeToolDiameter(const Gerber& gerber, int deci
 }
 
 ShapeList Isolation::isolationGeometry(const ShapeList& geometry, double offset, IsolationType type,
-                                       int stepsPerCircle) {
+                                       int stepsPerCircle, JoinStyle corner) {
     ShapeList buffered;
     buffered.reserve(geometry.size());
     for (const Shape& pol : geometry) {
-        buffered.push_back(offset == 0 ? pol : pol.buffer(offset, stepsPerCircle, JoinStyle::Round));
+        buffered.push_back(offset == 0 ? pol : pol.buffer(offset, stepsPerCircle, corner));
     }
     const ShapeList united = partsOf(Shape::unaryUnion(buffered));
     if (type == IsolationType::Full) return united;
@@ -156,6 +156,8 @@ ShapeList Isolation::isolationGeometry(const ShapeList& geometry, double offset,
     }
     return out;
 }
+
+ShapeList Isolation::invertDirection(const ShapeList& geometry) { return invertAll(geometry); }
 
 ShapeList Isolation::generateEnvelope(const ShapeList& geometry, double offset, bool invert, IsolationType type,
                                       bool follow, int stepsPerCircle) {

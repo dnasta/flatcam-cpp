@@ -118,6 +118,14 @@ public:
     const std::map<int, ExcellonTool>& drillTools() const { return drillTools_; }
 
     /**
+     * @brief Vacía la geometría dibujada de cada herramienta (los agujeros y ranuras quedan): lo que deja
+     * `create_geometry` del original cuando falla después de su primer bucle (`panelize` de la consola Tcl).
+     */
+    void clearToolGeometry() {
+        for (auto& [id, t] : drillTools_) t.solidGeometry.clear();
+    }
+
+    /**
      * @brief Una copia con las herramientas renumeradas 1, 2, 3... en el orden dado (lo que hace `build_tool_ui` de
      * Perforación con `excellon_tools` antes de generar el G-code: el número `T` es la posición en la tabla).
      * @param order Números de las herramientas, en el orden nuevo (las que no están se descartan).

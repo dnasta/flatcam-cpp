@@ -118,6 +118,15 @@ public:
      */
     bool parseLines(const std::vector<std::string>& lines);
 
+    /** @brief Los datos de los avisos de progreso de `parse_lines` del último análisis. */
+    struct ParseReport {
+        int lines{0};             ///< Sentencias analizadas ("Gerber processing. Parsing N lines.").
+        int joined{-1};           ///< Polígonos que se unen ("Joining polygons: N."); -1 si no se llegó a la unión.
+        bool darkPolarity{false}; ///< Si se aplicó la polaridad oscura al final ("Applying Gerber polarity.").
+    };
+    /** @brief Los datos de los avisos del último análisis. @return Los datos. */
+    const ParseReport& parseReport() const { return report_; }
+
     /**
      * @brief Interpreta un número de coordenada Gerber (`parse_gerber_number`).
      * @param number Texto del número, con signo opcional y sin punto decimal.
@@ -254,6 +263,7 @@ private:
     bool conversionDone_{false};
     std::string sourceFile_;
     std::string lastError_;
+    ParseReport report_;
 };
 
 }  // namespace flatcam

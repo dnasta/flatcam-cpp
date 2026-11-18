@@ -119,11 +119,19 @@ public:
      * @param offset Distancia; 0 no agranda.
      * @param type Contornos que se conservan.
      * @param stepsPerCircle Segmentos por cuarto de círculo.
+     * @param corner Las esquinas del agrandado (`corner`; de fábrica redondeadas, `geocutout` usa ingletes).
      * @return Polígonos (si @p type es Full) o anillos.
      * @throws GeometryError si GEOS falla.
      */
     static ShapeList isolationGeometry(const ShapeList& geometry, double offset, IsolationType type,
-                                       int stepsPerCircle);
+                                       int stepsPerCircle, JoinStyle corner = JoinStyle::Round);
+
+    /**
+     * @brief El sentido de fresado de `generate_envelope` con `invert`: cada polígono con el contorno exterior al revés
+     * (y sus agujeros) y cada anillo como un polígono con los vértices al revés; lo demás se descarta.
+     * @param geometry Figuras. @return Los polígonos.
+     */
+    static ShapeList invertDirection(const ShapeList& geometry);
 
     /**
      * @brief Envolvente de una pasada con el sentido de fresado aplicado (`generate_envelope`).

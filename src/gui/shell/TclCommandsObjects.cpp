@@ -3,6 +3,8 @@
 // export_dxf / export_gcode, delete, new_geometry / new_gerber / new_excellon, offset, scale, skew, mirror,
 // set_origin, get_bounds, join_excellon / join_geometries, add_circle / add_rectangle / add_polygon / add_polyline,
 // geo_union, exteriors, interiors, subtract_poly y subtract_rectangle.
+#include <limits>
+
 #include <QFileInfo>
 
 #include "cam/PyNumber.h"
@@ -380,6 +382,15 @@ protected:
         for (const QString& n : names) {
             FlatCAMObj* o = app_->collection()->byName(n);
             if (!o) raiseTclError("'NoneType' object has no attribute 'bounds'");
+            if (o->kind() == ObjectKind::Excellon && !static_cast<ExcellonObject*>(o)->excellon().drillTools().empty()) {
+                bool any = false;
+                for (const auto& [id, t] : static_cast<ExcellonObject*>(o)->excellon().drillTools()) any = any || !t.solidGeometry.empty();
+                if (!any) {  // bounds_rec de listas vacías (después de un panelize, sección 14): infinitos
+                    const double inf = std::numeric_limits<double>::infinity();
+                    out << "{" + QStringList{tclFloat(inf), tclFloat(inf), tclFloat(-inf), tclFloat(-inf)}.join(' ') + "}";
+                    continue;
+                }
+            }
             const QRectF b = o->bounds();
             out << "{" + QStringList{tclFloat(b.left()), tclFloat(b.top()), tclFloat(b.right()), tclFloat(b.bottom())}.join(' ') + "}";
         }
