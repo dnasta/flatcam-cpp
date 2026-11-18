@@ -47,9 +47,9 @@ std::vector<FlatCAMObj*> ObjectCollection::objects() const {
     return out;
 }
 
-FlatCAMObj* ObjectCollection::byName(const QString& name) const {
+FlatCAMObj* ObjectCollection::byName(const QString& name, bool caseSensitive) const {
     for (FlatCAMObj* o : objects())
-        if (o->name() == name) return o;
+        if (caseSensitive ? o->name() == name : o->name().toLower() == name.toLower()) return o;
     return nullptr;
 }
 

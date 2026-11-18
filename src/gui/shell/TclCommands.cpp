@@ -26,6 +26,7 @@ std::vector<std::unique_ptr<TclCommand>> createTclCommands(App* app) {
     std::vector<std::unique_ptr<TclCommand>> out;
     addAppTclCommands(app, out);
     addObjectTclCommands(app, out);
+    addCamTclCommands(app, out);
     std::set<QString> done;
     for (const auto& c : out) done.insert(c->meta().className);
     for (const TclCommandMeta& m : TclCommandMeta::all())

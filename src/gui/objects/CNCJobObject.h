@@ -27,6 +27,21 @@ struct CncToolRow {
 };
 
 /**
+ * @brief Los avisos del generador de G-code, traducidos como los emite el original (`[nivel] texto...`).
+ * @param msgs Los avisos.
+ * @return Los textos para `inform`.
+ */
+QStringList cncMessagesText(const std::vector<CncMessage>& msgs);
+
+/**
+ * @brief Los avisos de `CNCjob.gcode_parse` sobre un G-code: la cantidad de líneas (`splitlines`) y la creación de la
+ * geometría.
+ * @param gcode El G-code que se analiza (`self.gcode`).
+ * @return Los textos para `inform`.
+ */
+QStringList gcodeParseMessages(const std::string& gcode);
+
+/**
  * @brief Objeto CNC Job (`CNCJobObject`).
  *
  * Guarda el trabajo generado y lo dibuja como el original con `cncjob_plot_kind = all`: los viajes en amarillo

@@ -399,6 +399,15 @@ JsonValue objectOptions(const FlatCAMObj& obj, const char* kind, const JsonValue
     }
     o.set("name", JsonValue::string(obj.name().toStdString()));
     o.set("plot", JsonValue::boolean(obj.plotEnabled()));
+    const auto* geo = dynamic_cast<const GeometryObject*>(&obj);
+    if (geo && geo->optionBounds()) {
+        const auto& ob = *geo->optionBounds();
+        o.set("xmin", ob[0]);
+        o.set("ymin", ob[1]);
+        o.set("xmax", ob[2]);
+        o.set("ymax", ob[3]);
+        return o;
+    }
     const QRectF b = obj.bounds();
     o.set("xmin", real(b.left()));
     o.set("ymin", real(b.top()));

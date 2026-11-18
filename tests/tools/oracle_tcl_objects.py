@@ -23,6 +23,8 @@ import shapely.affinity  # noqa: F401
 import shapely.geometry  # noqa: F401
 import shapely.ops  # noqa: F401
 import shapely.wkt  # noqa: F401
+# El rtree real (fc_runtime lo simula si no está importado): lo usa el almacén de trazados del G-code.
+import rtree.index  # noqa: F401
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
@@ -78,6 +80,40 @@ SESSION = [
     "set_origin 1,2",
     "set_origin 1",
     "bounds g,h,hx,k",
+    "bounding_box h",
+    "bounding_box h -rounded true -margin 1 -outname hb",
+    "bounding_box no_existe -rounded 0",
+    "non_copper_regions h -rounded False",
+    "non_copper_regions h -margin 0.5 -rounded 1 -outname hn",
+    "add_circle hb 0 0 1",
+    "add_polygon hn 0 0 1 0 0 1",
+    "options hb",
+    "options no_existe",
+    # Para el G-code, un objeto armado solo con add_* (sin uniones: la GEOS 3.12 / 3.15 une distinto que la 3.11).
+    "new_geometry c",
+    "add_rectangle c 0 0 10 5",
+    "add_circle c 20 20 3",
+    "add_polyline c 0 10 5 15 10 10",
+    "add_polygon c 30 0 35 0 32 4",
+    "cncjob c",
+    "write_gcode c_cnc @DIR@/c.nc",
+    "cncjob c -dia 0.5 -z_cut 1 -z_move -3 -feedrate 300 -dpp 0.4 -spindlespeed 1000 -dwelltime 2 -toolchangez 10 "
+    "-toolchangexy 1,2 -endxy (3,4) -endz 5 -startz 7 -extracut_length 0.2 -pp grbl_11 -outname cc",
+    "write_gcode cc @DIR@/cc.nc -preamble {G04 P1} -postamble M30",
+    "cncjob c -pp GRBL_11 -outname cx",
+    "cncjob c -pp GRBL_laser -outname cl",
+    "write_gcode cl @DIR@/cl.nc",
+    "cncjob C -dpp 0.5 -extracut_length 0 -feedrate_z 30 -outname ck",
+    "write_gcode ck @DIR@/ck.nc",
+    "cncjob c -pp Marlin -toolchangez 5 -spindlespeed 200 -outname cm",
+    "write_gcode cm @DIR@/cm.nc -preamble {M117 hola}",
+    "cncjob hb -muted 1",
+    "cncjob no_existe",
+    "cncjob no_existe -muted 1",
+    "cncjob hb -endxy 5",
+    "cncjob k -toolchangexy 1,2,3",
+    "write_gcode no_existe @DIR@/x.nc",
+    "write_gcode h @DIR@/x.nc",
     "get_names",
     "delete hx",
     "get_names",
@@ -93,7 +129,10 @@ class Collection:
         self.app, self.ou, self.objs, self.active = app, ou, [], []
 
     def get_by_name(self, name, isCaseSensitive=None):
-        return next((o for o in self.objs if o.options["name"] == name), None)
+        # ObjectCollection.get_by_name
+        if isCaseSensitive is None or isCaseSensitive is True:
+            return next((o for o in self.objs if o.options["name"] == name), None)
+        return next((o for o in self.objs if o.options["name"].lower() == name.lower()), None)
 
     def get_names(self):
         return [o.options["name"] for o in self.objs]
@@ -145,9 +184,11 @@ def main():
     coll = Collection(fa, ou)
     fa.collection = coll
 
+    cnc_mod = fr.import_original("appObjects.FlatCAMCNCJob")
+
     def new_object(kind, name, initialize, plot=True, autoselected=True, callback=None, callback_params=None):
-        assert kind == "geometry"
-        obj = geo_mod.GeometryObject(name)
+        assert kind in ("geometry", "cncjob")
+        obj = geo_mod.GeometryObject(name) if kind == "geometry" else cnc_mod.CNCJobObject(name)
         for option, value in fa.options.items():
             if option.startswith(kind + "_"):
                 obj.options[option[len(kind) + 1:]] = value
@@ -156,10 +197,38 @@ def main():
         obj.options["name"] = name
         obj.item = object()
         obj.plot = lambda *a, **k: None
-        if initialize(obj, fa) == "fail":
+        obj.units = fa.options["units"]
+        try:
+            ret = initialize(obj, fa)
+        except Exception as e:
+            # AppObject.new_object (sin el traceback de Python, que el port no muestra)
+            msg = '[ERROR_NOTCL] %s' % fr.gettext("An internal error has occurred. See shell.\n")
+            msg += fr.gettext("Object ({kind}) failed because: {error} \n\n").format(kind=kind, error=str(e))
+            fa.inform.emit(msg)
             return "fail"
-        coll.append(obj)
+        # AppObject.new_object: el aviso en la consola (también si initialize devuelve "fail").
+        fa.inform_shell.emit("%s %s. %f seconds executing initialize()." % (fr.gettext("New object with name:"), name, 0.0))
+        if ret == "fail":
+            return "fail"
+        try:
+            xmin, ymin, xmax, ymax = obj.bounds()
+            obj.options['xmin'], obj.options['ymin'], obj.options['xmax'], obj.options['ymax'] = xmin, ymin, xmax, ymax
+        except Exception:
+            return "fail"
+        if kind == "cncjob":
+            coll.objs.append(obj)  # sin set_ui (el CNC Job no lo necesita para exportar)
+        else:
+            coll.append(obj)
     fa.app_obj.new_object = new_object
+    fa.preprocessors = fr.import_original("appPreProcessor").load_preprocessors()
+    # Los postprocesadores usan math.ceil sin importar math (error del original: con profundidad múltiple la cabecera
+    # queda vacía); el port y los demás oráculos se comportan como si estuviera importado.
+    import math
+    for pp in fa.preprocessors.values():
+        sys.modules[type(pp).__module__].math = math
+    # Las áreas de exclusión con el travel_coordinates original (un MagicMock no devuelve viajes).
+    from oracle_exclusion import exc_areas
+    fa.exc_areas = exc_areas(fa, [])
 
     fa.on_set_zero_click = lambda *a, **k: real_app.on_set_zero_click(fa, *a, **k)
 
@@ -189,25 +258,39 @@ def main():
     fa.inform_shell.emit.side_effect = lambda m, *a: real_app.info_shell(fa, m, *a)
     fa.shell_message = lambda *a, **k: real_app.shell_message(fa, *a, **k)
     out = {"session": []}
+    import tempfile
+    tmp = tempfile.mkdtemp()
     for cmd in SESSION:
+        written = set(os.listdir(tmp))
+        cmd_real = cmd.replace("@DIR@", tmp)
         before = shell._browser.toPlainText()
-        shell._edit.setPlainText(cmd)
+        shell._edit.setPlainText(cmd_real)
         shell.exec_current_command()
         after = shell._browser.toPlainText()
+        files = {}
+        for fn in sorted(set(os.listdir(tmp)) - written):
+            with open(os.path.join(tmp, fn), encoding="utf-8", newline="") as f:
+                # Sin la fecha ni la versión de la cabecera.
+                files[fn] = "".join(l for l in f.read().splitlines(True)
+                                    if "Created on" not in l and "GENERATED BY FLATCAM" not in l)
         objs = []
         for o in coll.objs:
+            if o.kind != "geometry":
+                objs.append({"name": o.options["name"], "kind": o.kind})
+                continue
             t1 = o.tools.get(1, {}).get("solid_geometry") if o.tools else None
             objs.append({"name": o.options["name"], "multigeo": bool(o.multigeo),
                          "solid": geo_state(o.solid_geometry), "tool1": geo_state(t1),
                          "tool1_is_solid": bool(o.tools) and 1 in o.tools and
                          o.tools[1]["solid_geometry"] is o.solid_geometry})
         added = after[len(before):] if after.startswith(before) else after
+        added = added.replace(tmp, "@DIR@")
         # El traceback de Python (rutas locales) no se guarda: el port no lo muestra.
         cut = added.upper().find("\nPYTHON TRACEBACK")
         out["session"].append({"cmd": cmd, "added": added if cut < 0 else added[:cut + 1], "traceback": cut >= 0,
                                # on_delete está simulado: sus avisos no son los del original
                                "simulated": cmd.startswith("delete ") and "failed" not in added,
-                               "objects": objs})
+                               "objects": objs, "files": files})
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)

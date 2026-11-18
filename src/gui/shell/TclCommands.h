@@ -28,4 +28,10 @@ void addAppTclCommands(App* app, std::vector<std::unique_ptr<TclCommand>>& out);
  */
 void addObjectTclCommands(App* app, std::vector<std::unique_ptr<TclCommand>>& out);
 
+/**
+ * @brief CAM: options, follow, bounding_box y non_copper_regions.
+ * @param app La aplicación. @param out Donde se agregan.
+ */
+void addCamTclCommands(App* app, std::vector<std::unique_ptr<TclCommand>>& out);
+
 }  // namespace flatcam::gui

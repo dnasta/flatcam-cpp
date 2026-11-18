@@ -53,8 +53,12 @@ public:
     /** @brief Todos los objetos, en el orden de los grupos (`get_list`). @return Los objetos. */
     std::vector<FlatCAMObj*> objects() const;
 
-    /** @brief Busca por nombre (`get_by_name`). @param name Nombre. @return El objeto o `nullptr`. */
-    FlatCAMObj* byName(const QString& name) const;
+    /**
+     * @brief Busca por nombre (`get_by_name`).
+     * @param name Nombre. @param caseSensitive Con `false`, sin distinguir mayúsculas (`isCaseSensitive=False`).
+     * @return El objeto o `nullptr`.
+     */
+    FlatCAMObj* byName(const QString& name, bool caseSensitive = true) const;
 
     /** @brief El objeto de un índice del modelo, o `nullptr` si es un grupo. @param index Índice. @return El objeto. */
     FlatCAMObj* objectAt(const QModelIndex& index) const;
