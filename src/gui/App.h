@@ -537,6 +537,8 @@ public:
     bool finalSave();
     /** @brief Si hay cambios sin guardar (`should_we_save`). @return El estado. */
     bool shouldWeSave() const { return shouldWeSave_; }
+    /** @brief Olvida los cambios sin guardar: al cerrar no se pregunta (el modo `--screenshot` de las pruebas). */
+    void discardChanges() { shouldWeSave_ = false; }
     /**
      * @brief Texto exportado de un Gerber o Excellon (`export_gerber` / `export_excellon` con los formatos
      * `gerber_exp_*` / `excellon_exp_*`). @param obj Objeto. @return El texto, o vacío.

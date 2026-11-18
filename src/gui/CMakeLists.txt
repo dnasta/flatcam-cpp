@@ -184,9 +184,18 @@ else()
     target_compile_options(flatcam_gui PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
-add_executable(flatcam MACOSX_BUNDLE WIN32 main.cpp)
+set(FLATCAM_APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/resources/FlatCAM.icns)
+set_source_files_properties(${FLATCAM_APP_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+add_executable(flatcam MACOSX_BUNDLE WIN32 main.cpp ${FLATCAM_APP_ICON})
+if(WIN32)
+    target_sources(flatcam PRIVATE resources/flatcam.rc)
+endif()
 target_link_libraries(flatcam PRIVATE flatcam_gui)
 set_target_properties(flatcam PROPERTIES
     OUTPUT_NAME "FlatCAM"
     MACOSX_BUNDLE_BUNDLE_NAME "FlatCAM"
-    MACOSX_BUNDLE_GUI_IDENTIFIER "org.flatcam.cpp")
+    MACOSX_BUNDLE_GUI_IDENTIFIER "org.flatcam.cpp"
+    MACOSX_BUNDLE_ICON_FILE "FlatCAM.icns"
+    MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
+    MACOSX_BUNDLE_COPYRIGHT "Licencia MIT. FlatCAM (c) 2014-2024 Juan Pablo Caram, Marius Stanciu y colaboradores; port a C++ (c) 2026 dnasta")
