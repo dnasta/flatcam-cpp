@@ -1,3 +1,4 @@
+#include "gui/QtCompat.h"
 #include "gui/objects/DocumentObject.h"
 
 #include <QColorDialog>
@@ -111,8 +112,8 @@ void DocumentObject::setUi(App* app) {
     connect(panel->al_right_tb, &QToolButton::clicked, this, [align] { align(Qt::AlignRight); });
     connect(panel->al_justify_tb, &QToolButton::clicked, this, [align] { align(Qt::AlignJustify); });
 
-    connect(panel->autocomplete_cb, &QCheckBox::checkStateChanged, this,
-            [this](Qt::CheckState s) { if (editor_) editor_->setCompleterEnabled(s != Qt::Unchecked); });
+    connect(panel->autocomplete_cb, FC_CHECK_STATE_CHANGED, this,
+            [this](CheckStateArg s) { if (editor_) editor_->setCompleterEnabled(s != Qt::Unchecked); });
     connect(panel->tab_size_spinner, &FCSpinner::returnPressed, this, [this] { onTabSizeChange(std::nullopt); });
 
     panel->font_color_entry->setText(defStr("document_font_color"));

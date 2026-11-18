@@ -4,6 +4,7 @@
 #include <QStringList>
 #include <memory>
 
+#include "gui/QtCompat.h"
 #include "gui/MainGUI.h"
 #include "gui/Preferences.h"
 #include "gui/Translation.h"
@@ -92,11 +93,11 @@ void Preferences::connectGroups() {
     connect(t->general_gui_group_style_combo, &QComboBox::textActivated, this, [this](const QString& style) {
         QSettings(settingsFile(), QSettings::IniFormat).setValue("style", style);
     });
-    connect(t->general_gui_group_hdpi_cb, &QCheckBox::checkStateChanged, this, [this](Qt::CheckState state) {
+    connect(t->general_gui_group_hdpi_cb, FC_CHECK_STATE_CHANGED, this, [this](CheckStateArg state) {
         QSettings(settingsFile(), QSettings::IniFormat).setValue("hdpi", static_cast<int>(state));
     });
     // General -> Aplicación: la pantalla de bienvenida y la consola al arrancar.
-    connect(t->general_app_group_splash_cb, &QCheckBox::checkStateChanged, this, [this](Qt::CheckState state) {
+    connect(t->general_app_group_splash_cb, FC_CHECK_STATE_CHANGED, this, [this](CheckStateArg state) {
         QSettings(settingsFile(), QSettings::IniFormat).setValue("splash_screen", state != Qt::Unchecked ? 1 : 0);
     });
     connect(t->general_app_group_shell_startup_cb, &QCheckBox::clicked, this, [this](bool state) {
@@ -160,8 +161,8 @@ void Preferences::connectGroups() {
                                            formatChanged();
                                        }));
     };
-    connect(t->excellon_gen_group_update_excellon_cb, &QCheckBox::checkStateChanged, this,
-            [updateExport](Qt::CheckState state) { updateExport(state != Qt::Unchecked); });
+    connect(t->excellon_gen_group_update_excellon_cb, FC_CHECK_STATE_CHANGED, this,
+            [updateExport](CheckStateArg state) { updateExport(state != Qt::Unchecked); });
     updateExport(defaults_["excellon_update"].toBool());
     // Excellon -> Exportar: los ceros solo con formato decimal no.
     connect(t->excellon_exp_group_format_radio, &RadioSet::activatedCustom, this, [t] {

@@ -1,3 +1,4 @@
+#include "gui/QtCompat.h"
 #include "gui/tools/PunchTool.h"
 
 #include <set>
@@ -27,13 +28,13 @@ PunchTool::PunchTool(App* app, QWidget* parent) : PunchToolUIBase(parent), app_(
                                                       {other_cb, other_ring_entry}};
     for (const auto& link : links) {
         QWidget* entry = link.second;
-        connect(link.first, &QCheckBox::checkStateChanged, this, [this, entry](Qt::CheckState s) {
+        connect(link.first, FC_CHECK_STATE_CHANGED, this, [this, entry](CheckStateArg s) {
             entry->setDisabled(s == Qt::Unchecked);
             if (!muted_) buildToolUi();
         });
     }
-    connect(select_all_cb, &QCheckBox::checkStateChanged, this,
-            [this](Qt::CheckState s) { onSelectAll(s != Qt::Unchecked); });
+    connect(select_all_cb, FC_CHECK_STATE_CHANGED, this,
+            [this](CheckStateArg s) { onSelectAll(s != Qt::Unchecked); });
 }
 
 ToolInfo PunchTool::info() { return {tr_("Punch Gerber"), tr_("Punch Tool")}; }
