@@ -47,6 +47,7 @@ private:
     std::string merged_;                  ///< `modified_excellon_file`.
     bool mergedRead_{false};              ///< El StringIO ya se leyó una vez (queda al final).
     QString outname_{"file"};
+    QString excPath_;  ///< Ruta del Excellon cargado (para los archivos recientes).
     QString timeOverride_;
     bool excellonLoaded_{false};
     bool infLoaded_{false};

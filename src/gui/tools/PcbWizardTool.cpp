@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/tools/PcbWizardTool.h"
 
 #include <algorithm>
@@ -87,6 +88,8 @@ void PcbWizardTool::loadExcellon(const QString& filename) {
 }
 
 bool PcbWizardTool::loadInf(const QString& filename) {
+    // El original suma las herramientas de un .INF a las del anterior (corregido: cada .INF con las suyas).
+    if (!reproduceOriginalBugs()) inf_.tools.clear();
     const bool ok = pcbWizardReadInf(pcbWizardReadLines(filename.toStdString()), inf_);
     // El formato encontrado pasa al formulario (aunque después falte la tabla).
     if (inf_.units) units_radio->setValue(QString::fromStdString(*inf_.units));
@@ -115,6 +118,7 @@ void PcbWizardTool::fileLoaded(bool inf, const QString& filename) {
     } else {
         excellonLoaded_ = true;
         outname_ = QFileInfo(filename).fileName();
+        excPath_ = QFileInfo(filename).absoluteFilePath();
         app_->ui()->inform(QString("[success] %1").arg(tr_("Main PcbWizard Excellon file loaded.")));
     }
     if (excellonLoaded_ && infLoaded_) {
@@ -140,7 +144,7 @@ FlatCAMObj* PcbWizardTool::importExcellon() {
     }
     // El original le pasa el mismo StringIO: la segunda vez se lee desde el final y queda vacío.
     std::vector<std::string> lines;
-    if (!mergedRead_) {
+    if (!mergedRead_ || !reproduceOriginalBugs()) {  // corregido: cada importación lee el texto entero
         std::size_t a = 0;
         while (a < merged_.size()) {
             std::size_t b = merged_.find('\n', a);
@@ -166,8 +170,8 @@ FlatCAMObj* PcbWizardTool::importExcellon() {
     }
     if (exc->units() != appUnitsKind()) exc->convertUnits(appUnitsKind());
     FlatCAMObj* obj = app_->addObject(std::make_unique<ExcellonObject>(name, std::move(exc)));
-    // file_opened.emit("excellon", name): registra el nombre, no la ruta.
-    app_->registerRecent("excellon", name);
+    // file_opened.emit("excellon", name): registra el nombre, no la ruta (corregido: la ruta del Excellon).
+    app_->registerRecent("excellon", reproduceOriginalBugs() || excPath_.isEmpty() ? name : excPath_);
     app_->ui()->inform(QString("[success] %1: %2").arg(tr_("Imported"), name));
     app_->ui()->notebook->setCurrentWidget(app_->ui()->project_tab);
     return obj;

@@ -4077,3 +4077,32 @@ TEST(GuiFixed, RulesCopperToCopperAndSilkToOutline) {
     EXPECT_TRUE(static_cast<DocumentObject*>(doc2)->sourceFile().contains(tr_("PASSED")))
         << static_cast<DocumentObject*>(doc2)->sourceFile().toStdString();
 }
+
+TEST(GuiFixed, SolderPasteCncJobName) {
+    flatcam::OriginalBugsScope fixed(false);
+    App app;
+    FlatCAMObj* mask = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/PCB principal-B_Mask.gbs");
+    ASSERT_NE(mask, nullptr);
+    QKeyEvent alt(QEvent::KeyPress, Qt::Key_K, Qt::AltModifier);
+    QApplication::sendEvent(app.ui(), &alt);
+    SolderPasteTool* t = app.solderPasteTool;
+    t->obj_combo->setValue(mask->name());
+    ASSERT_NE(t->createGeometry(), nullptr);
+    FlatCAMObj* cnc = t->createGcode();
+    ASSERT_NE(cnc, nullptr);
+    EXPECT_EQ(cnc->name(), mask->name() + "_cnc_solderpaste");  // el original corta en el primer "_"
+}
+
+TEST(GuiFixed, PcbWizardImportsTwiceAndDoesNotAccumulateTools) {
+    flatcam::OriginalBugsScope fixed(false);
+    App app;
+    app.ui()->pcb_wizard_tool_menuAction->trigger();
+    PcbWizardTool* t = app.pcbWizardTool;
+    const QString dir = QString(FLATCAM_TEST_DATA_DIR) + "/pcbwizard/";
+    t->loadExcellon(dir + "board.drl");
+    ASSERT_TRUE(t->loadInf(dir + "board.inf"));
+    ASSERT_TRUE(t->loadInf(dir + "board.inf"));
+    EXPECT_EQ(t->tools_table->rowCount(), 2);  // el original suma las del primero: 4
+    ASSERT_NE(t->importExcellon(), nullptr);
+    EXPECT_NE(t->importExcellon(), nullptr);  // el original: el StringIO ya leído
+}
