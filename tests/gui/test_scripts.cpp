@@ -137,7 +137,7 @@ TEST(GuiScript, OpensAndSavesScriptsLikeTheOriginal) {
     const QString f = tmp.filePath("guardado.FlatScript");
     ASSERT_TRUE(app.saveSourceFile(last, f));
     QFile in(f);
-    ASSERT_TRUE(in.open(QIODevice::ReadOnly));
+    ASSERT_TRUE(in.open(QIODevice::ReadOnly | QIODevice::Text));
     QStringList mine = QString::fromUtf8(in.readAll()).split('\n');
     QStringList theirs = o["saved_source"].toString().split('\n');
     ASSERT_EQ(mine.size(), theirs.size());
@@ -293,7 +293,7 @@ TEST(GuiTextEditor, ButtonsFindReplaceCommentLikeTheOriginal) {
     plain.loadText("linea 1\nlinea 2\n", true);
     ASSERT_TRUE(plain.handleSaveGCode({}, {}, tmp.filePath("editor.txt")));
     QFile f(tmp.filePath("editor.txt"));
-    ASSERT_TRUE(f.open(QIODevice::ReadOnly));
+    ASSERT_TRUE(f.open(QIODevice::ReadOnly | QIODevice::Text));
     EXPECT_EQ(QString::fromUtf8(f.readAll()), o["editor_saved"].toString());
     EXPECT_EQ(plain.buttonSave->styleSheet(), o["save_button_after_save"].toArray()[0].toString());
     plain.plainEditor()->insertPlainText("x");

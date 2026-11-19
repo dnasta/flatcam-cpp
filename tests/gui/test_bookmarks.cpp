@@ -128,7 +128,7 @@ TEST(GuiBookmarks, LikeTheOriginal) {
     const QString exp = tmp.path() + "/exported.txt";
     mgr->exportBookmarks(exp);
     QFile ef(exp);
-    ASSERT_TRUE(ef.open(QIODevice::ReadOnly));
+    ASSERT_TRUE(ef.open(QIODevice::ReadOnly | QIODevice::Text));
     EXPECT_EQ(QString::fromUtf8(ef.readAll()), o["exported"].toString());
     expectStep(app, mgr, steps[i++].toObject(), msgs, tmp.path());
     mgr->importBookmarks(kDir + "/import.txt");
