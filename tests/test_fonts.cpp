@@ -90,3 +90,61 @@ TEST(Fonts, TextToGeometryLikeTheOriginal) {
         }
     }
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+TEST(FontsFixed, CurvesHolesKerningObliqueAndSizes) {
+    if (!FontParser::available()) GTEST_SKIP() << "sin FreeType";
+    auto load = [] {
+        FontParser p;
+        p.loadFonts(FontParser::fontFiles({kDir}));
+        return p;
+    };
+    auto area = [](const std::vector<Shape>& l) {
+        double a = 0;
+        for (const Shape& s : l) a += s.area();
+        return a;
+    };
+    auto width = [](const std::vector<Shape>& l) {
+        double lo = 1e9, hi = -1e9;
+        for (const Shape& s : l)
+            if (auto b = s.bounds()) {
+                lo = std::min(lo, b->xmin);
+                hi = std::max(hi, b->xmax);
+            }
+        return hi - lo;
+    };
+    FontParser orig;
+    std::optional<std::vector<Shape>> oO, oAV, oSize;
+    {
+        OriginalBugsScope o(true);
+        orig = load();
+        oO = orig.fontToGeometry("o", "DejaVu Sans", "regular", 20, true);
+        oAV = orig.fontToGeometry("AV", "DejaVu Sans", "regular", 20, true);
+        oSize = orig.fontToGeometry("o", "DejaVu Sans", "regular", 20.7, true);
+    }
+    OriginalBugsScope fixed(false);
+    const FontParser fp = load();
+    // La cursiva "Oblique" queda con el nombre de la familia.
+    EXPECT_TRUE(fp.italic.count("DejaVu Sans"));
+    EXPECT_FALSE(orig.italic.count("DejaVu Sans"));
+    // "o": un solo polígono con su agujero, con las curvas aplanadas (más puntos), y menos área que los dos contornos.
+    const auto o = fp.fontToGeometry("o", "DejaVu Sans", "regular", 20, true);
+    ASSERT_TRUE(o && oO);
+    ASSERT_EQ(o->size(), 1u);
+    EXPECT_EQ((*o)[0].interiors().size(), 1u);
+    EXPECT_EQ(oO->size(), 2u);
+    EXPECT_LT(area(*o), area(*oO));
+    EXPECT_GT((*o)[0].coordinates().size() + (*o)[0].interiors()[0].coordinates().size(),
+              (*oO)[0].coordinates().size() + (*oO)[1].coordinates().size());
+    // Kerning de "AV": más angosto que sin kerning (el original lo buscaba entre otras letras).
+    const auto av = fp.fontToGeometry("AV", "DejaVu Sans", "regular", 20, true);
+    ASSERT_TRUE(av && oAV);
+    EXPECT_LT(width(*av), width(*oAV) - 0.01);
+    // Un tamaño con decimales se usa tal cual (el original lo trunca).
+    const auto big = fp.fontToGeometry("o", "DejaVu Sans", "regular", 20.7, true);
+    ASSERT_TRUE(big && oSize);
+    EXPECT_GT(width(*big), width(*o) + 0.01);
+    EXPECT_NEAR(width(*oSize), width(*oO), 1e-9);
+}

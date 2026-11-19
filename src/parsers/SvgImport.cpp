@@ -1,11 +1,14 @@
 #include "core/OriginalBugs.h"
 #include "parsers/SvgImport.h"
 
+#include "parsers/FontParser.h"
+
 #include <algorithm>
 #include <cctype>
 #include <cmath>
 #include <cstdlib>
 #include <functional>
+#include <map>
 #include <regex>
 #include <stdexcept>
 #include <utility>
@@ -743,11 +746,109 @@ bool tspanWithoutStyle(const XmlElement& n) {
     return false;
 }
 
+thread_local const FontParser* tFonts = nullptr;  ///< Las fuentes de la importación en curso (o ninguna).
+thread_local int tTextsSkipped = 0;               ///< Textos que no se pudieron escribir.
+
+/// Las propiedades de estilo de un elemento: los atributos de presentación y, encima, las de `style`.
+std::map<std::string, std::string> styleOf(const XmlElement& e, std::map<std::string, std::string> inherited) {
+    for (const char* k : {"font-family", "font-size", "font-weight", "font-style"})
+        if (auto v = e.get(k)) inherited[k] = *v;
+    if (auto st = e.get("style")) {
+        std::string item;
+        auto flush = [&] {
+            const auto c = item.find(':');
+            if (c != std::string::npos) {
+                auto trim = [](std::string x) {
+                    while (!x.empty() && std::isspace(static_cast<unsigned char>(x.front()))) x.erase(0, 1);
+                    while (!x.empty() && std::isspace(static_cast<unsigned char>(x.back()))) x.pop_back();
+                    return x;
+                };
+                inherited[trim(item.substr(0, c))] = trim(item.substr(c + 1));
+            }
+            item.clear();
+        };
+        for (char ch : *st + ";") {
+            if (ch == ';') flush();
+            else item += ch;
+        }
+    }
+    return inherited;
+}
+
+/// Un texto escrito con su fuente, en las coordenadas del SVG (Y hacia abajo), corrido a (x, y) y con el factor.
+ShapeList textShapes(const std::string& text, const std::map<std::string, std::string>& style, double x, double y,
+                     double factor, double& endX) {
+    endX = x;
+    if (text.empty()) return {};
+    std::string family = style.count("font-family") ? style.at("font-family") : std::string("sans-serif");
+    family = family.substr(0, family.find(','));
+    family.erase(std::remove(family.begin(), family.end(), '\''), family.end());
+    family.erase(std::remove(family.begin(), family.end(), '"'), family.end());
+    while (!family.empty() && family.front() == ' ') family.erase(0, 1);
+    while (!family.empty() && family.back() == ' ') family.pop_back();
+    const std::string weight = style.count("font-weight") ? style.at("font-weight") : "";
+    const std::string fstyle = style.count("font-style") ? style.at("font-style") : "";
+    const bool bold = weight == "bold" || weight == "bolder" || std::atoi(weight.c_str()) >= 600;
+    const bool italic = fstyle == "italic" || fstyle == "oblique";
+    const std::string type = bold && italic ? "bi" : bold ? "bold" : italic ? "italic" : "regular";
+    const double em = (style.count("font-size") ? svgLength(style.at("font-size")) : 16.0) * factor;  // en mm
+    // FontParser: el em de un tamaño S es S * 64 * k mm (k = 0,0080188, el factor de FlatCAM para mm).
+    const double pt = em / (64 * 0.0080187969924812);
+    std::optional<std::vector<Shape>> g;
+    if (tFonts && FontParser::available() && pt > 0) {
+        try {
+            g = tFonts->fontToGeometry(text, family, type, pt, true);
+            if (!g && type != "regular") g = tFonts->fontToGeometry(text, family, "regular", pt, true);
+        } catch (const std::exception&) {
+            g.reset();
+        }
+    }
+    if (!g) {
+        ++tTextsSkipped;
+        return {};
+    }
+    ShapeList out;
+    double right = 0;
+    for (const Shape& s : *g) {
+        if (auto b = s.bounds()) right = std::max(right, b->xmax);
+        out.push_back(s.scale(1.0, -1.0, Point2D{0, 0}).translate(x * factor, y * factor));
+    }
+    endX = x + right / factor;
+    return out;
+}
+
+/// Un elemento `text` con su texto y sus `tspan` (cada uno en su x, y o a continuación del anterior).
+ShapeList svgText(const XmlElement& node) {
+    ShapeList out;
+    const auto style = styleOf(node, {});
+    double x = node.get("x") ? svgLength(node.get("x")) : 0, y = node.get("y") ? svgLength(node.get("y")) : 0;
+    double end = x;
+    const double factor = 1.0;  // el factor se aplica afuera
+    ShapeList t = textShapes(node.text, style, x, y, factor, end);
+    out.insert(out.end(), t.begin(), t.end());
+    for (const XmlElement& c : node.children) {
+        if (c.tag != "tspan") continue;
+        const auto st = styleOf(c, style);
+        const double cx = c.get("x") ? svgLength(c.get("x")) : end;
+        const double cy = c.get("y") ? svgLength(c.get("y")) : y;
+        ShapeList u = textShapes(c.text, st, cx, cy, factor, end);
+        y = cy;
+        out.insert(out.end(), u.begin(), u.end());
+    }
+    return out;
+}
+
 Geos getsvggeo(const XmlElement& node, const XmlElement& root, int res, double factor) {
     Geos geo = ShapeList{};
     const std::string& kind = node.tag;
     if (kind == "defs" && !reproduceOriginalBugs()) {
         geo = ShapeList{};  // corregido: lo que está en defs solo se dibuja si un use lo pide
+    } else if (kind == "text" && !reproduceOriginalBugs()) {
+        // Corregido: los textos con su fuente (el original nunca los importa). Se arman en unidades del SVG y se
+        // escalan con el factor del viewBox.
+        ShapeList t = svgText(node);
+        for (Shape& s : t) s = s.scale(factor, factor, Point2D{0, 0});
+        geo = t;
     } else if (!node.children.empty()) {
         for (const XmlElement& child : node.children)
             if (Geos sub = getsvggeo(child, root, res, factor)) geo->insert(geo->end(), sub->begin(), sub->end());
@@ -842,8 +943,13 @@ Geos getsvggeo(const XmlElement& node, const XmlElement& root, int res, double f
 }
 
 /// Lo común a las dos importaciones: leer, el factor del viewBox, las figuras y el reflejo en Y corrido el alto.
-SvgImportResult readSvg(const std::string& text, int res, ShapeList& geos) {
+SvgImportResult readSvg(const std::string& text, int res, ShapeList& geos, const FontParser* fonts) {
     SvgImportResult r;
+    tFonts = fonts;
+    tTextsSkipped = 0;
+    struct Reset {
+        ~Reset() { tFonts = nullptr; }
+    } reset;
     const auto root = parseXml(text, r.error);
     if (!root) return r;
     try {
@@ -867,6 +973,7 @@ SvgImportResult readSvg(const std::string& text, int res, ShapeList& geos) {
         if (!g) throw SvgError("'NoneType' object is not iterable");
         for (const Shape& s : *g) geos.push_back(s.scale(1.0, -1.0, Point2D{0, 0}).translate(0, h));
         r.textWithoutStyle = tspanWithoutStyle(*root);
+        r.textsSkipped = tTextsSkipped;
         r.ok = true;
     } catch (const std::exception& e) {
         r.error = e.what();
@@ -876,16 +983,16 @@ SvgImportResult readSvg(const std::string& text, int res, ShapeList& geos) {
 
 }  // namespace
 
-SvgImportResult importSvgShapes(const std::string& svgText, int circleSteps) {
+SvgImportResult importSvgShapes(const std::string& svgText, int circleSteps, const FontParser* fonts) {
     ShapeList geos;
-    SvgImportResult r = readSvg(svgText, circleSteps, geos);
+    SvgImportResult r = readSvg(svgText, circleSteps, geos, fonts);
     if (r.ok) r.geometry = geos;
     return r;
 }
 
-SvgImportResult importSvgAsGeometry(const std::string& svgText, int circleSteps) {
+SvgImportResult importSvgAsGeometry(const std::string& svgText, int circleSteps, const FontParser* fonts) {
     ShapeList geos;
-    SvgImportResult r = readSvg(svgText, circleSteps, geos);
+    SvgImportResult r = readSvg(svgText, circleSteps, geos, fonts);
     if (!r.ok) return r;
     if (r.textWithoutStyle && reproduceOriginalBugs()) {
         // Geometry.import_svg llama a getsvgtext (Gerber.import_svg no).
@@ -917,9 +1024,9 @@ SvgImportResult importSvgAsGeometry(const std::string& svgText, int circleSteps)
     return r;
 }
 
-SvgImportResult importSvgAsGerber(const std::string& svgText, int circleSteps) {
+SvgImportResult importSvgAsGerber(const std::string& svgText, int circleSteps, const FontParser* fonts) {
     ShapeList geos;
-    SvgImportResult r = readSvg(svgText, circleSteps, geos);
+    SvgImportResult r = readSvg(svgText, circleSteps, geos, fonts);
     if (!r.ok) return r;
     auto fail = [&r] {
         r.ok = false;

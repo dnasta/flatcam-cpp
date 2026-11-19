@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/editors/GeoEditor.h"
 
 #include <QApplication>
@@ -428,21 +429,24 @@ GeoTextTool::GeoTextTool(GeoEditor* ed, QWidget* parent) : GeoTextToolUIBase(par
 }
 
 void GeoTextTool::onApply() {
-    // El original elige 'bold' antes que 'bi': con negrita y cursiva sale negrita.
-    const char* type = fontBold ? "bold" : fontItalic ? "italic" : "regular";
+    // El original elige 'bold' antes que 'bi': con negrita y cursiva sale negrita (corregido).
+    const bool fixed = !reproduceOriginalBugs();
+    const bool bi = fixed && fontBold && fontItalic;
+    const char* type = bi ? "bi" : fontBold ? "bold" : fontItalic ? "italic" : "regular";
     bool ok = false;
-    const int size = font_size_cb->currentText().toInt(&ok);  // int(font_size)
+    // int(font_size): con "10.5" falla y no hace nada (corregido: vale con decimales).
+    const double size = fixed ? font_size_cb->currentText().toDouble(&ok) : font_size_cb->currentText().toInt(&ok);
     const QString text = text_input_entry->toPlainText();
     FontParser& fp = fonts();
     const std::string name = fontName.toStdString();
-    const auto& dict = fontBold ? fp.bold : fontItalic ? fp.italic : fp.regular;
+    const auto& dict = bi ? fp.boldItalic : fontBold ? fp.bold : fontItalic ? fp.italic : fp.regular;
     if (!dict.count(name) || !FontParser::available()) {
         ed_->app()->ui()->inform("[ERROR_NOTCL] " + tr_("Font not supported, try another one."));
         textPath.clear();
         textFailed = true;
         return;
     }
-    if (!ok) return;  // ValueError: text_path queda como estaba
+    if (!ok || (fixed && size <= 0)) return;  // ValueError: text_path queda como estaba
     try {
         const auto r = fp.fontToGeometry(text.toStdString(), name, type, size, defStr("units").toUpper() == "MM");
         if (!r) return;
