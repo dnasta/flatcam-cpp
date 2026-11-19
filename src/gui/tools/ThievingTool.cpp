@@ -1,5 +1,6 @@
 #include <algorithm>
 
+#include "core/OriginalBugs.h"
 #include "gui/tools/ThievingTool.h"
 
 #include "cam/PyNumber.h"
@@ -122,7 +123,7 @@ void ThievingTool::addCopperThieving() {
                 grb_ = app_->collection()->byName(name);
                 if (grb_) copperThievingRun(zones, nullptr);
             },
-            tr_("Click the end point of the filling area."), false);
+            tr_("Click the end point of the filling area."), !reproduceOriginalBugs());  // corregido: Escape cancela
     } else {
         FlatCAMObj* refObj = app_->collection()->byName(ref_combo->currentText());
         if (!refObj) {
@@ -231,14 +232,15 @@ FlatCAMObj* ThievingTool::addPlatingMask() {
                                       thieving_, robber_, robberLine_, rbThickness_);
     if (!r.ok) return nullptr;  // el original falla en su hilo (solo queda en el registro)
     plated_area_entry->setValue(QString::fromStdString(pyFloatRepr(r.platedArea)));
-    // name.rpartition('.'): sin punto, el nombre queda como extensión.
+    // name.rpartition('.'): sin punto, el nombre queda como extensión (corregido: "<nombre>_plating_mask").
     const QString name = sm->name();
     const int dot = name.lastIndexOf('.');
-    const QString outname = dot < 0 ? QString("_plating_mask.%1").arg(name)
+    const QString outname = dot < 0 ? (reproduceOriginalBugs() ? QString("_plating_mask.%1").arg(name)
+                                                               : QString("%1_plating_mask").arg(name))
                                     : QString("%1_plating_mask.%2").arg(name.left(dot), name.mid(dot + 1));
     lastCreated_ = createGerber(sm, outname, std::move(r.solid), std::move(r.follow), std::move(r.apertures), r.added);
     // file_opened.emit("gerber", outname): registra como archivo reciente el nombre del objeto (no es un archivo).
-    app_->registerRecent("gerber", outname);
+    if (reproduceOriginalBugs()) app_->registerRecent("gerber", outname);  // corregido: no es un archivo
     onExit();
     ui->inform("[success] " + tr_("Generating Pattern Plating Mask done."));
     return lastCreated_;
