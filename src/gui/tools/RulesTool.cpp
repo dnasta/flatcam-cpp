@@ -1,5 +1,6 @@
 #include <tuple>
 
+#include "core/OriginalBugs.h"
 #include "gui/QtCompat.h"
 #include "gui/tools/RulesTool.h"
 
@@ -83,18 +84,48 @@ FlatCAMObj* RulesTool::execute() {
         if (use(copper_t_cb, copper_t_object)) if (auto g = gerber(copper_t_object)) l.push_back(*g);
         if (use(copper_b_cb, copper_b_object)) if (auto g = gerber(copper_b_object)) l.push_back(*g);
         auto r = rulesTracesSize(l, trace_size_entry->value());
-        // El informe solo usa el primer elemento de cada regla.
-        RulesResult first;
-        first.title = tr_("Trace Size").toStdString();
-        if (!r.empty()) {
-            first = r.front();
+        if (!reproduceOriginalBugs() && !r.empty()) {
+            // Corregido: una entrada por cada cobre (el informe del original solo usa la primera).
+            for (RulesResult& x : r) {
+                x.title = tr_("Trace Size").toStdString();
+                res.push_back(x);
+            }
+        } else {
+            // El informe solo usa el primer elemento de cada regla.
+            RulesResult first;
             first.title = tr_("Trace Size").toStdString();
+            if (!r.empty()) {
+                first = r.front();
+                first.title = tr_("Trace Size").toStdString();
+            }
+            res.push_back(first);
         }
-        res.push_back(first);
     }
     // "Cobre a cobre" y "Serigrafía a serigrafía" leen self.copper_t_cb / self.ss_t_cb, que no existen: el original
-    // falla en su hilo y no hay informe (la regla de la máscara depende de la de serigrafía).
-    if (clearance_copper2copper_cb->isChecked() || clearance_silk2silk_cb->isChecked()) return nullptr;
+    // falla en su hilo y no hay informe (la regla de la máscara depende de la de serigrafía). Corregido: cada capa
+    // elegida con `check_inside_gerber_clearance`.
+    if (reproduceOriginalBugs() && (clearance_copper2copper_cb->isChecked() || clearance_silk2silk_cb->isChecked()))
+        return nullptr;
+    auto inside = [&](FCCheckBox* rule, FCDoubleSpinner* value, const QString& name, FCCheckBox* tcb, FCComboBox* tobj,
+                      FCCheckBox* bcb, FCComboBox* bobj) {
+        if (!rule->isChecked()) return true;
+        if (!tcb->isChecked() && !bcb->isChecked()) {
+            ui->inform("[ERROR_NOTCL] " + tr_(name.toUtf8().constData()) + ". " +
+                       tr_("At least one Gerber object has to be selected for this rule but none is selected."));
+            return false;
+        }
+        if (use(tcb, tobj))
+            if (auto g = gerber(tobj))
+                res.push_back(rulesInsideClearance(*g, value->value(), tr_(("TOP -> " + name).toUtf8().constData()).toStdString()));
+        if (use(bcb, bobj))
+            if (auto g = gerber(bobj))
+                res.push_back(
+                    rulesInsideClearance(*g, value->value(), tr_(("BOTTOM -> " + name).toUtf8().constData()).toStdString()));
+        return true;
+    };
+    if (!inside(clearance_copper2copper_cb, clearance_copper2copper_entry, "Copper to Copper clearance", copper_t_cb,
+                copper_t_object, copper_b_cb, copper_b_object))
+        return nullptr;
     if (clearance_copper2ol_cb->isChecked() && out_cb->isChecked()) {
         std::vector<RulesGerber> objs;
         if (use(copper_t_cb, copper_t_object)) if (auto g = gerber(copper_t_object)) objs.push_back(*g);
@@ -108,6 +139,9 @@ FlatCAMObj* RulesTool::execute() {
         objs.push_back(*outl);
         res.push_back(rulesGerberClearance(objs, clearance_copper2ol_entry->value(), tr_("Copper to Outline clearance").toStdString()));
     }
+    if (!inside(clearance_silk2silk_cb, clearance_silk2silk_entry, "Silk to Silk clearance", ss_t_cb, ss_t_object,
+                ss_b_cb, ss_b_object))
+        return nullptr;
     if (clearance_silk2sm_cb->isChecked()) {
         auto st = use(ss_t_cb, ss_t_object) ? gerber(ss_t_object) : std::nullopt;
         auto sb = use(ss_b_cb, ss_b_object) ? gerber(ss_b_object) : std::nullopt;
@@ -138,8 +172,10 @@ FlatCAMObj* RulesTool::execute() {
             return nullptr;
         }
         objs.push_back(*outl);
-        // Como el original, con la separación de cobre a contorno.
-        res.push_back(rulesGerberClearance(objs, clearance_copper2ol_entry->value(), tr_("Silk to Outline Clearance").toStdString()));
+        // El original usa la separación de cobre a contorno (corregido: la de serigrafía a contorno).
+        res.push_back(rulesGerberClearance(
+            objs, (reproduceOriginalBugs() ? clearance_copper2ol_entry : clearance_silk2ol_entry)->value(),
+            tr_("Silk to Outline Clearance").toStdString()));
     }
     if (ring_integrity_cb->isChecked()) {
         auto t = use(copper_t_cb, copper_t_object) ? gerber(copper_t_object) : std::nullopt;
@@ -163,11 +199,18 @@ FlatCAMObj* RulesTool::execute() {
     }
     if (drill_size_cb->isChecked()) {
         auto r = rulesHolesSize(excs, drill_size_entry->value());
+        if (!reproduceOriginalBugs() && !r.empty()) {
+            for (RulesResult& x : r) {  // corregido: una entrada por cada Excellon
+                x.hasDias = true;
+                x.title = tr_("Hole Size").toStdString();
+                res.push_back(x);
+            }
+        }
         RulesResult first;
         first.hasDias = true;
         if (!r.empty()) first = r.front();
         first.title = tr_("Hole Size").toStdString();
-        res.push_back(first);
+        if (reproduceOriginalBugs() || r.empty()) res.push_back(first);
     }
     const auto txt = rulesReport(res, appDecimals(),
                                  {tr_("STATUS").toStdString(), tr_("FAILED").toStdString(), tr_("PASSED").toStdString(),

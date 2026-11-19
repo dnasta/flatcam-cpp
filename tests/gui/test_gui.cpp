@@ -4043,3 +4043,37 @@ TEST(GuiFixed, QRCodeCanBeCancelledAndIsUnited) {
     ASSERT_TRUE(g.apertures().count("25"));
     EXPECT_NEAR(g.apertures().at("25").width, 0.3, 1e-12);  // el módulo, sin el 1 %
 }
+
+TEST(GuiFixed, RulesCopperToCopperAndSilkToOutline) {
+    flatcam::OriginalBugsScope fixed(false);
+    App app;
+    FlatCAMObj* cu = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-B_Cu.gbr");
+    FlatCAMObj* edge = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-Edge_Cuts.gbr");
+    ASSERT_TRUE(cu && edge);
+    QKeyEvent alt(QEvent::KeyPress, Qt::Key_R, Qt::AltModifier);
+    QApplication::sendEvent(app.ui(), &alt);
+    RulesTool* t = app.rulesTool;
+    t->all_cb->setChecked(true);
+    t->all_cb->setChecked(false);
+    t->copper_t_cb->setChecked(true);
+    t->copper_t_object->setValue(cu->name());
+    t->clearance_copper2copper_cb->setChecked(true);
+    t->clearance_copper2copper_entry->setValue(0.3);
+    FlatCAMObj* doc = t->execute();  // el original falla
+    ASSERT_NE(doc, nullptr);
+    const QString txt = static_cast<DocumentObject*>(doc)->sourceFile();
+    EXPECT_TRUE(txt.contains(tr_("TOP -> Copper to Copper clearance").toUpper())) << txt.toStdString();
+    // Serigrafía a contorno usa su propio valor: con 0 no hay violaciones aunque la de cobre a contorno sea enorme.
+    t->clearance_copper2copper_cb->setChecked(false);
+    t->ss_t_cb->setChecked(true);
+    t->ss_t_object->setValue(cu->name());
+    t->out_cb->setChecked(true);
+    t->outline_object->setValue(edge->name());
+    t->clearance_silk2ol_cb->setChecked(true);
+    t->clearance_silk2ol_entry->setValue(0.0);
+    t->clearance_copper2ol_entry->setValue(100.0);
+    FlatCAMObj* doc2 = t->execute();
+    ASSERT_NE(doc2, nullptr);
+    EXPECT_TRUE(static_cast<DocumentObject*>(doc2)->sourceFile().contains(tr_("PASSED")))
+        << static_cast<DocumentObject*>(doc2)->sourceFile().toStdString();
+}
