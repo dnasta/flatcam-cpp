@@ -108,6 +108,18 @@ public:
     const QString& sourceFile() const { return sourceFile_; }
     /** @brief Cambia `source_file`. @param s Texto. */
     void setSourceFile(const QString& s) { sourceFile_ = s; }
+    /**
+     * @brief Lo guardado desde el editor de G-code, que (con los errores del original corregidos) es lo que se exporta y
+     * se guarda en el proyecto. @return El texto, o vacío si no se editó.
+     */
+    const std::optional<QString>& editedSource() const { return editedSource_; }
+    /** @brief Fija lo editado (también `source_file`). @param s Texto. */
+    /** @brief Sin ningún fragmento al componer (la casilla "Usar fragmentos" apagada). @param on Verdadero: sin. */
+    void setNoSnippets(bool on) const { noSnippets_ = on; }
+    void setEditedSource(const QString& s) {
+        editedSource_ = s;
+        sourceFile_ = s;
+    }
     /** @brief La cabecera con que se armó `source_file` (`gc_header`). @return Texto. */
     const std::string& sourceHeader() const { return sourceHeader_; }
     /** @brief `prepend_snippet`. @return Texto. */
@@ -150,6 +162,8 @@ private:
     std::vector<CncToolRow> tools_;
     std::optional<std::string> storedHeader_;
     QString sourceFile_;
+    std::optional<QString> editedSource_;
+    mutable bool noSnippets_{false};  ///< Exportar sin ningún fragmento (la casilla apagada, corregido).
     std::string sourceHeader_;
     QString prependSnippet_;
     QString appendSnippet_;

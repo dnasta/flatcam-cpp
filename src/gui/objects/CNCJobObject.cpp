@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/Preferences.h"
 #include "gui/objects/CNCJobObject.h"
 
@@ -70,8 +71,8 @@ std::string CNCJobObject::exportText(std::string preamble, std::string postamble
 
 std::string CNCJobObject::compose(const std::string& header, std::string preamble, std::string postamble) const {
     // export_gcode.
-    if (preamble.empty()) preamble = defStr("cncjob_prepend").toStdString();
-    if (postamble.empty()) postamble = defStr("cncjob_append").toStdString();
+    if (preamble.empty() && !noSnippets_) preamble = defStr("cncjob_prepend").toStdString();
+    if (postamble.empty() && !noSnippets_) postamble = defStr("cncjob_append").toStdString();
     const std::string pp = preprocessorName();
     const bool drilling = isDrilling();
     // include_header = False solo en Roland_MDX_20 e ISEL_ICP_CNC.
@@ -79,8 +80,8 @@ std::string CNCJobObject::compose(const std::string& header, std::string preambl
     std::string gcode = job_->gcode();
     if (!includeHeader) {
         // Un taladrado es multitool y esta rama solo suma los G-code de cnc_tools (vacío en un taladrado): sale sin
-        // cuerpo, como el original.
-        if (drilling) gcode.clear();
+        // cuerpo, como el original (corregido: con el G-code del taladrado).
+        if (drilling && reproduceOriginalBugs()) gcode.clear();
         return preamble + "\n" + gcode + "\n" + postamble;
     }
     const std::string end = defBool("cncjob_footer") ? "M02" : "";
@@ -111,6 +112,13 @@ std::string CNCJobObject::compose(const std::string& header, std::string preambl
 }
 
 void CNCJobObject::initSourceFile() {
+    if (editedSource_ && !reproduceOriginalBugs()) {
+        prependSnippet_ = defStr("cncjob_prepend");
+        appendSnippet_ = defStr("cncjob_append");
+        sourceHeader_ = headerText();
+        sourceFile_ = *editedSource_;  // lo editado, leído de un proyecto
+        return;
+    }
     prependSnippet_ = defStr("cncjob_prepend");
     appendSnippet_ = defStr("cncjob_append");
     sourceHeader_ = headerText();
@@ -130,7 +138,9 @@ bool CNCJobObject::saveTo(const QString& filename, const std::string& preamble, 
     QIODevice::OpenMode mode = QIODevice::WriteOnly | QIODevice::Truncate;
     if (!crlf) mode |= QIODevice::Text;
     if (!f.open(mode)) return false;
-    QString text = QString::fromStdString(exportText(preamble, postamble));
+    // Corregido: lo guardado desde el editor de G-code es lo que se exporta (el original lo descarta).
+    QString text = editedSource_ && !reproduceOriginalBugs() ? *editedSource_
+                                                             : QString::fromStdString(exportText(preamble, postamble));
     if (crlf) text.replace("\n", "\r\n");
     QTextStream out(&f);
     out << text;

@@ -900,11 +900,16 @@ bool App::exportGcode(CNCJobObject* job, QString filename) {
     // export_gcode_handler: los fragmentos del objeto solo con "Usar fragmentos de código CNC" (si quedan vacíos,
     // export_gcode igual usa los de las Preferencias).
     std::string preamble, postamble;
-    if (auto* cui = qobject_cast<CNCObjectUI*>(job->builtUi()); cui && cui->snippets_cb->isChecked()) {
+    const auto* cui = qobject_cast<CNCObjectUI*>(job->builtUi());
+    if (cui && cui->snippets_cb->isChecked()) {
         preamble = job->prependSnippet().toStdString();
         postamble = job->appendSnippet().toStdString();
     }
-    if (!job->saveTo(filename, preamble, postamble)) {
+    // Corregido: con la casilla apagada no se usa ningún fragmento (el original usa los de las Preferencias).
+    job->setNoSnippets(!reproduceOriginalBugs() && cui && !cui->snippets_cb->isChecked());
+    const bool saved = job->saveTo(filename, preamble, postamble);
+    job->setNoSnippets(false);
+    if (!saved) {
         ui_->inform(QString("[ERROR_NOTCL] %1: %2").arg(tr_("Failed to open file"), filename));
         return false;
     }
@@ -914,6 +919,12 @@ bool App::exportGcode(CNCJobObject* job, QString filename) {
 }
 
 AppTextEditor* App::reviewGcode(CNCJobObject* job) {
+    // Corregido: una sola pestaña de revisión (el original agrega otra en cada clic).
+    if (!reproduceOriginalBugs())
+        for (int i = 0; i < ui_->plot_tab_area->count(); ++i)
+            if (ui_->plot_tab_area->widget(i)->objectName() == "code_editor_tab" &&
+                ui_->plot_tab_area->tabText(i) == tr_("Code Review"))
+                ui_->plot_tab_area->closeTab(i--);
     auto* ed = new AppTextEditor(this, true);
     ui_->plot_tab_area->addTab(ed, tr_("Code Review"));
     ed->setObjectName("code_editor_tab");
