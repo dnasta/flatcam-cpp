@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "tools/CornerMarkers.h"
 
 #include <algorithm>
@@ -42,19 +43,14 @@ CornersGerber addCornerMarkers(const Gerber& g, const ShapeList& lines, double t
     if (found) {
         apid = *found;
     } else {
-        // str(int(max(ap_keys)) + 1): el máximo como texto ("9" > "10").
-        if (r.apertures.empty()) {
-            apid = "10";
-        } else {
-            std::string mx;
-            for (const auto& [k, v] : r.apertures) mx = std::max(mx, k);
-            apid = std::to_string(std::stoi(mx) + 1);
-        }
+        apid = Gerber::newApertureId(r.apertures);  // str(int(max(ap_keys)) + 1)
         Aperture ap;
         ap.type = "C";
         ap.size = thickness;
         r.apertures[apid] = ap;
-        join = JoinStyle::Bevel;
+        // El original engrosa con biseles en una apertura nueva y con ingletes en una existente (corregido: siempre
+        // ingletes, que es lo que dibuja la marca).
+        if (reproduceOriginalBugs()) join = JoinStyle::Bevel;
     }
     Aperture& ap = r.apertures[apid];
     ap.hasGeometry = true;

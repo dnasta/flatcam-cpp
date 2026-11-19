@@ -3967,3 +3967,30 @@ TEST(GuiPrintPdf, PrintsTheSelectedObjectsLikeTheOriginal) {
     ASSERT_TRUE(pdf.open(QIODevice::ReadOnly));
     EXPECT_TRUE(pdf.read(5) == "%PDF-");
 }
+
+TEST(GuiFixed, PanelizeOptimizationDefaultAndGeometryAsGerber) {
+    flatcam::OriginalBugsScope fixed(false);
+    App app;
+    FlatCAMObj* edge =
+        app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-Edge_Cuts.gbr");
+    ASSERT_NE(edge, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(edge));
+    app.ui()->menueditconvert_any2geo->trigger();
+    FlatCAMObj* geo = app.collection()->byName(edge->name() + "_conv");
+    ASSERT_NE(geo, nullptr);
+    app.preferences()->set("tools_panelize_optimization", flatcam::JsonValue::boolean(false));
+    PanelizeTool* t = app.panelizeTool;
+    app.ui()->panelize_btn->trigger();
+    EXPECT_FALSE(t->optimization_cb->isChecked());  // el valor de las preferencias
+    t->type_obj_combo->setCurrentIndex(2);  // Geometría
+    t->object_combo->setValue(geo->name());
+    t->panel_type_radio->setValue(QString("gerber"));
+    t->columns->setValue(2);
+    FlatCAMObj* panel = t->panelize();
+    ASSERT_NE(panel, nullptr);
+    ASSERT_EQ(panel->kind(), ObjectKind::Gerber);
+    const flatcam::Gerber& g = static_cast<GerberObject*>(panel)->gerber();
+    EXPECT_FALSE(g.solidGeometry().empty());  // el original lo deja vacío
+    ASSERT_TRUE(g.apertures().count("0"));
+    EXPECT_GT(panel->bounds().width(), 2 * edge->bounds().width() - 1e-6);
+}

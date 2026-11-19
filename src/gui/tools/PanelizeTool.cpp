@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/tools/PanelizeTool.h"
 
 #include "gui/App.h"
@@ -38,8 +39,9 @@ void PanelizeTool::setToolUi() {
     spacing_rows->setValue(defNum("tools_panelize_spacing_rows"));
     rows->setValue(defInt("tools_panelize_rows"));
     columns->setValue(defInt("tools_panelize_columns"));
-    // `x if x else True`: aunque las preferencias digan False queda en True (error del original que se reproduce).
-    optimization_cb->setChecked(true);
+    // `x if x else True`: aunque las preferencias digan False queda en True (error del original; corregido: el valor de
+    // las preferencias).
+    optimization_cb->setChecked(reproduceOriginalBugs() || defBool("tools_panelize_optimization"));
     constrain_cb->setChecked(defBool("tools_panelize_constrain"));
     x_width_entry->setValue(defNum("tools_panelize_constrainx"));
     y_height_entry->setValue(defNum("tools_panelize_constrainy"));
@@ -90,7 +92,9 @@ FlatCAMObj* PanelizeTool::panelize() {
         return nullptr;
     }
     FlatCAMObj* box = app_->collection()->byName(box_combo->currentText());
-    if (!box) {
+    // El original avisa "No object Box" aunque la referencia sea la caja del propio objeto (corregido: solo con la
+    // referencia "objeto").
+    if (!box && (reproduceOriginalBugs() || reference_radio->value().toString() != "bbox")) {
         app_->ui()->inform(QString("[WARNING_NOTCL] %1: %2").arg(tr_("No object Box. Using instead"), src->name()));
         reference_radio->setValue(QString("bbox"));
     }
@@ -124,9 +128,31 @@ FlatCAMObj* PanelizeTool::panelize() {
         if (src->kind() == ObjectKind::Gerber) {
             const Gerber& g = static_cast<GerberObject*>(src)->gerber();
             panelizeGerber(g, l, solid, aps);
+        } else if (src->kind() == ObjectKind::Geometry && !reproduceOriginalBugs()) {
+            // Corregido: una Geometría como Gerber lleva sus figuras (las líneas engrosadas con el diámetro de su
+            // herramienta) en la región "0".
+            Aperture reg;
+            reg.type = "REG";
+            reg.size = 0.0;
+            reg.hasGeometry = true;
+            for (const auto& [id, t] : static_cast<GeometryObject*>(src)->tools()) {
+                for (const Shape& sh : panelizeShapes(t.solidGeometry, l)) {
+                    const bool area = sh.type() == ShapeType::Polygon || sh.type() == ShapeType::MultiPolygon;
+                    const Shape solidShape = area ? sh : sh.buffer(t.tooldia / 2.0);
+                    if (solidShape.isEmpty()) continue;
+                    ApertureGeometry el;
+                    el.solid = solidShape;
+                    el.follow = sh;
+                    reg.geometry.push_back(el);
+                    solid.push_back(solidShape);
+                }
+            }
+            const Shape u = Shape::unaryUnion(solid);
+            solid = u.parts().empty() ? (u.isEmpty() ? ShapeList{} : ShapeList{u}) : u.parts();
+            aps["0"] = reg;
         }
         // Una Geometría como Gerber: el original solo copia las herramientas (que un Gerber no tiene) y el Gerber
-        // queda vacío; se reproduce.
+        // queda vacío (corregido arriba).
         auto g = std::make_unique<Gerber>();
         const Gerber* sg = src->kind() == ObjectKind::Gerber ? &static_cast<GerberObject*>(src)->gerber() : nullptr;
         g->restore(std::move(solid), {}, std::move(aps), sg ? sg->intDigits() : 3, sg ? sg->fracDigits() : 4,

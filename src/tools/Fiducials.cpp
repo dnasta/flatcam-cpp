@@ -17,8 +17,7 @@ double roundPy(double v, int decimals) {
 
 /// str(int(max(ap_keys)) + 1), o "10" sin aperturas.
 std::string nextApertureId(const std::map<std::string, Aperture>& aps) {
-    if (aps.empty()) return "10";
-    return std::to_string(std::stoi(aps.rbegin()->first) + 1);
+    return Gerber::newApertureId(aps);
 }
 
 Shape square(double xc, double yc, double side) {
