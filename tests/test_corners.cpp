@@ -60,3 +60,33 @@ TEST(CornerMarkers, MatchesTheOriginal) {
         }
     }
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+TEST(CornerMarkersFixed, NewApertureIdAndMitreJoins) {
+    std::map<std::string, Aperture> aps;
+    aps["99"] = Aperture{};
+    aps["100"] = Aperture{};
+    {
+        OriginalBugsScope o(true);
+        EXPECT_EQ(Gerber::newApertureId(aps), "100");  // "99" > "100" como texto: repite una que ya existe
+    }
+    OriginalBugsScope fixed(false);
+    EXPECT_EQ(Gerber::newApertureId(aps), "101");
+    EXPECT_EQ(Gerber::newApertureId({}), "10");
+    std::map<std::string, Aperture> low;
+    low["0"] = Aperture{};
+    EXPECT_EQ(Gerber::newApertureId(low), "10");
+    // Una apertura nueva: las marcas con ingletes (el original, con biseles).
+    Gerber g;
+    ASSERT_TRUE(g.parseFile(std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-Edge_Cuts.gbr"));
+    const ShapeList lines = cornerLines(g.bounds(), CornerSelection{true, false, false, false}, false, 0.37, 3, 1);
+    const CornersGerber r = addCornerMarkers(g, lines, 0.37);
+    double mine = 0, want = 0;
+    for (const auto& [id, ap] : r.apertures)
+        if (ap.size && std::abs(*ap.size - 0.37) < 1e-12)
+            for (const auto& el : ap.geometry) mine += el.solid->area();
+    for (const Shape& l : lines) want += l.buffer(0.37 / 2, 64, JoinStyle::Mitre).area();
+    EXPECT_NEAR(mine, want, 1e-12);
+}

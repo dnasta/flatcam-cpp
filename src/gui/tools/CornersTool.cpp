@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/tools/CornersTool.h"
 
 #include "gui/App.h"
@@ -16,6 +17,10 @@ CornersTool::CornersTool(App* app, QWidget* parent) : CornersToolUIBase(parent),
         for (FCCheckBox* c : {bl_cb, br_cb, tl_cb, tr_cb}) c->setChecked(v);
     });
     connect(drill_button, &QPushButton::clicked, this, [this] { createDrills(); });
+    // "Reiniciar herramienta" no está conectado en el original (corregido).
+    connect(reset_button, &QPushButton::clicked, this, [this] {
+        if (!reproduceOriginalBugs()) setToolUi();
+    });
 }
 
 ToolInfo CornersTool::info() { return {tr_("Corner Markers Tool"), tr_("Corners Tool")}; }

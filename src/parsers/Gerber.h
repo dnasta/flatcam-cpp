@@ -156,6 +156,16 @@ public:
      */
     std::vector<std::string> apertureOrder() const;
 
+    /**
+     * @brief El número de una apertura nueva: `str(int(max(ap_keys)) + 1)` de las herramientas del original, o "10" sin
+     * aperturas. El original toma el máximo de los números **como texto** ("9" > "10", así que con 9 y 10 da "10", que
+     * ya existe); con los errores del original corregidos (`reproduceOriginalBugs()` falso) se usa el máximo numérico y
+     * nunca menos de 10.
+     * @param apertures Las aperturas que ya hay.
+     * @return El número nuevo.
+     */
+    static std::string newApertureId(const std::map<std::string, Aperture>& apertures);
+
     /** @brief Macros de apertura definidas en el archivo, por nombre. @return El mapa de macros. */
     const std::map<std::string, std::shared_ptr<ApertureMacro>>& apertureMacros() const { return macros_; }
 

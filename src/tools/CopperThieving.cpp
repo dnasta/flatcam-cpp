@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "tools/CopperThieving.h"
 
 #include <algorithm>
@@ -200,7 +201,7 @@ RobberBarResult robberBar(const Gerber& g, double margin, double thickness) {
     if (found) {
         id = *found;
     } else {
-        id = r.apertures.empty() ? "10" : std::to_string(std::stoi(maxKey(r.apertures)) + 1);
+        id = Gerber::newApertureId(r.apertures);
         Aperture ap;
         ap.type = "C";
         ap.size = thickness;
@@ -298,9 +299,11 @@ PlatingMaskResult platingMaskImpl(const Gerber& sm, double clearance, char choic
             ap.hasGeometry = true;
             ap.geometry.push_back({*robber, *robberLine, std::nullopt});
         } else {
-            if (r.apertures.empty()) return r;  // max() de una lista vacía: ValueError
-            const int maxId = std::stoi(maxKey(r.apertures));
-            const std::string id = maxId != 0 ? std::to_string(maxId + 1) : "10";
+            if (r.apertures.empty() && reproduceOriginalBugs()) return r;  // max() de una lista vacía: ValueError
+            // Corregido: el máximo numérico (el original compara los números como texto) y "10" sin aperturas.
+            const int maxId = r.apertures.empty() ? 0 : std::stoi(maxKey(r.apertures));
+            const std::string id = reproduceOriginalBugs() ? (maxId != 0 ? std::to_string(maxId + 1) : "10")
+                                                           : Gerber::newApertureId(r.apertures);
             Aperture ap;
             ap.type = "C";
             ap.size = rbThickness + clearance;

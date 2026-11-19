@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "parsers/Gerber.h"
 
 #include <algorithm>
@@ -1037,6 +1038,19 @@ void Gerber::replaceGeometry(ShapeList solid, std::map<std::string, Aperture> ap
     solidGeometry() = std::move(solid);
     apertures_ = std::move(apertures);
     apertureOrder_ = order;
+}
+
+std::string Gerber::newApertureId(const std::map<std::string, Aperture>& apertures) {
+    if (apertures.empty()) return "10";
+    if (reproduceOriginalBugs()) return std::to_string(std::stoi(apertures.rbegin()->first) + 1);
+    int mx = 9;
+    for (const auto& [k, v] : apertures) {
+        try {
+            mx = std::max(mx, std::stoi(k));
+        } catch (const std::exception&) {
+        }
+    }
+    return std::to_string(mx + 1);
 }
 
 std::vector<std::string> Gerber::apertureOrder() const {
