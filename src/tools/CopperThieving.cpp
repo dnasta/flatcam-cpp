@@ -30,6 +30,12 @@ void flatten(const Shape& s, ShapeList& out) {
 /// MultiPolygon(geo_list).buffer(0.0000001).buffer(-0.0000001), en partes.
 ShapeList bufferedUnion(const ShapeList& list) {
     if (list.empty()) return {};
+    if (!reproduceOriginalBugs()) {
+        // Corregido: la unión (engrosar un MultiPolygon de figuras superpuestas no las une del todo).
+        const Shape u = Shape::unaryUnion(list);
+        if (u.isEmpty()) return {};
+        return u.parts().empty() ? ShapeList{u} : u.parts();
+    }
     const Shape u = Shape::collection(list).buffer(0.0000001, kRes).buffer(-0.0000001, kRes);
     if (u.isEmpty()) return {};
     return u.parts();
@@ -61,7 +67,9 @@ ThievingResult copperThieving(const Gerber& g, const ThievingParams& p, const Sh
             }
             if (p.minimalBox) {
                 // Con un solo polígono, la caja "mínima" es el polígono (unary_union sin convex_hull).
-                const Shape env = solid.size() == 1 ? Shape::unaryUnion(solid) : Shape::collection(solid).convexHull();
+                // Corregido: siempre la envolvente convexa.
+                const Shape env = solid.size() == 1 && reproduceOriginalBugs() ? Shape::unaryUnion(solid)
+                                                                                : Shape::collection(solid).convexHull();
                 bbox = env.buffer(p.margin, kRes, JoinStyle::Mitre);
             } else {
                 const BoundingBox b = Shape::collection(solid).bounds().value_or(BoundingBox{});
@@ -154,6 +162,8 @@ ThievingResult copperThieving(const Gerber& g, const ThievingParams& p, const Sh
                 lines.push_back(Shape::lineString({{bb.xmin, ny}, {bb.xmax, ny}}).buffer(half, res));
                 ny += p.lineSize + p.lineSpacing;
             }
+            // El original no vacía nunca la lista: cada relleno con líneas suma los anteriores (corregido).
+            if (!reproduceOriginalBugs()) flatGeometry.clear();
             flatten(outlineGeo, flatGeometry);
             flatten(boxOutline, flatGeometry);
             for (const Shape& l : lines) flatten(l.difference(clearance), flatGeometry);
@@ -266,8 +276,10 @@ PlatingMaskResult platingMaskImpl(const Gerber& sm, double clearance, char choic
         order.push_back(id);
         r.added.push_back(id);
     };
+    const bool fixed = !reproduceOriginalBugs();
     if (!thieving.empty() && (choice == 'b' || choice == 't')) {
-        for (const Shape& s : thieving) r.platedArea += s.area();
+        // El área galvanizada suma el relleno sin agrandar (corregido: agrandado, como va a la máscara).
+        for (const Shape& s : thieving) r.platedArea += fixed ? s.buffer(clearance).area() : s.area();
         if (!r.apertures.count("0")) {
             Aperture z;
             z.type = "REG";
@@ -279,12 +291,21 @@ PlatingMaskResult platingMaskImpl(const Gerber& sm, double clearance, char choic
         zero.hasGeometry = true;
         for (const Shape& poly : thieving) {
             const Shape b = poly.buffer(clearance);
+            if (fixed) {
+                // Corregido: un relleno que al achicarse se parte en varios (el original falla con `exterior`).
+                for (const Shape& part : b.parts().empty() ? ShapeList{b} : b.parts()) {
+                    if (part.isEmpty()) continue;
+                    geo.push_back(part);
+                    zero.geometry.push_back({part, part.exterior(), std::nullopt});
+                }
+                continue;
+            }
             geo.push_back(b);
             zero.geometry.push_back({b, b.exterior(), std::nullopt});
         }
     }
     if (robber && !robber->isEmpty() && (choice == 'b' || choice == 'r')) {
-        r.platedArea += robber->area();
+        r.platedArea += fixed ? robber->buffer(clearance).area() : robber->area();
         r.follow.push_back(*robberLine);
         std::optional<std::string> found;
         for (const std::string& id : order) {
@@ -297,7 +318,8 @@ PlatingMaskResult platingMaskImpl(const Gerber& sm, double clearance, char choic
         if (found) {
             Aperture& ap = r.apertures[*found];
             ap.hasGeometry = true;
-            ap.geometry.push_back({*robber, *robberLine, std::nullopt});
+            // La barra entra sin agrandar en una apertura existente (corregido: agrandada, como en una nueva).
+            ap.geometry.push_back({fixed ? robber->buffer(clearance) : *robber, *robberLine, std::nullopt});
         } else {
             if (r.apertures.empty() && reproduceOriginalBugs()) return r;  // max() de una lista vacía: ValueError
             // Corregido: el máximo numérico (el original compara los números como texto) y "10" sin aperturas.

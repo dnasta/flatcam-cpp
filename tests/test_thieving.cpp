@@ -179,3 +179,42 @@ TEST(CopperThieving, MatchesTheOriginal) {
         EXPECT_NEAR(tv, op.thiefVertices, op.thiefVertices * tolerance(false).verts);
     }
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+TEST(CopperThievingFixed, LinesDoNotAccumulateHullAndMask) {
+    OriginalBugsScope fixed(false);
+    Gerber g;
+    // Un solo polígono en "L": la caja mínima es su envolvente convexa (el original usa el polígono).
+    ASSERT_TRUE(g.parseLines({"%FSLAX46Y46*%", "%MOMM*%", "G36*", "X0Y0D02*", "X10000000Y0D01*", "X10000000Y2000000D01*",
+                              "X2000000Y2000000D01*", "X2000000Y10000000D01*", "X0Y10000000D01*", "X0Y0D01*", "G37*",
+                              "M02*"}));
+    ThievingParams p;
+    p.minimalBox = true;
+    p.margin = 0.0;
+    ShapeList flat;
+    const ThievingResult solid = copperThieving(g, p, {}, {}, flat);
+    ASSERT_TRUE(solid.ok);
+    double area = 0;
+    ASSERT_TRUE(solid.thieving);
+    for (const Shape& s : *solid.thieving) area += s.area();
+    EXPECT_GT(area, 10.0);  // el triángulo que agrega la envolvente
+    // Con líneas, dos rellenos seguidos dan lo mismo (el original suma el anterior).
+    p.fill = ThievingFill::Line;
+    p.minimalBox = false;
+    const ThievingResult a = copperThieving(g, p, {}, {}, flat);
+    const ThievingResult b = copperThieving(g, p, {}, {}, flat);
+    ASSERT_TRUE(a.ok && b.ok);
+    ASSERT_TRUE(a.thieving && b.thieving);
+    EXPECT_EQ(a.thieving->size(), b.thieving->size());
+    // La máscara: el área galvanizada suma el relleno agrandado.
+    Gerber sm;
+    ASSERT_TRUE(sm.parseLines({"%FSLAX46Y46*%", "%MOMM*%", "%ADD10C,1*%", "D10*", "X0Y0D03*", "M02*"}));
+    const ShapeList fill{Shape::box(5, 5, 6, 6)};
+    const PlatingMaskResult m = platingMask(sm, 0.1, 't', fill, std::nullopt, std::nullopt, 1.0);
+    ASSERT_TRUE(m.ok);
+    double smArea = 0;
+    for (const Shape& s : sm.solidGeometry()) smArea += s.area();
+    EXPECT_NEAR(m.platedArea, smArea + fill[0].buffer(0.1).area(), 1e-9);
+}
