@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "tools/Film.h"
 
 #include "cam/PyNumber.h"
@@ -54,12 +55,21 @@ FilmResult filmSvg(const ShapeList& obj, const ShapeList& box, const BoundingBox
     std::optional<Point2D> scaleReference;  // 'center'
     const double dpiRate = o.pngDpi / o.screenDpi;
     const Point2D trScaleReference{boxBounds.xmin, boxBounds.ymin};
+    const bool fixed = !reproduceOriginalBugs();
     if (dpiRate != 1 && o.fileType == "png") {
-        // Como el original: suma la relación de los dpi al factor.
-        sx += dpiRate;
-        sy += dpiRate;
+        // El original suma la relación de los dpi al factor (corregido: la multiplica).
+        if (fixed) {
+            sx = (sx != 0.0 ? sx : 1.0) * dpiRate;
+            sy = (sy != 0.0 ? sy : 1.0) * dpiRate;
+        } else {
+            sx += dpiRate;
+            sy += dpiRate;
+        }
         scaleReference = trScaleReference;
     }
+    // El original escala la caja desde su esquina inferior izquierda y la geometría desde su centro (sin PNG), así que con
+    // escala la película queda corrida respecto del viewBox (corregido: las dos desde la esquina).
+    if (fixed) scaleReference = trScaleReference;
     const Shape boxGeo = Shape::unaryUnion(box);
     const std::optional<Point2D> skewRef = skewOrigin(o.skewReference, boxGeo);
 
@@ -85,16 +95,27 @@ FilmResult filmSvg(const ShapeList& obj, const ShapeList& box, const BoundingBox
     if (sx != 0.0 && sy == 0.0) geom = scaleShape(geomSvg, sx, 1.0, scaleReference);
     else if (sx == 0.0 && sy != 0.0) geom = scaleShape(geomSvg, 1.0, sy, scaleReference);
     else if (sx != 0.0 && sy != 0.0) geom = scaleShape(geomSvg, sx, sy, scaleReference);
-    if (kx && !ky) geom = skewShape(geomSvg, *o.skewX, 0.0, objSkewRef);
-    else if (!kx && ky) geom = skewShape(geomSvg, 0.0, *o.skewY, objSkewRef);
-    else if (kx && ky) geom = skewShape(geomSvg, *o.skewX, *o.skewY, objSkewRef);
-    if (o.mirror == "x") geom = scaleShape(geomSvg, 1.0, -1.0, std::nullopt);
-    if (o.mirror == "y") geom = scaleShape(geomSvg, -1.0, 1.0, std::nullopt);
-    if (o.mirror == "both") geom = scaleShape(geomSvg, -1.0, -1.0, std::nullopt);
+    // Corregido: las transformaciones se acumulan, como en la caja.
+    const Shape& afterScale = fixed ? geom : geomSvg;
+    if (kx && !ky) geom = skewShape(afterScale, *o.skewX, 0.0, objSkewRef);
+    else if (!kx && ky) geom = skewShape(afterScale, 0.0, *o.skewY, objSkewRef);
+    else if (kx && ky) geom = skewShape(afterScale, *o.skewX, *o.skewY, objSkewRef);
+    const Shape afterSkew = fixed ? geom : geomSvg;
+    if (o.mirror == "x") geom = scaleShape(afterSkew, 1.0, -1.0, std::nullopt);
+    if (o.mirror == "y") geom = scaleShape(afterSkew, -1.0, 1.0, std::nullopt);
+    if (o.mirror == "both") geom = scaleShape(afterSkew, -1.0, -1.0, std::nullopt);
     const double stroke = o.strokeFactor <= 0 ? 0.01 : o.strokeFactor;
 
     // ET.fromstring: se cambian los atributos de los hijos directos de la raíz (un polígono suelto no tiene hijos).
     XmlNode root = parseMiniXml(shapelySvg(geom, stroke));
+    if (fixed && root.tag != "g") {
+        // Corregido: un polígono suelto es la raíz (no un grupo con hijos): se lo pone dentro de un grupo, así se
+        // recolorea y el rectángulo de la negativa queda al lado y no adentro.
+        XmlNode g;
+        g.tag = "g";
+        g.children.push_back(root);
+        root = g;
+    }
     for (XmlNode& c : root.children) {
         if (c.tag.empty()) continue;
         c.set("fill", o.negative ? "#FFFFFF" : o.color);
@@ -123,7 +144,8 @@ FilmResult filmSvg(const ShapeList& obj, const ShapeList& box, const BoundingBox
     header += ">";
     header += "<g transform=\"scale(1,-1)\">";
     // str(ET.tostring(root)): el texto de los bytes, con "b'" y "'" (quedan como texto dentro del grupo).
-    const std::string doc = header + "b'" + lxmlToString(root) + "'" + "</g> </svg>";
+    // Corregido: sin "b'" ni "'".
+    const std::string doc = header + (fixed ? "" : "b'") + lxmlToString(root) + (fixed ? "" : "'") + "</g> </svg>";
     FilmResult r;
     r.svg = prettyMiniXml(parseMiniXml(doc));
     r.bounds = bounds;
@@ -150,9 +172,21 @@ std::optional<Shape> filmPunchPads(const Gerber& g, double punchSize, std::strin
                 error = "size";
                 return std::nullopt;
             }
-        } else {
+        } else if (reproduceOriginalBugs()) {
             error = "keyerror";  // P, AM y REG no tienen 'width': KeyError
             return std::nullopt;
+        } else if (ap.type != "P" && ap.type != "AM") {
+            continue;  // corregido: las regiones no son pads; las P y las macros se perforan si son más grandes
+        } else {
+            bool small = false;
+            for (const ApertureGeometry& e : ap.geometry)
+                if (e.solid)
+                    if (const auto b = e.solid->bounds())
+                        small = small || punchSize >= std::min(b->xmax - b->xmin, b->ymax - b->ymin);
+            if (small) {
+                error = "size";
+                return std::nullopt;
+            }
         }
         for (const ApertureGeometry& e : ap.geometry)
             if (e.follow && e.follow->type() == ShapeType::Point) punching.push_back(e.follow->buffer(punchSize / 2));

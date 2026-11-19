@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/QtCompat.h"
 #include "gui/tools/FilmTool.h"
 
@@ -290,13 +291,17 @@ QString FilmTool::positivePunched(const QString& name, const QString& boxname, d
     }
     // new_object('gerber'): el objeto nace en gerber_def_units (pulgadas de fábrica) y se convierte a las unidades
     // de la aplicación, así que en mm la geometría queda 25,4 veces más grande, como en el original.
+    // Corregido: la geometría ya está en las unidades de la aplicación.
     const QString defUnits = defStr("gerber_def_units").toUpper();
-    if (defUnits != appUnits().toUpper())
+    if (reproduceOriginalBugs() && defUnits != appUnits().toUpper())
         punched = punched.transform(AffineTransform::scaling(defUnits == "IN" ? 25.4 : 1 / 25.4,
                                                              defUnits == "IN" ? 25.4 : 1 / 25.4, {0, 0}));
     auto g = std::make_unique<Gerber>();
     g->restore(flat({punched}), {}, {}, 2, 4, std::string());
-    if (appUnitsKind() == Units::Inches) g->convertUnits(Units::Inches);
+    if (appUnitsKind() == Units::Inches) {
+        if (reproduceOriginalBugs()) g->convertUnits(Units::Inches);
+        else g->setUnits(Units::Inches);
+    }
     const QString outname = name + "_punched";
     app_->addObject(std::make_unique<GerberObject>(outname, std::move(g)));
     return positiveNormal(outname, boxname, factor, ftype);
@@ -357,7 +362,9 @@ QString FilmTool::exportFilm(bool negative, const QString& objName, const QStrin
             if (!img.save(filename, "PNG")) return QString();
         } else {
             // La negativa usa siempre mm (compara self.units con 'INCH'); la positiva, pulgadas si son las unidades.
-            const double unit = !negative && appUnits().toUpper() == "IN" ? 72.0 : 72.0 / 25.4;
+            // Corregido: las dos en las unidades de la aplicación.
+            const bool inch = appUnits().toUpper() == "IN" && (!negative || !reproduceOriginalBugs());
+            const double unit = inch ? 72.0 : 72.0 / 25.4;
             if (!renderSvgToPdf(svg, filename, drawing, pagesize_combo->currentText(),
                                 orientation_radio->value().toString() == "p",
                                 {r.bounds.xmin * unit, r.bounds.ymin * unit}))
