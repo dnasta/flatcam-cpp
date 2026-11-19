@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/BookmarkManager.h"
 
 #include <QDateTime>
@@ -14,6 +15,7 @@
 #include <QUrl>
 #include <QVBoxLayout>
 #include <algorithm>
+#include <map>
 
 #include "gui/App.h"
 #include "gui/MainGUI.h"
@@ -82,7 +84,21 @@ void App::openUrl(const QString& url) {
 
 void App::installBookmarks(std::optional<BookmarkDict> dict) {
     BookmarkDict bm = bookmarks();
-    if (!dict) {
+    const bool fixed = !reproduceOriginalBugs();
+    if (fixed) {
+        // Corregido: FlatCAM y el sitio de respaldo van primero sin pisar los marcadores "1" y "2" del usuario, y las
+        // claves se renumeran (también después de arrastrar filas en el administrador: protected_rows).
+        BookmarkDict src = dict ? *dict : bm;
+        const QString backup = tr_("Backup Site");
+        BookmarkDict out{{"1", {"FlatCAM", "http://flatcam.org"}}, {"2", {backup, ""}}};
+        for (const auto& e : src)
+            if (e.second.first != "FlatCAM" && e.second.first != backup) out.push_back(e);
+        for (const auto& e : src)  // si el usuario cambió el enlace de respaldo, se conserva
+            if (e.second.first == backup) out[1].second.second = e.second.second;
+        int n = 0;
+        for (auto& e : out) e.first = QString::number(++n);
+        bm = out;
+    } else if (!dict) {
         // dict.update: las claves que ya están conservan su lugar (y se pisan), las nuevas van al final.
         for (const auto& [k, b] : BookmarkDict{{"1", {"FlatCAM", "http://flatcam.org"}}, {"2", {tr_("Backup Site"), ""}}}) {
             auto it = std::find_if(bm.begin(), bm.end(), [&k = k](const auto& e) { return e.first == k; });
@@ -101,11 +117,16 @@ void App::installBookmarks(std::optional<BookmarkDict> dict) {
         menu->removeAction(a);
         if (a->parent() == menu) a->deleteLater();
     }
+    // Corregido: el separador antes del administrador queda.
+    if (fixed) menu->insertSeparator(ui_->menuhelp_bookmarks_manager);
     const int limit = static_cast<int>(defNum("global_bookmarks_limit", 10));
-    // Los primeros `limit` del diccionario, ordenados por el número de la clave.
-    BookmarkDict sorted(bm.begin(), bm.begin() + std::min<std::size_t>(bm.size(), std::max(0, limit)));
+    // Los primeros `limit` del diccionario, ordenados por el número de la clave (corregido: primero se ordena y
+    // después se cuentan).
+    BookmarkDict sorted = bm;
+    if (!fixed) sorted.resize(std::min<std::size_t>(bm.size(), std::max(0, limit)));
     std::stable_sort(sorted.begin(), sorted.end(),
                      [](const auto& a, const auto& b) { return toInt(a.first) < toInt(b.first); });
+    if (fixed) sorted.resize(std::min<std::size_t>(sorted.size(), std::max(0, limit)));
     for (const auto& [k, b] : sorted) {
         auto* act = new QAction(menu);
         act->setText(b.first);
@@ -280,8 +301,9 @@ bool BookmarkManager::addEntry(const QString& titleArg, const QString& linkArg, 
     }
     if (link.endsWith('/')) link.chop(1);
     bm_.push_back({QString::number(bm_.size() + 1), {title, link}});
-    // En el menú solo si entra en el límite.
-    if (static_cast<int>(bm_.size()) < static_cast<int>(defNum("global_bookmarks_limit", 10))) {
+    // En el menú solo si entra en el límite (el original exige que queden menos que el límite: corregido, hasta él).
+    const int limitN = static_cast<int>(defNum("global_bookmarks_limit", 10));
+    if (static_cast<int>(bm_.size()) < limitN || (!reproduceOriginalBugs() && static_cast<int>(bm_.size()) == limitN)) {
         auto* act = new QAction(ui->menuhelp_bookmarks);
         act->setText(title);
         act->setIcon(QIcon(":/images/link16.png"));
@@ -295,6 +317,10 @@ bool BookmarkManager::addEntry(const QString& titleArg, const QString& linkArg, 
 
 void BookmarkManager::removeEntry() {
     MainGUI* ui = app_->ui();
+    if (!reproduceOriginalBugs() && table_widget->selectionModel()->selectedRows().isEmpty()) {
+        ui->inform("[WARNING_NOTCL] " + tr_("Nothing selected."));  // corregido: el original dice que quitó
+        return;
+    }
     for (const QModelIndex& idx : table_widget->selectionModel()->selectedRows()) {
         const QTableWidgetItem* it = table_widget->item(idx.row(), 1);
         const QString title = it ? it->text() : QString();
@@ -343,7 +369,11 @@ void BookmarkManager::exportBookmarks(const QString& filename) {
     }
     // Cada línea es la clave y la lista [título, enlace] escrita por str() de Python.
     QTextStream out(&f);
-    for (const auto& [k, b] : bm_) out << k << ":[" << pyRepr(b.first) << ", " << pyRepr(b.second) << "]\n";
+    // Corregido: "título:enlace", lo que entiende importar (el original escribe la lista y no se puede volver a leer).
+    if (!reproduceOriginalBugs())
+        for (const auto& [k, b] : bm_) out << b.first << ":" << b.second << "\n";
+    else
+        for (const auto& [k, b] : bm_) out << k << ":[" << pyRepr(b.first) << ", " << pyRepr(b.second) << "]\n";
     ui->inform(QString("[success] %1: %2").arg(tr_("Exported bookmarks to"), file));
 }
 
@@ -373,6 +403,16 @@ void BookmarkManager::importBookmarks(const QString& filename) {
         }
     if (start < text.size()) lines << text.mid(start);
     for (QString line : lines) {
+        // Corregido: solo se recortan los extremos (el original borra todos los espacios, también los del título, y
+        // deja el '\n' en el enlace); las líneas vacías se saltean.
+        if (!reproduceOriginalBugs()) {
+            line = line.trimmed();
+            if (line.isEmpty()) continue;
+            const int colon = line.indexOf(':');
+            if (colon < 0) continue;
+            addEntry(line.left(colon).trimmed(), line.mid(colon + 1).trimmed(), true, nullptr);
+            continue;
+        }
         line.remove(' ');
         const int colon = line.indexOf(':');
         const QString title = colon < 0 ? line : line.left(colon);
@@ -386,13 +426,20 @@ void BookmarkManager::importBookmarks(const QString& filename) {
 
 bool BookmarkManager::rebuildActions() {
     // El orden de la tabla (con lo arrastrado) pasa a ser el de los marcadores.
+    std::map<QString, QString> links;  // corregido: el enlace de una fila arrastrada se busca por su título
+    for (const auto& [k, b] : bm_) links[b.first] = b.second;
     bm_.clear();
     for (int r = 0; r < table_widget->rowCount(); ++r) {
         const QTableWidgetItem* t = table_widget->item(r, 1);
         auto* w = qobject_cast<QTextBrowser*>(table_widget->cellWidget(r, 2));
         // Una fila arrastrada pierde su enlace (el widget no se copia) y el original falla con AttributeError.
+        const QString title = t ? t->text() : QString();
+        if (!w && !reproduceOriginalBugs()) {
+            bm_.push_back({QString::number(r + 1), {title, links[title]}});
+            continue;
+        }
         if (!w) return false;
-        bm_.push_back({QString::number(r + 1), {t ? t->text() : QString(), w->toPlainText()}});
+        bm_.push_back({QString::number(r + 1), {title, w->toPlainText()}});
     }
     app_->installBookmarks(bm_);
     return true;

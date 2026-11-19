@@ -179,3 +179,56 @@ TEST(GuiBookmarks, ClosingTheManagerRebuildsTheMenuInTableOrder) {
     for (QAction* a : app.ui()->menuhelp_bookmarks->actions()) texts << a->text();
     EXPECT_EQ(texts.mid(0, 4), (QStringList{"FlatCAM", tr_("Backup Site"), "A", "B"}));
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+TEST(GuiFixed, BookmarksKeepTheUsersOnesExportImportAndLimit) {
+    OriginalBugsScope fixed(false);
+    App app;
+    // Los "1" y "2" del usuario no se pisan: pasan después de FlatCAM y el respaldo.
+    app.installBookmarks(BookmarkDict{{"1", {"Mio", "https://mio.example"}}, {"2", {"Otro", "https://otro.example"}}});
+    app.installBookmarks();
+    BookmarkDict bm = app.bookmarks();
+    ASSERT_EQ(bm.size(), 4u);
+    EXPECT_EQ(bm[0].second.first, "FlatCAM");
+    EXPECT_EQ(bm[2].second.first, "Mio");
+    EXPECT_EQ(bm[3].first, "4");
+    // El separador del menú queda.
+    bool sep = false;
+    for (QAction* a : app.ui()->menuhelp_bookmarks->actions()) sep = sep || a->isSeparator();
+    EXPECT_TRUE(sep);
+    // Exportar y volver a importar: los mismos títulos (con espacios) y enlaces, sin el '\n'.
+    BookmarkManager* mgr = app.onBookmarksManager();
+    ASSERT_NE(mgr, nullptr);
+    mgr->title_entry->setText("Con espacios");
+    mgr->link_entry->setText("https://esp.example");
+    mgr->add_entry_btn->click();
+    QTemporaryDir tmp;
+    mgr->exportBookmarks(tmp.filePath("b.txt"));
+    app.installBookmarks(BookmarkDict{});
+    mgr->importBookmarks(tmp.filePath("b.txt"));
+    ASSERT_TRUE(mgr->rebuildActions());
+    bm = app.bookmarks();
+    ASSERT_EQ(bm.size(), 5u);
+    EXPECT_EQ(bm[4].second.first, "Con espacios");
+    EXPECT_EQ(bm[4].second.second, "https://esp.example");
+    // "Quitar" sin nada elegido no quita nada.
+    QStringList msgs;
+    QObject::connect(app.ui(), &MainGUI::informed, [&msgs](const QString& m) { msgs << m; });
+    mgr->table_widget->clearSelection();
+    mgr->removeEntry();
+    ASSERT_FALSE(msgs.isEmpty());
+    EXPECT_FALSE(msgs.back().contains(tr_("Bookmark removed.")));
+    EXPECT_EQ(app.bookmarks().size(), 5u);
+    // Con el límite en 3: los tres de clave más chica, ordenados por número ("10" no va antes que "2").
+    app.preferences()->set("global_bookmarks_limit", JsonValue::integer(3));
+    BookmarkDict many;
+    for (int k : {1, 10, 2, 3})
+        many.push_back({QString::number(k), {QString("M%1").arg(k), QString("http://m%1.example").arg(k)}});
+    app.installBookmarks(many);
+    QStringList shown;
+    for (QAction* a : app.ui()->menuhelp_bookmarks->actions())
+        if (!a->isSeparator() && a != app.ui()->menuhelp_bookmarks_manager) shown << a->text();
+    EXPECT_EQ(shown, QStringList({"FlatCAM", tr_("Backup Site"), "M1"}));
+}
