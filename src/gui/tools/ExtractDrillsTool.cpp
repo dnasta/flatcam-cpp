@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/QtCompat.h"
 #include "gui/tools/ExtractDrillsTool.h"
 
@@ -36,6 +37,8 @@ void ExtractDrillsTool::setToolUi() {
         if (o->kind() == ObjectKind::Gerber) gerber_object_combo->addItem(o->name());
     if (!cur.isEmpty()) gerber_object_combo->setValue(cur);
     hole_size_radio->setValue(defVariant("tools_edrills_hole_type"));
+    // El original no actualiza los campos visibles al abrir la herramienta (corregido).
+    if (!reproduceOriginalBugs()) onHoleSizeToggle(hole_size_radio->value().toString());
     dia_entry->setValue(defNum("tools_edrills_hole_fixed_dia"));
     circular_ring_entry->setValue(defNum("tools_edrills_circular_ring"));
     oblong_ring_entry->setValue(defNum("tools_edrills_oblong_ring"));
@@ -92,7 +95,9 @@ FlatCAMObj* ExtractDrillsTool::extract() {
     // fcobj.options['name'].rpartition('.')[0]
     const QString name = src->name();
     const int dot = name.lastIndexOf('.');
-    return app_->addObject(std::make_unique<ExcellonObject>(dot < 0 ? QString() : name.left(dot), std::move(exc)));
+    // Sin punto el original deja el nombre vacío (corregido: el nombre entero).
+    const QString outname = dot >= 0 ? name.left(dot) : reproduceOriginalBugs() ? QString() : name;
+    return app_->addObject(std::make_unique<ExcellonObject>(outname, std::move(exc)));
 }
 
 }  // namespace flatcam::gui

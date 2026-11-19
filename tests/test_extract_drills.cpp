@@ -47,3 +47,29 @@ TEST(ExtractDrills, MatchesTheOriginal) {
         }
     }
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+TEST(ExtractDrillsFixed, ASinglePadIsExtracted) {
+    Gerber g;
+    ASSERT_TRUE(g.parseLines({"%FSLAX46Y46*%", "%MOMM*%", "%ADD10C,1.5*%", "D10*", "X1000000Y2000000D03*", "M02*"}));
+    ExtractDrillsSettings s;
+    s.mode = ExtractDrillsSettings::Mode::Fixed;
+    s.fixedDia = 0.8;
+    {
+        OriginalBugsScope o(true);
+        EXPECT_FALSE(extractDrills(g, s).has_value());  // "No drills extracted": el único pad no cuenta
+        s.mode = ExtractDrillsSettings::Mode::Proportional;
+        EXPECT_FALSE(extractDrills(g, s).has_value());
+    }
+    OriginalBugsScope fixed(false);
+    for (auto m : {ExtractDrillsSettings::Mode::Fixed, ExtractDrillsSettings::Mode::Proportional}) {
+        s.mode = m;
+        const auto r = extractDrills(g, s);
+        ASSERT_TRUE(r.has_value());
+        ASSERT_EQ(r->size(), 1u);
+        ASSERT_EQ(r->front().drills.size(), 1u);
+        EXPECT_NEAR(r->front().drills[0].x, 1.0, 1e-9);
+    }
+}

@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "tools/PunchGerber.h"
 
 #include <algorithm>
@@ -123,6 +124,9 @@ PunchResult punchGerber(const Gerber& g, const std::set<std::string>& selected, 
             } else if (ap.type != "C" && ap.type != "R" && ap.type != "O" && s.other) {
                 use = true;
                 limitA = ap.size;
+                // Una macro no tiene 'size' y el original falla (KeyError); corregido: la medida menor de su figura.
+                if (!limitA && !reproduceOriginalBugs() && !ap.geometry.empty() && ap.geometry[0].solid)
+                    if (const auto b = ap.geometry[0].solid->bounds()) limitA = std::min(b->xmax - b->xmin, b->ymax - b->ymin);
             }
             if (!use) continue;
             for (const ApertureGeometry& el : ap.geometry) {
@@ -143,9 +147,12 @@ PunchResult punchGerber(const Gerber& g, const std::set<std::string>& selected, 
             return r;
         }
         r.solid = partsOf(solid.difference(unionOf(punching)));
-        for (const std::string& id : order)
+        // El original busca los agujeros en los pads de todas las aperturas (corregido: solo las elegidas).
+        for (const std::string& id : order) {
+            if (!reproduceOriginalBugs() && !selected.count(id)) continue;
             for (const ApertureGeometry& el : g.apertures().at(id).geometry)
                 if (el.solid && isFlash(el)) collectHoles(holes, punch, *el.solid, punching);
+        }
         addHoleApertures(r, holes);
         return r;
     }
@@ -159,8 +166,10 @@ PunchResult punchGerber(const Gerber& g, const std::set<std::string>& selected, 
     for (const std::string& id : order) {
         const Aperture& ap = g.apertures().at(id);
         ShapeList punching;
+        if (!reproduceOriginalBugs()) dia.reset();  // corregido: cada apertura con su diámetro
         if (selected.count(id)) {
             bool use = false;
+            const bool known = ap.type == "C" || ap.type == "O" || ap.type == "R";
             if (ap.type == "C" && s.circular) {
                 dia = size(ap.size.value_or(0.0), s.ringCircular);
                 use = true;
@@ -177,7 +186,8 @@ PunchResult punchGerber(const Gerber& g, const std::set<std::string>& selected, 
                     dia = size(ap.width > ap.height ? ap.height : ap.width, s.ringRectangular);
                     use = true;
                 }
-            } else if (s.other) {
+            } else if (s.other && (reproduceOriginalBugs() || !known)) {
+                // El original perfora por "otros" también un C, R u O con su filtro apagado (corregido).
                 if (ap.size) {
                     dia = size(*ap.size, s.ringOther);
                 } else if (ap.type == "AM" && !ap.geometry.empty() && ap.geometry[0].solid) {

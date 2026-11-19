@@ -49,7 +49,7 @@ struct ExtractedTool {
  * aperturas del archivo. Con los modos de anillo y proporcional los diámetros iguales (a @c decimals cifras) van en la
  * misma herramienta.
  *
- * Error del original que se reproduce: el primer agujero de cada herramienta no cuenta para saber si se extrajo algo
+ * Error del original (corregido si `reproduceOriginalBugs()` es falso): el primer agujero de cada herramienta no cuenta para saber si se extrajo algo
  * (el original crea la lista `solid_geometry` vacía con el primero y agrega desde el segundo), así que si ninguna
  * herramienta (ninguna apertura, en los modos de anillo y proporcional) tiene dos o más agujeros, no se crea nada.
  * @param g El Gerber. @param s Parámetros.

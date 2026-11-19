@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "tools/ExtractDrills.h"
 
 #include <algorithm>
@@ -53,7 +54,8 @@ std::optional<std::vector<ExtractedTool>> extractDrills(const Gerber& g, const E
             }
             for (const Point2D& p : flashes(ap)) t.drills.push_back(p);
         }
-        if (t.drills.size() < 2) return std::nullopt;  // el primero no entra en solid_geometry
+        // El primero no entra en solid_geometry (corregido: cuenta).
+        if (t.drills.size() < (reproduceOriginalBugs() ? 2u : 1u)) return std::nullopt;
         tools.push_back(t);
         return tools;
     }
@@ -105,7 +107,8 @@ std::optional<std::vector<ExtractedTool>> extractDrills(const Gerber& g, const E
         const std::size_t before = tools[*match].drills.size();
         for (const Point2D& p : pts) tools[*match].drills.push_back(p);
         // `solid_geometry` de la herramienta: todos sus agujeros menos el primero.
-        if (before > 0 || !pts.empty()) found.insert(tools[*match].drills.size() >= 2);
+        if (before > 0 || !pts.empty())
+            found.insert(tools[*match].drills.size() >= (reproduceOriginalBugs() ? 2u : 1u));
     }
     if (!found.count(true)) return std::nullopt;
     return tools;

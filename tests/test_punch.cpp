@@ -83,3 +83,45 @@ TEST(PunchGerber, MatchesTheOriginal) {
         }
     }
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+TEST(PunchGerberFixed, MacrosFiltersAndClearHoles) {
+    Gerber g;
+    ASSERT_TRUE(g.parseLines({"%FSLAX46Y46*%", "%MOMM*%", "%AMBOX*21,1,2,2,0,0,0*%", "%ADD10C,1.5*%",
+                              "%ADD11R,2X2*%", "%ADD12BOX*%", "D10*", "X0Y0D03*", "D11*", "X5000000Y0D03*", "D12*",
+                              "X10000000Y0D03*", "M02*"}));
+    const double area = [&] {
+        double a = 0;
+        for (const Shape& s : g.solidGeometry()) a += s.area();
+        return a;
+    }();
+    auto areaOf = [](const ShapeList& l) {
+        double a = 0;
+        for (const Shape& s : l) a += s.area();
+        return a;
+    };
+    PunchSettings s;
+    s.method = PunchSettings::Method::Fixed;
+    s.fixedDia = 0.5;
+    const std::set<std::string> macro{"12"};
+    {
+        OriginalBugsScope o(true);
+        EXPECT_EQ(punchGerber(g, macro, s).error, PunchResult::Error::OriginalFails);  // KeyError: 'size'
+    }
+    OriginalBugsScope fixed(false);
+    const PunchResult m = punchGerber(g, macro, s);
+    ASSERT_TRUE(m.ok());
+    const double hole = 3.14159265358979 * 0.25 * 0.25;
+    EXPECT_NEAR(areaOf(m.solid), area - hole, 1e-3);
+    ASSERT_EQ(m.newApertures.size(), 1u);  // solo los pads de la apertura elegida
+    // Anillo con los círculos apagados y "otros" encendido: el círculo no se perfora.
+    s.method = PunchSettings::Method::Ring;
+    s.circular = false;
+    const PunchResult r = punchGerber(g, {"10", "11"}, s);
+    ASSERT_TRUE(r.ok());
+    const double square = 1.6 * 1.6;  // 2 - 2 * 0.2
+    EXPECT_NEAR(areaOf(r.solid), area - 3.14159265358979 * 0.8 * 0.8, 0.05);
+    EXPECT_GT(areaOf(r.solid), area - square - 0.01);
+}
