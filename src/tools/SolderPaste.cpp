@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "tools/SolderPaste.h"
 
 #include <algorithm>
@@ -69,10 +70,13 @@ PasteGeometry solderPasteGeometry(const ShapeList& solid, const std::vector<std:
             if (r1 == r2) {
                 const double length = distance({b.xmin, b.ymin}, {b.xmax, b.ymin});
                 const double h = distance({b.xmin, b.ymin}, {b.xmin, b.ymax});
-                // Si la boquilla no entra, geo queda como estaba (la del pad anterior), como en el original.
+                // Si la boquilla no entra, geo queda como estaba (la del pad anterior) en el original (corregido: no hay
+                // trazo y el pad pasa a la boquilla siguiente).
                 if (!(offset >= length / 2 || offset >= h / 2)) {
                     if (length > h) geo = Shape::lineString({{b.xmin, b.ymin + h / 2}, {b.xmin + length, b.ymin + h / 2}});
                     else geo = Shape::lineString({{b.xmin + length / 2, b.ymin}, {b.xmin + length / 2, b.ymin + h}});
+                } else if (!reproduceOriginalBugs()) {
+                    geo = Shape::fromWkt("LINESTRING EMPTY");
                 }
             } else if (r1 > r2) {
                 geo = d1;

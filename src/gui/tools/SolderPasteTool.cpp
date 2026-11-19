@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/tools/SolderPasteTool.h"
 
 #include <QTableWidgetItem>
@@ -164,8 +165,10 @@ FlatCAMObj* SolderPasteTool::createGcode() {
         app_->ui()->inform("[WARNING_NOTCL] " + tr_("This Geometry can't be processed. NOT a solder_paste_tool geometry."));
         return nullptr;
     }
-    // originar_name = name.partition('_')[0]
-    const QString outname = name.section('_', 0, 0) + "_cnc_solderpaste";
+    // originar_name = name.partition('_')[0]: se corta en el primer "_" (corregido: sin el "_solderpaste" final).
+    QString base = name.section('_', 0, 0);
+    if (!reproduceOriginalBugs()) base = name.endsWith("_solderpaste") ? name.chopped(12) : name;
+    const QString outname = base + "_cnc_solderpaste";
     const QRectF b = geo->bounds();
     std::vector<std::string> gcodes;
     std::vector<CncToolRow> rows;
