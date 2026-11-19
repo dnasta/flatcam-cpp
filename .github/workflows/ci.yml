@@ -18,7 +18,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends build-essential cmake ninja-build libgeos-dev liblzma-dev \
             libgtest-dev qt6-base-dev qt6-svg-dev libqt6opengl6-dev qt6-serialport-dev libgl-dev tcl-dev \
-            libfreetype-dev
+            libfreetype-dev gdb
       - name: Configurar
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFLATCAM_BUILD_DOCS=OFF
       - name: Compilar
@@ -27,6 +27,17 @@ jobs:
         env:
           QT_QPA_PLATFORM: offscreen
         run: ctest --test-dir build --output-on-failure
+      - name: Traza de los tests que fallaron (gdb)
+        if: failure()
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          f=build/Testing/Temporary/LastTestsFailed.log
+          [ -f "$f" ] || exit 0
+          for name in $(cut -d: -f2 "$f"); do
+            case "$name" in Gui*) exe=build/tests/gui_tests ;; *) exe=build/tests/core_tests ;; esac
+            gdb -batch -ex run -ex "thread apply all bt 25" --args "$exe" --gtest_filter="$name" 2>&1 | grep -v "Line ignored" | tail -80
+          done
 
   windows:
     name: Windows (MSVC 2022)
