@@ -2,6 +2,7 @@
 #include <QString>
 #include <algorithm>
 
+#include "core/OriginalBugs.h"
 #include "gui/App.h"
 #include "gui/MainGUI.h"
 #include "gui/Translation.h"
@@ -72,6 +73,54 @@ std::vector<FlatCAMObj*> App::convertToGerber() {
         std::map<std::string, Aperture> apertures;
         ShapeList solid;
         if (auto* g = dynamic_cast<GeometryObject*>(o)) {
+            if (!reproduceOriginalBugs()) {
+                // Corregido: el original pone también las líneas en la apertura "0" (de ancho 0: no se ven ni se
+                // fresan). Los polígonos siguen siendo regiones de la "0"; las líneas de cada herramienta van a una
+                // apertura C de su diámetro (desde la 10), engrosadas con su radio.
+                Aperture region;
+                region.type = "C";
+                region.size = 0.0;
+                region.hasGeometry = true;
+                std::map<double, Aperture> traces;
+                for (const auto& [tid, t] : g->tools()) {
+                    for (const Shape& s : t.solidGeometry) {
+                        ApertureGeometry el;
+                        const ShapeType ty = s.type();
+                        if (ty == ShapeType::Polygon) {
+                            el.solid = s;
+                            el.follow = s.exterior();
+                            region.geometry.push_back(el);
+                            solid.push_back(s);
+                        } else if (ty == ShapeType::LineString || ty == ShapeType::LinearRing ||
+                                   ty == ShapeType::MultiLineString) {
+                            const double dia = t.tooldia > 0 ? t.tooldia : 0.0;
+                            el.follow = s;
+                            el.solid = dia > 0 ? s.buffer(dia / 2.0) : s;
+                            Aperture& ap = traces[dia];
+                            ap.type = "C";
+                            ap.size = dia;
+                            ap.hasGeometry = true;
+                            ap.geometry.push_back(el);
+                            solid.push_back(*el.solid);
+                        } else if (ty == ShapeType::MultiPolygon) {
+                            for (const Shape& p : s.parts()) {
+                                ApertureGeometry pe;
+                                pe.solid = p;
+                                pe.follow = p.exterior();
+                                region.geometry.push_back(pe);
+                                solid.push_back(p);
+                            }
+                        }
+                    }
+                }
+                if (!region.geometry.empty()) apertures["0"] = region;
+                int apid = 10;
+                for (auto& [dia, ap] : traces) apertures[std::to_string(apid++)] = std::move(ap);
+                auto gb = std::make_unique<Gerber>();
+                gb->restore(solid, {}, std::move(apertures), 3, 4, std::string());
+                out.push_back(addObject(std::make_unique<GerberObject>(o->name() + "_conv", std::move(gb))));
+                continue;
+            }
             // initialize_geometry: todo en la apertura "0" (C de tamaño 0), con el contorno como línea de seguimiento.
             Aperture ap;
             ap.type = "C";
@@ -145,7 +194,7 @@ std::vector<FlatCAMObj*> App::convertToExcellon() {
             for (const Shape& s : g->solidGeometry())
                 if (s.type() == ShapeType::Polygon || s.type() == ShapeType::MultiPolygon ||
                     s.type() == ShapeType::LinearRing)
-                    addDrill(s, true);
+                    addDrill(s, reproduceOriginalBugs());  // corregido: el diámetro redondeado, sin repetir agujeros
         } else if (auto* gr = dynamic_cast<GerberObject*>(o)) {
             // initialize_gerber: los destellos (follow = punto) son agujeros y los trazos de dos puntos, ranuras.
             const Gerber& gb = gr->gerber();

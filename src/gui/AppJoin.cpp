@@ -6,6 +6,7 @@
 #include <map>
 #include <set>
 
+#include "core/OriginalBugs.h"
 #include "gui/App.h"
 #include "gui/MainGUI.h"
 #include "gui/Translation.h"
@@ -151,7 +152,8 @@ FlatCAMObj* App::joinGerber(const std::vector<FlatCAMObj*>* given, const QString
         ui_->inform(tooFew(objs.size()));
         return nullptr;
     }
-    // GerberObject.merge: la geometría de todos (también como follow_geometry, como el original) y las aperturas; una
+    // GerberObject.merge: la geometría de todos (el original la copia también como follow_geometry; corregido: la
+    // de seguimiento de cada uno) y las aperturas; una
     // apertura repetida se agrega con el número siguiente al mayor.
     ShapeList solid, follow;
     std::map<std::string, Aperture> apertures;
@@ -161,7 +163,8 @@ FlatCAMObj* App::joinGerber(const std::vector<FlatCAMObj*>* given, const QString
         intDigits = g.intDigits();
         fracDigits = g.fracDigits();
         solid.insert(solid.end(), g.solidGeometry().begin(), g.solidGeometry().end());
-        follow.insert(follow.end(), g.solidGeometry().begin(), g.solidGeometry().end());
+        const ShapeList& f = reproduceOriginalBugs() ? g.solidGeometry() : g.followGeometry();
+        follow.insert(follow.end(), f.begin(), f.end());
         for (const std::string& code : g.apertureOrder()) {
             const Aperture& ap = g.apertures().at(code);
             if (!apertures.count(code)) {

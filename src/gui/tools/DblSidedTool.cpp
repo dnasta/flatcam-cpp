@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/Preferences.h"
 #include "gui/tools/DblSidedTool.h"
 
@@ -74,8 +75,10 @@ DblSidedTool::DblSidedTool(App* app, QWidget* parent) : DblSidedToolUIBase(paren
         }
         stopPicking();
         // Desactiva el ajuste a la grilla (cuesta acertar a un agujero con la grilla). El original no lo vuelve a
-        // activar después (guarda grid_status_memory y no lo usa): se reproduce.
-        if (app_->ui()->grid_snap_btn->isChecked()) app_->ui()->grid_snap_btn->trigger();
+        // activar después (guarda grid_status_memory y no lo usa); corregido: se restaura al terminar de elegir.
+        const bool gridOn = app_->ui()->grid_snap_btn->isChecked();
+        if (gridOn) app_->ui()->grid_snap_btn->trigger();
+        restoreGrid_ = gridOn && !reproduceOriginalBugs();
         app_->ui()->inform(tr_("Click on canvas within the desired Excellon drill hole") + ".");
         pickConnection_ = connect(app_->ui()->plotCanvas(), &PlotCanvas::mouseClicked, this,
                                   [this](QPointF w, Qt::MouseButton b) {
@@ -105,6 +108,8 @@ FlatCAMObj* DblSidedTool::comboObject(const FCComboBox* combo) const {
 void DblSidedTool::stopPicking() {
     if (pickConnection_) disconnect(pickConnection_);
     pickConnection_ = {};
+    if (restoreGrid_ && !app_->ui()->grid_snap_btn->isChecked()) app_->ui()->grid_snap_btn->trigger();
+    restoreGrid_ = false;
 }
 
 void DblSidedTool::setToolUi() {

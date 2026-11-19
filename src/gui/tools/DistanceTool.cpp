@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/Preferences.h"
 #include "gui/tools/DistanceTool.h"
 
@@ -23,12 +24,14 @@ QString fmt(double v) { return QString::asprintf("%.*f", kDecimals, v); }
 /** @brief `"(%.*f, %.*f)"`. */
 QString pointText(double x, double y) { return "(" + fmt(x) + ", " + fmt(y) + ")"; }
 
-/** @brief El mensaje del resultado; el original usa `'%*f'` (ancho 4, no decimales: quedan los 6 de `%f`). */
+/** @brief El mensaje del resultado; el original usa `'%*f'` (ancho 4, no decimales: quedan los 6 de `%f`);
+ *  corregido: `'%.*f'` (4 decimales). */
 QString resultMessage(double dx, double dy, double d) {
+    const char* f = reproduceOriginalBugs() ? "%*f" : "%.*f";
     return QString("%1: %2 D(x) = %3 | D(y) = %4 | %5 = %6")
-        .arg(tr_("MEASURING"), tr_("Result"), QString::asprintf("%*f", kDecimals, std::abs(dx)),
-             QString::asprintf("%*f", kDecimals, std::abs(dy)), tr_("Distance"),
-             QString::asprintf("%*f", kDecimals, std::abs(d)));
+        .arg(tr_("MEASURING"), tr_("Result"), QString::asprintf(f, kDecimals, std::abs(dx)),
+             QString::asprintf(f, kDecimals, std::abs(dy)), tr_("Distance"),
+             QString::asprintf(f, kDecimals, std::abs(d)));
 }
 
 }  // namespace
@@ -63,8 +66,10 @@ void DistanceTool::setToolUi() {
     total_distance_entry->setValue(QString("0.0"));
     snap_center_cb->setChecked(defBool("tools_dist_snap_center"));
     snap_center_cb->hide();             // solo en los editores de Gerber y Excellon
-    // El original dispara dos veces la grilla (sin efecto neto) y recuerda si estaba activa; nunca lo vuelve a False.
+    // El original dispara dos veces la grilla (sin efecto neto) y recuerda si estaba activa; nunca lo vuelve a False
+    // (corregido: recuerda cómo estaba esta vez).
     if (app_->ui()->grid_snap_btn->isChecked()) gridMemory_ = true;
+    else if (!reproduceOriginalBugs()) gridMemory_ = false;
 }
 
 void DistanceTool::activate() {
