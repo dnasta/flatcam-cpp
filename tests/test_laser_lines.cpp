@@ -5,6 +5,7 @@
 #include <sstream>
 
 #include "golden_laser_lines.h"
+#include "core/OriginalBugs.h"
 #include "tools/Paint.h"
 
 using namespace flatcam;
@@ -97,3 +98,61 @@ INSTANTIATE_TEST_SUITE_P(Original, LaserLines, ::testing::Range<std::size_t>(0, 
                              return std::string(golden_laser_lines::kScenarios.at(info.param).name);
                          });
 
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+namespace {
+/// Trazados de "Líneas láser" de todos los polígonos de un Gerber (y cuántos polígonos se pintaron).
+std::pair<int, ShapeList> paintLaser(const std::string& text, double dia = 0.05, double overlap = 0.5,
+                                     bool connect = true, bool contour = true) {
+    Gerber g;
+    std::vector<std::string> lines;
+    std::stringstream ss(text);
+    for (std::string l; std::getline(ss, l);) lines.push_back(l);
+    EXPECT_TRUE(g.parseLines(lines));
+    PaintOptions o;
+    o.toolDia = dia;
+    o.overlap = overlap;
+    o.connect = connect;
+    o.contour = contour;
+    o.method = PolygonClearing::Method::LaserLines;
+    int painted = 0;
+    ShapeList out;
+    for (const Shape& p : Paint::flattenToPolygons(g.solidGeometry()))
+        if (auto r = Paint::laserLines(p.buffer(-0.0), g, o)) {
+            ++painted;
+            out.insert(out.end(), r->begin(), r->end());
+        }
+    return {painted, out};
+}
+}  // namespace
+
+TEST(LaserLinesFixed, MacrosRegionsAndASingleTraceArePainted) {
+    const char* header = "%FSLAX46Y46*%\n%MOMM*%\n%LPD*%\n";
+    const std::string macro = std::string(header) +
+                              "%AMBOX*\n21,1,1.0,0.6,0,0,0*%\n%ADD10C,0.400000*%\n%ADD20BOX*%\nD10*\nX0Y0D02*\n"
+                              "X5000000Y0D01*\nD20*\nX5000000Y0D03*\nM02*\n";
+    const std::string single = std::string(header) + "%ADD10C,0.150000*%\nD10*\nX0Y0D02*\nX4000000Y0D01*\nM02*\n";
+    // Una región (tamaño 0) y, aparte, un trazo.
+    const std::string region = std::string(header) +
+                               "%ADD10C,0.300000*%\nG36*\nX0Y0D02*\nX2000000Y0D01*\nX2000000Y1000000D01*\n"
+                               "X0Y1000000D01*\nX0Y0D01*\nG37*\nD10*\nX5000000Y0D02*\nX9000000Y0D01*\nM02*\n";
+    // Un trazo de 0,15 con una fresa de 0,1 y sin contorno: todas sus líneas se unen en una sola y linemerge falla.
+    struct Case { const std::string* text; double dia, overlap; bool connect, contour; };
+    for (const Case& c : {Case{&macro, 0.05, 0.5, true, true}, Case{&single, 0.1, 0.2, true, false},
+                          Case{&region, 0.05, 0.5, true, true}}) {
+        std::pair<int, ShapeList> orig;
+        {
+            OriginalBugsScope o(true);
+            orig = paintLaser(*c.text, c.dia, c.overlap, c.connect, c.contour);
+        }
+        OriginalBugsScope fixed(false);
+        const auto [painted, lines] = paintLaser(*c.text, c.dia, c.overlap, c.connect, c.contour);
+        EXPECT_GT(lines.size(), orig.second.size()) << *c.text << " pintados " << painted << " contra " << orig.first;
+        double len = 0;
+        for (const Shape& sh : lines) len += sh.length();
+        EXPECT_GT(len, 1.0) << *c.text;
+        EXPECT_GE(painted, orig.first);
+    }
+}

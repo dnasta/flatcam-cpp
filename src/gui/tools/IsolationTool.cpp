@@ -213,8 +213,10 @@ bool IsolationTool::addTool(double dia) {
     t.geo = defaultGeometryTool();
     t.geo.tooldia = d;
     t.geo.offset = "Path";
-    t.geo.type = "           Iso";  // así, con los espacios, en on_tool_default_add del original
-    t.geo.toolType = "V";
+    // on_tool_default_add del original: "           Iso" (con espacios) y forma "V"; corregido: "Iso" y la forma de las
+    // preferencias (tools_iso_tool_type, "C1").
+    t.geo.type = reproduceOriginalBugs() ? "           Iso" : "Iso";
+    t.geo.toolType = reproduceOriginalBugs() ? "V" : defStr("tools_iso_tool_type");
     t.geo.data.cutZ = defNum("tools_iso_tool_cutz");
     t.passes = defInt("tools_iso_passes");
     t.overlap = defNum("tools_iso_overlap");

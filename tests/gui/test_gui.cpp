@@ -406,6 +406,58 @@ TEST(GuiFixed, ThemeColorsOfTheLightTheme) {
     EXPECT_EQ(flatcam::gui::defStr("geometry_plot_line"), "#FF0000");
 }
 
+TEST(GuiFixed, ToolsDatabaseIsSearchedByTheToolNumber) {
+    // NCC, Paint y Corte comparaban el objetivo de la base (un número) con un texto y nunca encontraban nada.
+    flatcam::OriginalBugsScope fixed(false);
+    QTemporaryDir data;
+    App app;
+    app.setDataPath(data.path());
+    flatcam::gui::ToolsDatabase::ensureFile(data.path());
+    app.ui()->menuoptions_tools_db->trigger();
+    auto* tab = qobject_cast<ToolsDBTab*>(app.ui()->plot_tab_area->currentWidget());
+    ASSERT_NE(tab, nullptr);
+    tab->addTool();
+    tab->tool_op_combo->setIndexValue(5);  // NCC
+    tab->dia_entry->setValue(0.15);
+    tab->ncc_overlap_entry->setValue(80);
+    tab->save();
+    app.closeToolsDatabase();
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* cu = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Logo.gbr")));
+    ASSERT_NE(cu, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(cu));
+    NccTool* ncc = app.nccTool;
+    app.ui()->ncc_btn->trigger();
+    const std::size_t before = ncc->tools().size();
+    ncc->new_tooldia_entry->setValue(0.15);
+    ncc->add_newtool_button->click();
+    ASSERT_EQ(ncc->tools().size(), before + 1);
+    EXPECT_DOUBLE_EQ(ncc->tools().rbegin()->second.overlap, 80.0);  // la de la base (con los tools_ncc_*)
+    EXPECT_EQ(app.ui()->fcinfo->text->text(), tr_("New tool added to Tool Table from Tools Database."));
+}
+
+TEST(GuiFixed, NewPaintAndIsolationToolsUseThePreferredShape) {
+    // El original agregaba las herramientas de Paint e Isolation con forma "V" (e Isolation con "           Iso").
+    for (bool original : {true, false}) {
+        flatcam::OriginalBugsScope scope(original);
+        App app;
+        const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+        auto* cu = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Logo.gbr")));
+        ASSERT_NE(cu, nullptr);
+        app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(cu));
+        app.ui()->isolation_btn->trigger();
+        app.isolationTool->new_tooldia_entry->setValue(0.37);
+        app.isolationTool->search_and_add_btn->click();
+        const auto& iso = app.isolationTool->tools().rbegin()->second.geo;
+        EXPECT_EQ(iso.toolType, original ? "V" : "C1");
+        EXPECT_EQ(iso.type, original ? "           Iso" : "Iso");
+        app.ui()->paint_btn->trigger();
+        app.paintTool->new_tooldia_entry->setValue(0.37);
+        app.paintTool->add_newtool_button->click();
+        EXPECT_EQ(app.paintTool->tools().rbegin()->second.geo.toolType, original ? "V" : "C1");
+    }
+}
+
 int main(int argc, char** argv) {
     // Sin pantalla salvo que se pida otra plataforma (QT_QPA_PLATFORM=cocoa para mirar el canvas OpenGL).
     if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")) qputenv("QT_QPA_PLATFORM", "offscreen");

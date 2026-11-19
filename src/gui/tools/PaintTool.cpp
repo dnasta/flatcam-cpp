@@ -1,5 +1,6 @@
 #include <QTimer>
 
+#include "core/OriginalBugs.h"
 #include "gui/Preferences.h"
 #include "gui/tools/PaintTool.h"
 
@@ -35,11 +36,15 @@ PaintTool::PaintTool(App* app, QWidget* parent) : PaintToolUIBase(parent), app_(
     });
     connect(add_newtool_button, &QPushButton::clicked, this, [this] {
         // on_tool_add: primero busca el diámetro en la base de datos de herramientas.
-        // El original compara tool_target con el texto "Paint", y la base guarda números: no encuentra nunca.
+        // El original compara tool_target con el texto "Paint", y la base guarda números: no encuentra nunca (corregido:
+        // el número de Pintura, 4).
         JsonValue dbTool;
         double dia = 0;
         switch (lookupToolForAdd(app_->ui(), app_->dataPath(), tools_, new_tooldia_entry->value(),
-                                 [paint = tr_("Paint")](const JsonValue& t) { return t.isString() && QString::fromStdString(t.text()) == paint; }, dbTool, dia)) {
+                                 [paint = tr_("Paint")](const JsonValue& t) {
+                                     if (!reproduceOriginalBugs()) return t.isNumber() && t.toDouble() == 4;
+                                     return t.isString() && QString::fromStdString(t.text()) == paint;
+                                 }, dbTool, dia)) {
             case DbAddResult::Cancel: return;
             case DbAddResult::Default:
                 if (addTool(new_tooldia_entry->value()))
@@ -188,7 +193,9 @@ bool PaintTool::addTool(double dia) {
     t.geo.tooldia = d;
     t.geo.offset = "Path";
     t.geo.type = "Iso";
-    t.geo.toolType = "V";  // así lo pone on_tool_default_add de Paint
+    // on_tool_default_add del original pone "V" (y la Geometría recalcula la Z de corte con la punta en V);
+    // corregido: la forma de las preferencias (tools_paint_tool_type, "C1").
+    t.geo.toolType = reproduceOriginalBugs() ? "V" : defStr("tools_paint_tool_type");
     t.geo.data.cutZ = defNum("tools_paint_cutz");
     // data = default_data: los tools_paint_* de las preferencias (no lo que tenga el formulario).
     t.overlap = defNum("tools_paint_overlap");

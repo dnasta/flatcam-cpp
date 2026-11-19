@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/objects/ObjectUIs.h"
 #include "gui/Preferences.h"
 #include <set>
@@ -485,8 +486,8 @@ void GeometryObjectUI::addTool(double diaIn) {
         defaultAdd();
         return;
     }
-    // Como el original: offset, tipo y forma quedan los de la ÚLTIMA herramienta recorrida de la base; con el mismo
-    // diámetro se copian los datos tools_mill_* y generales, y por la tolerancia los tools_iso* y generales.
+    // El original deja offset, tipo y forma de la ÚLTIMA herramienta recorrida de la base y, por la tolerancia, copia
+    // los tools_iso*. Corregido: los de la herramienta encontrada y siempre los tools_mill_* (de fresado).
     int found = 0;
     std::optional<double> updated;
     JsonValue match, last;
@@ -504,7 +505,7 @@ void GeometryObjectUI::addTool(double diaIn) {
             ++found;
             match = t;
             updated = dbDia;
-            prefix = "tools_iso";
+            prefix = reproduceOriginalBugs() ? "tools_iso" : "tools_mill_";
         }
     }
     if (found == 0) {
@@ -520,10 +521,11 @@ void GeometryObjectUI::addTool(double diaIn) {
     ct.geo = defaultGeometryTool();
     ToolsDatabase::applyTo(match, ct, prefix);
     ct.geo.tooldia = updated ? *updated : dia;
-    ct.geo.offset = QString::fromStdString(last["offset"].text());
-    ct.geo.offsetValue = last["offset_value"].toDouble();
-    ct.geo.type = QString::fromStdString(last["type"].text());
-    ct.geo.toolType = QString::fromStdString(last["tool_type"].text());
+    const JsonValue& from = reproduceOriginalBugs() ? last : match;
+    ct.geo.offset = QString::fromStdString(from["offset"].text());
+    ct.geo.offsetValue = from["offset_value"].toDouble();
+    ct.geo.type = QString::fromStdString(from["type"].text());
+    ct.geo.toolType = QString::fromStdString(from["tool_type"].text());
     ct.geo.solidGeometry = obj_->solidGeometry();
     tools[uid] = ct.geo;
     build(*obj_);

@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/Preferences.h"
 #include "gui/tools/CutOutTool.h"
 
@@ -23,7 +24,11 @@ CutOutTool::CutOutTool(App* app, QWidget* parent) : CutOutToolUIBase(parent), ap
         double dia = 0;
         const QString cut = tr_("Cutout");
         const auto r = lookupToolForAdd(app_->ui(), app_->dataPath(), {}, dia_value(),
-                                        [cut](const JsonValue& t) { return t.isString() && QString::fromStdString(t.text()) == cut; },
+                                        [cut](const JsonValue& t) {
+                                            // Corregido: el número de Corte (6); el original compara con el texto.
+                                            if (!reproduceOriginalBugs()) return t.isNumber() && t.toDouble() == 6;
+                                            return t.isString() && QString::fromStdString(t.text()) == cut;
+                                        },
                                         dbTool, dia);
         if (r == DbAddResult::Cancel) return;
         if (r == DbAddResult::FromDb) {

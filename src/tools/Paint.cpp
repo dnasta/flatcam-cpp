@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "tools/Paint.h"
 
 #include <algorithm>
@@ -167,6 +168,14 @@ std::optional<ShapeList> Paint::laserLines(const Shape& polyg, const Gerber& ger
         for (const std::string& id : gerber.apertureOrder()) {
             const Aperture& ap = aps.at(id);
             for (const ApertureGeometry& el : ap.geometry) {
+                if (!reproduceOriginalBugs() && (!ap.size || *ap.size == 0.0)) {
+                    // Corregido: una macro (sin tamaño) hacía fallar todo el polígono y las regiones (tamaño 0) se
+                    // sumaban a los trazos de todos los polígonos y lo hacían fallar; ahora se rellenan como un pad
+                    // (líneas con contorno) si están dentro del polígono.
+                    if (el.solid && !el.solid->isEmpty() && el.solid->within(polyg.buffer(1e-9)))
+                        addTo(flashes, std::string("R"), &el);
+                    continue;
+                }
                 if (!ap.size) return std::nullopt;  // apval["size"] de una macro: KeyError
                 if (*ap.size == 0.0) addTo(traces, 0.0, &el);
                 if (el.follow && el.follow->within(polyg)) {
@@ -213,7 +222,12 @@ std::optional<ShapeList> Paint::laserLines(const Shape& polyg, const Gerber& ger
             }
         }
         const Shape united = Shape::unaryUnion(copper);
-        if (united.type() == ShapeType::LineString) return partial();  // linemerge: "Cannot linemerge"
+        if (united.type() == ShapeType::LineString) {
+            // linemerge de una sola línea: "Cannot linemerge" y el original pierde los trazos (corregido).
+            if (reproduceOriginalBugs()) return partial();
+            out.push_back(united);
+            return partial();
+        }
         if (!united.isEmpty()) {
             const Shape merged = Shape::lineMerge(isMulti(united.type()) ? united.parts() : ShapeList{united});
             ShapeList parts;
