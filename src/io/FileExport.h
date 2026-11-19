@@ -40,7 +40,7 @@ struct ExcellonExportFormat {
 
 /**
  * @brief Texto de un Gerber exportado, como `export_gerber` (las unidades de la aplicación son milímetros: a pulgadas
- * el factor es 0,03937, como el original).
+ * el factor es 0,03937 como el original, o 1 / 25,4 con los errores del original corregidos).
  *
  * Solo la apertura "0" exporta sus regiones (G36/G37, con los agujeros en polaridad clara); el resto exporta el trazo
  * o destello (`follow`) y las zonas claras. Los tamaños de las aperturas se escriben con `str()` de Python.

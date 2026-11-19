@@ -65,3 +65,46 @@ TEST(FileExport, ExcellonMatchesOriginal) {
         EXPECT_EQ(withoutDate(exportExcellon(e, f, header())), c.text);
     }
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+TEST(FileExportFixed, ExcellonSlotsAndInchFactor) {
+    OriginalBugsScope fixed(false);
+    for (const char* file : {"excellon_samples/slots_g85.drl", "excellon_samples/routed_slots.drl"}) {
+        SCOPED_TRACE(file);
+        Excellon e;
+        ASSERT_TRUE(e.parseFile(std::string(FLATCAM_TEST_DATA_DIR) + "/" + file));
+        e.createGeometry();
+        std::vector<std::pair<Point2D, Point2D>> slots;
+        for (const auto& [id, t] : e.drillTools()) slots.insert(slots.end(), t.slots.begin(), t.slots.end());
+        ASSERT_FALSE(slots.empty());
+        for (const char* type : {"routing", "drilling"}) {
+            for (const char* units : {"METRIC", "INCH"}) {
+                SCOPED_TRACE(std::string(type) + " " + units);
+                ExcellonExportFormat f;
+                f.units = units;
+                f.whole = units == std::string("METRIC") ? 3 : 2;
+                f.fract = units == std::string("METRIC") ? 4 : 6;
+                f.slotType = type;
+                const std::string text = exportExcellon(e, f, header());
+                // Se vuelve a leer con las mismas ranuras (en mm; en pulgadas, con el factor exacto 1 / 25,4).
+                Excellon back;
+                std::vector<std::string> lines;
+                std::stringstream ss(text);
+                for (std::string l; std::getline(ss, l);) lines.push_back(l);
+                ASSERT_TRUE(back.parseLines(lines));
+                if (units == std::string("INCH")) back.convertUnits(Units::Millimeters);
+                std::vector<std::pair<Point2D, Point2D>> got;
+                for (const auto& [id, t] : back.drillTools()) got.insert(got.end(), t.slots.begin(), t.slots.end());
+                ASSERT_EQ(got.size(), slots.size()) << text;
+                for (std::size_t i = 0; i < got.size(); ++i) {
+                    EXPECT_NEAR(got[i].first.x, slots[i].first.x, 1e-3);
+                    EXPECT_NEAR(got[i].first.y, slots[i].first.y, 1e-3);
+                    EXPECT_NEAR(got[i].second.x, slots[i].second.x, 1e-3);
+                    EXPECT_NEAR(got[i].second.y, slots[i].second.y, 1e-3);
+                }
+            }
+        }
+    }
+}

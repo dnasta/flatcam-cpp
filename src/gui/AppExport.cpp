@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <algorithm>
 
+#include "core/OriginalBugs.h"
 #include "gui/App.h"
 
 #include "gui/ProjectIO.h"
@@ -124,18 +125,28 @@ std::string App::cncSvgText(const CNCJobObject* job) const {
     const auto& tools = job->tools();
     const auto& gcodes = job->job().toolGcodes();
     const bool drilling = job->isDrilling();
-    const std::string gcode = gcodes.empty() ? job->job().gcode() : gcodes.back();
     const CncToolRow* last = tools.empty() ? nullptr : &tools.back();
-    const bool laser =
-        last && last->data[drilling ? "tools_drill_ppname_e" : "ppname_g"].text().find("laser") != std::string::npos;
-    const JsonValue parsed = ProjectIO::gcodeParse(gcode, laser, drilling && last ? last->dia : 0.0);
     ShapeList travels, cuts, all;
+    // El original solo interpreta el G-code de la última herramienta (corregido: el de todas, cada una con su diámetro).
+    std::vector<std::pair<std::string, const CncToolRow*>> parts;
+    if (gcodes.empty()) {
+        parts.push_back({job->job().gcode(), last});
+    } else if (reproduceOriginalBugs() || gcodes.size() != tools.size()) {
+        parts.push_back({gcodes.back(), last});
+    } else {
+        for (std::size_t i = 0; i < gcodes.size(); ++i) parts.push_back({gcodes[i], &tools[i]});
+    }
+    for (const auto& [gcode, row] : parts) {
+    const bool laser =
+        row && row->data[drilling ? "tools_drill_ppname_e" : "ppname_g"].text().find("laser") != std::string::npos;
+    const JsonValue parsed = ProjectIO::gcodeParse(gcode, laser, drilling && row ? row->dia : 0.0);
     for (const JsonValue& seg : parsed.items()) {
         const Shape g = Shape::fromWkt(seg["geom"]["__inst__"].text());
         all.push_back(g);
         const std::string k = seg["kind"].items().empty() ? std::string() : seg["kind"].items()[0].text();
         if (k == "C") cuts.push_back(g);
         if (k == "T") travels.push_back(g);
+    }
     }
     // bounds(): un trabajo de una herramienta (G-code abierto) usa solid_geometry = la unión de todo lo interpretado; uno
     // multiherramienta, los cortes de su última herramienta (CNCjob.bounds reinicia los mínimos en cada una).
