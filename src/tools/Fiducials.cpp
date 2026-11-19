@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "tools/Fiducials.h"
 
 #include <cmath>
@@ -86,7 +87,8 @@ std::optional<FiducialsGerber> addFiducials(const Gerber& g, const std::vector<P
             for (const Shape& l : {hor, ver}) {
                 const Shape b = l.buffer(t2, steps);
                 buffs.push_back(b);
-                elements.push_back({b, Shape::point(b.centroid()), std::nullopt});
+                // El seguimiento de cada elemento es el centroide del engrosado en el original (corregido: la línea).
+                elements.push_back({b, reproduceOriginalBugs() ? Shape::point(b.centroid()) : l, std::nullopt});
             }
         }
         const auto found =
@@ -96,8 +98,12 @@ std::optional<FiducialsGerber> addFiducials(const Gerber& g, const std::vector<P
         ap.geometry.insert(ap.geometry.end(), elements.begin(), elements.end());
         // MultiPolygon(geo_buff_list).buffer(0) y se recorre: con un solo polígono, TypeError.
         const Shape u = Shape::unaryUnion(buffs);
-        if (u.type() == ShapeType::Polygon) return std::nullopt;
-        for (const Shape& p : u.parts()) added.push_back(p);
+        if (u.type() == ShapeType::Polygon) {
+            if (reproduceOriginalBugs()) return std::nullopt;
+            added.push_back(u);  // corregido: las cruces unidas en un solo polígono
+        } else {
+            for (const Shape& p : u.parts()) added.push_back(p);
+        }
     } else {
         for (const Point2D& p : points) {
             for (const Shape& s : {square(p.x - size / 4, p.y + size / 4, size / 2),

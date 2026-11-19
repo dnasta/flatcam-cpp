@@ -64,3 +64,24 @@ TEST(Fiducials, MatchesTheOriginal) {
             EXPECT_TRUE(r->follow[base + i].equalsExact(Shape::fromWkt(c.followAdded[i]), 1e-9)) << i;
     }
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+TEST(FiducialsFixed, CrossesJoinedInOnePolygonAndLineFollow) {
+    Gerber g;
+    ASSERT_TRUE(g.parseLines({"%FSLAX46Y46*%", "%MOMM*%", "%ADD10C,1*%", "D10*", "X0Y0D03*", "M02*"}));
+    const std::vector<Point2D> pts{{0, 0}, {0.2, 0.2}};  // tan cerca que las cruces se unen
+    {
+        OriginalBugsScope o(true);
+        EXPECT_FALSE(addFiducials(g, pts, 1.0, FiducialType::Cross, 0.25, 64, 4).has_value());  // TypeError
+    }
+    OriginalBugsScope fixed(false);
+    const auto r = addFiducials(g, pts, 1.0, FiducialType::Cross, 0.25, 64, 4);
+    ASSERT_TRUE(r.has_value());
+    bool lines = false;
+    for (const auto& [id, ap] : r->apertures)
+        if (ap.size && std::abs(*ap.size - 0.25) < 1e-12)
+            for (const auto& el : ap.geometry) lines = lines || (el.follow && el.follow->type() == ShapeType::LineString);
+    EXPECT_TRUE(lines);
+}

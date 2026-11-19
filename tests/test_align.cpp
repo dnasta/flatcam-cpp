@@ -45,3 +45,26 @@ TEST(AlignObjects, MovesLikeTheOriginal) {
         }
     }
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+TEST(AlignObjectsFixed, AngleWithAtan2AndBothCoordinates) {
+    OriginalBugsScope fixed(false);
+    // Media vuelta: atan da 0 (pierde el cuadrante).
+    AlignMove m = alignMove({{0, 0}, {0, 0}, {1, 0}, {-1, 0}}, 4);
+    ASSERT_TRUE(m.angle);
+    EXPECT_NEAR(std::abs(*m.angle), 180.0, 1e-9);
+    // El destino en la X del centro: el original divide por cero.
+    m = alignMove({{0, 0}, {0, 0}, {1, 0}, {0, 1}}, 4);
+    EXPECT_FALSE(m.fails);
+    ASSERT_TRUE(m.angle);
+    EXPECT_NEAR(*m.angle, 90.0, 1e-9);
+    // Coinciden solo en Y: igual hay que girar (el original lo omite).
+    m = alignMove({{0, 0}, {0, 0}, {1, 1}, {-1, 1}}, 4);
+    ASSERT_TRUE(m.angle);
+    EXPECT_NEAR(*m.angle, 90.0, 1e-9);
+    // Coinciden en X y en Y: no hace falta.
+    m = alignMove({{0, 0}, {0, 0}, {1, 1}, {1, 1}}, 4);
+    EXPECT_FALSE(m.angle);
+}
