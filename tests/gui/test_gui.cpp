@@ -544,6 +544,33 @@ TEST(GuiFixed, ConvertGeometryToExcellonAndGerber) {
     EXPECT_GT(area, 1.0);
 }
 
+TEST(GuiFixed, CncSvgOfADrillingJobWithEveryTool) {
+    // El original no exporta el SVG de un taladrado (Polygon.svg no acepta stroke_color) y solo dibuja la última
+    // herramienta.
+    App app;
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* drl = static_cast<ExcellonObject*>(app.openByExtension(QString::fromStdString(dir + "PTH.drl")));
+    ASSERT_NE(drl, nullptr);
+    ASSERT_GT(drl->excellon().drillTools().size(), 1u);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(drl));
+    app.ui()->drill_btn->trigger();
+    app.drillingTool->tools_table->selectAll();
+    app.drillingTool->toolchange_cb->setChecked(true);  // un G-code por herramienta
+    auto* cnc = dynamic_cast<CNCJobObject*>(app.drillingTool->generateCnc());
+    ASSERT_NE(cnc, nullptr);
+    const std::string orig = app.cncSvgText(cnc);  // el original: solo la última herramienta
+    flatcam::OriginalBugsScope fixed(false);
+    const std::string svg = app.cncSvgText(cnc);
+    ASSERT_FALSE(svg.empty());
+    EXPECT_NE(svg.find("#5E6CFF"), std::string::npos);
+    EXPECT_GT(svg.size(), 2 * orig.size());
+    // El ancho del dibujo es el de todos los agujeros, no el de la última herramienta.
+    const QRectF b = drl->bounds();
+    const auto w = svg.find("width=\"");
+    ASSERT_NE(w, std::string::npos);
+    EXPECT_NEAR(std::stod(svg.substr(w + 7)), b.width(), 5.0);
+}
+
 int main(int argc, char** argv) {
     // Sin pantalla salvo que se pida otra plataforma (QT_QPA_PLATFORM=cocoa para mirar el canvas OpenGL).
     if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")) qputenv("QT_QPA_PLATFORM", "offscreen");

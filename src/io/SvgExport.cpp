@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "io/SvgExport.h"
 
 #include <cmath>
@@ -157,8 +158,9 @@ std::string exportCncSvg(const ShapeList& travels, const ShapeList& cuts, const 
     auto group = [&](const ShapeList& l, const std::string& color, std::string& out) {
         if (l.empty()) return true;
         const Shape u = Shape::unaryUnion(l);
-        // Solo las líneas tienen stroke_color en Shapely 1.8; con cualquier otra figura: TypeError.
-        if (u.type() != ShapeType::LineString && u.type() != ShapeType::LinearRing &&
+        // Solo las líneas tienen stroke_color en Shapely 1.8; con cualquier otra figura: TypeError (corregido: los
+        // polígonos de un taladrado se dibujan con ese color).
+        if (reproduceOriginalBugs() && u.type() != ShapeType::LineString && u.type() != ShapeType::LinearRing &&
             u.type() != ShapeType::MultiLineString)
             return false;
         out += shapelySvg(u, sf, color);
