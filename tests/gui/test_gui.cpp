@@ -4020,3 +4020,26 @@ TEST(GuiFixed, SubtractGeometryFromGeometry) {
     for (const auto& s : static_cast<GeometryObject*>(r)->tools().at(1).solidGeometry) len += s.length();
     EXPECT_NEAR(len, 8.0, 1e-9);
 }
+
+TEST(GuiFixed, QRCodeCanBeCancelledAndIsUnited) {
+    flatcam::OriginalBugsScope fixed(false);
+    App app;
+    FlatCAMObj* cu = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-B_Cu.gbr");
+    ASSERT_NE(cu, nullptr);
+    QKeyEvent alt(QEvent::KeyPress, Qt::Key_Q, Qt::AltModifier);
+    QApplication::sendEvent(app.ui(), &alt);
+    QRCodeTool* t = app.qrcodeTool;
+    t->text_data->setValue("https://flatcam.org");
+    ASSERT_TRUE(t->execute());
+    Q_EMIT app.ui()->plotCanvas()->mouseReleased(QPointF(0, 0), Qt::RightButton, false);  // cancela
+    EXPECT_FALSE(t->isPlacing());
+    ASSERT_TRUE(t->execute());
+    t->onRelease({0, 0}, Qt::LeftButton);
+    const flatcam::Gerber& g = static_cast<GerberObject*>(cu)->gerber();
+    // Unida: ningún par de polígonos se superpone, y el cobre que toca el código queda cortado por la máscara.
+    const auto& sg = g.solidGeometry();
+    for (std::size_t i = 0; i < sg.size(); ++i)
+        for (std::size_t j = i + 1; j < sg.size(); ++j) EXPECT_LT(sg[i].intersection(sg[j]).area(), 1e-9) << i << " " << j;
+    ASSERT_TRUE(g.apertures().count("25"));
+    EXPECT_NEAR(g.apertures().at("25").width, 0.3, 1e-12);  // el módulo, sin el 1 %
+}

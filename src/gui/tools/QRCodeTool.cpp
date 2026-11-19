@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/QtCompat.h"
 #include "gui/tools/QRCodeTool.h"
 
@@ -117,7 +118,15 @@ bool QRCodeTool::execute() {
     PlotCanvas* canvas = ui->plotCanvas();
     moveConn_ = connect(canvas, &PlotCanvas::mouseMoved, this, [this](QPointF w) { onMove(w); });
     releaseConn_ = connect(canvas, &PlotCanvas::mouseReleased, this,
-                           [this](QPointF w, Qt::MouseButton b, bool) { onRelease(w, b); });
+                           [this](QPointF w, Qt::MouseButton b, bool dragged) {
+                               // No se puede cancelar en el original (corregido: el botón derecho sin arrastrar).
+                               if (placing_ && b == Qt::RightButton && !dragged && !reproduceOriginalBugs()) {
+                                   onExit();
+                                   app_->ui()->inform("[WARNING_NOTCL] " + tr_("Cancelled."));
+                                   return;
+                               }
+                               onRelease(w, b);
+                           });
     placing_ = true;
     ui->inform(tr_("Click on the DESTINATION point ..."));
     return true;
