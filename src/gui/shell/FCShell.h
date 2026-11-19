@@ -116,6 +116,8 @@ public:
      * @return El resultado de Tcl.
      */
     QString eval(const QString& text, bool* ok = nullptr);
+    /** @brief Si el texto es una orden completa de Tcl (`Tcl_CommandComplete`). @param text Texto. @return Completa. */
+    static bool isComplete(const QString& text);
 
     /** @brief `append_output`. @param text Texto. */
     void appendOutput(const QString& text) { append("out", text); }

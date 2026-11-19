@@ -5,6 +5,7 @@
 #include <QFileInfo>
 #include <algorithm>
 
+#include "core/OriginalBugs.h"
 #include "gui/App.h"
 #include "gui/MainGUI.h"
 #include "gui/PlotCanvas.h"
@@ -49,6 +50,16 @@ QString pyListRepr(const QStringList& items) {
 /** `bool(eval(texto))` de un "True" / "False" / número. */
 bool pyTruth(const QString& text) {
     const QString t = text.trimmed();
+    if (!reproduceOriginalBugs()) {
+        // Corregido: los valores lógicos de Tcl (el original hace `eval` de Python).
+        const QString l = t.toLower();
+        if (l == "true" || l == "yes" || l == "on" || l == "1") return true;
+        if (l == "false" || l == "no" || l == "off" || l == "0" || l == "none") return false;
+        bool ok = false;
+        const double d = t.toDouble(&ok);
+        if (ok) return d != 0;
+        throw TclError(QString("expected boolean value but got \"%1\"").arg(t));
+    }
     if (t == "True") return true;
     if (t == "False" || t == "None") return false;
     bool ok = false;
@@ -249,6 +260,15 @@ public:
 
 protected:
     std::optional<QString> execute(const TclArgs& args) override {
+        // Corregido: los errores con el estilo de error (el original los manda a inform_shell, sin estilo).
+        if (!reproduceOriginalBugs()) {
+            auto fail = [](const QString& m) -> std::optional<QString> { throw TclError(m); };
+            if (!args.has("path")) return fail("Failed. The Tcl command set_path was used but no path argument was provided.");
+            const QString p = args.str("path").replace('\\', '/');
+            const QFileInfo f(p);
+            if (f.isFile()) return fail(QString("The provided path: %1, is a path to file and not a directory as expected.").arg(p));
+            if (!f.isDir()) return fail(QString("The provided path: %1, do not exist. Check for typos.").arg(p));
+        }
         if (!args.has("path")) return QString("Failed. The Tcl command set_path was used but no path argument was provided.");
         const QString path = args.str("path").replace('\\', '/');
         const QFileInfo fi(path);

@@ -284,6 +284,8 @@ QString FCShell::eval(const QString& text, bool* ok) {
     return QString::fromUtf8(Tcl_GetStringResult(interp_));
 }
 
+bool FCShell::isComplete(const QString& text) { return Tcl_CommandComplete(text.toUtf8().constData()) != 0; }
+
 QString FCShell::execCommand(const QString& text, bool noEcho) {
     // exec_command_test con reraise = False.
     if (!noEcho) openProcessing();
