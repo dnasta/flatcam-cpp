@@ -1,5 +1,6 @@
 #include <QTimer>
 
+#include "core/OriginalBugs.h"
 #include "gui/Preferences.h"
 #include "gui/tools/NccTool.h"
 
@@ -35,18 +36,23 @@ NccTool::NccTool(App* app, QWidget* parent) : NccToolUIBase(parent), app_(app) {
     });
     connect(add_newtool_button, &QPushButton::clicked, this, [this] {
         // on_tool_add: primero busca el diámetro en la base de datos de herramientas.
-        // El original compara tool_target con el texto "NCC", y la base guarda números: no encuentra nunca.
+        // El original compara tool_target con el texto "NCC", y la base guarda números: no encuentra nunca (corregido:
+        // el número de NCC, 5).
         JsonValue dbTool;
         double dia = 0;
         switch (lookupToolForAdd(app_->ui(), app_->dataPath(), tools_, new_tooldia_entry->value(),
-                                 [ncc = tr_("NCC")](const JsonValue& t) { return t.isString() && QString::fromStdString(t.text()) == ncc; }, dbTool, dia)) {
+                                 [ncc = tr_("NCC")](const JsonValue& t) {
+                                     if (!reproduceOriginalBugs()) return t.isNumber() && t.toDouble() == 5;
+                                     return t.isString() && QString::fromStdString(t.text()) == ncc;
+                                 }, dbTool, dia)) {
             case DbAddResult::Cancel: return;
             case DbAddResult::Default:
                 if (addTool(new_tooldia_entry->value()))
                     app_->ui()->inform("[success] " + tr_("Default tool added to Tool Table."));
                 return;
             case DbAddResult::FromDb:
-                if (addDbTool(dbTool, dia, "tools_iso"))  // así en el original (copia los tools_iso*, no los tools_ncc*)
+                // El original copia los tools_iso* (corregido: los tools_ncc*).
+                if (addDbTool(dbTool, dia, reproduceOriginalBugs() ? "tools_iso" : "tools_ncc"))
                     app_->ui()->inform("[success] " + tr_("New tool added to Tool Table from Tools Database."));
                 return;
         }
