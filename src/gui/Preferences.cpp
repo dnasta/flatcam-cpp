@@ -757,7 +757,9 @@ void Preferences::onSave(bool saveToFile) {
     t->pref_apply_button->setStyleSheet("");
     t->pref_apply_button->setIcon(QIcon(":/images/apply32.png"));
     ui_->inform(tr_("Preferences applied."));
-    // Como el original, "Aplicar" no lee el formulario: current_defaults.update(defaults).
+    // El original, en "Aplicar", no lee el formulario: current_defaults.update(defaults) (corregido: lo lee antes, así
+    // lo escrito vale aunque no se haya guardado).
+    if (!saveToFile && !reproduceOriginalBugs()) readForm();
     for (const auto& [k, v] : defaults_.members()) currentDefaults_.set(k, v);
 
     bool shouldRestart = false;
@@ -812,7 +814,15 @@ void Preferences::onCloseButton() {
     changedFlag_ = false;
     ignoreTabCloseEvent_ = true;
     ui_->pref_status_label->setStyleSheet("");
+    // El original reescribe el formulario con las señales de "editado" conectadas y las preferencias quedan marcadas
+    // como editadas (corregido: sin las señales).
+    const bool wasConnected = edConnected_;
+    if (!reproduceOriginalBugs()) connectEdited(false);
     writeForm(&currentDefaults_);
+    if (!reproduceOriginalBugs()) {
+        connectEdited(wasConnected);
+        changedFlag_ = false;
+    }
     for (const auto& [k, v] : currentDefaults_.members()) defaults_.set(k, v);
     const int idx = tabIndex();
     if (idx >= 0) {

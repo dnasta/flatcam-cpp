@@ -396,3 +396,56 @@ TEST(GuiPreferences, CursorFollowsThePreferences) {
     pt->general_app_set_group_mouse_cursor_color_cb->setChecked(false);
     EXPECT_EQ(c->cursorColor(), QColor("black"));
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+#include "gui/widgets/FCPrefWidgets.h"
+
+TEST(GuiPreferencesFixed, ApplyReadsTheFormCloseIsCleanAndSelectionColors) {
+    OriginalBugsScope fixed(false);
+    TempApp t;
+    Preferences* p = t.p();
+    p->open();
+    // "Aplicar" lee el formulario.
+    p->tab()->tools_ncc_group_ncc_overlap_entry->setValue(70.0);
+    p->tab()->pref_apply_button->click();
+    EXPECT_EQ(js(p->value("tools_ncc_overlap")), "70.0");
+    // "Cerrar" deja las preferencias sin marcar.
+    p->tab()->tools_ncc_group_ncc_overlap_entry->setValue(60.0);
+    p->tab()->pref_close_button->click();
+    EXPECT_FALSE(p->isOpen());
+    EXPECT_FALSE(p->changed());
+    // El color de relleno de la selección conserva el color y el alfa; un alfa chico se escribe con dos dígitos.
+    p->open();
+    auto* sf = p->tab()->general_gui_group_sf_color_entry;
+    sf->setValue("#112233");
+    Q_EMIT sf->editingFinished();
+    const std::string fill = p->value("global_sel_fill").text();
+    EXPECT_EQ(fill.substr(0, 7), "#112233");
+    EXPECT_EQ(fill.size(), 9u);
+    p->tab()->general_gui_group_left_right_alpha_entry->setValue(5);
+    EXPECT_EQ(p->value("global_sel_fill").text(), "#11223305");
+}
+
+TEST(GuiPreferencesFixed, ToggleUnitsScalesTheGridOnceAndKeepsTheGeometry) {
+    OriginalBugsScope fixed(false);
+    TempApp t;
+    t.app.setUnitsAutoAnswer(true);
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    FlatCAMObj* g = t.app.openGerber(QString::fromStdString(dir + "Edge_Cuts.gbr"));
+    ASSERT_NE(g, nullptr);
+    t.app.ui()->collection_view->setCurrentIndex(t.app.collection()->indexOf(g));
+    t.app.ui()->menueditconvert_any2geo->trigger();
+    auto* geo = dynamic_cast<GeometryObject*>(t.app.collection()->byName(g->name() + "_conv"));
+    ASSERT_NE(geo, nullptr);
+    ASSERT_FALSE(geo->tools().begin()->second.solidGeometry.empty());
+    const double grid = t.p()->value("global_gridx").toDouble();
+    const JsonValue tooldia = t.p()->value("geometry_cnctooldia");
+    // Desde la pestaña de Preferencias (escala las preferencias).
+    t.p()->tab()->general_app_group_units_radio->setValue(QString("IN"));
+    t.app.onToggleUnits(false);
+    EXPECT_EQ(t.p()->value("units").text(), "IN");
+    EXPECT_NEAR(t.p()->value("global_gridx").toDouble(), grid / 25.4, 1e-4);  // una sola vez
+    EXPECT_EQ(t.p()->value("geometry_cnctooldia").isString(), tooldia.isString());
+    EXPECT_FALSE(geo->tools().begin()->second.solidGeometry.empty());  // la geometría de la herramienta sigue
+}

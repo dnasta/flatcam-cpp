@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <limits>
 
+#include "core/OriginalBugs.h"
 #include "gui/objects/GeometryObject.h"
 #include "gui/Preferences.h"
 
@@ -360,7 +361,8 @@ double GeometryObject::convertUnits(Units units) {
         for (double* v : {&d.cutZ, &d.depthPerPass, &d.travelZ, &d.feedrate, &d.feedrateZ, &d.feedrateRapid, &d.endZ,
                           &d.toolchangeZ})
             *v *= factor;
-        t.solidGeometry.clear();  // error del original: 'solid_geometry' no pasa al diccionario nuevo
+        // Error del original: 'solid_geometry' no pasa al diccionario nuevo (corregido: se conserva, ya escalada).
+        if (reproduceOriginalBugs()) t.solidGeometry.clear();
     }
     return factor;
 }

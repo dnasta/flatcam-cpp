@@ -14,6 +14,7 @@
 
 #include <map>
 #include <tuple>
+#include "core/OriginalBugs.h"
 #include "gui/QtCompat.h"
 #include "gui/widgets/FCPrefWidgets.h"
 #include "gui/widgets/FCLabel.h"
@@ -224,10 +225,10 @@ void App::onWorkspaceToggle() {
 }
 
 void App::onWorkspaceModified() {
-    // on_workspace_modified (tamaño u orientación): como el original, dibuja la hoja aunque el área esté apagada.
+    // on_workspace_modified (tamaño u orientación): el original dibuja la hoja aunque el área esté apagada (corregido).
     deleteWorkspace();
     prefs_->readForm();
-    drawWorkspace();
+    if (reproduceOriginalBugs() || defBool("global_workspace")) drawWorkspace();
 }
 
 // --------------------------------------------------------------------------------------------- Editar
