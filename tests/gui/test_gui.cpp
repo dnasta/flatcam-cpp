@@ -3994,3 +3994,29 @@ TEST(GuiFixed, PanelizeOptimizationDefaultAndGeometryAsGerber) {
     ASSERT_TRUE(g.apertures().count("0"));
     EXPECT_GT(panel->bounds().width(), 2 * edge->bounds().width() - 1e-6);
 }
+
+TEST(GuiFixed, SubtractGeometryFromGeometry) {
+    flatcam::OriginalBugsScope fixed(false);
+    App app;
+    auto mk = [&](const QString& name, const flatcam::Shape& s) {
+        auto g = std::make_unique<GeometryObject>(name);
+        g->solidGeometry() = {s};
+        GeometryTool t = defaultGeometryTool();
+        t.solidGeometry = {s};
+        g->tools()[1] = t;
+        return app.addObject(std::move(g));
+    };
+    mk("objetivo", flatcam::Shape::lineString({{0, 0}, {10, 0}}));
+    mk("resta", flatcam::Shape::box(4, -1, 6, 1));
+    SubTool* t = app.subTool;
+    QKeyEvent alt(QEvent::KeyPress, Qt::Key_W, Qt::AltModifier);
+    QApplication::sendEvent(app.ui(), &alt);
+    t->target_geo_combo->setValue(QString("objetivo"));
+    t->sub_geo_combo->setValue(QString("resta"));
+    FlatCAMObj* r = t->subtractGeometry();  // el original no crea nada
+    ASSERT_NE(r, nullptr);
+    EXPECT_EQ(r->name(), "objetivo_sub");
+    double len = 0;
+    for (const auto& s : static_cast<GeometryObject*>(r)->tools().at(1).solidGeometry) len += s.length();
+    EXPECT_NEAR(len, 8.0, 1e-9);
+}

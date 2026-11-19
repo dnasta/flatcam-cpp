@@ -53,3 +53,24 @@ TEST(EtchCompensation, MatchesTheOriginal) {
         }
     }
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+TEST(EtchCompensationFixed, SizesGrowTwiceTheOffsetAndFollowIsKept) {
+    Gerber g;
+    ASSERT_TRUE(g.parseLines({"%FSLAX46Y46*%", "%MOMM*%", "%ADD10C,1*%", "%ADD11R,2X1*%", "%ADD12P,2X6*%", "D10*",
+                              "X0Y0D02*", "X5000000Y0D01*", "D11*", "X10000000Y0D03*", "D12*", "X15000000Y0D03*",
+                              "G36*", "X0Y5000000D02*", "X1000000Y5000000D01*", "X1000000Y6000000D01*",
+                              "X0Y5000000D01*", "G37*", "M02*"}));
+    OriginalBugsScope fixed(false);
+    const EtchResult r = etchCompensate(g, 0.1, 64);
+    EXPECT_NEAR(*r.apertures.at("10").size, 1.2, 1e-12);
+    EXPECT_NEAR(r.apertures.at("11").width, 2.2, 1e-12);
+    EXPECT_NEAR(r.apertures.at("11").height, 1.2, 1e-12);
+    EXPECT_NEAR(r.apertures.at("12").diam, 2.2, 1e-12);
+    for (const auto& [id, ap] : r.apertures)
+        if (ap.type == "REG") EXPECT_NEAR(ap.size.value_or(0.0), 0.0, 1e-12) << id;  // las regiones no cambian
+    EXPECT_EQ(r.follow.size(), g.followGeometry().size());
+    EXPECT_FALSE(r.follow.empty());
+}

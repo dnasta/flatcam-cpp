@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "tools/EtchCompensation.h"
 
 #include <cmath>
@@ -27,6 +28,25 @@ EtchResult etchCompensate(const Gerber& g, double offset, int steps) {
     const Shape u = Shape::unaryUnion(grown);
     r.solid = u.parts();
     r.apertures = g.apertures();
+    if (!reproduceOriginalBugs()) {
+        // Corregido: engrosar `offset` agranda las medidas en 2 * offset (el original les suma offset); las regiones
+        // (tamaño 0) y las macros no tienen medida que cambiar, y las P cambian también su diámetro.
+        const double d = 2 * offset;
+        for (auto& [id, ap] : r.apertures) {
+            if (ap.type == "R" || ap.type == "O") {
+                ap.width += d;
+                ap.height += d;
+                if (ap.size) ap.size = std::sqrt(ap.width * ap.width + ap.height * ap.height);
+            } else if (ap.type == "C" || ap.type == "P") {
+                if (ap.size) *ap.size += d;
+                if (ap.type == "P") ap.diam += d;
+            }
+            for (ApertureGeometry& el : ap.geometry)
+                if (el.solid) el.solid = el.solid->buffer(offset, steps);
+        }
+        r.follow = g.followGeometry();
+        return r;
+    }
     for (auto& [id, ap] : r.apertures) {
         if (ap.type == "R" || ap.type == "O") {
             ap.width += offset;

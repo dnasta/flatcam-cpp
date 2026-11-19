@@ -35,6 +35,7 @@ std::optional<double> etchOffset(EtchRatio ratio, double thicknessUm, double fac
 struct EtchResult {
     ShapeList solid;                            ///< Partes de la unión de los polígonos engrosados.
     std::map<std::string, Aperture> apertures;  ///< Aperturas con sus tamaños y sus figuras sólidas engrosadas.
+    ShapeList follow;  ///< Geometría de seguimiento (el original no la copia: vacía; corregido: la del Gerber).
 };
 
 /**
