@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "tools/RulesCheck.h"
 
 #include <algorithm>
@@ -117,7 +118,13 @@ RulesResult rulesInsideClearance(const RulesGerber& g, double size, const std::s
             if (e.clear) clear.push_back(*e.clear);
         }
     ShapeList total;
-    if (!clear.empty()) {
+    if (!reproduceOriginalBugs()) {
+        // Corregido: el cobre con todos sus borrados (el original, con borrados, solo mira los sólidos que contienen
+        // uno, y con un solo polígono falla).
+        Shape t = Shape::unaryUnion(solid);
+        if (!clear.empty()) t = t.difference(Shape::unaryUnion(clear));
+        total = t.parts().empty() ? (t.isEmpty() ? ShapeList{} : ShapeList{t}) : t.parts();
+    } else if (!clear.empty()) {
         // Solo los sólidos que contienen un borrado (uno por cada par).
         for (const Shape& c : clear)
             for (const Shape& s : solid)
@@ -212,9 +219,23 @@ std::optional<std::string> rulesReport(const std::vector<RulesResult>& results, 
     // st: STATUS, FAILED, PASSED, "Violations: There are no violations for the current rule."
     std::string txt;
     char buf[256];
-    auto upper = [](std::string s) {
-        std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) { return std::toupper(c); });
-        return s;
+    // str.upper() de Python: también las letras latinas con tilde (UTF-8 de dos bytes, U+00E0 a U+00FE salvo U+00F7),
+    // que en los títulos traducidos aparecen ("SEPARACIÓN"); las demás quedan como están.
+    auto upper = [](const std::string& s) {
+        std::string out;
+        out.reserve(s.size());
+        for (std::size_t i = 0; i < s.size(); ++i) {
+            const auto c = static_cast<unsigned char>(s[i]);
+            if (c == 0xC3 && i + 1 < s.size()) {
+                const auto d = static_cast<unsigned char>(s[i + 1]);
+                out += static_cast<char>(c);
+                out += static_cast<char>(d >= 0xA0 && d <= 0xBE && d != 0xB7 ? d - 0x20 : d);
+                ++i;
+            } else {
+                out += static_cast<char>(c < 0x80 ? std::toupper(c) : c);
+            }
+        }
+        return out;
     };
     auto status = [&](bool failed) {
         std::snprintf(buf, sizeof buf, "%s: <span style=\"color:white;background-color:%s\">&nbsp;%s </span>.<BR>",
@@ -232,9 +253,10 @@ std::optional<std::string> rulesReport(const std::vector<RulesResult>& results, 
                     pt = r.failed;
                 } else {
                     // 'Failed' in points[0]: con un Point de Shapely (TypeError) el informe no se crea.
-                    if (r.points.front().shapely) return std::nullopt;
+                    // Corregido: el punto se escribe igual.
+                    if (r.points.front().shapely && reproduceOriginalBugs()) return std::nullopt;
                     for (const RulesPoint& p : r.points) {
-                        if (p.shapely) return std::nullopt;
+                        if (p.shapely && reproduceOriginalBugs()) return std::nullopt;
                         std::snprintf(buf, sizeof buf, "(%.*f, %.*f), ", decimals, p.p.x, decimals, p.p.y);
                         pt += buf;
                     }
