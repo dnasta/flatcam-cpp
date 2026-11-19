@@ -1,5 +1,6 @@
 // Port de la biblioteca de Python qrcode 7.4.2 (Copyright (c) 2011, Lincoln Loop; licencia BSD, ver NOTICE) y de
 // ToolQRCode.execute / make de FlatCAM 2024.4.
+#include "core/OriginalBugs.h"
 #include "tools/QrCode.h"
 
 #include <algorithm>
@@ -690,8 +691,13 @@ QrGerber qrInsert(const Gerber& g, const QrGeometry& qr, const Point2D& pos, int
     const Shape offsetMask = mask.translate(pos.x, pos.y);
     // El cobre que contiene entera la máscara se corta; el resto queda (sin repetir polígonos iguales: `not in`).
     ShapeList solid;
+    const bool fixed = !reproduceOriginalBugs();
     for (const Shape& poly : g.solidGeometry()) {
-        if (poly.contains(offsetMask)) {
+        if (fixed) {
+            // Corregido: se corta todo el cobre que toca la máscara (el original solo el que la contiene entera).
+            const Shape d = poly.intersects(offsetMask) ? poly.difference(offsetMask) : poly;
+            if (!d.isEmpty()) solid.push_back(d);
+        } else if (poly.contains(offsetMask)) {
             solid.push_back(poly.difference(offsetMask));
         } else {
             const bool repeated = std::any_of(solid.begin(), solid.end(), [&](const Shape& s) {
@@ -703,6 +709,11 @@ QrGerber qrInsert(const Gerber& g, const QrGeometry& qr, const Point2D& pos, int
     const Shape working = negative ? mask.difference(qr.utility) : qr.utility;
     const ShapeList parts = working.parts();
     for (const Shape& p : parts.empty() ? ShapeList{working} : parts) solid.push_back(p.translate(pos.x, pos.y));
+    if (fixed) {
+        // Corregido: la geometría sólida unida (el original deja los módulos sueltos).
+        const Shape u = Shape::unaryUnion(solid);
+        solid = u.parts().empty() ? (u.isEmpty() ? ShapeList{} : ShapeList{u}) : u.parts();
+    }
     out.solid = solid;
 
     out.apertures = g.apertures();
@@ -722,8 +733,10 @@ QrGerber qrInsert(const Gerber& g, const QrGeometry& qr, const Point2D& pos, int
         Aperture ap;
         ap.type = "R";
         ap.hasGeometry = true;
-        ap.height = box * 1.01;
-        ap.width = box * 1.01;
+        // El original agranda el ancho y el alto 1 % pero no el tamaño (corregido: el módulo tal cual).
+        const double k = fixed ? 1.0 : 1.01;
+        ap.height = box * k;
+        ap.width = box * k;
         ap.size = std::sqrt(box * box + box * box);
         out.apertures[newId] = ap;
     }
