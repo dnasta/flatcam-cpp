@@ -445,9 +445,14 @@ TEST(GuiApp, ReorderingTheProjectTreeChangesTheDrawOrder) {
     ASSERT_FALSE(r.isEmpty());
     m.reset(col->mimeData({col->indexOf(edge)}));
     const QPointF pos(r.center().x(), r.top() + 1);
-    QDragEnterEvent enter(pos, Qt::MoveAction, m.get(), Qt::LeftButton, Qt::NoModifier);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+    const QPointF dpos = pos;  // desde Qt 6.8 los eventos de arrastre toman QPointF (el de QPoint es obsoleto)
+#else
+    const QPoint dpos = pos.toPoint();
+#endif
+    QDragEnterEvent enter(dpos, Qt::MoveAction, m.get(), Qt::LeftButton, Qt::NoModifier);
     QApplication::sendEvent(view->viewport(), &enter);
-    QDragMoveEvent mv(pos, Qt::MoveAction, m.get(), Qt::LeftButton, Qt::NoModifier);
+    QDragMoveEvent mv(dpos, Qt::MoveAction, m.get(), Qt::LeftButton, Qt::NoModifier);
     QApplication::sendEvent(view->viewport(), &mv);
     EXPECT_TRUE(mv.isAccepted());
     QDropEvent drop(pos, Qt::MoveAction, m.get(), Qt::LeftButton, Qt::NoModifier);
