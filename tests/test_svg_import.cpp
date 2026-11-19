@@ -63,3 +63,69 @@ TEST(SvgImport, PathParserCommands) {
     EXPECT_EQ((*p)[5].end, (Point2D{6, 5}));
     EXPECT_FALSE(parseSvgPath("10 0 L5 5", err));  // no empieza con un comando
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+namespace {
+/// Un SVG de 100 x 100 mm con viewBox de 50 (factor 2) y el contenido dado.
+std::string svgDoc(const std::string& body) {
+    return "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100mm\" height=\"100mm\" viewBox=\"0 0 50 50\">" + body +
+           "</svg>";
+}
+ShapeList geometryOf(const std::string& body) {
+    const SvgImportResult r = importSvgAsGeometry(svgDoc(body), 64);
+    EXPECT_TRUE(r.ok) << r.error;
+    return r.geometry;
+}
+double totalArea(const ShapeList& l) {
+    double a = 0;
+    for (const Shape& s : l) a += s.area();
+    return a;
+}
+}  // namespace
+
+TEST(SvgImportFixed, ViewBoxFactorRectsMatrixPathsAndDefs) {
+    OriginalBugsScope fixed(false);
+    // Un trayecto de líneas: el inicio también con el factor (cuadrado de 10 -> 20 x 20).
+    EXPECT_NEAR(totalArea(geometryOf("<path d=\"M 5 5 L 15 5 L 15 15 L 5 15 Z\"/>")), 400.0, 1e-6);
+    // Un trayecto abierto es una línea.
+    {
+        const ShapeList g = geometryOf("<path d=\"M 0 0 L 10 0 L 10 10\"/>");
+        ASSERT_EQ(g.size(), 1u);
+        EXPECT_EQ(g[0].type(), ShapeType::LineString);
+        EXPECT_NEAR(g[0].length(), 40.0, 1e-9);
+    }
+    // El rect con el ancho y el alto escalados; con esquinas redondeadas.
+    EXPECT_NEAR(totalArea(geometryOf("<rect x=\"0\" y=\"0\" width=\"10\" height=\"5\"/>")), 200.0, 1e-6);
+    {
+        const double a = totalArea(geometryOf("<rect x=\"0\" y=\"0\" width=\"10\" height=\"10\" rx=\"2\"/>"));
+        const double expected = 400.0 - (4 - 3.14159265358979) * 16;  // radio 4 tras el factor
+        EXPECT_NEAR(a, expected, 0.2);
+    }
+    // matrix(a b c d e f): x' = a x + c y + e. Un inclinado en X de un cuadrado: el área no cambia y la X crece con la Y.
+    {
+        const ShapeList g = geometryOf("<rect x=\"0\" y=\"0\" width=\"10\" height=\"10\" transform=\"matrix(1 0 1 1 0 0)\"/>");
+        ASSERT_EQ(g.size(), 1u);
+        const auto b = g[0].bounds();
+        ASSERT_TRUE(b);
+        EXPECT_NEAR(b->xmax - b->xmin, 40.0, 1e-6);  // 20 de ancho más 20 de inclinación
+        EXPECT_NEAR(b->ymax - b->ymin, 20.0, 1e-6);
+    }
+    // Una lista de puntos con espacios a los costados.
+    EXPECT_NEAR(totalArea(geometryOf("<polygon points=\"  0,0 10,0 10,10 0,10  \"/>")), 400.0, 1e-6);
+    // Lo de defs no se dibuja salvo que un use lo pida.
+    EXPECT_TRUE(geometryOf("<defs><rect id=\"r\" x=\"0\" y=\"0\" width=\"10\" height=\"10\"/></defs>").empty());
+    EXPECT_NEAR(totalArea(geometryOf("<defs><rect id=\"r\" x=\"0\" y=\"0\" width=\"10\" height=\"10\"/></defs>"
+                                     "<use href=\"#r\"/>")),
+                400.0, 1e-6);
+    // Un texto sin style ya no hace fallar la importación.
+    EXPECT_EQ(geometryOf("<text><tspan>hola</tspan></text><rect x=\"0\" y=\"0\" width=\"10\" height=\"10\"/>").size(), 1u);
+    // Como Gerber: una figura con agujero lo conserva (el área es la del anillo) y sin el Polygon() vacío al final.
+    const SvgImportResult grb = importSvgAsGerber(
+        svgDoc("<path d=\"M 0 0 L 20 0 L 20 20 L 0 20 Z M 5 5 L 15 5 L 15 15 L 5 15 Z\"/><line x1=\"0\" y1=\"0\" x2=\"5\" y2=\"5\"/>"),
+        64);
+    ASSERT_TRUE(grb.ok) << grb.error;
+    ASSERT_EQ(grb.geometry.size(), 1u);
+    EXPECT_NEAR(grb.geometry[0].area(), 1600.0 - 400.0, 1e-6);
+}

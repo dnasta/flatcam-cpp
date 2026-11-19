@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "parsers/SvgImport.h"
 
 #include <algorithm>
@@ -573,8 +574,8 @@ std::optional<ShapeList> path2shapely(const std::vector<SvgSegment>& path, doubl
     bool closed = false;
     for (const SvgSegment& c : path) {
         if (c.kind == SvgSegment::Kind::Line) {
-            // El inicio no se multiplica por el factor (así está en el original).
-            const Point2D s = c.start;
+            // El inicio no se multiplica por el factor (así está en el original; corregido).
+            const Point2D s = reproduceOriginalBugs() ? c.start : Point2D{factor * c.start.x, factor * c.start.y};
             if (points.empty() || !(points.back() == s)) points.push_back(s);
             points.push_back({factor * c.end.x, factor * c.end.y});
             continue;
@@ -612,7 +613,13 @@ std::optional<ShapeList> path2shapely(const std::vector<SvgSegment>& path, doubl
             continue;
         }
     }
+    const bool openEnd = !points.empty() && !closed;
     if (!points.empty()) rings.push_back(points);
+    if (!reproduceOriginalBugs() && rings.size() == 1 && openEnd && !(rings[0].front() == rings[0].back())) {
+        // Corregido: un trayecto abierto es una línea (el original lo cierra y lo convierte en polígono).
+        if (rings[0].size() < 2) return std::nullopt;
+        return ShapeList{Shape::lineString(rings[0])};
+    }
     // MultiLineString(rings): cada anillo necesita al menos dos puntos.
     for (const auto& r : rings)
         if (r.size() < 2) return std::nullopt;
@@ -651,6 +658,8 @@ std::vector<Point2D> pointList(const std::string& str, double factor) {
     while (a < b && str[a] == ' ') ++a;
     while (b > a && str[b - 1] == ' ') --b;
     const std::string stripped = str.substr(a, b - a);
+    // Corregido: el original corta el texto sin recortar con las posiciones del recortado.
+    const std::string& cut = reproduceOriginalBugs() ? str : stripped;
     static const std::regex sep(R"((\s*,\s*)|(\s+))");
     std::vector<Point2D> pairs;
     double last = 0;
@@ -658,13 +667,13 @@ std::vector<Point2D> pointList(const std::string& str, double factor) {
     int i = 0;
     for (auto it = std::sregex_iterator(stripped.begin(), stripped.end(), sep); it != std::sregex_iterator(); ++it) {
         const auto mstart = static_cast<std::size_t>(it->position(0));
-        const double val = pyFloat(str.substr(pos, mstart > pos ? mstart - pos : 0));
+        const double val = pyFloat(cut.substr(pos, mstart > pos ? mstart - pos : 0));
         if (i % 2 == 1) pairs.push_back({factor * last, factor * val});
-        else last = val * factor;
+        else last = reproduceOriginalBugs() ? val * factor : val;  // el original multiplica la X dos veces (corregido)
         pos = mstart + static_cast<std::size_t>(it->length(0));
         ++i;
     }
-    const double val = pyFloat(str.substr(std::min(pos, str.size())));
+    const double val = pyFloat(cut.substr(std::min(pos, cut.size())));
     if (i % 2 == 1) pairs.push_back({factor * last, factor * val});
     return pairs;
 }
@@ -737,7 +746,9 @@ bool tspanWithoutStyle(const XmlElement& n) {
 Geos getsvggeo(const XmlElement& node, const XmlElement& root, int res, double factor) {
     Geos geo = ShapeList{};
     const std::string& kind = node.tag;
-    if (!node.children.empty()) {
+    if (kind == "defs" && !reproduceOriginalBugs()) {
+        geo = ShapeList{};  // corregido: lo que está en defs solo se dibuja si un use lo pide
+    } else if (!node.children.empty()) {
         for (const XmlElement& child : node.children)
             if (Geos sub = getsvggeo(child, root, res, factor)) geo->insert(geo->end(), sub->begin(), sub->end());
     } else if (kind == "path") {
@@ -746,13 +757,36 @@ Geos getsvggeo(const XmlElement& node, const XmlElement& root, int res, double f
         if (!p) throw SvgError(err);
         geo = path2shapely(*p, factor);
     } else if (kind == "rect") {
-        const double w = svgLength(node.get("width")), h = svgLength(node.get("height"));
+        // El original no multiplica el ancho ni el alto por el factor (corregido).
+        const double rf = reproduceOriginalBugs() ? 1.0 : factor;
+        const double w = svgLength(node.get("width")) * rf, h = svgLength(node.get("height")) * rf;
         const double x = node.get("x") ? svgLength(node.get("x")) * factor : 0;
         const double y = node.get("y") ? svgLength(node.get("y")) * factor : 0;
         // Esquinas redondeadas: el original multiplica el texto de rx por el factor y falla (TypeError).
-        if ((node.get("rx") && !node.get("rx")->empty()) || (node.get("ry") && !node.get("ry")->empty()))
+        const bool hasRx = node.get("rx") && !node.get("rx")->empty();
+        const bool hasRy = node.get("ry") && !node.get("ry")->empty();
+        if ((hasRx || hasRy) && reproduceOriginalBugs())
             throw SvgError("can't multiply sequence by non-int of type 'float'");
-        geo = ShapeList{cleanPolygon({{x, y}, {x + w, y}, {x + w, y + h}, {x, y + h}, {x, y}})};
+        if (hasRx || hasRy) {
+            // Corregido: las esquinas redondeadas (si falta uno de los radios vale el otro; como mucho la mitad del lado).
+            double rx = hasRx ? svgLength(node.get("rx")) * factor : svgLength(node.get("ry")) * factor;
+            double ry = hasRy ? svgLength(node.get("ry")) * factor : rx;
+            rx = std::min(std::abs(rx), w / 2);
+            ry = std::min(std::abs(ry), h / 2);
+            std::vector<Point2D> pts;
+            const int q = std::max(1, res / 4);
+            const Point2D centers[4] = {{x + w - rx, y + ry}, {x + w - rx, y + h - ry}, {x + rx, y + h - ry}, {x + rx, y + ry}};
+            for (int k = 0; k < 4; ++k) {
+                const double a0 = (k * 90.0 - 90.0) * kPi / 180.0;
+                for (int i = 0; i <= q; ++i) {
+                    const double t = a0 + (kPi / 2) * i / q;
+                    pts.push_back({centers[k].x + rx * std::cos(t), centers[k].y + ry * std::sin(t)});
+                }
+            }
+            geo = ShapeList{cleanPolygon(pts)};
+        } else {
+            geo = ShapeList{cleanPolygon({{x, y}, {x + w, y}, {x + w, y + h}, {x, y + h}, {x, y}})};
+        }
     } else if (kind == "circle") {
         const double cx = attrScaled(node, "cx", factor), cy = attrScaled(node, "cy", factor);
         const double r = attrScaled(node, "r", factor);
@@ -796,7 +830,10 @@ Geos getsvggeo(const XmlElement& node, const XmlElement& root, int res, double f
                     else if (it->name == "rotate") g = g.rotate(v[0], Point2D{v[1], v[2]});
                     else if (it->name == "skew") g = g.skew(v[0], v[1], Point2D{0, 0});
                     // affine_transform(geo, [a, b, c, d, e, f]): Shapely lo toma como [a, b, d, e, xoff, yoff].
-                    else if (it->name == "matrix") g = g.transform(AffineTransform(v[0], v[1], v[2], v[3], v[4], v[5]));
+                    // Corregido: matrix(a b c d e f) es x' = a x + c y + e, y' = b x + d y + f.
+                    else if (it->name == "matrix")
+                        g = g.transform(reproduceOriginalBugs() ? AffineTransform(v[0], v[1], v[2], v[3], v[4], v[5])
+                                                                : AffineTransform(v[0], v[2], v[1], v[3], v[4], v[5]));
                 }
             }
         }
@@ -850,7 +887,7 @@ SvgImportResult importSvgAsGeometry(const std::string& svgText, int circleSteps)
     ShapeList geos;
     SvgImportResult r = readSvg(svgText, circleSteps, geos);
     if (!r.ok) return r;
-    if (r.textWithoutStyle) {
+    if (r.textWithoutStyle && reproduceOriginalBugs()) {
         // Geometry.import_svg llama a getsvgtext (Gerber.import_svg no).
         r.ok = false;
         r.error = "'style'";
@@ -889,6 +926,25 @@ SvgImportResult importSvgAsGerber(const std::string& svgText, int circleSteps) {
         r.error = "'object has no attribute 'exterior'";
         return r;
     };
+    if (!reproduceOriginalBugs()) {
+        // Corregido: el original pasa los agujeros de una figura sola a polígonos aparte (quedan rellenos), falla con
+        // cualquier línea y deja al final el Polygon() vacío inicial. Los polígonos se quedan con sus agujeros, las
+        // líneas cerradas son polígonos y las abiertas no tienen área (se saltean).
+        for (const Shape& g : geos) {
+            const ShapeList parts = g.parts().empty() ? ShapeList{g} : g.parts();
+            for (const Shape& p : parts) {
+                if (p.isEmpty()) continue;
+                if (p.type() == ShapeType::Polygon) {
+                    r.geometry.push_back(p);
+                } else if (p.type() == ShapeType::LinearRing ||
+                           (p.type() == ShapeType::LineString && p.coordinates().size() >= 4 &&
+                            p.coordinates().front() == p.coordinates().back())) {
+                    r.geometry.push_back(Shape::polygon(p.coordinates()).buffer(0, circleSteps));
+                }
+            }
+        }
+        return r;
+    }
     if (geos.size() == 1) {
         // Una sola figura: su contorno y cada agujero como un polígono aparte.
         if (geos[0].type() != ShapeType::Polygon) return fail();
