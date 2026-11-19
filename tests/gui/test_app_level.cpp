@@ -167,3 +167,48 @@ TEST(GuiAppLevel, AdvancedDrillingUsesSlotsAndTheToolsDatabase) {
     app.preferences()->set("excellon_autoload_db", JsonValue::boolean(false));
     ASSERT_TRUE(ToolsDatabase::save(file, JsonValue::object()));  // la base de las pruebas queda vacía
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+TEST(GuiFixed, DiagonalSlotsAsDrillsAndDatabaseWithTwoTools) {
+    flatcam::OriginalBugsScope fixed(false);
+    // Una ranura diagonal de largo 10 con paso 2: el inicio y los puntos a 2, 4, 6 y 8 (el original, solo el inicio).
+    const double s = 10 / std::sqrt(2.0);
+    const auto pts = DrillingTool::slotAsDrills({0, 0}, {s, s}, 2.0, true);
+    ASSERT_EQ(pts.size(), 6u);
+    EXPECT_NEAR(pts[2].x, 4 / std::sqrt(2.0), 1e-9);
+    EXPECT_NEAR(pts.back().x, s, 1e-12);
+    App app;
+    app.preferences()->set("global_app_level", JsonValue::string("a"));
+    // Dos herramientas de la base para el diámetro 1,0: la del mismo diámetro gana (el original cancela todo).
+    const QString file = ToolsDatabase::fileName(app.dataPath());
+    ToolsDatabase::ensureFile(app.dataPath());
+    JsonValue db = JsonValue::object();
+    for (const auto& [key, dia, z] : {std::tuple{"1", 0.9, -3.0}, std::tuple{"2", 1.0, -2.0}}) {
+        JsonValue tool = ToolsDatabase::newTool(JsonValue::object(), appDefaults());
+        tool.set("tooldia", JsonValue::real(dia));
+        JsonValue& data = const_cast<JsonValue&>(tool["data"]);
+        data.set("tol_min", JsonValue::real(0.95));
+        data.set("tol_max", JsonValue::real(1.05));
+        data.set("tools_drill_cutz", JsonValue::real(z));
+        db.set(key, tool);
+    }
+    ASSERT_TRUE(ToolsDatabase::save(file, db));
+    app.preferences()->set("excellon_autoload_db", JsonValue::boolean(true));
+    FlatCAMObj* exc = app.openExcellon(kData + "/excellon_samples/slots_g85.drl");
+    ASSERT_NE(exc, nullptr);
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(exc));
+    app.ui()->drill_btn->trigger();
+    DrillingTool* t = app.drillingTool;
+    EXPECT_FALSE(t->drill_overlap_entry->isHidden());
+    EXPECT_FALSE(t->last_drill_cb->isHidden());
+    t->tools_table->selectAll();
+    t->drill_slots_cb->setChecked(true);
+    auto* job = dynamic_cast<CNCJobObject*>(t->generateCnc());
+    ASSERT_NE(job, nullptr);
+    EXPECT_DOUBLE_EQ(job->tools()[0].dia, 1.0);
+    EXPECT_DOUBLE_EQ(job->tools()[0].cutZ, -2.0);
+    app.preferences()->set("excellon_autoload_db", JsonValue::boolean(false));
+    ASSERT_TRUE(ToolsDatabase::save(file, JsonValue::object()));
+}

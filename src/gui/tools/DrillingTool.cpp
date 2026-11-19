@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/Preferences.h"
 #include "gui/tools/DrillingTool.h"
 
@@ -133,9 +134,12 @@ void DrillingTool::setToolUi() {
     const bool basic = appLevelBasic();
     estartz_label->setVisible(!basic);
     estartz_entry->setVisible(!basic);
-    drill_overlap_label->hide();
-    drill_overlap_entry->hide();
-    last_drill_cb->hide();
+    // El original esconde siempre el solape y "Último taladro" (se usan los de las Preferencias); corregido: se ven en
+    // el nivel Avanzado, con "Taladrar ranuras".
+    const bool showSlotParams = !basic && !reproduceOriginalBugs();
+    drill_overlap_label->setVisible(showSlotParams);
+    drill_overlap_entry->setVisible(showSlotParams);
+    last_drill_cb->setVisible(showSlotParams);
     drill_slots_cb->setVisible(!basic);
     drill_slots_cb->setChecked(basic ? false : defBool("tools_drill_drill_slots"));
     muted_ = false;
@@ -314,6 +318,36 @@ void DrillingTool::loadToolsFromDb() {
     // entonces el diámetro pasa a ser el de la base). Si a una le corresponden varias, no cambia nada.
     std::map<int, ToolData> next = storage_;
     std::map<int, double> dias;
+    if (!reproduceOriginalBugs()) {
+        // Corregido: el mismo diámetro con los decimales de la aplicación (no `==` de coma flotante) y, si hay varias
+        // herramientas, la del mismo diámetro o la primera dentro de su tolerancia (el original cancela todo).
+        const int dec = appDecimals();
+        for (const auto& [id, t] : excellon_->excellon().drillTools()) {
+            const JsonValue* exact = nullptr;
+            const JsonValue* inTol = nullptr;
+            for (const auto& [key, dbTool] : db.members()) {
+                const double dbDia = dbTool["tooldia"].toDouble();
+                const JsonValue& data = dbTool["data"];
+                auto num = [](const JsonValue& v) {
+                    return v.isString() ? QString::fromStdString(v.text()).toDouble() : v.toDouble();
+                };
+                if (QString::number(dbDia, 'f', dec) == QString::number(t.tooldia, 'f', dec)) {
+                    if (!exact) exact = &dbTool;
+                } else if (num(data["tol_max"]) >= t.tooldia && t.tooldia >= num(data["tol_min"]) && !inTol) {
+                    inTol = &dbTool;
+                }
+            }
+            if (exact) {
+                apply(next.at(id), (*exact)["data"]);
+            } else if (inTol) {
+                apply(next.at(id), (*inTol)["data"]);
+                dias[id] = (*inTol)["tooldia"].toDouble();
+            }
+        }
+        storage_ = std::move(next);
+        diaOverride_ = std::move(dias);
+        return;
+    }
     for (const auto& [id, t] : excellon_->excellon().drillTools()) {
         int found = 0;
         for (const auto& [key, dbTool] : db.members()) {
@@ -479,9 +513,16 @@ std::vector<Point2D> DrillingTool::slotAsDrills(const Point2D& start, const Poin
     // original); con "Último taladro", también el final si está a overlap / 10 o más del anterior.
     std::vector<Point2D> out{start};
     const Shape line = Shape::lineString({start, stop});
+    const double length = std::hypot(stop.x - start.x, stop.y - start.y);
     for (int i = 1; overlap > 0; ++i) {
         const Shape p = line.interpolate(overlap * i);
-        if (!p.within(line)) break;
+        // Corregido: mientras el punto esté antes del final (en una ranura diagonal el punto interpolado no cae exacto
+        // sobre la línea y `within` cortaba la serie).
+        if (!reproduceOriginalBugs()) {
+            if (overlap * i >= length - 1e-9) break;
+        } else if (!p.within(line)) {
+            break;
+        }
         const auto b = p.bounds();
         out.push_back({b->xmin, b->ymin});
     }
