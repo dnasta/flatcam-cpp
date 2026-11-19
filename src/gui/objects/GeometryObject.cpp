@@ -86,7 +86,7 @@ GeometryObject::GeometryObject(QString name)
     fillColor = Qt::transparent;
 }
 
-QColor GeometryObject::plotLineColor() { return colorFromFlatCam("#FFAAAA"); }
+QColor GeometryObject::plotLineColor() { return colorFromFlatCam(defStr("geometry_plot_line")); }
 
 PlotLayerData GeometryObject::plotData() const {
     PlotLayerData d;

@@ -4,6 +4,7 @@
 #include <cctype>
 
 #include "golden_excellon.h"
+#include "core/OriginalBugs.h"
 #include "parsers/Excellon.h"
 #include "test_helpers.h"
 
@@ -140,3 +141,24 @@ INSTANTIATE_TEST_SUITE_P(TestData, ExcellonGolden, ::testing::Range<std::size_t>
                              for (char& c : name) if (!std::isalnum(static_cast<unsigned char>(c))) c = '_';
                              return name;
                          });
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+
+TEST(ExcellonFixed, HeaderlessFakeDiametersAndReselectedTools) {
+    // Sin cabecera: T2 no trae diámetro (se inventa uno) y T1 se vuelve a elegir sin diámetro.
+    const std::vector<std::string> lines = {"%", "T1C0.8", "X1.5Y2.5", "T2", "X3.0Y4.0", "T1", "X5.0Y6.0", "M30"};
+    {
+        OriginalBugsScope original(true);
+        Excellon e(userOptions());
+        ASSERT_TRUE(e.parseLines(lines));
+        // Como el original: el diámetro inventado de T2 en pulgadas (1,01 / 25,4) y T1 pisado con uno inventado.
+        EXPECT_NEAR(e.drillTools().at(2).tooldia, 1.01 / 25.4, 1e-12);
+        EXPECT_NEAR(e.drillTools().at(1).tooldia, 1.0 / 25.4, 1e-12);
+    }
+    OriginalBugsScope fixed(false);
+    Excellon e(userOptions());
+    ASSERT_TRUE(e.parseLines(lines));
+    EXPECT_NEAR(e.drillTools().at(2).tooldia, 1.01, 1e-12);  // métrico: en milímetros
+    EXPECT_DOUBLE_EQ(e.drillTools().at(1).tooldia, 0.8);     // se conserva el diámetro declarado
+    EXPECT_EQ(e.drillTools().at(1).drills.size(), 2u);
+}

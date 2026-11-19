@@ -60,7 +60,7 @@ GeometryTool defaultGeometryTool();
  * @brief Objeto Geometría (`GeometryObject`), siempre "multigeo" como las que crean las herramientas: cada herramienta
  * guarda su propia geometría.
  *
- * Se dibuja solo con líneas, del color `geometry_plot_line` (`#FFAAAA`: en el original `is_theme_black` se usa sin
+ * Se dibuja solo con líneas, del color `geometry_plot_line` (`#FF0000`; en el original `#FFAAAA`, porque `is_theme_black` se usa sin
  * llamarla y la condición siempre es verdadera). Las herramientas con color propio (los puentes finos del Corte,
  * `#29a3a3fa`) se dibujan con el suyo. "Generar objeto CNCJob" crea `<nombre>_cnc` con
  * `mtool_gen_cncjob`, con todas las herramientas elegidas en un mismo trabajo.

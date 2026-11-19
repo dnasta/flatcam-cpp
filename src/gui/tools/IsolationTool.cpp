@@ -1,5 +1,6 @@
 #include <QTimer>
 
+#include "core/OriginalBugs.h"
 #include "gui/Preferences.h"
 #include "gui/tools/IsolationTool.h"
 
@@ -240,12 +241,14 @@ void IsolationTool::updateUi() {
         generate_iso_button->setDisabled(true);
         // Así, con las comillas corridas, en el original.
         tool_data_label->setText(
-            QString("<b>%1: <font color=#7777FF\"\">%2</font></b>").arg(tr_("Parameters for"), tr_("No Tool Selected")));
+            QString("<b>%1: <font color=%3>%2</font></b>")
+                .arg(tr_("Parameters for"), tr_("No Tool Selected"),
+                     reproduceOriginalBugs() ? QString("#7777FF\"\"") : "\"" + fgBlue() + "\""));
         return;
     }
     generate_iso_button->setDisabled(false);
     auto label = [this](const QString& what) {
-        tool_data_label->setText(QString("<b>%1: <font color=\"#7777FF\">%2</font></b>").arg(tr_("Parameters for"), what));
+        tool_data_label->setText(QString("<b>%1: <font color=\"%3\">%2</font></b>").arg(tr_("Parameters for"), what, fgBlue()));
     };
     if (ids.size() > 1) {
         label(tr_("Multiple Tools"));

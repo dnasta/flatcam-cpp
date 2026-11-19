@@ -129,3 +129,71 @@ TEST(Preprocessor, EveryPreprocessorDrivesAGeometryJob) {
         EXPECT_FALSE(job.startGcode().empty());
     }
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+namespace {
+/// El texto de un método con los errores del original y corregido.
+template <class F>
+std::pair<std::string, std::string> bothWays(F f) {
+    std::string orig;
+    {
+        OriginalBugsScope o(true);
+        orig = f();
+    }
+    OriginalBugsScope fixed(false);
+    return {orig, f()};
+}
+}  // namespace
+
+TEST(PreprocessorFixed, HeaderAndToolchangeBugs) {
+    PreprocessorParams p = golden_pp::scenario(0);  // corte en mm: con X,Y final, sin X,Y de cambio
+    // Marlin: ";Spindle Speed: ... RPM)" sin el paréntesis de cierre.
+    auto [m0, m1] = bothWays([&] { return makePreprocessor("Marlin")->startCode(p); });
+    EXPECT_NE(m0.find(" RPM)\n"), std::string::npos);
+    EXPECT_EQ(m1.find(" RPM)\n"), std::string::npos);
+    EXPECT_NE(m1.find(";Spindle Speed: 1000.0 RPM\n"), std::string::npos) << m1;
+    // Berta_CNC: el X,Y final aunque no haya X,Y de cambio.
+    ASSERT_FALSE(p.xyToolchange.has_value());
+    auto [b0, b1] = bothWays([&] { return makePreprocessor("Berta_CNC")->startCode(p); });
+    EXPECT_NE(b0.find("(X,Y End: None mm)"), std::string::npos) << b0;
+    EXPECT_NE(b1.find("(X,Y End: 0.0000, 0.0000 mm)"), std::string::npos) << b1;
+    // Toolchange_Custom: M6 también sin X,Y de cambio.
+    auto [t0, t1] = bothWays([&] { return makePreprocessor("Toolchange_Custom")->toolchangeCode(p); });
+    EXPECT_EQ(t0.find("M6"), std::string::npos);
+    EXPECT_NE(t1.find("M6"), std::string::npos);
+    // line_xyz: la Y del cambio de herramienta es la Y.
+    p.xyToolchange = std::array<PyNumber, 2>{PyNumber(1.5), PyNumber(7.25)};
+    auto [l0, l1] = bothWays([&] { return makePreprocessor("line_xyz")->toolchangeCode(p); });
+    EXPECT_NE(l0.find("X1.5000 Y1.5000"), std::string::npos) << l0;
+    EXPECT_NE(l1.find("X1.5000 Y7.2500"), std::string::npos) << l1;
+    // Marlin_laser: con Z inicial va a la Z inicial, no a la de viaje.
+    p.startZ = PyNumber(5.0);
+    auto [z0, z1] = bothWays([&] { return makePreprocessor("Marlin_laser_FAN_pin")->startzCode(p); });
+    EXPECT_EQ(z0, "G0 Z" + std::string(p.zMove.value() == 2.0 ? "2.0000" : "?"));
+    EXPECT_EQ(z1, "G0 Z5.0000");
+}
+
+TEST(PreprocessorFixed, MultiDepthPassesUseTheirOwnZ) {
+    // line_xyz con profundidad múltiple: el original corta a la Z final en todos los tramos de cada pasada.
+    GeometryJobSettings s;
+    s.preprocessor = "line_xyz";
+    s.order = DrillOrder::FileOrder;
+    s.toolSettings.toolDia = 1.0;
+    s.toolSettings.cutZ = -1.0;
+    s.toolSettings.multidepth = true;
+    s.toolSettings.depthPerPass = 0.5;
+    s.toolSettings.travelZ = 2.0;
+    s.toolSettings.feedrate = 100.0;
+    s.toolSettings.feedrateZ = 50.0;
+    s.toolSettings.endZ = 10.0;
+    auto [g0, g1] = bothWays([&] {
+        CncJob job;
+        EXPECT_TRUE(job.generateFromGeometry({Shape::lineString({{0, 0}, {10, 0}, {10, 5}})}, s)) << job.lastError();
+        return job.gcode();
+    });
+    EXPECT_EQ(g0.find("G01 X10.0000 Y0.0000 Z-0.5000"), std::string::npos) << g0;
+    EXPECT_NE(g1.find("G01 X10.0000 Y0.0000 Z-0.5000"), std::string::npos) << g1;
+    EXPECT_NE(g1.find("G01 X10.0000 Y0.0000 Z-1.0000"), std::string::npos) << g1;
+}

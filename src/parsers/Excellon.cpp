@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "parsers/Excellon.h"
 
 #include <algorithm>
@@ -276,15 +277,24 @@ bool Excellon::parseLines(const std::vector<std::string>& elines) {
                                 diameterless_ = true;
                                 Logger::warning("No tool diameter info for T" + std::to_string(*currentTool) +
                                                 ": using fake diameters.");
-                                // Igual que el original: compara con "MM", pero `excellon_units` vale "METRIC" o
-                                // "INCH", así que en la práctica siempre se usa la rama de pulgadas.
-                                if (excellonUnits_ == "MM") {
+                                // El original compara con "MM", pero `excellon_units` vale "METRIC" o "INCH", así
+                                // que siempre usa la rama de pulgadas (error corregido salvo con
+                                // reproduceOriginalBugs()).
+                                const bool metric = reproduceOriginalBugs()
+                                                        ? excellonUnits_ == "MM"
+                                                        : (excellonUnits_ == "MM" || excellonUnits_ == "METRIC");
+                                if (metric) {
                                     diam = options_.toollessDiameter + (*currentTool - 1) / 100.0;
                                 } else {
                                     diam = (options_.toollessDiameter + (*currentTool - 1) / 100.0) / 25.4;
                                 }
                             }
-                            toolRef(name).tooldia = diam;
+                            // El original vuelve a fijar el diámetro cada vez que se elige la herramienta: un
+                            // "T1" sin diámetro después de "T1C0.8" lo pisa con uno inventado (corregido: si la
+                            // herramienta ya existe y la orden no trae diámetro, se conserva).
+                            const bool keep = !reproduceOriginalBugs() && !(hl[2].matched && hl[2].length() > 0) &&
+                                              drillTools_.count(name) > 0;
+                            if (!keep) toolRef(name).tooldia = diam;
                             toolRef(name).solidGeometry.clear();
                         }
                     }

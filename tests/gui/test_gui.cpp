@@ -9,6 +9,8 @@
 #include <QToolBar>
 #include <cmath>
 
+#include "core/OriginalBugs.h"
+#include "gui/Preferences.h"
 #include "gui/App.h"
 #include "gui/AppTextEditor.h"
 #include "gui/MainGUI.h"
@@ -387,6 +389,23 @@ TEST(GuiDrilling, UserWorkflowReproducesTheRealFile) {
     EXPECT_EQ(fixedMine, fixedReal);
 }
 
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+
+TEST(GuiFixed, ThemeColorsOfTheLightTheme) {
+    {
+        flatcam::OriginalBugsScope original(true);
+        App app;
+        EXPECT_EQ(GeometryObject("g").outlineColor, colorFromFlatCam("#FFAAAA"));
+        EXPECT_EQ(flatcam::gui::fgBlue(), "#7777FF");
+    }
+    flatcam::OriginalBugsScope fixed(false);
+    App app;
+    // defaults.py quería "#FF0000" con el tema claro y get_fg_blue "#0000FF" (is_theme_black sin llamar).
+    EXPECT_EQ(GeometryObject("g").outlineColor, colorFromFlatCam("#FF0000"));
+    EXPECT_EQ(flatcam::gui::fgBlue(), "#0000FF");
+    EXPECT_EQ(flatcam::gui::defStr("geometry_plot_line"), "#FF0000");
+}
+
 int main(int argc, char** argv) {
     // Sin pantalla salvo que se pida otra plataforma (QT_QPA_PLATFORM=cocoa para mirar el canvas OpenGL).
     if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")) qputenv("QT_QPA_PLATFORM", "offscreen");
@@ -395,6 +414,8 @@ int main(int argc, char** argv) {
     QStandardPaths::setTestModeEnabled(true);
     Q_INIT_RESOURCE(flatcam);
     ::testing::InitGoogleTest(&argc, argv);
+    // Los tests comparan con el original: reproducen sus errores (los de las correcciones usan OriginalBugsScope).
+    flatcam::setReproduceOriginalBugs(true);
     return RUN_ALL_TESTS();
 }
 

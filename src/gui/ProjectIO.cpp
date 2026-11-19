@@ -1,4 +1,5 @@
 #include "gui/ProjectIO.h"
+#include "gui/Preferences.h"
 
 #include <QFile>
 #include <QRegularExpression>
@@ -572,8 +573,8 @@ JsonValue geometryDefaultData(const JsonValue& app) {
 JsonValue geometryDict(const GeometryObject& obj, const JsonValue& app) {
     JsonValue d = base(obj);
     setIfMissing(d, "alpha_level", JsonValue::string("FF"));
-    setIfMissing(d, "fill_color", JsonValue::string("#FFAAAA"));
-    setIfMissing(d, "outline_color", JsonValue::string("#FFAAAA"));
+    setIfMissing(d, "fill_color", JsonValue::string(defStr("geometry_plot_line").toStdString()));
+    setIfMissing(d, "outline_color", JsonValue::string(defStr("geometry_plot_line").toStdString()));
     setIfMissing(d, "units", JsonValue::string("MM"));
     setIfMissing(d, "follow_geometry", JsonValue());
     d.set("multigeo", JsonValue::boolean(true));
