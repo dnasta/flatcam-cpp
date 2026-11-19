@@ -236,6 +236,7 @@ private:
     QPointF center_{50.0, 50.0};  ///< Centro de la vista en mm.
     double scale_{1.0};           ///< Píxeles por mm.
     bool firstResize_{true};
+    bool glReady_{false};  // initializeGL encontró un contexto OpenGL válido
     bool hudEnabled_{true};       // global_hud
     bool hudDelta_{true};         // false mientras mide la herramienta Distancia
     QColor cursorColor_{"#FF0000"};  // global_cursor_color

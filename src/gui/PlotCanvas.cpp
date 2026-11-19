@@ -104,6 +104,10 @@ void PlotCanvas::setGridEnabled(bool on) {
 }
 
 void PlotCanvas::initializeGL() {
+    // Sin un contexto válido (sin OpenGL: un escritorio remoto, la plataforma "offscreen" de Linux) no se dibuja nada
+    // en vez de llamar a funciones de GL que no existen.
+    glReady_ = context() && context()->isValid();
+    if (!glReady_) return;
     initializeOpenGLFunctions();
     // GLSL 1.20: funciona con el contexto de compatibilidad por defecto en macOS, Windows y Linux.
     program_ = std::make_unique<QOpenGLShaderProgram>();
@@ -143,9 +147,9 @@ void PlotCanvas::setLayerOrder(std::vector<int> idsBottomFirst) {
 void PlotCanvas::removeLayer(int id) {
     auto it = layers_.find(id);
     if (it == layers_.end()) return;
-    makeCurrent();
+    if (glReady_) makeCurrent();
     layers_.erase(it);  // los buffers se liberan con el contexto activo
-    doneCurrent();
+    if (glReady_) doneCurrent();
     update();
 }
 
@@ -248,6 +252,7 @@ void PlotCanvas::resizeGL(int, int) {
 double PlotCanvas::tickStep() const { return niceStep(80.0 / scale_); }
 
 void PlotCanvas::paintGL() {
+    if (!glReady_) return;
     QPainter p(this);
     const QRectF vr = viewRect();
     // Fondo: color de la ventana alrededor y blanco dentro de la vista, con borde negro.

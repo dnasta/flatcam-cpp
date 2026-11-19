@@ -40,10 +40,10 @@ std::string pythonText(const std::string& path) {
 TEST(ProjectFile, ParsesValuesLikePython) {
     JsonValue v;
     std::string err;
-    ASSERT_TRUE(ProjectFile::parse(
-        R"({"a": [1, -3.400000000000001, 2e-05, true, false, null, NaN, -Infinity], "s": "\u00e1\"\\\n\ud83d\ude00", "o": {}})",
-        v, err))
-        << err;
+    // El texto va en una variable: el preprocesador tradicional de MSVC no acepta un literal crudo dentro de un macro.
+    const std::string json =
+        R"({"a": [1, -3.400000000000001, 2e-05, true, false, null, NaN, -Infinity], "s": "\u00e1\"\\\n\ud83d\ude00", "o": {}})";
+    ASSERT_TRUE(ProjectFile::parse(json, v, err)) << err;
     const JsonValue& a = v["a"];
     ASSERT_EQ(a.items().size(), 8u);
     EXPECT_TRUE(a.items()[0].isInteger());
