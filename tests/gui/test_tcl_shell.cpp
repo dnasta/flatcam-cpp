@@ -126,3 +126,31 @@ TEST(GuiTclShell, ToggleWithTheMenuAndShowOnErrors) {
     app.ui()->inform("[WARNING] aviso dos");
     EXPECT_FALSE(app.ui()->shell_dock->isHidden());
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+#include "gui/objects/ObjectCollection.h"
+
+TEST(GuiFixed, TclScriptsBooleansSetPathAndImportSvg) {
+    OriginalBugsScope fixed(false);
+    App app;
+    // Una línea que falla no se pega a las siguientes: las otras se ejecutan; un proc de varias líneas también.
+    app.shell()->browser()->clearLog();
+    app.runScriptCode("set a 1\nnoexiste_cmd\nset b 2\nproc suma {x y} {\n  return [expr {$x + $y}]\n}\nsuma 2 3\n");
+    const QString log = app.shell()->browser()->toPlainText();
+    EXPECT_TRUE(log.contains("invalid command name \"noexiste_cmd\"")) << log.toStdString();
+    EXPECT_EQ(app.shell()->eval("set b"), "2");
+    EXPECT_TRUE(log.contains("5\n")) << log.toStdString();
+    // plot_all con un valor lógico de Tcl.
+    bool ok = false;
+    app.shell()->eval("plot_all -plot_status false", &ok);
+    EXPECT_TRUE(ok) << app.shell()->eval("set errorInfo").toStdString();
+    // set_path a una carpeta que no existe: un error de Tcl.
+    app.shell()->eval("set_path /no/existe/esta/carpeta", &ok);
+    EXPECT_FALSE(ok);
+    // import_svg existe.
+    const QString svg = QString(FLATCAM_TEST_DATA_DIR) + "/svg/paths.svg";
+    app.shell()->eval("import_svg {" + svg + "} -outname importado", &ok);
+    EXPECT_TRUE(ok) << app.shell()->eval("set errorInfo").toStdString();
+    EXPECT_NE(app.collection()->byName("importado"), nullptr);
+}

@@ -155,6 +155,29 @@ void App::runScriptCode(const QString& code) {
     if (ui_->shell_dock->isHidden()) ui_->shell_dock->show();
     shell_->openProcessing();
     QString oldLine;
+    if (!reproduceOriginalBugs()) {
+        // Corregido: las líneas se juntan solo mientras la orden no está completa (`info complete`: llaves o comillas
+        // abiertas); una orden completa que falla muestra su error y no se vuelve a intentar pegada a la siguiente.
+        for (QString line : code.split(QRegularExpression("\r\n|\r|\n"))) {
+            if (oldLine.isEmpty() && (line.trimmed().startsWith('#') || line.trimmed().isEmpty())) continue;
+#ifdef Q_OS_WIN
+            if (line.contains("open")) line.replace('\\', '/');
+#endif
+            oldLine += line + "\n";
+            if (!FCShell::isComplete(oldLine)) continue;
+            bool ok = true;
+            const QString result = shell_->eval(oldLine, &ok);
+            if (ok) {
+                if (result != "None" && !result.isEmpty()) shell_->appendOutput(result + "\n");
+            } else {
+                shell_->appendError("ERROR: " + shell_->eval("set errorInfo") + "\n");
+            }
+            oldLine.clear();
+        }
+        if (!oldLine.trimmed().isEmpty()) shell_->appendError("ERROR: " + tr_("Incomplete command") + ": " + oldLine);
+        shell_->closeProcessing();
+        return;
+    }
     for (QString line : code.split(QRegularExpression("\r\n|\r|\n"))) {  // splitlines
         if (line.startsWith('#') || line.isEmpty()) continue;
 #ifdef Q_OS_WIN

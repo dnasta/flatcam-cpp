@@ -8,6 +8,7 @@
 #include <QFileInfo>
 #include <algorithm>
 
+#include "core/OriginalBugs.h"
 #include "cam/PyNumber.h"
 #include "gui/App.h"
 #include "gui/MainGUI.h"
@@ -105,7 +106,8 @@ protected:
 
 class OpenSvgOrDxf : public TclCommand {
 public:
-    OpenSvgOrDxf(App* a, bool dxf) : TclCommand(a, dxf ? "TclCommandOpenDXF" : "TclCommandOpenSVG"), dxf_(dxf) {}
+    OpenSvgOrDxf(App* a, bool dxf, const char* cls = nullptr)
+        : TclCommand(a, cls ? cls : dxf ? "TclCommandOpenDXF" : "TclCommandOpenSVG"), dxf_(dxf) {}
 
 protected:
     std::optional<QString> execute(const TclArgs& args) override {
@@ -600,6 +602,8 @@ void addObjectTclCommands(App* app, std::vector<std::unique_ptr<TclCommand>>& ou
     out.push_back(std::make_unique<SaveProject>(app));
     out.push_back(std::make_unique<OpenSvgOrDxf>(app, false));
     out.push_back(std::make_unique<OpenSvgOrDxf>(app, true));
+    // Corregido: import_svg está escrito en el original pero no se registra (es lo mismo que open_svg).
+    if (!reproduceOriginalBugs()) out.push_back(std::make_unique<OpenSvgOrDxf>(app, false, "TclCommandImportSvg"));
     out.push_back(std::make_unique<BrokenExport>(app, "TclCommandExportGerber", "export_gerber"));
     out.push_back(std::make_unique<BrokenExport>(app, "TclCommandExportExcellon", "export_excellon"));
     out.push_back(std::make_unique<BrokenExport>(app, "TclCommandExportSVG", "export_svg"));
