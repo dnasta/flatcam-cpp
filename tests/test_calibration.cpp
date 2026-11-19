@@ -135,3 +135,25 @@ TEST(Calibration, MatchesTheOriginal) {
         EXPECT_EQ(s.gcode({}), g["factors_2dec"]->gcode);
     }
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+TEST(CalibrationFixed, FactorsFromTheMeasuredDeviations) {
+    OriginalBugsScope fixed(false);
+    // Puntos sin redondear: sin medir nada no hay factores (el original los calcula igual).
+    const CalibrationPoints pts{Point2D{1, 1}, Point2D{11.00004, 1}, Point2D{1, 21.00004}, Point2D{11, 21}};
+    CalibrationFactors f = calibrationFactors(pts, {}, {}, {}, {}, 4);
+    EXPECT_FALSE(f.scaleX || f.scaleY || f.skewX || f.skewY);
+    // La inclinación en Y sale del desvío medido (el original le suma el origen).
+    f = calibrationFactors(pts, std::nullopt, std::nullopt, std::nullopt, 0.1, 4);
+    ASSERT_TRUE(f.skewY);
+    EXPECT_NEAR(*f.skewY, std::atan(0.1 / 10.00004) * 180.0 / M_PI, 1e-9);
+    // Un punto en la X del origen: no hay escala en X, pero sí en Y (el original corta).
+    const CalibrationPoints flat{Point2D{1, 1}, Point2D{1, 1}, Point2D{1, 21}, Point2D{11, 21}};
+    f = calibrationFactors(flat, std::nullopt, 0.2, 0.3, std::nullopt, 4);
+    EXPECT_FALSE(f.failed);
+    EXPECT_FALSE(f.scaleX);
+    ASSERT_TRUE(f.scaleY);
+    EXPECT_NEAR(*f.scaleY, 0.2 / 20 + 1, 1e-12);
+}

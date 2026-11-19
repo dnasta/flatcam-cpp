@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "tools/Calibration.h"
 
 #include <cmath>
@@ -67,6 +68,19 @@ CalibrationFactors calibrationFactors(const CalibrationPoints& pts, std::optiona
                                       std::optional<double> brDy, int decimals) {
     CalibrationFactors f;
     const Point2D o = pts[0], tl = pts[2], br = pts[1];
+    if (!reproduceOriginalBugs()) {
+        // Corregido: los campos medidos son desvíos; cada factor sale solo de un desvío escrito y distinto de 0 (el
+        // original compara el valor, que sin medir es la coordenada del objetivo, con esa coordenada redondeada), la
+        // inclinación en Y usa el desvío tal cual (el original le suma el origen) y un punto que coincide con el origen en
+        // ese eje deja el factor sin calcular (el original divide por cero y corta).
+        const double kDeg = 180.0 / M_PI;
+        const double dxBr = br.x - o.x, dyTl = tl.y - o.y;
+        if (brDx && *brDx != 0.0 && dxBr != 0.0) f.scaleX = *brDx / dxBr + 1;
+        if (tlDy && *tlDy != 0.0 && dyTl != 0.0) f.scaleY = *tlDy / dyTl + 1;
+        if (tlDx && *tlDx != 0.0 && dyTl != 0.0) f.skewX = std::atan(*tlDx / dyTl) * kDeg;
+        if (brDy && *brDy != 0.0 && dxBr != 0.0) f.skewY = std::atan(*brDy / dxBr) * kDeg;
+        return f;
+    }
     const double topLeftDx = tlDx.value_or(tl.x), topLeftDy = tlDy.value_or(tl.y);
     const double botRightDx = brDx.value_or(br.x), botRightDy = brDy.value_or(br.y);
     // Python lanza ZeroDivisionError y corta: lo ya escrito queda.

@@ -4106,3 +4106,33 @@ TEST(GuiFixed, PcbWizardImportsTwiceAndDoesNotAccumulateTools) {
     ASSERT_NE(t->importExcellon(), nullptr);
     EXPECT_NE(t->importExcellon(), nullptr);  // el original: el StringIO ya leído
 }
+
+TEST(GuiFixed, CalibrationOfAnExcellonAndNoMorePointsAfterTheFourth) {
+    flatcam::OriginalBugsScope fixed(false);
+    App app;
+    FlatCAMObj* drl = app.openExcellon(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-PTH.drl");
+    ASSERT_NE(drl, nullptr);
+    app.ui()->cal_btn->trigger();
+    CalibrationTool* t = app.calibrationTool;
+    t->cal_source_radio->setValue(QString("free"));
+    ASSERT_TRUE(t->startCollectPoints());
+    for (int i = 0; i < 4; ++i) t->onRelease(QPointF(i * 10.0, i * 7.0 + 1), Qt::LeftButton, false);
+    t->onRelease(QPointF(50, 50), Qt::LeftButton, false);  // un quinto clic no agrega nada
+    ASSERT_EQ(t->clickPoints().size(), 4u);
+    t->adj_object_type_combo->setCurrentIndex(1);
+    ASSERT_EQ(t->adj_object_combo->currentText(), drl->name());
+    t->scalex_entry->setValue(1.01);
+    FlatCAMObj* cal = t->calibrate();  // el original falla siempre con un Excellon
+    ASSERT_NE(cal, nullptr);
+    EXPECT_EQ(cal->kind(), ObjectKind::Excellon);
+    auto spanX = [](FlatCAMObj* o) {
+        double lo = 1e18, hi = -1e18;
+        for (const auto& [id, tool] : static_cast<ExcellonObject*>(o)->excellon().drillTools())
+            for (const auto& p : tool.drills) {
+                lo = std::min(lo, p.x);
+                hi = std::max(hi, p.x);
+            }
+        return hi - lo;
+    };
+    EXPECT_NEAR(spanX(cal), spanX(drl) * 1.01, 1e-6);  // los centros de los agujeros, escalados
+}
