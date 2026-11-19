@@ -1,5 +1,6 @@
 #include "parsers/FontParser.h"
 
+#include <cmath>
 #include <cstdint>
 #include <cstdlib>
 #include <filesystem>
@@ -12,7 +13,10 @@
 #include <ft2build.h>
 #include <cctype>
 #include FT_FREETYPE_H
+#include FT_OUTLINE_H
 #endif
+
+#include "core/OriginalBugs.h"
 
 namespace flatcam {
 
@@ -85,6 +89,66 @@ std::string expandHome(const std::string& p) {
     return p;
 }
 
+#ifdef FLATCAM_HAVE_FREETYPE
+/// Los contornos de una letra con las curvas cuadráticas y cúbicas aplanadas (FT_Outline_Decompose), cerrados.
+std::vector<std::vector<Point2D>> flattenOutline(const FT_Outline& outline) {
+    struct Ctx {
+        std::vector<std::vector<Point2D>> rings;
+        Point2D cur{0, 0};
+    } ctx;
+    constexpr int kSteps = 8;
+    auto close = [](Ctx& c) {
+        if (!c.rings.empty() && c.rings.back().size() > 1 && !(c.rings.back().front() == c.rings.back().back()))
+            c.rings.back().push_back(c.rings.back().front());
+    };
+    FT_Outline_Funcs funcs{};
+    funcs.move_to = [](const FT_Vector* to, void* u) -> int {
+        auto& c = *static_cast<Ctx*>(u);
+        if (!c.rings.empty() && c.rings.back().size() > 1 && !(c.rings.back().front() == c.rings.back().back()))
+            c.rings.back().push_back(c.rings.back().front());
+        c.cur = {static_cast<double>(to->x), static_cast<double>(to->y)};
+        c.rings.push_back({c.cur});
+        return 0;
+    };
+    funcs.line_to = [](const FT_Vector* to, void* u) -> int {
+        auto& c = *static_cast<Ctx*>(u);
+        c.cur = {static_cast<double>(to->x), static_cast<double>(to->y)};
+        c.rings.back().push_back(c.cur);
+        return 0;
+    };
+    funcs.conic_to = [](const FT_Vector* ctl, const FT_Vector* to, void* u) -> int {
+        auto& c = *static_cast<Ctx*>(u);
+        const Point2D p0 = c.cur, p1{static_cast<double>(ctl->x), static_cast<double>(ctl->y)},
+                      p2{static_cast<double>(to->x), static_cast<double>(to->y)};
+        for (int i = 1; i <= kSteps; ++i) {
+            const double t = static_cast<double>(i) / kSteps, s = 1 - t;
+            c.rings.back().push_back({s * s * p0.x + 2 * s * t * p1.x + t * t * p2.x,
+                                      s * s * p0.y + 2 * s * t * p1.y + t * t * p2.y});
+        }
+        c.cur = p2;
+        return 0;
+    };
+    funcs.cubic_to = [](const FT_Vector* c1, const FT_Vector* c2, const FT_Vector* to, void* u) -> int {
+        auto& c = *static_cast<Ctx*>(u);
+        const Point2D p0 = c.cur, p1{static_cast<double>(c1->x), static_cast<double>(c1->y)},
+                      p2{static_cast<double>(c2->x), static_cast<double>(c2->y)},
+                      p3{static_cast<double>(to->x), static_cast<double>(to->y)};
+        for (int i = 1; i <= kSteps; ++i) {
+            const double t = static_cast<double>(i) / kSteps, s = 1 - t;
+            c.rings.back().push_back(
+                {s * s * s * p0.x + 3 * s * s * t * p1.x + 3 * s * t * t * p2.x + t * t * t * p3.x,
+                 s * s * s * p0.y + 3 * s * s * t * p1.y + 3 * s * t * t * p2.y + t * t * t * p3.y});
+        }
+        c.cur = p3;
+        return 0;
+    };
+    FT_Outline copy = outline;
+    FT_Outline_Decompose(&copy, &funcs, &ctx);
+    close(ctx);
+    return ctx.rings;
+}
+#endif
+
 }  // namespace
 
 bool FontParser::available() {
@@ -119,10 +183,15 @@ std::vector<std::string> FontParser::fontFiles(const std::vector<std::string>& d
         std::error_code ec;
         for (auto it = fs::directory_iterator(d, ec); !ec && it != fs::directory_iterator(); it.increment(ec)) {
             std::string ext = it->path().extension().string();
+            const bool fixed = !reproduceOriginalBugs();
 #ifdef _WIN32
             for (char& c : ext) c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+#else
+            if (fixed)
+                for (char& c : ext) c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
 #endif
-            if (ext != ".ttf") continue;
+            // El original solo lee los .ttf (corregido: también .otf y .ttc, que en macOS son la mayoría).
+            if (ext != ".ttf" && !(fixed && (ext == ".otf" || ext == ".ttc"))) continue;
             const std::string abs = fs::absolute(it->path()).lexically_normal().string();
             if (seen.insert(abs).second) out.push_back(abs);
         }
@@ -139,13 +208,15 @@ std::pair<std::string, std::string> FontParser::fontName(const std::string& path
         return (static_cast<unsigned char>(data[o]) << 8) | static_cast<unsigned char>(data[o + 1]);
     };
     auto u32 = [&](std::size_t o) -> std::uint32_t { return (static_cast<std::uint32_t>(u16(o)) << 16) | u16(o + 2); };
-    const std::uint32_t version = u32(0);
+    std::size_t base = 0;
+    if (u32(0) == 0x74746366) base = u32(12);  // 'ttcf': una colección; la primera fuente
+    const std::uint32_t version = u32(base);
     if (version != 0x00010000 && version != 0x4F54544F && version != 0x74727565)  // TrueType, 'OTTO', 'true'
         throw std::runtime_error("No es una fuente TrueType");
-    const unsigned numTables = u16(4);
+    const unsigned numTables = u16(base + 4);
     std::size_t nameOff = 0;
     for (unsigned i = 0; i < numTables; ++i) {
-        const std::size_t rec = 12 + 16 * static_cast<std::size_t>(i);
+        const std::size_t rec = base + 12 + 16 * static_cast<std::size_t>(i);
         if (data.compare(rec, 4, "name") == 0) nameOff = u32(rec + 8);
     }
     if (!nameOff) throw std::runtime_error("La fuente no tiene tabla 'name'");
@@ -203,7 +274,8 @@ void FontParser::loadFonts(const std::vector<std::string>& files) {
         } else if (contains(name, "Italic")) {
             italic[replaceAll(name, " Italic", "")] = font;
         } else if (contains(name, "Oblique")) {
-            italic[replaceAll(name, " Italic", "")] = font;  // así en el original: queda " Oblique"
+            // Así en el original: queda " Oblique" (corregido).
+            italic[replaceAll(name, reproduceOriginalBugs() ? " Italic" : " Oblique", "")] = font;
         } else {
             regular[replaceAll(name, " Regular", "")] = font;
         }
@@ -211,7 +283,7 @@ void FontParser::loadFonts(const std::vector<std::string>& files) {
 }
 
 std::optional<std::vector<Shape>> FontParser::fontToGeometry(const std::string& text, const std::string& fontName,
-                                                             const std::string& fontType, int fontSize, bool mm,
+                                                             const std::string& fontType, double fontSize, bool mm,
                                                              double coordx, double coordy) const {
     const std::map<std::string, std::string>* dict = fontType == "bi"        ? &boldItalic
                                                      : fontType == "bold"    ? &bold
@@ -245,7 +317,10 @@ std::optional<std::vector<Shape>> FontParser::fontToGeometry(const std::string& 
         }
     } guard{lib, face};
     // set_char_size(width=size * 64): el alto toma el ancho; 72 ppp.
-    if (FT_Set_Char_Size(face, static_cast<FT_F26Dot6>(fontSize) * 64, 0, 72, 72))
+    const bool fixed = !reproduceOriginalBugs();
+    const FT_F26Dot6 charSize = fixed ? static_cast<FT_F26Dot6>(std::lround(fontSize * 64))
+                                      : static_cast<FT_F26Dot6>(static_cast<int>(fontSize)) * 64;
+    if (charSize <= 0 || FT_Set_Char_Size(face, charSize, 0, 72, 72))
         throw std::runtime_error("FreeType no acepta el tamaño");
     std::vector<Shape> path;
     double penX = coordx;
@@ -256,13 +331,38 @@ std::optional<std::vector<Shape>> FontParser::fontToGeometry(const std::string& 
             FT_Vector delta;
             // Como el original: freetype-py `get_kerning` vuelve a buscar el índice de lo que recibe, y FlatCAM ya le
             // pasa índices, así que el kerning es el de las letras cuyo código es cada índice.
-            if (!FT_Get_Kerning(face, FT_Get_Char_Index(face, previous), FT_Get_Char_Index(face, glyph),
-                                FT_KERNING_DEFAULT, &delta))
+            // Corregido: los índices tal cual.
+            const FT_UInt left = fixed ? previous : FT_Get_Char_Index(face, previous);
+            const FT_UInt right = fixed ? glyph : FT_Get_Char_Index(face, glyph);
+            if (!FT_Get_Kerning(face, left, right, FT_KERNING_DEFAULT, &delta))
                 penX += static_cast<double>(delta.x);
         }
         if (FT_Load_Glyph(face, glyph, FT_LOAD_RENDER)) throw std::runtime_error("FreeType no puede cargar la letra");
         const FT_GlyphSlot slot = face->glyph;
         const FT_Outline& outline = slot->outline;
+        if (fixed) {
+            // Corregido: el original arma cada contorno con los puntos tal cual (también los de control de las curvas)
+            // y cada uno como un polígono aparte. Acá las curvas se aplanan y los contornos de la letra se combinan
+            // (diferencia simétrica), así los agujeros de "o", "a", "8"... quedan huecos.
+            const std::vector<std::vector<Point2D>> rings = flattenOutline(outline);
+            Shape letter;
+            bool any = false;
+            for (const auto& r : rings) {
+                if (r.size() < 4) continue;
+                Shape poly = Shape::polygon(r).buffer(0);
+                if (poly.isEmpty()) continue;
+                letter = any ? letter.symmetricDifference(poly) : poly;
+                any = true;
+            }
+            if (any) {
+                const ShapeList parts = letter.parts().empty() ? ShapeList{letter} : letter.parts();
+                for (const Shape& pp : parts)
+                    if (!pp.isEmpty()) path.push_back(pp.translate(penX, coordy));
+            }
+            penX += static_cast<double>(slot->advance.x);
+            previous = glyph;
+            continue;
+        }
         int start = 0;
         for (int c = 0; c < outline.n_contours; ++c) {
             const int end = outline.contours[c];

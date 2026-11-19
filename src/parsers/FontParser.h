@@ -72,7 +72,8 @@ public:
      * @param text Texto (UTF-8); cada carácter es una letra, también los saltos de línea.
      * @param fontName Nombre de la fuente (la familia que muestra el combo).
      * @param fontType "regular", "bold", "italic" o "bi".
-     * @param fontSize Tamaño en puntos (el original hace `int()` del texto del combo).
+     * @param fontSize Tamaño en puntos (el original hace `int()` del texto del combo y lo usa entero; con los errores
+     *        del original corregidos vale también un tamaño con decimales).
      * @param mm Verdadero si las unidades son milímetros (si no, pulgadas).
      * @param coordx X del origen (se suma a la posición en unidades de FreeType, como el original).
      * @param coordy Y del origen.
@@ -81,7 +82,7 @@ public:
      * @throws std::runtime_error si FreeType no puede abrir la fuente.
      */
     std::optional<std::vector<Shape>> fontToGeometry(const std::string& text, const std::string& fontName,
-                                                     const std::string& fontType, int fontSize, bool mm,
+                                                     const std::string& fontType, double fontSize, bool mm,
                                                      double coordx = 0, double coordy = 0) const;
 
     std::map<std::string, std::string> regular;     ///< `regular_f`: nombre -> archivo.

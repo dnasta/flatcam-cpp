@@ -5,6 +5,8 @@
 #include <QStringDecoder>
 #include <QtEndian>
 
+#include "gui/editors/GeoEditor.h"
+#include "core/OriginalBugs.h"
 #include "gui/App.h"
 #include "gui/MainGUI.h"
 #include "gui/Translation.h"
@@ -27,7 +29,10 @@ FlatCAMObj* App::importSvg(const QString& filename, bool asGerber, const QString
         return nullptr;
     }
     const std::string text = f.readAll().toStdString();
-    const SvgImportResult r = asGerber ? importSvgAsGerber(text) : importSvgAsGeometry(text);
+    // Las fuentes (las mismas de la herramienta Texto) solo si hay textos: leerlas tarda.
+    const FontParser* fonts =
+        !reproduceOriginalBugs() && text.find("<text") != std::string::npos ? &GeoTextTool::fonts() : nullptr;
+    const SvgImportResult r = asGerber ? importSvgAsGerber(text, 64, fonts) : importSvgAsGeometry(text, 64, fonts);
     if (!r.ok) {
         ui_->inform("[ERROR_NOTCL]" + tr_("Import failed."));
         return nullptr;
@@ -62,8 +67,9 @@ FlatCAMObj* App::importSvg(const QString& filename, bool asGerber, const QString
     lastFolder_ = QFileInfo(filename).absolutePath();
     registerRecent("svg", filename);
     ui_->inform(QString("[success] %1: %2").arg(tr_("Opened"), filename));
-    // Los textos (tspan) no se importan, como en el original: getsvgtext llama a ParseFont() sin la aplicación y el
-    // error queda atrapado (sección 14 de AGENTS.md).
+    // En el original los textos (tspan) no se importan nunca: getsvgtext llama a ParseFont() sin la aplicación y el
+    // error queda atrapado (sección 14 de AGENTS.md). Corregido: se escriben con su fuente; si falta, se avisa.
+    if (r.textsSkipped > 0) ui_->inform("[WARNING_NOTCL] " + tr_("Font not supported, try another one."));
     return obj;
 }
 

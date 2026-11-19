@@ -129,3 +129,41 @@ TEST(SvgImportFixed, ViewBoxFactorRectsMatrixPathsAndDefs) {
     ASSERT_EQ(grb.geometry.size(), 1u);
     EXPECT_NEAR(grb.geometry[0].area(), 1600.0 - 400.0, 1e-6);
 }
+
+#include "parsers/FontParser.h"
+
+TEST(SvgImportFixed, TextsAreWrittenWithTheirFont) {
+    if (!FontParser::available()) GTEST_SKIP() << "sin FreeType";
+    FontParser fonts;
+    fonts.loadFonts(FontParser::fontFiles({std::string(FLATCAM_TEST_DATA_DIR) + "/fonts"}));
+    const std::string body =
+        "<text x=\"5\" y=\"20\" style=\"font-family:'DejaVu Sans';font-size:10px\">Ho<tspan>la</tspan></text>"
+        "<text x=\"5\" y=\"40\" font-family=\"No Existe\">x</text>";
+    {
+        OriginalBugsScope o(true);
+        const SvgImportResult r = importSvgAsGeometry(svgDoc(body), 64, &fonts);
+        ASSERT_TRUE(r.ok);
+        EXPECT_TRUE(r.geometry.empty());  // el original no importa los textos
+    }
+    OriginalBugsScope fixed(false);
+    const SvgImportResult r = importSvgAsGeometry(svgDoc(body), 64, &fonts);
+    ASSERT_TRUE(r.ok) << r.error;
+    EXPECT_EQ(r.textsSkipped, 1);  // la fuente que no está
+    ASSERT_FALSE(r.geometry.empty());
+    // Factor 2: el texto empieza en x = 10 mm, con la línea de base en y = 100 - 40 = 60 mm y el em de 20 mm.
+    double xmin = 1e9, ymin = 1e9, ymax = -1e9;
+    for (const Shape& s : r.geometry)
+        if (auto b = s.bounds()) {
+            xmin = std::min(xmin, b->xmin);
+            ymin = std::min(ymin, b->ymin);
+            ymax = std::max(ymax, b->ymax);
+        }
+    EXPECT_NEAR(xmin, 10.0, 2.0);
+    EXPECT_NEAR(ymin, 60.0, 1.0);          // "Hola" no baja de la línea de base
+    EXPECT_GT(ymax - ymin, 10.0);          // la "H" y la "l": casi tres cuartos del em
+    EXPECT_LT(ymax - ymin, 20.0);
+    // "o" y "a" con su agujero: algún polígono con interiores.
+    bool hole = false;
+    for (const Shape& s : r.geometry) hole = hole || !s.interiors().empty();
+    EXPECT_TRUE(hole);
+}

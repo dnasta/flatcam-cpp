@@ -13,6 +13,10 @@
 #include "core/Shape.h"
 
 namespace flatcam {
+class FontParser;
+}
+
+namespace flatcam {
 
 /** @brief Un elemento de un documento XML (lo mínimo que hace falta para leer un SVG). */
 struct XmlElement {
@@ -74,31 +78,37 @@ struct SvgImportResult {
      * la importación como Geometría falla con `KeyError: 'style'`.
      */
     bool textWithoutStyle{false};
+    int textsSkipped{0};  ///< Textos que no se pudieron escribir (la fuente no está o no hay FreeType).
 };
 
 /**
  * @brief `Geometry.import_svg`: las figuras de un SVG para un objeto Geometría (los polígonos y después las líneas
  * unidas con `linemerge`).
  * @param svgText El archivo. @param circleSteps `geometry_circle_steps` (64).
+ * @param fonts Las fuentes para los textos. El original nunca importa los textos (`getsvgtext` falla); con los errores
+ *        del original corregidos y con fuentes, cada `text` / `tspan` se escribe con su fuente (`font-family`,
+ *        `font-size`, `font-weight`, `font-style`) en su posición.
  * @return El resultado.
  */
-SvgImportResult importSvgAsGeometry(const std::string& svgText, int circleSteps = 64);
+SvgImportResult importSvgAsGeometry(const std::string& svgText, int circleSteps = 64, const FontParser* fonts = nullptr);
 
 /**
  * @brief `Gerber.import_svg`: las figuras de un SVG para un objeto Gerber (todas en la apertura "0"; con una sola
  * figura, sus agujeros pasan a ser polígonos aparte, como el original). Falla si hay figuras que no son polígonos. Al final va
  * un polígono vacío: el `solid_geometry` inicial de un Gerber (`Polygon()`), como en el original.
  * @param svgText El archivo. @param circleSteps `gerber_circle_steps` (64).
+ * @param fonts Las fuentes para los textos (ver @ref importSvgAsGeometry).
  * @return El resultado (los polígonos de la apertura "0").
  */
-SvgImportResult importSvgAsGerber(const std::string& svgText, int circleSteps = 64);
+SvgImportResult importSvgAsGerber(const std::string& svgText, int circleSteps = 64, const FontParser* fonts = nullptr);
 
 /**
  * @brief Las figuras de un SVG tal cual (invertidas en Y y corridas el alto), sin pasar por un objeto: lo que hace
  * `convert_svg_to_geo` de la herramienta de códigos QR.
  * @param svgText El archivo. @param circleSteps `geometry_circle_steps` (64).
+ * @param fonts Las fuentes para los textos (ver @ref importSvgAsGeometry).
  * @return El resultado.
  */
-SvgImportResult importSvgShapes(const std::string& svgText, int circleSteps = 64);
+SvgImportResult importSvgShapes(const std::string& svgText, int circleSteps = 64, const FontParser* fonts = nullptr);
 
 }  // namespace flatcam
