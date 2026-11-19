@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "tools/AlignObjects.h"
 
 #include <cmath>
@@ -32,6 +33,8 @@ std::vector<Point2D> alignPickGerber(const Gerber& g, const Point2D& click, int 
             if (el.solid && pt.within(*el.solid) && el.follow && el.follow->type() == ShapeType::Point)
                 out.push_back(roundedCentroid(*el.solid, decimals));
     }
+    // Un clic sobre dos figuras agrega dos puntos en el original (corregido: la primera).
+    if (!reproduceOriginalBugs() && out.size() > 1) out.resize(1);
     return out;
 }
 
@@ -41,6 +44,7 @@ std::vector<Point2D> alignPickExcellon(const Excellon& e, const Point2D& click, 
     for (const auto& [n, tool] : e.drillTools())
         for (const Shape& geo : tool.solidGeometry)
             if (pt.within(geo)) out.push_back(roundedCentroid(geo, decimals));
+    if (!reproduceOriginalBugs() && out.size() > 1) out.resize(1);
     return out;
 }
 
@@ -58,8 +62,16 @@ AlignMove alignMove(const std::vector<Point2D>& p, int decimals) {
     const double dxs = start.x - m.origin.x;
     const double dys = start.y - m.origin.y;
     const double tol = std::pow(10.0, -decimals);
-    const bool notNeeded = std::abs(start.x - dest.x) <= tol || std::abs(start.y - dest.y) <= tol;
-    if (notNeeded) return m;
+    const bool fixed = !reproduceOriginalBugs();
+    // El original omite el giro si coinciden en X **o** en Y (corregido: en X y en Y) y calcula el ángulo con atan, que
+    // pierde el cuadrante y divide por cero con la X del centro (corregido: atan2).
+    const bool sameX = std::abs(start.x - dest.x) <= tol, sameY = std::abs(start.y - dest.y) <= tol;
+    if (fixed ? (sameX && sameY) : (sameX || sameY)) return m;
+    if (fixed) {
+        const double radToDeg = 180.0 / M_PI;
+        m.angle = (std::atan2(dyd, dxd) - std::atan2(dys, dxs)) * radToDeg;
+        return m;
+    }
     if (dxd == 0.0 || dxs == 0.0) {
         m.fails = true;  // ZeroDivisionError en dyd / dxd o dys / dxs
         return m;

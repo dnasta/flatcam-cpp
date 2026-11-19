@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/tools/FiducialsTool.h"
 
 #include <QHeaderView>
@@ -161,7 +162,12 @@ FlatCAMObj* FiducialsTool::addSoldermaskOpening() {
         app_->ui()->inform("[WARNING_NOTCL] " + tr_("There is no Gerber object loaded ..."));
         return nullptr;
     }
-    // Con los puntos del último "Agregar fiducial" (ninguno si no se agregó).
+    // Con los puntos del último "Agregar fiducial" (ninguno si no se agregó: el original crea la apertura vacía;
+    // corregido: avisa y no crea nada).
+    if (points_.empty() && !reproduceOriginalBugs()) {
+        app_->ui()->inform("[WARNING_NOTCL] " + tr_("Add Fiducial") + ": " + tr_("Cancelled."));
+        return nullptr;
+    }
     FlatCAMObj* out = addGeo(sm, fid_size_entry->value() * 2.0, "circular");
     onExit();
     return out;
