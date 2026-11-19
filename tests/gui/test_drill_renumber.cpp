@@ -8,6 +8,8 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QDragEnterEvent>
+#include <QMimeData>
 #include <QTimer>
 
 #include "gui/App.h"
@@ -169,4 +171,39 @@ TEST(GuiToolTables, DraggingRowsRenumbersIsolationAndGeometryTools) {
     EXPECT_DOUBLE_EQ(geo->tools().at(1).tooldia, 2.0);
     EXPECT_DOUBLE_EQ(geo->tools().at(2).tooldia, 1.0);
     EXPECT_EQ(ui->geo_tools_table->item(0, 5)->text(), "2");  // el número viejo, como el original
+}
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+TEST(GuiFixed, DraggedGeometryToolsRebuildTheTableAndSignalsStayOn) {
+    OriginalBugsScope fixed(false);
+    App app;
+    auto g = std::make_unique<GeometryObject>("geo");
+    for (int i = 1; i <= 2; ++i) {
+        GeometryTool t = defaultGeometryTool();
+        t.tooldia = i;
+        g->tools()[i] = t;
+    }
+    FlatCAMObj* obj = app.addObject(std::move(g));
+    auto* ui = qobject_cast<GeometryObjectUI*>(obj->propertiesUi());
+    ASSERT_NE(ui, nullptr);
+    // Entrar arrastrando y no soltar ya no deja las señales bloqueadas.
+    QMimeData mime;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+    const QPointF dpos(5, 5);
+#else
+    const QPoint dpos(5, 5);
+#endif
+    QDragEnterEvent enter(dpos, Qt::MoveAction, &mime, Qt::LeftButton, Qt::NoModifier);
+    QApplication::sendEvent(ui->geo_tools_table->viewport(), &enter);
+    EXPECT_FALSE(ui->geo_tools_table->signalsBlocked());
+    ui->geo_tools_table->clearSelection();
+    ui->geo_tools_table->selectRow(1);
+    ui->geo_tools_table->moveSelectedRows(0);
+    QCoreApplication::processEvents();
+    EXPECT_FALSE(ui->geo_tools_table->signalsBlocked());
+    // La columna oculta tiene los números nuevos.
+    EXPECT_EQ(ui->geo_tools_table->item(0, 5)->text(), "1");
+    EXPECT_EQ(ui->geo_tools_table->item(1, 5)->text(), "2");
 }

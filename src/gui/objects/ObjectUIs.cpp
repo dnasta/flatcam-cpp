@@ -3,6 +3,7 @@
 #include "gui/Preferences.h"
 #include <set>
 
+#include <QTimer>
 #include <QHeaderView>
 #include <algorithm>
 #include <cmath>
@@ -267,6 +268,11 @@ GeometryObjectUI::GeometryObjectUI(QWidget* parent) : GeometryObjectUIBase(paren
     connect(geo_tools_table, &FCTable::dragDropped, this, [this] {
         if (!obj_) return;
         if (auto t = reorderToolsByTable(geo_tools_table, 5, obj_->tools())) obj_->tools() = std::move(*t);
+        // Corregido: la tabla se vuelve a armar con los números nuevos (si no, las filas apuntan a otras herramientas).
+        if (!reproduceOriginalBugs())
+            QTimer::singleShot(0, this, [this] {
+                if (obj_) build(*obj_);
+            });
     });
     // set_ui: los postprocesadores, con el nombre como tooltip; "default" es geometry_ppname_g.
     for (const QString& n : preprocessorNames()) {

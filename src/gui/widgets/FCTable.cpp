@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/widgets/FCTable.h"
 
 #include <QDragEnterEvent>
@@ -63,7 +64,8 @@ void FCTable::dragEnterEvent(QDragEnterEvent* e) {
     if (!dragDrop_) return QTableWidget::dragEnterEvent(e);
     // Como el original: las señales quedan bloqueadas hasta soltar (si se cancela el arrastre, siguen bloqueadas).
     if (e->source() == this) {
-        blockSignals(true);
+        // Corregido: las señales se bloquean solo mientras se mueven las filas (moveSelectedRows).
+        if (reproduceOriginalBugs()) blockSignals(true);
         e->accept();
     } else {
         e->ignore();
@@ -85,6 +87,7 @@ int FCTable::dropOn(const QPoint& pos) const {
 }
 
 void FCTable::moveSelectedRows(int dropRow) {
+    blockSignals(true);
     std::set<int> rowSet;
     for (const QTableWidgetItem* it : selectedItems()) rowSet.insert(it->row());
     const std::vector<int> rows(rowSet.begin(), rowSet.end());
