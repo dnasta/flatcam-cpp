@@ -170,6 +170,20 @@ void GeometryObject::setSolidGeometry(ShapeList shapes, bool asList) {
 std::optional<QString> GeometryObject::addShapeLikeTheOriginal(const Shape& shape, bool circle) {
     static const char* const names[] = {"Point", "LineString", "LinearRing", "Polygon", "MultiPoint",
                                          "MultiLineString", "MultiPolygon", "GeometryCollection"};
+    if (!reproduceOriginalBugs()) {
+        // Corregido: la figura se agrega una vez a la geometría (que es siempre una lista) y a la herramienta 1 (el
+        // original falla si la geometría es None o una figura sola, y con la lista compartida la agrega dos veces).
+        solidNotList_ = false;
+        aliased_ = false;
+        toolAppendError_.clear();
+        solid_.push_back(shape);
+        auto t = tools_.find(1);
+        if (t == tools_.end()) tools_[1] = defaultGeometryTool(), t = tools_.find(1);
+        if (singleGeo_) syncSingleGeo();
+        else t->second.solidGeometry.push_back(shape);
+        if (singleGeo_) captureOptionBounds();
+        return std::nullopt;
+    }
     if (solidNotList_) {
         // solid_geometry es una figura: add_circle hace append (AttributeError, solo atrapa TypeError);
         // add_polygon / add_polyline la unen con la nueva.

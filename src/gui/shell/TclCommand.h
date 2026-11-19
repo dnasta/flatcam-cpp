@@ -107,6 +107,8 @@ protected:
     [[noreturn]] static void raiseTclError(const QString& text) { throw TclError(text); }
     App* app_;                 ///< La aplicación.
     QStringList originalArgs_; ///< `original_args`.
+    /** @brief Cambia los argumentos obligatorios (para corregir los del original). @param r Los nombres. */
+    void setRequired(const QStringList& r) { meta_.required = r; }
 
 private:
     TclCommandMeta meta_;

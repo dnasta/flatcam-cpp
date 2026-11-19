@@ -12,6 +12,7 @@
 #include "gui/App.h"
 #include "gui/MainGUI.h"
 #include "gui/Preferences.h"
+#include "gui/Translation.h"
 #include "gui/shell/FCShell.h"
 #include "gui/shell/TclCommand.h"
 #include "gui/AppTextEditor.h"
@@ -129,6 +130,7 @@ TEST(GuiTclShell, ToggleWithTheMenuAndShowOnErrors) {
 
 // ---------------------------------------------------------------- errores del original corregidos (sección 14)
 #include "core/OriginalBugs.h"
+#include "gui/objects/GeometryObject.h"
 #include "gui/objects/ObjectCollection.h"
 
 TEST(GuiFixed, TclScriptsBooleansSetPathAndImportSvg) {
@@ -153,4 +155,47 @@ TEST(GuiFixed, TclScriptsBooleansSetPathAndImportSvg) {
     app.shell()->eval("import_svg {" + svg + "} -outname importado", &ok);
     EXPECT_TRUE(ok) << app.shell()->eval("set errorInfo").toStdString();
     EXPECT_NE(app.collection()->byName("importado"), nullptr);
+}
+
+TEST(GuiFixed, TclObjectCommandsExportAddScaleMirrorAndOrigin) {
+    OriginalBugsScope fixed(false);
+    App app;
+    bool ok = false;
+    auto run = [&](const QString& c) {
+        const QString r = app.shell()->eval(c, &ok);
+        EXPECT_TRUE(ok) << c.toStdString() << ": " << app.shell()->eval("set errorInfo").toStdString();
+        return r;
+    };
+    run("new_geometry g");
+    run("add_rectangle g 0 0 10 5");  // el original falla: solid_geometry es None
+    run("add_circle g 20 0 1");
+    auto* g = dynamic_cast<GeometryObject*>(app.collection()->byName("g"));
+    ASSERT_NE(g, nullptr);
+    EXPECT_EQ(g->solidGeometry().size(), 2u);
+    // exteriors: la figura agregada no queda dos veces.
+    run("exteriors g -outname ext");
+    run("add_polyline ext 0 0 1 1");
+    EXPECT_EQ(dynamic_cast<GeometryObject*>(app.collection()->byName("ext"))->solidGeometry().size(), 3u);
+    // subtract_rectangle y después add_circle.
+    run("subtract_rectangle ext 0 0 2 2");
+    run("add_circle ext 50 50 1");
+    // scale con un solo eje no aplasta el otro.
+    const QRectF before = g->bounds();
+    run("scale g -x 2");
+    EXPECT_NEAR(g->bounds().height(), before.height(), 1e-9);
+    EXPECT_NEAR(g->bounds().width(), before.width() * 2, 1e-6);
+    // mirror sin -box ni -origin: alrededor de su centro (los límites quedan).
+    const QRectF b2 = g->bounds();
+    run("mirror g -axis Y");
+    EXPECT_NEAR(g->bounds().left(), b2.left(), 1e-9);
+    // export_dxf y export_svg exportan.
+    QTemporaryDir tmp;
+    run("export_dxf g {" + tmp.filePath("g.dxf") + "}");
+    run("export_svg g {" + tmp.filePath("g.svg") + "}");
+    EXPECT_TRUE(QFile::exists(tmp.filePath("g.dxf")));
+    EXPECT_TRUE(QFile::exists(tmp.filePath("g.svg")));
+    // set_origin con una coordenada: el aviso de las dos (no IndexError).
+    app.shell()->eval("set_origin 1", &ok);
+    EXPECT_FALSE(ok);
+    EXPECT_TRUE(app.shell()->eval("set errorInfo").contains(tr_("Expected a pair of (x, y) coordinates. Got") + ": 1")) << app.shell()->eval("set errorInfo").toStdString();
 }
