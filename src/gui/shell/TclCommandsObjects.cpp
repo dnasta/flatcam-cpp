@@ -14,6 +14,7 @@
 #include "gui/MainGUI.h"
 #include "gui/Preferences.h"
 #include "gui/Translation.h"
+#include "gui/objects/CNCJobObject.h"
 #include "gui/objects/GeometryObject.h"
 #include "gui/objects/ObjectCollection.h"
 #include "gui/shell/FCShell.h"
@@ -143,11 +144,39 @@ private:
  */
 class BrokenExport : public TclCommand {
 public:
-    BrokenExport(App* a, const char* cls, const char* fn) : TclCommand(a, cls), fn_(fn) {}
+    BrokenExport(App* a, const char* cls, const char* fn) : TclCommand(a, cls), fn_(fn) {
+        // Corregido: el argumento obligatorio es `name` (el original pide un `obj_name` que no existe).
+        if (!reproduceOriginalBugs()) setRequired({"name"});
+    }
 
 protected:
-    std::optional<QString> execute(const TclArgs&) override {
-        raiseTclError(QString("MenuFileHandlers.%1() got an unexpected keyword argument 'name'").arg(fn_));
+    std::optional<QString> execute(const TclArgs& args) override {
+        if (reproduceOriginalBugs())
+            raiseTclError(QString("MenuFileHandlers.%1() got an unexpected keyword argument 'name'").arg(fn_));
+        // Corregido: exporta el objeto al archivo (sin el nombre, a la carpeta de Tcl con el nombre del objeto).
+        const QString name = args.str("name");
+        FlatCAMObj* o = app_->collection()->byName(name);
+        if (!o) raiseTclError("Object not found: " + name);
+        QString file = args.has("filename") ? args.str("filename") : QString();
+        const QString ext = fn_ == "export_gerber" ? ".gbr" : fn_ == "export_excellon" ? ".drl"
+                            : fn_ == "export_svg" ? ".svg" : ".dxf";
+        if (file.isEmpty()) file = defStr("global_tcl_path") + "/" + name + ext;
+        bool ok = false;
+        if (fn_ == "export_gerber" || fn_ == "export_excellon") {
+            const ObjectKind want = fn_ == "export_gerber" ? ObjectKind::Gerber : ObjectKind::Excellon;
+            if (o->kind() != want)
+                raiseTclError(QString("Expected %1, got %2 %3.").arg(want == ObjectKind::Gerber ? "Gerber" : "Excellon",
+                                                                    name, pyType(o)));
+            ok = app_->exportObject(o, file);
+        } else if (fn_ == "export_svg") {
+            ok = app_->exportSvgFile(o, file);
+        } else {
+            auto* geo = dynamic_cast<GeometryObject*>(o);
+            if (!geo) raiseTclError(QString("Expected Geometry, got %1 %2.").arg(name, pyType(o)));
+            ok = app_->exportDxfFile(geo, file);
+        }
+        if (!ok) raiseTclError("Could not export: " + file);
+        return std::nullopt;
     }
 
 private:
@@ -164,7 +193,11 @@ protected:
         FlatCAMObj* o = app_->collection()->byName(name);
         if (!o) raiseTclError("Object not found: " + name);
         if (o->kind() != ObjectKind::CNCJob) raiseTclError(QString("Expected CNCjob, got %1 %2.").arg(name, pyType(o)));
-        // get_gcode arma el texto y el original lo descarta: el comando no hace nada visible.
+        // get_gcode arma el texto y el original lo descarta: el comando no hace nada visible (corregido: el G-code va a
+        // la consola, que es lo que dice su ayuda).
+        if (!reproduceOriginalBugs())
+            return QString::fromStdString(static_cast<CNCJobObject*>(o)->exportText(args.str("preamble").toStdString(),
+                                                                                   args.str("postamble").toStdString()));
         return std::nullopt;
     }
 };
@@ -254,7 +287,7 @@ protected:
                 const JsonValue v = pyEvalLiteral(org);
                 if (!v.isArray() || v.items().size() < 2)
                     raiseTclError(tr_("Expected -origin <origin> or -origin <min_bounds> or -origin <center> or - origin "
-                                      "3.0,4.2.") + "\n");
+                                      "3.0,4.2.") + (reproduceOriginalBugs() ? "\n" : ""));
                 point = {v.items()[0].toDouble(), v.items()[1].toDouble()};
             }
         }
@@ -267,8 +300,10 @@ protected:
             raiseTclError(tr_("Expected -x <value> -y <value>."));
         } else {
             // Con un solo eje, el otro factor es 0 (la figura se aplasta), como el original.
-            sx = args.has("x") ? args.num("x") : 0.0;
-            sy = args.has("y") ? args.num("y") : 0.0;
+            // (corregido: el otro eje queda igual, factor 1)
+            const double other = reproduceOriginalBugs() ? 0.0 : 1.0;
+            sx = args.has("x") ? args.num("x") : other;
+            sy = args.has("y") ? args.num("y") : other;
             changed = o->scale(sx, sy, point);
         }
         if (changed) app_->objectChanged(o);
@@ -320,7 +355,12 @@ protected:
             if (o->mirror(axis, {v.items()[0].toDouble(), v.items()[1].toDouble()})) app_->objectChanged(o);
             app_->informTransformed(o, "mirror");
         }
-        // Sin -box ni -origin el original no refleja nada.
+        // Sin -box ni -origin el original no refleja nada (corregido: alrededor del centro del propio objeto).
+        if (!args.has("origin") && !reproduceOriginalBugs()) {
+            const QRectF b = o->bounds();
+            if (o->mirror(axis, {0.5 * (b.left() + b.right()), 0.5 * (b.top() + b.bottom())})) app_->objectChanged(o);
+            app_->informTransformed(o, "mirror");
+        }
         return std::nullopt;
     }
 };
@@ -353,7 +393,8 @@ protected:
                 if (!v.isNumber()) raiseTclError(QString("could not convert string to float: %1").arg(pyReprString(c)));
                 loc.push_back(v.toDouble());
             }
-            if (loc.size() < 2) raiseTclError("list index out of range");  // location[1] antes de comprobar
+            // location[1] antes de comprobar (corregido: el aviso de las dos coordenadas)
+            if (loc.size() < 2 && reproduceOriginalBugs()) raiseTclError("list index out of range");
             if (loc.size() != 2)
                 raiseTclError(QString("%1: %2").arg(tr_("Expected a pair of (x, y) coordinates. Got"))
                                   .arg(loc.size()));
@@ -363,7 +404,8 @@ protected:
         app_->setOriginAt(QPointF(-lx, -ly), false);  // on_set_zero_click(location=loc, noplot=True)
         // El original escribe dos veces la X ('{0:.4f}, {0:.4f}').
         app_->shellMessage(QString("[success] Tcl %1: %2").arg(tr_("Origin set by offsetting all loaded objects with "),
-                                                                QString::asprintf("%.4f, %.4f", lx, lx)));
+                                                                QString::asprintf("%.4f, %.4f", lx,
+                                                                                  reproduceOriginalBugs() ? lx : ly)));
         return std::nullopt;
     }
 };
@@ -583,7 +625,9 @@ protected:
                     diffs.push_back(p.difference(tool));
                 }
             }
-        geo->setSolidGeometry({Shape::unaryUnion(diffs)}, false);
+        // El original deja una figura sola (no una lista) y después add_circle falla; corregido: la lista de sus partes.
+        if (reproduceOriginalBugs()) geo->setSolidGeometry({Shape::unaryUnion(diffs)}, false);
+        else geo->setSolidGeometry(Shape::unaryUnion(diffs).parts(), true);
         app_->objectChanged(geo);
         return std::nullopt;
     }
