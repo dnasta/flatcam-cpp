@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <cmath>
 
+#include "core/OriginalBugs.h"
 #include "gui/Preferences.h"
 #include "gui/App.h"
 #include "gui/tools/PropertiesTool.h"
@@ -108,6 +109,8 @@ void App::updateProjectMenu() {
     menuProjectGenerateCnc->setVisible(any);
     if (!any) return;
     for (QAction* a : {menuProjectEdit, menuProjectSave, menuProjectViewSource}) a->setVisible(true);
+    if (!reproduceOriginalBugs())  // corregido: lo que esconde un Script o Documento vuelve con los demás objetos
+        for (QAction* a : {menuProjectEnable, menuProjectDisable, menuProjectProperties}) a->setVisible(true);
     menuProjectColor->setEnabled(false);
     for (FlatCAMObj* o : sel) {
         const ObjectKind k = o->kind();

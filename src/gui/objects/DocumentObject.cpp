@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/QtCompat.h"
 #include "gui/objects/DocumentObject.h"
 
@@ -124,6 +125,14 @@ void DocumentObject::setUi(App* app) {
 
     // Texto con formato si lo parece (Qt.mightBeRichText), si no, texto plano; el cursor al principio.
     ed->loadText(sourceFile(), true, false, true, Qt::mightBeRichText(sourceFile()));
+    if (!reproduceOriginalBugs()) {
+        // Corregido: lo escrito llega a source_file (on_text_changed), y read_only deja el texto de solo lectura.
+        connect(ed->document(), &QTextDocument::contentsChanged, this, [this] {
+            setSourceFile(editor_->toHtml());
+            app_->markChanged();
+        });
+        if (readOnly_ && ed->richEditor()) ed->richEditor()->setReadOnly(true);
+    }
     buildUi();
 }
 

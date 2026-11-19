@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/App.h"
 
 #include "gui/objects/CNCAutolevel.h"
@@ -1197,7 +1198,10 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
             case Qt::Key_G: {
                 // En un editor de texto, ir a una línea; si no, abrir un Gerber.
                 QWidget* w = ui->plot_tab_area->currentWidget();
-                if (w && w->objectName().toLower().contains("editor")) gotoTextLine();
+                // Corregido: la pestaña de un script (que se llama como el objeto) también es un editor de texto.
+                const bool textTab = w && (w->objectName().toLower().contains("editor") ||
+                                           (!reproduceOriginalBugs() && qobject_cast<AppTextEditor*>(w)));
+                if (textTab) gotoTextLine();
                 else onFileOpenGerber();
                 return true;
             }

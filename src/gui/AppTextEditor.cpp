@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/AppTextEditor.h"
 
 #include <QCheckBox>
@@ -203,7 +204,9 @@ void AppTextEditor::handleReplaceGCode() {
     const QString oldText = entryFind->text();
     const QString newText = entryReplace->text();
     if (sel_all_cb->isChecked()) {
-        // Desde el cursor hasta el final (no vuelve a empezar); al terminar, el cursor va al principio.
+        // Desde el cursor hasta el final (no vuelve a empezar); al terminar, el cursor va al principio (corregido:
+        // todo el texto, desde el principio).
+        if (!reproduceOriginalBugs()) moveCursor(QTextCursor::Start);
         QTextCursor cursor = textCursor();
         cursor.beginEditBlock();
         while (true) {
