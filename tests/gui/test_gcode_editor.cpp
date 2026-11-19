@@ -15,9 +15,12 @@
 #include <QRegularExpression>
 #include <QScrollArea>
 #include <QTextBlock>
+#include <QTemporaryDir>
 #include <QToolButton>
 
 #include "gui/App.h"
+#include "gui/ProjectIO.h"
+#include "gui/Translation.h"
 #include "gui/AppTextEditor.h"
 #include "gui/MainGUI.h"
 #include "gui/Preferences.h"
@@ -293,4 +296,48 @@ TEST(GuiCncExport, SnippetsFooterAndLineEndings) {
     f.close();
     QFile::remove(file);
     app.preferences()->set("cncjob_line_ending", JsonValue::boolean(false));
+}
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+TEST(GuiFixed, GCodeEditorInsertsSavesAndExportsTheEditedCode) {
+    OriginalBugsScope fixed(false);
+    App app;
+    ASSERT_TRUE(app.openProject(kDir + "/luz_de_noche/luz_de_noche_reducido.FlatPrj"));
+    auto* cnc = dynamic_cast<CNCJobObject*>(app.collection()->byName("luz de noche Pascual-PTH.drl_cnc"));
+    ASSERT_NE(cnc, nullptr);
+    select(app, cnc);
+    app.objectToEditor();
+    ASSERT_EQ(app.callSource(), "gcode_editor");
+    QPointer<AppTextEditor> tab = app.gcodeEditor->tab();
+    // "Insertar código": el fragmento donde está el cursor.
+    tab->plainEditor()->moveCursor(QTextCursor::End);
+    app.gcodeEditor->panel()->prepend_text->setPlainText("G04 P1\n");
+    app.gcodeEditor->panel()->update_gcode_button->click();
+    EXPECT_TRUE(tab->toPlainText().endsWith("G04 P1\n"));
+    // Un trabajo leído de un proyecto: elegir una herramienta elige su G-code (el original falla).
+    FCTable* t = app.gcodeEditor->panel()->exc_cnc_tools_table;
+    ASSERT_GT(t->rowCount(), 3);
+    t->selectRow(3);
+    app.gcodeEditor->onRowSelectionChange();
+    EXPECT_FALSE(tab->plainEditor()->extraSelections().isEmpty());
+    ASSERT_TRUE(app.editorToObject(true));
+    // Lo editado es lo que se exporta.
+    QTemporaryDir dir;
+    const QString f = dir.filePath("editado.nc");
+    ASSERT_TRUE(cnc->saveTo(f, {}, {}));
+    QFile in(f);
+    ASSERT_TRUE(in.open(QIODevice::ReadOnly | QIODevice::Text));
+    EXPECT_TRUE(QString::fromUtf8(in.readAll()).endsWith("G04 P1\n"));
+    // Y se guarda en el proyecto.
+    const JsonValue d = ProjectIO::toDict(*cnc, app.appOptions());
+    EXPECT_TRUE(QString::fromStdString(d["source_file"].text()).endsWith("G04 P1\n"));
+    // Una sola pestaña de revisión.
+    app.reviewGcode(cnc);
+    app.reviewGcode(cnc);
+    int reviews = 0;
+    for (int i = 0; i < app.ui()->plot_tab_area->count(); ++i)
+        reviews += app.ui()->plot_tab_area->tabText(i) == tr_("Code Review");
+    EXPECT_EQ(reviews, 1);
 }

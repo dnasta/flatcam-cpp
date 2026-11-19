@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/ProjectIO.h"
 #include "gui/Preferences.h"
 
@@ -218,6 +219,8 @@ std::unique_ptr<FlatCAMObj> cncFrom(const JsonValue& d, const QString& name, con
     job->restore(start, gcodes);  // gc_start no se guarda en el proyecto: se reconstruye (ProjectIO::rebuildStartGcode)
     auto obj = std::make_unique<CNCJobObject>(name, std::move(job), GcodeHeaderInfo{}, std::move(rows));
     obj->setStoredHeader(d["gc_header"].text());
+    if (d["source_file"].isString() && !reproduceOriginalBugs())
+        obj->setEditedSource(QString::fromStdString(d["source_file"].text()));
     return obj;
 }
 
@@ -691,6 +694,9 @@ JsonValue cncDict(const CNCJobObject& obj, const JsonValue& app) {
     d.set("solid_geometry", drilling ? shpList(drillCircles) : JsonValue());
     d.set("kind", JsonValue::string("cncjob"));
     d.set("options", objectOptions(obj, "cncjob", app, {}));
+    // Corregido: lo editado en el editor de G-code (el original no lo guarda; al abrir, ignora la clave).
+    if (obj.editedSource() && !reproduceOriginalBugs())
+        d.set("source_file", JsonValue::string(obj.editedSource()->toStdString()));
     return d;
 }
 

@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/editors/GCodeEditor.h"
 
 #include <QHeaderView>
@@ -38,6 +39,13 @@ GCodeEditor::GCodeEditor(App* app) : QObject(app), app_(app), ui_(new GCodeEdito
     // el segundo "Insertar código" no está conectado.
     connect(ui_->name_entry, &QLineEdit::returnPressed, this, [this] { editedObjName_ = ui_->name_entry->text(); });
     connect(ui_->exit_editor_button, &QPushButton::clicked, this, [this] { app_->editorToObject(); });
+    // Corregido: los dos "Insertar código" insertan su fragmento donde está el cursor.
+    auto insert = [this](FCTextArea* from) {
+        if (reproduceOriginalBugs() || !tab_) return;
+        tab_->plainEditor()->insertPlainText(from->toPlainText());
+    };
+    connect(ui_->update_gcode_button, &QPushButton::clicked, this, [this, insert] { insert(ui_->prepend_text); });
+    connect(ui_->update_gcode_sec_button, &QPushButton::clicked, this, [this, insert] { insert(ui_->append_text); });
     // ui_connect: las tablas siempre conectadas (el original solo conecta la que tiene herramientas; la otra no tiene
     // filas que elegir).
     connect(ui_->cnc_tools_table, &QTableWidget::clicked, this, [this] { onRowSelectionChange(); });
@@ -177,7 +185,8 @@ void GCodeEditor::edit(CNCJobObject* obj) {
 
 void GCodeEditor::save(CNCJobObject* obj) {
     if (tab_) {
-        obj->setSourceFile(tab_->toPlainText());
+        if (reproduceOriginalBugs()) obj->setSourceFile(tab_->toPlainText());
+        else obj->setEditedSource(tab_->toPlainText());
         tab_->buttonSave->setStyleSheet("");
         tab_->buttonSave->setIcon(QIcon(":/images/save_as.png"));
     }
@@ -249,13 +258,13 @@ void GCodeEditor::onRowSelectionChange() {
         if (!drilling) {
             // cnc_tools[tool_no]: la clave es el número de la herramienta (si no está: KeyError, se corta todo). En un
             // trabajo leído de un proyecto las claves son textos ("1"): falla siempre.
-            if (obj_->projectData.isObject()) return;
+            if (obj_->projectData.isObject() && reproduceOriginalBugs()) return;
             for (size_t i = 0; i < tools.size(); ++i)
                 if (tools[i].tool == toolNo) found = i < gcodes.size() ? QString::fromStdString(gcodes[i]) : QString();
             if (!found) return;
         } else {
             // En un trabajo leído de un proyecto las claves de exc_cnc_tools son textos y dec_format falla (TypeError).
-            if (obj_->projectData.isObject()) return;
+            if (obj_->projectData.isObject() && reproduceOriginalBugs()) return;
             // La herramienta con el mismo diámetro redondeado (la última, si se repite).
             const QTableWidgetItem* diaItem = table->item(row, 1);
             const QString dia = diaItem ? QString::number(diaItem->text().toDouble(), 'f', dec) : QString();
@@ -319,8 +328,17 @@ void GCodeEditor::onToggleAllRows() {
     for (const QModelIndex& i : table->selectionModel()->selectedIndexes()) rows.insert(i.row());
     // Con todas elegidas se vacía la tabla (la selección del texto queda: se limpia una copia del cursor); si no, se
     // eligen todas (sin tocar el texto: selectAll no emite clicked).
-    if (static_cast<int>(rows.size()) == table->rowCount()) table->clearSelection();
-    else table->selectAll();
+    if (static_cast<int>(rows.size()) == table->rowCount()) {
+        table->clearSelection();
+        if (!reproduceOriginalBugs() && tab_) {  // corregido: también se borra la selección del texto
+            QTextCursor c = tab_->plainEditor()->textCursor();
+            c.clearSelection();
+            tab_->plainEditor()->setTextCursor(c);
+            tab_->plainEditor()->setExtraSelections({});
+        }
+    }
+    else
+        table->selectAll();
 }
 
 }  // namespace flatcam::gui
