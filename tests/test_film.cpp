@@ -241,3 +241,36 @@ TEST(PrintPdf, MatchesTheOriginal) {
         else EXPECT_TRUE(similar(stripPaths(svg), stripPaths(c.svg), 1e-6));
     }
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+TEST(FilmFixed, SinglePolygonNoBytesTextCumulativeTransformsAndPngScale) {
+    OriginalBugsScope fixed(false);
+    const ShapeList one{Shape::box(0, 0, 10, 5)};
+    FilmOptions o;
+    FilmResult r = filmSvg(one, one, {0, 0, 10, 5}, "mm", o);
+    EXPECT_EQ(r.svg.find("b'"), std::string::npos);
+    // El polígono, blanco, al lado del rectángulo negro (no adentro).
+    EXPECT_NE(r.svg.find("fill=\"#FFFFFF\""), std::string::npos) << r.svg;
+    const auto rect = r.svg.find("<rect"), path = r.svg.find("<path");
+    ASSERT_NE(rect, std::string::npos);
+    ASSERT_NE(path, std::string::npos);
+    EXPECT_EQ(r.svg.find("</path>"), std::string::npos);  // el rectángulo no queda dentro del path
+    // PNG con otra densidad: la escala se multiplica (el original suma la relación).
+    o.fileType = "png";
+    o.pngDpi = 192;
+    o.negative = false;
+    r = filmSvg(one, one, {0, 0, 10, 5}, "mm", o);
+    EXPECT_NEAR(r.bounds.xmax - r.bounds.xmin, 20.0, 1e-9);
+    // Escala y espejo acumulados: el espejo no anula la escala.
+    o.fileType = "svg";
+    o.scaleX = 2;
+    o.scaleY = 1;
+    o.mirror = "y";
+    r = filmSvg(one, one, {0, 0, 10, 5}, "mm", o);
+    // Escalado al doble desde la esquina (0..20) y reflejado alrededor de su centro: queda en 0..20, igual que el
+    // viewBox (el original lo deja de 0 a 10 y la caja de -1 a 21).
+    EXPECT_NE(r.svg.find("M 0.0,0.0"), std::string::npos) << r.svg;
+    EXPECT_NE(r.svg.find("20.0,"), std::string::npos) << r.svg;
+}
