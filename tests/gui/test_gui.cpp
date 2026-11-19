@@ -458,6 +458,92 @@ TEST(GuiFixed, NewPaintAndIsolationToolsUseThePreferredShape) {
     }
 }
 
+TEST(GuiFixed, PickingAHoleRestoresTheGridSnap) {
+    // "Elegir agujero" de PCB a 2 caras apagaba el ajuste a la grilla y el original no lo volvía a encender.
+    for (bool original : {true, false}) {
+        flatcam::OriginalBugsScope scope(original);
+        App app;
+        const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+        auto* drl = static_cast<ExcellonObject*>(app.openByExtension(QString::fromStdString(dir + "PTH.drl")));
+        ASSERT_NE(drl, nullptr);
+        DblSidedTool* t = app.dblsidedTool;
+        app.ui()->dblsided_btn->trigger();
+        if (!app.ui()->grid_snap_btn->isChecked()) app.ui()->grid_snap_btn->trigger();
+        t->axis_location->setValue("hole");
+        t->exc_combo->setValue(drl->name());
+        t->pick_hole_button->click();
+        EXPECT_FALSE(app.ui()->grid_snap_btn->isChecked());
+        Q_EMIT app.ui()->plotCanvas()->mouseClicked(QPointF(0, 0), Qt::RightButton);  // termina la elección
+        EXPECT_EQ(app.ui()->grid_snap_btn->isChecked(), !original);
+    }
+}
+
+TEST(GuiFixed, DistanceMessageAndGridMemory) {
+    flatcam::OriginalBugsScope fixed(false);
+    App app;
+    MainGUI* ui = app.ui();
+    DistanceTool* t = app.distanceTool;
+    // Con la grilla encendida, una medición; después apagada: al terminar tiene que quedar apagada.
+    if (!ui->grid_snap_btn->isChecked()) ui->grid_snap_btn->trigger();
+    ui->distance_btn->trigger();
+    t->onRelease({1, 1}, Qt::LeftButton, false);
+    t->onRelease({4, 5}, Qt::LeftButton, false);
+    // '%.*f': cuatro decimales (el original escribía seis).
+    EXPECT_TRUE(ui->fcinfo->text->text().endsWith("= 5.0000")) << ui->fcinfo->text->text().toStdString();
+    EXPECT_TRUE(ui->grid_snap_btn->isChecked());
+    ui->grid_snap_btn->trigger();
+    ui->distance_btn->trigger();
+    t->onRelease({1, 1}, Qt::LeftButton, false);
+    t->onRelease({4, 5}, Qt::LeftButton, false);
+    EXPECT_FALSE(ui->grid_snap_btn->isChecked());
+}
+
+TEST(GuiFixed, ConvertGeometryToExcellonAndGerber) {
+    flatcam::OriginalBugsScope fixed(false);
+    App app;
+    MainGUI* ui = app.ui();
+    const std::string dir = std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    auto* pth = static_cast<ExcellonObject*>(app.openByExtension(QString::fromStdString(dir + "PTH.drl")));
+    auto* edge = static_cast<GerberObject*>(app.openByExtension(QString::fromStdString(dir + "Edge_Cuts.gbr")));
+    ASSERT_TRUE(pth && edge);
+    auto* view = ui->collection_view;
+    auto selectOnly = [&](FlatCAMObj* o) {
+        view->selectionModel()->clearSelection();
+        view->selectionModel()->select(app.collection()->indexOf(o), QItemSelectionModel::Select);
+    };
+    std::size_t drills = 0;
+    for (const auto& [id, t] : pth->excellon().drillTools()) drills += t.drills.size();
+    selectOnly(pth);
+    ui->menueditconvert_any2geo->trigger();
+    auto* geo = dynamic_cast<GeometryObject*>(app.collection()->byName(pth->name() + "_conv"));
+    ASSERT_NE(geo, nullptr);
+    // Geometría -> Excellon: las mismas herramientas (por el diámetro redondeado) y cada agujero una sola vez.
+    selectOnly(geo);
+    const std::vector<FlatCAMObj*> exc = app.convertToExcellon();
+    ASSERT_EQ(exc.size(), 1u);
+    auto* back = dynamic_cast<ExcellonObject*>(exc.front());
+    ASSERT_NE(back, nullptr);
+    std::size_t backDrills = 0;
+    for (const auto& [id, t] : back->excellon().drillTools()) backDrills += t.drills.size();
+    EXPECT_EQ(backDrills, drills);
+    EXPECT_EQ(back->excellon().drillTools().size(), pth->excellon().drillTools().size());
+    // Una Geometría de líneas (el corte) -> Gerber: una apertura C del diámetro de la fresa, con ancho.
+    app.ui()->collection_view->setCurrentIndex(app.collection()->indexOf(edge));
+    app.ui()->cutout_btn->trigger();
+    auto* cut = dynamic_cast<GeometryObject*>(app.cutoutTool->freeformCutout());
+    ASSERT_NE(cut, nullptr);
+    selectOnly(cut);
+    const std::vector<FlatCAMObj*> grb = app.convertToGerber();
+    ASSERT_EQ(grb.size(), 1u);
+    const auto& aps = static_cast<GerberObject*>(grb.front())->gerber().apertures();
+    ASSERT_TRUE(aps.count("10"));
+    EXPECT_DOUBLE_EQ(*aps.at("10").size, cut->tools().begin()->second.tooldia);
+    EXPECT_FALSE(aps.count("0"));
+    double area = 0;
+    for (const flatcam::Shape& s : static_cast<GerberObject*>(grb.front())->gerber().solidGeometry()) area += s.area();
+    EXPECT_GT(area, 1.0);
+}
+
 int main(int argc, char** argv) {
     // Sin pantalla salvo que se pida otra plataforma (QT_QPA_PLATFORM=cocoa para mirar el canvas OpenGL).
     if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")) qputenv("QT_QPA_PLATFORM", "offscreen");
@@ -2254,6 +2340,15 @@ TEST(GuiCanvasSelection, ClickAndAreaSelection) {
     app.onCanvasDoubleClick(Qt::LeftButton);
     click(onlyEdge);
     EXPECT_EQ(ui->notebook->currentWidget(), ui->properties_tab);
+    {
+        // Corregido: al quitar la selección con un clic ya no avisa que el objeto quedó elegido.
+        flatcam::OriginalBugsScope fixed(false);
+        if (sel().empty()) click(onlyEdge);
+        click(onlyEdge);
+        if (!sel().empty()) click(onlyEdge);
+        EXPECT_TRUE(sel().empty());
+        EXPECT_EQ(ui->fcinfo->text->text(), tr_("Objects selection is cleared."));
+    }
 }
 
 // Menús Editar y Ver, el menú del canvas y Archivo -> Nuevo proyecto.
@@ -2379,6 +2474,17 @@ TEST(GuiEditViewMenus, JoinObjects) {
     ASSERT_NE(g, nullptr);
     EXPECT_EQ(g->gerber().solidGeometry().size(), edge->gerber().solidGeometry().size() + logo->gerber().solidGeometry().size());
     EXPECT_EQ(g->gerber().apertures().size(), edge->gerber().apertures().size() + logo->gerber().apertures().size());
+    EXPECT_EQ(g->gerber().followGeometry().size(), g->gerber().solidGeometry().size());  // como el original
+    {
+        // Corregido: la geometría de seguimiento es la de cada Gerber.
+        flatcam::OriginalBugsScope fixed(false);
+        select({edge, logo});
+        auto* g2 = dynamic_cast<GerberObject*>(app.joinGerber());
+        ASSERT_NE(g2, nullptr);
+        EXPECT_EQ(g2->gerber().followGeometry().size(),
+                  edge->gerber().followGeometry().size() + logo->gerber().followGeometry().size());
+        EXPECT_NE(g2->gerber().followGeometry().size(), g2->gerber().solidGeometry().size());
+    }
     // Excellon: los agujeros de los dos; las herramientas de igual diámetro, juntas.
     select({pth, npth});
     EXPECT_EQ(app.joinGerber(), nullptr);  // no son Gerber

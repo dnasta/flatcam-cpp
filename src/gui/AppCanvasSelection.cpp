@@ -5,6 +5,7 @@
 #include <QClipboard>
 #include <QSplitter>
 
+#include "core/OriginalBugs.h"
 #include "gui/Preferences.h"
 #include "gui/App.h"
 #include "gui/CanvasPicker.h"
@@ -179,9 +180,11 @@ void App::selectObjects(bool multisel) {
             drawSelectionShape(cur);
             shapeDrawn_.insert(cur);
         } else {
-            // Un clic sobre el objeto ya elegido: se quita la selección (y el original igual avisa que está elegido).
+            // Un clic sobre el objeto ya elegido: se quita la selección (y el original igual avisa que está elegido;
+            // corregido: queda el aviso de la selección borrada).
             clearSelection();
             deleteSelectionShape();
+            if (!reproduceOriginalBugs()) return;
         }
         selectedMessage(cur);
         return;
