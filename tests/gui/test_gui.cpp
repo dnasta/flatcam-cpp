@@ -2766,7 +2766,7 @@ TEST(GuiFiles, ExportSvg) {
     QTemporaryDir tmp;
     ASSERT_TRUE(app.exportSvgFile(edge, tmp.filePath("e.svg")));
     QFile f(tmp.filePath("e.svg"));
-    ASSERT_TRUE(f.open(QIODevice::ReadOnly));
+    ASSERT_TRUE(f.open(QIODevice::ReadOnly | QIODevice::Text));  // en Windows se escribe con \r\n, como el original
     const QString text = QString::fromUtf8(f.readAll());
     EXPECT_TRUE(text.startsWith("<?xml version=\"1.0\" ?>\n<svg xmlns="));
     EXPECT_TRUE(text.contains("<g transform=\"scale(1,-1)\">"));
@@ -3734,7 +3734,7 @@ TEST(GuiFilm, ExportsSvgPngPdfAndThePunchedFilm) {
     flatcam::FilmOptions o;
     const flatcam::FilmResult want = filmSvg(edgeShapes, edgeShapes, {b.left(), b.top(), b.right(), b.bottom()}, "mm", o);
     QFile f(dir.filePath("neg.svg"));
-    ASSERT_TRUE(f.open(QIODevice::ReadOnly));
+    ASSERT_TRUE(f.open(QIODevice::ReadOnly | QIODevice::Text));
     EXPECT_EQ(f.readAll().toStdString(), want.svg);
     EXPECT_NE(want.svg.find("id=\"neg_rect\""), std::string::npos);
     // PNG: el dibujo en puntos (72 dpi).
