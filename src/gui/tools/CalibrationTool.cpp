@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/tools/CalibrationTool.h"
 
 #include <QDateTime>
@@ -162,17 +163,26 @@ void CalibrationTool::onRelease(const QPointF& world, Qt::MouseButton button, bo
                 picked = alignPickExcellon(static_cast<ExcellonObject*>(target_)->excellon(), click, decimals);
             else if (target_->kind() == ObjectKind::Gerber)
                 picked = alignPickGerber(static_cast<GerberObject*>(target_)->gerber(), click, decimals);
-            // Cada figura bajo el clic agrega un punto (también después del cuarto), como el original.
+            // Cada figura bajo el clic agrega un punto (también después del cuarto), como el original (corregido: la
+            // primera, y nada después del cuarto).
+            if (!reproduceOriginalBugs()) {
+                if (points_.size() >= 4) picked.clear();
+                if (picked.size() > 1) picked.resize(1);
+            }
             for (const Point2D& p : picked) {
                 points_.push_back(p);
                 checkPoints();
             }
         } else {
+            if (points_.size() >= 4 && !reproduceOriginalBugs()) return;
             points_.push_back({calibrationRound(click.x, decimals), calibrationRound(click.y, decimals)});
             checkPoints();
         }
     } else if (button == Qt::RightButton && !dragged) {
-        if (points_.size() != 4) {
+        // Con cuatro puntos el original no hace nada (corregido: termina la elección).
+        if (points_.size() == 4 && !reproduceOriginalBugs()) {
+            disconnectEvents();
+        } else if (points_.size() != 4) {
             resetPoints();
             disconnectEvents();
             app_->ui()->inform("[WARNING_NOTCL] " + tr_("Cancelled by user request."));
@@ -321,7 +331,7 @@ FlatCAMObj* CalibrationTool::calibrate() {
     if (points_.empty()) return nullptr;  // IndexError: 'fail' sin mensaje
     const Point2D origin = points_[0];
     const QString name = obj->name() + "_calibrated";
-    if (obj->kind() == ObjectKind::Excellon) {
+    if (obj->kind() == ObjectKind::Excellon && reproduceOriginalBugs()) {
         // initialize_excellon copia obj.drills, que la 2024.4 ya no tiene: new_object falla siempre.
         ui->inform(QString("[ERROR_NOTCL] %1%2").arg(
             tr_("An internal error has occurred. See shell.\n"),
