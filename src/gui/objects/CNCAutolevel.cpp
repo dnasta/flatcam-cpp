@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/QtCompat.h"
 #include "gui/objects/CNCAutolevel.h"
 
@@ -334,8 +335,8 @@ void CNCAutolevel::addProbePoints() {
         else app_->ui()->plotCanvas()->removeLayer(kProbingLayer);
         return;
     }
-    // Manual: el primer punto en (xmin, xmin), como el original, y después los clics.
-    points_.push_back({{b->xmin, b->xmin}, std::nullopt, 0.0});
+    // Manual: el primer punto en (xmin, xmin) en el original (corregido: la esquina (xmin, ymin)), y después los clics.
+    points_.push_back({{b->xmin, reproduceOriginalBugs() ? b->xmin : b->ymin}, std::nullopt, 0.0});
     ui->inform(tr_("Click on canvas to add a Probe Point..."));
     ui->setCanvasHandlersEnabled(false);
     disconnect(conn_);
@@ -497,13 +498,16 @@ void CNCAutolevel::connectPort() {
     port_->setParity(QSerialPort::NoParity);
     port_->setStopBits(QSerialPort::OneStop);
     port_->setFlowControl(QSerialPort::NoFlowControl);
-    if (port_->open(QIODevice::ReadWrite)) {
+    bool opened = port_->open(QIODevice::ReadWrite);
+    if (opened) {
         // Se alterna DTR para reiniciar el controlador; después "despertar". El original ignora la respuesta (un FIXME
-        // la reemplaza por ['ok']): con el puerto abierto, queda conectado.
+        // la reemplaza por ['ok']): con el puerto abierto, queda conectado (corregido: sin respuesta, desconectado).
         port_->setDataTerminalReady(false);
         port_->clear(QSerialPort::Input);
         port_->setDataTerminalReady(true);
-        wake();
+        if (wake().isEmpty() && !reproduceOriginalBugs()) opened = false;
+    }
+    if (opened) {
         ui_->com_connect_button->setStyleSheet("QPushButton {background-color: seagreen;}");
         ui_->com_connect_button->setText(tr_("Connected"));
         ui_->controller_reset_button->setDisabled(false);
@@ -567,7 +571,13 @@ std::optional<QStringList> CNCAutolevel::sendCommand(const QString& command, boo
     }
     if (echo)
         for (const QString& l : lines) shell("\t\t\t: " + l.trimmed().toUpper());
-    // `'ok' in line` con una línea en bytes: TypeError. Con cualquier respuesta, lo que sigue no se hace.
+    // `'ok' in line` con una línea en bytes: TypeError. Con cualquier respuesta, lo que sigue no se hace (corregido:
+    // las líneas se comparan como texto; con "error" se corta).
+    if (!reproduceOriginalBugs()) {
+        for (const QString& l : lines)
+            if (l.trimmed().startsWith("error", Qt::CaseInsensitive) || l.trimmed().startsWith("ALARM")) return std::nullopt;
+        return lines;
+    }
     return std::nullopt;
 }
 

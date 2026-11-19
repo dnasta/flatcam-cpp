@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "cam/Autolevel.h"
 
 #include <cstdio>
@@ -129,7 +130,8 @@ bool autolevelImportHeightMap(const std::vector<std::string>& lines, std::vector
 std::vector<std::string> grblJogCommands(const std::string& direction, double step, double feedrate,
                                          const std::string& units, double travelZ) {
     const std::string g = units == "IN" ? "G20" : "G21";
-    const std::string st = "(" + pyFloatRepr(step) + ",)";
+    // El original escribe el paso como una tupla ("X(5.0,)"); corregido: el número.
+    const std::string st = reproduceOriginalBugs() ? "(" + pyFloatRepr(step) + ",)" : pyFloatRepr(step);
     const std::string fr = pyFloatRepr(feedrate);
     if (direction == "xplus") return {"$J=G91 " + g + " X" + st + " F" + fr};
     if (direction == "xminus") return {"$J=G91 " + g + " X-" + st + " F" + fr};

@@ -95,3 +95,16 @@ TEST(Autolevel, MatchesTheOriginal) {
         EXPECT_EQ(joined, golden_autolevel::kJog[i]);
     }
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+TEST(AutolevelFixed, JogStepIsANumber) {
+    {
+        OriginalBugsScope o(true);
+        EXPECT_EQ(grblJogCommands("xplus", 5.0, 100, "MM", 2.0).front(), "$J=G91 G21 X(5.0,) F100.0");
+    }
+    OriginalBugsScope fixed(false);
+    EXPECT_EQ(grblJogCommands("xplus", 5.0, 100, "MM", 2.0).front(), "$J=G91 G21 X5.0 F100.0");
+    EXPECT_EQ(grblJogCommands("zminus", 0.5, 100, "IN", 2.0).front(), "$J=G91 G20 Z-0.5 F100.0");
+}

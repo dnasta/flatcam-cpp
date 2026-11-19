@@ -4136,3 +4136,21 @@ TEST(GuiFixed, CalibrationOfAnExcellonAndNoMorePointsAfterTheFourth) {
     };
     EXPECT_NEAR(spanX(cal), spanX(drl) * 1.01, 1e-6);  // los centros de los agujeros, escalados
 }
+
+TEST(GuiFixed, AutolevelManualFirstPointIsTheCorner) {
+    flatcam::OriginalBugsScope fixed(false);
+    App app;
+    FlatCAMObj* cnc = app.openGcode(QString(FLATCAM_TEST_DATA_DIR) + "/DosCau_PPal-Edge_Cuts.nc");
+    ASSERT_NE(cnc, nullptr);
+    app.showProperties(cnc);
+    auto* job = static_cast<CNCJobObject*>(cnc);
+    auto* ui = static_cast<CNCObjectUI*>(cnc->propertiesUi());
+    CNCAutolevel* al = job->autolevel(&app);
+    ui->al_mode_radio->setValue(QString("manual"));
+    Q_EMIT ui->al_mode_radio->activatedCustom("manual");
+    al->addProbePoints();
+    ASSERT_EQ(al->points().size(), 1u);
+    EXPECT_NE(al->points()[0].point.y, al->points()[0].point.x);  // (xmin, ymin), no (xmin, xmin)
+    EXPECT_TRUE(al->points()[0].point.y < -30);
+    al->onRelease(QPointF(0, 0), Qt::RightButton, false);
+}
