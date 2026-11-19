@@ -73,7 +73,8 @@ FlatCAMObj* EtchTool::compensate() {
     const Gerber& g = static_cast<GerberObject*>(src)->gerber();
     EtchResult r = etchCompensate(g, *off, defInt("gerber_circle_steps", 64));
     auto out = std::make_unique<Gerber>();
-    out->restore(std::move(r.solid), {}, std::move(r.apertures), g.intDigits(), g.fracDigits(), std::string());
+    out->restore(std::move(r.solid), std::move(r.follow), std::move(r.apertures), g.intDigits(), g.fracDigits(),
+                 std::string());
     auto obj = std::make_unique<GerberObject>(name + "_comp", std::move(out));
     obj->fillColor = src->fillColor;
     obj->outlineColor = src->outlineColor;

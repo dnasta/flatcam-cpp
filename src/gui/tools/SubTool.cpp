@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/tools/SubTool.h"
 
 #include "gui/App.h"
@@ -86,8 +87,28 @@ FlatCAMObj* SubTool::subtractGeometry() {
         app_->ui()->inform("[ERROR_NOTCL] " + tr_("Currently, the Subtractor geometry cannot be of type Multigeo."));
         return nullptr;
     }
-    // El original falla acá (ValueError al recorrer las herramientas del objetivo) y no crea nada.
-    return nullptr;
+    // El original falla acá (ValueError al recorrer las herramientas del objetivo) y no crea nada (corregido).
+    auto* target = dynamic_cast<GeometryObject*>(app_->collection()->byName(targetName));
+    if (reproduceOriginalBugs() || !target || !sub) return nullptr;
+    ShapeList subSolid = sub->solidGeometry();
+    for (const auto& [id, t] : sub->tools()) subSolid.insert(subSolid.end(), t.solidGeometry.begin(), t.solidGeometry.end());
+    const Shape subUnion = Shape::unaryUnion(subSolid);
+    const bool close = close_paths_cb->isChecked();
+    const QString outname = targetName + "_sub";
+    auto geo = std::make_unique<GeometryObject>(outname);
+    for (const auto& [id, t] : target->tools()) {
+        GeometryTool nt = t;
+        nt.solidGeometry = ::flatcam::subtractGeometry(t.solidGeometry, subUnion, close);
+        geo->solidGeometry().insert(geo->solidGeometry().end(), nt.solidGeometry.begin(), nt.solidGeometry.end());
+        geo->tools()[id] = nt;
+    }
+    FlatCAMObj* out = app_->addObject(std::move(geo));
+    app_->ui()->inform(QString("[success] %1: %2").arg(tr_("Created"), outname));
+    if (delete_sources_cb->isChecked()) {
+        app_->deleteByName(targetName);
+        app_->deleteByName(subName);
+    }
+    return out;
 }
 
 }  // namespace flatcam::gui

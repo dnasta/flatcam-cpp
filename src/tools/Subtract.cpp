@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "tools/Subtract.h"
 
 #include <optional>
@@ -8,6 +9,15 @@ namespace {
 
 /// Las restas de una figura con cada figura del sustraendo que la toca; vacío si ninguna cambió nada.
 std::optional<Shape> subtractEach(const Shape& target, const ShapeList& subs) {
+    if (!reproduceOriginalBugs()) {
+        // Corregido: se resta la unión de las figuras que la tocan (el original resta cada una por separado y une las
+        // restas, así que lo que tapa una no se resta si otra no lo tapa) y una figura cubierta entera desaparece.
+        ShapeList touching;
+        for (const Shape& s : subs)
+            if (target.intersects(s)) touching.push_back(s);
+        if (touching.empty()) return std::nullopt;
+        return target.difference(Shape::unaryUnion(touching));
+    }
     ShapeList diff;
     for (const Shape& s : subs) {
         if (!target.intersects(s)) continue;
@@ -57,7 +67,10 @@ SubtractGerberResult subtractGerber(const Gerber& target, const Gerber& sub) {
                 dest.clear = c ? *c : *el.clear;
                 changed = changed || c.has_value();
             }
-            (changed ? modified : kept).push_back(dest);
+            // Corregido: un elemento que quedó vacío (cubierto entero) se descarta.
+            const bool gone = !reproduceOriginalBugs() && changed && (!dest.solid || dest.solid->isEmpty()) &&
+                              (!dest.clear || dest.clear->isEmpty());
+            if (!gone) (changed ? modified : kept).push_back(dest);
         }
         Aperture& ap = r.apertures[id];
         ap.geometry.insert(ap.geometry.end(), kept.begin(), kept.end());
@@ -79,7 +92,10 @@ SubtractGerberResult subtractGerber(const Gerber& target, const Gerber& sub) {
         if (it == r.apertures.end()) continue;
         for (const ApertureGeometry& el : it->second.geometry) {
             if (!el.solid || el.solid->isEmpty()) continue;
-            if (el.solid->type() == ShapeType::MultiPolygon) {
+            if (el.solid->type() == ShapeType::MultiPolygon && !reproduceOriginalBugs()) {
+                // Corregido: todas las partes de un elemento partido.
+                for (const Shape& part : el.solid->parts()) flat.push_back(part);
+            } else if (el.solid->type() == ShapeType::MultiPolygon) {
                 if (flat.empty()) {
                     r.failed = true;
                     return r;

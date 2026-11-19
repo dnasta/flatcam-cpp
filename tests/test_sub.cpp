@@ -51,3 +51,29 @@ TEST(Subtract, GeometryMatchesTheOriginal) {
         }
     }
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+TEST(SubtractFixed, OverlappingSubtractorsCoveredAndSplitElements) {
+    // El objetivo: una región de 10 x 2 y un pad de 1 x 1 aparte. El sustraendo: dos cuadrados de 2 x 2 superpuestos que
+    // cortan la región en dos y un cuadrado que tapa el pad entero.
+    Gerber target, sub;
+    ASSERT_TRUE(target.parseLines({"%FSLAX46Y46*%", "%MOMM*%", "%ADD10R,1X1*%", "G36*", "X0Y0D02*", "X10000000Y0D01*",
+                                   "X10000000Y2000000D01*", "X0Y2000000D01*", "X0Y0D01*", "G37*", "D10*",
+                                   "X20000000Y0D03*", "M02*"}));
+    ASSERT_TRUE(sub.parseLines({"%FSLAX46Y46*%", "%MOMM*%", "%ADD10R,2X3*%", "%ADD11R,2X2*%", "D10*", "X4000000Y1000000D03*",
+                                "X5000000Y1000000D03*", "D11*", "X20000000Y0D03*", "M02*"}));
+    auto areaOf = [](const ShapeList& l) {
+        double a = 0;
+        for (const Shape& s : l) a += s.area();
+        return a;
+    };
+    OriginalBugsScope fixed(false);
+    const SubtractGerberResult r = subtractGerber(target, sub);
+    ASSERT_FALSE(r.failed);
+    EXPECT_NEAR(areaOf(r.solid), 20.0 - 3 * 2, 1e-6);  // las dos partes de la región, sin el pad
+    EXPECT_EQ(r.solid.size(), 2u);
+    for (const auto& [id, ap] : r.apertures)
+        for (const auto& el : ap.geometry) EXPECT_FALSE(el.solid && el.solid->isEmpty()) << id;
+}
