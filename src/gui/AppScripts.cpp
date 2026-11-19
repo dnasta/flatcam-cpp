@@ -14,6 +14,7 @@
 #include <QTextStream>
 #include <QRegularExpression>
 
+#include "core/OriginalBugs.h"
 #include "gui/App.h"
 #include "gui/AppTextEditor.h"
 #include "gui/Preferences.h"
@@ -90,7 +91,8 @@ void App::onFileOpenScript(const QString& name) {
 
 void App::onFileOpenScriptExample() {
     // La carpeta de ejemplos del original lleva '\\' también fuera de Windows (y no viene con la 2024.4).
-    const QString examples = QCoreApplication::applicationDirPath() + "\\assets\\examples";
+    const QString examples = QCoreApplication::applicationDirPath() +
+                             (reproduceOriginalBugs() ? "\\assets\\examples" : "/assets/examples");
     const QStringList files = QFileDialog::getOpenFileNames(ui_.get(), tr_("Open TCL script"), examples, kScriptFilter);
     if (files.isEmpty()) {
         ui_->inform("[WARNING_NOTCL] " + tr_("Cancelled."));
@@ -208,6 +210,11 @@ bool App::saveSourceFile(FlatCAMObj* obj, const QString& filename) {
                                        "Most likely another app is holding the file open and not accessible."));
         return false;
     }
+    if (!reproduceOriginalBugs()) {
+        // Corregido: el texto tal cual (el original le pone la cabecera de un Gerber, G04, que Tcl no entiende).
+        f.write(t->sourceFile().toUtf8());
+        return true;
+    }
     // La cabecera es la de un Gerber (G04), también en los scripts.
     const QString when = QLocale::c().toString(QDateTime::currentDateTime(), "dddd, dd MMMM yyyy 'at' HH:mm");
     const QString kind = obj->kind() == ObjectKind::Script ? "SCRIPT" : "DOCUMENT";
@@ -241,7 +248,7 @@ void App::onFileSaveScript(const QString& filename) {
     }
     saveSourceFile(obj, f);
     // "Script" con mayúscula no tiene ícono en los recientes: no aparece (KeyError en el original).
-    if (!defBool("global_open_style")) registerRecent("Script", f);
+    if (!defBool("global_open_style")) registerRecent(reproduceOriginalBugs() ? "Script" : "script", f);
 }
 
 void App::onFileSaveDocument(const QString& filename) {
@@ -251,11 +258,21 @@ void App::onFileSaveDocument(const QString& filename) {
         ui_->inform("[WARNING_NOTCL] " + tr_("No object is selected."));
         return;
     }
-    // El original comprueba que sea un ScriptObject: con un Documento siempre falla.
-    if (obj->kind() != ObjectKind::Script) {
+    // El original comprueba que sea un ScriptObject: con un Documento siempre falla (corregido: un Documento).
+    if (obj->kind() != (reproduceOriginalBugs() ? ObjectKind::Script : ObjectKind::Document)) {
         ui_->inform("[ERROR_NOTCL] " + tr_("Failed. Only Document objects can be saved as Document files..."));
         return;
     }
+    if (reproduceOriginalBugs()) return;
+    QString f = filename;
+    if (f.isEmpty())
+        f = QFileDialog::getSaveFileName(ui_.get(), tr_("Save Document source file"), lastFolder() + "/" + obj->name(),
+                                         "FlatCAM Documents (*.FlatDoc);;All Files (*.*)");
+    if (f.isEmpty()) {
+        ui_->inform("[WARNING_NOTCL] " + tr_("Cancelled."));
+        return;
+    }
+    if (saveSourceFile(obj, f) && !defBool("global_open_style")) registerRecent("document", f);
 }
 
 AppTextEditor* App::codeEditorTab() const { return codeEditor_; }

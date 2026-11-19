@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/QtCompat.h"
 #include "gui/objects/ScriptObject.h"
 
@@ -59,6 +60,13 @@ void ScriptObject::setUi(App* app) {
     ed->t_frame->hide();
     ed->loadText(sourceFile(), false, true);
     ed->t_frame->show();
+    if (!reproduceOriginalBugs()) {
+        // Corregido: lo escrito llega a source_file (se guarda en el proyecto y al guardar el script).
+        connect(ed->document(), &QTextDocument::contentsChanged, this, [this] {
+            setSourceFile(editor_->toPlainText());
+            app_->markChanged();
+        });
+    }
     buildUi();
 }
 

@@ -325,3 +325,37 @@ TEST(GuiTextEditor, CodeEditorAndGotoLine) {
     ASSERT_NE(app.codeEditorTab(), nullptr);
     EXPECT_TRUE(app.codeEditorTab()->toPlainText().startsWith("version\n"));
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+TEST(GuiFixed, ScriptAndDocumentEditsAreKeptAndSaved) {
+    OriginalBugsScope fixed(false);
+    App app;
+    auto* s = static_cast<ScriptObject*>(app.onFileNewScript());
+    ASSERT_NE(s, nullptr);
+    // Lo escrito llega a source_file (el original lo pierde).
+    s->editor()->plainEditor()->setPlainText("puts hola\nputs chau");
+    EXPECT_EQ(s->sourceFile(), "puts hola\nputs chau");
+    // Guardar sin la cabecera G04 de un Gerber.
+    QTemporaryDir tmp;
+    ASSERT_TRUE(app.saveSourceFile(s, tmp.filePath("s.FlatScript")));
+    QFile in(tmp.filePath("s.FlatScript"));
+    ASSERT_TRUE(in.open(QIODevice::ReadOnly | QIODevice::Text));
+    EXPECT_EQ(QString::fromUtf8(in.readAll()), "puts hola\nputs chau");
+    // "Todos" reemplaza en todo el texto aunque el cursor esté al final.
+    AppTextEditor* ed = s->editor();
+    ed->moveCursor(QTextCursor::End);
+    ed->entryFind->setText("puts");
+    ed->entryReplace->setText("echo");
+    ed->sel_all_cb->setChecked(true);
+    ed->handleReplaceGCode();
+    EXPECT_EQ(s->sourceFile(), "echo hola\necho chau");
+    // Un Documento se guarda (el original siempre falla).
+    auto* d = static_cast<DocumentObject*>(app.newDocumentObject());
+    d->editor()->richEditor()->setPlainText("nota");
+    EXPECT_TRUE(d->sourceFile().contains("nota"));
+    select(app, d);
+    app.onFileSaveDocument(tmp.filePath("d.FlatDoc"));
+    EXPECT_TRUE(QFile::exists(tmp.filePath("d.FlatDoc")));
+}
