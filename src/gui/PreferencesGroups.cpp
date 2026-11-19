@@ -4,6 +4,7 @@
 #include <QStringList>
 #include <memory>
 
+#include "core/OriginalBugs.h"
 #include "gui/QtCompat.h"
 #include "gui/MainGUI.h"
 #include "gui/Preferences.h"
@@ -20,7 +21,12 @@ namespace flatcam::gui {
 namespace {
 
 /// `hex(v)[2:] if int(hex(v)[2:], 16) > 0 else '00'` (sin completar con ceros: 5 da "5").
-std::string alphaHex(int v) { return v > 0 ? QString::number(v, 16).toStdString() : "00"; }
+std::string alphaHex(int v) {
+    if (v <= 0) return "00";
+    // Corregido: dos dígitos (con "5" el color quedaba de 8 caracteres y no era válido).
+    if (!reproduceOriginalBugs()) return QString("%1").arg(v, 2, 16, QChar('0')).toStdString();
+    return QString::number(v, 16).toStdString();
+}
 
 /// `s[a:b]` de Python sobre un texto.
 std::string slice(const std::string& s, std::size_t a, std::size_t b = std::string::npos) {
@@ -75,10 +81,14 @@ void Preferences::connectGroups() {
         onEdit(e, [this, color, e, key] { set(key, JsonValue::string(color(e))); });
     };
 
-    // General -> GUI (GeneralGUIPrefGroupUI). Error del original que se reproduce: el color de relleno de la selección
-    // de izquierda a derecha se reemplaza por su propio alfa (`global_sel_fill[7:9]`).
-    onEdit(t->general_gui_group_sf_color_entry, [this, text] {
-        set("global_sel_fill", JsonValue::string(slice(text("global_sel_fill"), 7, 9)));
+    // General -> GUI (GeneralGUIPrefGroupUI). Error del original: el color de relleno de la selección de izquierda a
+    // derecha se reemplaza por su propio alfa (`global_sel_fill[7:9]`); corregido: el color nuevo con el alfa guardado.
+    onEdit(t->general_gui_group_sf_color_entry, [this, text, color] {
+        if (!reproduceOriginalBugs())
+            set("global_sel_fill", JsonValue::string(slice(color(tab_->general_gui_group_sf_color_entry), 0, 7) +
+                                                     slice(text("global_sel_fill"), 7, 9)));
+        else
+            set("global_sel_fill", JsonValue::string(slice(text("global_sel_fill"), 7, 9)));
     });
     keepAlpha(t->general_gui_group_sl_color_entry, "global_sel_line");
     alpha(t->general_gui_group_left_right_alpha_entry, "global_sel_fill", "global_sel_line");
@@ -298,8 +308,9 @@ void Preferences::initColorPickers() {
     t->general_gui_group_left_right_alpha_entry->setValue(alphaOf("global_sel_fill"));
     t->general_gui_group_alt_sf_color_entry->setValue(str("global_alt_sel_fill"));
     t->general_gui_group_alt_sl_color_entry->setValue(str("global_alt_sel_line"));
-    // Como el original: el alfa de derecha a izquierda se toma de `global_sel_fill`, no de `global_alt_sel_fill`.
-    t->general_gui_group_right_left_alpha_entry->setValue(alphaOf("global_sel_fill"));
+    // El original toma el alfa de derecha a izquierda de `global_sel_fill`, no de `global_alt_sel_fill` (corregido).
+    t->general_gui_group_right_left_alpha_entry->setValue(
+        alphaOf(reproduceOriginalBugs() ? "global_sel_fill" : "global_alt_sel_fill"));
     t->general_gui_group_draw_color_entry->setValue(str("global_draw_color"));
     t->general_gui_group_sel_draw_color_entry->setValue(str("global_sel_draw_color"));
     t->general_gui_group_proj_color_entry->setValue(str("global_proj_item_color"));

@@ -8,6 +8,8 @@
 #include <QMessageBox>
 #include <QPushButton>
 
+#include "gui/tools/PropertiesTool.h"
+#include "core/OriginalBugs.h"
 #include "gui/App.h"
 #include "gui/Preferences.h"
 #include "gui/Translation.h"
@@ -129,12 +131,17 @@ void App::scaleDefaults(double factor) {
             else if (list.isArray()) items = list.items();
             else continue;
             JsonValue conv = JsonValue::array();
+            QStringList asText;
             for (const JsonValue& x : items) {
                 const auto f = toFloat(x);
                 if (!f) return;  // float() falla: el original se corta con la excepción
                 conv.push(decFormat(*f * factor, dec));
+                asText << QString::fromStdString(PropertiesTool::pyStr(conv.items().back()).toStdString());
             }
-            p->set(dim, conv);
+            // El original guarda la lista también donde había un texto ("2.4" pasa a ser "[0.0945]"); corregido: un
+            // texto queda como texto, con los valores separados por comas.
+            if (v.isString() && !reproduceOriginalBugs()) p->set(dim, JsonValue::string(asText.join(", ").toStdString()));
+            else p->set(dim, conv);
         } else if (std::string(dim) == "global_gridx" || std::string(dim) == "global_gridy") {
             if (auto f = toFloat(v)) p->set(dim, decFormat(*f * factor, dec));
         } else if (truthy(v)) {
@@ -193,13 +200,22 @@ void App::onToggleUnits(bool noPref) {
             o->convertUnits(u);
             objectChanged(o);  // las propiedades guardadas y el panel (build_ui)
         }
-        // Error del original que se reproduce: con el área de trabajo encendida llama a
-        // draw_workspace(pagesize=...), que no tiene ese parámetro (TypeError), y no sigue.
-        if (defBool("global_workspace")) return;
+        // Error del original: con el área de trabajo encendida llama a draw_workspace(pagesize=...), que no tiene ese
+        // parámetro (TypeError), y no sigue (corregido: vuelve a dibujar la hoja en las unidades nuevas).
+        if (defBool("global_workspace")) {
+            if (reproduceOriginalBugs()) return;
+            deleteWorkspace();
+            drawWorkspace();
+        }
         // La grilla de la barra: global_gridx por el factor (la Y igual a la X si están enlazadas; así, con gridx,
-        // también en el original).
-        valX = toFloatOr(prefs_->value("global_gridx")) * factor;
-        valY = ui_->grid_gap_link_cb->isChecked() ? valX : toFloatOr(prefs_->value("global_gridx")) * factor;
+        // también en el original). Corregido: si las preferencias ya se escalaron, la grilla también (el original la
+        // escalaba dos veces) y la Y es la Y.
+        const bool fixed = !reproduceOriginalBugs();
+        const double gf = fixed && !noPref ? 1.0 : factor;
+        valX = toFloatOr(prefs_->value("global_gridx")) * gf;
+        valY = ui_->grid_gap_link_cb->isChecked()
+                   ? valX
+                   : toFloatOr(prefs_->value(fixed ? "global_gridy" : "global_gridx")) * gf;
         plotAll();
         setScreenUnits(newUnits);
         shouldWeSave_ = true;
