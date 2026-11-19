@@ -445,8 +445,8 @@ TEST(GuiApp, ReorderingTheProjectTreeChangesTheDrawOrder) {
     ASSERT_FALSE(r.isEmpty());
     m.reset(col->mimeData({col->indexOf(edge)}));
     const QPointF pos(r.center().x(), r.top() + 1);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
-    const QPointF dpos = pos;  // desde Qt 6.8 los eventos de arrastre toman QPointF (el de QPoint es obsoleto)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+    const QPointF dpos = pos;  // desde Qt 6.9 los eventos de arrastre toman QPointF (el de QPoint es obsoleto)
 #else
     const QPoint dpos = pos.toPoint();
 #endif
