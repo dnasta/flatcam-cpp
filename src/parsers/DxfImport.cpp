@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "parsers/DxfImport.h"
 
 #include <cctype>
@@ -188,20 +189,28 @@ void rbasis(int c, double t, int npts, const std::vector<double>& x, const std::
 }
 
 /// `_rbspline` / `_rbsplinu` con los nudos uniformes (`_knot` / `_knotu`: los de la DXF nunca tienen el largo que piden).
-void rbspline(bool closed, int npts, int k, int p1, const std::vector<double>& b, std::vector<double>& p) {
+void rbspline(bool closed, int npts, int k, int p1, const std::vector<double>& b, std::vector<double>& p,
+              const std::vector<double>& knots = {}, const std::vector<double>& weights = {}) {
     const int nplusc = npts + k;
     std::vector<double> x(static_cast<std::size_t>(nplusc + 1), 0.0);
-    for (int i = 2; i <= nplusc; ++i) {
-        if (closed) x[i] = static_cast<double>(i - 1);
+    const bool own = static_cast<int>(knots.size()) == nplusc;  // los nudos de la DXF (corregido)
+    for (int i = 1; i <= nplusc; ++i) {
+        if (own) x[i] = knots[static_cast<std::size_t>(i - 1)];
+        else if (i == 1) x[i] = 0.0;
+        else if (closed) x[i] = static_cast<double>(i - 1);
         else x[i] = (k < i && i < npts + 2) ? x[i - 1] + 1.0 : x[i - 1];
     }
-    const std::vector<double> h(static_cast<std::size_t>(npts + 1), 1.0);
+    std::vector<double> h(static_cast<std::size_t>(npts + 1), 1.0);
+    if (static_cast<int>(weights.size()) == npts)
+        for (int i = 1; i <= npts; ++i) h[i] = weights[static_cast<std::size_t>(i - 1)];
     int icount = 0;
-    double t = closed ? k - 1 : 0;
-    const double step = closed ? (static_cast<double>(npts) - (k - 1)) / static_cast<double>(p1 - 1)
-                               : x[nplusc] / static_cast<double>(p1 - 1);
+    double t = own ? x[k] : closed ? k - 1 : 0;
+    const double tEnd = own ? x[npts + 1] : x[nplusc];
+    const double step = own      ? (tEnd - t) / static_cast<double>(p1 - 1)
+                        : closed ? (static_cast<double>(npts) - (k - 1)) / static_cast<double>(p1 - 1)
+                                 : x[nplusc] / static_cast<double>(p1 - 1);
     for (int i1 = 1; i1 <= p1; ++i1) {
-        if (x[nplusc] - t < 5e-6) t = x[nplusc];
+        if (tEnd - t < 5e-6) t = (own && tEnd < x[nplusc]) ? tEnd - 1e-9 * (tEnd - x[k]) : tEnd;
         std::vector<double> nbasis(static_cast<std::size_t>(npts + 1), 0.0);
         rbasis(k, t, npts, x, h, nbasis);
         for (int j = 1; j <= 3; ++j) {
@@ -217,7 +226,8 @@ void rbspline(bool closed, int npts, int k, int p1, const std::vector<double>& b
     }
 }
 
-std::vector<Point2D> spline2Polyline(std::vector<Vec3> xyz, int degree, bool closed, int segments) {
+std::vector<Point2D> spline2Polyline(std::vector<Vec3> xyz, int degree, bool closed, int segments,
+                                     const std::vector<double>& knots = {}, const std::vector<double>& weights = {}) {
     const Vec3 d{xyz.front().x - xyz.back().x, xyz.front().y - xyz.back().y, xyz.front().z - xyz.back().z};
     if (d.x * d.x + d.y * d.y + d.z * d.z < 1e-10) closed = false;
     if (closed) {
@@ -236,7 +246,8 @@ std::vector<Point2D> spline2Polyline(std::vector<Vec3> xyz, int degree, bool clo
         b[i + 2] = pt.z;
         i += 3;
     }
-    rbspline(closed, npts, k, nseg, b, p);
+    // Corregido: con nudos propios (los de la DXF) no hace falta repetir los primeros puntos.
+    rbspline(closed, npts, k, nseg, b, p, closed && !knots.empty() ? std::vector<double>{} : knots, weights);
     std::vector<Point2D> out;
     for (int j = 1; j < 3 * nseg + 1; j += 3) out.push_back({p[j], p[j + 1]});
     return out;
@@ -245,6 +256,44 @@ std::vector<Point2D> spline2Polyline(std::vector<Vec3> xyz, int degree, bool clo
 // ------------------------------------------------------------------------------------------------ ParseDXF
 
 double radians(double d) { return d * (kPi / 180.0); }
+
+/// Los puntos de un tramo de polilínea con curva (`bulge` = tan(ángulo / 4)), sin el primero.
+void bulgeArc(const Point2D& a, const Point2D& b, double bulge, std::vector<Point2D>& out) {
+    if (bulge == 0.0) {
+        out.push_back(b);
+        return;
+    }
+    const double theta = 4 * std::atan(bulge);  // ángulo con signo (positivo: antihorario)
+    const double chord = std::hypot(b.x - a.x, b.y - a.y);
+    if (chord == 0.0) {
+        out.push_back(b);
+        return;
+    }
+    const double r = chord / (2 * std::sin(std::abs(theta) / 2));
+    const Point2D m{(a.x + b.x) / 2, (a.y + b.y) / 2};
+    const double d = r * std::cos(std::abs(theta) / 2);  // del centro al punto medio
+    const double ux = -(b.y - a.y) / chord, uy = (b.x - a.x) / chord;  // normal a la izquierda
+    const double s = (bulge > 0) == (std::abs(theta) < kPi) ? 1.0 : -1.0;
+    const Point2D c{m.x + s * d * ux, m.y + s * d * uy};
+    const double a0 = std::atan2(a.y - c.y, a.x - c.x);
+    const int n = std::max(4, static_cast<int>(std::ceil(std::abs(theta) / (2 * kPi) * 64)));
+    for (int i = 1; i <= n; ++i) {
+        const double t = a0 + theta * i / n;
+        out.push_back({c.x + r * std::cos(t), c.y + r * std::sin(t)});
+    }
+    out.back() = b;
+}
+
+/// Una polilínea con sus curvas: los vértices y el `bulge` de cada uno (el tramo que sale de él).
+std::vector<Point2D> withBulges(const std::vector<Point2D>& v, const std::vector<double>& bulges, bool closed) {
+    std::vector<Point2D> out;
+    if (v.empty()) return out;
+    out.push_back(v.front());
+    const std::size_t n = v.size();
+    for (std::size_t i = 0; i + 1 < n + (closed ? 1 : 0); ++i)
+        bulgeArc(v[i], v[(i + 1) % n], i < bulges.size() ? bulges[i] : 0.0, out);
+    return out;
+}
 
 std::optional<Shape> entityGeo(const Document& doc, const Entity& e, ShapeList& many);
 
@@ -270,6 +319,18 @@ ShapeList geoFromInsert(const Document& doc, const Entity& ins) {
     if (it == doc.blocks.end()) throw DxfError("KeyError: bloque " + name);
     const Vec3 bc = it->second.base;
     for (Shape geo : getGeo(doc, it->second.entities)) {
+        if (!reproduceOriginalBugs()) {
+            // Corregido: el bloque desde su punto base, escalado y girado alrededor del punto de inserción, y la grilla
+            // de filas y columnas con el espaciado girado como el bloque.
+            Shape g = geo.translate(-bc.x, -bc.y).scale(sx, sy, Point2D{0, 0}).rotate(phi, Point2D{0, 0});
+            const double c = std::cos(radians(phi)), s = std::sin(radians(phi));
+            for (int r = 0; r < std::max(1, rCount); ++r)
+                for (int col = 0; col < std::max(1, cCount); ++col) {
+                    const double dx = col * cSpacing, dy = r * rSpacing;
+                    out.push_back(g.translate(tr.x + dx * c - dy * s, tr.y + dx * s + dy * c));
+                }
+            continue;
+        }
         if (tr.x != 0 || tr.y != 0) geo = geo.translate(tr.x - bc.x, tr.y - bc.y);
         if (rCount > 1)
             for (int r = 0; r < rCount; ++r) out.push_back(geo.translate(tr.x + (r * rSpacing) - bc.x, 0));
@@ -351,28 +412,54 @@ std::optional<Shape> entityGeo(const Document& doc, const Entity& e, ShapeList& 
     }
     if (t == "LWPOLYLINE") {
         std::vector<Point2D> pts;
-        // Los vértices: cada código 10 con su 20 (el ancho y la curva se ignoran).
-        for (std::size_t k = 0; k < e.tags.size(); ++k)
+        // Los vértices: cada código 10 con su 20 (el ancho y la curva se ignoran; corregido: la curva, código 42).
+        std::vector<double> bulges;
+        for (std::size_t k = 0; k < e.tags.size(); ++k) {
             if (e.tags[k].first == 10) {
                 Point2D p{std::stod(e.tags[k].second), 0};
                 if (k + 1 < e.tags.size() && e.tags[k + 1].first == 20) p.y = std::stod(e.tags[k + 1].second);
                 pts.push_back(p);
+                bulges.push_back(0.0);
+            } else if (e.tags[k].first == 42 && !bulges.empty()) {
+                bulges.back() = std::stod(e.tags[k].second);
             }
-        if (e.integer(70, 0) & 1) pts.push_back(pts.front());
+        }
+        const bool closedPl = (e.integer(70, 0) & 1) != 0;
+        if (!reproduceOriginalBugs()) {
+            pts = withBulges(pts, bulges, closedPl);
+        } else if (closedPl) {
+            pts.push_back(pts.front());
+        }
         if (pts.size() < 2) throw DxfError("LineStrings must have at least 2 coordinate tuples");
         return Shape::lineString(pts);
     }
     if (t == "POLYLINE") {
         std::vector<Point2D> pts;
+        std::vector<double> bulges;
         for (const Entity& v : e.vertices) {
             const Vec3 p = v.point(10, Vec3{0, 0, 0});
             pts.push_back({p.x, p.y});
+            bulges.push_back(v.num(42, 0.0));
         }
-        if (e.integer(70, 0) & 1) pts.push_back(pts.front());
+        const bool closedPl = (e.integer(70, 0) & 1) != 0;
+        if (!reproduceOriginalBugs()) {
+            pts = withBulges(pts, bulges, closedPl);  // corregido: las curvas de los vértices
+        } else if (closedPl) {
+            pts.push_back(pts.front());
+        }
         if (pts.size() < 2) throw DxfError("LineStrings must have at least 2 coordinate tuples");
         return Shape::lineString(pts);
     }
-    if (t == "SOLID" || t == "TRACE") return std::nullopt;  // dxfsolid2shapely devuelve None
+    if (t == "SOLID" || t == "TRACE") {
+        if (reproduceOriginalBugs()) return std::nullopt;  // dxfsolid2shapely devuelve None
+        // Corregido: el cuadrilátero relleno (los puntos 1, 2, 4, 3; con tres puntos, un triángulo).
+        const Vec3 a = e.point(10), b = e.point(11), c = e.point(12);
+        const Vec3 d = e.first(13) ? e.point(13) : c;
+        std::vector<Point2D> q{{a.x, a.y}, {b.x, b.y}, {d.x, d.y}, {c.x, c.y}, {a.x, a.y}};
+        const Shape poly = Shape::polygon(q).buffer(0);
+        if (poly.isEmpty()) return std::nullopt;
+        return poly;
+    }
     if (t == "SPLINE") {
         std::vector<Vec3> ctrl;
         for (std::size_t k = 0; k < e.tags.size(); ++k)
@@ -382,8 +469,27 @@ std::optional<Shape> entityGeo(const Document& doc, const Entity& e, ShapeList& 
                 if (k + 2 < e.tags.size() && e.tags[k + 2].first == 30) p.z = std::stod(e.tags[k + 2].second);
                 ctrl.push_back(p);
             }
+        if (ctrl.empty() && !reproduceOriginalBugs()) {
+            // Corregido: un spline definido por puntos de ajuste (código 11): la línea que pasa por ellos.
+            std::vector<Point2D> fit;
+            for (std::size_t k = 0; k < e.tags.size(); ++k)
+                if (e.tags[k].first == 11) {
+                    Point2D p{std::stod(e.tags[k].second), 0};
+                    if (k + 1 < e.tags.size() && e.tags[k + 1].first == 21) p.y = std::stod(e.tags[k + 1].second);
+                    fit.push_back(p);
+                }
+            if (fit.size() < 2) throw DxfError("spline sin puntos");
+            return Shape::lineString(fit);
+        }
         if (ctrl.empty()) throw DxfError("spline sin puntos de control");
-        return Shape::lineString(spline2Polyline(ctrl, e.integer(71, 3), (e.integer(70, 0) & 1) != 0, 20));
+        std::vector<double> knots, weights;
+        if (!reproduceOriginalBugs())
+            for (const auto& [code, v] : e.tags) {
+                if (code == 40) knots.push_back(std::stod(v));  // corregido: los nudos y los pesos de la DXF
+                if (code == 41) weights.push_back(std::stod(v));
+            }
+        return Shape::lineString(
+            spline2Polyline(ctrl, e.integer(71, 3), (e.integer(70, 0) & 1) != 0, 20, knots, weights));
     }
     if (t == "INSERT") {
         many = geoFromInsert(doc, e);
@@ -406,7 +512,9 @@ DxfImportResult importDxfAsGeometry(const std::string& dxfText) {
         }
         const Shape merged = Shape::lineMerge(lines);
         // `for l in merged_lines`: una sola LineString no es iterable en Shapely 1.8 y el original falla.
-        if (merged.type() == ShapeType::LineString) throw DxfError("'LineString' object is not iterable");
+        // Corregido: una sola línea se importa (parts() ya la devuelve).
+        if (merged.type() == ShapeType::LineString && reproduceOriginalBugs())
+            throw DxfError("'LineString' object is not iterable");
         for (const Shape& p : merged.parts()) r.geometry.push_back(p);
         r.ok = true;
     } catch (const std::exception& e) {
@@ -420,6 +528,27 @@ DxfImportResult importDxfAsGerber(const std::string& dxfText) {
     try {
         const Document doc = readDxf(dxfText);
         const ShapeList geos = getGeo(doc, doc.modelspace);
+        if (!reproduceOriginalBugs()) {
+            // Corregido: los polígonos (círculos, puntos, sólidos) se conservan y las líneas se unen; sin el
+            // Polygon() vacío inicial.
+            ShapeList lines;
+            for (const Shape& g : geos) {
+                if (g.type() == ShapeType::Polygon) r.geometry.push_back(g);
+                else if (g.type() == ShapeType::MultiPolygon)
+                    for (const Shape& pp : g.parts()) r.geometry.push_back(pp);
+                else lines.push_back(g);
+            }
+            if (!lines.empty()) {
+                const Shape merged = Shape::lineMerge(lines);
+                if (merged.parts().empty()) {
+                    if (!merged.isEmpty()) r.geometry.push_back(merged);
+                } else {
+                    for (const Shape& pp : merged.parts()) r.geometry.push_back(pp);
+                }
+            }
+            r.ok = true;
+            return r;
+        }
         for (const Shape& g : geos)
             if (g.type() == ShapeType::Polygon || g.type() == ShapeType::MultiPolygon)
                 throw DxfError("linemerge de un polígono");  // linemerge(geos) del original
