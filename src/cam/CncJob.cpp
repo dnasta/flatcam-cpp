@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "cam/CncJob.h"
 
 #include <algorithm>
@@ -401,6 +402,8 @@ struct GeoContext {
     /// El `z_move` que reciben `linear2gcode` / `linear2gcode_extra` como argumento (sus subidas `lift_code(...,
     /// z_move=z_move)`); NaN si es el del trabajo. En `generate_from_geometry_2` es el que se pidió, sin corregir.
     double zMoveArg{std::numeric_limits<double>::quiet_NaN()};
+    /// La Z de la pasada en curso (la última de `plunge`): con los errores corregidos la reciben todos los tramos.
+    double passZ{std::numeric_limits<double>::quiet_NaN()};
 };
 
 /// Equivale a `Decimal(x).quantize(Decimal('0.000000001'))`, expresado en unidades de 1e-9.
@@ -496,6 +499,7 @@ std::string plunge(GeoContext& c, double x, double y, double zCut) {
     c.p.zCut = PyNumber(zCut);
     g += c.pp.downCode(c.p) + "\n";
     c.p.zCut = PyNumber(c.ts.cutZ);
+    c.passZ = zCut;
     return g + c.pp.feedrateCode(c.p) + "\n";
 }
 
@@ -503,9 +507,16 @@ std::string plunge(GeoContext& c, double x, double y, double zCut) {
 std::string linearTo(GeoContext& c, double x, double y, std::optional<double> z = std::nullopt) {
     c.p.x = x;
     c.p.y = y;
+    // El original pasa `z` solo en algunos tramos y `z_cut` es siempre la del trabajo (lo notan Roland, que deja una línea
+    // vacía sin `z`, y line_xyz, que corta a la profundidad final en todas las pasadas). Corregido: todos los tramos
+    // reciben la Z de la pasada.
+    const bool fix = !reproduceOriginalBugs();
     if (z) c.p.z = PyNumber(*z);
+    else if (fix && !std::isnan(c.passZ)) c.p.z = PyNumber(c.passZ);
+    if (fix && c.p.z) c.p.zCut = *c.p.z;
     std::string g = c.pp.linearCode(c.p) + "\n";
     c.p.z.reset();
+    c.p.zCut = PyNumber(c.ts.cutZ);
     return g;
 }
 

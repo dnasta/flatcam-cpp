@@ -5,6 +5,7 @@
 #include <memory>
 #include <utility>
 
+#include "core/OriginalBugs.h"
 #include "cam/Preprocessor.h"
 #include "cam/generated/PreprocessorTemplates.h"
 #include "cam/internal/PpCommon.h"
@@ -58,7 +59,9 @@ std::string defaultLikeStart(const PreprocessorParams& p, const StartStyle& st) 
     gcode += c("Z End: " + p.zEnd.str() + units);
     // Berta_CNC pregunta por el X,Y del cambio de herramienta pero imprime el final (si falta el final, el original falla;
     // el port escribe "None").
-    const bool showEnd = st.endXYGatedByToolchange ? p.xyToolchange.has_value() : p.xyEnd.has_value();
+    // Corregido: el X,Y final depende solo de que haya uno.
+    const bool showEnd = st.endXYGatedByToolchange && reproduceOriginalBugs() ? p.xyToolchange.has_value()
+                                                                              : p.xyEnd.has_value();
     gcode += c("X,Y End: " + (showEnd && p.xyEnd ? pair(p.decimals, *p.xyEnd) : std::string("None")) + units);
     const std::string steps = "Steps per circle: " + std::to_string(p.stepsPerCircle);
     switch (st.steps) {
@@ -74,7 +77,9 @@ std::string defaultLikeStart(const PreprocessorParams& p, const StartStyle& st) 
     gcode += c("X range: " + right9(xmin) + " ... " + right9(xmax) + " " + units);
     gcode += c("Y range: " + right9(ymin) + " ... " + right9(ymax) + " " + units) + "\n";
     // En el estilo con punto y coma el original deja el paréntesis de cierre.
-    gcode += std::string(st.semicolon ? ";" : "(") + "Spindle Speed: " + strOrNone(p.spindleSpeed) + " RPM)\n";
+    // Corregido: sin ese paréntesis.
+    gcode += std::string(st.semicolon ? ";" : "(") + "Spindle Speed: " + strOrNone(p.spindleSpeed) + " RPM" +
+             (st.semicolon && !reproduceOriginalBugs() ? "" : ")") + "\n";
     gcode += st.tail;
     return gcode;
 }
@@ -182,7 +187,8 @@ public:
     }
     std::string startzCode(const PreprocessorParams&) const override { return ""; }
     std::string toolchangeCode(const PreprocessorParams& p) const override {
-        std::string gcode = p.xyToolchange ? "\nM6\n" : "";
+        // El original solo emite M6 si hay X,Y de cambio (corregido: siempre).
+        std::string gcode = p.xyToolchange || !reproduceOriginalBugs() ? "\nM6\n" : "";
         if (p.fPlunge) gcode += "\nG00 Z" + fmt(p.coordsDecimals, p.zMove.value());
         return gcode;
     }
@@ -340,9 +346,15 @@ public:
                                                 {"toolC", fmt(p.decimals, p.toolC.value())}};
         const bool exc = p.options.type == "Excellon";
         if (exc) v["t_drills"] = excellonDrills(p);
-        // Las plantillas del original ponen x_toolchange también en la Y (se reproduce).
-        std::string gcode = pyFormat(kline_xyz_toolchange_code[exc ? 0 : 2], v);
-        if (p.fPlunge) gcode += pyFormat(kline_xyz_toolchange_code[exc ? 1 : 3], v);
+        // Las plantillas del original ponen x_toolchange también en la Y (corregido salvo con reproduceOriginalBugs()).
+        auto tpl = [](const char* t) {
+            std::string s = t;
+            if (!reproduceOriginalBugs())
+                for (std::size_t i; (i = s.find("Y{x_toolchange}")) != std::string::npos;) s.replace(i, 15, "Y{y_toolchange}");
+            return s;
+        };
+        std::string gcode = pyFormat(tpl(kline_xyz_toolchange_code[exc ? 0 : 2]), v);
+        if (p.fPlunge) gcode += pyFormat(tpl(kline_xyz_toolchange_code[exc ? 1 : 3]), v);
         return gcode;
     }
     std::string upToZeroCode(const PreprocessorParams& p) const override { return "G01 " + xy(p) + " Z0"; }
@@ -463,8 +475,9 @@ public:
         return gcode;
     }
     std::string startzCode(const PreprocessorParams& p) const override {
-        // Así en el original: con Z inicial va a la Z de viaje.
-        return p.startZ ? "G0 Z" + fmt(p.coordsDecimals, p.zMove.value()) : "";
+        // El original, con Z inicial, va a la Z de viaje (corregido: a la Z inicial).
+        if (!p.startZ) return "";
+        return "G0 Z" + fmt(p.coordsDecimals, reproduceOriginalBugs() ? p.zMove.value() : p.startZ->value());
     }
     std::string liftCode(const PreprocessorParams&) const override { return fan_ ? "M400\nM107" : "M400\nM5"; }
     std::string downCode(const PreprocessorParams& p) const override { return spindleCode(p); }

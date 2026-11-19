@@ -10,6 +10,7 @@ if(NOT GTest_FOUND)
 endif()
 
 add_executable(core_tests
+    test_main.cpp
     test_types.cpp
     test_source_hygiene.cpp
     test_shape.cpp
@@ -67,12 +68,16 @@ add_executable(core_tests
     test_hpgl2.cpp
     test_rest_machining.cpp
 )
-target_link_libraries(core_tests PRIVATE flatcam::core GTest::gtest_main)
+target_link_libraries(core_tests PRIVATE flatcam::core GTest::gtest)
 target_include_directories(core_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_definitions(core_tests PRIVATE FLATCAM_TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data")
 
 include(GoogleTest)
-gtest_discover_tests(core_tests)
+# MSVC arma en la pila los inicializadores de los goldens grandes: con el 1 MB de Windows se desborda al arrancar.
+if(MSVC)
+    target_link_options(core_tests PRIVATE /STACK:536870912)
+endif()
+gtest_discover_tests(core_tests DISCOVERY_TIMEOUT 120)
 
 # Tests de la interfaz (solo si se compila la GUI). Corren sin pantalla: plataforma "offscreen" de Qt.
 if(TARGET flatcam_gui)
@@ -80,5 +85,12 @@ if(TARGET flatcam_gui)
     target_link_libraries(gui_tests PRIVATE flatcam_gui GTest::gtest)
     target_include_directories(gui_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     target_compile_definitions(gui_tests PRIVATE FLATCAM_TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data")
-    gtest_discover_tests(gui_tests PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+    # Plataforma de Qt de los tests de la GUI: "offscreen" (sin pantalla). En Linux el CI usa "xcb" con xvfb: la Qt 6.4
+    # de Ubuntu se cae al mostrar un QOpenGLWidget sin OpenGL en "offscreen" (error de Qt).
+    if(MSVC)
+        target_link_options(gui_tests PRIVATE /STACK:67108864)
+    endif()
+    set(FLATCAM_TEST_QPA "offscreen" CACHE STRING "Plataforma de Qt (QT_QPA_PLATFORM) de los tests de la GUI")
+    gtest_discover_tests(gui_tests PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=${FLATCAM_TEST_QPA}"
+                         DISCOVERY_TIMEOUT 120)
 endif()

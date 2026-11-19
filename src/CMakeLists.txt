@@ -6,6 +6,7 @@ add_library(flatcam_core STATIC
     core/Geometry.cpp
     core/Shape.cpp
     core/Types.cpp
+    core/OriginalBugs.cpp
     core/internal/GeosContext.cpp
     parsers/ApertureMacro.cpp
     parsers/Gerber.cpp

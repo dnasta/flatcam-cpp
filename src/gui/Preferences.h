@@ -41,6 +41,13 @@ double defNum(const std::string& key, double def = 0.0);
 int defInt(const std::string& key, int def = 0);
 /** @brief `bool(defaults[key])`. @param key Clave. @return El valor. */
 bool defBool(const std::string& key);
+/**
+ * @brief El azul de los rótulos (`appGUI/Color.get_fg_blue`): `#0000FF` en el tema claro. El original usa
+ * `is_theme_black` sin llamarla y da siempre el del oscuro, `#7777FF` (así con reproduceOriginalBugs()).
+ * @return El color como texto.
+ */
+QString fgBlue();
+
 /** @brief `str(defaults[key])`. @param key Clave. @return El texto. */
 QString defStr(const std::string& key);
 /** @brief El valor para un `RadioSet` (texto, número o booleano). @param key Clave. @return El valor. */

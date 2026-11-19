@@ -145,9 +145,11 @@ void App::setSelectedColor(const QString& action) {
     };
     if (action == "Default") {
         for (FlatCAMObj* o : sel) {
-            if (o->kind() == ObjectKind::Excellon) apply(o, colorFromFlatCam("#C40000BF"), colorFromFlatCam("#750000BF"));
-            else if (o->kind() == ObjectKind::Gerber) apply(o, colorFromFlatCam("#BBF268BF"), colorFromFlatCam("#006E20BF"));
-            else if (o->kind() == ObjectKind::Geometry) apply(o, colorFromFlatCam("#FFAAAA"), colorFromFlatCam("#FFAAAA"));
+            // Los colores de las preferencias (antes el port los tenía fijos).
+            auto pref = [](const char* k) { return colorFromFlatCam(defStr(k)); };
+            if (o->kind() == ObjectKind::Excellon) apply(o, pref("excellon_plot_fill"), pref("excellon_plot_line"));
+            else if (o->kind() == ObjectKind::Gerber) apply(o, pref("gerber_plot_fill"), pref("gerber_plot_line"));
+            else if (o->kind() == ObjectKind::Geometry) apply(o, pref("geometry_plot_line"), pref("geometry_plot_line"));
         }
         return;
     }

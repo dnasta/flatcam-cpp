@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/Preferences.h"
 
 #include <cctype>
@@ -427,13 +428,19 @@ Preferences::~Preferences() {
 const char* Preferences::version() { return "2024.4"; }
 
 const JsonValue& Preferences::factoryDefaults() {
-    static const JsonValue f = [] {
+    auto make = [](bool original) {
         JsonValue v = ProjectIO::factoryDefaults();
         v.set("version", JsonValue::string(version()));  // FlatCAMDefaults.__init__: factory_defaults['version']
+        // defaults.py: "#FFAAAA" if is_theme_black else "#FF0000", sin llamar a is_theme_black (siempre el del tema
+        // oscuro). El port solo tiene el tema claro: corregido, rojo.
+        if (!original) v.set("geometry_plot_line", JsonValue::string("#FF0000"));
         return v;
-    }();
-    return f;
+    };
+    static const JsonValue fixed = make(false), original = make(true);
+    return reproduceOriginalBugs() ? original : fixed;
 }
+
+QString fgBlue() { return reproduceOriginalBugs() ? "#7777FF" : "#0000FF"; }
 
 const std::map<std::string, std::pair<std::string, std::string>>& Preferences::fields() {
     static const std::map<std::string, std::pair<std::string, std::string>> f = [] {

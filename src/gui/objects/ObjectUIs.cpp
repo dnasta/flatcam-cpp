@@ -394,9 +394,9 @@ void GeometryObjectUI::build(GeometryObject& obj) {
 void GeometryObjectUI::updateUi() {
     if (!obj_) return;
     const std::vector<int> rows = selectedRows();
-    // Color de get_fg_blue(): '#7777FF', porque en el original is_theme_black se usa sin llamarla.
+    // Color de get_fg_blue() (fgBlue: en el original siempre '#7777FF', por is_theme_black sin llamar).
     auto label = [this](const QString& what) {
-        tool_data_label->setText(QString("<b>%1: <font color=\"#7777FF\">%2</font></b>").arg(tr_("Parameters for"), what));
+        tool_data_label->setText(QString("<b>%1: <font color=\"%3\">%2</font></b>").arg(tr_("Parameters for"), what, fgBlue()));
     };
     if (rows.empty()) {
         generate_cnc_button->setDisabled(true);

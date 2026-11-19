@@ -9,6 +9,7 @@
 #include <QTimer>
 #include <cstring>
 
+#include "core/OriginalBugs.h"
 #include "gui/App.h"
 
 int main(int argc, char* argv[]) {
@@ -26,6 +27,9 @@ int main(int argc, char* argv[]) {
 
     flatcam::gui::App app;
     QStringList args = QApplication::arguments().mid(1);
+    // --original-bugs (o FLATCAM_ORIGINAL_BUGS=1): reproducir los errores del FlatCAM original (core/OriginalBugs.h).
+    if (args.removeAll("--original-bugs") > 0 || qEnvironmentVariableIntValue("FLATCAM_ORIGINAL_BUGS") == 1)
+        flatcam::setReproduceOriginalBugs(true);
     QString shotPath;
     const int shot = args.indexOf("--screenshot");
     if (shot >= 0 && shot + 1 < args.size()) {
