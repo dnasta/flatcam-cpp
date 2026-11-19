@@ -11,6 +11,7 @@ endif()
 
 add_executable(core_tests
     test_types.cpp
+    test_source_hygiene.cpp
     test_shape.cpp
     test_affine.cpp
     test_arcmath.cpp
