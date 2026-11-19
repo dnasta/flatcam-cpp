@@ -208,6 +208,9 @@ std::vector<FlatCAMObj*> App::openPdf(const QString& filename) {
         const QByteArray raw = qUncompress(withSize);
         QStringDecoder utf8(QStringDecoder::Utf8);
         const QString decoded = utf8(raw);
+        if ((raw.isEmpty() || utf8.hasError()) && !reproduceOriginalBugs()) {
+            continue;  // corregido: un stream que no es de contenido (fuentes, imágenes) se saltea
+        }
         if (raw.isEmpty() || utf8.hasError()) {
             // un stream que no es zlib o no es UTF-8 (fuentes, imágenes): el original avisa y no abre nada
             ui_->inform(QString("[ERROR_NOTCL] %1: %2\n%3").arg(tr_("Failed to open"), filename,
@@ -244,7 +247,7 @@ std::vector<FlatCAMObj*> App::openPdf(const QString& filename) {
                 continue;
             }
             out.push_back(addObject(std::make_unique<ExcellonObject>(name, std::move(exc))));
-            registerRecent("excellon", filename);
+            if (reproduceOriginalBugs()) registerRecent("excellon", filename);
         } else {
             // layer_rendering_as_gerber
             const PdfGerberLayer g = pdfLayerAsGerber(aps);
@@ -253,10 +256,12 @@ std::vector<FlatCAMObj*> App::openPdf(const QString& filename) {
             auto grb = std::make_unique<Gerber>();
             grb->restore(g.solid, g.follow, apMap, 2, 4, std::string());
             out.push_back(addObject(std::make_unique<GerberObject>(name, std::move(grb))));
-            registerRecent("gerber", filename);
+            if (reproduceOriginalBugs()) registerRecent("gerber", filename);
         }
         ui_->inform(QString("[success] %1: %2").arg(tr_("Rendered"), name));
     }
+    // Corregido: el reciente es el PDF (el original lo registra como Gerber o Excellon, una vez por capa).
+    if (!out.empty() && !reproduceOriginalBugs()) registerRecent("pdf", filename);
     return out;
 }
 

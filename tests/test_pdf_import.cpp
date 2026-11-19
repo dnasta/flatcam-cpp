@@ -67,3 +67,50 @@ TEST(PdfImport, AbortsLikeTheOriginal) {
     // Bézier sin punto actual: TypeError.
     EXPECT_TRUE(parsePdf("1 2 3 4 5 6 c\n", "MM").empty());
 }
+
+// ---------------------------------------------------------------- errores del original corregidos (sección 14)
+#include "core/OriginalBugs.h"
+
+namespace {
+std::optional<BoundingBox> layerBounds(const std::map<int, PdfApertures>& layers) {
+    std::optional<BoundingBox> out;
+    for (const auto& [k, aps] : layers)
+        for (const auto& [code, ap] : aps)
+            for (const ApertureGeometry& e : ap.geometry)
+                if (e.solid)
+                    if (const auto b = e.solid->bounds()) {
+                        if (!out) out = *b;
+                        out->xmin = std::min(out->xmin, b->xmin);
+                        out->ymin = std::min(out->ymin, b->ymin);
+                        out->xmax = std::max(out->xmax, b->xmax);
+                        out->ymax = std::max(out->ymax, b->ymax);
+                    }
+    return out;
+}
+}  // namespace
+
+TEST(PdfImportFixed, FullMatrixSaveRestoreRectanglesAndSinglePointFillStroke) {
+    OriginalBugsScope fixed(false);
+    const double f = 25.4 / 72;
+    // cm escala y desplaza: la escala también se aplica al desplazamiento del rectángulo y no a sus medidas dos veces.
+    auto b = layerBounds(parsePdf("q 2 0 0 2 10 0 cm\n0 0 72 36 re\nf\nQ\n", "MM"));
+    ASSERT_TRUE(b);
+    EXPECT_NEAR(b->xmin, 10 * f, 1e-6);
+    EXPECT_NEAR(b->xmax, 154 * f, 1e-6);
+    EXPECT_NEAR(b->ymax, 72 * f, 1e-6);
+    // Un giro de 90 grados (b y c distintos de 0): el original lo ignora.
+    b = layerBounds(parsePdf("0 1 -1 0 0 0 cm\n0 0 72 36 re\nf\n", "MM"));
+    ASSERT_TRUE(b);
+    EXPECT_NEAR(b->xmin, -36 * f, 1e-6);
+    EXPECT_NEAR(b->ymax, 72 * f, 1e-6);
+    // Q restaura la matriz: el segundo rectángulo queda sin escalar.
+    b = layerBounds(parsePdf("q\n3 0 0 3 0 0 cm\nQ\n0 0 72 72 re\nf\n", "MM"));
+    ASSERT_TRUE(b);
+    EXPECT_NEAR(b->xmax, 72 * f, 1e-6);
+    // Una línea con una "Q" que no es el operador no restaura nada.
+    b = layerBounds(parsePdf("2 0 0 2 0 0 cm\n% Qx\n0 0 72 72 re\nf\n", "MM"));
+    ASSERT_TRUE(b);
+    EXPECT_NEAR(b->xmax, 144 * f, 1e-6);
+    // B con un trazado de un punto ya no corta todo el archivo.
+    EXPECT_FALSE(parsePdf("1 w\n0 0 m\n5 5 l\nS\n10 10 m\nB\n", "MM").empty());
+}

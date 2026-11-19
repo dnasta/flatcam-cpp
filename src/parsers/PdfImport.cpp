@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "parsers/PdfImport.h"
 
 #include <algorithm>
@@ -8,6 +9,7 @@
 #include <iterator>
 #include <optional>
 #include <regex>
+#include <sstream>
 #include <stdexcept>
 
 #include "core/GeometryError.h"
@@ -147,6 +149,15 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
     std::optional<Point2D> startPoint, currentPoint;
     double size = 0;
     std::array<double, 2> offset{0, 0}, scale{1, 1};
+    // Corregido (sin los errores del original): la matriz de transformación completa de PDF (a b c d e f), que `cm`
+    // multiplica (CTM' = M x CTM) y `q`/`Q` guardan y restauran; el grosor se escala con sqrt(|ad - bc|).
+    const bool fixed = !reproduceOriginalBugs();
+    std::array<double, 6> ctm{1, 0, 0, 1, 0, 0};
+    std::vector<std::array<double, 6>> gsCtm;
+    auto apply = [&](double x, double y) {
+        return Point2D{(ctm[0] * x + ctm[2] * y + ctm[4]) * f, (ctm[1] * x + ctm[3] * y + ctm[5]) * f};
+    };
+    auto widthScale = [&] { return fixed ? std::sqrt(std::abs(ctm[0] * ctm[3] - ctm[1] * ctm[2])) : scale[0]; };
     struct Saved {
         std::array<double, 2> offset, scale;
     };
@@ -164,6 +175,7 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
 
     auto num = [](const std::ssub_match& m) { return std::strtod(m.str().c_str(), nullptr); };
     auto pt = [&](const std::smatch& m, int i) {
+        if (fixed) return apply(num(m[i]), num(m[i + 1]));
         const double x = num(m[i]) + offset[0], y = num(m[i + 1]) + offset[1];
         return Point2D{x * f * scale[0], y * f * scale[1]};
     };
@@ -182,7 +194,11 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
         const double r = roundPy(applied, 5);
         for (auto& [k, a] : aps)
             if (a.size && *a.size == r) return a;
-        if (!aps.empty() && find(aps, std::to_string(aperture))) ++aperture;
+        if (fixed) {
+            while (find(aps, std::to_string(aperture))) ++aperture;  // corregido: un número libre
+        } else if (!aps.empty() && find(aps, std::to_string(aperture))) {
+            ++aperture;
+        }
         return assign(aps, std::to_string(aperture), r);
     };
 
@@ -223,7 +239,43 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                 flagClear = num(m[1]) == 1 && num(m[2]) == 1 && num(m[3]) == 1;
                 continue;
             }
-            if (std::regex_search(line, m, cmRe)) {
+            if (fixed && std::regex_search(line, m, cmRe)) {
+                if (m[1].matched && m[1].str() == "q") {
+                    gsCtm.push_back(ctm);
+                    gsWidth.push_back(size);
+                }
+                const std::array<double, 6> M{num(m[2]), num(m[3]), num(m[4]), num(m[5]), num(m[6]), num(m[7])};
+                const std::array<double, 6> C = ctm;
+                ctm = {M[0] * C[0] + M[1] * C[2],        M[0] * C[1] + M[1] * C[3],
+                       M[2] * C[0] + M[3] * C[2],        M[2] * C[1] + M[3] * C[3],
+                       M[4] * C[0] + M[5] * C[2] + C[4], M[4] * C[1] + M[5] * C[3] + C[5]};
+                continue;
+            }
+            if (fixed) {
+                // q y Q como operadores (una palabra de la línea), no cualquier línea que empiece con q o tenga una Q.
+                std::istringstream words(line);
+                std::string w;
+                bool save = false, restore = false;
+                while (words >> w) {
+                    save = save || w == "q";
+                    restore = restore || w == "Q";
+                }
+                if (save) {
+                    gsCtm.push_back(ctm);
+                    gsWidth.push_back(size);
+                }
+                if (restore) {
+                    if (!gsCtm.empty()) {
+                        ctm = gsCtm.back();
+                        gsCtm.pop_back();
+                    }
+                    if (!gsWidth.empty()) {
+                        size = gsWidth.back();
+                        gsWidth.pop_back();
+                    }
+                }
+            }
+            if (!fixed && std::regex_search(line, m, cmRe)) {
                 if (m[1].matched && m[1].str() == "q") {
                     gsTransform.push_back({offset, scale});
                     gsWidth.push_back(size);
@@ -238,11 +290,11 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                 }
                 continue;
             }
-            if (std::regex_search(line, saveRe)) {
+            if (!fixed && std::regex_search(line, saveRe)) {
                 gsTransform.push_back({offset, scale});
                 gsWidth.push_back(size);
             }
-            if (std::regex_search(line, restoreRe)) {
+            if (!fixed && std::regex_search(line, restoreRe)) {
                 if (!gsTransform.empty()) {
                     offset = gsTransform.back().offset;
                     scale = gsTransform.back().scale;
@@ -285,7 +337,8 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                 continue;
             }
             if (std::regex_search(line, m, yRe)) {
-                // como el original: 'y' no marca el trazado como curva
+                // como el original: 'y' no marca el trazado como curva (corregido: sí)
+                if (fixed) current = "bezier";
                 const Point2D s = need(currentPoint), c1 = pt(m, 1), e = pt(m, 3);
                 sub.bezier.push_back({s, c1, e, e});
                 currentPoint = e;
@@ -296,7 +349,15 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                 // como el original, al ancho y al alto también se les suma el desplazamiento
                 const double x = (num(m[1]) + offset[0]) * f * scale[0], y = (num(m[2]) + offset[1]) * f * scale[1];
                 const double w = (num(m[3]) + offset[0]) * f * scale[0], h = (num(m[4]) + offset[1]) * f * scale[1];
-                const Point2D p1{x, y}, p2{x + w, y}, p3{x + w, y + h}, p4{x, y + h};
+                Point2D p1{x, y}, p2{x + w, y}, p3{x + w, y + h}, p4{x, y + h};
+                if (fixed) {
+                    // corregido: las cuatro esquinas pasan por la matriz (sin sumar el desplazamiento a las medidas)
+                    const double rx = num(m[1]), ry = num(m[2]), rw = num(m[3]), rh = num(m[4]);
+                    p1 = apply(rx, ry);
+                    p2 = apply(rx + rw, ry);
+                    p3 = apply(rx + rw, ry + rh);
+                    p4 = apply(rx, ry + rh);
+                }
                 sub.rectangle.insert(sub.rectangle.end(), {p1, p2, p3, p4, p1});
                 currentPoint = p1;
                 continue;
@@ -344,7 +405,7 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                 continue;
             }
             if (std::regex_search(line, strokeRe)) {
-                const double applied = size * scale[0] * f;
+                const double applied = size * widthScale() * f;
                 ShapeList pathGeo;
                 auto stroke = [&](const std::vector<Point2D>& pts) {
                     if (auto g = lineBuffer(pts, applied / 2, steps)) pathGeo.push_back(*g);
@@ -387,7 +448,7 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                 continue;
             }
             if (std::regex_search(line, fillRe)) {
-                const double applied = size * scale[0] * f;
+                const double applied = size * widthScale() * f;
                 ShapeList pathGeo;
                 auto fill = [&](const std::vector<Point2D>& pts) {
                     if (auto g = polyBuffer(pts, steps)) pathGeo.push_back(*g);
@@ -456,7 +517,7 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                 }
             }
             if (std::regex_search(line, fillStrokeRe)) {
-                const double applied = size * scale[0] * f;
+                const double applied = size * widthScale() * f;
                 ShapeList pathGeo, fillGeo;
                 auto fill = [&](std::vector<Point2D> pts) {
                     if (auto g = polyBuffer(std::move(pts), steps)) fillGeo.push_back(*g);
@@ -464,6 +525,7 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                 // En 'B' el engrosado del trazo no está en un try: un trazado de un punto corta todo.
                 auto stroke = [&](const std::vector<Point2D>& pts) {
                     auto g = lineBuffer(pts, applied / 2, steps);
+                    if (!g && fixed) return;  // corregido: un trazado de un punto no tiene trazo
                     if (!g) throw ParseAbort();
                     pathGeo.push_back(*g);
                 };
