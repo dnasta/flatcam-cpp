@@ -4,12 +4,14 @@
 #include <QKeySequence>
 #include <QSpacerItem>
 
+#include "gui/Translation.h"
+
 namespace flatcam::gui {
 
 void PropertiesToolUIBase::setupUi() {
     // ---- acciones (compartidas entre menús y barras)
     this->setAutoFillBackground(true);
-    this->setProperty("objectName", QString::fromUtf8("Propiedades"));
+    this->setProperty("objectName", QString::fromUtf8("Properties"));
     layout = new QVBoxLayout();
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(6);

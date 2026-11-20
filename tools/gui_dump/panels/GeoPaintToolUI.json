@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Herramienta de pintura"
+    "v": "Paint Tool"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Herramienta de pintura"
+        "v": "Paint Tool"
        }
       }
      }
@@ -99,11 +99,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Diámetro de la herramienta a utilizar en la operación."
+           "v": "Diameter of the tool to be used in the operation."
           },
           "text": {
            "t": "str",
-           "v": "Diá. de Herram:"
+           "v": "Tool Dia:"
           }
          }
         }
@@ -151,11 +151,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Cuánto (porcentaje) del ancho de la herramienta para superponer cada pasada de herramienta.\nAjustar el valor comenzando con valores más bajos\ny aumentarlo si las áreas que deben procesarse aún están\nno procesado.Valores más bajos = procesamiento más rápido, ejecución más rápida en CNC.\nValores más altos = procesamiento lento y ejecución lenta en CNC\ndebido a demasiados caminos."
+           "v": "How much (percentage) of the tool width to overlap each tool pass.\nAdjust the value starting with lower values\nand increasing it if areas that should be processed are still \nnot processed.\nLower values = faster processing, faster execution on CNC.\nHigher values = slow processing and slow execution on CNC\ndue of too many paths."
           },
           "text": {
            "t": "str",
-           "v": "Superposición:"
+           "v": "Overlap:"
           }
          }
         }
@@ -207,11 +207,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Distancia por la cual evitar\nlos bordes del polígono a\nser pintado."
+           "v": "Distance by which to avoid\nthe edges of the polygon to\nbe painted."
           },
           "text": {
            "t": "str",
-           "v": "Margen:"
+           "v": "Margin:"
           }
          }
         }
@@ -255,11 +255,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Algoritmo para pintar los polígonos:\n- Estándar: paso fijo hacia adentro.\n- Basado en semillas: hacia afuera de la semilla.\n- Basado en líneas: líneas paralelas."
+           "v": "Algorithm to paint the polygons:\n- Standard: Fixed step inwards.\n- Seed-based: Outwards from seed.\n- Line-based: Parallel lines."
           },
           "text": {
            "t": "str",
-           "v": "Método:"
+           "v": "Method:"
           }
          }
         }
@@ -277,13 +277,13 @@
          "props": {
           "currentText": {
            "t": "str",
-           "v": "Semilla"
+           "v": "Seed"
           }
          },
          "items": [
-          "Estándar",
-          "Semilla",
-          "Líneas"
+          "Standard",
+          "Seed",
+          "Lines"
          ],
          "currentIndex": 1
         }
@@ -301,11 +301,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Dibuja líneas entre el resultado\nSegmentos para minimizar elevaciones de herramientas."
+           "v": "Draw lines between resulting\nsegments to minimize tool lifts."
           },
           "text": {
            "t": "str",
-           "v": "Conectar:"
+           "v": "Connect:"
           }
          }
         }
@@ -341,11 +341,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Corta todo el perímetro del polígono.\nPara recortar los bordes ásperos."
+           "v": "Cut around the perimeter of the polygon\nto trim rough edges."
           },
           "text": {
            "t": "str",
-           "v": "Contorno:"
+           "v": "Contour:"
           }
          }
         }
@@ -397,7 +397,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "Pintar"
+           "v": "Paint"
           }
          }
         }

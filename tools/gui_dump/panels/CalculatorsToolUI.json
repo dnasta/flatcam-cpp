@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Calculadoras"
+    "v": "Calculators"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Calculadoras"
+        "v": "Calculators"
        }
       }
      }
@@ -77,7 +77,7 @@
       "props": {
        "text": {
         "t": "str",
-        "v": "<font size=3><b>Calculadora de unidades</b></font>"
+        "v": "<font size=3><b>Units Calculator</b></font>"
        }
       }
      }
@@ -143,7 +143,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "PULGADA"
+           "v": "INCH"
           }
          }
         }
@@ -161,7 +161,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Aquí ingresa el valor a convertir de MM a PULGADA"
+           "v": "Here you enter the value to be converted from MM to INCH"
           },
           "styleSheet": {
            "t": "str",
@@ -187,7 +187,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Aquí ingresa el valor a convertir de PULGADAS a MM"
+           "v": "Here you enter the value to be converted from INCH to MM"
           },
           "styleSheet": {
            "t": "str",
@@ -228,7 +228,7 @@
       "props": {
        "text": {
         "t": "str",
-        "v": "<font size=3><b>Calc. de herra. en forma de V</b></font>"
+        "v": "<font size=3><b>V-Shape Tool Calculator</b></font>"
        }
       }
      }
@@ -262,11 +262,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el diámetro de la punta de la herramienta.\nEstá especificado por el fabricante."
+           "v": "This is the tool tip diameter.\nIt is specified by manufacturer."
           },
           "text": {
            "t": "str",
-           "v": "Diá. de la punta:"
+           "v": "Tip Diameter:"
           }
          }
         }
@@ -310,11 +310,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el ángulo de la punta de la herramienta.\nEstá especificado por el fabricante."
+           "v": "This is the angle of the tip of the tool.\nIt is specified by manufacturer."
           },
           "text": {
            "t": "str",
-           "v": "Ángulo de la punta:"
+           "v": "Tip Angle:"
           }
          }
         }
@@ -354,11 +354,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esta es la profundidad para cortar el material.\nEn el CNCJob se encuentra el parámetro CutZ."
+           "v": "This is the depth to cut into the material.\nIn the CNCJob is the CutZ parameter."
           },
           "text": {
            "t": "str",
-           "v": "Corte Z:"
+           "v": "Cut Z:"
           }
          }
         }
@@ -402,11 +402,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el diámetro de la herramienta a ingresar\nSección FlatCAM Gerber.\nEn la sección CNCJob se llama >diá. de herra.<."
+           "v": "This is the tool diameter to be entered into\nFlatCAM Gerber section.\nIn the CNCJob section it is called >Tool dia<."
           },
           "text": {
            "t": "str",
-           "v": "Diá. de Herram:"
+           "v": "Tool Diameter:"
           }
          }
         }
@@ -441,11 +441,11 @@
       "props": {
        "toolTip": {
         "t": "str",
-        "v": "Calcule el corte Z o el diámetro efectivo de la herramienta,\ndependiendo de cuál se desee y cuál se conozca. "
+        "v": "Calculate either the Cut Z or the effective tool diameter,\n  depending on which is desired and which is known. "
        },
        "text": {
         "t": "str",
-        "v": "Calcular"
+        "v": "Calculate"
        },
        "icon": {
         "t": "QIcon",
@@ -474,11 +474,11 @@
       "props": {
        "toolTip": {
         "t": "str",
-        "v": "Esta calculadora es útil para aquellos que platican la vía / la almohadilla / los agujeros de perforación,\nUtilizando un método como tinta de graphite o tinta de hipofosfito de calcio o cloruro de paladio."
+        "v": "This calculator is useful for those who plate the via/pad/drill holes,\nusing a method like graphite ink or calcium hypophosphite ink or palladium chloride."
        },
        "text": {
         "t": "str",
-        "v": "<font size=3><b>Calculadora de electrochapado</b></font>"
+        "v": "<font size=3><b>ElectroPlating Calculator</b></font>"
        }
       }
      }
@@ -539,11 +539,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Elija cómo calcular el área del PCB."
+           "v": "Choose how to calculate the board area."
           },
           "text": {
            "t": "str",
-           "v": "Cálculo de área:"
+           "v": "Area Calculation:"
           }
          }
         }
@@ -561,11 +561,11 @@
          "props": {},
          "choices": [
           {
-           "label": "Dimensiones",
+           "label": "Dimensions",
            "value": "d"
           },
           {
-           "label": "Zona",
+           "label": "Area",
            "value": "a"
           }
          ],
@@ -587,11 +587,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esta es la longitud del tablero. En centímetros."
+           "v": "This is the board length. In centimeters."
           },
           "text": {
            "t": "str",
-           "v": "Longitud del tablero:"
+           "v": "Board Length:"
           }
          }
         }
@@ -685,11 +685,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el ancho de la tabla. En centímetros."
+           "v": "This is the board width.In centimeters."
           },
           "text": {
            "t": "str",
-           "v": "Ancho del tablero:"
+           "v": "Board Width:"
           }
          }
         }
@@ -783,11 +783,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esta es el área del PCB."
+           "v": "This is the board area."
           },
           "text": {
            "t": "str",
-           "v": "Zona:"
+           "v": "Area:"
           },
           "hidden": {
            "t": "bool",
@@ -924,11 +924,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Densidad de corriente para pasar por el tablero.\nEn amperios por pies cuadrados ASF."
+           "v": "Current density to pass through the board. \nIn Amps per Square Feet ASF."
           },
           "text": {
            "t": "str",
-           "v": "Densidad actual:"
+           "v": "Current Density:"
           }
          }
         }
@@ -1026,11 +1026,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Qué tan grueso pretende ser el crecimiento del cobre.\nEn micras."
+           "v": "How thick the copper growth is intended to be.\nIn microns."
           },
           "text": {
            "t": "str",
-           "v": "Crecimiento de cobre:"
+           "v": "Copper Growth:"
           }
          }
         }
@@ -1128,11 +1128,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el valor de intensidad actual\npara configurar en la fuente de alimentación. En amperios."
+           "v": "This is the current intensity value\nto be set on the Power Supply. In Amps."
           },
           "text": {
            "t": "str",
-           "v": "Valor actual:"
+           "v": "Current Value:"
           }
          }
         }
@@ -1230,11 +1230,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el tiempo calculado requerido para el procedimiento.\nEn minutos."
+           "v": "This is the calculated time required for the procedure.\nIn minutes."
           },
           "text": {
            "t": "str",
-           "v": "Hora:"
+           "v": "Time:"
           }
          }
         }
@@ -1332,11 +1332,11 @@
       "props": {
        "toolTip": {
         "t": "str",
-        "v": "Calcule el valor de intensidad actual y el tiempo del procedimiento,\ndependiendo de los parámetros anteriores"
+        "v": "Calculate the current intensity value and the procedure time,\ndepending on the parameters above"
        },
        "text": {
         "t": "str",
-        "v": "Calcular"
+        "v": "Calculate"
        },
        "icon": {
         "t": "QIcon",
@@ -1371,7 +1371,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Restablecerá los parámetros de la herramienta."
+        "v": "Will reset the tool parameters."
        },
        "styleSheet": {
         "t": "str",
@@ -1379,7 +1379,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Restablecer la Herramienta"
+        "v": "Reset Tool"
        },
        "icon": {
         "t": "QIcon",

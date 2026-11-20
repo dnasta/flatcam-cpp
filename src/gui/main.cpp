@@ -6,11 +6,13 @@
 //      --select <nombre>   elige ese objeto en el árbol (muestra sus Propiedades)
 //      --tool <ncc|paint|drill|cutout>   abre esa herramienta
 #include <QApplication>
+#include <QStandardPaths>
 #include <QTimer>
 #include <cstring>
 
 #include "core/OriginalBugs.h"
 #include "gui/App.h"
+#include "gui/Translation.h"
 
 int main(int argc, char* argv[]) {
     // Qt saca "-style" de los argumentos al construir QApplication: hay que mirarlo antes.
@@ -25,6 +27,9 @@ int main(int argc, char* argv[]) {
     // que en Windows en las tres plataformas se usa Fusion, salvo que se pida otro con -style.
     if (!styleRequested) QApplication::setStyle("Fusion");
 
+    // apply_language: el idioma guardado (Preferencias -> General -> Idiomas) o, la primera vez, el del sistema.
+    flatcam::gui::setLanguage(flatcam::gui::startupLanguage(
+        QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/settings.ini"));
     flatcam::gui::App app;
     QStringList args = QApplication::arguments().mid(1);
     // --original-bugs (o FLATCAM_ORIGINAL_BUGS=1): reproducir los errores del FlatCAM original (core/OriginalBugs.h).

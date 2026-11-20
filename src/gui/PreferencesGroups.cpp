@@ -106,6 +106,8 @@ void Preferences::connectGroups() {
     connect(t->general_gui_group_hdpi_cb, FC_CHECK_STATE_CHANGED, this, [this](CheckStateArg state) {
         QSettings(settingsFile(), QSettings::IniFormat).setValue("hdpi", static_cast<int>(state));
     });
+    // on_language_apply_click(restart=True): si el idioma elegido es otro, pregunta, lo guarda y reinicia.
+    connect(t->general_app_group_language_apply_btn, &QPushButton::clicked, this, [this] { onLanguageApply(); });
     // General -> Aplicación: la pantalla de bienvenida y la consola al arrancar.
     connect(t->general_app_group_splash_cb, FC_CHECK_STATE_CHANGED, this, [this](CheckStateArg state) {
         QSettings(settingsFile(), QSettings::IniFormat).setValue("splash_screen", state != Qt::Unchecked ? 1 : 0);

@@ -4,6 +4,8 @@
 #include <QKeySequence>
 #include <QSpacerItem>
 
+#include "gui/Translation.h"
+
 namespace flatcam::gui {
 
 void GeoEditorUIBase::setupUi() {
@@ -22,7 +24,7 @@ void GeoEditorUIBase::setupUi() {
     icon->setPixmap(QPixmap(QString::fromUtf8(":/images/flatcam_icon32.png")));
     title_box->addWidget(icon, 0);
     title_label = new FCLabel(nullptr);
-    title_label->setText(QString::fromUtf8("<font size=5><b>Editor de geometría</b></font>"));
+    title_label->setText(trUi_(QString::fromUtf8("<font size=5><b>Geometry Editor</b></font>")));
     title_box->addWidget(title_label, 1);
     auto* w2 = new FCLabel(nullptr);
     title_box->addWidget(w2, 0);
@@ -40,8 +42,8 @@ void GeoEditorUIBase::setupUi() {
     { QFont f = exit_editor_button->font(); f.setBold(true); exit_editor_button->setFont(f); }
     exit_editor_button->setIcon(QIcon(QString::fromUtf8(":/images/power16.png")));
     exit_editor_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\t\t  QPushButton\n\t\t\t\t\t\t\t\t\t  {\n\t\t\t\t\t\t\t\t\t\t  font-weight: bold;\n\t\t\t\t\t\t\t\t\t  }\n\t\t\t\t\t\t\t\t\t  "));
-    exit_editor_button->setText(QString::fromUtf8("Salir del editor"));
-    exit_editor_button->setToolTip(QString::fromUtf8("Salida del editor."));
+    exit_editor_button->setText(trUi_(QString::fromUtf8("Exit Editor")));
+    exit_editor_button->setToolTip(trUi_(QString::fromUtf8("Exit from Editor.")));
     lay1->addWidget(exit_editor_button, 0);
     setLayout(lay1);
 }

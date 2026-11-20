@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Herram. Invertir Gerber"
+    "v": "Invert Gerber Tool"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Herram. Invertir Gerber"
+        "v": "Invert Gerber Tool"
        }
       }
      }
@@ -135,7 +135,7 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Objeto de Gerber que se invertirá."
+               "v": "Gerber object that will be inverted."
               },
               "text": {
                "t": "str",
@@ -203,11 +203,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Parám. para esta herramienta."
+               "v": "Parameters for this tool."
               },
               "text": {
                "t": "str",
-               "v": "<b>Parámetros:</b>"
+               "v": "<b>Parameters:</b>"
               }
              }
             }
@@ -225,11 +225,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Distancia por la cual evitar\nLos bordes del objeto Gerber."
+               "v": "Distance by which to avoid\nthe edges of the Gerber object."
               },
               "text": {
                "t": "str",
-               "v": "Margen:"
+               "v": "Margin:"
               }
              }
             }
@@ -247,7 +247,7 @@
              "props": {
               "objectName": {
                "t": "str",
-               "v": "Margen"
+               "v": "Margin"
               },
               "decimals": {
                "t": "int",
@@ -277,11 +277,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "La forma en que se unirán las líneas en el contorno del objeto.\nPuede ser:\n- redondeado -> se agrega un arco entre dos líneas de unión\n- cuadrado -> las líneas se encuentran en un ángulo de 90 grados\n- bisel -> las líneas están unidas por una tercera línea"
+               "v": "The way that the lines in the object outline will be joined.\nCan be:\n- rounded -> an arc is added between two joining lines\n- square -> the lines meet in 90 degrees angle\n- bevel -> the lines are joined by a third line"
               },
               "text": {
                "t": "str",
-               "v": "Estilo de unión de líneas:"
+               "v": "Lines Join Style:"
               }
              }
             }
@@ -299,15 +299,15 @@
              "props": {},
              "choices": [
               {
-               "label": "Redondeado",
+               "label": "Rounded",
                "value": "r"
               },
               {
-               "label": "Cuadrado",
+               "label": "Square",
                "value": "s"
               },
               {
-               "label": "Bisel",
+               "label": "Bevel",
                "value": "b"
               }
              ],
@@ -366,7 +366,7 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Invertirá el objeto Gerber: áreas que tienen cobre.\nestará vacío de cobre y el área vacía anterior será\nlleno de cobre."
+               "v": "Will invert the Gerber object: areas that have copper\nwill be empty of copper and previous empty area will be\nfilled with copper."
               },
               "styleSheet": {
                "t": "str",
@@ -374,7 +374,7 @@
               },
               "text": {
                "t": "str",
-               "v": "Invertir Gerber"
+               "v": "Invert Gerber"
               },
               "icon": {
                "t": "QIcon",
@@ -412,7 +412,7 @@
            },
            "toolTip": {
             "t": "str",
-            "v": "Restablecerá los parámetros de la herramienta."
+            "v": "Will reset the tool parameters."
            },
            "styleSheet": {
             "t": "str",
@@ -420,7 +420,7 @@
            },
            "text": {
             "t": "str",
-            "v": "Restablecer la Herramienta"
+            "v": "Reset Tool"
            },
            "icon": {
             "t": "QIcon",

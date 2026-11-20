@@ -1,4 +1,5 @@
 #include "core/OriginalBugs.h"
+#include "gui/Translation.h"
 #include "gui/ProjectIO.h"
 #include "gui/Preferences.h"
 
@@ -362,7 +363,7 @@ std::unique_ptr<FlatCAMObj> ProjectIO::objectFrom(const JsonValue& d, QString& w
         return nullptr;
     }
     if (!obj) {
-        warning = QString("%1: el tipo \"%2\" todavía no se abre").arg(name, QString::fromStdString(kind));
+        warning = tr_("%1: the type \"%2\" can not be opened yet").arg(name, QString::fromStdString(kind));
         return nullptr;
     }
     applyColors(*obj, d);

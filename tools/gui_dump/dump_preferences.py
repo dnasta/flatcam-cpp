@@ -18,7 +18,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import fc_runtime as fr  # noqa: E402
 from dump_tree import Dumper  # noqa: E402
 
-OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "panels", "PreferencesTabUI.json")
+OUT = os.path.join(fr.DUMP_DIR or os.path.join(os.path.dirname(os.path.abspath(__file__)), "panels"),
+                   "PreferencesTabUI.json")
 FIELDS = os.path.join(fr.ROOT, "src", "gui", "resources", "preferences_fields.json")
 FORMS = ["general_defaults_form", "gerber_defaults_form", "excellon_defaults_form", "geometry_defaults_form",
          "cncjob_defaults_form", "tools_defaults_form", "tools2_defaults_form", "util_defaults_form"]
@@ -53,6 +54,8 @@ def main():
     data = {"root": d.widget(tab), "actions": d.actions, "class": "PreferencesTabUI"}
     with open(OUT, "w", encoding="utf-8") as fh:
         json.dump(data, fh, ensure_ascii=False, indent=1)
+    if fr.DUMP_DIR:  # otro idioma: los campos son los mismos
+        return
     fields = {}
     for key, w in pm.defaults_form_fields.items():
         fields[key] = {"member": names.get(id(w)), "py": type(w).__name__}

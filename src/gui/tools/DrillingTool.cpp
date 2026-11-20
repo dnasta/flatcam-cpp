@@ -615,7 +615,7 @@ FlatCAMObj* DrillingTool::generateCnc() {
     }
     auto job = std::make_unique<CncJob>(js);
     if (!job->generateFromExcellon(renumbered)) {
-        app_->ui()->inform("[ERROR_NOTCL] " + QString::fromStdString(job->lastError()));
+        app_->ui()->inform("[ERROR_NOTCL] " + tr_(QString::fromStdString(job->lastError())));
         return nullptr;
     }
     GcodeHeaderInfo h;

@@ -517,6 +517,8 @@ void Preferences::setup(const QString& dataPath) {
     currentDefaults_ = factoryDefaults();
     load(current);
     set("global_theme", JsonValue::string(theme().toStdString()));  // app_Main: defaults['global_theme'] = theme()
+    // El idioma con que arrancó la aplicación (el combo lo muestra, como `language_cb.setCurrentText(language_name)`).
+    set("global_language", JsonValue::string(languageName(language()).toStdString()));
     if (tab_) {
         resetAlphaControls();
         initColorPickers();
@@ -572,6 +574,9 @@ PreferencesTab* Preferences::tab() {
         tab_ = new PreferencesTab();
         tab_->setObjectName("preferences_tab");
         members_ = tab_->membersByName();
+        // LOAD LANGUAGES: los idiomas por su nombre.
+        for (const QString& code : availableLanguages())
+            tab_->general_app_group_language_cb->addItem(languageName(code));
         // Como el arranque del original: las señales de los grupos, show_preferences_gui (__init_color_pickers) y
         // defaults_write_form().
         resetAlphaControls();
@@ -849,6 +854,34 @@ void Preferences::onTabClosed() {
         }
         closingTab_ = false;
     }
+}
+
+bool Preferences::onLanguageApply() {
+    const QString name = tab()->general_app_group_language_cb->currentText();
+    const QString code = languageCode(name);
+    if (code.isEmpty() || code == language()) return false;  // ya es el idioma de la aplicación
+    bool yes = autoAnswer_.value_or(false);
+    if (!autoAnswer_) {
+        QMessageBox box;
+        box.setText(tr_("The application will restart."));
+        box.setInformativeText(QString("%1 %2?").arg(tr_("Are you sure do you want to change the current language to"),
+                                                      name));
+        box.setWindowTitle(tr_("Apply Language") + " ...");
+        box.setWindowIcon(QIcon(":/images/language32.png"));
+        box.setIcon(QMessageBox::Question);
+        QPushButton* bYes = box.addButton(tr_("Yes"), QMessageBox::YesRole);
+        box.addButton(tr_("No"), QMessageBox::NoRole);
+        box.setDefaultButton(bYes);
+        box.exec();
+        yes = box.clickedButton() == bYes;
+    }
+    if (!yes) return false;
+    QSettings(settingsFile(), QSettings::IniFormat).setValue("language", code);
+    // restart_program: guarda las preferencias y vuelve a abrir la aplicación (preguntando si se guarda el proyecto).
+    set("global_language", JsonValue::string(name.toStdString()));
+    saveDefaults(true);
+    if (onRestart) onRestart();
+    return true;
 }
 
 void Preferences::onRestoreDefaults() {

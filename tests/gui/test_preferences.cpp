@@ -13,6 +13,7 @@
 #include "gui/MainGUI.h"
 #include "gui/PlotCanvas.h"
 #include "gui/Preferences.h"
+#include "gui/Translation.h"
 #include "gui/tools/PropertiesTool.h"
 #include "gui/tools/ToolPanels.h"
 #include "gui/objects/GeometryObject.h"
@@ -88,10 +89,11 @@ TEST(GuiPreferences, FormMatchesTheOriginalForEveryField) {
     ASSERT_EQ(Preferences::fields().size(), 485u);
     // Al arrancar (show_preferences_gui con __init_color_pickers y defaults_write_form) y después defaults_read_form():
     // mismo valor y mismo tipo que el original en las 485 claves. Los controles de alfa reescriben el alfa de los colores
-    // en minúsculas ("#BBF268bf"), también en las opciones. El tema es el único distinto (el port solo tiene el claro).
+    // en minúsculas ("#BBF268bf"), también en las opciones. El tema es distinto (el port solo tiene el claro) y el idioma
+    // también: el oráculo corre sin cargar los idiomas (el combo queda vacío); el port muestra el actual.
     int checked = 0;
     for (const auto& [k, v] : oracle()["factory_read"].members()) {
-        if (k == "global_theme") {
+        if (k == "global_theme" || k == "global_language") {
             ++checked;
             continue;
         }
@@ -117,7 +119,8 @@ TEST(GuiPreferences, FormMatchesTheOriginalForEveryField) {
     }
     // Después de pasar por un archivo (las tuplas son listas).
     p->writeForm(&oracle()["factory_read"]);
-    for (const auto& [k, v] : oracle()["roundtrip_read"].members()) EXPECT_EQ(js(*p->formValue(k)), js(v)) << k;
+    for (const auto& [k, v] : oracle()["roundtrip_read"].members())
+        if (k != "global_language") EXPECT_EQ(js(*p->formValue(k)), js(v)) << k;
     // Error del original que se reproduce: editar el color de relleno de la selección deja solo su alfa.
     p->tab()->general_gui_group_sf_color_entry->setValue("#123456");
     Q_EMIT p->tab()->general_gui_group_sf_color_entry->editingFinished();
@@ -448,4 +451,66 @@ TEST(GuiPreferencesFixed, ToggleUnitsScalesTheGridOnceAndKeepsTheGeometry) {
     EXPECT_NEAR(t.p()->value("global_gridx").toDouble(), grid / 25.4, 1e-4);  // una sola vez
     EXPECT_EQ(t.p()->value("geometry_cnctooldia").isString(), tooldia.isString());
     EXPECT_FALSE(geo->tools().begin()->second.solidGeometry.empty());  // la geometría de la herramienta sigue
+}
+
+// Los idiomas del original (translate/*.bin): las tablas, la interfaz armada en otro idioma y el combo.
+TEST(GuiLanguage, EveryLanguageOfTheOriginalWithItsTexts) {
+    struct Restore {
+        ~Restore() { setLanguage("es"); }
+    } restore;
+    // sorted(get_languages_names()): por el nombre en cada idioma (el ruso, en cirílico, al final).
+    EXPECT_EQ(availableLanguages(), QStringList({"de", "en", "es", "fr", "it", "pt_BR", "ro", "tr", "ru"}));
+    EXPECT_EQ(languageName("pt_BR"), "Português (Brasil)");
+    EXPECT_EQ(languageCode("Español"), "es");
+    EXPECT_FALSE(setLanguage("xx"));
+    ASSERT_TRUE(setLanguage("de"));
+    EXPECT_EQ(language(), "de");
+    // La interfaz generada sale como la del original en alemán (también los textos compuestos con el atajo).
+    EXPECT_EQ(trUi_("New Project...\tCtrl+N"), QString("Neues Projekt...\tStrg+N"));
+    EXPECT_EQ(tr_("Apply Language"), QString("Sprache anwend"));  // así está en el original
+    // Los mensajes propios del port, también los que el núcleo arma con un número.
+    EXPECT_EQ(tr_("Tool 3 has no drills"), QString("Werkzeug 3 hat keine Bohrungen"));
+    EXPECT_EQ(tr_("Unknown preprocessor: foo"), QString("Unbekannter Präprozessor: foo"));
+    {
+        TempApp t;
+        EXPECT_EQ(t.app.ui()->menufilenewproject->text(), QString("Neues Projekt...\tStrg+N"));
+        auto* cb = t.p()->tab()->general_app_group_language_cb;
+        EXPECT_EQ(cb->count(), 9);
+        EXPECT_EQ(cb->currentText(), QString("Deutsch"));
+    }
+    ASSERT_TRUE(setLanguage("en"));
+    EXPECT_EQ(tr_("Open"), QString("Open"));
+    EXPECT_EQ(trUi_("New Project...\tCtrl+N"), QString("New Project...\tCtrl+N"));
+    ASSERT_TRUE(setLanguage("ru"));
+    {
+        TempApp t;
+        EXPECT_EQ(t.app.ui()->menufilenewproject->text(), QString("Новый проект...\tCtrl+N"));
+    }
+}
+
+// "Aplicar idioma": guarda el elegido en settings.ini y reinicia; al arrancar se usa ese (o FLATCAM_LANGUAGE, o el
+// del sistema).
+TEST(GuiLanguage, ApplyLanguageSavesItAndRestarts) {
+    TempApp t;
+    int restarts = 0;
+    t.p()->onRestart = [&restarts] { ++restarts; };
+    auto* cb = t.p()->tab()->general_app_group_language_cb;
+    EXPECT_EQ(cb->currentText(), QString("Español"));
+    EXPECT_FALSE(t.p()->onLanguageApply());  // ya es el idioma de la aplicación
+    EXPECT_EQ(restarts, 0);
+    cb->setCurrentText("English");
+    t.p()->setAutoAnswer(false);
+    t.p()->setAutoAnswer(std::optional<bool>(false));
+    EXPECT_FALSE(t.p()->onLanguageApply());  // "No"
+    t.p()->setAutoAnswer(true);
+    EXPECT_TRUE(t.p()->onLanguageApply());
+    EXPECT_EQ(restarts, 1);
+    const QString ini = t.p()->settingsFile();
+    EXPECT_EQ(QSettings(ini, QSettings::IniFormat).value("language").toString(), QString("en"));
+    EXPECT_EQ(startupLanguage(ini), QString("en"));
+    qputenv("FLATCAM_LANGUAGE", "fr");
+    EXPECT_EQ(startupLanguage(ini), QString("fr"));
+    qunsetenv("FLATCAM_LANGUAGE");
+    EXPECT_EQ(startupLanguage(t.dir.path() + "/no.ini"), systemLanguage());
+    EXPECT_EQ(language(), "es");  // cambia al reiniciar, no antes
 }

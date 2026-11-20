@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Herra. de import. PcbWizard"
+    "v": "PcbWizard Import Tool"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Herra. de import. PcbWizard"
+        "v": "PcbWizard Import Tool"
        }
       }
      }
@@ -72,7 +72,7 @@
       "props": {
        "text": {
         "t": "str",
-        "v": "<b>Cargar archivos:</b>"
+        "v": "<b>Load files:</b>"
        }
       }
      }
@@ -106,11 +106,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Cargue el archivo Excellon.\nPor lo general, tiene una extensión .DRL"
+           "v": "Load the Excellon file.\nUsually it has a .DRL extension"
           },
           "text": {
            "t": "str",
-           "v": "Archivo Excellon:"
+           "v": "Excellon file:"
           }
          }
         }
@@ -126,7 +126,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "Abrir"
+           "v": "Open"
           }
          }
         }
@@ -142,11 +142,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Cargue el archivo INF."
+           "v": "Load the INF file."
           },
           "text": {
            "t": "str",
-           "v": "Archivo INF:"
+           "v": "INF file:"
           }
          }
         }
@@ -162,7 +162,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "Abrir"
+           "v": "Open"
           }
          }
         }
@@ -214,7 +214,7 @@
        "cols": 2,
        "labels": [
         "#Tool",
-        "Diámetro"
+        "Diameter"
        ],
        "hheader": true,
        "vheader": false,
@@ -247,7 +247,7 @@
       "props": {
        "text": {
         "t": "str",
-        "v": "<b>Formato Excellon:</b>"
+        "v": "<b>Excellon Format:</b>"
        }
       }
      }
@@ -281,11 +281,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El número de dígitos para la parte integral de las coordenadas."
+           "v": "The number of digits for the integral part of the coordinates."
           },
           "text": {
            "t": "str",
-           "v": "Dígitos enteros:"
+           "v": "Int. digits:"
           }
          }
         }
@@ -325,11 +325,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El número de dígitos para la parte fraccionaria de las coordenadas."
+           "v": "The number of digits for the fractional part of the coordinates."
           },
           "text": {
            "t": "str",
-           "v": "Dígitos Fraccio:"
+           "v": "Frac. digits:"
           }
          }
         }
@@ -369,11 +369,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El tipo de supresión de ceros utilizada.\nPuede ser de tipo:\n- LZ = los ceros iniciales se mantienen\n- TZ = los ceros finales se mantienen\n- Sin supresión = sin supresión de cero"
+           "v": "The type of zeros suppression used.\nCan be of type:\n- LZ = leading zeros are kept\n- TZ = trailing zeros are kept\n- No Suppression = no zero suppression"
           },
           "text": {
            "t": "str",
-           "v": "Supresión de Ceros:"
+           "v": "Zeros supp.:"
           }
          }
         }
@@ -397,7 +397,7 @@
            "value": "TZ"
           },
           {
-           "label": "Sin supresión",
+           "label": "No Suppression",
            "value": "D"
           }
          ],
@@ -417,11 +417,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El tipo de unidades que las coordenadas y la herramienta\ndiámetros están utilizando. Puede ser PULGADAS o MM."
+           "v": "The type of units that the coordinates and tool\ndiameters are using. Can be INCH or MM."
           },
           "text": {
            "t": "str",
-           "v": "<b>Unidades:</b>"
+           "v": "<b>Units:</b>"
           }
          }
         }
@@ -437,7 +437,7 @@
          "props": {},
          "choices": [
           {
-           "label": "Pulgada",
+           "label": "Inch",
            "value": "INCH"
           },
           {
@@ -464,11 +464,11 @@
       "props": {
        "toolTip": {
         "t": "str",
-        "v": "Importar un archivo Excellon\nque almacena su información en 2 archivos.\nUno generalmente tiene la extensión .DRL mientras\nel otro tiene extensión .INF."
+        "v": "Import an Excellon file\nthat store it's information's in 2 files.\nOne usually has .DRL extension while\nthe other has .INF extension."
        },
        "text": {
         "t": "str",
-        "v": "Importar Excellon"
+        "v": "Import Excellon"
        }
       }
      }

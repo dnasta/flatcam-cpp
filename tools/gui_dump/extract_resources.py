@@ -3,7 +3,7 @@
 
 - Íconos: carga `resources.py` (recursos compilados por el rcc de PyQt5), recorre `:/` y escribe cada archivo en
   `src/gui/resources/` con la misma ruta; genera `src/gui/resources/flatcam.qrc` para que el C++ los use como `:/images/...`.
-- Traducción: convierte `translate/es.bin` (un diccionario de pickle inglés -> español) en `src/gui/resources/es.json`.
+- Traducción: la arma `build_translations.py` (`src/gui/resources/i18n/`); acá solo se agrega al `.qrc`.
 
 Uso:  MAMBA_ROOT_PREFIX=$HOME/.local/share/mamba micromamba run -n old python tools/gui_dump/extract_resources.py
 """
@@ -15,6 +15,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import fc_runtime as fr  # noqa: E402
 
 OUT = os.path.join(fr.ROOT, "src", "gui", "resources")
+# Las tablas de traducción (las arma build_translations.py).
+I18N = ["languages", "de", "en", "es", "fr", "it", "pt_BR", "ro", "ru", "tr"]
 
 
 def main():
@@ -38,16 +40,14 @@ def main():
             out.write(data)
         files.append(rel)
     files.sort()
-    with open(os.path.join(OUT, "es.json"), "w", encoding="utf-8") as f:
-        json.dump(fr.SPANISH, f, ensure_ascii=False, sort_keys=True, indent=0)
     with open(os.path.join(OUT, "flatcam.qrc"), "w", encoding="utf-8") as f:
         f.write('<!DOCTYPE RCC>\n<!-- ARCHIVO GENERADO por tools/gui_dump/extract_resources.py - no editar a mano. -->\n')
         f.write('<RCC version="1.0">\n<qresource prefix="/">\n')
-        for rel in files + ["es.json", "factory_defaults.json", "preferences_fields.json", "shortcuts.json",
+        for rel in files + ["i18n/%s.json" % l for l in I18N] + ["factory_defaults.json", "preferences_fields.json", "shortcuts.json",
                                "tcl_keywords.json", "tcl_commands.json"]:
             f.write("    <file>%s</file>\n" % rel)
         f.write("</qresource>\n</RCC>\n")
-    print("%d archivos y %d traducciones en %s" % (len(files), len(fr.SPANISH), OUT))
+    print("%d archivos en %s" % (len(files), OUT))
 
 
 if __name__ == "__main__":

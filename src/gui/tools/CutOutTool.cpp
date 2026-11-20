@@ -165,7 +165,7 @@ FlatCAMObj* CutOutTool::cutout(bool rectangular) {
     const bool ok = rectangular ? CutOut::rectangular(geometry, isGerber, o, r, error)
                                 : CutOut::freeform(geometry, isGerber, o, r, error);
     if (!ok || r.solidGeometry.isEmpty()) {
-        app_->ui()->inform("[ERROR_NOTCL] " + tr_("Failed.") + (error.empty() ? QString() : " " + QString::fromStdString(error)));
+        app_->ui()->inform("[ERROR_NOTCL] " + tr_("Failed.") + (error.empty() ? QString() : " " + tr_(QString::fromStdString(error))));
         return nullptr;
     }
     // excellon_init (puentes con "mouse bites"): un Excellon `<objeto>_mouse_bites` con los agujeros, antes que la

@@ -4,19 +4,21 @@
 #include <QKeySequence>
 #include <QSpacerItem>
 
+#include "gui/Translation.h"
+
 namespace flatcam::gui {
 
 void DblSidedToolUIBase::setupUi() {
     // ---- acciones (compartidas entre menús y barras)
     this->setAutoFillBackground(true);
-    this->setProperty("objectName", QString::fromUtf8("PCB a 2 caras"));
+    this->setProperty("objectName", QString::fromUtf8("2-Sided PCB"));
     layout = new QVBoxLayout();
     layout->setContentsMargins(9, 9, 9, 9);
     layout->setSpacing(6);
     auto* w1 = new FCLabel(nullptr);
     { QFont f = w1->font(); f.setBold(true); f.setPixelSize(16); w1->setFont(f); }
     w1->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"));
-    w1->setText(QString::fromUtf8("PCB a 2 caras"));
+    w1->setText(trUi_(QString::fromUtf8("2-Sided PCB")));
     layout->addWidget(w1, 0);
     auto* w2 = new FCLabel(nullptr);
     layout->addWidget(w2, 0);
@@ -25,14 +27,14 @@ void DblSidedToolUIBase::setupUi() {
     lay3->setHorizontalSpacing(6);
     lay3->setVerticalSpacing(6);
     m_objects_label = new FCLabel(nullptr);
-    m_objects_label->setText(QString::fromUtf8("<b>Objeto fuente:</b>"));
-    m_objects_label->setToolTip(QString::fromUtf8("Objetos a ser reflejados."));
+    m_objects_label->setText(trUi_(QString::fromUtf8("<b>Source Object:</b>")));
+    m_objects_label->setToolTip(trUi_(QString::fromUtf8("Objects to be mirrored.")));
     lay3->addWidget(m_objects_label, 0, 0, 1, 2);
     type_obj_combo_label = new FCLabel(nullptr);
-    type_obj_combo_label->setText(QString::fromUtf8("Tipo:"));
-    type_obj_combo_label->setToolTip(QString::fromUtf8("Seleccione el tipo de objeto de aplicación que se procesará en esta herramienta."));
+    type_obj_combo_label->setText(trUi_(QString::fromUtf8("Type:")));
+    type_obj_combo_label->setToolTip(trUi_(QString::fromUtf8("Select the type of application object to be processed in this tool.")));
     lay3->addWidget(type_obj_combo_label, 2, 0, 1, 1);
-    object_type_radio = new RadioSet({{QString::fromUtf8("Gerber"), QVariant(QString::fromUtf8("grb"))}, {QString::fromUtf8("Geometría"), QVariant(QString::fromUtf8("geo"))}, {QString::fromUtf8("Excellon"), QVariant(QString::fromUtf8("exc"))}}, Qt::Horizontal, true, nullptr);
+    object_type_radio = new RadioSet({{trUi_(QString::fromUtf8("Gerber")), QVariant(QString::fromUtf8("grb"))}, {trUi_(QString::fromUtf8("Geometry")), QVariant(QString::fromUtf8("geo"))}, {trUi_(QString::fromUtf8("Excellon")), QVariant(QString::fromUtf8("exc"))}}, Qt::Horizontal, true, nullptr);
     object_type_radio->setValue(QVariant(QString::fromUtf8("grb")));
     lay3->addWidget(object_type_radio, 2, 1, 1, 1);
     object_combo = new FCComboBox(nullptr);
@@ -49,12 +51,12 @@ void DblSidedToolUIBase::setupUi() {
     lay5->setHorizontalSpacing(6);
     lay5->setVerticalSpacing(6);
     bv_label = new FCLabel(nullptr);
-    bv_label->setText(QString::fromUtf8("<b>Valores de límites:</b>"));
-    bv_label->setToolTip(QString::fromUtf8("Seleccione en lienzo los objetos\npara el cual calcular valores de límites."));
+    bv_label->setText(trUi_(QString::fromUtf8("<b>Bounds Values:</b>")));
+    bv_label->setToolTip(trUi_(QString::fromUtf8("Select on canvas the object(s)\nfor which to calculate bounds values.")));
     lay5->addWidget(bv_label, 6, 0, 1, 2);
     xmin_btn = new FCButton(nullptr);
-    xmin_btn->setText(QString::fromUtf8("X min:"));
-    xmin_btn->setToolTip(QString::fromUtf8("Ubicacion minima."));
+    xmin_btn->setText(trUi_(QString::fromUtf8("X min:")));
+    xmin_btn->setToolTip(trUi_(QString::fromUtf8("Minimum location.")));
     lay5->addWidget(xmin_btn, 7, 0, 1, 1);
     xmin_entry = new FCDoubleSpinner(nullptr);
     xmin_entry->setProperty("decimals", 4);
@@ -63,8 +65,8 @@ void DblSidedToolUIBase::setupUi() {
     xmin_entry->setReadOnly(true);
     lay5->addWidget(xmin_entry, 7, 1, 1, 1);
     ymin_btn = new FCButton(nullptr);
-    ymin_btn->setText(QString::fromUtf8("Y min:"));
-    ymin_btn->setToolTip(QString::fromUtf8("Ubicacion minima."));
+    ymin_btn->setText(trUi_(QString::fromUtf8("Y min:")));
+    ymin_btn->setToolTip(trUi_(QString::fromUtf8("Minimum location.")));
     lay5->addWidget(ymin_btn, 8, 0, 1, 1);
     ymin_entry = new FCDoubleSpinner(nullptr);
     ymin_entry->setProperty("decimals", 4);
@@ -73,8 +75,8 @@ void DblSidedToolUIBase::setupUi() {
     ymin_entry->setReadOnly(true);
     lay5->addWidget(ymin_entry, 8, 1, 1, 1);
     xmax_btn = new FCButton(nullptr);
-    xmax_btn->setText(QString::fromUtf8("X max:"));
-    xmax_btn->setToolTip(QString::fromUtf8("Máxima ubicación."));
+    xmax_btn->setText(trUi_(QString::fromUtf8("X max:")));
+    xmax_btn->setToolTip(trUi_(QString::fromUtf8("Maximum location.")));
     lay5->addWidget(xmax_btn, 9, 0, 1, 1);
     xmax_entry = new FCDoubleSpinner(nullptr);
     xmax_entry->setProperty("decimals", 4);
@@ -83,8 +85,8 @@ void DblSidedToolUIBase::setupUi() {
     xmax_entry->setReadOnly(true);
     lay5->addWidget(xmax_entry, 9, 1, 1, 1);
     ymax_btn = new FCButton(nullptr);
-    ymax_btn->setText(QString::fromUtf8("Y max:"));
-    ymax_btn->setToolTip(QString::fromUtf8("Máxima ubicación."));
+    ymax_btn->setText(trUi_(QString::fromUtf8("Y max:")));
+    ymax_btn->setToolTip(trUi_(QString::fromUtf8("Maximum location.")));
     lay5->addWidget(ymax_btn, 10, 0, 1, 1);
     ymax_entry = new FCDoubleSpinner(nullptr);
     ymax_entry->setProperty("decimals", 4);
@@ -93,19 +95,19 @@ void DblSidedToolUIBase::setupUi() {
     ymax_entry->setReadOnly(true);
     lay5->addWidget(ymax_entry, 10, 1, 1, 1);
     center_btn = new FCButton(nullptr);
-    center_btn->setText(QString::fromUtf8("Centroide:"));
-    center_btn->setToolTip(QString::fromUtf8("La ubicación del punto central para el rectangular\nforma delimitadora. Centroide. El formato es (x, y)."));
+    center_btn->setText(trUi_(QString::fromUtf8("Centroid:")));
+    center_btn->setToolTip(trUi_(QString::fromUtf8("The center point location for the rectangular\nbounding shape. Centroid. Format is (x, y).")));
     lay5->addWidget(center_btn, 12, 0, 1, 1);
     center_entry = new NumericalEvalTupleEntry(nullptr);
-    center_entry->setProperty("placeholderText", QString::fromUtf8("Coords del punto central"));
+    center_entry->setProperty("placeholderText", trUi_(QString::fromUtf8("Center point coordinates")));
     center_entry->setReadOnly(true);
     center_entry->setStyleSheet(QString::fromUtf8("QLineEdit {border: 1px solid #0069A9;}"));
     lay5->addWidget(center_entry, 12, 1, 1, 1);
     calculate_bb_button = new FCButton(nullptr);
     { QFont f = calculate_bb_button->font(); f.setBold(true); calculate_bb_button->setFont(f); }
     calculate_bb_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t\t\t\t\t   "));
-    calculate_bb_button->setText(QString::fromUtf8("Calcular valores de límites"));
-    calculate_bb_button->setToolTip(QString::fromUtf8("Calcule las coordenadas de forma rectangular envolvente,\npara la selección de objetos.\nLa forma de la envoltura es paralela al eje X, Y."));
+    calculate_bb_button->setText(trUi_(QString::fromUtf8("Calculate Bounds Values")));
+    calculate_bb_button->setToolTip(trUi_(QString::fromUtf8("Calculate the enveloping rectangular shape coordinates,\nfor the selection of objects.\nThe envelope shape is parallel with the X, Y axis.")));
     lay5->addWidget(calculate_bb_button, 13, 0, 1, 2);
     auto* w6 = new QFrame(nullptr);
     w6->setProperty("frameShadow", 48);
@@ -119,25 +121,25 @@ void DblSidedToolUIBase::setupUi() {
     lay7->setHorizontalSpacing(6);
     lay7->setVerticalSpacing(6);
     param_label = new FCLabel(nullptr);
-    param_label->setText(QString::fromUtf8("<b>Operación Espejo:</b>"));
-    param_label->setToolTip(QString::fromUtf8("Parámetros para la operación Reflejar."));
+    param_label->setText(trUi_(QString::fromUtf8("<b>Mirror Operation:</b>")));
+    param_label->setToolTip(trUi_(QString::fromUtf8("Parameters for the mirror operation.")));
     lay7->addWidget(param_label, 0, 0, 1, 2);
     mirax_label = new FCLabel(nullptr);
-    mirax_label->setText(QString::fromUtf8("Eje:"));
-    mirax_label->setToolTip(QString::fromUtf8("Espejo verticalmente (X) u horizontal (Y)."));
+    mirax_label->setText(trUi_(QString::fromUtf8("Axis:")));
+    mirax_label->setToolTip(trUi_(QString::fromUtf8("Mirror vertically (X) or horizontally (Y).")));
     lay7->addWidget(mirax_label, 2, 0, 1, 1);
-    mirror_axis = new RadioSet({{QString::fromUtf8("X"), QVariant(QString::fromUtf8("X"))}, {QString::fromUtf8("Y"), QVariant(QString::fromUtf8("Y"))}}, Qt::Vertical, false, nullptr);
+    mirror_axis = new RadioSet({{trUi_(QString::fromUtf8("X")), QVariant(QString::fromUtf8("X"))}, {trUi_(QString::fromUtf8("Y")), QVariant(QString::fromUtf8("Y"))}}, Qt::Vertical, false, nullptr);
     mirror_axis->setValue(QVariant(QString::fromUtf8("X")));
     lay7->addWidget(mirror_axis, 2, 1, 1, 2);
     axloc_label = new FCLabel(nullptr);
-    axloc_label->setText(QString::fromUtf8("Referencia:"));
-    axloc_label->setToolTip(QString::fromUtf8("Las coordenadas utilizadas como referencia para la operación de espejo.\nPuede ser:\n- Punto -> un conjunto de coordenadas (x, y) alrededor del cual se refleja el objeto\n- Caja -> un conjunto de coordenadas (x, y) obtenidas del centro del\ncuadro delimitador de otro objeto seleccionado a continuación\n- Ajuste de agujero -> un punto definido por el centro de un agujero en un objeto Excellon"));
+    axloc_label->setText(trUi_(QString::fromUtf8("Reference:")));
+    axloc_label->setToolTip(trUi_(QString::fromUtf8("The coordinates used as reference for the mirror operation.\nCan be:\n- Point -> a set of coordinates (x,y) around which the object is mirrored\n- Box -> a set of coordinates (x, y) obtained from the center of the\nbounding box of another object selected below\n- Hole Snap -> a point defined by the center of a drill hole in a Excellon object")));
     lay7->addWidget(axloc_label, 4, 0, 1, 1);
-    axis_location = new RadioSet({{QString::fromUtf8("Punto"), QVariant(QString::fromUtf8("point"))}, {QString::fromUtf8("Caja"), QVariant(QString::fromUtf8("box"))}, {QString::fromUtf8("Encajar en el agujero"), QVariant(QString::fromUtf8("hole"))}}, Qt::Horizontal, true, nullptr);
+    axis_location = new RadioSet({{trUi_(QString::fromUtf8("Point")), QVariant(QString::fromUtf8("point"))}, {trUi_(QString::fromUtf8("Box")), QVariant(QString::fromUtf8("box"))}, {trUi_(QString::fromUtf8("Hole Snap")), QVariant(QString::fromUtf8("hole"))}}, Qt::Horizontal, true, nullptr);
     axis_location->setValue(QVariant(QString::fromUtf8("point")));
     lay7->addWidget(axis_location, 4, 1, 1, 2);
     point_entry = new NumericalEvalTupleEntry(nullptr);
-    point_entry->setProperty("placeholderText", QString::fromUtf8("Coordenadas de puntos"));
+    point_entry->setProperty("placeholderText", trUi_(QString::fromUtf8("Point coordinates")));
     point_entry->setStyleSheet(QString::fromUtf8("QLineEdit {border: 1px solid #0069A9;}"));
     lay7->addWidget(point_entry, 7, 0, 1, 2);
     add_point_button = new FCButton(nullptr);
@@ -145,20 +147,20 @@ void DblSidedToolUIBase::setupUi() {
     add_point_button->setIcon(QIcon(QString::fromUtf8(":/images/plus16.png")));
     add_point_button->setMinimumSize(QSize(60, 0));
     add_point_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t\t\t"));
-    add_point_button->setText(QString::fromUtf8("Añadir"));
-    add_point_button->setToolTip(QString::fromUtf8("Agregue las coordenadas en formato <b> (x, y) </b> a través del cual el eje de reflejo\nseleccionado en el pase 'EJE DE ESPEJO'.\nLas coordenadas (x, y) se capturan presionando la tecla MAYÚS\ny haga clic con el botón izquierdo del mouse en el lienzo o puede ingresar las coordenadas manualmente."));
+    add_point_button->setText(trUi_(QString::fromUtf8("Add")));
+    add_point_button->setToolTip(trUi_(QString::fromUtf8("Add the coordinates in format <b>(x, y)</b> through which the mirroring axis\n selected in 'MIRROR AXIS' pass.\nThe (x, y) coordinates are captured by pressing SHIFT key\nand left mouse button click on canvas or you can enter the coordinates manually.")));
     lay7->addWidget(add_point_button, 7, 2, 1, 1);
     exc_hole_lbl = new FCLabel(nullptr);
-    exc_hole_lbl->setText(QString::fromUtf8("Excellon:"));
-    exc_hole_lbl->setToolTip(QString::fromUtf8("Objeto que contiene agujeros que se pueden seleccionar como referencia para la creación de reflejos."));
+    exc_hole_lbl->setText(trUi_(QString::fromUtf8("Excellon:")));
+    exc_hole_lbl->setToolTip(trUi_(QString::fromUtf8("Object that holds holes that can be picked as reference for mirroring.")));
     exc_hole_lbl->setHidden(true);
     lay7->addWidget(exc_hole_lbl, 10, 0, 1, 1);
     exc_combo = new FCComboBox(nullptr);
     exc_combo->setHidden(true);
     lay7->addWidget(exc_combo, 10, 1, 1, 2);
     pick_hole_button = new FCButton(nullptr);
-    pick_hole_button->setText(QString::fromUtf8("Escoge un hoyo"));
-    pick_hole_button->setToolTip(QString::fromUtf8("Haga clic dentro de un taladro que pertenezca al objeto Excellon seleccionado,\ny las coordenadas del centro del agujero se copiarán en el campo Punto."));
+    pick_hole_button->setText(trUi_(QString::fromUtf8("Pick hole")));
+    pick_hole_button->setToolTip(trUi_(QString::fromUtf8("Click inside a drill hole that belong to the selected Excellon object,\nand the hole center coordinates will be copied to the Point field.")));
     pick_hole_button->setHidden(true);
     lay7->addWidget(pick_hole_button, 12, 0, 1, 3);
     auto* lay8 = new QGridLayout();
@@ -166,11 +168,11 @@ void DblSidedToolUIBase::setupUi() {
     lay8->setHorizontalSpacing(6);
     lay8->setVerticalSpacing(6);
     box_type_label = new FCLabel(nullptr);
-    box_type_label->setText(QString::fromUtf8("Objeto de referencia:"));
-    box_type_label->setToolTip(QString::fromUtf8("Puede ser de tipo: Gerber o Excellon o Geometry.\nSe utilizan las coordenadas del centro del cuadro delimitador.\ncomo referencia para la operación del espejo."));
+    box_type_label->setText(trUi_(QString::fromUtf8("Reference Object:")));
+    box_type_label->setToolTip(trUi_(QString::fromUtf8("It can be of type: Gerber or Excellon or Geometry.\nThe coordinates of the center of the bounding box are used\nas reference for mirror operation.")));
     box_type_label->setHidden(true);
     lay8->addWidget(box_type_label, 0, 0, 1, 2);
-    box_type_radio = new RadioSet({{QString::fromUtf8("Gerber"), QVariant(QString::fromUtf8("grb"))}, {QString::fromUtf8("Excellon"), QVariant(QString::fromUtf8("exc"))}, {QString::fromUtf8("Geometría"), QVariant(QString::fromUtf8("geo"))}}, Qt::Horizontal, true, nullptr);
+    box_type_radio = new RadioSet({{trUi_(QString::fromUtf8("Gerber")), QVariant(QString::fromUtf8("grb"))}, {trUi_(QString::fromUtf8("Excellon")), QVariant(QString::fromUtf8("exc"))}, {trUi_(QString::fromUtf8("Geometry")), QVariant(QString::fromUtf8("geo"))}}, Qt::Horizontal, true, nullptr);
     box_type_radio->setHidden(true);
     box_type_radio->setValue(QVariant(QString::fromUtf8("grb")));
     lay8->addWidget(box_type_radio, 1, 0, 1, 2);
@@ -183,8 +185,8 @@ void DblSidedToolUIBase::setupUi() {
     { QFont f = mirror_button->font(); f.setBold(true); mirror_button->setFont(f); }
     mirror_button->setIcon(QIcon(QString::fromUtf8(":/images/doubleside16.png")));
     mirror_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"));
-    mirror_button->setText(QString::fromUtf8("Espejo"));
-    mirror_button->setToolTip(QString::fromUtf8("Refleja (voltea) el objeto especificado alrededor\nEl eje especificado. No crea un nuevo\nobjeto, pero lo modifica."));
+    mirror_button->setText(trUi_(QString::fromUtf8("Mirror")));
+    mirror_button->setToolTip(trUi_(QString::fromUtf8("Mirrors (flips) the specified object around \nthe specified axis. Does not create a new \nobject, but modifies it.")));
     lay7->addWidget(mirror_button, 16, 0, 1, 3);
     auto* w9 = new QFrame(nullptr);
     w9->setProperty("frameShadow", 48);
@@ -198,35 +200,35 @@ void DblSidedToolUIBase::setupUi() {
     lay10->setHorizontalSpacing(6);
     lay10->setVerticalSpacing(6);
     alignment_label = new FCLabel(nullptr);
-    alignment_label->setText(QString::fromUtf8("<b>Alineación de PCB:</b>"));
-    alignment_label->setToolTip(QString::fromUtf8("Crea un objeto Excellon que contiene el\nagujeros de alineación especificados y su espejo\nimágenes."));
+    alignment_label->setText(trUi_(QString::fromUtf8("<b>PCB Alignment:</b>")));
+    alignment_label->setToolTip(trUi_(QString::fromUtf8("Creates an Excellon Object containing the\nspecified alignment holes and their mirror\nimages.")));
     lay10->addWidget(alignment_label, 0, 0, 1, 2);
     dt_label = new FCLabel(nullptr);
-    dt_label->setText(QString::fromUtf8("Diá. del Taladro:"));
-    dt_label->setToolTip(QString::fromUtf8("Diámetro del taladro para los orificios de alineación."));
+    dt_label->setText(trUi_(QString::fromUtf8("Drill Dia:")));
+    dt_label->setToolTip(trUi_(QString::fromUtf8("Diameter of the drill for the alignment holes.")));
     lay10->addWidget(dt_label, 2, 0, 1, 1);
     drill_dia = new FCDoubleSpinner(nullptr);
     drill_dia->setProperty("decimals", 4);
     drill_dia->setProperty("maximum", 10000.0);
-    drill_dia->setToolTip(QString::fromUtf8("Diámetro del taladro para los orificios de alineación."));
+    drill_dia->setToolTip(trUi_(QString::fromUtf8("Diameter of the drill for the alignment holes.")));
     drill_dia->setProperty("value", 3.125);
     lay10->addWidget(drill_dia, 2, 1, 1, 1);
     align_ax_label = new FCLabel(nullptr);
-    align_ax_label->setText(QString::fromUtf8("Eje:"));
-    align_ax_label->setToolTip(QString::fromUtf8("Espejo verticalmente (X) u horizontal (Y)."));
+    align_ax_label->setText(trUi_(QString::fromUtf8("Axis:")));
+    align_ax_label->setToolTip(trUi_(QString::fromUtf8("Mirror vertically (X) or horizontally (Y).")));
     lay10->addWidget(align_ax_label, 4, 0, 1, 1);
-    align_axis_radio = new RadioSet({{QString::fromUtf8("X"), QVariant(QString::fromUtf8("X"))}, {QString::fromUtf8("Y"), QVariant(QString::fromUtf8("Y"))}}, Qt::Vertical, false, nullptr);
+    align_axis_radio = new RadioSet({{trUi_(QString::fromUtf8("X")), QVariant(QString::fromUtf8("X"))}, {trUi_(QString::fromUtf8("Y")), QVariant(QString::fromUtf8("Y"))}}, Qt::Vertical, false, nullptr);
     align_axis_radio->setValue(QVariant(QString::fromUtf8("X")));
     lay10->addWidget(align_axis_radio, 4, 1, 1, 1);
     align_ref_label = new FCLabel(nullptr);
-    align_ref_label->setText(QString::fromUtf8("Referencia:"));
-    align_ref_label->setToolTip(QString::fromUtf8("El punto de referencia utilizado para crear el segundo ejercicio de alineación.\ndesde el primer ejercicio de alineación, haciendo espejo.\nSe puede modificar en la sección Parámetros Espejo -> Referencia"));
+    align_ref_label->setText(trUi_(QString::fromUtf8("Reference:")));
+    align_ref_label->setToolTip(trUi_(QString::fromUtf8("The reference point used to create the second alignment drill\nfrom the first alignment drill, by doing mirror.\nIt can be modified in the Mirror Parameters -> Reference section")));
     lay10->addWidget(align_ref_label, 6, 0, 1, 1);
     align_ref_label_val = new NumericalEvalTupleEntry(nullptr);
     align_ref_label_val->setEnabled(false);
     align_ref_label_val->setStyleSheet(QString::fromUtf8("QLineEdit {border: 1px solid #0069A9;}"));
-    align_ref_label_val->setText(QString::fromUtf8("0.0000"));
-    align_ref_label_val->setToolTip(QString::fromUtf8("El punto de referencia utilizado para crear el segundo ejercicio de alineación.\ndesde el primer ejercicio de alineación, haciendo espejo.\nSe puede modificar en la sección Parámetros Espejo -> Referencia"));
+    align_ref_label_val->setText(trUi_(QString::fromUtf8("0.0000")));
+    align_ref_label_val->setToolTip(trUi_(QString::fromUtf8("The reference point used to create the second alignment drill\nfrom the first alignment drill, by doing mirror.\nIt can be modified in the Mirror Parameters -> Reference section")));
     lay10->addWidget(align_ref_label_val, 6, 1, 1, 1);
     lay10->setColumnStretch(1, 1);
     layout->addLayout(lay10, 0);
@@ -235,11 +237,11 @@ void DblSidedToolUIBase::setupUi() {
     lay11->setHorizontalSpacing(6);
     lay11->setVerticalSpacing(6);
     ah_label = new FCLabel(nullptr);
-    ah_label->setText(QString::fromUtf8("Taladro de alineación Coords:"));
-    ah_label->setToolTip(QString::fromUtf8("Agujeros de alineación (x1, y1), (x2, y2), ... en un lado del eje del espejo. Para cada conjunto de coordenadas (x, y)\ningresado aquí, se crearán un par de simulacros:\n\n- un ejercicio en las coordenadas del campo\n- un taladro en posición de espejo sobre el eje seleccionado arriba en 'Alinear eje'."));
+    ah_label->setText(trUi_(QString::fromUtf8("Alignment Drill Coordinates:")));
+    ah_label->setToolTip(trUi_(QString::fromUtf8("Alignment holes (x1, y1), (x2, y2), ... on one side of the mirror axis. For each set of (x, y) coordinates\nentered here, a pair of drills will be created:\n\n- one drill at the coordinates from the field\n- one drill in mirror position over the axis selected above in the 'Align Axis'.")));
     lay11->addWidget(ah_label, 0, 0, 1, 2);
     alignment_holes = new NumericalEvalTupleEntry(nullptr);
-    alignment_holes->setProperty("placeholderText", QString::fromUtf8("Coords de Perforación"));
+    alignment_holes->setProperty("placeholderText", trUi_(QString::fromUtf8("Drill coordinates")));
     alignment_holes->setStyleSheet(QString::fromUtf8("QLineEdit {border: 1px solid #0069A9;}"));
     lay11->addWidget(alignment_holes, 1, 0, 1, 2);
     auto* lay12 = new QHBoxLayout();
@@ -247,13 +249,13 @@ void DblSidedToolUIBase::setupUi() {
     lay12->setSpacing(6);
     add_drill_point_button = new FCButton(nullptr);
     add_drill_point_button->setIcon(QIcon(QString::fromUtf8(":/images/plus16.png")));
-    add_drill_point_button->setText(QString::fromUtf8("Añadir"));
-    add_drill_point_button->setToolTip(QString::fromUtf8("Agregue coordenadas de taladros de alineación en el formato: (x1, y1), (x2, y2), ...\nen un lado del eje de alineación.\n\nEl conjunto de coordenadas se puede obtener:\n- presione la tecla SHIFT y haga clic con el botón izquierdo del mouse en el lienzo. Luego haga clic en Agregar.\n- presione la tecla SHIFT y haga clic con el botón izquierdo en el lienzo Luego Ctrl + V en el campo.\n- presione la tecla SHIFT y haga clic con el botón izquierdo del mouse en el lienzo. Luego, haga clic en RMB en el campo y haga clic en Pegar.\n- ingresando las coordenadas manualmente en el formato: (x1, y1), (x2, y2), ..."));
+    add_drill_point_button->setText(trUi_(QString::fromUtf8("Add")));
+    add_drill_point_button->setToolTip(trUi_(QString::fromUtf8("Add alignment drill holes coordinates in the format: (x1, y1), (x2, y2), ... \non one side of the alignment axis.\n\nThe coordinates set can be obtained:\n- press SHIFT key and left mouse clicking on canvas. Then click Add.\n- press SHIFT key and left mouse clicking on canvas. Then Ctrl+V in the field.\n- press SHIFT key and left mouse clicking on canvas. Then RMB click in the field and click Paste.\n- by entering the coords manually in the format: (x1, y1), (x2, y2), ...")));
     lay12->addWidget(add_drill_point_button, 0);
     delete_drill_point_button = new FCButton(nullptr);
     delete_drill_point_button->setIcon(QIcon(QString::fromUtf8(":/images/trash32.png")));
-    delete_drill_point_button->setText(QString::fromUtf8("Eliminar último"));
-    delete_drill_point_button->setToolTip(QString::fromUtf8("Eliminar la última tupla de coordenadas en la lista."));
+    delete_drill_point_button->setText(trUi_(QString::fromUtf8("Delete Last")));
+    delete_drill_point_button->setToolTip(trUi_(QString::fromUtf8("Delete the last coordinates tuple in the list.")));
     lay12->addWidget(delete_drill_point_button, 0);
     lay11->addLayout(lay12, 2, 0, 1, 2);
     layout->addLayout(lay11, 0);
@@ -261,16 +263,16 @@ void DblSidedToolUIBase::setupUi() {
     { QFont f = create_alignment_hole_button->font(); f.setBold(true); create_alignment_hole_button->setFont(f); }
     create_alignment_hole_button->setIcon(QIcon(QString::fromUtf8(":/images/drill32.png")));
     create_alignment_hole_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"));
-    create_alignment_hole_button->setText(QString::fromUtf8("Crear objeto Excellon"));
-    create_alignment_hole_button->setToolTip(QString::fromUtf8("Crea un objeto Excellon que contiene el\nagujeros de alineación especificados y su espejo\nimágenes."));
+    create_alignment_hole_button->setText(trUi_(QString::fromUtf8("Create Excellon Object")));
+    create_alignment_hole_button->setToolTip(trUi_(QString::fromUtf8("Creates an Excellon Object containing the\nspecified alignment holes and their mirror\nimages.")));
     layout->addWidget(create_alignment_hole_button, 0);
     layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Policy(1), QSizePolicy::Policy(7)));
     reset_button = new FCButton(nullptr);
     { QFont f = reset_button->font(); f.setBold(true); reset_button->setFont(f); }
     reset_button->setIcon(QIcon(QString::fromUtf8(":/images/reset32.png")));
     reset_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"));
-    reset_button->setText(QString::fromUtf8("Restablecer la Herramienta"));
-    reset_button->setToolTip(QString::fromUtf8("Restablecerá los parámetros de la herramienta."));
+    reset_button->setText(trUi_(QString::fromUtf8("Reset Tool")));
+    reset_button->setToolTip(trUi_(QString::fromUtf8("Will reset the tool parameters.")));
     layout->addWidget(reset_button, 0);
     setLayout(layout);
 }

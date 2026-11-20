@@ -63,7 +63,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "<font size=5><b>Objeto de Documento</b></font>"
+           "v": "<font size=5><b>Document Object</b></font>"
           }
          }
         }
@@ -78,11 +78,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "BASIC es adecuado para un principiante. Muchos parámetros\nestán ocultos para el usuario en este modo.\nEl modo AVANZADO pondrá a disposición todos los parámetros.\n\nPara cambiar el NIVEL de la aplicación, vaya a:\nEditar -> Preferencias -> General y verificar:\n'APP. NIVEL 'botón de radio."
+           "v": "BASIC is suitable for a beginner. Many parameters\nare hidden from the user in this mode.\nADVANCED mode will make available all parameters.\n\nTo change the application LEVEL, go to:\nEdit -> Preferences -> General and check:\n'APP. LEVEL' radio button."
           },
           "text": {
            "t": "str",
-           "v": "<span style=\"color:green;\"><b>BASIC</b></span>"
+           "v": "<span style=\"color:green;\"><b>Basic</b></span>"
           },
           "alignment": {
            "t": "int",
@@ -136,7 +136,7 @@
             "props": {
              "text": {
               "t": "str",
-              "v": "<b>Nombre:</b>"
+              "v": "<b>Name:</b>"
              }
             }
            }
@@ -210,7 +210,7 @@
              },
              "toolTip": {
               "t": "str",
-              "v": "Esto selecciona si el autocompletador está habilitado en el Editor de Documentos."
+              "v": "This selects if the auto completer is enabled in the Document Editor."
              },
              "styleSheet": {
               "t": "str",
@@ -218,7 +218,7 @@
              },
              "text": {
               "t": "str",
-              "v": "Autocompletador"
+              "v": "Auto Completer"
              }
             }
            }
@@ -265,7 +265,7 @@
             "props": {
              "text": {
               "t": "str",
-              "v": "Tipo de Fuente:"
+              "v": "Font Type:"
              }
             }
            }
@@ -488,7 +488,7 @@
             "props": {
              "text": {
               "t": "str",
-              "v": "Tamaño de Fuente:"
+              "v": "Font Size:"
              }
             }
            }
@@ -657,7 +657,7 @@
             "props": {
              "text": {
               "t": "str",
-              "v": "Alineación:"
+              "v": "Alignment:"
              }
             }
            }
@@ -689,7 +689,7 @@
                "props": {
                 "toolTip": {
                  "t": "str",
-                 "v": "Alinear a la izquierda"
+                 "v": "Align Left"
                 },
                 "icon": {
                  "t": "QIcon",
@@ -708,7 +708,7 @@
                "props": {
                 "toolTip": {
                  "t": "str",
-                 "v": "Centrar"
+                 "v": "Center"
                 },
                 "icon": {
                  "t": "QIcon",
@@ -727,7 +727,7 @@
                "props": {
                 "toolTip": {
                  "t": "str",
-                 "v": "Alinear a la derecha"
+                 "v": "Align Right"
                 },
                 "icon": {
                  "t": "QIcon",
@@ -746,7 +746,7 @@
                "props": {
                 "toolTip": {
                  "t": "str",
-                 "v": "Alinear Justificar"
+                 "v": "Justify"
                 },
                 "icon": {
                  "t": "QIcon",
@@ -769,11 +769,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Establecer el color de fuente para el texto seleccionado"
+              "v": "Set the font color for the selected text"
              },
              "text": {
               "t": "str",
-              "v": "Color de Fuente:"
+              "v": "Font Color:"
              }
             }
            }
@@ -853,11 +853,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Establezca el color de selección al hacer la selección de texto."
+              "v": "Set the selection color when doing text selection."
              },
              "text": {
               "t": "str",
-              "v": "Color de seleccion:"
+              "v": "Selection Color:"
              }
             }
            }
@@ -937,11 +937,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Establece el tamaño de la pestaña. En píxeles El valor predeterminado es 80 píxeles."
+              "v": "Set the tab size. In pixels. Default value is 80 pixels."
              },
              "text": {
               "t": "str",
-              "v": "Tamaño de Pestaña:"
+              "v": "Tab Size:"
              }
             }
            }

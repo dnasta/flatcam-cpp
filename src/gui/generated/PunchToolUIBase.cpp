@@ -4,19 +4,21 @@
 #include <QKeySequence>
 #include <QSpacerItem>
 
+#include "gui/Translation.h"
+
 namespace flatcam::gui {
 
 void PunchToolUIBase::setupUi() {
     // ---- acciones (compartidas entre menús y barras)
     this->setAutoFillBackground(true);
-    this->setProperty("objectName", QString::fromUtf8("Gerber Perforadora"));
+    this->setProperty("objectName", QString::fromUtf8("Punch Gerber"));
     layout = new QVBoxLayout();
     layout->setContentsMargins(9, 9, 9, 9);
     layout->setSpacing(6);
     auto* w1 = new QLabel(nullptr);
     { QFont f = w1->font(); f.setBold(true); f.setPixelSize(16); w1->setFont(f); }
     w1->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"));
-    w1->setText(QString::fromUtf8("Gerber Perforadora"));
+    w1->setText(trUi_(QString::fromUtf8("Punch Gerber")));
     layout->addWidget(w1, 0);
     auto* w2 = new QLabel(nullptr);
     layout->addWidget(w2, 0);
@@ -25,8 +27,8 @@ void PunchToolUIBase::setupUi() {
     lay3->setHorizontalSpacing(6);
     lay3->setVerticalSpacing(6);
     grb_label = new QLabel(nullptr);
-    grb_label->setText(QString::fromUtf8("<b>GERBER:</b>"));
-    grb_label->setToolTip(QString::fromUtf8("Gerber en el que hacer agujeros."));
+    grb_label->setText(trUi_(QString::fromUtf8("<b>GERBER:</b>")));
+    grb_label->setToolTip(trUi_(QString::fromUtf8("Gerber into which to punch holes.")));
     lay3->addWidget(grb_label, 0, 0, 1, 2);
     gerber_object_combo = new FCComboBox(nullptr);
     lay3->addWidget(gerber_object_combo, 1, 0, 1, 2);
@@ -36,8 +38,8 @@ void PunchToolUIBase::setupUi() {
     { QSizePolicy sp(QSizePolicy::Policy(1), QSizePolicy::Policy(0)); sp.setHorizontalStretch(0); sp.setVerticalStretch(0); w4->setSizePolicy(sp); }
     lay3->addWidget(w4, 2, 0, 1, 2);
     padt_label = new QLabel(nullptr);
-    padt_label->setText(QString::fromUtf8("<b>Tipo de almohadillas procesadas</b>"));
-    padt_label->setToolTip(QString::fromUtf8("El tipo de forma de almohadillas que se procesará.\nSi la PCB tiene muchas almohadillas SMD con almohadillas rectangulares,\ndeshabilitar la apertura rectangular."));
+    padt_label->setText(trUi_(QString::fromUtf8("<b>Processed Pads Type</b>")));
+    padt_label->setToolTip(trUi_(QString::fromUtf8("The type of pads shape to be processed.\nIf the PCB has many SMD pads with rectangular pads,\ndisable the Rectangular aperture.")));
     lay3->addWidget(padt_label, 3, 0, 1, 2);
     auto* lay5 = new QGridLayout();
     lay5->setContentsMargins(0, 0, 0, 0);
@@ -48,29 +50,29 @@ void PunchToolUIBase::setupUi() {
     lay6->setHorizontalSpacing(6);
     lay6->setVerticalSpacing(6);
     select_all_cb = new FCCheckBox(nullptr);
-    select_all_cb->setText(QString::fromUtf8("Todos"));
+    select_all_cb->setText(trUi_(QString::fromUtf8("All")));
     lay6->addWidget(select_all_cb, 0, 0, 1, 1);
     circular_cb = new FCCheckBox(nullptr);
     circular_cb->setChecked(true);
-    circular_cb->setText(QString::fromUtf8("Circular"));
-    circular_cb->setToolTip(QString::fromUtf8("Proceso de Almohadillas Circulares."));
+    circular_cb->setText(trUi_(QString::fromUtf8("Circular")));
+    circular_cb->setToolTip(trUi_(QString::fromUtf8("Process Circular Pads.")));
     lay6->addWidget(circular_cb, 1, 0, 1, 1);
     oblong_cb = new FCCheckBox(nullptr);
-    oblong_cb->setText(QString::fromUtf8("Oblongo"));
-    oblong_cb->setToolTip(QString::fromUtf8("Procesar almohadillas oblongas."));
+    oblong_cb->setText(trUi_(QString::fromUtf8("Oblong")));
+    oblong_cb->setToolTip(trUi_(QString::fromUtf8("Process Oblong Pads.")));
     lay6->addWidget(oblong_cb, 2, 0, 1, 1);
     square_cb = new FCCheckBox(nullptr);
     square_cb->setChecked(true);
-    square_cb->setText(QString::fromUtf8("Cuadrado"));
-    square_cb->setToolTip(QString::fromUtf8("Procesar almohadillas cuadradas."));
+    square_cb->setText(trUi_(QString::fromUtf8("Square")));
+    square_cb->setToolTip(trUi_(QString::fromUtf8("Process Square Pads.")));
     lay6->addWidget(square_cb, 3, 0, 1, 1);
     rectangular_cb = new FCCheckBox(nullptr);
-    rectangular_cb->setText(QString::fromUtf8("Rectangular"));
-    rectangular_cb->setToolTip(QString::fromUtf8("Proceso Almohadillas Rectangulares."));
+    rectangular_cb->setText(trUi_(QString::fromUtf8("Rectangular")));
+    rectangular_cb->setToolTip(trUi_(QString::fromUtf8("Process Rectangular Pads.")));
     lay6->addWidget(rectangular_cb, 4, 0, 1, 1);
     other_cb = new FCCheckBox(nullptr);
-    other_cb->setText(QString::fromUtf8("Otros"));
-    other_cb->setToolTip(QString::fromUtf8("Procese los pads no en las categorías anteriores."));
+    other_cb->setText(trUi_(QString::fromUtf8("Others")));
+    other_cb->setToolTip(trUi_(QString::fromUtf8("Process pads not in the categories above.")));
     lay6->addWidget(other_cb, 5, 0, 1, 1);
     lay5->addLayout(lay6, 0, 0, 1, 1);
     apertures_table = new FCTable(nullptr);
@@ -79,7 +81,7 @@ void PunchToolUIBase::setupUi() {
     apertures_table->setProperty("selectionMode", 2);
     { QSizePolicy sp(QSizePolicy::Policy(3), QSizePolicy::Policy(5)); sp.setHorizontalStretch(0); sp.setVerticalStretch(0); apertures_table->setSizePolicy(sp); }
     apertures_table->setColumnCount(4);
-    apertures_table->setHorizontalHeaderLabels({QString::fromUtf8("Código"), QString::fromUtf8("Tipo"), QString::fromUtf8("Tamaño"), QString::fromUtf8("M")});
+    apertures_table->setHorizontalHeaderLabels({trUi_(QString::fromUtf8("Code")), trUi_(QString::fromUtf8("Type")), trUi_(QString::fromUtf8("Size")), trUi_(QString::fromUtf8("M"))});
     apertures_table->verticalHeader()->setVisible(false);
     apertures_table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeMode(3));
     apertures_table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeMode(3));
@@ -100,10 +102,10 @@ void PunchToolUIBase::setupUi() {
     lay8->setHorizontalSpacing(6);
     lay8->setVerticalSpacing(6);
     method_label = new QLabel(nullptr);
-    method_label->setText(QString::fromUtf8("<b>Método:</b>"));
-    method_label->setToolTip(QString::fromUtf8("La fuente del orificio de perforación puede ser:\n- Objeto Excellon-> el centro de perforación de objetos Excellon servirá como referencia.\n- Diámetro fijo -> intentará usar el centro de las almohadillas como referencia agregando agujeros de diámetro fijo.\n- Anillo anular fijo -> intentará mantener un anillo anular establecido.\n- Proporcional -> hará un orificio de perforación Gerber con un diámetro del porcentaje del diámetro de la almohadilla."));
+    method_label->setText(trUi_(QString::fromUtf8("<b>Method:</b>")));
+    method_label->setToolTip(trUi_(QString::fromUtf8("The punch hole source can be:\n- Excellon Object-> the Excellon object drills center will serve as reference.\n- Fixed Diameter -> will try to use the pads center as reference adding fixed diameter holes.\n- Fixed Annular Ring -> will try to keep a set annular ring.\n- Proportional -> will make a Gerber punch hole having the diameter a percentage of the pad diameter.")));
     lay8->addWidget(method_label, 0, 0, 1, 2);
-    method_punch = new RadioSet({{QString::fromUtf8("Excellon"), QVariant(QString::fromUtf8("exc"))}, {QString::fromUtf8("Diámetro fijo"), QVariant(QString::fromUtf8("fixed"))}, {QString::fromUtf8("Proporcional"), QVariant(QString::fromUtf8("prop"))}, {QString::fromUtf8("Anillo anular fijo"), QVariant(QString::fromUtf8("ring"))}}, Qt::Vertical, false, nullptr);
+    method_punch = new RadioSet({{trUi_(QString::fromUtf8("Excellon")), QVariant(QString::fromUtf8("exc"))}, {trUi_(QString::fromUtf8("Fixed Diameter")), QVariant(QString::fromUtf8("fixed"))}, {trUi_(QString::fromUtf8("Proportional")), QVariant(QString::fromUtf8("prop"))}, {trUi_(QString::fromUtf8("Fixed Annular Ring")), QVariant(QString::fromUtf8("ring"))}}, Qt::Vertical, false, nullptr);
     method_punch->setValue(QVariant(QString::fromUtf8("exc")));
     lay8->addWidget(method_punch, 1, 0, 1, 2);
     auto* w9 = new QFrame(nullptr);
@@ -112,18 +114,18 @@ void PunchToolUIBase::setupUi() {
     { QSizePolicy sp(QSizePolicy::Policy(1), QSizePolicy::Policy(0)); sp.setHorizontalStretch(0); sp.setVerticalStretch(0); w9->setSizePolicy(sp); }
     lay8->addWidget(w9, 2, 0, 1, 2);
     exc_label = new QLabel(nullptr);
-    exc_label->setText(QString::fromUtf8("<b>Excellon</b>"));
-    exc_label->setToolTip(QString::fromUtf8("Retire la geometría de Excellon del Gerber para crear los agujeros en las almohadillas."));
+    exc_label->setText(trUi_(QString::fromUtf8("<b>Excellon</b>")));
+    exc_label->setToolTip(trUi_(QString::fromUtf8("Remove the geometry of Excellon from the Gerber to create the holes in pads.")));
     lay8->addWidget(exc_label, 3, 0, 1, 2);
     exc_combo = new FCComboBox(nullptr);
     lay8->addWidget(exc_combo, 4, 0, 1, 2);
     fixed_label = new QLabel(nullptr);
-    fixed_label->setText(QString::fromUtf8("<b>Diámetro fijo</b>"));
+    fixed_label->setText(trUi_(QString::fromUtf8("<b>Fixed Diameter</b>")));
     fixed_label->setHidden(true);
     lay8->addWidget(fixed_label, 6, 0, 1, 2);
     dia_label = new QLabel(nullptr);
-    dia_label->setText(QString::fromUtf8("Valor:"));
-    dia_label->setToolTip(QString::fromUtf8("Diámetro fijo del agujero."));
+    dia_label->setText(trUi_(QString::fromUtf8("Value:")));
+    dia_label->setToolTip(trUi_(QString::fromUtf8("Fixed hole diameter.")));
     dia_label->setHidden(true);
     lay8->addWidget(dia_label, 8, 0, 1, 1);
     dia_entry = new FCDoubleSpinner(nullptr);
@@ -138,16 +140,16 @@ void PunchToolUIBase::setupUi() {
     ring_box->setContentsMargins(0, 0, 0, 0);
     ring_box->setSpacing(6);
     ring_label = new QLabel(nullptr);
-    ring_label->setText(QString::fromUtf8("<b>Anillo anular fijo</b>"));
-    ring_label->setToolTip(QString::fromUtf8("El tamaño del anillo anular.\nLa astilla de cobre entre el exterior del agujero\ny el margen de la almohadilla de cobre."));
+    ring_label->setText(trUi_(QString::fromUtf8("<b>Fixed Annular Ring</b>")));
+    ring_label->setToolTip(trUi_(QString::fromUtf8("The size of annular ring.\nThe copper sliver between the hole exterior\nand the margin of the copper pad.")));
     ring_box->addWidget(ring_label, 0);
     grid1 = new QGridLayout();
     grid1->setContentsMargins(0, 0, 0, 0);
     grid1->setHorizontalSpacing(6);
     grid1->setVerticalSpacing(6);
     circular_ring_label = new QLabel(nullptr);
-    circular_ring_label->setText(QString::fromUtf8("Circular:"));
-    circular_ring_label->setToolTip(QString::fromUtf8("El tamaño del anillo anular para almohadillas circulares."));
+    circular_ring_label->setText(trUi_(QString::fromUtf8("Circular:")));
+    circular_ring_label->setToolTip(trUi_(QString::fromUtf8("The size of annular ring for circular pads.")));
     grid1->addWidget(circular_ring_label, 3, 0, 1, 1);
     circular_ring_entry = new FCDoubleSpinner(nullptr);
     circular_ring_entry->setProperty("decimals", 4);
@@ -155,8 +157,8 @@ void PunchToolUIBase::setupUi() {
     circular_ring_entry->setProperty("value", 0.2);
     grid1->addWidget(circular_ring_entry, 3, 1, 1, 1);
     oblong_ring_label = new QLabel(nullptr);
-    oblong_ring_label->setText(QString::fromUtf8("Oblongo:"));
-    oblong_ring_label->setToolTip(QString::fromUtf8("El tamaño del anillo anular para almohadillas oblongas."));
+    oblong_ring_label->setText(trUi_(QString::fromUtf8("Oblong:")));
+    oblong_ring_label->setToolTip(trUi_(QString::fromUtf8("The size of annular ring for oblong pads.")));
     grid1->addWidget(oblong_ring_label, 4, 0, 1, 1);
     oblong_ring_entry = new FCDoubleSpinner(nullptr);
     oblong_ring_entry->setProperty("decimals", 4);
@@ -165,8 +167,8 @@ void PunchToolUIBase::setupUi() {
     oblong_ring_entry->setProperty("value", 0.2);
     grid1->addWidget(oblong_ring_entry, 4, 1, 1, 1);
     square_ring_label = new QLabel(nullptr);
-    square_ring_label->setText(QString::fromUtf8("Cuadrado:"));
-    square_ring_label->setToolTip(QString::fromUtf8("El tamaño del anillo anular para almohadillas cuadradas."));
+    square_ring_label->setText(trUi_(QString::fromUtf8("Square:")));
+    square_ring_label->setToolTip(trUi_(QString::fromUtf8("The size of annular ring for square pads.")));
     grid1->addWidget(square_ring_label, 5, 0, 1, 1);
     square_ring_entry = new FCDoubleSpinner(nullptr);
     square_ring_entry->setProperty("decimals", 4);
@@ -174,8 +176,8 @@ void PunchToolUIBase::setupUi() {
     square_ring_entry->setProperty("value", 0.2);
     grid1->addWidget(square_ring_entry, 5, 1, 1, 1);
     rectangular_ring_label = new QLabel(nullptr);
-    rectangular_ring_label->setText(QString::fromUtf8("Rectangular:"));
-    rectangular_ring_label->setToolTip(QString::fromUtf8("El tamaño del anillo anular para almohadillas rectangulares."));
+    rectangular_ring_label->setText(trUi_(QString::fromUtf8("Rectangular:")));
+    rectangular_ring_label->setToolTip(trUi_(QString::fromUtf8("The size of annular ring for rectangular pads.")));
     grid1->addWidget(rectangular_ring_label, 6, 0, 1, 1);
     rectangular_ring_entry = new FCDoubleSpinner(nullptr);
     rectangular_ring_entry->setProperty("decimals", 4);
@@ -184,8 +186,8 @@ void PunchToolUIBase::setupUi() {
     rectangular_ring_entry->setProperty("value", 0.2);
     grid1->addWidget(rectangular_ring_entry, 6, 1, 1, 1);
     other_ring_label = new QLabel(nullptr);
-    other_ring_label->setText(QString::fromUtf8("Otros:"));
-    other_ring_label->setToolTip(QString::fromUtf8("El tamaño del anillo anular para otras almohadillas."));
+    other_ring_label->setText(trUi_(QString::fromUtf8("Others:")));
+    other_ring_label->setToolTip(trUi_(QString::fromUtf8("The size of annular ring for other pads.")));
     grid1->addWidget(other_ring_label, 7, 0, 1, 1);
     other_ring_entry = new FCDoubleSpinner(nullptr);
     other_ring_entry->setProperty("decimals", 4);
@@ -198,19 +200,19 @@ void PunchToolUIBase::setupUi() {
     ring_frame->setLayout(ring_box);
     lay8->addWidget(ring_frame, 10, 0, 1, 2);
     prop_label = new QLabel(nullptr);
-    prop_label->setText(QString::fromUtf8("<b>Diá. proporcional</b>"));
+    prop_label->setText(trUi_(QString::fromUtf8("<b>Proportional Diameter</b>")));
     prop_label->setHidden(true);
     lay8->addWidget(prop_label, 12, 0, 1, 2);
     factor_label = new QLabel(nullptr);
-    factor_label->setText(QString::fromUtf8("Valor:"));
-    factor_label->setToolTip(QString::fromUtf8("Diámetro proporcional.\nEl diámetro del agujero será una fracción del tamaño de la almohadilla."));
+    factor_label->setText(trUi_(QString::fromUtf8("Value:")));
+    factor_label->setToolTip(trUi_(QString::fromUtf8("Proportional Diameter.\nThe hole diameter will be a fraction of the pad size.")));
     factor_label->setHidden(true);
     lay8->addWidget(factor_label, 13, 0, 1, 1);
     factor_entry = new FCDoubleSpinner(nullptr);
     factor_entry->setProperty("decimals", 4);
     factor_entry->setProperty("maximum", 100.0);
     factor_entry->setProperty("singleStep", 0.1);
-    factor_entry->setProperty("suffix", QString::fromUtf8(" %"));
+    factor_entry->setProperty("suffix", trUi_(QString::fromUtf8(" %")));
     factor_entry->setProperty("value", 80.0);
     factor_entry->setHidden(true);
     lay8->addWidget(factor_entry, 13, 1, 1, 1);
@@ -225,16 +227,16 @@ void PunchToolUIBase::setupUi() {
     { QFont f = punch_object_button->font(); f.setBold(true); punch_object_button->setFont(f); }
     punch_object_button->setIcon(QIcon(QString::fromUtf8(":/images/punch32.png")));
     punch_object_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"));
-    punch_object_button->setText(QString::fromUtf8("Gerber Perforadora"));
-    punch_object_button->setToolTip(QString::fromUtf8("Cree un objeto Gerber a partir del objeto seleccionado, dentro de\nEl cuadro especificado."));
+    punch_object_button->setText(trUi_(QString::fromUtf8("Punch Gerber")));
+    punch_object_button->setToolTip(trUi_(QString::fromUtf8("Create a Gerber object from the selected object, within\nthe specified box.")));
     layout->addWidget(punch_object_button, 0);
     layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Policy(1), QSizePolicy::Policy(7)));
     reset_button = new QPushButton(nullptr);
     { QFont f = reset_button->font(); f.setBold(true); reset_button->setFont(f); }
     reset_button->setIcon(QIcon(QString::fromUtf8(":/images/reset32.png")));
     reset_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"));
-    reset_button->setText(QString::fromUtf8("Restablecer la Herramienta"));
-    reset_button->setToolTip(QString::fromUtf8("Restablecerá los parámetros de la herramienta."));
+    reset_button->setText(trUi_(QString::fromUtf8("Reset Tool")));
+    reset_button->setToolTip(trUi_(QString::fromUtf8("Will reset the tool parameters.")));
     layout->addWidget(reset_button, 0);
     setLayout(layout);
 }

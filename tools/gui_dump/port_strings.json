@@ -1,0 +1,227 @@
+{
+ "_": "Textos propios del port (no están en el original): inglés -> {idioma: traducción}; \"pattern\": true si el núcleo arma el texto con un valor en lugar de %1. Los usa build_translations.py.",
+ "The offset outline is not a single polygon: its exterior can not be taken": {
+  "es": "El contorno desplazado no es un polígono único: no se puede tomar su borde exterior",
+  "de": "Die versetzte Kontur ist kein einzelnes Polygon: ihr Außenrand kann nicht verwendet werden",
+  "fr": "Le contour décalé n'est pas un polygone unique : son bord extérieur ne peut pas être pris",
+  "it": "Il contorno spostato non è un poligono singolo: non se ne può prendere il bordo esterno",
+  "pt_BR": "O contorno deslocado não é um polígono único: não é possível obter sua borda externa",
+  "ro": "Conturul decalat nu este un singur poligon: marginea sa exterioară nu poate fi luată",
+  "ru": "Смещённый контур не является одним полигоном: его внешнюю границу взять нельзя",
+  "tr": "Kaydırılmış dış hat tek bir çokgen değil: dış kenarı alınamıyor"
+ },
+ "The offset outline is not a single polygon": {
+  "es": "El contorno desplazado no es un polígono único",
+  "de": "Die versetzte Kontur ist kein einzelnes Polygon",
+  "fr": "Le contour décalé n'est pas un polygone unique",
+  "it": "Il contorno spostato non è un poligono singolo",
+  "pt_BR": "O contorno deslocado não é um polígono único",
+  "ro": "Conturul decalat nu este un singur poligon",
+  "ru": "Смещённый контур не является одним полигоном",
+  "tr": "Kaydırılmış dış hat tek bir çokgen değil"
+ },
+ "The object has no bounds": {
+  "es": "El objeto no tiene límites",
+  "de": "Das Objekt hat keine Grenzen",
+  "fr": "L'objet n'a pas de limites",
+  "it": "L'oggetto non ha limiti",
+  "pt_BR": "O objeto não tem limites",
+  "ro": "Obiectul nu are limite",
+  "ru": "У объекта нет границ",
+  "tr": "Nesnenin sınırları yok"
+ },
+ "The mouse bites of a rectangular cutout with several shapes fail in the original (TypeError)": {
+  "es": "Los mouse bites del corte rectangular con varias figuras fallan en el original (TypeError)",
+  "de": "Die Mouse Bites eines rechteckigen Ausschnitts mit mehreren Formen schlagen im Original fehl (TypeError)",
+  "fr": "Les mouse bites d'une découpe rectangulaire avec plusieurs formes échouent dans l'original (TypeError)",
+  "it": "I mouse bites di un taglio rettangolare con più forme falliscono nell'originale (TypeError)",
+  "pt_BR": "Os mouse bites de um recorte retangular com várias formas falham no original (TypeError)",
+  "ro": "Mouse bites ale unei decupări dreptunghiulare cu mai multe forme eșuează în original (TypeError)",
+  "ru": "Mouse bites прямоугольной обрезки с несколькими фигурами не работают в оригинале (TypeError)",
+  "tr": "Birden çok şekilli dikdörtgen kesimin mouse bites'ı orijinalde başarısız olur (TypeError)"
+ },
+ "No cut line is left": {
+  "es": "No quedó ninguna línea de corte",
+  "de": "Es ist keine Schnittlinie übrig",
+  "fr": "Il ne reste aucune ligne de coupe",
+  "it": "Non è rimasta alcuna linea di taglio",
+  "pt_BR": "Não sobrou nenhuma linha de corte",
+  "ro": "Nu a rămas nicio linie de tăiere",
+  "ru": "Не осталось ни одной линии реза",
+  "tr": "Hiç kesim çizgisi kalmadı"
+ },
+ "Without gaps the rectangular cutout makes no lines (the original fails too)": {
+  "es": "Sin puentes el corte rectangular no genera líneas (el original también falla)",
+  "de": "Ohne Stege erzeugt der rechteckige Ausschnitt keine Linien (auch das Original schlägt fehl)",
+  "fr": "Sans ponts, la découpe rectangulaire ne produit aucune ligne (l'original échoue aussi)",
+  "it": "Senza ponticelli il taglio rettangolare non genera linee (anche l'originale fallisce)",
+  "pt_BR": "Sem pontes o recorte retangular não gera linhas (o original também falha)",
+  "ro": "Fără punți decuparea dreptunghiulară nu generează linii (și originalul eșuează)",
+  "ru": "Без перемычек прямоугольная обрезка не создаёт линий (оригинал тоже даёт ошибку)",
+  "tr": "Köprüler olmadan dikdörtgen kesim çizgi oluşturmaz (orijinal de başarısız olur)"
+ },
+ "The tool diameter must be positive": {
+  "es": "El diámetro de la herramienta debe ser positivo",
+  "de": "Der Werkzeugdurchmesser muss positiv sein",
+  "fr": "Le diamètre de l'outil doit être positif",
+  "it": "Il diametro dell'utensile deve essere positivo",
+  "pt_BR": "O diâmetro da ferramenta deve ser positivo",
+  "ro": "Diametrul uneltei trebuie să fie pozitiv",
+  "ru": "Диаметр инструмента должен быть положительным",
+  "tr": "Takım çapı pozitif olmalıdır"
+ },
+ "The isolation geometry is empty": {
+  "es": "La geometría de aislamiento quedó vacía",
+  "de": "Die Isolationsgeometrie ist leer",
+  "fr": "La géométrie d'isolation est vide",
+  "it": "La geometria di isolamento è vuota",
+  "pt_BR": "A geometria de isolação está vazia",
+  "ro": "Geometria de izolare este goală",
+  "ru": "Геометрия изоляции пуста",
+  "tr": "Yalıtım geometrisi boş"
+ },
+ "The Laser Lines method only works for Gerber objects": {
+  "es": "El método Líneas láser solo sirve para objetos Gerber",
+  "de": "Die Methode Laserlinien funktioniert nur mit Gerber-Objekten",
+  "fr": "La méthode Lignes laser ne fonctionne qu'avec des objets Gerber",
+  "it": "Il metodo Linee laser funziona solo con oggetti Gerber",
+  "pt_BR": "O método Linhas laser só funciona com objetos Gerber",
+  "ro": "Metoda Linii laser funcționează doar pentru obiecte Gerber",
+  "ru": "Метод «Лазерные линии» работает только с объектами Gerber",
+  "tr": "Lazer Çizgileri yöntemi yalnızca Gerber nesneleriyle çalışır"
+ },
+ "There are no polygons to paint": {
+  "es": "No hay polígonos para pintar",
+  "de": "Es gibt keine Polygone zum Malen",
+  "fr": "Il n'y a aucun polygone à peindre",
+  "it": "Non ci sono poligoni da dipingere",
+  "pt_BR": "Não há polígonos para pintar",
+  "ro": "Nu există poligoane de pictat",
+  "ru": "Нет полигонов для рисования",
+  "tr": "Boyanacak çokgen yok"
+ },
+ "A Polygon or MultiPolygon was expected (the original fails with other shapes)": {
+  "es": "Se esperaba un polígono o un multipolígono (el original falla con otras figuras)",
+  "de": "Ein Polygon oder MultiPolygon wurde erwartet (das Original schlägt bei anderen Formen fehl)",
+  "fr": "Un Polygon ou un MultiPolygon était attendu (l'original échoue avec d'autres formes)",
+  "it": "Era atteso un Polygon o un MultiPolygon (l'originale fallisce con altre forme)",
+  "pt_BR": "Era esperado um Polygon ou MultiPolygon (o original falha com outras formas)",
+  "ro": "Era așteptat un Polygon sau MultiPolygon (originalul eșuează cu alte forme)",
+  "ru": "Ожидался Polygon или MultiPolygon (оригинал не работает с другими фигурами)",
+  "tr": "Bir Polygon veya MultiPolygon bekleniyordu (orijinal diğer şekillerle başarısız olur)"
+ },
+ "The Excellon has no drills for the selected tools": {
+  "es": "El Excellon no tiene agujeros para las herramientas elegidas",
+  "de": "Das Excellon hat keine Bohrungen für die ausgewählten Werkzeuge",
+  "fr": "L'Excellon n'a aucun perçage pour les outils sélectionnés",
+  "it": "L'Excellon non ha fori per gli utensili selezionati",
+  "pt_BR": "O Excellon não tem furos para as ferramentas selecionadas",
+  "ro": "Excellon nu are găuri pentru uneltele selectate",
+  "ru": "В Excellon нет отверстий для выбранных инструментов",
+  "tr": "Excellon'da seçili takımlar için delik yok"
+ },
+ "The Cut Z of tool %1 is zero: there would be no cut": {
+  "pattern": true,
+  "es": "La Z de corte de la herramienta %1 es cero: no habría corte",
+  "de": "Die Schnitt-Z von Werkzeug %1 ist null: es gäbe keinen Schnitt",
+  "fr": "La Z de coupe de l'outil %1 est nulle : il n'y aurait pas de coupe",
+  "it": "La Z di taglio dell'utensile %1 è zero: non ci sarebbe taglio",
+  "pt_BR": "O Z de corte da ferramenta %1 é zero: não haveria corte",
+  "ro": "Z de tăiere al uneltei %1 este zero: nu ar exista tăiere",
+  "ru": "Глубина резания Z инструмента %1 равна нулю: резания не будет",
+  "tr": "%1 numaralı takımın kesim Z'si sıfır: kesim olmaz"
+ },
+ "Tool %1 has no drills": {
+  "pattern": true,
+  "es": "La herramienta %1 no tiene agujeros",
+  "de": "Werkzeug %1 hat keine Bohrungen",
+  "fr": "L'outil %1 n'a aucun perçage",
+  "it": "L'utensile %1 non ha fori",
+  "pt_BR": "A ferramenta %1 não tem furos",
+  "ro": "Unealta %1 nu are găuri",
+  "ru": "У инструмента %1 нет отверстий",
+  "tr": "%1 numaralı takımın deliği yok"
+ },
+ "There are no tools": {
+  "es": "No hay herramientas",
+  "de": "Es gibt keine Werkzeuge",
+  "fr": "Il n'y a aucun outil",
+  "it": "Non ci sono utensili",
+  "pt_BR": "Não há ferramentas",
+  "ro": "Nu există unelte",
+  "ru": "Нет инструментов",
+  "tr": "Takım yok"
+ },
+ "There are no lines to travel": {
+  "es": "No hay líneas para recorrer",
+  "de": "Es gibt keine Linien zum Abfahren",
+  "fr": "Il n'y a aucune ligne à parcourir",
+  "it": "Non ci sono linee da percorrere",
+  "pt_BR": "Não há linhas para percorrer",
+  "ro": "Nu există linii de parcurs",
+  "ru": "Нет линий для прохода",
+  "tr": "Gidilecek çizgi yok"
+ },
+ "Unknown preprocessor: %1": {
+  "pattern": true,
+  "es": "Postprocesador desconocido: %1",
+  "de": "Unbekannter Präprozessor: %1",
+  "fr": "Préprocesseur inconnu : %1",
+  "it": "Preprocessore sconosciuto: %1",
+  "pt_BR": "Pré-processador desconhecido: %1",
+  "ro": "Preprocesor necunoscut: %1",
+  "ru": "Неизвестный препроцессор: %1",
+  "tr": "Bilinmeyen önişlemci: %1"
+ },
+ "Error generating the G-code of the geometry: %1": {
+  "pattern": true,
+  "es": "Error al generar el G-code de la geometría: %1",
+  "de": "Fehler beim Erzeugen des G-Codes der Geometrie: %1",
+  "fr": "Erreur lors de la génération du G-code de la géométrie : %1",
+  "it": "Errore nella generazione del G-code della geometria: %1",
+  "pt_BR": "Erro ao gerar o G-code da geometria: %1",
+  "ro": "Eroare la generarea G-code-ului geometriei: %1",
+  "ru": "Ошибка при создании G-кода геометрии: %1",
+  "tr": "Geometrinin G kodu oluşturulurken hata: %1"
+ },
+ "the position was left as a tuple after AA": {
+  "es": "la posición quedó con una tupla después de AA",
+  "de": "die Position blieb nach AA ein Tupel",
+  "fr": "la position est restée un tuple après AA",
+  "it": "la posizione è rimasta una tupla dopo AA",
+  "pt_BR": "a posição ficou como uma tupla depois de AA",
+  "ro": "poziția a rămas un tuplu după AA",
+  "ru": "после AA позиция осталась кортежем",
+  "tr": "AA'dan sonra konum bir demet olarak kaldı"
+ },
+ "%1: the type \"%2\" can not be opened yet": {
+  "es": "%1: el tipo \"%2\" todavía no se abre",
+  "de": "%1: der Typ \"%2\" kann noch nicht geöffnet werden",
+  "fr": "%1 : le type \"%2\" ne peut pas encore être ouvert",
+  "it": "%1: il tipo \"%2\" non può ancora essere aperto",
+  "pt_BR": "%1: o tipo \"%2\" ainda não pode ser aberto",
+  "ro": "%1: tipul \"%2\" nu poate fi încă deschis",
+  "ru": "%1: тип \"%2\" пока нельзя открыть",
+  "tr": "%1: \"%2\" türü henüz açılamıyor"
+ },
+ "The Geometries of the port always have several tools (MultiGeo).": {
+  "es": "Las Geometrías del port son siempre de varias herramientas (MultiGeo).",
+  "de": "Die Geometrien dieser Version haben immer mehrere Werkzeuge (MultiGeo).",
+  "fr": "Les géométries de cette version ont toujours plusieurs outils (MultiGeo).",
+  "it": "Le geometrie di questa versione hanno sempre più utensili (MultiGeo).",
+  "pt_BR": "As geometrias desta versão sempre têm várias ferramentas (MultiGeo).",
+  "ro": "Geometriile acestei versiuni au întotdeauna mai multe unelte (MultiGeo).",
+  "ru": "Геометрии в этой версии всегда содержат несколько инструментов (MultiGeo).",
+  "tr": "Bu sürümün geometrilerinde her zaman birden çok takım vardır (MultiGeo)."
+ },
+ "The command %1 is not in the port yet.": {
+  "es": "El comando %1 todavía no está en el port.",
+  "de": "Der Befehl %1 ist in dieser Version noch nicht vorhanden.",
+  "fr": "La commande %1 n'est pas encore disponible dans cette version.",
+  "it": "Il comando %1 non è ancora disponibile in questa versione.",
+  "pt_BR": "O comando %1 ainda não está disponível nesta versão.",
+  "ro": "Comanda %1 nu este încă disponibilă în această versiune.",
+  "ru": "Команда %1 пока не поддерживается в этой версии.",
+  "tr": "%1 komutu bu sürümde henüz yok."
+ }
+}

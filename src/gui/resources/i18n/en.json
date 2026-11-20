@@ -1,0 +1,14 @@
+{
+"code": "en",
+"name": "English",
+"patterns": [
+"Error generating the G-code of the geometry: %1",
+"The Cut Z of tool %1 is zero: there would be no cut",
+"Tool %1 has no drills",
+"Unknown preprocessor: %1"
+],
+"ui": {},
+"msg": {
+"": "Project-Id-Version: \nPO-Revision-Date: 2020-11-07 06:57+0200\nLast-Translator: \nLanguage-Team: \nLanguage: en\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nGenerated-By: pygettext.py 1.5\nX-Generator: Poedit 2.4.1\nPlural-Forms: nplurals=2; plural=(n != 1);\nX-Poedit-Basepath: ../../..\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: build\nX-Poedit-SearchPathExcluded-1: doc\nX-Poedit-SearchPathExcluded-2: tests\n"
+}
+}

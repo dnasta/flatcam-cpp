@@ -6,7 +6,7 @@
   "props": {
    "windowTitle": {
     "t": "str",
-    "v": "Acerca de"
+    "v": "About"
    }
   },
   "layout": {
@@ -109,7 +109,7 @@
          },
          "tabs": [
           {
-           "text": "Pantalla de bienvenida",
+           "text": "Splash",
            "icon": null,
            "tooltip": "",
            "protected": false,
@@ -161,7 +161,7 @@
                 "props": {
                  "text": {
                   "t": "str",
-                  "v": "<font size=8><B>FlatCAM β</B></font><BR>Fabricación de placa de circuito impreso asistida por computadora 2D<BR><BR><BR><a href = \"https://bitbucket.org/jpcgt/flatcam/src/Beta/\"><B>Desarrollo</B></a><BR><a href = \"https://bitbucket.org/jpcgt/flatcam/downloads/\"><b>DESCARGAR</B></a><BR><a href = \"https://bitbucket.org/jpcgt/flatcam/issues?status=new&status=open/\"><B>Rastreador de problemas</B></a><BR>"
+                  "v": "<font size=8><B>FlatCAM β</B></font><BR>2D Computer-Aided Printed Circuit Board Manufacturing<BR><BR><BR><a href = \"https://bitbucket.org/jpcgt/flatcam/src/Beta/\"><B>Development</B></a><BR><a href = \"https://bitbucket.org/jpcgt/flatcam/downloads/\"><b>DOWNLOAD</B></a><BR><a href = \"https://bitbucket.org/jpcgt/flatcam/issues?status=new&status=open/\"><B>Issue tracker</B></a><BR>"
                  },
                  "openExternalLinks": {
                   "t": "bool",
@@ -175,7 +175,7 @@
            }
           },
           {
-           "text": "Programadores",
+           "text": "Programmers",
            "icon": null,
            "tooltip": "",
            "protected": false,
@@ -316,7 +316,7 @@
                      "props": {
                       "text": {
                        "t": "str",
-                       "v": "<b>Programador</b>"
+                       "v": "<b>Programmer</b>"
                       }
                      }
                     }
@@ -334,7 +334,7 @@
                      "props": {
                       "text": {
                        "t": "str",
-                       "v": "<b>Estado</b>"
+                       "v": "<b>Status</b>"
                       }
                      }
                     }
@@ -352,7 +352,7 @@
                      "props": {
                       "text": {
                        "t": "str",
-                       "v": "<b>Email</b>"
+                       "v": "<b>E-mail</b>"
                       }
                      }
                     }
@@ -388,7 +388,7 @@
                      "props": {
                       "text": {
                        "t": "str",
-                       "v": "Autor del programa"
+                       "v": "Program Author"
                       }
                      }
                     }
@@ -509,7 +509,7 @@
                      "props": {
                       "text": {
                        "t": "str",
-                       "v": "BETA Mantenedor >= 2019"
+                       "v": "BETA Maintainer >= 2019"
                       }
                      }
                     }
@@ -1155,7 +1155,7 @@
            }
           },
           {
-           "text": "Traductores",
+           "text": "Translators",
            "icon": null,
            "tooltip": "",
            "protected": false,
@@ -1265,7 +1265,7 @@
                      "props": {
                       "text": {
                        "t": "str",
-                       "v": "<b>Idioma</b>"
+                       "v": "<b>Language</b>"
                       }
                      }
                     }
@@ -1283,7 +1283,7 @@
                      "props": {
                       "text": {
                        "t": "str",
-                       "v": "<b>Traductor</b>"
+                       "v": "<b>Translator</b>"
                       }
                      }
                     }
@@ -1301,7 +1301,7 @@
                      "props": {
                       "text": {
                        "t": "str",
-                       "v": "<b>Correcciones</b>"
+                       "v": "<b>Corrections</b>"
                       }
                      }
                     }
@@ -1319,7 +1319,7 @@
                      "props": {
                       "text": {
                        "t": "str",
-                       "v": "<b>Email</b>"
+                       "v": "<b>E-mail</b>"
                       }
                      }
                     }
@@ -1833,7 +1833,7 @@
            }
           },
           {
-           "text": "Licencia",
+           "text": "License",
            "icon": null,
            "tooltip": "",
            "protected": false,
@@ -1874,7 +1874,7 @@
                 "props": {
                  "text": {
                   "t": "str",
-                  "v": "Licenciado bajo la licencia MIT:<br><a href = \"http://www.opensource.org/licenses/mit-license.php\">http://www.opensource.org/licenses/mit-license.php</a><br>"
+                  "v": "Licensed under the MIT license:<br><a href = \"http://www.opensource.org/licenses/mit-license.php\">http://www.opensource.org/licenses/mit-license.php</a><br>"
                  },
                  "openExternalLinks": {
                   "t": "bool",
@@ -1893,7 +1893,7 @@
                 "props": {
                  "text": {
                   "t": "str",
-                  "v": "Por la presente se otorga permiso, sin cargo, a cualquier persona que obtenga una copia\nde este software y los archivos de documentación asociados (el \"Software\"), para tratar\nen el Software sin restricción, incluidos, entre otros, los derechos\npara usar, copiar, modificar, fusionar, publicar, distribuir, sublicenciar y / o vender\ncopias del Software y para permitir a las personas a quienes pertenece el Software\n amueblado para hacerlo, sujeto a las siguientes condiciones:\n\nEl aviso de copyright anterior y este aviso de permiso se incluirán en\ntodas las copias o partes sustanciales del software.\n\nEL SOFTWARE SE PROPORCIONA \"TAL CUAL\", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA O\nIMPLÍCITO, INCLUYENDO PERO NO LIMITADO A LAS GARANTÍAS DE COMERCIABILIDAD,\nAPTITUD PARA UN PROPÓSITO PARTICULAR Y NO INFRACCIÓN. EN NINGÚN CASO EL\nLOS AUTORES O LOS TITULARES DE LOS DERECHOS DE AUTOR SERÁN RESPONSABLES POR CUALQUIER RECLAMACIÓN, DAÑO U OTRO\nRESPONSABILIDAD, EN CASO DE ACCIÓN DE CONTRATO, TORTURA O DE OTRA MANERA, DERIVADA DE,\nFUERA DE O EN CONEXIÓN CON EL SOFTWARE O EL USO U OTRAS OFERTAS EN\nEL SOFTWARE."
+                  "v": "Permission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE."
                  }
                 }
                }
@@ -1913,7 +1913,7 @@
            }
           },
           {
-           "text": "Atribuciones",
+           "text": "Attributions",
            "icon": null,
            "tooltip": "",
            "protected": false,
@@ -1954,7 +1954,7 @@
                 "props": {
                  "text": {
                   "t": "str",
-                  "v": "Algunos de los iconos utilizados son de las siguientes fuentes: <br><div> Iconos de <a href=\"https://www.flaticon.com/authors/freepik\" title=\"Freepik\">Freepik</a>de<a href=\"https://www.flaticon.com/\" title=\"Flaticon\"> www.flaticon.com </a></div><div>Iconos de <a target=\"_ blank\" href=\"https: //icons8.com\">Icons8</a></div>Iconos de <a href=\"http://www.onlinewebfonts.com\">oNline Web Fonts</a><div>Iconos de <a href=\"https://www.flaticon.com/authors/pixel-perfect\" title=\"Pixel perfect\">Pixel perfect</a> de <a href=\"https://www.flaticon.com/\" title=\"Flaticon\">www.flaticon.com</a></div>"
+                  "v": "Some of the icons used are from the following sources:<br><div>Icons by <a href=\"https://www.flaticon.com/authors/freepik\" title=\"Freepik\">Freepik</a> from <a href=\"https://www.flaticon.com/\"             title=\"Flaticon\">www.flaticon.com</a></div><div>Icons by <a target=\"_blank\" href=\"https://icons8.com\">Icons8</a></div>Icons by <a href=\"http://www.onlinewebfonts.com\">oNline Web Fonts</a><div>Icons by <a href=\"https://www.flaticon.com/authors/pixel-perfect\" title=\"Pixel perfect\">Pixel perfect</a> from <a href=\"https://www.flaticon.com/\" title=\"Flaticon\">www.flaticon.com</a></div>"
                  },
                  "openExternalLinks": {
                   "t": "bool",
@@ -2098,7 +2098,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "Cerca"
+           "v": "Close"
           },
           "autoDefault": {
            "t": "bool",

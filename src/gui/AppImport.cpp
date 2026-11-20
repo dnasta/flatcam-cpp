@@ -148,7 +148,7 @@ FlatCAMObj* App::openHpgl2(const QString& filename) {
     const std::string text = f.readAll().toStdString();
     const Hpgl2Result r = parseHpgl2(text);
     if (!r.ok) {
-        if (!r.error.empty()) ui_->inform("[ERROR] " + tr_("HPGL2 Parser ERROR") + "\n" + QString::fromStdString(r.error));
+        if (!r.error.empty()) ui_->inform("[ERROR] " + tr_("HPGL2 Parser ERROR") + "\n" + tr_(QString::fromStdString(r.error)));
         ui_->inform("[ERROR_NOTCL] " + tr_("Object is not HPGL2 file or empty. Aborting object creation."));
         ui_->inform("[ERROR_NOTCL]" + tr_("Failed. Probable not a HPGL2 file."));
         return nullptr;

@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Herramienta de Sustracción"
+    "v": "Subtract Tool"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Herramienta de Sustracción"
+        "v": "Subtract Tool"
        }
       }
      }
@@ -153,11 +153,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Cuando está marcado, eliminará los objetos de origen\ndespués de una operación exitosa."
+               "v": "When checked will delete the source objects\nafter a successful operation."
               },
               "text": {
                "t": "str",
-               "v": "Eliminar fuente"
+               "v": "Delete source"
               }
              }
             }
@@ -237,11 +237,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Objeto de Gerber para restar\nEl sustractor del objeto Gerber."
+               "v": "Gerber object from which to subtract\nthe subtractor Gerber object."
               },
               "text": {
                "t": "str",
-               "v": "Objetivo:"
+               "v": "Target:"
               }
              }
             }
@@ -274,11 +274,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Objeto de Gerber que se restará\ndel objeto objetivo de Gerber."
+               "v": "Gerber object that will be subtracted\nfrom the target Gerber object."
               },
               "text": {
                "t": "str",
-               "v": "Sustractor:"
+               "v": "Subtractor:"
               }
              }
             }
@@ -317,7 +317,7 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Eliminará el área ocupada por el sustractor\nGerber del objetivo Gerber.\nSe puede utilizar para eliminar la serigrafía superpuesta\nsobre la máscara de soldadura."
+               "v": "Will remove the area occupied by the subtractor\nGerber from the Target Gerber.\nCan be used to remove the overlapping silkscreen\nover the soldermask."
               },
               "styleSheet": {
                "t": "str",
@@ -325,7 +325,7 @@
               },
               "text": {
                "t": "str",
-               "v": "Restar Gerber"
+               "v": "Subtract Gerber"
               },
               "icon": {
                "t": "QIcon",
@@ -360,7 +360,7 @@
              "props": {
               "text": {
                "t": "str",
-               "v": "<b>GEOMETRÍA</b>"
+               "v": "<b>GEOMETRY</b>"
               }
              }
             }
@@ -378,11 +378,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Objeto de Geometría del cual restar\nEl objeto de Geometría de sustractor."
+               "v": "Geometry object from which to subtract\nthe subtractor Geometry object."
               },
               "text": {
                "t": "str",
-               "v": "Objetivo:"
+               "v": "Target:"
               }
              }
             }
@@ -415,11 +415,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Objeto de Geometría que se restará\ndel objeto de Geometría de destino."
+               "v": "Geometry object that will be subtracted\nfrom the target Geometry object."
               },
               "text": {
                "t": "str",
-               "v": "Sustractor:"
+               "v": "Subtractor:"
               }
              }
             }
@@ -452,11 +452,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Marcar esto cerrará los caminos cortados por el objeto sustractor."
+               "v": "Checking this will close the paths cut by the subtractor object."
               },
               "text": {
                "t": "str",
-               "v": "Caminos cercanos"
+               "v": "Close paths"
               },
               "checked": {
                "t": "bool",
@@ -484,7 +484,7 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Eliminará el área ocupada por el sustractor\nGeometría de la Geometría Objetivo."
+               "v": "Will remove the area occupied by the subtractor\nGeometry from the Target Geometry."
               },
               "styleSheet": {
                "t": "str",
@@ -492,7 +492,7 @@
               },
               "text": {
                "t": "str",
-               "v": "Restar Geometría"
+               "v": "Subtract Geometry"
               },
               "icon": {
                "t": "QIcon",
@@ -543,7 +543,7 @@
            },
            "toolTip": {
             "t": "str",
-            "v": "Restablecerá los parámetros de la herramienta."
+            "v": "Will reset the tool parameters."
            },
            "styleSheet": {
             "t": "str",
@@ -551,7 +551,7 @@
            },
            "text": {
             "t": "str",
-            "v": "Restablecer la Herramienta"
+            "v": "Reset Tool"
            },
            "icon": {
             "t": "QIcon",

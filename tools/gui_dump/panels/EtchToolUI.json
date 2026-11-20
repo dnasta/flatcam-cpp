@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Herramienta de Comp de Grabado"
+    "v": "Etch Compensation Tool"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -68,7 +68,7 @@
            },
            "text": {
             "t": "str",
-            "v": "Herramienta de Comp de Grabado"
+            "v": "Etch Compensation Tool"
            }
           }
          }
@@ -152,7 +152,7 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Objeto de Gerber que se invertirá."
+               "v": "Gerber object that will be inverted."
               },
               "text": {
                "t": "str",
@@ -220,11 +220,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Utilidades de conversión."
+               "v": "Conversion utilities."
               },
               "text": {
                "t": "str",
-               "v": "<b>Utilidades:</b>"
+               "v": "<b>Utilities:</b>"
               }
              }
             }
@@ -242,11 +242,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Se convertirá del grosor de oz a micras [um].\nPuede usar fórmulas con operadores: /, *, +, -,%,.\nLos números reales usan el separador de decimales de punto."
+               "v": "Will convert from oz thickness to microns [um].\nCan use formulas with operators: /, *, +, -, %, .\nThe real numbers use the dot decimals separator."
               },
               "text": {
                "t": "str",
-               "v": "Oz a Micrones:"
+               "v": "Oz to Microns:"
               }
              }
             }
@@ -284,7 +284,7 @@
                  },
                  "placeholderText": {
                   "t": "str",
-                  "v": "Valor de oz"
+                  "v": "Oz value"
                  }
                 }
                }
@@ -303,7 +303,7 @@
                  },
                  "placeholderText": {
                   "t": "str",
-                  "v": "Valor de micras"
+                  "v": "Microns value"
                  }
                 }
                }
@@ -324,11 +324,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Se convertirá de milésimas de pulgada a micras [um].\nPuede usar fórmulas con operadores: /, *, +, -,%,.\nLos números reales usan el separador de decimales de punto."
+               "v": "Will convert from mils to microns [um].\nCan use formulas with operators: /, *, +, -, %, .\nThe real numbers use the dot decimals separator."
               },
               "text": {
                "t": "str",
-               "v": "Mils a Micrones:"
+               "v": "Mils to Microns:"
               }
              }
             }
@@ -366,7 +366,7 @@
                  },
                  "placeholderText": {
                   "t": "str",
-                  "v": "Valor de milésimas"
+                  "v": "Mils value"
                  }
                 }
                }
@@ -385,7 +385,7 @@
                  },
                  "placeholderText": {
                   "t": "str",
-                  "v": "Valor de micras"
+                  "v": "Microns value"
                  }
                 }
                }
@@ -437,11 +437,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Parám. para esta herramienta."
+               "v": "Parameters for this tool."
               },
               "text": {
                "t": "str",
-               "v": "<b>Parámetros:</b>"
+               "v": "<b>Parameters:</b>"
               }
              }
             }
@@ -459,11 +459,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "El grosor de la lámina de cobre.\nEn micras [um]."
+               "v": "The thickness of the copper foil.\nIn microns [um]."
               },
               "text": {
                "t": "str",
-               "v": "Espesor de cobre:"
+               "v": "Copper Thickness:"
               }
              }
             }
@@ -507,11 +507,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "La relación de grabado lateral versus grabado profundo.\nPuede ser:\n- personalizado -> el usuario ingresará un valor personalizado\n- preseleccionado -> valor que depende de una selección de grabadores"
+               "v": "The ratio of lateral etch versus depth etch.\nCan be:\n- custom -> the user will enter a custom value\n- preselection -> value which depends on a selection of etchants"
               },
               "text": {
                "t": "str",
-               "v": "Proporción:"
+               "v": "Ratio:"
               }
              }
             }
@@ -529,15 +529,15 @@
              "props": {},
              "choices": [
               {
-               "label": "Factor de grabado",
+               "label": "Etch Factor",
                "value": "factor"
               },
               {
-               "label": "Lista de grabados",
+               "label": "Etchants list",
                "value": "etch_list"
               },
               {
-               "label": "Desplazamiento manual",
+               "label": "Manual offset",
                "value": "manual"
               }
              ],
@@ -559,11 +559,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Una lista de grabadores."
+               "v": "A list of etchants."
               },
               "text": {
                "t": "str",
-               "v": "Grabadores:"
+               "v": "Etchants:"
               },
               "hidden": {
                "t": "bool",
@@ -595,7 +595,7 @@
              "items": [
               "CuCl2",
               "Fe3Cl",
-              "Baños alcalinos"
+              "Alkaline baths"
              ],
              "currentIndex": 0
             }
@@ -613,11 +613,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "La relación entre el grabado profundo y el grabado lateral.\nAcepta números reales y fórmulas utilizando los operadores: /, *, +, -,%"
+               "v": "The ratio between depth etch and lateral etch .\nAccepts real numbers and formulas using the operators: /,*,+,-,%"
               },
               "text": {
                "t": "str",
-               "v": "Factor de grabado:"
+               "v": "Etch Factor:"
               }
              }
             }
@@ -643,7 +643,7 @@
               },
               "placeholderText": {
                "t": "str",
-               "v": "Número real o fórmula"
+               "v": "Real number or formula"
               }
              }
             }
@@ -661,11 +661,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Valor con el que aumentar o disminuir (buffer)\nLas características de cobre. En micras [um]."
+               "v": "Value with which to increase or decrease (buffer)\nthe copper features. In microns [um]."
               },
               "text": {
                "t": "str",
-               "v": "Compensar:"
+               "v": "Offset:"
               },
               "hidden": {
                "t": "bool",
@@ -754,7 +754,7 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Aumentará el grosor de las características de cobre para compensar el grabado lateral."
+               "v": "Will increase the copper features thickness to compensate the lateral etch."
               },
               "styleSheet": {
                "t": "str",
@@ -762,7 +762,7 @@
               },
               "text": {
                "t": "str",
-               "v": "Compensar"
+               "v": "Compensate"
               },
               "icon": {
                "t": "QIcon",
@@ -800,7 +800,7 @@
            },
            "toolTip": {
             "t": "str",
-            "v": "Restablecerá los parámetros de la herramienta."
+            "v": "Will reset the tool parameters."
            },
            "styleSheet": {
             "t": "str",
@@ -808,7 +808,7 @@
            },
            "text": {
             "t": "str",
-            "v": "Restablecer la Herramienta"
+            "v": "Reset Tool"
            },
            "icon": {
             "t": "QIcon",

@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Imagen como objeto"
+    "v": "Image as Object"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Imagen como objeto"
+        "v": "Image as Object"
        }
       }
      }
@@ -81,11 +81,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Especifique el tipo de objeto a crear a partir de la imagen.\nPuede ser de tipo: Gerber o Geometría."
+           "v": "Specify the type of object to create from the image.\nIt can be of type: Gerber or Geometry."
           },
           "text": {
            "t": "str",
-           "v": "Tipo de objeto:"
+           "v": "Object Type:"
           }
          }
         }
@@ -106,7 +106,7 @@
          },
          "items": [
           "Gerber",
-          "Geometría"
+          "Geometry"
          ],
          "currentIndex": 0
         }
@@ -122,11 +122,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Especifique un valor de DPI para la imagen."
+           "v": "Specify a DPI value for the image."
           },
           "text": {
            "t": "str",
-           "v": "Valor de DPI:"
+           "v": "DPI value:"
           }
          }
         }
@@ -175,7 +175,7 @@
       "props": {
        "text": {
         "t": "str",
-        "v": "<font size=4><b>Nivel de detalle:</b></font>"
+        "v": "<font size=4><b>Level of detail:</b></font>"
        }
       }
      }
@@ -209,11 +209,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Elija un método para la interpretación de la imagen.\nB / N significa una imagen en blanco y negro. Color significa una imagen en color."
+           "v": "Choose a method for the image interpretation.\nB/W means a black & white image. Color means a colored image."
           },
           "text": {
            "t": "str",
-           "v": "<b>Tipo de imagen:</b>"
+           "v": "<b>Image type:</b>"
           }
          }
         }
@@ -253,11 +253,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Máscara para imagen monocroma.\nToma valores entre [0 ... 255].\nDecide el nivel de detalles a incluir\nen la geometría resultante.\n0 significa sin detalles y 255 significa todo\n(que es totalmente negro)"
+           "v": "Mask for monochrome image.\nTakes values between [0 ... 255].\nDecides the level of details to include\nin the resulting geometry.\n0 means no detail and 255 means everything \n(which is totally black)."
           },
           "text": {
            "t": "str",
-           "v": "Valor de la máscara <b>B/W</b>:"
+           "v": "Mask value <b>B/W</b>:"
           }
          }
         }
@@ -293,11 +293,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Máscara para color ROJO.\nToma valores entre [0 ... 255].\nDecide el nivel de detalles a incluir\nen la geometría resultante."
+           "v": "Mask for RED color.\nTakes values between [0 ... 255].\nDecides the level of details to include\nin the resulting geometry."
           },
           "text": {
            "t": "str",
-           "v": "Valor de la máscara <b>R:</b>"
+           "v": "Mask value <b>R:</b>"
           },
           "enabled": {
            "t": "bool",
@@ -341,11 +341,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Máscara para color VERDE.\nToma valores entre [0 ... 255].\nDecide el nivel de detalles a incluir\nen la geometría resultante."
+           "v": "Mask for GREEN color.\nTakes values between [0 ... 255].\nDecides the level of details to include\nin the resulting geometry."
           },
           "text": {
            "t": "str",
-           "v": "Valor de la máscara <b>G:</b>"
+           "v": "Mask value <b>G:</b>"
           },
           "enabled": {
            "t": "bool",
@@ -389,11 +389,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Máscara para color AZUL.\nToma valores entre [0 ... 255].\nDecide el nivel de detalles a incluir\nen la geometría resultante."
+           "v": "Mask for BLUE color.\nTakes values between [0 ... 255].\nDecides the level of details to include\nin the resulting geometry."
           },
           "text": {
            "t": "str",
-           "v": "Valor de la máscara <b>B:</b>"
+           "v": "Mask value <b>B:</b>"
           },
           "enabled": {
            "t": "bool",
@@ -440,11 +440,11 @@
       "props": {
        "toolTip": {
         "t": "str",
-        "v": "Abra una imagen de tipo ráster y luego impórtela en FlatCAM."
+        "v": "Open a image of raster type and then import it in FlatCAM."
        },
        "text": {
         "t": "str",
-        "v": "Importar imagen"
+        "v": "Import image"
        }
       }
      }

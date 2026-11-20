@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Herramienta de Óptima"
+    "v": "Optimal Tool"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Herramienta de Óptima"
+        "v": "Optimal Tool"
        }
       }
      }
@@ -153,11 +153,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Número de decimales guardados para distancias encontradas."
+           "v": "Number of decimals kept for found distances."
           },
           "text": {
            "t": "str",
-           "v": "Precisión:"
+           "v": "Precision:"
           }
          }
         }
@@ -201,11 +201,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Mostrar la distancia mínima entre las características de cobre."
+           "v": "Display minimum distance between copper features."
           },
           "text": {
            "t": "str",
-           "v": "<b>Distancia minima:</b>"
+           "v": "<b>Minimum distance:</b>"
           }
          }
         }
@@ -221,7 +221,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "Determinado:"
+           "v": "Determined:"
           }
          }
         }
@@ -295,11 +295,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Cuántas veces se encuentra este mínimo."
+           "v": "How many times this minimum is found."
           },
           "text": {
            "t": "str",
-           "v": "Ocurriendo:"
+           "v": "Occurring:"
           }
          }
         }
@@ -335,11 +335,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Coordenadas para los puntos donde se encontró la distancia mínima."
+           "v": "Coordinates for points where minimum distance was found."
           },
           "text": {
            "t": "str",
-           "v": "Coordenadas de puntos mínimos"
+           "v": "Minimum points coordinates"
           }
          }
         }
@@ -367,7 +367,7 @@
           },
           "placeholderText": {
            "t": "str",
-           "v": "Coordenadas para los puntos donde se encontró la distancia mínima."
+           "v": "Coordinates for points where minimum distance was found."
           },
           "hidden": {
            "t": "bool",
@@ -394,11 +394,11 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Seleccione una posición en el cuadro de texto Ubicaciones y luego\nhaga clic en este botón."
+           "v": "Select a position in the Locations text box and then\nclick this button."
           },
           "text": {
            "t": "str",
-           "v": "Saltar a la posición seleccionada"
+           "v": "Jump to selected position"
           },
           "hidden": {
            "t": "bool",
@@ -422,11 +422,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Mostrará otras distancias en el archivo Gerber ordenado a\nel mínimo al máximo, sin incluir el mínimo absoluto."
+           "v": "Will display other distances in the Gerber file ordered from\nthe minimum to the maximum, not including the absolute minimum."
           },
           "text": {
            "t": "str",
-           "v": "<b>Otras distancias:</b>"
+           "v": "<b>Other distances:</b>"
           }
          }
         }
@@ -442,11 +442,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Otras distancias y las coordenadas de los puntos.\ndonde se encontró la distancia."
+           "v": "Other distances and the coordinates for points\nwhere the distance was found."
           },
           "text": {
            "t": "str",
-           "v": "Otras distancias puntos coordenadas"
+           "v": "Other distances points coordinates"
           }
          }
         }
@@ -491,11 +491,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Otras distancias y las coordenadas de los puntos.\ndonde se encontró la distancia."
+            "v": "Other distances and the coordinates for points\nwhere the distance was found."
            },
            "text": {
             "t": "str",
-            "v": "Distancias de Gerber"
+            "v": "Gerber distances"
            }
           }
          }
@@ -522,7 +522,7 @@
            },
            "placeholderText": {
             "t": "str",
-            "v": "Otras distancias y las coordenadas de los puntos.\ndonde se encontró la distancia."
+            "v": "Other distances and the coordinates for points\nwhere the distance was found."
            }
           }
          }
@@ -547,11 +547,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Otras distancias y las coordenadas de los puntos.\ndonde se encontró la distancia."
+            "v": "Other distances and the coordinates for points\nwhere the distance was found."
            },
            "text": {
             "t": "str",
-            "v": "Coordenadas de puntos"
+            "v": "Points coordinates"
            }
           }
          }
@@ -578,7 +578,7 @@
            },
            "placeholderText": {
             "t": "str",
-            "v": "Otras distancias y las coordenadas de los puntos.\ndonde se encontró la distancia."
+            "v": "Other distances and the coordinates for points\nwhere the distance was found."
            }
           }
          }
@@ -600,11 +600,11 @@
            },
            "toolTip": {
             "t": "str",
-            "v": "Seleccione una posición en el cuadro de texto Ubicaciones y luego\nhaga clic en este botón."
+            "v": "Select a position in the Locations text box and then\nclick this button."
            },
            "text": {
             "t": "str",
-            "v": "Saltar a la posición seleccionada"
+            "v": "Jump to selected position"
            },
            "enabled": {
             "t": "bool",
@@ -640,7 +640,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Calcule la distancia mínima entre las características de cobre,\nesto permitirá determinar la herramienta adecuada para\nutilizar para aislamiento o limpieza de cobre."
+        "v": "Calculate the minimum distance between copper features,\nthis will allow the determination of the right tool to\nuse for isolation or copper clearing."
        },
        "styleSheet": {
         "t": "str",
@@ -648,7 +648,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Encuentra mínimo"
+        "v": "Find Minimum"
        },
        "icon": {
         "t": "QIcon",
@@ -683,7 +683,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Restablecerá los parámetros de la herramienta."
+        "v": "Will reset the tool parameters."
        },
        "styleSheet": {
         "t": "str",
@@ -691,7 +691,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Restablecer la Herramienta"
+        "v": "Reset Tool"
        },
        "icon": {
         "t": "QIcon",

@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Película de PCB"
+    "v": "Film PCB"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Película de PCB"
+        "v": "Film PCB"
        }
       }
      }
@@ -127,11 +127,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Especifique el tipo de objeto para el cual crear la película.\nEl objeto puede ser de tipo: Gerber o Geometry.\nLa selección aquí decide el tipo de objetos que serán\nen el cuadro combinado de objeto de película."
+           "v": "Specify the type of object for which to create the film.\nThe object can be of type: Gerber or Geometry.\nThe selection here decide the type of objects that will be\nin the Film Object combobox."
           },
           "text": {
            "t": "str",
-           "v": "<b>Objeto</b>:"
+           "v": "<b>Object</b>:"
           }
          }
         }
@@ -153,7 +153,7 @@
            "value": "grb"
           },
           {
-           "label": "Geometría",
+           "label": "Geometry",
            "value": "geo"
           }
          ],
@@ -190,11 +190,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Especifique el tipo de objeto que se utilizará como contenedor para\ncreación cinematográfica. Puede ser: tipo Gerber o Geometría. La selección aquí decide el tipo de objetos que serán\nen el cuadro combinado Objeto de caja."
+           "v": "Specify the type of object to be used as an container for\nfilm creation. It can be: Gerber or Geometry type.The selection here decide the type of objects that will be\nin the Box Object combobox."
           },
           "text": {
            "t": "str",
-           "v": "Tipo de caja:"
+           "v": "Box Type:"
           }
          }
         }
@@ -216,7 +216,7 @@
            "value": "grb"
           },
           {
-           "label": "Geometría",
+           "label": "Geometry",
            "value": "geo"
           }
          ],
@@ -284,11 +284,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "En algún momento, las impresoras distorsionarán la forma de impresión, especialmente los tipos de láser.\nEsta sección proporciona las herramientas para compensar las distorsiones de impresión."
+           "v": "Sometime the printers will distort the print shape, especially the Laser types.\nThis section provide the tools to compensate for the print distortions."
           },
           "text": {
            "t": "str",
-           "v": "<b>Ajustes de la película</b>"
+           "v": "<b>Film Adjustments</b>"
           }
          }
         }
@@ -312,7 +312,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Un valor mayor que 1 estirará la película\nmientras que un valor menor que 1 lo sacudirá."
+           "v": "A value greater than 1 will stretch the film\nwhile a value less than 1 will jolt it."
           },
           "styleSheet": {
            "t": "str",
@@ -320,7 +320,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Escalar la Geo de la Película"
+           "v": "Scale Film geometry"
           }
          }
         }
@@ -338,7 +338,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "Factor X:"
+           "v": "X factor:"
           },
           "hidden": {
            "t": "bool",
@@ -398,7 +398,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "Factor Y:"
+           "v": "Y factor:"
           },
           "hidden": {
            "t": "bool",
@@ -495,7 +495,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Los valores positivos se sesgarán a la derecha.\nmientras que los valores negativos se desviarán a la izquierda."
+           "v": "Positive values will skew to the right\nwhile negative values will skew to the left."
           },
           "styleSheet": {
            "t": "str",
@@ -503,7 +503,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Inclina la Geo de la Película"
+           "v": "Skew Film geometry"
           }
          }
         }
@@ -521,7 +521,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "Ángulo X:"
+           "v": "X angle:"
           },
           "hidden": {
            "t": "bool",
@@ -577,7 +577,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "Ángulo Y:"
+           "v": "Y angle:"
           },
           "hidden": {
            "t": "bool",
@@ -633,11 +633,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El punto de referencia que se utilizará como origen para el sesgo.\nPuede ser uno de los cuatro puntos del cuadro delimitador de geometría."
+           "v": "The reference point to be used as origin for the skew.\nIt can be one of the four points of the geometry bounding box."
           },
           "text": {
            "t": "str",
-           "v": "Referencia:"
+           "v": "Reference:"
           },
           "hidden": {
            "t": "bool",
@@ -664,19 +664,19 @@
          },
          "choices": [
           {
-           "label": "Abajo a la izquierda",
+           "label": "Bottom Left",
            "value": "bottomleft"
           },
           {
-           "label": "Arriba a la izquierda",
+           "label": "Top Left",
            "value": "topleft"
           },
           {
-           "label": "Abajo a la derecha",
+           "label": "Bottom Right",
            "value": "bottomright"
           },
           {
-           "label": "Arriba a la derecha",
+           "label": "Top right",
            "value": "topright"
           }
          ],
@@ -735,7 +735,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Refleje la geometría de la película en el eje seleccionado o en ambos."
+           "v": "Mirror the film geometry on the selected axis or on both."
           },
           "styleSheet": {
            "t": "str",
@@ -743,7 +743,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Refleja la Geo de la Película"
+           "v": "Mirror Film geometry"
           }
          }
         }
@@ -761,7 +761,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "Eje espejo:"
+           "v": "Mirror Axis:"
           },
           "hidden": {
            "t": "bool",
@@ -788,7 +788,7 @@
          },
          "choices": [
           {
-           "label": "Ninguno",
+           "label": "None",
            "value": "none"
           },
           {
@@ -800,7 +800,7 @@
            "value": "y"
           },
           {
-           "label": "Ambas",
+           "label": "Both",
            "value": "both"
           }
          ],
@@ -853,7 +853,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "<b>Parámetros de la película</b>"
+           "v": "<b>Film Parameters</b>"
           }
          }
         }
@@ -871,11 +871,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Escale el grosor de trazo de línea de cada entidad en el archivo SVG.\nSignifica que la línea que envuelve cada característica SVG será más gruesa o más delgada,\npor lo tanto, las características finas pueden verse más afectadas por este parámetro."
+           "v": "Scale the line stroke thickness of each feature in the SVG file.\nIt means that the line that envelope each SVG feature will be thicker or thinner,\ntherefore the fine features may be more affected by this parameter."
           },
           "text": {
            "t": "str",
-           "v": "Trazo de escala:"
+           "v": "Scale Stroke:"
           }
          }
         }
@@ -923,11 +923,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Genera una película negra positiva o una película negativa.\nPositivo significa que imprimirá las características.\nCon negro sobre un lienzo blanco.\nNegativo significa que imprimirá las características.\nCon blanco sobre un lienzo negro.\nEl formato de la película es SVG."
+           "v": "Generate a Positive black film or a Negative film.\nPositive means that it will print the features\nwith black on a white canvas.\nNegative means that it will print the features\nwith white on a black canvas.\nThe Film format is SVG."
           },
           "text": {
            "t": "str",
-           "v": "Tipo de Filme:"
+           "v": "Film Type:"
           }
          }
         }
@@ -945,11 +945,11 @@
          "props": {},
          "choices": [
           {
-           "label": "Positivo",
+           "label": "Positive",
            "value": "pos"
           },
           {
-           "label": "Negativa",
+           "label": "Negative",
            "value": "neg"
           }
          ],
@@ -971,11 +971,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Especifique un borde alrededor del objeto.\nSólo para película negativa.\nAyuda si usamos como objeto de caja lo mismo\nobjeto como en el objeto de la película. Se creará una gruesa\nbarra negra alrededor de la impresión real que permite una\nmejor delimitación de las características del esquema que son de\nColor blanco como el resto y que puede confundir con el\nEntorno si no fuera por esta frontera."
+           "v": "Specify a border around the object.\nOnly for negative film.\nIt helps if we use as a Box Object the same \nobject as in Film Object. It will create a thick\nblack bar around the actual print allowing for a\nbetter delimitation of the outline features which are of\nwhite color like the rest and which may confound with the\nsurroundings if not for this border."
           },
           "text": {
            "t": "str",
-           "v": "Frontera:"
+           "v": "Border:"
           }
          }
         }
@@ -1027,11 +1027,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Cuando está marcada, la película generada tendrá agujeros en las almohadillas cuando\nLa película generada es positiva. Esto se hace para ayudar a perforar,\ncuando se hace manualmente."
+           "v": "When checked the generated film will have holes in pads when\nthe generated film is positive. This is done to help drilling,\nwhen done manually."
           },
           "text": {
            "t": "str",
-           "v": "Perforar Agujeros"
+           "v": "Punch drill holes"
           },
           "hidden": {
            "t": "bool",
@@ -1097,11 +1097,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "La fuente del orificio de perforación puede ser:\n- Excellon -> un centro de agujeros Excellon servirá como referencia.\n- Centro de almohadillas -> intentará usar el centro de almohadillas como referencia."
+            "v": "The punch hole source can be:\n- Excellon -> an Excellon holes center will serve as reference.\n- Pad Center -> will try to use the pads center as reference."
            },
            "text": {
             "t": "str",
-            "v": "Fuente:"
+            "v": "Source:"
            }
           }
          }
@@ -1123,7 +1123,7 @@
             "value": "exc"
            },
            {
-            "label": "Centro de la almohadilla",
+            "label": "Pad center",
             "value": "pad"
            }
           ],
@@ -1145,11 +1145,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Retire la geometría de Excellon de la película para crear los agujeros en las almohadillas."
+            "v": "Remove the geometry of Excellon from the Film to create the holes in pads."
            },
            "text": {
             "t": "str",
-            "v": "Objeto Excellon:"
+            "v": "Excellon Obj:"
            }
           }
          }
@@ -1182,11 +1182,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "El valor aquí controlará qué tan grande es el agujero de perforación en los pads."
+            "v": "The value here will control how big is the punch hole in the pads."
            },
            "text": {
             "t": "str",
-            "v": "Tamaño de perforación:"
+            "v": "Punch Size:"
            },
            "hidden": {
             "t": "bool",
@@ -1308,11 +1308,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El tipo de archivo de la película guardada. Puede ser:\n- 'SVG' -> formato vectorial de código abierto\n- 'PNG' -> imagen de trama\n- 'PDF' -> formato de documento portátil"
+           "v": "The file type of the saved film. Can be:\n- 'SVG' -> open-source vectorial format\n- 'PNG' -> raster image\n- 'PDF' -> portable document format"
           },
           "text": {
            "t": "str",
-           "v": "Tipo de Filme:"
+           "v": "Film Type:"
           }
          }
         }
@@ -1360,11 +1360,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Puede ser:\n- retrato\n- paisaje"
+           "v": "Can be:\n- Portrait\n- Landscape"
           },
           "text": {
            "t": "str",
-           "v": "Orient. de la página:"
+           "v": "Page Orientation:"
           },
           "hidden": {
            "t": "bool",
@@ -1391,11 +1391,11 @@
          },
          "choices": [
           {
-           "label": "Retrato",
+           "label": "Portrait",
            "value": "p"
           },
           {
-           "label": "Paisaje",
+           "label": "Landscape",
            "value": "l"
           }
          ],
@@ -1417,11 +1417,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Una selección de tamaños de página estándar ISO 216."
+           "v": "A selection of standard ISO 216 page sizes."
           },
           "text": {
            "t": "str",
-           "v": "Tamaño de página:"
+           "v": "Page Size:"
           },
           "hidden": {
            "t": "bool",
@@ -1510,7 +1510,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El valor predeterminado es 96 DPI. Cambie este valor para escalar el archivo PNG."
+           "v": "Default value is 96 DPI. Change this value to scale the PNG file."
           },
           "text": {
            "t": "str",
@@ -1568,7 +1568,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Crear una Película para el objeto seleccionado, dentro de\nEl cuadro especificado. No crea un nuevo\nObjeto FlatCAM, pero guárdelo directamente en el\nformato seleccionado."
+           "v": "Create a Film for the selected object, within\nthe specified box. Does not create a new \n FlatCAM object, but directly save it in the\nselected format."
           },
           "styleSheet": {
            "t": "str",
@@ -1576,7 +1576,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Guardar película"
+           "v": "Save Film"
           },
           "icon": {
            "t": "QIcon",
@@ -1614,7 +1614,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Restablecerá los parámetros de la herramienta."
+        "v": "Will reset the tool parameters."
        },
        "styleSheet": {
         "t": "str",
@@ -1622,7 +1622,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Restablecer la Herramienta"
+        "v": "Reset Tool"
        },
        "icon": {
         "t": "QIcon",

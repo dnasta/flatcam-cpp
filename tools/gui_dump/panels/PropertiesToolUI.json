@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Propiedades"
+    "v": "Properties"
    },
    "autoFillBackground": {
     "t": "bool",

@@ -578,6 +578,8 @@ int main(int argc, char** argv) {
     // Los recientes y demás datos de la aplicación van a una carpeta de prueba, no a la del usuario.
     QStandardPaths::setTestModeEnabled(true);
     Q_INIT_RESOURCE(flatcam);
+    // Los tests comparan los textos en español (los oráculos vuelcan el original en español).
+    flatcam::gui::setLanguage("es");
     ::testing::InitGoogleTest(&argc, argv);
     // Los tests comparan con el original: reproducen sus errores (los de las correcciones usan OriginalBugsScope).
     flatcam::setReproduceOriginalBugs(true);

@@ -27,13 +27,18 @@ REF = os.path.join(ROOT, "reference", "FlatCAM_2024_4", "FlatCAM")
 from PyQt5 import QtCore, QtGui, QtWidgets  # noqa: E402
 
 # ------------------------------------------------------------------ traducción
-with open(os.path.join(REF, "translate", "es.bin"), "rb") as f:
+# El idioma del volcado: español de fábrica; FC_LANG=en, de, fr... vuelca la interfaz en otro idioma (FC_DUMP_DIR dice
+# dónde, para no pisar los volcados en español, que son los que genera el C++).
+LANG = os.environ.get("FC_LANG", "es")
+DUMP_DIR = os.environ.get("FC_DUMP_DIR")
+with open(os.path.join(REF, "translate", LANG + ".bin"), "rb") as f:
     SPANISH = pickle.load(f)
 # Correcciones de la traducción pedidas por el usuario (por ejemplo "Open" -> "Abrir", no "Abierto").
 import json  # noqa: E402
 
-with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "es_corrections.json"), encoding="utf-8") as f:
-    SPANISH.update({k: v for k, v in json.load(f).items() if not k.startswith("_")})
+if LANG == "es":
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "es_corrections.json"), encoding="utf-8") as f:
+        SPANISH.update({k: v for k, v in json.load(f).items() if not k.startswith("_")})
 
 
 def gettext(text):

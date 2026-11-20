@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Herram. de Marca. de Esquina"
+    "v": "Corner Markers Tool"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Herram. de Marca. de Esquina"
+        "v": "Corner Markers Tool"
        }
       }
      }
@@ -72,7 +72,7 @@
       "props": {
        "toolTip": {
         "t": "str",
-        "v": "El objeto Gerber al que se agregarán marcadores de esquina."
+        "v": "The Gerber object to which will be added corner markers."
        },
        "text": {
         "t": "str",
@@ -131,11 +131,11 @@
       "props": {
        "toolTip": {
         "t": "str",
-        "v": "Lugares donde colocar marcadores de esquina."
+        "v": "Locations where to place corner markers."
        },
        "text": {
         "t": "str",
-        "v": "<b>Localizaciones:</b>"
+        "v": "<b>Locations:</b>"
        }
       }
      }
@@ -183,7 +183,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "Arriba a la izquierda"
+           "v": "Top Left"
           }
          }
         }
@@ -201,7 +201,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "Arriba a la derecha"
+           "v": "Top Right"
           }
          }
         }
@@ -219,7 +219,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "Abajo a la izquierda"
+           "v": "Bottom Left"
           }
          }
         }
@@ -237,7 +237,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "Abajo a la derecha"
+           "v": "Bottom Right"
           }
          }
         }
@@ -283,7 +283,7 @@
       "props": {
        "text": {
         "t": "str",
-        "v": "Alternar Todo"
+        "v": "Toggle ALL"
        }
       }
      }
@@ -378,11 +378,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Parámetros utilizados para esta herramienta."
+           "v": "Parameters used for this tool."
           },
           "text": {
            "t": "str",
-           "v": "<b>Parámetros:</b>"
+           "v": "<b>Parameters:</b>"
           }
          }
         }
@@ -400,11 +400,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Forma del marcador."
+           "v": "Shape of the marker."
           },
           "text": {
            "t": "str",
-           "v": "Tipo:"
+           "v": "Type:"
           }
          }
         }
@@ -422,11 +422,11 @@
          "props": {},
          "choices": [
           {
-           "label": "Semi-Cruz",
+           "label": "Semi-Cross",
            "value": "s"
           },
           {
-           "label": "Cruce",
+           "label": "Cross",
            "value": "c"
           }
          ],
@@ -448,11 +448,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El grosor de la línea que hace el marcador de esquina."
+           "v": "The thickness of the line that makes the corner marker."
           },
           "text": {
            "t": "str",
-           "v": "Espesor:"
+           "v": "Thickness:"
           }
          }
         }
@@ -504,11 +504,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "La longitud de la línea que hace el marcador de esquina."
+           "v": "The length of the line that makes the corner marker."
           },
           "text": {
            "t": "str",
-           "v": "Longitud:"
+           "v": "Length:"
           }
          }
         }
@@ -560,11 +560,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Margen de cuadro delimitador."
+           "v": "Bounding box margin."
           },
           "text": {
            "t": "str",
-           "v": "Margen:"
+           "v": "Margin:"
           }
          }
         }
@@ -618,7 +618,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Agregará marcadores de esquina al archivo Gerber seleccionado."
+           "v": "Will add corner markers to the selected Gerber file."
           },
           "styleSheet": {
            "t": "str",
@@ -626,7 +626,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Agregar Marcador"
+           "v": "Add Marker"
           },
           "icon": {
            "t": "QIcon",
@@ -679,7 +679,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "<b>Taladros en esquinas:</b>"
+           "v": "<b>Drills in Corners:</b>"
           }
          }
         }
@@ -697,11 +697,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Diá del Taladro."
+           "v": "Drill Diameter."
           },
           "text": {
            "t": "str",
-           "v": "Diá. del Taladro:"
+           "v": "Drill Dia:"
           }
          }
         }
@@ -755,7 +755,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Agregará taladros en el centro de los marcadores."
+           "v": "Will add drill holes in the center of the markers."
           },
           "styleSheet": {
            "t": "str",
@@ -763,7 +763,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Crear objeto Excellon"
+           "v": "Create Excellon Object"
           },
           "icon": {
            "t": "QIcon",
@@ -801,7 +801,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Restablecerá los parámetros de la herramienta."
+        "v": "Will reset the tool parameters."
        },
        "styleSheet": {
         "t": "str",
@@ -809,7 +809,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Restablecer la Herramienta"
+        "v": "Reset Tool"
        },
        "icon": {
         "t": "QIcon",

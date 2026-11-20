@@ -32,7 +32,7 @@
       "props": {
        "text": {
         "t": "str",
-        "v": "<font size=4><b>Herramienta de Dist</b></font><br>"
+        "v": "<font size=4><b>Distance Tool</b></font><br>"
        }
       }
      }
@@ -87,11 +87,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esas son las unidades en las que se mide la distancia."
+           "v": "Those are the units in which the distance is measured."
           },
           "text": {
            "t": "str",
-           "v": "Unidades:"
+           "v": "Units:"
           }
          }
         }
@@ -109,7 +109,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "MÉTRICO (mm)"
+           "v": "METRIC (mm)"
           },
           "enabled": {
            "t": "bool",
@@ -131,11 +131,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El cursor del mouse se ajustará al centro de la almohadilla / taladro\ncuando se cierne sobre la geometría de la almohadilla / taladro."
+           "v": "Mouse cursor will snap to the center of the pad/drill\nwhen it is hovering over the geometry of the pad/drill."
           },
           "text": {
            "t": "str",
-           "v": "Ajustar al centro"
+           "v": "Snap to center"
           },
           "hidden": {
            "t": "bool",
@@ -188,11 +188,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esto mide las coordenadas del punto de inicio."
+           "v": "This is measuring Start point coordinates."
           },
           "text": {
            "t": "str",
-           "v": "Iniciar coordenadas:"
+           "v": "Start Coords:"
           }
          }
         }
@@ -210,7 +210,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esto mide las coordenadas del punto de inicio."
+           "v": "This is measuring Start point coordinates."
           },
           "text": {
            "t": "str",
@@ -240,11 +240,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Estas son las coordenadas del punto de parada de medición."
+           "v": "This is the measuring Stop point coordinates."
           },
           "text": {
            "t": "str",
-           "v": "Detener coordenadas:"
+           "v": "Stop Coords:"
           }
          }
         }
@@ -262,7 +262,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Estas son las coordenadas del punto de parada de medición."
+           "v": "This is the measuring Stop point coordinates."
           },
           "text": {
            "t": "str",
@@ -292,7 +292,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esta es la distancia medida sobre el eje X."
+           "v": "This is the distance measured over the X axis."
           },
           "text": {
            "t": "str",
@@ -314,7 +314,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esta es la distancia medida sobre el eje X."
+           "v": "This is the distance measured over the X axis."
           },
           "text": {
            "t": "str",
@@ -344,7 +344,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esta es la distancia medida sobre el eje Y."
+           "v": "This is the distance measured over the Y axis."
           },
           "text": {
            "t": "str",
@@ -366,7 +366,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esta es la distancia medida sobre el eje Y."
+           "v": "This is the distance measured over the Y axis."
           },
           "text": {
            "t": "str",
@@ -396,11 +396,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el ángulo de orientación de la línea de medición."
+           "v": "This is orientation angle of the measuring line."
           },
           "text": {
            "t": "str",
-           "v": "Ángulo:"
+           "v": "Angle:"
           }
          }
         }
@@ -418,7 +418,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el ángulo de orientación de la línea de medición."
+           "v": "This is orientation angle of the measuring line."
           },
           "text": {
            "t": "str",
@@ -448,11 +448,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el punto a punto de la distancia euclidiana."
+           "v": "This is the point to point Euclidian distance."
           },
           "text": {
            "t": "str",
-           "v": "<b>DISTANCIA:</b>"
+           "v": "<b>DISTANCE:</b>"
           }
          }
         }
@@ -470,7 +470,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el punto a punto de la distancia euclidiana."
+           "v": "This is the point to point Euclidian distance."
           },
           "text": {
            "t": "str",
@@ -500,7 +500,7 @@
       "props": {
        "text": {
         "t": "str",
-        "v": "Trabajando..."
+        "v": "Working..."
        },
        "enabled": {
         "t": "bool",

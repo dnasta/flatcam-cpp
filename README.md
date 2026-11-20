@@ -11,7 +11,9 @@ clase del port indica en su documentación de qué archivo y función de Python 
 El port está completo: todo lo que tiene FlatCAM 2024.4 (abrir y exportar Gerber, Excellon, G-code, SVG, DXF, PDF,
 HPGL2 e imágenes; Isolation, NCC, Paint, Perforación, Corte, PCB a 2 caras y las demás herramientas; los editores de
 Geometría, Excellon, Gerber y G-code; los 20 postprocesadores; las Preferencias; la consola Tcl con sus 65 comandos;
-abrir y guardar proyectos `.FlatPrj` compatibles con el original). Ver `docs/NOTAS_1.0.0.md`.
+abrir y guardar proyectos `.FlatPrj` compatibles con el original), en los 9 idiomas del original (alemán, inglés,
+español, francés, italiano, portugués de Brasil, rumano, ruso y turco: de fábrica el del sistema, y se cambia en
+Preferencias -> General -> Idiomas). Ver `docs/NOTAS_1.0.0.md`.
 
 Cada parte se verificó contra el código **original** con oráculos en Python y, donde había, contra el G-code real
 generado por FlatCAM 2024.4. Los errores del FlatCAM original están **corregidos**

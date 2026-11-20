@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Herra. de Pasta de Soldadura"
+    "v": "Solder Paste Tool"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Herra. de Pasta de Soldadura"
+        "v": "Solder Paste Tool"
        }
       }
      }
@@ -81,7 +81,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Objeto de pasta de soldadura Gerber."
+           "v": "Gerber Solderpaste object."
           },
           "text": {
            "t": "str",
@@ -146,11 +146,11 @@
       "props": {
        "toolTip": {
         "t": "str",
-        "v": "Conjunto de herramientas desde el cual el algoritmo\nelegirá los que se usan para dispensar pasta de soldadura."
+        "v": "Tools pool from which the algorithm\nwill pick the ones used for dispensing solder paste."
        },
        "text": {
         "t": "str",
-        "v": "<b>Tabla de herramientas</b>"
+        "v": "<b>Tools Table</b>"
        }
       }
      }
@@ -198,7 +198,7 @@
        "cols": 3,
        "labels": [
         "#",
-        "Diámetro",
+        "Diameter",
         ""
        ],
        "hheader": true,
@@ -241,11 +241,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Diámetro de la nueva herramienta para agregar en la tabla de herramientas"
+           "v": "Diameter for the new tool to add in the Tool Table"
           },
           "text": {
            "t": "str",
-           "v": "<b>Nueva herra. de boquilla:</b>"
+           "v": "<b>New Nozzle Tool:</b>"
           }
          }
         }
@@ -325,11 +325,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Agregue una nueva herramienta de boquilla a la tabla de herramientas\ncon el diámetro especificado anteriormente."
+           "v": "Add a new nozzle tool to the Tool Table\nwith the diameter specified above."
           },
           "text": {
            "t": "str",
-           "v": "Añadir"
+           "v": "Add"
           }
          }
         }
@@ -347,11 +347,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Eliminar una selección de herramientas en la tabla de herramientas\nseleccionando primero una fila en la Tabla de herramientas."
+           "v": "Delete a selection of tools in the Tool Table\nby first selecting a row in the Tool Table."
           },
           "text": {
            "t": "str",
-           "v": "Borrar"
+           "v": "Delete"
           }
          }
         }
@@ -434,11 +434,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El primer paso es seleccionar una serie de herramientas de boquillas para su uso\ny luego opcionalmente modificar los parámetros GCode a continuación."
+           "v": "First step is to select a number of nozzle tools for usage\nand then optionally modify the GCode parameters below."
           },
           "text": {
            "t": "str",
-           "v": "<b>PASO 1:</b>"
+           "v": "<b>STEP 1:</b>"
           }
          }
         }
@@ -456,7 +456,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "Seleccionar herramientas.\nModificar parámetros."
+           "v": "Select tools.\nModify parameters."
           }
          }
         }
@@ -514,11 +514,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "La altura (Z) cuando comienza la dispensación de pasta de soldadura."
+               "v": "The height (Z) when solder paste dispensing starts."
               },
               "text": {
                "t": "str",
-               "v": "Inicio de dispen. Z:"
+               "v": "Z Dispense Start:"
               }
              }
             }
@@ -562,11 +562,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "La altura (Z) al dispensar pasta de soldadura."
+               "v": "The height (Z) when doing solder paste dispensing."
               },
               "text": {
                "t": "str",
-               "v": "Dispensación Z:"
+               "v": "Z Dispense:"
               }
              }
             }
@@ -610,11 +610,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "La altura (Z) cuando se detiene la dispensación de pasta de soldadura."
+               "v": "The height (Z) when solder paste dispensing stops."
               },
               "text": {
                "t": "str",
-               "v": "Parada de dispen. Z:"
+               "v": "Z Dispense Stop:"
               }
              }
             }
@@ -658,11 +658,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "La altura (Z) para viajar entre almohadillas\n(sin dispensar pasta de soldadura)."
+               "v": "The height (Z) for travel between pads\n(without dispensing solder paste)."
               },
               "text": {
                "t": "str",
-               "v": "Viajar Z:"
+               "v": "Z Travel:"
               }
              }
             }
@@ -706,11 +706,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "La altura (Z) para el cambio de herramienta (boquilla)."
+               "v": "The height (Z) for tool (nozzle) change."
               },
               "text": {
                "t": "str",
-               "v": "Cambio de herra. Z:"
+               "v": "Z Toolchange:"
               }
              }
             }
@@ -754,11 +754,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "La ubicación X, Y para el cambio de herramienta (boquilla).\nEl formato es (x, y) donde x e y son números reales."
+               "v": "The X,Y location for tool (nozzle) change.\nThe format is (x, y) where x and y are real numbers."
               },
               "text": {
                "t": "str",
-               "v": "Cambio de herra X, Y:"
+               "v": "Toolchange X-Y:"
               }
              }
             }
@@ -790,11 +790,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Avance (velocidad) mientras se mueve en el plano X-Y."
+               "v": "Feedrate (speed) while moving on the X-Y plane."
               },
               "text": {
                "t": "str",
-               "v": "Avance X-Y:"
+               "v": "Feedrate X-Y:"
               }
              }
             }
@@ -838,11 +838,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Avance (velocidad) mientras se mueve verticalmente\n(en el plano Z)."
+               "v": "Feedrate (speed) while moving vertically\n(on Z plane)."
               },
               "text": {
                "t": "str",
-               "v": "Avance Z:"
+               "v": "Feedrate Z:"
               }
              }
             }
@@ -886,11 +886,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Avance (velocidad) mientras se mueve verticalmente\npara dispensar la posición (en el plano Z)."
+               "v": "Feedrate (speed) while moving up vertically\nto Dispense position (on Z plane)."
               },
               "text": {
                "t": "str",
-               "v": "Avance de Dispens. Z:"
+               "v": "Feedrate Z Dispense:"
               }
              }
             }
@@ -934,11 +934,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "La velocidad del dispensador mientras empuja la pasta de soldadura\na través de la boquilla dispensadora."
+               "v": "The dispenser speed while pushing solder paste\nthrough the dispenser nozzle."
               },
               "text": {
                "t": "str",
-               "v": "Veloc. del husillo FWD:"
+               "v": "Spindle Speed FWD:"
               }
              }
             }
@@ -978,11 +978,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Pausa después de la dispensación de soldadura."
+               "v": "Pause after solder dispensing."
               },
               "text": {
                "t": "str",
-               "v": "Morar FWD:"
+               "v": "Dwell FWD:"
               }
              }
             }
@@ -1026,11 +1026,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "La velocidad del dispensador mientras se retrae la pasta de soldadura\na través de la boquilla dispensadora."
+               "v": "The dispenser speed while retracting solder paste\nthrough the dispenser nozzle."
               },
               "text": {
                "t": "str",
-               "v": "Veloc. del husillo REV:"
+               "v": "Spindle Speed REV:"
               }
              }
             }
@@ -1070,11 +1070,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Pausa después de que el dispensador de pasta de soldadura se retraiga,\npara permitir el equilibrio de presión."
+               "v": "Pause after solder paste dispenser retracted,\nto allow pressure equilibrium."
               },
               "text": {
                "t": "str",
-               "v": "Morar REV:"
+               "v": "Dwell REV:"
               }
              }
             }
@@ -1118,11 +1118,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Archivos que controlan la generación de GCode."
+               "v": "Files that control the GCode generation."
               },
               "text": {
                "t": "str",
-               "v": "Postprocesador:"
+               "v": "Preprocessor:"
               }
              }
             }
@@ -1213,11 +1213,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "El segundo paso es crear una dispensación de pasta de soldadura\ngeometría de un archivo Gerber de máscara de pasta de soldadura."
+               "v": "Second step is to create a solder paste dispensing\ngeometry out of an Solder Paste Mask Gerber file."
               },
               "text": {
                "t": "str",
-               "v": "<b>PASO 2:</b>"
+               "v": "<b>STEP 2:</b>"
               }
              }
             }
@@ -1241,7 +1241,7 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Generar geometría de dispensación de pasta de soldadura."
+               "v": "Generate solder paste dispensing geometry."
               },
               "styleSheet": {
                "t": "str",
@@ -1249,7 +1249,7 @@
               },
               "text": {
                "t": "str",
-               "v": "Generar Geo"
+               "v": "Generate Geo"
               }
              }
             }
@@ -1286,11 +1286,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Objeto de pasta de soldadura de geometría.\nEl nombre del objeto tiene que terminar en:\n'_solderpaste' como protección."
+               "v": "Geometry Solder Paste object.\nThe name of the object has to end in:\n'_solderpaste' as a protection."
               },
               "text": {
                "t": "str",
-               "v": "Resultado Geo:"
+               "v": "Geo Result:"
               }
              }
             }
@@ -1356,11 +1356,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "El tercer paso es seleccionar una geometría de distribución de pasta de soldadura,\ny luego generar un objeto CNCJob.\n\nRECUERDE: si desea crear un CNCJob con nuevos parámetros,\nprimero necesitas generar una geometría con esos nuevos parámetros,\ny solo después de eso puede generar un CNCJob actualizado."
+               "v": "Third step is to select a solder paste dispensing geometry,\nand then generate a CNCJob object.\n\nREMEMBER: if you want to create a CNCJob with new parameters,\nfirst you need to generate a geometry with those new params,\nand only after that you can generate an updated CNCJob."
               },
               "text": {
                "t": "str",
-               "v": "<b>PASO 3:</b>"
+               "v": "<b>STEP 3:</b>"
               }
              }
             }
@@ -1384,7 +1384,7 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Generar GCodelo para dispensar pasta de soldadura\nen almohadillas de PCB."
+               "v": "Generate GCode for Solder Paste dispensing\non PCB pads."
               },
               "styleSheet": {
                "t": "str",
@@ -1392,7 +1392,7 @@
               },
               "text": {
                "t": "str",
-               "v": "Generar GCode"
+               "v": "Generate GCode"
               }
              }
             }
@@ -1429,11 +1429,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "CNCJob soldar pegar objeto.\nPara habilitar la sección de guardar GCode,\nel nombre del objeto debe terminar en:\n'_solderpaste' como protección."
+               "v": "CNCJob Solder paste object.\nIn order to enable the GCode save section,\nthe name of the object has to end in:\n'_solderpaste' as a protection."
               },
               "text": {
                "t": "str",
-               "v": "Resultado del CNC:"
+               "v": "CNC Result:"
               }
              }
             }
@@ -1500,11 +1500,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Cuarto paso (y último) es seleccionar un CNCJob hecho de\nuna geometría de dispensación de pasta de soldadura, y luego ver / guardar su código GC."
+               "v": "Fourth step (and last) is to select a CNCJob made from \na solder paste dispensing geometry, and then view/save it's GCode."
               },
               "text": {
                "t": "str",
-               "v": "<b>PASO 4:</b>"
+               "v": "<b>STEP 4:</b>"
               }
              }
             }
@@ -1528,7 +1528,7 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Ver el GCode generado para la dispensación de pasta de soldadura\nen almohadillas de PCB."
+               "v": "View the generated GCode for Solder Paste dispensing\non PCB pads."
               },
               "styleSheet": {
                "t": "str",
@@ -1536,7 +1536,7 @@
               },
               "text": {
                "t": "str",
-               "v": "Ver GCode"
+               "v": "View GCode"
               }
              }
             }
@@ -1560,7 +1560,7 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Guarde el GCode generado para la dispensación de pasta de soldadura\nen almohadillas de PCB, a un archivo."
+               "v": "Save the generated GCode for Solder Paste dispensing\non PCB pads, to a file."
               },
               "styleSheet": {
                "t": "str",
@@ -1568,7 +1568,7 @@
               },
               "text": {
                "t": "str",
-               "v": "Guardar GCode"
+               "v": "Save GCode"
               }
              }
             }
@@ -1606,7 +1606,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Restablecerá los parámetros de la herramienta."
+        "v": "Will reset the tool parameters."
        },
        "styleSheet": {
         "t": "str",
@@ -1614,7 +1614,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Restablecer la Herramienta"
+        "v": "Reset Tool"
        },
        "icon": {
         "t": "QIcon",

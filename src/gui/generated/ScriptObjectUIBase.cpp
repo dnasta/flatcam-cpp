@@ -4,6 +4,8 @@
 #include <QKeySequence>
 #include <QSpacerItem>
 
+#include "gui/Translation.h"
+
 namespace flatcam::gui {
 
 void ScriptObjectUIBase::setupUi() {
@@ -19,12 +21,12 @@ void ScriptObjectUIBase::setupUi() {
     icon->setPixmap(QPixmap(QString::fromUtf8(":/images/script_new24.png")));
     title_box->addWidget(icon, 0);
     title_label = new FCLabel(nullptr);
-    title_label->setText(QString::fromUtf8("<font size=5><b>Objeto de script</b></font>"));
+    title_label->setText(trUi_(QString::fromUtf8("<font size=5><b>Script Object</b></font>")));
     title_box->addWidget(title_label, 1);
     level = new FCLabel(nullptr);
     level->setProperty("alignment", 130);
-    level->setText(QString::fromUtf8("<span style=\"color:green;\"><b>BASIC</b></span>"));
-    level->setToolTip(QString::fromUtf8("BASIC es adecuado para un principiante. Muchos parámetros\nestán ocultos para el usuario en este modo.\nEl modo AVANZADO pondrá a disposición todos los parámetros.\n\nPara cambiar el NIVEL de la aplicación, vaya a:\nEditar -> Preferencias -> General y verificar:\n'APP. NIVEL 'botón de radio."));
+    level->setText(trUi_(QString::fromUtf8("<span style=\"color:green;\"><b>Basic</b></span>")));
+    level->setToolTip(trUi_(QString::fromUtf8("BASIC is suitable for a beginner. Many parameters\nare hidden from the user in this mode.\nADVANCED mode will make available all parameters.\n\nTo change the application LEVEL, go to:\nEdit -> Preferences -> General and check:\n'APP. LEVEL' radio button.")));
     title_box->addWidget(level, 0);
     lay1->addLayout(title_box, 0);
     custom_box = new QVBoxLayout();
@@ -34,10 +36,10 @@ void ScriptObjectUIBase::setupUi() {
     name_hlay->setContentsMargins(0, 0, 0, 0);
     name_hlay->setSpacing(6);
     auto* w2 = new FCLabel(nullptr);
-    w2->setText(QString::fromUtf8("<b>Nombre:</b>"));
+    w2->setText(trUi_(QString::fromUtf8("<b>Name:</b>")));
     name_hlay->addWidget(w2, 0);
     name_entry = new FCEntry(nullptr);
-    name_entry->setText(QString::fromUtf8("x"));
+    name_entry->setText(trUi_(QString::fromUtf8("x")));
     name_hlay->addWidget(name_entry, 0);
     custom_box->addLayout(name_hlay, 0);
     auto* lay3 = new QHBoxLayout();
@@ -47,8 +49,8 @@ void ScriptObjectUIBase::setupUi() {
     autocomplete_cb->setChecked(true);
     { QFont f = autocomplete_cb->font(); f.setBold(true); autocomplete_cb->setFont(f); }
     autocomplete_cb->setStyleSheet(QString::fromUtf8("\n\t\t\tQCheckBox {font-weight: bold; color: black}\n\t\t\t"));
-    autocomplete_cb->setText(QString::fromUtf8("Autocompletador"));
-    autocomplete_cb->setToolTip(QString::fromUtf8("Esto selecciona si el autocompletador está habilitado en el Editor de secuencias de comandos."));
+    autocomplete_cb->setText(trUi_(QString::fromUtf8("Auto Completer")));
+    autocomplete_cb->setToolTip(trUi_(QString::fromUtf8("This selects if the auto completer is enabled in the Script Editor.")));
     lay3->addWidget(autocomplete_cb, 0);
     lay3->addItem(new QSpacerItem(0, 0, QSizePolicy::Policy(7), QSizePolicy::Policy(1)));
     custom_box->addLayout(lay3, 0);
