@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "editors/GrbEditorModel.h"
 
 #include <algorithm>
@@ -232,7 +233,8 @@ void GrbEditorModel::buffer(const std::vector<std::string>& codes, double dist, 
             if (std::find(selected.begin(), selected.end(), s) == selected.end()) continue;
             ApertureGeometry n;
             if (s->solid) n.solid = s->solid->buffer(dist, 16, js);
-            if (s->follow) n.follow = s->follow->buffer(dist, 16, js);
+            // corregido: la línea de seguimiento queda como estaba (el original la engrosa y pasa a ser un polígono)
+            if (s->follow) n.follow = reproduceOriginalBugs() ? s->follow->buffer(dist, 16, js) : *s->follow;
             if (s->clear) n.clear = s->clear->buffer(dist, 16, js);
             s = std::make_shared<ApertureGeometry>(n);
         }

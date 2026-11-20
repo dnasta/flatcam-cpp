@@ -35,8 +35,8 @@ std::optional<ApertureGeometry> pad(const Aperture& ap, const Point2D& p, int st
  * @brief El punto intermedio de una pista o región con codo (`bend_mode` 1 a 4; 5 es ángulo libre).
  *
  * Reproduce las tres variantes del original: la pista (`TrackEditorGrb`) y el primer tramo de la región usan
- * `old_y - gridy * (mx - my)` cuando el punto está más arriba (el codo sale para abajo); los tramos siguientes de la
- * región, `old_y + gridy * (my - mx)`.
+ * `old_y - gridy * (mx - my)` cuando el punto está más arriba; los tramos siguientes de la región,
+ * `old_y + gridy * (my - mx)`, que es lo mismo (el codo sale para arriba en los dos casos).
  * @param mode Modo. @param old El último punto. @param cur El mouse. @param gx Grilla X. @param gy Grilla Y.
  * @param later Tramo de la región después del primero. @param prev El punto anterior (queda si no hay uno nuevo).
  * @return El punto, si hay.
