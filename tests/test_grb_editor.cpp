@@ -4,6 +4,7 @@
 #include <string>
 #include <algorithm>
 
+#include "core/OriginalBugs.h"
 #include "editors/GrbEditorModel.h"
 #include "golden_grb_editor.h"
 #include "parsers/Gerber.h"
@@ -62,4 +63,27 @@ TEST(GrbEditor, SemiDiscsMatchTheOriginal) {
         ASSERT_TRUE(e.has_value());
         EXPECT_TRUE(e->solid->equalsExact(Shape::fromWkt(s.wkt), 1e-9)) << e->solid->toWkt() << "\n" << s.wkt;
     }
+}
+
+TEST(GrbEditorFixed, BendUpGoesUpAndBufferKeepsTheFollowLine) {
+    flatcam::OriginalBugsScope fixed(false);
+    using flatcam::Point2D;
+    // Modo 1 (45 grados), el mouse más arriba que a la derecha: el codo sale para arriba (también en el original).
+    const auto b = flatcam::grbdraw::bend(1, {0, 0}, {1, 3}, 1, 1, false, std::nullopt);
+    ASSERT_TRUE(b.has_value());
+    EXPECT_DOUBLE_EQ(b->x, 0);
+    EXPECT_DOUBLE_EQ(b->y, 2);
+    // Engrosar no convierte la línea de seguimiento en un polígono.
+    flatcam::GrbEditorModel m;
+    flatcam::ApertureGeometry e;
+    const flatcam::Shape l = flatcam::Shape::lineString({{0, 0}, {5, 0}});
+    e.solid = l.buffer(0.5);
+    e.follow = l;
+    m.ensureZero();
+    auto s = m.add("0", e);
+    m.selected = {s};
+    m.buffer({"0"}, 0.2, 1);
+    const auto& g = m.aperture("0")->geometry.front();
+    ASSERT_TRUE(g->follow.has_value());
+    EXPECT_EQ(g->follow->type(), flatcam::ShapeType::LineString);
 }

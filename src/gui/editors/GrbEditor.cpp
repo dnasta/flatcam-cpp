@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/editors/GrbEditor.h"
 
 #include <QApplication>
@@ -521,8 +522,12 @@ void GrbEditor::onPress(const QPointF& world, Qt::MouseButton button) {
         return;
     } else if (n == "region") {
         inAction_ = true;
-        if (t.interPoint) t.points.push_back(*t.interPoint);
-        t.points.push_back(pos_);
+        // Con la grilla apagada el punto intermedio es el mismo clic y cada punto se repite (corregido: solo uno nuevo).
+        const auto addPoint = [&](const Point2D& q) {
+            if (reproduceOriginalBugs() || t.points.empty() || !(t.points.back() == q)) t.points.push_back(q);
+        };
+        if (t.interPoint) addPoint(*t.interPoint);
+        addPoint(pos_);
         ui->inform(tr_("Click on next Point or click right mouse button to complete ..."));
         return;
     } else if (n == "disc") {
@@ -711,7 +716,10 @@ void GrbEditor::onRelease(const QPointF& world, Qt::MouseButton button, bool dra
                     e.follow = l;
                     e.solid = l.buffer(t.bufVal, defInt("gerber_circle_steps", 64)).buffer(0);
                 }
-                if (e.solid) t.geometry = {e};
+                // El último tramo ya se agregó con el último clic (corregido: no se agrega otra vez si no hay uno nuevo).
+                const bool repeated = !reproduceOriginalBugs() && !t.points.empty() && !t.tempPoints.empty() &&
+                                      t.tempPoints.back() == t.points.back();
+                if (e.solid && !repeated) t.geometry = {e};
             } else if (t.points.size() > 2) {
                 model_.ensureZero();
                 lastAperture_ = "0";
