@@ -1,0 +1,156 @@
+# Arma los instaladores: macOS (.dmg, Apple Silicon), Windows (instalador y .zip), Linux (.deb, .rpm y AppImage).
+# Con una etiqueta v* (git tag v1.0.0 && git push origin v1.0.0) los publica en un Release de GitHub; a mano
+# (Actions -> Paquetes -> Run workflow) solo los deja como artefactos de la corrida.
+name: Paquetes
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  macos:
+    name: macOS (Apple Silicon)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependencias (Homebrew)
+        run: brew install ninja geos qt tcl-tk freetype xz
+      - name: Compilar
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFLATCAM_BUILD_TESTS=OFF -DFLATCAM_BUILD_DOCS=OFF
+          cmake --build build
+      - name: Paquete
+        run: tools/package_macos.sh build build/dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: build/dist/*.dmg
+
+  windows:
+    name: Windows (x64)
+    runs-on: windows-2022
+    env:
+      VCPKG_DEFAULT_TRIPLET: x64-windows
+      VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg-cache,readwrite
+    steps:
+      - uses: actions/checkout@v4
+      - name: Caché de vcpkg
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/vcpkg-cache
+          key: vcpkg-${{ runner.os }}-geos-lzma-freetype-tcl-v1
+      - name: Dependencias (vcpkg)
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force "${{ github.workspace }}/vcpkg-cache" | Out-Null
+          & "$env:VCPKG_INSTALLATION_ROOT/vcpkg" install geos liblzma freetype tcl
+      - name: Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.*'
+          arch: win64_msvc2022_64
+          modules: qtserialport
+          cache: true
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Compilar
+        shell: pwsh
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFLATCAM_BUILD_TESTS=OFF -DFLATCAM_BUILD_DOCS=OFF `
+            "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+          cmake --build build
+      - name: Paquete
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe")) { choco install innosetup -y --no-progress }
+          ./tools/package_windows.ps1 -Build build -Out build/dist
+      - name: Que arranque (captura de pantalla)
+        shell: pwsh
+        run: |
+          $p = Start-Process build/dist/FlatCAM/FlatCAM.exe -ArgumentList "--screenshot","shot.png" -PassThru -Wait
+          if (-not (Test-Path shot.png)) { throw "FlatCAM.exe no arrancó (código $($p.ExitCode))" }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: |
+            build/dist/*.exe
+            build/dist/*.zip
+
+  linux-deb:
+    name: Linux (.deb y AppImage, Ubuntu 24.04)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependencias
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential cmake ninja-build dpkg-dev file libgeos-dev \
+            liblzma-dev qt6-base-dev qt6-base-dev-tools qt6-svg-dev libqt6opengl6-dev qt6-serialport-dev qt6-wayland \
+            libgl-dev tcl-dev libfreetype-dev libfuse2 xvfb xauth libgl1-mesa-dri libxkbcommon-x11-0 libxcb-cursor0 \
+            libxcb-icccm4 libxcb-keysyms1 libxcb-shape0 libxcb-xinerama0
+      - name: Compilar
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFLATCAM_BUILD_TESTS=OFF -DFLATCAM_BUILD_DOCS=OFF
+          cmake --build build
+      - name: Paquetes
+        run: QMAKE=/usr/lib/qt6/bin/qmake tools/package_linux.sh build build/dist deb appimage
+      - name: Que arranquen (.deb instalado y AppImage)
+        run: |
+          sudo apt-get install -y ./build/dist/*.deb
+          xvfb-run -a flatcam --screenshot /tmp/deb.png && test -s /tmp/deb.png
+          xvfb-run -a env APPIMAGE_EXTRACT_AND_RUN=1 build/dist/*.AppImage --screenshot /tmp/appimage.png
+          test -s /tmp/appimage.png
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-deb
+          path: |
+            build/dist/*.deb
+            build/dist/*.AppImage
+
+  linux-rpm:
+    name: Linux (.rpm, Fedora)
+    runs-on: ubuntu-24.04
+    container: fedora:41
+    steps:
+      - name: Dependencias
+        run: |
+          dnf install -y git cmake ninja-build gcc-c++ rpm-build geos-devel xz-devel qt6-qtbase-devel qt6-qtsvg-devel \
+            qt6-qtserialport-devel tcl-devel freetype-devel mesa-libGL-devel xorg-x11-server-Xvfb mesa-dri-drivers
+      - uses: actions/checkout@v4
+      - name: Compilar
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DFLATCAM_BUILD_TESTS=OFF -DFLATCAM_BUILD_DOCS=OFF
+          cmake --build build
+      - name: Paquete
+        run: tools/package_linux.sh build build/dist rpm
+      - name: Que arranque (.rpm instalado)
+        run: |
+          dnf install -y ./build/dist/*.rpm
+          Xvfb :99 & sleep 2
+          DISPLAY=:99 flatcam --screenshot /tmp/rpm.png && test -s /tmp/rpm.png
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-rpm
+          path: build/dist/*.rpm
+
+  release:
+    name: Publicar el Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [macos, windows, linux-deb, linux-rpm]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          notes=docs/NOTAS_${GITHUB_REF_NAME#v}.md
+          [ -f "$notes" ] || notes=/dev/null
+          gh release create "$GITHUB_REF_NAME" dist/* --title "FlatCAM-cpp ${GITHUB_REF_NAME#v}" --notes-file "$notes"
