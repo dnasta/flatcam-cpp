@@ -188,13 +188,25 @@ std::string exportPrintSvg(const std::vector<PrintSvgItem>& items, const Boundin
     for (const PrintSvgItem& it : items) {
         // Geometry.export_svg sin transformaciones: la unión, con el trazo de 0,01.
         XmlNode root = parseMiniXml(shapelySvg(Shape::unaryUnion(it.shapes), 0.01));
+        bool any = false;
         for (XmlNode& c : root.children) {
             if (c.tag.empty()) continue;
             c.set("fill", it.color);
             c.set("opacity", it.opacity);
             c.set("stroke", it.color);
+            any = true;
         }
-        doc += "b'" + lxmlToString(root) + "'";
+        if (reproduceOriginalBugs()) {
+            doc += "b'" + lxmlToString(root) + "'";
+        } else {
+            // Corregido: sin "b'" y "'", y un objeto de un solo polígono (la raíz es el trayecto) también se recolorea.
+            if (!any) {
+                root.set("fill", it.color);
+                root.set("opacity", it.opacity);
+                root.set("stroke", it.color);
+            }
+            doc += lxmlToString(root);
+        }
     }
     doc += "</g> </svg>";
     return prettyMiniXml(parseMiniXml(doc));

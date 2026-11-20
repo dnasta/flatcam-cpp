@@ -251,6 +251,34 @@ void App::onFileExportPng() {
     exportPngFile(f);
 }
 
+namespace {
+/** Los cortes de un CNC Job engrosados con el radio de su herramienta (para imprimirlos). */
+ShapeList printedCuts(const CNCJobObject* job) {
+    const auto& tools = job->tools();
+    const auto& gcodes = job->job().toolGcodes();
+    const bool drilling = job->isDrilling();
+    std::vector<std::pair<std::string, const CncToolRow*>> parts;
+    if (gcodes.empty() || gcodes.size() != tools.size())
+        parts.push_back({job->job().gcode(), tools.empty() ? nullptr : &tools.back()});
+    else
+        for (std::size_t i = 0; i < gcodes.size(); ++i) parts.push_back({gcodes[i], &tools[i]});
+    ShapeList out;
+    for (const auto& [gcode, row] : parts) {
+        const bool laser =
+            row && row->data[drilling ? "tools_drill_ppname_e" : "ppname_g"].text().find("laser") != std::string::npos;
+        const double dia = row ? row->dia : defNum("cncjob_tooldia", 1.0);
+        const JsonValue parsed = ProjectIO::gcodeParse(gcode, laser, drilling ? dia : 0.0);
+        for (const JsonValue& seg : parsed.items()) {
+            const std::string k = seg["kind"].items().empty() ? std::string() : seg["kind"].items()[0].text();
+            if (k != "C") continue;
+            const Shape g = Shape::fromWkt(seg["geom"]["__inst__"].text());
+            out.push_back(g.type() == ShapeType::Polygon ? g : g.buffer(dia / 2));
+        }
+    }
+    return out;
+}
+}  // namespace
+
 bool App::printPdf(const QString& filename, const std::vector<FlatCAMObj*>& objs, std::string* svgOut) {
     if (objs.empty()) return false;
     std::vector<PrintSvgItem> items;
@@ -265,19 +293,34 @@ bool App::printPdf(const QString& filename, const std::vector<FlatCAMObj*>& objs
             shapes = e->excellon().solidGeometry();
         } else if (auto* geo = dynamic_cast<GeometryObject*>(o)) {
             for (const auto& [id, t] : geo->tools()) shapes.insert(shapes.end(), t.solidGeometry.begin(), t.solidGeometry.end());
+        } else if (auto* job = dynamic_cast<CNCJobObject*>(o); job && !reproduceOriginalBugs()) {
+            shapes = printedCuts(job);  // corregido: los cortes del CNC Job
         } else {
             // CNCJob.export_svg no acepta los factores de escala: TypeError, no se escribe nada.
             ui_->inform("[ERROR_NOTCL] " + tr_("Failed."));
             return false;
         }
-        if (o->kind() == ObjectKind::Geometry) {
+        if (!reproduceOriginalBugs()) {
+            // Corregido: la opacidad es un número (el alfa entre 0 y 1), y cada objeto tiene la suya.
+            const QColor c = o->kind() == ObjectKind::Gerber || o->kind() == ObjectKind::Excellon
+                                 ? o->fillColor
+                                 : QColor(defStr("global_draw_color"));
+            color = c.name(QColor::HexRgb).toUpper().toStdString();
+            opacity = QString::number(o->kind() == ObjectKind::Gerber || o->kind() == ObjectKind::Excellon
+                                          ? c.alphaF() : 1.0, 'g', 4).toStdString();
+        } else if (o->kind() == ObjectKind::Geometry) {
             color = defStr("global_draw_color").toStdString();
         } else {
             color = o->fillColor.name(QColor::HexRgb).toUpper().toStdString();  // fill_color[:-2]
             opacity = alphaHex(o->fillColor);                                    // fill_color[-2:]
         }
         items.push_back({shapes, color, opacity});
-        const QRectF r = o->bounds();
+        QRectF r = o->bounds();
+        if (o->kind() == ObjectKind::CNCJob && !reproduceOriginalBugs()) {
+            const auto bb = Shape::unaryUnion(shapes).bounds();
+            if (!bb) continue;
+            r = QRectF(QPointF(bb->xmin, bb->ymin), QPointF(bb->xmax, bb->ymax));
+        }
         b = {std::min(b.xmin, r.left()), std::min(b.ymin, r.top()), std::max(b.xmax, r.right()), std::max(b.ymax, r.bottom())};
     }
     const std::string uom = appUnits().toLower() == "in" ? "in" : "mm";

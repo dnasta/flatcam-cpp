@@ -4154,3 +4154,27 @@ TEST(GuiFixed, AutolevelManualFirstPointIsTheCorner) {
     EXPECT_TRUE(al->points()[0].point.y < -30);
     al->onRelease(QPointF(0, 0), Qt::RightButton, false);
 }
+
+TEST(GuiFixed, PrintPdfRecolorsOpacityAndCncJobs) {
+    flatcam::OriginalBugsScope fixed(false);
+    App app;
+    FlatCAMObj* edge = app.openGerber(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-Edge_Cuts.gbr");
+    FlatCAMObj* pth = app.openExcellon(QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-PTH.drl");
+    FlatCAMObj* nc = app.openGcode(QString(FLATCAM_TEST_DATA_DIR) +
+                                   "/luz_de_noche/luz de noche Pascual-Edge_Cuts.gbr_cutout_cnc.nc");
+    ASSERT_NE(edge, nullptr);
+    ASSERT_NE(pth, nullptr);
+    ASSERT_NE(nc, nullptr);
+    edge->fillColor = QColor("#BBF268");
+    edge->fillColor.setAlpha(0xBF);
+    QTemporaryDir dir;
+    std::string svg;
+    ASSERT_TRUE(app.printPdf(dir.filePath("print.pdf"), {edge, pth, nc}, &svg));
+    EXPECT_EQ(svg.find("b'"), std::string::npos);
+    EXPECT_NE(svg.find("opacity=\"0.749\""), std::string::npos);
+    EXPECT_EQ(svg.find("opacity=\"BF\""), std::string::npos);
+    // Tres objetos, cada uno recoloreado (el CNC Job también se imprime).
+    std::size_t fills = 0;
+    for (std::size_t p = svg.find("fill=\"#"); p != std::string::npos; p = svg.find("fill=\"#", p + 1)) ++fills;
+    EXPECT_GE(fills, 3u);
+}
