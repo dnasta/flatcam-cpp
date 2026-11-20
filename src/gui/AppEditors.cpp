@@ -5,6 +5,7 @@
 #include <QTabBar>
 #include <algorithm>
 
+#include "core/OriginalBugs.h"
 #include "gui/App.h"
 #include "gui/MainGUI.h"
 #include "gui/Translation.h"
@@ -23,8 +24,9 @@ bool App::editorActive() const { return callSource_ != "app"; }
 
 void App::objectToEditor() {
     MainGUI* ui = ui_.get();
-    // Como el original, el menú Objetos queda deshabilitado aunque no se pueda editar el objeto elegido.
-    ui->menuobjects->setDisabled(true);
+    // Como el original, el menú Objetos queda deshabilitado aunque no se pueda editar el objeto elegido (corregido: se
+    // deshabilita recién al entrar al editor).
+    if (reproduceOriginalBugs()) ui->menuobjects->setDisabled(true);
     FlatCAMObj* obj = activeObject();
     if (!obj || obj->kind() == ObjectKind::Script || obj->kind() == ObjectKind::Document) {
         ui->inform("[WARNING_NOTCL] " + tr_("Select a Geometry, Gerber, Excellon or CNCJob Object to edit."));

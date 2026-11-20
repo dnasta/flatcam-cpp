@@ -62,16 +62,16 @@ public:
     void onFlipY();
     /** @brief `on_skewx`. @param val Ángulo. @param ref Referencia. */
     void onSkewX(std::optional<double> val = std::nullopt, std::optional<int> ref = std::nullopt);
-    /** @brief `on_skewy`. */
-    void onSkewY();
+    /** @brief `on_skewy`: inclina en Y. @param val El ángulo (o el del campo). @param ref La referencia (o la del combo). */
+    void onSkewY(std::optional<double> val = std::nullopt, std::optional<int> ref = std::nullopt);
     /** @brief `on_scalex`. */
     void onScaleX();
     /** @brief `on_scaley`. */
     void onScaleY();
     /** @brief `on_offx`. @param val Distancia (vacío: la del campo). */
     void onOffX(std::optional<double> val = std::nullopt);
-    /** @brief `on_offy`. */
-    void onOffY();
+    /** @brief `on_offy`: desplaza en Y. @param val La distancia (o la del campo). */
+    void onOffY(std::optional<double> val = std::nullopt);
     /** @brief `on_buffer_by_distance`. */
     void onBufferByDistance();
     /** @brief `on_buffer_by_factor`. */
@@ -127,6 +127,33 @@ private:
     GeoEditor* ed_;
 };
 
+class FCDoubleSpinner;
+class FCComboBox;
+class FCButton;
+
+/**
+ * @brief `BufferSelectionTool`: el panel de la herramienta Buffer del editor (distancia, esquinas y los tres botones).
+ *
+ * En el original no se puede abrir (`'%S:'` no es un formato válido, sección 14 de AGENTS.md); con los errores
+ * corregidos se arma a mano, con los mismos campos.
+ */
+class GeoBufferTool : public QWidget {
+    Q_OBJECT
+public:
+    /** @brief Crea el panel. @param ed El editor. @param parent Padre. */
+    explicit GeoBufferTool(GeoEditor* ed, QWidget* parent = nullptr);
+    /** @brief Hace el engrosado pedido (`on_buffer`, `on_buffer_int`, `on_buffer_ext`). @param kind Cuál. */
+    void apply(GeoEditorModel::BufferKind kind);
+    FCDoubleSpinner* buffer_distance_entry;  ///< Distancia.
+    FCComboBox* buffer_corner_cb;            ///< Redondo, Cuadrado, Biselado.
+    FCButton* buffer_int_button;             ///< "Buffer interior".
+    FCButton* buffer_ext_button;             ///< "Buffer exterior".
+    FCButton* buffer_button;                 ///< "Buffer completo".
+
+private:
+    GeoEditor* ed_;
+};
+
 /**
  * @brief `AppGeoEditor`: edita la geometría de un objeto Geometría (una herramienta de un multigeo).
  *
@@ -148,6 +175,10 @@ public:
     GeoTransformTool* transformTool() const { return transformTool_; }
     /** @brief El panel de Texto. @return El panel. */
     GeoTextTool* textTool() const { return textTool_; }
+    /** @brief El panel de Buffer (con los errores del original corregidos). @return El panel. */
+    GeoBufferTool* bufferTool() const { return bufferTool_; }
+    /** @brief La distancia del canvas que equivale a unos píxeles del clic (para elegir figuras). @return mm. */
+    double clickTolerance() const;
     /** @brief El modelo (figuras y elección). @return El modelo. */
     GeoEditorModel& model() { return model_; }
 
@@ -230,6 +261,7 @@ private:
     QPointer<GeoPaintTool> paintTool_;
     QPointer<GeoTransformTool> transformTool_;
     QPointer<GeoTextTool> textTool_;
+    QPointer<GeoBufferTool> bufferTool_;
     GeoEditorModel model_;
     std::unique_ptr<Tool> tool_;
     std::map<QString, QAction*> buttons_;

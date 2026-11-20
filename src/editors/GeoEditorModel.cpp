@@ -1,6 +1,8 @@
+#include "core/OriginalBugs.h"
 #include "editors/GeoEditorModel.h"
 
 #include <algorithm>
+#include <functional>
 #include <cmath>
 #include <limits>
 
@@ -206,6 +208,27 @@ std::vector<EditorShapePtr> GeoEditorModel::complete(const ShapeList& geometry, 
         }
     }
     (void)multiPolygonOfList;
+    if (climb && !reproduceOriginalBugs()) {
+        // Corregido: cada figura se invierte conservando su tipo (los anillos siguen siendo anillos y las múltiples,
+        // múltiples), en vez de juntarlo todo en un MultiPolygon.
+        std::function<Shape(const Shape&)> rev = [&](const Shape& g) -> Shape {
+            switch (g.type()) {
+                case ShapeType::Polygon: return reversedPolygon(g);
+                case ShapeType::LinearRing: return Shape::linearRing(reversed(g.coordinates()));
+                case ShapeType::LineString: return Shape::lineString(reversed(g.coordinates()));
+                default: break;
+            }
+            if (isMulti(g)) {
+                ShapeList parts;
+                for (const Shape& p : g.parts()) parts.push_back(rev(p));
+                return Shape::collection(parts);
+            }
+            return g;
+        };
+        std::vector<EditorShapePtr> out;
+        for (const Shape& g : geometry) out.push_back(add(rev(g)));
+        return out;
+    }
     // for geo in geom: una lista, un MultiPolygon o una figura múltiple se recorren.
     ShapeList items;
     if (list) items = geom;
@@ -216,13 +239,28 @@ std::vector<EditorShapePtr> GeoEditorModel::complete(const ShapeList& geometry, 
     return out;
 }
 
-void GeoEditorModel::clickSelect(const Point2D& p, bool toggle) {
-    const auto n = storage.nearest(p);
-    if (!n) {
-        selected.clear();
-        return;
+void GeoEditorModel::clickSelect(const Point2D& p, bool toggle, double tolerance) {
+    EditorShapePtr obj;
+    if (!reproduceOriginalBugs()) {
+        const Shape pt = Shape::point(p);
+        std::vector<EditorShapePtr> under;
+        for (const auto& o : storage.objects())
+            if (!o->geo.isEmpty() && o->geo.distance(pt) <= tolerance) under.push_back(o);
+        if (under.empty()) {
+            if (!toggle) selected.clear();
+            clickIndex_ = -1;
+            return;
+        }
+        clickIndex_ = (clickIndex_ + 1) % static_cast<int>(under.size());
+        obj = under[static_cast<std::size_t>(clickIndex_)];
+    } else {
+        const auto n = storage.nearest(p);
+        if (!n) {
+            selected.clear();
+            return;
+        }
+        obj = n->second;
     }
-    const EditorShapePtr obj = n->second;
     if (toggle) {
         auto it = std::find(selected.begin(), selected.end(), obj);
         if (it != selected.end()) selected.erase(it);
@@ -249,6 +287,7 @@ void GeoEditorModel::areaSelect(const Point2D& a, const Point2D& b, bool contain
 }
 
 void GeoEditorModel::unite() {
+    if (selected.empty() && !reproduceOriginalBugs()) return;  // corregido: sin nada elegido no agrega una figura vacía
     ShapeList geos;
     for (const auto& s : selected) geos.push_back(s->geo);
     const Shape r = Shape::unaryUnion(geos);
@@ -309,6 +348,26 @@ bool GeoEditorModel::cutpath() {
 
 std::optional<ShapeList> GeoEditorModel::explode() {
     ShapeList lines;
+    if (!reproduceOriginalBugs()) {
+        // Corregido: también las líneas, los anillos, las múltiples y los agujeros de los polígonos.
+        std::function<void(const Shape&)> split = [&](const Shape& g) {
+            const auto seg = [&](const std::vector<Point2D>& c) {
+                for (std::size_t i = 0; i + 1 < c.size(); ++i) lines.push_back(Shape::lineString({c[i], c[i + 1]}));
+            };
+            if (isMulti(g)) {
+                for (const Shape& p : g.parts()) split(p);
+            } else if (g.type() == ShapeType::Polygon) {
+                seg(g.exterior().coordinates());
+                for (const Shape& h : g.interiors()) seg(h.coordinates());
+            } else if (g.type() == ShapeType::LineString || g.type() == ShapeType::LinearRing) {
+                seg(g.coordinates());
+            }
+        };
+        for (const auto& s : selected) split(s->geo);
+        const auto sel = selected;
+        for (const auto& s : sel) remove(s);
+        return lines;
+    }
     for (const auto& s : selected) {
         if (s->geo.type() != ShapeType::Polygon) return std::nullopt;  // geo.exterior: AttributeError
         const auto ext = s->geo.exterior().coordinates();
@@ -331,7 +390,10 @@ void GeoEditorModel::erase(const Point2D& origin, const Point2D& destination) {
     }
     const Shape eraser = Shape::unaryUnion(er);
     for (const auto& o : storage.objects())
-        if (eraser.intersects(o->geo)) o->geo = o->geo.difference(eraser);
+        if (eraser.intersects(o->geo)) {
+            o->geo = o->geo.difference(eraser);
+            if (!reproduceOriginalBugs()) storage.reindex(o);  // corregido: los vértices nuevos
+        }
 }
 
 std::optional<std::string> GeoEditorModel::paint(double tooldia, double overlap, double margin, bool connect,
@@ -382,28 +444,69 @@ BoundingBox GeoEditorModel::selectionBounds() const {
 
 void GeoEditorModel::rotate(double angle, const Point2D& p) {
     for (const auto& s : selected) s->geo = s->geo.rotate(angle, p);
+    reindexSelected();
 }
 
 void GeoEditorModel::mirror(char axis, const Point2D& p) {
     const double xs = axis == 'X' ? 1.0 : -1.0, ys = axis == 'X' ? -1.0 : 1.0;
     for (const auto& s : selected) s->geo = s->geo.scale(xs, ys, p);
+    reindexSelected();
 }
 
 void GeoEditorModel::skew(double ax, double ay, const Point2D& p) {
     for (const auto& s : selected) s->geo = s->geo.skew(ax, ay, p);
+    reindexSelected();
 }
 
 void GeoEditorModel::scale(double fx, double fy, const Point2D& p) {
     for (const auto& s : selected) s->geo = s->geo.scale(fx, fy, p);
+    reindexSelected();
 }
 
 void GeoEditorModel::offset(double dx, double dy) {
     for (const auto& s : selected) s->geo = s->geo.translate(dx, dy);
+    reindexSelected();
 }
 
 void GeoEditorModel::buffer(double value, int join, bool factor) {
     for (const auto& s : selected)
         s->geo = factor ? s->geo.scale(value, value) : s->geo.buffer(value, 32, join == 1 ? JoinStyle::Round : JoinStyle::Mitre);
+    reindexSelected();
+}
+
+void GeoEditorModel::reindexSelected() {
+    if (reproduceOriginalBugs()) return;  // el original deja los vértices viejos en el índice
+    for (const auto& s : selected) storage.reindex(s);
+}
+
+std::optional<std::string> GeoEditorModel::bufferTool(BufferKind kind, double distance, int join, int steps) {
+    if (distance < 0) {
+        selected.clear();
+        return kind == BufferKind::Interior ? std::string("Negative buffer value is not accepted.")
+                                            : std::string("Negative buffer value is not accepted. Use Buffer interior to "
+                                                          "generate an 'inside' shape");
+    }
+    if (selected.empty()) return std::string("Nothing selected.");
+    const JoinStyle js = join == 1 ? JoinStyle::Round : join == 2 ? JoinStyle::Mitre : JoinStyle::Bevel;
+    const int res = steps / 4;
+    ShapeList results;
+    for (const auto& t : selected) {
+        Shape g = t->geo;
+        if (kind == BufferKind::Full) {
+            if (g.type() == ShapeType::Polygon && !g.isEmpty()) results.push_back(g.exterior().buffer(distance - 1e-10, res, js));
+            else results.push_back(g.buffer(distance - 1e-10, res, js));
+            continue;
+        }
+        if (g.type() == ShapeType::LinearRing) g = Shape::polygon(g.coordinates());
+        if (g.type() == ShapeType::Polygon && !g.isEmpty())
+            results.push_back(g.buffer(kind == BufferKind::Interior ? -distance + 1e-10 : distance, res, js));
+    }
+    if (results.empty()) {
+        selected.clear();
+        return std::string("Failed, the result is empty. Choose a different buffer value.");
+    }
+    for (const Shape& r : results) add(r);
+    return std::nullopt;
 }
 
 }  // namespace flatcam

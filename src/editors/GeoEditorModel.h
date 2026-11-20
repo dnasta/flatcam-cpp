@@ -93,8 +93,11 @@ public:
     /**
      * @brief `FCSelect.click_release`: elige la figura con el vértice más cercano a @p p.
      * @param p El punto. @param toggle La tecla de elección múltiple está apretada (agrega o quita).
+     * @param tolerance Con los errores del original corregidos: las figuras a esta distancia del clic son las que están
+     * bajo el mouse (cada clic pasa a la siguiente) y, si no hay ninguna, se borra la elección (el original elige
+     * siempre la más cercana, aunque esté lejos).
      */
-    void clickSelect(const Point2D& p, bool toggle);
+    void clickSelect(const Point2D& p, bool toggle, double tolerance = 0.0);
 
     /**
      * @brief `draw_selection_area_handler`: elige con un rectángulo.
@@ -159,6 +162,24 @@ public:
      * @param value Distancia o factor. @param join 1 redondo, 2 inglete. @param factor Escalar en vez de engrosar.
      */
     void buffer(double value, int join, bool factor);
+
+    /** @brief Qué engrosado hace la herramienta Buffer del editor. */
+    enum class BufferKind { Full, Interior, Exterior };
+
+    /**
+     * @brief La herramienta Buffer (`AppGeoEditor.buffer`, `buffer_int`, `buffer_ext`): agrega el engrosado de las
+     * elegidas (en el original la herramienta no se puede abrir).
+     * @param kind Completo (el contorno de los polígonos), interior o exterior.
+     * @param distance Distancia (no negativa). @param join 1 redondo, 2 inglete, 3 bisel. @param steps
+     * `geometry_circle_steps`.
+     * @return Vacío si salió bien, o el mensaje del original (en inglés, para traducirlo).
+     */
+    std::optional<std::string> bufferTool(BufferKind kind, double distance, int join, int steps);
+
+private:
+    int clickIndex_ = -1;  ///< `draw_shape_idx`: cuál de las figuras bajo el clic se eligió.
+    /** @brief Con los errores del original corregidos, vuelve a indexar las elegidas (cambiaron). */
+    void reindexSelected();
 };
 
 }  // namespace flatcam

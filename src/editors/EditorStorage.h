@@ -56,6 +56,12 @@ public:
      */
     std::optional<std::pair<Point2D, EditorShapePtr>> nearest(const Point2D& p) const;
 
+    /**
+     * @brief Vuelve a indexar los vértices de una figura que cambió (corregido: el original conserva los viejos).
+     * @param s La figura.
+     */
+    void reindex(const EditorShapePtr& s);
+
     /** @brief Vacía el almacén (`make_storage`). */
     void clear() { entries_.clear(); }
 

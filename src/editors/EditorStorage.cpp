@@ -30,6 +30,11 @@ std::vector<Point2D> EditorStorage::points(const Shape& g, std::optional<double>
 
 void EditorStorage::insert(const EditorShapePtr& s) { entries_.push_back({s, points(s->geo, tolerance)}); }
 
+void EditorStorage::reindex(const EditorShapePtr& s) {
+    for (Entry& e : entries_)
+        if (e.shape == s) e.points = points(s->geo, tolerance);
+}
+
 void EditorStorage::remove(const EditorShapePtr& s) {
     entries_.erase(std::remove_if(entries_.begin(), entries_.end(), [&](const Entry& e) { return e.shape == s; }),
                    entries_.end());
