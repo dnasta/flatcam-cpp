@@ -206,3 +206,16 @@ set_target_properties(flatcam PROPERTIES
     MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
     MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
     MACOSX_BUNDLE_COPYRIGHT "Licencia MIT. FlatCAM (c) 2014-2024 Juan Pablo Caram, Marius Stanciu y colaboradores; port a C++ (c) 2026 dnasta")
+
+# Instalación en Linux (los paquetes .deb y .rpm se arman con CPack; el AppImage con tools/package_linux.sh). En
+# macOS y Windows el paquete lo arman tools/package_macos.sh y tools/package_windows.ps1.
+if(UNIX AND NOT APPLE)
+    include(GNUInstallDirs)
+    set_target_properties(flatcam PROPERTIES OUTPUT_NAME "flatcam")
+    install(TARGETS flatcam RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(FILES resources/linux/flatcam.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+    foreach(size 16 24 32 128 256)
+        install(FILES resources/images/flatcam_icon${size}.png
+                DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/${size}x${size}/apps RENAME flatcam.png)
+    endforeach()
+endif()

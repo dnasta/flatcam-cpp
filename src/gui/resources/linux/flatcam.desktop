@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=FlatCAM
+GenericName=PCB CAM
+Comment=2D CAM for making PCBs with CNC routers and lasers
+Comment[es]=CAM 2D para fabricar PCB con CNC o láser
+Exec=flatcam %F
+Icon=flatcam
+Terminal=false
+Categories=Science;Electronics;Engineering;
+Keywords=PCB;Gerber;Excellon;G-code;CNC;Laser;
