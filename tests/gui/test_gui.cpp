@@ -4180,3 +4180,29 @@ TEST(GuiFixed, PrintPdfRecolorsOpacityAndCncJobs) {
     for (std::size_t p = svg.find("fill=\"#"); p != std::string::npos; p = svg.find("fill=\"#", p + 1)) ++fills;
     EXPECT_GE(fills, 3u);
 }
+
+// Corregido: un ".tap" (en la lista de Excellon y en la de G-code) se abre con un solo lector, según su contenido (el
+// original prueba los dos y uno falla con un error, "This is not GCODE" con un taladro).
+TEST(GuiFixed, TapFileOpensOnceByItsContent) {
+    QTemporaryDir tmp;
+    const QString gcode = tmp.path() + "/trabajo.tap", drill = tmp.path() + "/taladro.tap";
+    QFile::copy(QString(FLATCAM_TEST_DATA_DIR) + "/DosCau_PPal-Edge_Cuts.nc", gcode);
+    QFile::copy(QString(FLATCAM_TEST_DATA_DIR) + "/PCB principal-Drill.drl", drill);
+    {
+        App app;  // como el original: el Excellon se abre y el lector de G-code avisa el error
+        QStringList messages;
+        QObject::connect(app.ui(), &MainGUI::informed, [&messages](const QString& m) { messages << m; });
+        app.openByExtension(drill);
+        EXPECT_EQ(app.collection()->objects().size(), 1u);
+        EXPECT_TRUE(messages.join("\n").contains("[ERROR_NOTCL]"));
+    }
+    flatcam::OriginalBugsScope fixed(false);
+    App app;
+    FlatCAMObj* g = app.openByExtension(gcode);
+    ASSERT_NE(g, nullptr);
+    EXPECT_NE(dynamic_cast<CNCJobObject*>(g), nullptr);
+    FlatCAMObj* e = app.openByExtension(drill);
+    ASSERT_NE(e, nullptr);
+    EXPECT_NE(dynamic_cast<ExcellonObject*>(e), nullptr);
+    EXPECT_EQ(app.collection()->objects().size(), 2u);
+}

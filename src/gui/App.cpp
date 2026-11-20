@@ -762,11 +762,19 @@ void App::onFileOpenGcode() {
 
 FlatCAMObj* App::openByExtension(const QString& filename) {
     const QString ext = QFileInfo(filename).suffix().toLower();
-    // dropEvent de MainGUI: cada lista por separado (".tap" está en la de Excellon y en la de G-code: abre los dos).
+    // dropEvent de MainGUI: cada lista por separado (".tap" está en la de Excellon y en la de G-code: prueba los dos y uno
+    // falla con un error).
     static const QStringList kGcodeExt = {"cnc", "din", "dnc", "ecs", "eia", "fan", "fgc", "fnc", "gc", "gcd", "gcode",
                                           "h", "hnc", "i", "min", "mpf", "mpr", "nc", "ncc", "ncg", "ngc", "ncp", "out",
                                           "ply", "rol", "sbp", "tap", "xpi"};
     if (kGerberExt.contains(ext)) return openGerber(filename);
+    if (ext == "tap" && !reproduceOriginalBugs()) {
+        // Corregido: se abre una sola vez, según el contenido (la cabecera de un Excellon: M48 o una herramienta TnnC).
+        QFile f(filename);
+        const QString text = f.open(QIODevice::ReadOnly) ? QString::fromLatin1(f.read(1 << 20)) : QString();
+        static const QRegularExpression excellon(R"((^|\n)\s*(M48|T\d+C[\d.]+))");
+        return excellon.match(text).hasMatch() ? openExcellon(filename) : openGcode(filename);
+    }
     if (ext == "tap") {
         FlatCAMObj* e = openExcellon(filename);
         FlatCAMObj* g = openGcode(filename);
