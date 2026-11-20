@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(FlatCAMCpp
-        VERSION 0.1.0
+        VERSION 1.0.0
         DESCRIPTION "Port a C++17 / Qt6 de FlatCAM 2024.4 (CAM 2D para PCB)"
         LANGUAGES CXX)
 

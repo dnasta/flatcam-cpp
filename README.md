@@ -6,32 +6,34 @@ láser), pensado para compilar y ejecutarse en **macOS (Apple Silicon)**, **Wind
 El código fuente original en Python está en `reference/FlatCAM_2024_4/` y sirve como referencia: cada
 clase del port indica en su documentación de qué archivo y función de Python proviene.
 
-## Estado
+## Estado: versión 1.0.0
 
-| Fase | Contenido | Estado |
-|---|---|---|
-| 1 | CMake, Doxygen y núcleo de geometría (`Shape`, `Geometry`, `ArcMath`, `AffineTransform`) | Hecha |
-| 2 | Parsers de Gerber y Excellon, con tests contra archivos reales | Hecha |
-| 3 | Herramientas (Isolation, NCC, Paint, Drilling, CutOut, PCB a 2 caras) y salida de G-code | Hecha |
-| 4 | Interfaz Qt6 (ventana principal, árbol de proyecto, canvas `QOpenGLWidget`, paneles) | En curso: ventana principal idéntica a la original y canvas |
-| 5 | Herramientas secundarias y postprocesadores restantes | Pendiente |
+El port está completo: todo lo que tiene FlatCAM 2024.4 (abrir y exportar Gerber, Excellon, G-code, SVG, DXF, PDF,
+HPGL2 e imágenes; Isolation, NCC, Paint, Perforación, Corte, PCB a 2 caras y las demás herramientas; los editores de
+Geometría, Excellon, Gerber y G-code; los 20 postprocesadores; las Preferencias; la consola Tcl con sus 65 comandos;
+abrir y guardar proyectos `.FlatPrj` compatibles con el original). Ver `docs/NOTAS_1.0.0.md`.
 
-Quedan fuera del alcance los editores de Gerber, Geometría y Excellon.
+Cada parte se verificó contra el código **original** con oráculos en Python y, donde había, contra el G-code real
+generado por FlatCAM 2024.4. Los errores del FlatCAM original están **corregidos**
+en la aplicación; para comportarse exactamente como el original (por ejemplo, para comparar el G-code) se puede
+arrancar con `--original-bugs` o con la variable `FLATCAM_ORIGINAL_BUGS=1`.
 
 ## Estructura
 
 ```
 src/core/        Núcleo sin dependencias de Qt (Shape, Geometry, ArcMath, AffineTransform, Types)
 src/core/internal/  Detalles internos de GEOS (no forman parte de la API)
-src/parsers/     Lectores de Gerber, Excellon y macros de apertura
-src/tools/       Herramientas (NCC, Paint, CutOut, Isolation, PCB a 2 caras)
+src/parsers/     Lectores de Gerber, Excellon, SVG, DXF, PDF, HPGL2, imágenes y fuentes
+src/tools/       Herramientas (NCC, Paint, CutOut, Isolation, PCB a 2 caras, Panelizar, Film, ...)
+src/editors/     Modelos de los editores de Geometría, Excellon y Gerber (sin Qt)
+src/io/          Proyectos .FlatPrj y exportación (Gerber, Excellon, SVG, DXF)
 src/cam/         Generación de G-code y postprocesadores
 src/gui/         Interfaz Qt6: ventana principal, canvas OpenGL, widgets de FlatCAM; generated/ sale de tools/gui_dump/
 tools/gui_dump/  Generadores que construyen la interfaz ORIGINAL con PyQt5 y la vuelcan a C++ (y extraen íconos y textos)
 tests/           Tests unitarios (GoogleTest); los golden_*.h tienen valores de referencia de Shapely y de los
                  parsers originales de FlatCAM
 tests/data/      Gerber, Excellon y G-code reales de un proyecto (más parámetros en PARAMETROS.md)
-tests/tools/     Script que regenera esos valores de referencia
+tests/tools/     Oráculos: ejecutan el FlatCAM original y regeneran esos valores de referencia
 reference/       Fuentes originales de FlatCAM 2024.4 (solo lectura)
 ```
 
@@ -86,9 +88,10 @@ open build/doxygen/html/index.html      # en Linux: xdg-open
 ## Cómo se verifica
 
 Los valores esperados de los tests no se escribieron a mano. `tests/tools/gen_golden.py` los calcula con Shapely y
-numpy (buffers, uniones, transformaciones, arcos) y los oráculos `oracle_gerber.py` y `oracle_excellon.py` ejecutan
-los parsers **originales** de FlatCAM sobre los archivos de `tests/data/`. Así se comprueba que el port reproduce
-los resultados del programa original.
+numpy (buffers, uniones, transformaciones, arcos) y los oráculos de `tests/tools/` (`oracle_*.py`) ejecutan el código
+**original** de FlatCAM (parsers, herramientas, postprocesadores, editores, consola Tcl, la interfaz con PyQt5) sobre los
+archivos de `tests/data/`. Los tests corren con los errores del original activados (así se comparan con él) y cada
+corrección tiene su test aparte (`*Fixed.*`). El CI (GitHub Actions) compila y prueba en Linux y Windows.
 
 ## Licencia
 
