@@ -3,7 +3,7 @@
 
 Con la interfaz PyQt5 real abre los dos CNC Job del proyecto del usuario (`luz_de_noche_reducido.FlatPrj`: el corte
 y la perforación) como `open_project` (`from_dict`, `set_ui`, `build_ui`). El original no guarda `gc_start` en los
-proyectos y el port lo reconstruye (decisión del usuario, AGENTS.md 11.13); para comparar lo mismo, el oráculo le pone
+proyectos y el port lo reconstruye (decisión del usuario); para comparar lo mismo, el oráculo le pone
 el código de inicio del `.nc` real del usuario (idéntico al reconstruido) y arma `source_file` otra vez como `set_ui`.
 Después ejecuta el código ORIGINAL de:
 

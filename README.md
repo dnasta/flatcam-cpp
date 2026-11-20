@@ -16,7 +16,7 @@ español, francés, italiano, portugués de Brasil, rumano, ruso y turco: de fá
 Preferencias -> General -> Idiomas). Ver `docs/NOTAS_1.0.0.md`.
 
 Cada parte se verificó contra el código **original** con oráculos en Python y, donde había, contra el G-code real
-generado por FlatCAM 2024.4. Los errores del FlatCAM original (lista en `AGENTS.md`, sección 14) están **corregidos**
+generado por FlatCAM 2024.4. Los errores del FlatCAM original están **corregidos**
 en la aplicación; para comportarse exactamente como el original (por ejemplo, para comparar el G-code) se puede
 arrancar con `--original-bugs` o con la variable `FLATCAM_ORIGINAL_BUGS=1`.
 

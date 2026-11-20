@@ -28,11 +28,11 @@ mismos trazados, el taladrado con los mismos agujeros. La suite corre con dos ve
 
 ## Diferencias con el original
 
-- **Errores del original corregidos.** Más de 200 errores encontrados al portar (listados en `AGENTS.md`, sección 14)
+- **Errores del original corregidos.** Más de 200 errores encontrados al portar
   están corregidos en la aplicación: comandos Tcl que nunca funcionaban (exportar, fresar, pintar, panelizar...),
   importaciones de SVG, DXF y PDF, el editor de Geometría (la herramienta Buffer), los postprocesadores, Film,
   Calibración, etc. Con `--original-bugs` (o `FLATCAM_ORIGINAL_BUGS=1`) la aplicación se comporta como el original.
-- **Desvíos conscientes**, documentados en `AGENTS.md` (sección 11): el orden de los agujeros lo calcula un optimizador
+- **Desvíos conscientes**, documentados en el código (comentarios Doxygen): el orden de los agujeros lo calcula un optimizador
   propio (en vez de OR-Tools); el estilo de la interfaz es Fusion en todas las plataformas; los archivos se leen en el
   hilo de la interfaz; el G-code de láser por defecto es la variante de la 8.994 (`G00 Z0` al empezar).
 - **Pendiente:** aplicar el mapa de alturas de la autonivelación al G-code (en el original tampoco está hecho).

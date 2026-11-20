@@ -52,7 +52,7 @@ Shape rectangle(const Point2D& p1, const Point2D& p2);
 /**
  * @brief Las figuras del editor de Geometría y lo que se hace con ellas.
  *
- * Las operaciones siguen al original al pie de la letra, también en sus fallas (ver `AGENTS.md`, sección 14).
+ * Las operaciones siguen al original al pie de la letra, también en sus fallas (ver `core/OriginalBugs.h`).
  */
 class GeoEditorModel {
 public:

@@ -134,7 +134,7 @@ class FCButton;
 /**
  * @brief `BufferSelectionTool`: el panel de la herramienta Buffer del editor (distancia, esquinas y los tres botones).
  *
- * En el original no se puede abrir (`'%S:'` no es un formato válido, sección 14 de AGENTS.md); con los errores
+ * En el original no se puede abrir (`'%S:'` no es un formato válido); con los errores
  * corregidos se arma a mano, con los mismos campos.
  */
 class GeoBufferTool : public QWidget {

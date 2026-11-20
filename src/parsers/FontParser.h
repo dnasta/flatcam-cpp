@@ -9,7 +9,7 @@
  * (`FLATCAM_HAVE_FREETYPE`); sin ella `FontParser::available()` es falso y ninguna fuente se puede usar.
  *
  * En el SVG el original también intenta escribir los textos (`getsvgtext`), pero llama a `ParseFont()` sin la
- * aplicación y el error queda atrapado: nunca importa un texto (ver la sección 14 de AGENTS.md).
+ * aplicación y el error queda atrapado: nunca importa un texto (ver `core/OriginalBugs.h`).
  */
 #ifndef FLATCAM_PARSERS_FONTPARSER_H
 #define FLATCAM_PARSERS_FONTPARSER_H

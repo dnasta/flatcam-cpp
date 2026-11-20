@@ -73,7 +73,7 @@ TEST(SolderPaste, MatchesTheOriginal) {
                 EXPECT_TRUE(found) << w;
             }
             // Igual texto por texto, salvo los empates exactos de rtree.nearest (un pad simétrico cuyos dos extremos quedan
-            // a la misma distancia: el original lo recorre al revés; AGENTS.md 11.8): entonces, las mismas líneas (sin
+            // a la misma distancia: el original lo recorre al revés): entonces, las mismas líneas (sin
             // distinguir el rápido del lineal hacia cada extremo).
             const std::string got = solderPasteGcode(t.paths, pasteParams(t.uid, t.dia, c.bounds), true);
             if (got != want.gcode) {
