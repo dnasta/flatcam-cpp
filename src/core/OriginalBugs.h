@@ -1,6 +1,6 @@
 /**
  * @file OriginalBugs.h
- * @brief Interruptor global para reproducir los errores del FlatCAM original.
+ * @brief Interruptor global para reproducir los errores del FlatCAM original .
  *
  * El port corrige los errores conocidos del FlatCAM 2024.4 en Python (desvíos conscientes). Mientras se portaba se
  * los reproducía a propósito para poder comparar el G-code y los archivos con el original; esos comportamientos siguen

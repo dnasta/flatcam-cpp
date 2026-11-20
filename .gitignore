@@ -7,3 +7,8 @@ cmake-build-*/
 *.user
 __pycache__/
 *.pyc
+
+# Notas de trabajo locales (no se publican)
+AGENTS.md
+CLAUDE.md
+TODO.md
