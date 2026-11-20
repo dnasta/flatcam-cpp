@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "editors/ExcEditorModel.h"
 
 #include <algorithm>
@@ -207,7 +208,10 @@ void ExcEditorModel::clickSelect(const Point2D& pos, bool toggle) {
     EditorStorage sel;
     for (const Tool& t : storages) {
         const auto n = t.storage.nearest(pos);
-        if (!n) return;
+        if (!n) {
+            if (reproduceOriginalBugs()) return;
+            continue;  // corregido: una herramienta sin agujeros no impide elegir
+        }
         sel.insert(n->second);
     }
     const auto n = sel.nearest(pos);
@@ -220,8 +224,9 @@ void ExcEditorModel::clickSelect(const Point2D& pos, bool toggle) {
         const double delta = c[1].x - c[0].x;
         xmin = c[0].x - 0.7 * delta;
         xmax = c[0].x + 1.7 * delta;
-        ymin = c[0].y - 0.7 * delta;
-        ymax = c[0].y + 1.7 * delta;
+        // La caja está corrida hacia arriba (corregido: centrada en la cruz, como en X).
+        ymin = c[0].y - (reproduceOriginalBugs() ? 0.7 : 1.2) * delta;
+        ymax = c[0].y + (reproduceOriginalBugs() ? 1.7 : 1.2) * delta;
     } else if (t == ShapeType::Polygon) {
         const BoundingBox b = closest->geo.bounds().value_or(BoundingBox{});
         const double dx = b.xmax - b.xmin, dy = b.ymax - b.ymin;
@@ -296,6 +301,13 @@ std::optional<std::vector<double>> ExcEditorModel::resize(const std::set<double>
     std::vector<double> keys;
     for (const Tool& t : storages) keys.push_back(t.dia);
     for (double k : keys) {
+        if (!reproduceOriginalBugs()) {
+            // Corregido: se borra solo un diámetro sin agujeros ni ranuras (no uno que conserva sus ranuras), y uno que
+            // nunca tuvo ninguno no cancela nada.
+            const int dn = pointsEdit.count(k) ? pointsEdit[k] : 0, sn = slotPointsEdit.count(k) ? slotPointsEdit[k] : 0;
+            if (dn == 0 && sn == 0 && k != newDia && dias.count(k)) deleted.push_back(k);
+            continue;
+        }
         if (pointsEdit.count(k)) {
             if (pointsEdit[k] == 0) deleted.push_back(k);
         } else if (slotPointsEdit.count(k)) {

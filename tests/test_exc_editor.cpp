@@ -6,6 +6,7 @@
 #include <string>
 #include <algorithm>
 
+#include "core/OriginalBugs.h"
 #include "editors/ExcEditorModel.h"
 #include "golden_exc_editor.h"
 #include "parsers/Excellon.h"
@@ -106,4 +107,27 @@ TEST(ExcEditor, DrawingShapesMatchTheOriginal) {
         for (std::size_t i = 0; i < got.size(); ++i)
             EXPECT_TRUE(got[i].equalsExact(Shape::fromWkt(s.wkt[i]), 1e-9)) << i << "\n" << got[i].toWkt() << "\n" << s.wkt[i];
     }
+}
+
+TEST(ExcEditorFixed, ClickWithEmptyToolCenteredBoxAndResizeKeepsSlots) {
+    flatcam::OriginalBugsScope fixed(false);
+    using flatcam::ExcEditorModel;
+    namespace excdraw = flatcam::excdraw;
+    ExcEditorModel m;
+    m.ensure(0.5);  // una herramienta sin agujeros
+    auto d = m.add(1.0, excdraw::drill({0, 0}, 1.0));
+    auto s = m.add(1.0, excdraw::slot({10, 0}, 1.0, 3.0, 'X', 0, 64, false));
+    m.pointsEdit[1.0] = 1;
+    m.slotPointsEdit[1.0] = 1;
+    // El clic elige aunque haya una herramienta vacía, y la caja está centrada (abajo de la cruz también).
+    m.clickSelect({0, -1.0}, false);
+    ASSERT_EQ(m.selected.size(), 1u);
+    EXPECT_EQ(m.selected.front(), d);
+    // Cambiar el diámetro del único agujero: la herramienta conserva su ranura.
+    const auto deleted = m.resize({1.0}, 0.8);
+    ASSERT_TRUE(deleted.has_value());
+    EXPECT_TRUE(deleted->empty());
+    ASSERT_NE(m.storage(1.0), nullptr);
+    EXPECT_EQ(m.storage(1.0)->size(), 1u);
+    (void)s;
 }
