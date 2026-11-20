@@ -16,7 +16,7 @@ $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent $PSScriptRoot
 if (-not $Out) { $Out = Join-Path $Build "dist" }
 $exe = Join-Path $Build "src/gui/FlatCAM.exe"
-if (-not (Test-Path $exe)) { throw "No está $exe: compilá la GUI primero." }
+if (-not (Test-Path $exe)) { throw "No está ${exe}: compilá la GUI primero." }
 $version = (Select-String -Path (Join-Path $Root "CMakeLists.txt") -Pattern 'VERSION\s+(\d+\.\d+\.\d+)').Matches[0].Groups[1].Value
 
 $app = Join-Path $Out "FlatCAM"
