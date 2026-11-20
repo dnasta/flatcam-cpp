@@ -13,9 +13,11 @@
 #include <QJsonObject>
 #include <QRegularExpression>
 
+#include "core/OriginalBugs.h"
 #include "core/Shape.h"
 #include "gui/App.h"
 #include "gui/Preferences.h"
+#include "gui/objects/CNCJobObject.h"
 #include "gui/objects/GeometryObject.h"
 #include "gui/objects/ObjectCollection.h"
 #include "gui/shell/FCShell.h"
@@ -268,4 +270,39 @@ TEST(GuiTclObjects, FilesProjectsAndJoins) {
     sh->eval("open_project {" + prj + "}", &ok);
     EXPECT_TRUE(ok);
     EXPECT_EQ(sh->eval("get_names", &ok).toStdString(), "edge\nluz de noche Pascual-PTH.drl\nnpth\nj");
+}
+
+TEST(GuiFixed, TclDrillcncjobAndBoundingBox) {
+    flatcam::OriginalBugsScope fixed(false);
+    App app;
+    FCShell* sh = app.shell();
+    bool ok = false;
+    sh->eval("open_excellon {" + QString(FLATCAM_TEST_DATA_DIR) + "/PCB principal-Drill.drl} -outname drl", &ok);
+    ASSERT_TRUE(ok);
+    // Z negativa (la de fábrica), orden T sin repetir, -endz y -toolchangexy; el nombre sin distinguir mayúsculas.
+    sh->eval("drillcncjob DRL -drillz -1.5 -toolchangez 15 -toolchangexy 1,2 -endz 7 -opt_type T -outname c", &ok);
+    EXPECT_TRUE(ok) << sh->eval("set errorInfo").toStdString();
+    auto* job = dynamic_cast<CNCJobObject*>(app.collection()->byName("c"));
+    ASSERT_NE(job, nullptr);
+    const std::string g = job->exportText();
+    EXPECT_NE(g.find("G21"), std::string::npos);           // código de inicio
+    EXPECT_NE(g.find("Z-1.5"), std::string::npos);
+    EXPECT_NE(g.find("Z7.0"), std::string::npos) << g.substr(g.size() > 400 ? g.size() - 400 : 0);
+    EXPECT_EQ(g.find("Total drills for tool T1 = 1"), std::string::npos);
+    EXPECT_NE(g.find("Excellon"), std::string::npos);
+    // 192 agujeros, ninguno repetido: una bajada por agujero.
+    std::size_t downs = 0;
+    for (std::size_t p = g.find("G01 Z-1.5"); p != std::string::npos; p = g.find("G01 Z-1.5", p + 1)) ++downs;
+    EXPECT_EQ(downs, 192u);
+    // -drilled_dias: solo esa herramienta.
+    sh->eval("drillcncjob drl -drillz -1 -drilled_dias 0.8 -diatol 5 -outname c2", &ok);
+    EXPECT_TRUE(ok) << sh->eval("set errorInfo").toStdString();
+    EXPECT_NE(app.collection()->byName("c2"), nullptr);
+    // bounding_box con la preferencia de las esquinas (un valor lógico) y non_copper_regions no esconde el origen.
+    sh->eval("open_gerber {" + QString(FLATCAM_TEST_DATA_DIR) + "/PCB principal-Edge_Cuts.gm1} -outname edge", &ok);
+    sh->eval("bounding_box edge", &ok);
+    EXPECT_TRUE(ok) << sh->eval("set errorInfo").toStdString();
+    sh->eval("non_copper_regions edge", &ok);
+    EXPECT_TRUE(ok);
+    EXPECT_TRUE(app.collection()->byName("edge")->plotEnabled());
 }
