@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "gui/editors/ExcEditor.h"
 
 #include <QApplication>
@@ -289,8 +290,22 @@ void ExcEditor::buildUi() {
     t->resizeColumnsToContents();
     t->resizeRowsToContents();
     t->verticalHeader()->hide();
-    // sortItems(1): ordena por el texto del diámetro (como texto, "10.0000" antes que "2.0000").
-    t->sortItems(1);
+    // sortItems(1): ordena por el texto del diámetro (como texto, "10.0000" antes que "2.0000"; corregido: por el
+    // número, y los totales quedan al final).
+    if (reproduceOriginalBugs()) {
+        t->sortItems(1);
+    } else {
+        std::vector<std::pair<double, std::vector<QTableWidgetItem*>>> rows;
+        const int n = t->rowCount() - 2;
+        for (int r = 0; r < n; ++r) {
+            std::vector<QTableWidgetItem*> items;
+            for (int c = 0; c < t->columnCount(); ++c) items.push_back(t->takeItem(r, c));
+            rows.push_back({items[1] ? items[1]->text().toDouble() : 0.0, items});
+        }
+        std::stable_sort(rows.begin(), rows.end(), [](const auto& a, const auto& b) { return a.first < b.first; });
+        for (int r = 0; r < n; ++r)
+            for (int c = 0; c < t->columnCount(); ++c) t->setItem(r, c, rows[static_cast<std::size_t>(r)].second[c]);
+    }
     tool2tooldia_.clear();
     for (int r = 0; r < t->rowCount() - 2; ++r)
         if (t->item(r, 0) && t->item(r, 1)) tool2tooldia_[t->item(r, 0)->text().toInt()] = t->item(r, 1)->text().toDouble();
@@ -463,6 +478,8 @@ void ExcEditor::onPress(const QPointF& world, Qt::MouseButton button) {
     Tool& t = *tool_;
     const QString n = t.name;
     const int steps = defInt("geometry_circle_steps", 64);
+    if (!reproduceOriginalBugs() && (n == "drill_add" || n == "slot_add" || n == "drill_array" || n == "slot_array"))
+        t.points = pos_;  // corregido: el clic (ya ajustado a la grilla), no la última posición del mouse
     if ((n == "drill_add" || n == "slot_add") && t.dia && t.points) {
         const Point2D p = *t.points;
         if (n == "drill_add") {
@@ -550,6 +567,10 @@ void ExcEditor::onPress(const QPointF& world, Qt::MouseButton button) {
                 st->insert(makeEditorShape(s->geo.translate(dx, dy)));
                 if (n == "drill_move") {
                     st->remove(s);
+                } else if (!reproduceOriginalBugs()) {
+                    // corregido: un agujero cuenta como agujero y una ranura como ranura
+                    if (s->geo.type() == ShapeType::Polygon) ++model_.slotPointsEdit[d];
+                    else ++model_.pointsEdit[d];
                 } else {
                     if (model_.pointsEdit.count(d)) ++model_.pointsEdit[d];
                     if (model_.slotPointsEdit.count(d)) ++model_.slotPointsEdit[d];
@@ -758,7 +779,10 @@ bool ExcEditor::handleKey(int key, Qt::KeyboardModifiers mods) {
             replot();
             selectTool("drill_select");
             return true;
-        case Qt::Key_Delete: deleteTools(); return true;  // on_tool_delete (las filas elegidas)
+        case Qt::Key_Delete:  // on_tool_delete (las filas elegidas; corregido: lo elegido en el canvas, si hay)
+            if (!reproduceOriginalBugs() && !model_.selected.empty()) deleteSelected();
+            else deleteTools();
+            return true;
         case Qt::Key_Minus: ui->plotCanvas()->zoom(1.0 / defNum("global_zoom_ratio", 1.5), {mouse_.x, mouse_.y}); return true;
         case Qt::Key_Equal: ui->plotCanvas()->zoom(defNum("global_zoom_ratio", 1.5), {mouse_.x, mouse_.y}); return true;
         case Qt::Key_QuoteLeft: ui->onToggleNotebook(); return true;
