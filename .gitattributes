@@ -1,0 +1,6 @@
+# Estadística de lenguajes de GitHub (Linguist): el proyecto es C++.
+# Los fuentes del FlatCAM original (Python) y los datos de prueba no cuentan.
+reference/** linguist-vendored
+tests/data/** linguist-vendored
+# Los .nc son G-code, no nesC.
+*.nc linguist-detectable=false
