@@ -1151,10 +1151,11 @@ bool CncJob::generateFromExcellonByTool(const Excellon& ex, const ExcellonByTool
         } else if (*zCut == 0) {
             inform("WARNING", "The Cut Z parameter is zero. There will be no cut, aborting", ".");
             return fail("fail");
-        } else {
-            zCut.reset();
+        } else if (reproduceOriginalBugs()) {
+            zCut.reset();  // corregido: una Z negativa es la correcta y queda
         }
     }
+    const bool fixed = !reproduceOriginalBugs();
 
     // ---- X,Y de cambio y final
     std::optional<std::vector<double>> xyToolchange = parseXYText(s.xyToolchange);
@@ -1233,9 +1234,15 @@ bool CncJob::generateFromExcellonByTool(const Excellon& ex, const ExcellonByTool
         p.options.ymax = PyNumber(s.bounds->ymax);
     }
     // options['Tools_in_use'] la arma el comando con textos y un encabezado: el cambio de herramienta nunca encuentra
-    // la herramienta y escribe "Total drills ... = 1".
+    // la herramienta y escribe "Total drills ... = 1" (corregido: las herramientas con su cantidad de agujeros).
+    if (fixed)
+        for (int t : pointsOrder)
+            p.options.toolsInUse.push_back(ToolInUse{t, PyNumber(ex.drillTools().at(t).tooldia),
+                                                     static_cast<int>(points[t].size()), 0});
 
     std::string g;
+    // Corregido: el código de inicio (el original llama con is_first = False y no lo escribe).
+    if (fixed) startGcode_ = pp->startCode(p) + "\n";
     g += pp->zFeedrateCode(p) + "\n";  // use_ui is False
     if (!s.toolchange) {
         p.x = xyToolchange ? (*xyToolchange)[0] : 0.0;
@@ -1259,9 +1266,11 @@ bool CncJob::generateFromExcellonByTool(const Excellon& ex, const ExcellonByTool
         if (optimized) {
             for (std::size_t i : PathOptimizer::order(pts, {oldx, oldy})) out.push_back(pts[i]);
         } else if (salesman) {
-            // optimized_travelling_salesman: arranca en el primero y lo vuelve a visitar (sigue en must_visit)
+            // optimized_travelling_salesman: arranca en el primero y lo vuelve a visitar (sigue en must_visit;
+            // corregido: no se repite)
             std::vector<Point2D> must = pts;
             out.push_back(pts.front());
+            if (fixed) must.erase(must.begin());
             while (!must.empty()) {
                 const Point2D last = out.back();
                 std::size_t best = 0;
@@ -1282,7 +1291,8 @@ bool CncJob::generateFromExcellonByTool(const Excellon& ex, const ExcellonByTool
         }
     };
     const auto drillPoints = [&](const std::vector<Point2D>& path, double toolDia) -> bool {
-        if (!optimized && !salesman) return false;  // locations[point] con una tupla
+        // locations[point] con una tupla (corregido: otro orden es el del archivo)
+        if (!optimized && !salesman && !fixed) return false;
         for (const Point2D& pt : path) {
             g += exclusionTravel(*pp, p, &s.exclusionAreas, {oldx, oldy}, pt, toolDia, s.units == "IN", s.zMove.value());
             p.x = pt.x;

@@ -6,6 +6,7 @@
 
 #include <QRegularExpression>
 
+#include "core/OriginalBugs.h"
 #include "cam/CncJob.h"
 #include "cam/PolygonClearing.h"
 #include "gui/App.h"
@@ -180,6 +181,8 @@ protected:
         bool rounded = false;
         if (args.has("rounded")) {
             rounded = args.hasValue("rounded") && pyTruthCapitalized(args.str("rounded"));
+        } else if (!reproduceOriginalBugs()) {
+            rounded = defBool(std::string(pre) + "rounded");  // corregido: la preferencia es un valor lógico
         } else {
             // bool(eval(defaults[...])): el valor de fábrica es un bool, y eval() solo acepta texto.
             const JsonValue& v = appDefaults()[std::string(pre) + "rounded"];
@@ -193,7 +196,7 @@ protected:
         out->tools()[1] = defaultGeometryTool();
         out->setSingleGeoShape(noncopper_ ? box.difference(geo) : box);
         app_->addObject(std::move(out), false);
-        if (noncopper_) {
+        if (noncopper_ && reproduceOriginalBugs()) {
             // ui.plot_cb.toggle() del objeto de origen: deja de dibujarse (o vuelve a dibujarse).
             o->setPlotEnabled(!o->plotEnabled());
             app_->ui()->plotCanvas()->setLayerVisible(o->id(), o->plotEnabled());
@@ -207,7 +210,8 @@ private:
 
 /** `args[key] if key in args and args[key] else defaults[defKey]` con un número. */
 double argOrDefault(const TclArgs& args, const std::string& key, const std::string& defKey) {
-    if (args.has(key) && args.hasValue(key) && args.num(key) != 0) return args.num(key);
+    // Corregido: un 0 escrito vale (el original lo prueba como "truthy" y toma la preferencia).
+    if (args.has(key) && args.hasValue(key) && (args.num(key) != 0 || !reproduceOriginalBugs())) return args.num(key);
     return defNum(defKey);
 }
 
@@ -271,6 +275,9 @@ protected:
             return std::nullopt;
         }
         auto* geo = static_cast<GeometryObject*>(o);
+        // Corregido: los límites de la cabecera son los de ahora (el original usa los de `options`, viejos después de
+        // transformar con Tcl).
+        if (!reproduceOriginalBugs()) geo->captureOptionBounds();
 
         // Los valores de los argumentos o de las preferencias, como el original.
         double tooldia = 0;
@@ -303,7 +310,8 @@ protected:
             if (args.hasValue("dpp")) dpp = args.num("dpp");
         }
         std::optional<double> startZ;
-        if (args.has("startz") && args.hasValue("startz") && args.num("startz") != 0) startZ = args.num("startz");
+        if (args.has("startz") && args.hasValue("startz") && (args.num("startz") != 0 || !reproduceOriginalBugs()))
+            startZ = args.num("startz");
         else if (auto d = defPy("geometry_startz")) startZ = d->value();
         const double endZ = argOrDefault(args, "endz", "geometry_endz");
         const QString endxyText =
@@ -338,7 +346,7 @@ protected:
 
         if (geo->isSingleGeo()) {
             // generatecncjob(**args): no tiene el argumento `muted`.
-            if (args.has("muted"))
+            if (args.has("muted") && reproduceOriginalBugs())  // corregido: -muted vale
                 raiseTclError("GeometryObject.generatecncjob() got an unexpected keyword argument 'muted'");
             Geometry2Settings s;
             s.preprocessor = pp.toStdString();
@@ -479,7 +487,8 @@ public:
 protected:
     std::optional<QString> execute(const TclArgs& args) override {
         const QString name = args.str("name");
-        FlatCAMObj* o = app_->collection()->byName(name);  // get_by_name(name): distingue mayúsculas
+        // get_by_name(name): distingue mayúsculas (corregido: como los demás comandos, no)
+        FlatCAMObj* o = app_->collection()->byName(name, reproduceOriginalBugs());
         const QString outname = args.has("outname") ? args.str("outname") : name + "_cnc";
         const bool muted = args.has("muted") && args.hasValue("muted") && pyTruthCapitalized(args.str("muted"));
         if (!o) {
@@ -491,7 +500,25 @@ protected:
             return QString("fail");
         }
         auto* exc = static_cast<ExcellonObject*>(o);
-        const Excellon& ex = exc->excellon();
+        const bool fixed = !reproduceOriginalBugs();
+        Excellon picked;  // corregido: con -drilled_dias, solo las herramientas de esos diámetros (con -diatol en %)
+        const bool someDias = fixed && args.has("drilled_dias") && args.str("drilled_dias") != "all";
+        if (someDias) {
+            std::vector<double> dias;
+            for (const QString& d : args.str("drilled_dias").split(',', Qt::SkipEmptyParts)) {
+                bool ok = false;
+                dias.push_back(d.trimmed().toDouble(&ok));
+                if (!ok) raiseTclError("Bad tools: " + d);
+            }
+            const double tol = args.has("diatol") && args.hasValue("diatol") ? args.num("diatol") / 100.0 : 0.0;
+            for (const auto& [id, t] : exc->excellon().drillTools())
+                for (double d : dias)
+                    if (std::fabs(t.tooldia - d) <= d * tol + 1e-9) {
+                        picked.addDrillTool(id, t.tooldia, t.drills);
+                        break;
+                    }
+        }
+        const Excellon& ex = someDias ? picked : exc->excellon();
         // job_init: lo que falla adentro lo atrapa new_object ("Object (cncjob) failed because: ...").
         try {
             const auto has = [&](const char* k) { return args.has(k) && args.hasValue(k); };
@@ -500,7 +527,7 @@ protected:
                 if (has(k) && args.num(k) != 0) return PyNumber(args.num(k));
                 return defPy(def).value_or(PyNumber(0));
             };
-            if (args.has("drilled_dias") && args.str("drilled_dias") != "all") {
+            if (!fixed && args.has("drilled_dias") && args.str("drilled_dias") != "all") {
                 // obj.tools[tool]["C"]: en la 2024.4 las herramientas no tienen "C" (KeyError: 'C').
                 QString err = !ex.drillTools().empty() && !args.str("drilled_dias").split(',', Qt::SkipEmptyParts).isEmpty()
                                   ? "'C'"
@@ -518,14 +545,16 @@ protected:
                 s.toolchange = defBool("tools_drill_toolchange");
                 s.zToolchange = PyNumber(defNum("tools_drill_toolchangez"));
             }
-            // `args["tools_drill_toolchangexy"]`: la clave que no existe (KeyError).
-            if (args.has("toolchangexy")) throw TclError("'tools_drill_toolchangexy'");
-            const QString xyTc = defaultXY("tools_drill_toolchangexy");
+            // `args["tools_drill_toolchangexy"]`: la clave que no existe (KeyError; corregido: el X,Y escrito).
+            if (args.has("toolchangexy") && !fixed) throw TclError("'tools_drill_toolchangexy'");
+            const QString xyTc = fixed && has("toolchangexy") ? args.str("toolchangexy")
+                                                              : defaultXY("tools_drill_toolchangexy");
             parseXY(xyTc, "The entered value for 'toolchangexy' needs to have the format x,y or in format (x, y) - no "
                           "spaces allowed. But always two comma separated values.");
             s.xyToolchange = xyTc.toStdString();
             // El comando guarda la Z final en job_obj.endz, que nadie lee: end_code usa z_end, el 2.0 del constructor.
             s.endZ = PyNumber(2.0);
+            if (fixed && has("endz")) s.endZ = PyNumber(args.num("endz"));  // corregido: -endz vale
             const QString xyEnd = has("endxy") && !args.str("endxy").isEmpty() ? args.str("endxy")
                                                                                : defaultXY("tools_drill_endxy");
             parseXY(xyEnd, "The entered value for 'xy_end' needs to have the format x,y or in format (x, y) - no spaces "
@@ -581,7 +610,8 @@ protected:
             GcodeHeaderInfo h;
             h.version = "2024.4";
             h.versionDate = "2024/04/15";
-            h.type = "Geometry";  // gc_header se arma en CNCJobObject.__init__, antes de options['type'] = 'Excellon'
+            // gc_header se arma en CNCJobObject.__init__, antes de options['type'] = 'Excellon' (corregido: Excellon)
+            h.type = fixed ? "Excellon" : "Geometry";
             h.units = appUnits().toStdString();
             app_->addObject(std::make_unique<CNCJobObject>(outname, std::move(job), h, std::vector<CncToolRow>{}),
                             false);
