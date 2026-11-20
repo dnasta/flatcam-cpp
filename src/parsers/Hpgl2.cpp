@@ -66,7 +66,12 @@ Hpgl2Result parseHpgl2(const std::string& text, int circleSteps, bool fixOrigina
     bool penDown = false, init = false;
     std::optional<int> tool;
     auto flush = [&]() {
+        if (!tool && fixOriginalBugs) tool = 1;  // corregido: sin SP se dibuja con la pluma 1
         if (!tool) throw ParseError("KeyError: None");  // self.tools[current_tool] sin SP
+        if (fixOriginalBugs && path.size() < 2) {  // corregido: un trazo de un punto no es una línea
+            path.clear();
+            return;
+        }
         const Shape g = Shape::lineString(path);
         r.tools[*tool].push_back(g);
         buffer.push_back(g);
@@ -76,12 +81,15 @@ Hpgl2Result parseHpgl2(const std::string& text, int circleSteps, bool fixOrigina
         if (lx.v && ly.v) path = {{lx.get(), ly.get()}};
     };
     auto addShape = [&](const Shape& g) {
+        if (!tool && fixOriginalBugs) tool = 1;
         if (!tool) throw ParseError("KeyError: None");
         r.tools[*tool].push_back(g);
         buffer.push_back(g);
     };
     // La rama de PA del original para un movimiento a (x, y) (o solo x, si y falta).
     auto moveTo = [&](double x, std::optional<double> y) {
+        std::optional<Point2D> prev;
+        if (lx.v && ly.v && !lx.broken && !ly.broken) prev = Point2D{*lx.v, *ly.v};
         lx = Coord{x, false};
         cx = lx;
         if (y) {
@@ -92,6 +100,10 @@ Hpgl2Result parseHpgl2(const std::string& text, int circleSteps, bool fixOrigina
         }
         if (penDown) {
             if (cx.v && (cy.v || cy.broken)) {
+                if (path.empty() && fixOriginalBugs) {
+                    // corregido: bajar la pluma sin trazo empieza uno nuevo en la posición anterior (o en esta)
+                    path.push_back(prev ? *prev : Point2D{cx.get(), cy.get()});
+                }
                 if (path.empty()) throw ParseError("IndexError: list index out of range");  // path[-1]
                 const Point2D p{cx.get(), cy.get()};
                 if (!(path.back() == p)) path.push_back(p);
@@ -138,7 +150,8 @@ Hpgl2Result parseHpgl2(const std::string& text, int circleSteps, bool fixOrigina
             if (!init) continue;
             if (std::regex_search(g, m, spRe)) {
                 const int t = std::stoi(m[1]);
-                r.tools[t].clear();  // la pluma se vuelve a crear vacía
+                // la pluma se vuelve a crear vacía (corregido: conserva lo que ya tenía)
+                if (!fixOriginalBugs) r.tools[t].clear();
                 if (tool && !path.empty()) flush();
                 tool = t;
                 continue;
@@ -228,7 +241,7 @@ Hpgl2Result parseHpgl2(const std::string& text, int circleSteps, bool fixOrigina
             // "Line ignored"
         }
         // Corregido: el último trazo con la pluma abajo no se pierde al terminar el archivo.
-        if (fixOriginalBugs && path.size() > 1 && tool) flush();
+        if (fixOriginalBugs && path.size() > 1) flush();
         if (buffer.empty()) return r;  // "Object is not HPGL2 file or empty"
         const Shape u = Shape::unaryUnion(buffer);
         r.solidGeometry = u.parts().empty() ? ShapeList{u} : u.parts();

@@ -124,3 +124,14 @@ TEST(Hpgl2Fixed, ThreePointArc) {
     for (const Point2D& p : pts) EXPECT_GE(p.y, -1e-9);  // pasa por arriba (por el punto intermedio)
     EXPECT_TRUE(parseFile("at_aborts.plt").ok);  // el original no lo lee
 }
+
+TEST(Hpgl2Fixed, PenChangeWithOnePointPenDownWithoutPathAndNoSelectPen) {
+    // Sin SP: se dibuja con la pluma 1.
+    const auto a = flatcam::parseHpgl2("IN;\nPU0,0;\nPD;\nPA100,0;\nPA100,100;\nPU;\n");
+    ASSERT_EQ(a.tools.count(1), 1u);
+    EXPECT_EQ(a.tools.at(1).size(), 1u);
+    // Cambiar de pluma con un trazo de un punto no falla; volver a la pluma 1 conserva su trazo.
+    const auto b = flatcam::parseHpgl2("IN;\nSP1;\nPU0,0;\nPD;\nPA100,0;\nPU;\nPA5,5;\nSP2;\nSP1;\nPU0,0;\nPD;\nPA0,50;\nPU;\n");
+    ASSERT_EQ(b.tools.count(1), 1u);
+    EXPECT_EQ(b.tools.at(1).size(), 2u);
+}
