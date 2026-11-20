@@ -32,7 +32,7 @@
       "props": {
        "text": {
         "t": "str",
-        "v": "<font size=4><b>Herramienta de Distancia Mínima</b></font><br>"
+        "v": "<font size=4><b>Minimum Distance Tool</b></font><br>"
        }
       }
      }
@@ -66,11 +66,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esas son las unidades en las que se mide la distancia."
+           "v": "Those are the units in which the distance is measured."
           },
           "text": {
            "t": "str",
-           "v": "Unidades:"
+           "v": "Units:"
           }
          }
         }
@@ -86,7 +86,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "MÉTRICO (mm)"
+           "v": "METRIC (mm)"
           },
           "enabled": {
            "t": "bool",
@@ -106,11 +106,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el primer objeto de coordenadas de puntos.\nEste es el punto de partida para medir la distancia."
+           "v": "This is first object point coordinates.\nThis is the start point for measuring distance."
           },
           "text": {
            "t": "str",
-           "v": "Primer punto:"
+           "v": "First object point:"
           }
          }
         }
@@ -126,7 +126,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el primer objeto de coordenadas de puntos.\nEste es el punto de partida para medir la distancia."
+           "v": "This is first object point coordinates.\nThis is the start point for measuring distance."
           },
           "text": {
            "t": "str",
@@ -154,11 +154,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el segundo objeto de coordenadas de puntos.\nEste es el punto final para medir la distancia."
+           "v": "This is second object point coordinates.\nThis is the end point for measuring distance."
           },
           "text": {
            "t": "str",
-           "v": "Segundo punto:"
+           "v": "Second object point:"
           }
          }
         }
@@ -174,7 +174,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el segundo objeto de coordenadas de puntos.\nEste es el punto final para medir la distancia."
+           "v": "This is second object point coordinates.\nThis is the end point for measuring distance."
           },
           "text": {
            "t": "str",
@@ -202,7 +202,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esta es la distancia medida sobre el eje X."
+           "v": "This is the distance measured over the X axis."
           },
           "text": {
            "t": "str",
@@ -222,7 +222,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esta es la distancia medida sobre el eje X."
+           "v": "This is the distance measured over the X axis."
           },
           "text": {
            "t": "str",
@@ -250,7 +250,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esta es la distancia medida sobre el eje Y."
+           "v": "This is the distance measured over the Y axis."
           },
           "text": {
            "t": "str",
@@ -270,7 +270,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esta es la distancia medida sobre el eje Y."
+           "v": "This is the distance measured over the Y axis."
           },
           "text": {
            "t": "str",
@@ -298,11 +298,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el ángulo de orientación de la línea de medición."
+           "v": "This is orientation angle of the measuring line."
           },
           "text": {
            "t": "str",
-           "v": "Ángulo:"
+           "v": "Angle:"
           }
          }
         }
@@ -318,7 +318,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el ángulo de orientación de la línea de medición."
+           "v": "This is orientation angle of the measuring line."
           },
           "text": {
            "t": "str",
@@ -346,11 +346,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el punto a punto de la distancia euclidiana."
+           "v": "This is the point to point Euclidean distance."
           },
           "text": {
            "t": "str",
-           "v": "<b>DISTANCIA:</b>"
+           "v": "<b>DISTANCE:</b>"
           }
          }
         }
@@ -366,7 +366,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el punto a punto de la distancia euclidiana."
+           "v": "This is the point to point Euclidean distance."
           },
           "text": {
            "t": "str",
@@ -394,11 +394,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el punto medio de la distancia euclidiana punto a punto."
+           "v": "This is the middle point of the point to point Euclidean distance."
           },
           "text": {
            "t": "str",
-           "v": "<b>Punto Medio:</b>"
+           "v": "<b>Half Point:</b>"
           }
          }
         }
@@ -414,7 +414,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Este es el punto medio de la distancia euclidiana punto a punto."
+           "v": "This is the middle point of the point to point Euclidean distance."
           },
           "text": {
            "t": "str",
@@ -445,7 +445,7 @@
       "props": {
        "text": {
         "t": "str",
-        "v": "Medida"
+        "v": "Measure"
        }
       }
      }
@@ -460,7 +460,7 @@
       "props": {
        "text": {
         "t": "str",
-        "v": "Saltar a Medio Punto"
+        "v": "Jump to Half Point"
        },
        "enabled": {
         "t": "bool",

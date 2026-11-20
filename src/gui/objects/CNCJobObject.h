@@ -113,9 +113,9 @@ public:
      * se guarda en el proyecto. @return El texto, o vacío si no se editó.
      */
     const std::optional<QString>& editedSource() const { return editedSource_; }
-    /** @brief Fija lo editado (también `source_file`). @param s Texto. */
     /** @brief Sin ningún fragmento al componer (la casilla "Usar fragmentos" apagada). @param on Verdadero: sin. */
     void setNoSnippets(bool on) const { noSnippets_ = on; }
+    /** @brief Fija lo editado (también `source_file`). @param s Texto. */
     void setEditedSource(const QString& s) {
         editedSource_ = s;
         sourceFile_ = s;

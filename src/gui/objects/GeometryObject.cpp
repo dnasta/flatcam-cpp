@@ -345,7 +345,7 @@ std::unique_ptr<CNCJobObject> GeometryObject::makeCncJob(const std::vector<int>&
         }
     }
     if (!ok) {
-        error = "[ERROR_NOTCL] " + QString::fromStdString(job->lastError());
+        error = "[ERROR_NOTCL] " + tr_(QString::fromStdString(job->lastError()));
         return nullptr;
     }
     GcodeHeaderInfo h;

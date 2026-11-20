@@ -10,7 +10,7 @@
    },
    "windowTitle": {
     "t": "str",
-    "v": "FlatCAM 2024.4 BETA - 64bit - [3D]    Proyecto nuevo: no guardado"
+    "v": "FlatCAM 2024.4 BETA - 64bit - [3D]    New Project - Not saved"
    }
   },
   "menubar": {
@@ -19,17 +19,17 @@
    "name": "menu",
    "props": {},
    "items": [
-    "105553154577376",
-    "105553156815408",
-    "105553156822736",
-    "105553156823728",
-    "105553156848800",
-    "105553156776864",
-    "105553156777152",
-    "105553156777136",
-    "105553156777664",
-    "105553156778224",
-    "105553156778512"
+    "105553175457184",
+    "105553177438416",
+    "105553177354064",
+    "105553177355056",
+    "105553177381856",
+    "105553177439680",
+    "105553177440016",
+    "105553177440000",
+    "105553177440528",
+    "105553177441088",
+    "105553177441376"
    ]
   },
   "toolbars": [
@@ -56,19 +56,19 @@
      },
      "items": [
       {
-       "action": "105553156211536"
+       "action": "105553177968976"
       },
       {
-       "action": "105553156211600"
+       "action": "105553177969040"
       },
       {
-       "action": "105553156211248"
+       "action": "105553177968704"
       },
       {
-       "action": "105553156211680"
+       "action": "105553177969120"
       },
       {
-       "action": "105553156211744"
+       "action": "105553177969184"
       }
      ]
     },
@@ -98,40 +98,40 @@
      },
      "items": [
       {
-       "action": "105553156211808"
+       "action": "105553177969248"
       },
       {
-       "action": "105553156211872"
+       "action": "105553177969312"
       },
       {
-       "action": "105553156211232"
+       "action": "105553177968688"
       },
       {
-       "action": "105553156211952"
+       "action": "105553177969392"
       },
       {
-       "action": "105553156212016"
+       "action": "105553177969456"
       },
       {
-       "action": "105553156211664"
+       "action": "105553177969104"
       },
       {
-       "action": "105553156212096"
+       "action": "105553177969536"
       },
       {
-       "action": "105553156212160"
+       "action": "105553177969600"
       },
       {
-       "action": "105553156212224"
+       "action": "105553177969664"
       },
       {
-       "action": "105553156212288"
+       "action": "105553177969728"
       },
       {
-       "action": "105553156212352"
+       "action": "105553177969792"
       },
       {
-       "action": "105553156212416"
+       "action": "105553177969856"
       }
      ]
     },
@@ -165,19 +165,19 @@
      },
      "items": [
       {
-       "action": "105553156212480"
+       "action": "105553177969920"
       },
       {
-       "action": "105553156212544"
+       "action": "105553177969984"
       },
       {
-       "action": "105553156212608"
+       "action": "105553177970048"
       },
       {
-       "action": "105553156212672"
+       "action": "105553177970112"
       },
       {
-       "action": "105553156212736"
+       "action": "105553177970176"
       }
      ]
     },
@@ -211,16 +211,16 @@
      },
      "items": [
       {
-       "action": "105553156212800"
+       "action": "105553177970240"
       },
       {
-       "action": "105553156212864"
+       "action": "105553177970304"
       },
       {
-       "action": "105553156212928"
+       "action": "105553177970368"
       },
       {
-       "action": "105553156212992"
+       "action": "105553177970432"
       }
      ]
     },
@@ -250,82 +250,82 @@
      },
      "items": [
       {
-       "action": "105553156213056"
+       "action": "105553177970496"
       },
       {
-       "action": "105553156213120"
+       "action": "105553177970560"
       },
       {
-       "action": "105553156213184"
+       "action": "105553177970624"
       },
       {
-       "action": "105553156213248"
+       "action": "105553177970688"
       },
       {
-       "action": "105553156213312"
+       "action": "105553177970752"
       },
       {
-       "action": "105553156213376"
+       "action": "105553177970816"
       },
       {
-       "action": "105553156213440"
+       "action": "105553177970880"
       },
       {
-       "action": "105553156213504"
+       "action": "105553177970944"
       },
       {
-       "action": "105553156212080"
+       "action": "105553177969520"
       },
       {
-       "action": "105553156213584"
+       "action": "105553177971024"
       },
       {
-       "action": "105553156213648"
+       "action": "105553177971088"
       },
       {
-       "action": "105553156213712"
+       "action": "105553177971152"
       },
       {
-       "action": "105553156213776"
+       "action": "105553177971216"
       },
       {
-       "action": "105553156213840"
+       "action": "105553177971280"
       },
       {
-       "action": "105553156213904"
+       "action": "105553177971344"
       },
       {
-       "action": "105553156211936"
+       "action": "105553177969376"
       },
       {
-       "action": "105553156213984"
+       "action": "105553177971424"
       },
       {
-       "action": "105553156214048"
+       "action": "105553177971488"
       },
       {
-       "action": "105553156214112"
+       "action": "105553177971552"
       },
       {
-       "action": "105553156214176"
+       "action": "105553177971616"
       },
       {
-       "action": "105553156214240"
+       "action": "105553177971680"
       },
       {
-       "action": "105553156214304"
+       "action": "105553177971744"
       },
       {
-       "action": "105553156214368"
+       "action": "105553177971808"
       },
       {
-       "action": "105553156214432"
+       "action": "105553177971872"
       },
       {
-       "action": "105553156214496"
+       "action": "105553177971936"
       },
       {
-       "action": "105553156214560"
+       "action": "105553177244384"
       }
      ]
     },
@@ -359,37 +359,37 @@
      },
      "items": [
       {
-       "action": "105553156214624"
+       "action": "105553177244496"
       },
       {
-       "action": "105553156214688"
+       "action": "105553177244608"
       },
       {
-       "action": "105553156214752"
+       "action": "105553177244720"
       },
       {
-       "action": "105553156214816"
+       "action": "105553177244784"
       },
       {
-       "action": "105553156214880"
+       "action": "105553177244848"
       },
       {
-       "action": "105553156214944"
+       "action": "105553177244912"
       },
       {
-       "action": "105553156213568"
+       "action": "105553177244320"
       },
       {
-       "action": "105553156215024"
+       "action": "105553177244992"
       },
       {
-       "action": "105553156215088"
+       "action": "105553177245056"
       },
       {
-       "action": "105553156213968"
+       "action": "105553177244544"
       },
       {
-       "action": "105553156215168"
+       "action": "105553177245136"
       }
      ]
     },
@@ -423,76 +423,76 @@
      },
      "items": [
       {
-       "action": "105553156215232"
+       "action": "105553177245200"
       },
       {
-       "action": "105553156215296"
+       "action": "105553177245264"
       },
       {
-       "action": "105553156215360"
+       "action": "105553177245328"
       },
       {
-       "action": "105553156215424"
+       "action": "105553177245392"
       },
       {
-       "action": "105553156215152"
+       "action": "105553177245120"
       },
       {
-       "action": "105553156215504"
+       "action": "105553177245472"
       },
       {
-       "action": "105553156215568"
+       "action": "105553177245536"
       },
       {
-       "action": "105553156215008"
+       "action": "105553177244976"
       },
       {
-       "action": "105553156215648"
+       "action": "105553177245616"
       },
       {
-       "action": "105553156215712"
+       "action": "105553177245680"
       },
       {
-       "action": "105553156215776"
+       "action": "105553177245744"
       },
       {
-       "action": "105553156215840"
+       "action": "105553177245808"
       },
       {
-       "action": "105553156215488"
+       "action": "105553177245456"
       },
       {
-       "action": "105553156215920"
+       "action": "105553177245888"
       },
       {
-       "action": "105553156215984"
+       "action": "105553177245952"
       },
       {
-       "action": "105553156216048"
+       "action": "105553177246016"
       },
       {
-       "action": "105553156216112"
+       "action": "105553177246080"
       },
       {
-       "action": "105553156215632"
+       "action": "105553177245600"
       },
       {
-       "action": "105553156216192"
+       "action": "105553177246160"
       },
       {
-       "action": "105553156216256"
+       "action": "105553177246224"
       },
       {
-       "action": "105553156216320"
+       "action": "105553177246288"
       },
       {
-       "action": "105553156216384"
+       "action": "105553177246352"
       },
       {
-       "action": "105553156215904"
+       "action": "105553177245872"
       },
       {
-       "action": "105553156216464"
+       "action": "105553177246432"
       }
      ]
     },
@@ -526,61 +526,61 @@
      },
      "items": [
       {
-       "action": "105553156216528"
+       "action": "105553177246496"
       },
       {
-       "action": "105553156216592"
+       "action": "105553177246560"
       },
       {
-       "action": "105553156216656"
+       "action": "105553177246624"
       },
       {
-       "action": "105553156216720"
+       "action": "105553177246688"
       },
       {
-       "action": "105553156216784"
+       "action": "105553177246752"
       },
       {
-       "action": "105553156216848"
+       "action": "105553177246816"
       },
       {
-       "action": "105553156216912"
+       "action": "105553177246880"
       },
       {
-       "action": "105553156216976"
+       "action": "105553177246944"
       },
       {
-       "action": "105553156216448"
+       "action": "105553177246416"
       },
       {
-       "action": "105553156217056"
+       "action": "105553177247024"
       },
       {
-       "action": "105553156217120"
+       "action": "105553177247088"
       },
       {
-       "action": "105553156217184"
+       "action": "105553177247152"
       },
       {
-       "action": "105553156217248"
+       "action": "105553177247216"
       },
       {
-       "action": "105553156216176"
+       "action": "105553177246144"
       },
       {
-       "action": "105553156217328"
+       "action": "105553177247296"
       },
       {
-       "action": "105553156217392"
+       "action": "105553177247360"
       },
       {
-       "action": "105553156217456"
+       "action": "105553177247424"
       },
       {
-       "action": "105553156217312"
+       "action": "105553177247280"
       },
       {
-       "action": "105553156217536"
+       "action": "105553177247504"
       }
      ]
     },
@@ -639,7 +639,7 @@
        },
        "tabs": [
         {
-         "text": "Proyecto",
+         "text": "Project",
          "icon": null,
          "tooltip": "",
          "protected": false,
@@ -745,7 +745,7 @@
          }
         },
         {
-         "text": "Propiedades",
+         "text": "Properties",
          "icon": null,
          "tooltip": "",
          "protected": false,
@@ -819,7 +819,7 @@
          }
         },
         {
-         "text": "Herramienta",
+         "text": "Tool",
          "icon": null,
          "tooltip": "",
          "protected": false,
@@ -922,7 +922,7 @@
          },
          "tabs": [
           {
-           "text": "Área de la parcela",
+           "text": "Plot Area",
            "icon": null,
            "tooltip": "",
            "protected": true,
@@ -1036,11 +1036,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "¡Hola!"
+           "v": "Hello!"
           },
           "text": {
            "t": "str",
-           "v": "Aplicacion iniciada ..."
+           "v": "Application started ..."
           }
          }
         }
@@ -1069,7 +1069,7 @@
       },
       "windowTitle": {
        "t": "str",
-       "v": "Barra de herramientas de coordenadas delta"
+       "v": "Delta Coordinates Toolbar"
       },
       "hidden": {
        "t": "bool",
@@ -1092,7 +1092,7 @@
          },
          "toolTip": {
           "t": "str",
-          "v": "Medida relativa.\nLa referencia es la posición del último clic"
+          "v": "Relative measurement.\nReference is last click position"
          },
          "text": {
           "t": "str",
@@ -1116,7 +1116,7 @@
       },
       "windowTitle": {
        "t": "str",
-       "v": "Barra de herramientas de coordenadas"
+       "v": "Coordinates Toolbar"
       }
      },
      "items": [
@@ -1135,7 +1135,7 @@
          },
          "toolTip": {
           "t": "str",
-          "v": "Medida absoluta.\nLa referencia es (X = 0, Y = 0) posición"
+          "v": "Absolute measurement.\nReference is (X=0, Y= 0) position"
          },
          "text": {
           "t": "str",
@@ -1166,7 +1166,7 @@
       },
       "windowTitle": {
        "t": "str",
-       "v": "Barra de herramientas de cuadrícula"
+       "v": "Grid Toolbar"
       },
       "styleSheet": {
        "t": "str",
@@ -1175,7 +1175,7 @@
      },
      "items": [
       {
-       "action": "105553156869536"
+       "action": "105553177385296"
       },
       {
        "widget": {
@@ -1192,7 +1192,7 @@
          },
          "toolTip": {
           "t": "str",
-          "v": "Distancia de ajuste de la rejilla X"
+          "v": "Grid X snapping distance"
          },
          "text": {
           "t": "str",
@@ -1226,7 +1226,7 @@
         "props": {
          "toolTip": {
           "t": "str",
-          "v": "Cuando está activo, el valor en Grid_X\nSe copia al valor Grid_Y."
+          "v": "When active, value on Grid_X\nis copied to the Grid_Y value."
          },
          "checked": {
           "t": "bool",
@@ -1267,7 +1267,7 @@
          },
          "toolTip": {
           "t": "str",
-          "v": "Distancia de ajuste de cuadrícula Y"
+          "v": "Grid Y snapping distance"
          },
          "text": {
           "t": "str",
@@ -1298,7 +1298,7 @@
        "visible": true
       },
       {
-       "action": "105553156870576"
+       "action": "105553177386864"
       },
       {
        "widget": {
@@ -1315,7 +1315,7 @@
          },
          "toolTip": {
           "t": "str",
-          "v": "Distancia máxima del imán"
+          "v": "Max. magnet distance"
          },
          "text": {
           "t": "str",
@@ -1346,7 +1346,7 @@
       },
       "windowTitle": {
        "t": "str",
-       "v": "Barra de herramientas de estado"
+       "v": "Status Toolbar"
       },
       "styleSheet": {
        "t": "str",
@@ -1362,7 +1362,7 @@
         "props": {
          "toolTip": {
           "t": "str",
-          "v": "Alternar la visualización del eje en el lienzo"
+          "v": "Toggle the display of axis on canvas"
          },
          "pixmap": {
           "t": "QPixmap",
@@ -1396,7 +1396,7 @@
         "props": {
          "toolTip": {
           "t": "str",
-          "v": "Preferencias"
+          "v": "Preferences"
          },
          "pixmap": {
           "t": "QPixmap",
@@ -1430,7 +1430,7 @@
         "props": {
          "toolTip": {
           "t": "str",
-          "v": "Línea de Comando"
+          "v": "Command Line"
          },
          "pixmap": {
           "t": "QPixmap",
@@ -1464,7 +1464,7 @@
         "props": {
          "toolTip": {
           "t": "str",
-          "v": "HUD (pantalla de visualización)"
+          "v": "HUD (Heads up display)"
          },
          "pixmap": {
           "t": "QPixmap",
@@ -1498,7 +1498,7 @@
         "props": {
          "toolTip": {
           "t": "str",
-          "v": "Dibuja un rectángulo delimitador en el lienzo.\nEl propósito es ilustrar los límites de nuestro trabajo."
+          "v": "Draw a delimiting rectangle on canvas.\nThe purpose is to illustrate the limits for our work."
          },
          "text": {
           "t": "str",
@@ -1600,7 +1600,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "Ocioso."
+           "v": "Idle."
           }
          }
         }
@@ -1640,7 +1640,7 @@
   ]
  },
  "actions": {
-  "105553154577376": {
+  "105553175457184": {
    "name": "menu_toggle_nb",
    "props": {
     "checkable": {
@@ -1653,15 +1653,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Panel de palanca"
+     "v": "Toggle Panel"
     },
     "toolTip": {
      "t": "str",
-     "v": "Panel de palanca"
+     "v": "Toggle Panel"
     }
    }
   },
-  "105553154577632": {
+  "105553175453408": {
    "name": "menufilenewproject",
    "props": {
     "icon": {
@@ -1670,15 +1670,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Nuevo Proyecto...\tCtrl+N"
+     "v": "New Project...\tCtrl+N"
     },
     "toolTip": {
      "t": "str",
-     "v": "Creará un nuevo proyecto en blanco"
+     "v": "Will create a new, blank project"
     }
    }
   },
-  "105553156815584": {
+  "105553177438976": {
    "name": "menufilenewgeo",
    "props": {
     "icon": {
@@ -1687,15 +1687,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Geometría\tN"
+     "v": "Geometry\tN"
     },
     "toolTip": {
      "t": "str",
-     "v": "Creará un nuevo objeto vacío de geometría."
+     "v": "Will create a new, empty Geometry Object."
     }
    }
   },
-  "105553156815616": {
+  "105553177439008": {
    "name": "menufilenewgrb",
    "props": {
     "icon": {
@@ -1708,11 +1708,11 @@
     },
     "toolTip": {
      "t": "str",
-     "v": "Creará un nuevo objeto vacío de Gerber."
+     "v": "Will create a new, empty Gerber Object."
     }
    }
   },
-  "105553156815648": {
+  "105553177439040": {
    "name": "menufilenewexc",
    "props": {
     "icon": {
@@ -1725,16 +1725,16 @@
     },
     "toolTip": {
      "t": "str",
-     "v": "Creará un objeto Excellon nuevo y vacío."
+     "v": "Will create a new, empty Excellon Object."
     }
    }
   },
-  "105553156815472": {
+  "105553177438864": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156815696": {
+  "105553177439088": {
    "name": "menufilenewdoc",
    "props": {
     "icon": {
@@ -1743,15 +1743,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Documento\tD"
+     "v": "Document\tD"
     },
     "toolTip": {
      "t": "str",
-     "v": "Creará un nuevo objeto de Documento vacío."
+     "v": "Will create a new, empty Document Object."
     }
    }
   },
-  "105553156815520": {
+  "105553177438912": {
    "name": null,
    "props": {
     "icon": {
@@ -1760,11 +1760,11 @@
     },
     "text": {
      "t": "str",
-     "v": "Nueva"
+     "v": "New"
     },
     "toolTip": {
      "t": "str",
-     "v": "Nueva"
+     "v": "New"
     }
    },
    "menu": {
@@ -1772,7 +1772,7 @@
     "props": {
      "title": {
       "t": "str",
-      "v": "Nueva"
+      "v": "New"
      },
      "icon": {
       "t": "QIcon",
@@ -1785,15 +1785,15 @@
     },
     "py": "QMenu",
     "items": [
-     "105553156815584",
-     "105553156815616",
-     "105553156815648",
-     "105553156815472",
-     "105553156815696"
+     "105553177438976",
+     "105553177439008",
+     "105553177439040",
+     "105553177438864",
+     "105553177439088"
     ]
    }
   },
-  "105553154582720": {
+  "105553175456416": {
    "name": "menufileopenproject",
    "props": {
     "icon": {
@@ -1802,20 +1802,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Abrir proyecto...\tCtrl+O"
+     "v": "Open Project...\tCtrl+O"
     },
     "toolTip": {
      "t": "str",
-     "v": "Abrir proyecto\tCtrl+O"
+     "v": "Open Project\tCtrl+O"
     }
    }
   },
-  "105553156815680": {
+  "105553177439072": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553154578720": {
+  "105553175456160": {
    "name": "menufileopengerber",
    "props": {
     "icon": {
@@ -1824,15 +1824,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Abrir Gerber...\tCtrl+G"
+     "v": "Open Gerber...\tCtrl+G"
     },
     "toolTip": {
      "t": "str",
-     "v": "Abrir Gerber\tCtrl+G"
+     "v": "Open Gerber\tCtrl+G"
     }
    }
   },
-  "105553154583360": {
+  "105553175458400": {
    "name": "menufileopenexcellon",
    "props": {
     "icon": {
@@ -1841,15 +1841,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Abrir Excellon...\tCtrl+E"
+     "v": "Open Excellon...\tCtrl+E"
     },
     "toolTip": {
      "t": "str",
-     "v": "Abrir Excellon\tCtrl+E"
+     "v": "Open Excellon\tCtrl+E"
     }
    }
   },
-  "105553154583456": {
+  "105553175458592": {
    "name": "menufileopengcode",
    "props": {
     "icon": {
@@ -1858,20 +1858,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Abrir código G...\t"
+     "v": "Open G-Code...\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Abrir código G"
+     "v": "Open G-Code"
     }
    }
   },
-  "105553156815776": {
+  "105553177439168": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553154583296": {
+  "105553175314592": {
    "name": "menufileopenconfig",
    "props": {
     "icon": {
@@ -1880,15 +1880,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Abrir configuración...\t"
+     "v": "Open Config...\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Abrir configuración"
+     "v": "Open Config"
     }
    }
   },
-  "105553156815728": {
+  "105553177439120": {
    "name": null,
    "props": {
     "icon": {
@@ -1897,11 +1897,11 @@
     },
     "text": {
      "t": "str",
-     "v": "Abrir"
+     "v": "Open"
     },
     "toolTip": {
      "t": "str",
-     "v": "Abrir"
+     "v": "Open"
     }
    },
    "menu": {
@@ -1909,7 +1909,7 @@
     "props": {
      "title": {
       "t": "str",
-      "v": "Abrir"
+      "v": "Open"
      },
      "icon": {
       "t": "QIcon",
@@ -1922,17 +1922,17 @@
     },
     "py": "QMenu",
     "items": [
-     "105553154582720",
-     "105553156815680",
-     "105553154578720",
-     "105553154583360",
-     "105553154583456",
-     "105553156815776",
-     "105553154583296"
+     "105553175456416",
+     "105553177439072",
+     "105553175456160",
+     "105553175458400",
+     "105553175458592",
+     "105553177439168",
+     "105553175314592"
     ]
    }
   },
-  "105553156815872": {
+  "105553177439264": {
    "name": null,
    "props": {
     "icon": {
@@ -1941,11 +1941,11 @@
     },
     "text": {
      "t": "str",
-     "v": "Proyectos recientes"
+     "v": "Recent projects"
     },
     "toolTip": {
      "t": "str",
-     "v": "Proyectos recientes"
+     "v": "Recent projects"
     }
    },
    "menu": {
@@ -1953,7 +1953,7 @@
     "props": {
      "title": {
       "t": "str",
-      "v": "Proyectos recientes"
+      "v": "Recent projects"
      },
      "icon": {
       "t": "QIcon",
@@ -1964,7 +1964,7 @@
     "items": []
    }
   },
-  "105553156815936": {
+  "105553177439328": {
    "name": null,
    "props": {
     "icon": {
@@ -1973,11 +1973,11 @@
     },
     "text": {
      "t": "str",
-     "v": "Archivos recientes"
+     "v": "Recent files"
     },
     "toolTip": {
      "t": "str",
-     "v": "Archivos recientes"
+     "v": "Recent files"
     }
    },
    "menu": {
@@ -1985,7 +1985,7 @@
     "props": {
      "title": {
       "t": "str",
-      "v": "Archivos recientes"
+      "v": "Recent files"
      },
      "icon": {
       "t": "QIcon",
@@ -1996,7 +1996,7 @@
     "items": []
    }
   },
-  "105553154584064": {
+  "105553175461792": {
    "name": "menufilesaveproject",
    "props": {
     "icon": {
@@ -2005,15 +2005,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Guardar proyecto...\tCtrl+S"
+     "v": "Save Project...\tCtrl+S"
     },
     "toolTip": {
      "t": "str",
-     "v": "Guardar proyecto\tCtrl+S"
+     "v": "Save Project\tCtrl+S"
     }
    }
   },
-  "105553154584480": {
+  "105553175358464": {
    "name": "menufilesaveprojectas",
    "props": {
     "icon": {
@@ -2022,20 +2022,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Guardar proyecto como...\tCtrl+Shift+S"
+     "v": "Save Project As...\tCtrl+Shift+S"
     },
     "toolTip": {
      "t": "str",
-     "v": "Guardar proyecto como\tCtrl+Shift+S"
+     "v": "Save Project As\tCtrl+Shift+S"
     }
    }
   },
-  "105553156815424": {
+  "105553177438432": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156815984": {
+  "105553177439376": {
    "name": null,
    "props": {
     "icon": {
@@ -2044,11 +2044,11 @@
     },
     "text": {
      "t": "str",
-     "v": "Salvar"
+     "v": "Save"
     },
     "toolTip": {
      "t": "str",
-     "v": "Salvar"
+     "v": "Save"
     }
    },
    "menu": {
@@ -2056,7 +2056,7 @@
     "props": {
      "title": {
       "t": "str",
-      "v": "Salvar"
+      "v": "Save"
      },
      "icon": {
       "t": "QIcon",
@@ -2065,18 +2065,18 @@
     },
     "py": "QMenu",
     "items": [
-     "105553154584064",
-     "105553154584480",
-     "105553156815424"
+     "105553175461792",
+     "105553175358464",
+     "105553177438432"
     ]
    }
   },
-  "105553156815808": {
+  "105553177439200": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553154584288": {
+  "105553175429344": {
    "name": "menufilenewscript",
    "props": {
     "icon": {
@@ -2085,15 +2085,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Nuevo Script...\t"
+     "v": "New Script...\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Nuevo Script"
+     "v": "New Script"
     }
    }
   },
-  "105553154584960": {
+  "105553175429696": {
    "name": "menufileopenscript",
    "props": {
     "icon": {
@@ -2102,15 +2102,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Abrir Script...\t"
+     "v": "Open Script...\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Abrir Script"
+     "v": "Open Script"
     }
    }
   },
-  "105553154583424": {
+  "105553175429440": {
    "name": "menufileopenscriptexample",
    "props": {
     "icon": {
@@ -2119,20 +2119,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Abrir ejemplo...\t"
+     "v": "Open Example...\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Abrir ejemplo"
+     "v": "Open Example"
     }
    }
   },
-  "105553156816080": {
+  "105553177439472": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553154585152": {
+  "105553175429888": {
    "name": "menufilerunscript",
    "props": {
     "icon": {
@@ -2141,15 +2141,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Ejecutar script TCL...\tShift+S"
+     "v": "Run Script...\tShift+S"
     },
     "toolTip": {
      "t": "str",
-     "v": "Ejecutará el Script Tcl abierto así\npermitiendo la automatización de ciertos\nFunciones de FlatCAM."
+     "v": "Will run the opened Tcl Script thus\nenabling the automation of certain\nfunctions of FlatCAM."
     }
    }
   },
-  "105553156816096": {
+  "105553177439488": {
    "name": null,
    "props": {
     "icon": {
@@ -2183,20 +2183,20 @@
     },
     "py": "QMenu",
     "items": [
-     "105553154584288",
-     "105553154584960",
-     "105553154583424",
-     "105553156816080",
-     "105553154585152"
+     "105553175429344",
+     "105553175429696",
+     "105553175429440",
+     "105553177439472",
+     "105553175429888"
     ]
    }
   },
-  "105553156816032": {
+  "105553177439424": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553154746752": {
+  "105553175422592": {
    "name": "menufileimportsvg",
    "props": {
     "icon": {
@@ -2205,15 +2205,15 @@
     },
     "text": {
      "t": "str",
-     "v": "SVG como objeto de geometría...\t"
+     "v": "SVG as Geometry Object...\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "SVG como objeto de geometría"
+     "v": "SVG as Geometry Object"
     }
    }
   },
-  "105553154632160": {
+  "105553175260832": {
    "name": "menufileimportsvg_as_gerber",
    "props": {
     "icon": {
@@ -2222,20 +2222,20 @@
     },
     "text": {
      "t": "str",
-     "v": "SVG como objeto de Gerber...\t"
+     "v": "SVG as Gerber Object...\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "SVG como objeto de Gerber"
+     "v": "SVG as Gerber Object"
     }
    }
   },
-  "105553156822448": {
+  "105553177353840": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553154632768": {
+  "105553175260992": {
    "name": "menufileimportdxf",
    "props": {
     "icon": {
@@ -2244,15 +2244,15 @@
     },
     "text": {
      "t": "str",
-     "v": "DXF como objeto de geometría...\t"
+     "v": "DXF as Geometry Object...\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "DXF como objeto de geometría"
+     "v": "DXF as Geometry Object"
     }
    }
   },
-  "105553154633344": {
+  "105553175261376": {
    "name": "menufileimportdxf_as_gerber",
    "props": {
     "icon": {
@@ -2261,20 +2261,20 @@
     },
     "text": {
      "t": "str",
-     "v": "DXF como objeto de Gerber...\t"
+     "v": "DXF as Gerber Object...\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "DXF como objeto de Gerber"
+     "v": "DXF as Gerber Object"
     }
    }
   },
-  "105553156822528": {
+  "105553177353856": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553154633024": {
+  "105553175261056": {
    "name": "menufileimport_hpgl2_as_geo",
    "props": {
     "icon": {
@@ -2283,20 +2283,20 @@
     },
     "text": {
      "t": "str",
-     "v": "HPGL2 como objeto de geometría...\t"
+     "v": "HPGL2 as Geometry Object...\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "HPGL2 como objeto de geometría"
+     "v": "HPGL2 as Geometry Object"
     }
    }
   },
-  "105553156822560": {
+  "105553177353888": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553155361184": {
+  "105553176769952": {
    "name": "pdf_tool_menuAction",
    "props": {
     "icon": {
@@ -2305,20 +2305,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Herram. de Import. de PDF\tCtrl+Q"
+     "v": "PDF Import Tool\tCtrl+Q"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herram. de Import. de PDF\tCtrl+Q"
+     "v": "PDF Import Tool\tCtrl+Q"
     }
    }
   },
-  "105553156272112": {
+  "105553177710992": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553155391200": {
+  "105553176783936": {
    "name": "image_tool_menuAction",
    "props": {
     "icon": {
@@ -2327,20 +2327,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Imagen como objeto"
+     "v": "Image as Object"
     },
     "toolTip": {
      "t": "str",
-     "v": "Imagen como objeto"
+     "v": "Image as Object"
     }
    }
   },
-  "105553156274512": {
+  "105553177713392": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553155419360": {
+  "105553176729856": {
    "name": "pcb_wizard_tool_menuAction",
    "props": {
     "icon": {
@@ -2349,15 +2349,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herra. de import. PcbWizard"
+     "v": "PcbWizard Import Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herra. de import. PcbWizard"
+     "v": "PcbWizard Import Tool"
     }
    }
   },
-  "105553156816240": {
+  "105553177439632": {
    "name": null,
    "props": {
     "icon": {
@@ -2366,11 +2366,11 @@
     },
     "text": {
      "t": "str",
-     "v": "Importar"
+     "v": "Import"
     },
     "toolTip": {
      "t": "str",
-     "v": "Importar"
+     "v": "Import"
     }
    },
    "menu": {
@@ -2378,7 +2378,7 @@
     "props": {
      "title": {
       "t": "str",
-      "v": "Importar"
+      "v": "Import"
      },
      "icon": {
       "t": "QIcon",
@@ -2387,23 +2387,23 @@
     },
     "py": "QMenu",
     "items": [
-     "105553154746752",
-     "105553154632160",
-     "105553156822448",
-     "105553154632768",
-     "105553154633344",
-     "105553156822528",
-     "105553154633024",
-     "105553156822560",
-     "105553155361184",
-     "105553156272112",
-     "105553155391200",
-     "105553156274512",
-     "105553155419360"
+     "105553175422592",
+     "105553175260832",
+     "105553177353840",
+     "105553175260992",
+     "105553175261376",
+     "105553177353856",
+     "105553175261056",
+     "105553177353888",
+     "105553176769952",
+     "105553177710992",
+     "105553176783936",
+     "105553177713392",
+     "105553176729856"
     ]
    }
   },
-  "105553154633120": {
+  "105553175261152": {
    "name": "menufileexportsvg",
    "props": {
     "icon": {
@@ -2412,15 +2412,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Exportar SVG...\t"
+     "v": "Export SVG...\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Exportar SVG"
+     "v": "Export SVG"
     }
    }
   },
-  "105553154634016": {
+  "105553175262048": {
    "name": "menufileexportdxf",
    "props": {
     "icon": {
@@ -2429,20 +2429,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Exportar DXF...\t"
+     "v": "Export DXF...\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Exportar DXF"
+     "v": "Export DXF"
     }
    }
   },
-  "105553156822608": {
+  "105553177353936": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553154634048": {
+  "105553175262080": {
    "name": "menufileexportpng",
    "props": {
     "icon": {
@@ -2451,20 +2451,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Exportar PNG...\t"
+     "v": "Export PNG...\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Exportará una imagen en formato PNG,\nLa imagen guardada contendrá lo visual.\nInformación actualmente en FlatCAM Plot Area."
+     "v": "Will export an image in PNG format,\nthe saved image will contain the visual \ninformation currently in FlatCAM Plot Area."
     }
    }
   },
-  "105553156822688": {
+  "105553177354016": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553154634176": {
+  "105553175262208": {
    "name": "menufileexportexcellon",
    "props": {
     "icon": {
@@ -2473,15 +2473,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Exportar Excellon...\t"
+     "v": "Export Excellon...\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Exportará un objeto de Excellon como archivo de Excellon,\nEl formato de las coordenadas, las unidades de archivo y los ceros.\nse configuran en Preferencias -> Exportación de Excellon."
+     "v": "Will export an Excellon Object as Excellon file,\nthe coordinates format, the file units and zeros\nare set in Preferences -> Excellon Export."
     }
    }
   },
-  "105553154634368": {
+  "105553175262400": {
    "name": "menufileexportgerber",
    "props": {
     "icon": {
@@ -2490,15 +2490,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Gerber Exportación...\t"
+     "v": "Export Gerber...\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Exportará un objeto Gerber como archivo Gerber,\nEl formato de las coordenadas, las unidades de archivo y los ceros.\nse establecen en Preferencias -> Exportar Gerber."
+     "v": "Will export an Gerber Object as Gerber file,\nthe coordinates format, the file units and zeros\nare set in Preferences -> Gerber Export."
     }
    }
   },
-  "105553156822640": {
+  "105553177353968": {
    "name": null,
    "props": {
     "icon": {
@@ -2507,11 +2507,11 @@
     },
     "text": {
      "t": "str",
-     "v": "Exportar"
+     "v": "Export"
     },
     "toolTip": {
      "t": "str",
-     "v": "Exportar"
+     "v": "Export"
     }
    },
    "menu": {
@@ -2519,7 +2519,7 @@
     "props": {
      "title": {
       "t": "str",
-      "v": "Exportar"
+      "v": "Export"
      },
      "icon": {
       "t": "QIcon",
@@ -2532,22 +2532,22 @@
     },
     "py": "QMenu",
     "items": [
-     "105553154633120",
-     "105553154634016",
-     "105553156822608",
-     "105553154634048",
-     "105553156822688",
-     "105553154634176",
-     "105553154634368"
+     "105553175261152",
+     "105553175262048",
+     "105553177353936",
+     "105553175262080",
+     "105553177354016",
+     "105553175262208",
+     "105553175262400"
     ]
    }
   },
-  "105553156822544": {
+  "105553177353872": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553154632608": {
+  "105553175260960": {
    "name": "menufileimportpref",
    "props": {
     "icon": {
@@ -2556,15 +2556,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Importar preferencias del archivo...\t"
+     "v": "Import Preferences from file...\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Importar preferencias del archivo"
+     "v": "Import Preferences from file"
     }
    }
   },
-  "105553154634880": {
+  "105553175262912": {
    "name": "menufileexportpref",
    "props": {
     "icon": {
@@ -2573,20 +2573,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Exportar preferencias a un archivo...\t"
+     "v": "Export Preferences to file...\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Exportar preferencias a un archivo"
+     "v": "Export Preferences to file"
     }
    }
   },
-  "105553156822768": {
+  "105553177354096": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553154634912": {
+  "105553175262944": {
    "name": "menufilesavedefaults",
    "props": {
     "icon": {
@@ -2595,15 +2595,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Guardar Preferencias\t"
+     "v": "Save Preferences\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Guardar Preferencias"
+     "v": "Save Preferences"
     }
    }
   },
-  "105553156822816": {
+  "105553177354144": {
    "name": null,
    "props": {
     "icon": {
@@ -2612,11 +2612,11 @@
     },
     "text": {
      "t": "str",
-     "v": "Apoyo"
+     "v": "Backup"
     },
     "toolTip": {
      "t": "str",
-     "v": "Apoyo"
+     "v": "Backup"
     }
    },
    "menu": {
@@ -2624,7 +2624,7 @@
     "props": {
      "title": {
       "t": "str",
-      "v": "Apoyo"
+      "v": "Backup"
      },
      "icon": {
       "t": "QIcon",
@@ -2633,19 +2633,19 @@
     },
     "py": "QMenu",
     "items": [
-     "105553154632608",
-     "105553154634880",
-     "105553156822768",
-     "105553154634912"
+     "105553175260960",
+     "105553175262912",
+     "105553177354096",
+     "105553175262944"
     ]
    }
   },
-  "105553156822864": {
+  "105553177354192": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553154634688": {
+  "105553175262720": {
    "name": "menufile_print",
    "props": {
     "icon": {
@@ -2654,20 +2654,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Imprimir (PDF)\tCtrl+P"
+     "v": "Print (PDF)\tCtrl+P"
     },
     "toolTip": {
      "t": "str",
-     "v": "Imprimir (PDF)\tCtrl+P"
+     "v": "Print (PDF)\tCtrl+P"
     }
    }
   },
-  "105553156822912": {
+  "105553177354240": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553154635168": {
+  "105553175263200": {
    "name": "menufile_exit",
    "props": {
     "icon": {
@@ -2676,24 +2676,24 @@
     },
     "text": {
      "t": "str",
-     "v": "Salida\t"
+     "v": "Exit\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Salida"
+     "v": "Exit"
     }
    }
   },
-  "105553156815408": {
+  "105553177438416": {
    "name": null,
    "props": {
     "text": {
      "t": "str",
-     "v": "Archivo"
+     "v": "File"
     },
     "toolTip": {
      "t": "str",
-     "v": "Archivo"
+     "v": "File"
     }
    },
    "menu": {
@@ -2701,7 +2701,7 @@
     "props": {
      "title": {
       "t": "str",
-      "v": "Archivo"
+      "v": "File"
      },
      "toolTipsVisible": {
       "t": "bool",
@@ -2710,32 +2710,32 @@
     },
     "py": "QMenu",
     "items": [
-     "105553154577632",
-     "105553156815520",
-     "105553156815728",
-     "105553156815872",
-     "105553156815936",
-     "105553156815984",
-     "105553156815808",
-     "105553156816096",
-     "105553156816032",
-     "105553156816240",
-     "105553156822640",
-     "105553156822544",
-     "105553156822816",
-     "105553156822864",
-     "105553154634688",
-     "105553156822912",
-     "105553154635168"
+     "105553175453408",
+     "105553177438912",
+     "105553177439120",
+     "105553177439264",
+     "105553177439328",
+     "105553177439376",
+     "105553177439200",
+     "105553177439488",
+     "105553177439424",
+     "105553177439632",
+     "105553177353968",
+     "105553177353872",
+     "105553177354144",
+     "105553177354192",
+     "105553175262720",
+     "105553177354240",
+     "105553175263200"
     ]
    }
   },
-  "105553156822944": {
+  "105553177354272": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156823040": {
+  "105553177354368": {
    "name": "menueditedit",
    "props": {
     "icon": {
@@ -2744,15 +2744,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Editar objeto\tE"
+     "v": "Edit Object\tE"
     },
     "toolTip": {
      "t": "str",
-     "v": "Editar objeto\tE"
+     "v": "Edit Object\tE"
     }
    }
   },
-  "105553156823072": {
+  "105553177354400": {
    "name": "menueditok",
    "props": {
     "enabled": {
@@ -2765,20 +2765,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Salir del editor\tCtrl+S"
+     "v": "Exit Editor\tCtrl+S"
     },
     "toolTip": {
      "t": "str",
-     "v": "Salir del editor\tCtrl+S"
+     "v": "Exit Editor\tCtrl+S"
     }
    }
   },
-  "105553156823008": {
+  "105553177354336": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156823168": {
+  "105553177354496": {
    "name": "menuedit_convert_sg2mg",
    "props": {
     "icon": {
@@ -2787,15 +2787,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Convertir solo geo a multi geo\t"
+     "v": "Convert Single to MultiGeo\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Convertirá un objeto de geometría de un tipo de geometría única\na un tipo de geometría múltiple."
+     "v": "Will convert a Geometry object from single_geometry type\nto a multi_geometry type."
     }
    }
   },
-  "105553156823200": {
+  "105553177354528": {
    "name": "menuedit_convert_mg2sg",
    "props": {
     "icon": {
@@ -2804,20 +2804,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Convertir multi a solo Geo\t"
+     "v": "Convert Multi to SingleGeo\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Convertirá un objeto de geometría de tipo de geometría múltiple\na un solo tipo de geometría."
+     "v": "Will convert a Geometry object from multi_geometry type\nto a single_geometry type."
     }
    }
   },
-  "105553156823104": {
+  "105553177354432": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156823248": {
+  "105553177354576": {
    "name": "menueditconvert_any2geo",
    "props": {
     "icon": {
@@ -2826,15 +2826,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Convertir cualquiera a Geo\t"
+     "v": "Convert Any to Geo\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Convertir cualquiera a Geo"
+     "v": "Convert Any to Geo"
     }
    }
   },
-  "105553156823280": {
+  "105553177354608": {
    "name": "menueditconvert_any2gerber",
    "props": {
     "icon": {
@@ -2843,15 +2843,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Convertir cualquiera a Gerber\t"
+     "v": "Convert Any to Gerber\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Convertir cualquiera a Gerber"
+     "v": "Convert Any to Gerber"
     }
    }
   },
-  "105553156823312": {
+  "105553177354640": {
    "name": "menueditconvert_any2excellon",
    "props": {
     "icon": {
@@ -2860,15 +2860,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Convertir cualquiera a Geo\t"
+     "v": "Convert Any to Excellon\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Convertir cualquiera a Geo"
+     "v": "Convert Any to Excellon"
     }
    }
   },
-  "105553156823120": {
+  "105553177354448": {
    "name": null,
    "props": {
     "icon": {
@@ -2877,11 +2877,11 @@
     },
     "text": {
      "t": "str",
-     "v": "Conversión"
+     "v": "Conversion"
     },
     "toolTip": {
      "t": "str",
-     "v": "Conversión"
+     "v": "Conversion"
     }
    },
    "menu": {
@@ -2889,7 +2889,7 @@
     "props": {
      "title": {
       "t": "str",
-      "v": "Conversión"
+      "v": "Conversion"
      },
      "icon": {
       "t": "QIcon",
@@ -2902,16 +2902,16 @@
     },
     "py": "QMenu",
     "items": [
-     "105553156823168",
-     "105553156823200",
-     "105553156823104",
-     "105553156823248",
-     "105553156823280",
-     "105553156823312"
+     "105553177354496",
+     "105553177354528",
+     "105553177354432",
+     "105553177354576",
+     "105553177354608",
+     "105553177354640"
     ]
    }
   },
-  "105553156823392": {
+  "105553177354720": {
    "name": "menuedit_join2geo",
    "props": {
     "icon": {
@@ -2920,15 +2920,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Únete a Geo/Gerber/Exc -> Geo\t"
+     "v": "Join Geo/Gerber/Exc -> Geo\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Combine una selección de objetos, que pueden ser de tipo:\n- Gerber\n- Excellon\n- Geometría\nen un nuevo objeto de geometría combo."
+     "v": "Merge a selection of objects, which can be of type:\n- Gerber\n- Excellon\n- Geometry\ninto a new combo Geometry object."
     }
    }
   },
-  "105553156823424": {
+  "105553177354752": {
    "name": "menuedit_join_exc2exc",
    "props": {
     "icon": {
@@ -2937,15 +2937,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Únete a Excellon (s) -> Excellon\t"
+     "v": "Join Excellon(s) -> Excellon\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Combine una selección de objetos de Excellon en un nuevo objeto de Excellon combinado."
+     "v": "Merge a selection of Excellon objects into a new combo Excellon object."
     }
    }
   },
-  "105553156823456": {
+  "105553177354784": {
    "name": "menuedit_join_grb2grb",
    "props": {
     "icon": {
@@ -2954,15 +2954,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Únete a Gerber (s) -> Gerber\t"
+     "v": "Join Gerber(s) -> Gerber\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Combine una selección de objetos Gerber en un nuevo objeto combo Gerber."
+     "v": "Merge a selection of Gerber objects into a new combo Gerber object."
     }
    }
   },
-  "105553156823344": {
+  "105553177354672": {
    "name": null,
    "props": {
     "icon": {
@@ -2971,11 +2971,11 @@
     },
     "text": {
      "t": "str",
-     "v": "Unir objetos"
+     "v": "Join Objects"
     },
     "toolTip": {
      "t": "str",
-     "v": "Unir objetos"
+     "v": "Join Objects"
     }
    },
    "menu": {
@@ -2983,7 +2983,7 @@
     "props": {
      "title": {
       "t": "str",
-      "v": "Unir objetos"
+      "v": "Join Objects"
      },
      "icon": {
       "t": "QIcon",
@@ -2996,18 +2996,18 @@
     },
     "py": "QMenu",
     "items": [
-     "105553156823392",
-     "105553156823424",
-     "105553156823456"
+     "105553177354720",
+     "105553177354752",
+     "105553177354784"
     ]
    }
   },
-  "105553156823232": {
+  "105553177354560": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156823504": {
+  "105553177354832": {
    "name": "menueditcopyobject",
    "props": {
     "icon": {
@@ -3016,20 +3016,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Dupdo\tCopiar"
+     "v": "Copy\tCtrl+C"
     },
     "toolTip": {
      "t": "str",
-     "v": "Dupdo\tCopiar"
+     "v": "Copy\tCtrl+C"
     }
    }
   },
-  "105553156823488": {
+  "105553177354816": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156823552": {
+  "105553177354880": {
    "name": "menueditdelete",
    "props": {
     "icon": {
@@ -3038,20 +3038,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Borrar\tDEL"
+     "v": "Delete\tDEL"
     },
     "toolTip": {
      "t": "str",
-     "v": "Borrar\tDEL"
+     "v": "Delete\tDEL"
     }
    }
   },
-  "105553156823536": {
+  "105553177354864": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156075936": {
+  "105553176078752": {
    "name": "distance_tool_menuAction",
    "props": {
     "icon": {
@@ -3060,15 +3060,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Dist\tCtrl+M"
+     "v": "Distance Tool\tCtrl+M"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Dist\tCtrl+M"
+     "v": "Distance Tool\tCtrl+M"
     }
    }
   },
-  "105553156098432": {
+  "105553176086144": {
    "name": "distance_min_tool_menuAction",
    "props": {
     "icon": {
@@ -3077,15 +3077,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Distancia Mínima\tShift+M"
+     "v": "Minimum Distance Tool\tShift+M"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Distancia Mínima\tShift+M"
+     "v": "Minimum Distance Tool\tShift+M"
     }
    }
   },
-  "105553155320128": {
+  "105553176885952": {
    "name": "move_tool_menuAction",
    "props": {
     "icon": {
@@ -3094,15 +3094,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Movimiento\tM"
+     "v": "Move\tM"
     },
     "toolTip": {
      "t": "str",
-     "v": "Movimiento\tM"
+     "v": "Move\tM"
     }
    }
   },
-  "105553156823600": {
+  "105553177354928": {
    "name": "menueditorigin",
    "props": {
     "icon": {
@@ -3111,15 +3111,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Establecer origen\tO"
+     "v": "Set Origin\tO"
     },
     "toolTip": {
      "t": "str",
-     "v": "Establecer origen\tO"
+     "v": "Set Origin\tO"
     }
    }
   },
-  "105553156823632": {
+  "105553177354960": {
    "name": "menuedit_move2origin",
    "props": {
     "icon": {
@@ -3128,15 +3128,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Mover al origen\tShift+O"
+     "v": "Move to Origin\tShift+O"
     },
     "toolTip": {
      "t": "str",
-     "v": "Mover al origen\tShift+O"
+     "v": "Move to Origin\tShift+O"
     }
    }
   },
-  "105553156823664": {
+  "105553177354992": {
    "name": "menueditjump",
    "props": {
     "icon": {
@@ -3145,15 +3145,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Saltar a la ubicación\tJ"
+     "v": "Jump to Location\tJ"
     },
     "toolTip": {
      "t": "str",
-     "v": "Saltar a la ubicación\tJ"
+     "v": "Jump to Location\tJ"
     }
    }
   },
-  "105553156823696": {
+  "105553177355024": {
    "name": "menueditlocate",
    "props": {
     "icon": {
@@ -3162,20 +3162,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Localizar en objeto\tShift+J"
+     "v": "Locate in Object\tShift+J"
     },
     "toolTip": {
      "t": "str",
-     "v": "Localizar en objeto\tShift+J"
+     "v": "Locate in Object\tShift+J"
     }
    }
   },
-  "105553156823024": {
+  "105553177354352": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156823744": {
+  "105553177355072": {
    "name": "menuedittoggleunits",
    "props": {
     "icon": {
@@ -3184,15 +3184,15 @@
     },
     "text": {
      "t": "str",
-     "v": "(Escriba ayuda para empezar)\tQ"
+     "v": "Toggle Units\tQ"
     },
     "toolTip": {
      "t": "str",
-     "v": "(Escriba ayuda para empezar)\tQ"
+     "v": "Toggle Units\tQ"
     }
    }
   },
-  "105553156823776": {
+  "105553177355104": {
    "name": "menueditselectall",
    "props": {
     "icon": {
@@ -3201,20 +3201,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Seleccionar todo\tCtrl+A"
+     "v": "Select All\tCtrl+A"
     },
     "toolTip": {
      "t": "str",
-     "v": "Seleccionar todo\tCtrl+A"
+     "v": "Select All\tCtrl+A"
     }
    }
   },
-  "105553156823584": {
+  "105553177354912": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156823824": {
+  "105553177355152": {
    "name": "menueditpreferences",
    "props": {
     "icon": {
@@ -3223,34 +3223,34 @@
     },
     "text": {
      "t": "str",
-     "v": "Preferencias\tShift+P"
+     "v": "Preferences\tShift+P"
     },
     "toolTip": {
      "t": "str",
-     "v": "Preferencias\tShift+P"
+     "v": "Preferences\tShift+P"
     }
    }
   },
-  "105553157005744": {
+  "105553178115120": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156159936": {
+  "105553178037824": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156822736": {
+  "105553177354064": {
    "name": null,
    "props": {
     "text": {
      "t": "str",
-     "v": "Editar"
+     "v": "Edit"
     },
     "toolTip": {
      "t": "str",
-     "v": "Editar"
+     "v": "Edit"
     }
    },
    "menu": {
@@ -3258,40 +3258,40 @@
     "props": {
      "title": {
       "t": "str",
-      "v": "Editar"
+      "v": "Edit"
      }
     },
     "py": "QMenu",
     "items": [
-     "105553156822944",
-     "105553156823040",
-     "105553156823072",
-     "105553156823008",
-     "105553156823120",
-     "105553156823344",
-     "105553156823232",
-     "105553156823504",
-     "105553156823488",
-     "105553156823552",
-     "105553156823536",
-     "105553156075936",
-     "105553156098432",
-     "105553155320128",
-     "105553156823600",
-     "105553156823632",
-     "105553156823664",
-     "105553156823696",
-     "105553156823024",
-     "105553156823744",
-     "105553156823776",
-     "105553156823584",
-     "105553156823824",
-     "105553157005744",
-     "105553156159936"
+     "105553177354272",
+     "105553177354368",
+     "105553177354400",
+     "105553177354336",
+     "105553177354448",
+     "105553177354672",
+     "105553177354560",
+     "105553177354832",
+     "105553177354816",
+     "105553177354880",
+     "105553177354864",
+     "105553176078752",
+     "105553176086144",
+     "105553176885952",
+     "105553177354928",
+     "105553177354960",
+     "105553177354992",
+     "105553177355024",
+     "105553177354352",
+     "105553177355072",
+     "105553177355104",
+     "105553177354912",
+     "105553177355152",
+     "105553178115120",
+     "105553178037824"
     ]
    }
   },
-  "105553156823888": {
+  "105553177355216": {
    "name": "menuoptions_transform_rotate",
    "props": {
     "icon": {
@@ -3300,20 +3300,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Rotar selección\tShift+(R)"
+     "v": "Rotate Selection\tShift+(R)"
     },
     "toolTip": {
      "t": "str",
-     "v": "Rotar selección\tShift+(R)"
+     "v": "Rotate Selection\tShift+(R)"
     }
    }
   },
-  "105553156823872": {
+  "105553177355200": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156823936": {
+  "105553177355264": {
    "name": "menuoptions_transform_skewx",
    "props": {
     "icon": {
@@ -3322,15 +3322,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Inclinar en el eje X\tShift+X"
+     "v": "Skew on X axis\tShift+X"
     },
     "toolTip": {
      "t": "str",
-     "v": "Inclinar en el eje X\tShift+X"
+     "v": "Skew on X axis\tShift+X"
     }
    }
   },
-  "105553156823968": {
+  "105553177355296": {
    "name": "menuoptions_transform_skewy",
    "props": {
     "icon": {
@@ -3339,20 +3339,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Inclinar en el eje Y\tShift+Y"
+     "v": "Skew on Y axis\tShift+Y"
     },
     "toolTip": {
      "t": "str",
-     "v": "Inclinar en el eje Y\tShift+Y"
+     "v": "Skew on Y axis\tShift+Y"
     }
    }
   },
-  "105553156823808": {
+  "105553177355136": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156824016": {
+  "105553177355344": {
    "name": "menuoptions_transform_flipx",
    "props": {
     "icon": {
@@ -3361,15 +3361,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Voltear en el eje X\tX"
+     "v": "Flip on X axis\tX"
     },
     "toolTip": {
      "t": "str",
-     "v": "Voltear en el eje X\tX"
+     "v": "Flip on X axis\tX"
     }
    }
   },
-  "105553156824048": {
+  "105553177355376": {
    "name": "menuoptions_transform_flipy",
    "props": {
     "icon": {
@@ -3378,20 +3378,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Voltear en el ejeY\tY"
+     "v": "Flip on Y axis\tY"
     },
     "toolTip": {
      "t": "str",
-     "v": "Voltear en el ejeY\tY"
+     "v": "Flip on Y axis\tY"
     }
    }
   },
-  "105553156823920": {
+  "105553177355248": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156848704": {
+  "105553177381792": {
    "name": "menuoptions_view_source",
    "props": {
     "icon": {
@@ -3400,15 +3400,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Ver fuente\tAlt+S"
+     "v": "View source\tAlt+S"
     },
     "toolTip": {
      "t": "str",
-     "v": "Ver fuente\tAlt+S"
+     "v": "View source\tAlt+S"
     }
    }
   },
-  "105553156848768": {
+  "105553177381824": {
    "name": "menuoptions_tools_db",
    "props": {
     "icon": {
@@ -3417,20 +3417,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Base de Datos de Herramientas\tCtrl+D"
+     "v": "Tools Database\tCtrl+D"
     },
     "toolTip": {
      "t": "str",
-     "v": "Base de Datos de Herramientas\tCtrl+D"
+     "v": "Tools Database\tCtrl+D"
     }
    }
   },
-  "105553156848736": {
+  "105553177381808": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553155389440": {
+  "105553176765088": {
    "name": "transform_tool_menuAction",
    "props": {
     "icon": {
@@ -3439,20 +3439,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Transform. de objetos\tAlt+T"
+     "v": "Object Transform\tAlt+T"
     },
     "toolTip": {
      "t": "str",
-     "v": "Transform. de objetos\tAlt+T"
+     "v": "Object Transform\tAlt+T"
     }
    }
   },
-  "105553156271440": {
+  "105553177710320": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553155359520": {
+  "105553176768288": {
    "name": "properties_tool_menuAction",
    "props": {
     "icon": {
@@ -3461,24 +3461,24 @@
     },
     "text": {
      "t": "str",
-     "v": "Propiedades\tP"
+     "v": "Properties\tP"
     },
     "toolTip": {
      "t": "str",
-     "v": "Propiedades\tP"
+     "v": "Properties\tP"
     }
    }
   },
-  "105553156823728": {
+  "105553177355056": {
    "name": null,
    "props": {
     "text": {
      "t": "str",
-     "v": "Opciones"
+     "v": "Options"
     },
     "toolTip": {
      "t": "str",
-     "v": "Opciones"
+     "v": "Options"
     }
    },
    "menu": {
@@ -3486,29 +3486,29 @@
     "props": {
      "title": {
       "t": "str",
-      "v": "Opciones"
+      "v": "Options"
      }
     },
     "py": "QMenu",
     "items": [
-     "105553156823888",
-     "105553156823872",
-     "105553156823936",
-     "105553156823968",
-     "105553156823808",
-     "105553156824016",
-     "105553156824048",
-     "105553156823920",
-     "105553156848704",
-     "105553156848768",
-     "105553156848736",
-     "105553155389440",
-     "105553156271440",
-     "105553155359520"
+     "105553177355216",
+     "105553177355200",
+     "105553177355264",
+     "105553177355296",
+     "105553177355136",
+     "105553177355344",
+     "105553177355376",
+     "105553177355248",
+     "105553177381792",
+     "105553177381824",
+     "105553177381808",
+     "105553176765088",
+     "105553177710320",
+     "105553176768288"
     ]
    }
   },
-  "105553156848848": {
+  "105553177381904": {
    "name": "menuviewenable",
    "props": {
     "icon": {
@@ -3517,15 +3517,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Permitir a todos\tAlt+1"
+     "v": "Enable all\tAlt+1"
     },
     "toolTip": {
      "t": "str",
-     "v": "Permitir a todos\tAlt+1"
+     "v": "Enable all\tAlt+1"
     }
    }
   },
-  "105553156848880": {
+  "105553177381936": {
    "name": "menuviewdisableall",
    "props": {
     "icon": {
@@ -3534,15 +3534,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Desactivar todo\tAlt+2"
+     "v": "Disable all\tAlt+2"
     },
     "toolTip": {
      "t": "str",
-     "v": "Desactivar todo\tAlt+2"
+     "v": "Disable all\tAlt+2"
     }
    }
   },
-  "105553156848912": {
+  "105553177381968": {
    "name": "menuviewenableother",
    "props": {
     "icon": {
@@ -3559,7 +3559,7 @@
     }
    }
   },
-  "105553156848944": {
+  "105553177382000": {
    "name": "menuviewdisableother",
    "props": {
     "icon": {
@@ -3576,12 +3576,12 @@
     }
    }
   },
-  "105553156848720": {
+  "105553177381776": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156848992": {
+  "105553177382048": {
    "name": "menuview_zoom_fit",
    "props": {
     "icon": {
@@ -3590,15 +3590,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Ajuste de zoom\tV"
+     "v": "Zoom Fit\tV"
     },
     "toolTip": {
      "t": "str",
-     "v": "Ajuste de zoom\tV"
+     "v": "Zoom Fit\tV"
     }
    }
   },
-  "105553156849024": {
+  "105553177382080": {
    "name": "menuview_zoom_in",
    "props": {
     "icon": {
@@ -3607,15 +3607,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Acercarse\t="
+     "v": "Zoom In\t="
     },
     "toolTip": {
      "t": "str",
-     "v": "Acercarse\t="
+     "v": "Zoom In\t="
     }
    }
   },
-  "105553156849056": {
+  "105553177382112": {
    "name": "menuview_zoom_out",
    "props": {
     "icon": {
@@ -3624,20 +3624,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Disminuir el zoom\t-"
+     "v": "Zoom Out\t-"
     },
     "toolTip": {
      "t": "str",
-     "v": "Disminuir el zoom\t-"
+     "v": "Zoom Out\t-"
     }
    }
   },
-  "105553156848976": {
+  "105553177382032": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156849104": {
+  "105553177382160": {
    "name": "menuview_replot",
    "props": {
     "icon": {
@@ -3646,20 +3646,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Redibujar todo\tF5"
+     "v": "Redraw All\tF5"
     },
     "toolTip": {
      "t": "str",
-     "v": "Redibujar todo\tF5"
+     "v": "Redraw All\tF5"
     }
    }
   },
-  "105553156849088": {
+  "105553177382144": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156849152": {
+  "105553177382208": {
    "name": "menuview_toggle_code_editor",
    "props": {
     "icon": {
@@ -3668,20 +3668,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Alternar editor de código\tShift+E"
+     "v": "Toggle Code Editor\tShift+E"
     },
     "toolTip": {
      "t": "str",
-     "v": "Alternar editor de código\tShift+E"
+     "v": "Toggle Code Editor\tShift+E"
     }
    }
   },
-  "105553156849136": {
+  "105553177382192": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156776848": {
+  "105553177439616": {
    "name": "menuview_toggle_fscreen",
    "props": {
     "icon": {
@@ -3690,15 +3690,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Alternar pantalla completa\tAlt+F10"
+     "v": "Toggle FullScreen\tAlt+F10"
     },
     "toolTip": {
      "t": "str",
-     "v": "Alternar pantalla completa\tAlt+F10"
+     "v": "Toggle FullScreen\tAlt+F10"
     }
    }
   },
-  "105553156776880": {
+  "105553177439712": {
    "name": "menuview_toggle_parea",
    "props": {
     "icon": {
@@ -3707,15 +3707,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Alternar área de la parcela\tCtrl+F10"
+     "v": "Toggle Plot Area\tCtrl+F10"
     },
     "toolTip": {
      "t": "str",
-     "v": "Alternar área de la parcela\tCtrl+F10"
+     "v": "Toggle Plot Area\tCtrl+F10"
     }
    }
   },
-  "105553156776912": {
+  "105553177439776": {
    "name": "menuview_toggle_notebook",
    "props": {
     "icon": {
@@ -3724,20 +3724,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Alternar Proyecto/Prop. /Herramienta\t`"
+     "v": "Toggle Project/Properties/Tool\t`"
     },
     "toolTip": {
      "t": "str",
-     "v": "Alternar Proyecto/Prop. /Herramienta\t`"
+     "v": "Toggle Project/Properties/Tool\t`"
     }
    }
   },
-  "105553156776832": {
+  "105553177439536": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156776960": {
+  "105553177439824": {
    "name": "menuview_toggle_grid",
    "props": {
     "icon": {
@@ -3746,15 +3746,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Alternar ajuste de cuadrícula\tG"
+     "v": "Toggle Grid Snap\tG"
     },
     "toolTip": {
      "t": "str",
-     "v": "Alternar ajuste de cuadrícula\tG"
+     "v": "Toggle Grid Snap\tG"
     }
    }
   },
-  "105553156776992": {
+  "105553177439856": {
    "name": "menuview_toggle_grid_lines",
    "props": {
     "icon": {
@@ -3763,15 +3763,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Alternar Líneas de Cuadrícula\tShift+G"
+     "v": "Toggle Grid Lines\tShift+G"
     },
     "toolTip": {
      "t": "str",
-     "v": "Alternar Líneas de Cuadrícula\tShift+G"
+     "v": "Toggle Grid Lines\tShift+G"
     }
    }
   },
-  "105553156777024": {
+  "105553177439888": {
    "name": "menuview_toggle_axis",
    "props": {
     "icon": {
@@ -3780,15 +3780,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Alternar eje\tShift+A"
+     "v": "Toggle Axis\tShift+A"
     },
     "toolTip": {
      "t": "str",
-     "v": "Alternar eje\tShift+A"
+     "v": "Toggle Axis\tShift+A"
     }
    }
   },
-  "105553156777056": {
+  "105553177439920": {
    "name": "menuview_toggle_workspace",
    "props": {
     "icon": {
@@ -3797,15 +3797,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Alternar espacio de trabajo\tShift+W"
+     "v": "Toggle Workspace\tShift+W"
     },
     "toolTip": {
      "t": "str",
-     "v": "Alternar espacio de trabajo\tShift+W"
+     "v": "Toggle Workspace\tShift+W"
     }
    }
   },
-  "105553156777088": {
+  "105553177439952": {
    "name": "menuview_toggle_hud",
    "props": {
     "icon": {
@@ -3814,24 +3814,24 @@
     },
     "text": {
      "t": "str",
-     "v": "Activar HUD\tShift+H"
+     "v": "Toggle HUD\tShift+H"
     },
     "toolTip": {
      "t": "str",
-     "v": "Activar HUD\tShift+H"
+     "v": "Toggle HUD\tShift+H"
     }
    }
   },
-  "105553156848800": {
+  "105553177381856": {
    "name": null,
    "props": {
     "text": {
      "t": "str",
-     "v": "Ver"
+     "v": "View"
     },
     "toolTip": {
      "t": "str",
-     "v": "Ver"
+     "v": "View"
     }
    },
    "menu": {
@@ -3839,42 +3839,42 @@
     "props": {
      "title": {
       "t": "str",
-      "v": "Ver"
+      "v": "View"
      }
     },
     "py": "QMenu",
     "items": [
-     "105553156848848",
-     "105553156848880",
-     "105553156848912",
-     "105553156848944",
-     "105553156848720",
-     "105553156848992",
-     "105553156849024",
-     "105553156849056",
-     "105553156848976",
-     "105553156849104",
-     "105553156849088",
-     "105553156849152",
-     "105553156849136",
-     "105553156776848",
-     "105553156776880",
-     "105553156776912",
-     "105553156776832",
-     "105553156776960",
-     "105553156776992",
-     "105553156777024",
-     "105553156777056",
-     "105553156777088"
+     "105553177381904",
+     "105553177381936",
+     "105553177381968",
+     "105553177382000",
+     "105553177381776",
+     "105553177382048",
+     "105553177382080",
+     "105553177382112",
+     "105553177382032",
+     "105553177382160",
+     "105553177382144",
+     "105553177382208",
+     "105553177382192",
+     "105553177439616",
+     "105553177439712",
+     "105553177439776",
+     "105553177439536",
+     "105553177439824",
+     "105553177439856",
+     "105553177439888",
+     "105553177439920",
+     "105553177439952"
     ]
    }
   },
-  "105553156776944": {
+  "105553177439808": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156777168": {
+  "105553177440032": {
    "name": "menuobjects_selall",
    "props": {
     "icon": {
@@ -3883,15 +3883,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Seleccionar todo\t"
+     "v": "Select All\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Seleccionar todo"
+     "v": "Select All"
     }
    }
   },
-  "105553156777200": {
+  "105553177440064": {
    "name": "menuobjects_unselall",
    "props": {
     "icon": {
@@ -3900,24 +3900,24 @@
     },
     "text": {
      "t": "str",
-     "v": "Deseleccionar todo\t"
+     "v": "Deselect All\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Deseleccionar todo"
+     "v": "Deselect All"
     }
    }
   },
-  "105553156776864": {
+  "105553177439680": {
    "name": null,
    "props": {
     "text": {
      "t": "str",
-     "v": "Objetos"
+     "v": "Objects"
     },
     "toolTip": {
      "t": "str",
-     "v": "Objetos"
+     "v": "Objects"
     }
    },
    "menu": {
@@ -3925,18 +3925,18 @@
     "props": {
      "title": {
       "t": "str",
-      "v": "Objetos"
+      "v": "Objects"
      }
     },
     "py": "QMenu",
     "items": [
-     "105553156776944",
-     "105553156777168",
-     "105553156777200"
+     "105553177439808",
+     "105553177440032",
+     "105553177440064"
     ]
    }
   },
-  "105553156777264": {
+  "105553177440128": {
    "name": "menutoolshell",
    "props": {
     "icon": {
@@ -3945,15 +3945,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Línea de Comando\tS"
+     "v": "Command Line\tS"
     },
     "toolTip": {
      "t": "str",
-     "v": "Línea de Comando\tS"
+     "v": "Command Line\tS"
     }
    }
   },
-  "105553155860608": {
+  "105553176290880": {
    "name": "cal_exc_tool_menuAction",
    "props": {
     "icon": {
@@ -3962,15 +3962,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Calibración\tAlt+E"
+     "v": "Calibration Tool\tAlt+E"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Calibración\tAlt+E"
+     "v": "Calibration Tool\tAlt+E"
     }
    }
   },
-  "105553156095488": {
+  "105553176049632": {
    "name": "dblsidedtool_menuAction",
    "props": {
     "icon": {
@@ -3979,15 +3979,15 @@
     },
     "text": {
      "t": "str",
-     "v": "PCB a 2 caras\tAlt+D"
+     "v": "2-Sided PCB\tAlt+D"
     },
     "toolTip": {
      "t": "str",
-     "v": "PCB a 2 caras\tAlt+D"
+     "v": "2-Sided PCB\tAlt+D"
     }
    }
   },
-  "105553155888064": {
+  "105553176236704": {
    "name": "align_objects_tool_menuAction",
    "props": {
     "icon": {
@@ -3996,15 +3996,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Alinear objetos\tAlt+A"
+     "v": "Align Objects\tAlt+A"
     },
     "toolTip": {
      "t": "str",
-     "v": "Alinear objetos\tAlt+A"
+     "v": "Align Objects\tAlt+A"
     }
    }
   },
-  "105553155941408": {
+  "105553176257088": {
    "name": "edrills_tool_menuAction",
    "props": {
     "icon": {
@@ -4013,20 +4013,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Extraer Taladros\tAlt+I"
+     "v": "Extract Drills\tAlt+I"
     },
     "toolTip": {
      "t": "str",
-     "v": "Extraer Taladros\tAlt+I"
+     "v": "Extract Drills\tAlt+I"
     }
    }
   },
-  "105553156162144": {
+  "105553178068496": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553155928096": {
+  "105553176211360": {
    "name": "panelize_tool_menuAction",
    "props": {
     "icon": {
@@ -4035,15 +4035,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Panelizar PCB\tAlt+Z"
+     "v": "Panelize PCB\tAlt+Z"
     },
     "toolTip": {
      "t": "str",
-     "v": "Panelizar PCB\tAlt+Z"
+     "v": "Panelize PCB\tAlt+Z"
     }
    }
   },
-  "105553155960608": {
+  "105553176177824": {
    "name": "film_tool_menuAction",
    "props": {
     "icon": {
@@ -4052,15 +4052,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Película de PCB\tAlt+L"
+     "v": "Film PCB\tAlt+L"
     },
     "toolTip": {
      "t": "str",
-     "v": "Película de PCB\tAlt+L"
+     "v": "Film PCB\tAlt+L"
     }
    }
   },
-  "105553155206176": {
+  "105553176931104": {
    "name": "paste_tool_menuAction",
    "props": {
     "icon": {
@@ -4069,15 +4069,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herra. de Pasta de Soldadura\tAlt+K"
+     "v": "Solder Paste Tool\tAlt+K"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herra. de Pasta de Soldadura\tAlt+K"
+     "v": "Solder Paste Tool\tAlt+K"
     }
    }
   },
-  "105553156022144": {
+  "105553176951776": {
    "name": "calculator_tool_menuAction",
    "props": {
     "icon": {
@@ -4086,20 +4086,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Calculadoras\tAlt+C"
+     "v": "Calculators\tAlt+C"
     },
     "toolTip": {
      "t": "str",
-     "v": "Calculadoras\tAlt+C"
+     "v": "Calculators\tAlt+C"
     }
    }
   },
-  "105553156263744": {
+  "105553178090144": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553155085024": {
+  "105553176846784": {
    "name": "cutout_tool_menuAction",
    "props": {
     "icon": {
@@ -4108,15 +4108,15 @@
     },
     "text": {
      "t": "str",
-     "v": "PCB de corte\tAlt+X"
+     "v": "Cutout PCB\tAlt+X"
     },
     "toolTip": {
      "t": "str",
-     "v": "PCB de corte\tAlt+X"
+     "v": "Cutout PCB\tAlt+X"
     }
    }
   },
-  "105553155119072": {
+  "105553177077760": {
    "name": "ncclear_tool_menuAction",
    "props": {
     "icon": {
@@ -4125,15 +4125,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Compensación sin cobre\tAlt+N"
+     "v": "Non-Copper Clearing\tAlt+N"
     },
     "toolTip": {
      "t": "str",
-     "v": "Compensación sin cobre\tAlt+N"
+     "v": "Non-Copper Clearing\tAlt+N"
     }
    }
   },
-  "105553155155136": {
+  "105553177041728": {
    "name": "paint_tool_menuAction",
    "props": {
     "icon": {
@@ -4142,15 +4142,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de pintura\tAlt+P"
+     "v": "Paint Tool\tAlt+P"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de pintura\tAlt+P"
+     "v": "Paint Tool\tAlt+P"
     }
    }
   },
-  "105553155189344": {
+  "105553177010112": {
    "name": "isolation_tool_menuAction",
    "props": {
     "icon": {
@@ -4159,15 +4159,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Aislamiento\tAlt+I"
+     "v": "Isolation Tool\tAlt+I"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Aislamiento\tAlt+I"
+     "v": "Isolation Tool\tAlt+I"
     }
    }
   },
-  "105553155486240": {
+  "105553176978944": {
    "name": "drilling_tool_menuAction",
    "props": {
     "icon": {
@@ -4176,15 +4176,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Perforación\tAlt+D"
+     "v": "Drilling Tool\tAlt+D"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Perforación\tAlt+D"
+     "v": "Drilling Tool\tAlt+D"
     }
    }
   },
-  "105553155252000": {
+  "105553176899264": {
    "name": "sub_tool_menuAction",
    "props": {
     "icon": {
@@ -4193,20 +4193,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Sustracción\tAlt+W"
+     "v": "Subtract Tool\tAlt+W"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Sustracción\tAlt+W"
+     "v": "Subtract Tool\tAlt+W"
     }
    }
   },
-  "105553156149408": {
+  "105553178092848": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553155270464": {
+  "105553176868064": {
    "name": "rules_tool_menuAction",
    "props": {
     "icon": {
@@ -4215,15 +4215,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Verificar Reglas\tAlt+R"
+     "v": "Check Rules\tAlt+R"
     },
     "toolTip": {
      "t": "str",
-     "v": "Verificar Reglas\tAlt+R"
+     "v": "Check Rules\tAlt+R"
     }
    }
   },
-  "105553155320192": {
+  "105553176885440": {
    "name": "optimal_tool_menuAction",
    "props": {
     "icon": {
@@ -4232,40 +4232,40 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Óptima\tAlt+O"
+     "v": "Optimal Tool\tAlt+O"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Óptima\tAlt+O"
+     "v": "Optimal Tool\tAlt+O"
     }
    }
   },
-  "105553156159872": {
+  "105553178037760": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156205008": {
+  "105553178049968": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156117664": {
+  "105553178056176": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156124560": {
+  "105553178063072": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156180656": {
+  "105553178004752": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553155490816": {
+  "105553176688928": {
    "name": "copper_thieving_tool_menuAction",
    "props": {
     "icon": {
@@ -4274,15 +4274,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta Thieving Tool\tAlt+J"
+     "v": "Copper Thieving Tool\tAlt+J"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta Thieving Tool\tAlt+J"
+     "v": "Copper Thieving Tool\tAlt+J"
     }
    }
   },
-  "105553155543648": {
+  "105553176643808": {
    "name": "fiducial_tool_menuAction",
    "props": {
     "icon": {
@@ -4291,15 +4291,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Fiduciales\tAlt+F"
+     "v": "Fiducials Tool\tAlt+F"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Fiduciales\tAlt+F"
+     "v": "Fiducials Tool\tAlt+F"
     }
    }
   },
-  "105553155529184": {
+  "105553176596064": {
    "name": "qrcode_tool_menuAction",
    "props": {
     "icon": {
@@ -4308,15 +4308,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta QRCode\tAlt+Q"
+     "v": "QRCode Tool\tAlt+Q"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta QRCode\tAlt+Q"
+     "v": "QRCode Tool\tAlt+Q"
     }
    }
   },
-  "105553155555904": {
+  "105553176622720": {
    "name": "punch_tool_menuAction",
    "props": {
     "icon": {
@@ -4325,15 +4325,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Gerber Perforadora\tAlt+H"
+     "v": "Punch Gerber\tAlt+H"
     },
     "toolTip": {
      "t": "str",
-     "v": "Gerber Perforadora\tAlt+H"
+     "v": "Punch Gerber\tAlt+H"
     }
    }
   },
-  "105553155563648": {
+  "105553176565824": {
    "name": "invert_tool_menuAction",
    "props": {
     "icon": {
@@ -4342,15 +4342,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herram. Invertir Gerber\tALT+G"
+     "v": "Invert Gerber Tool\tALT+G"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herram. Invertir Gerber\tALT+G"
+     "v": "Invert Gerber Tool\tALT+G"
     }
    }
   },
-  "105553155348704": {
+  "105553176580192": {
    "name": "corners_tool_menuAction",
    "props": {
     "icon": {
@@ -4359,15 +4359,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herram. de Marca. de Esquina\tAlt+M"
+     "v": "Corner Markers Tool\tAlt+M"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herram. de Marca. de Esquina\tAlt+M"
+     "v": "Corner Markers Tool\tAlt+M"
     }
    }
   },
-  "105553155231616": {
+  "105553175441920": {
    "name": "etch_tool_menuAction",
    "props": {
     "icon": {
@@ -4376,24 +4376,24 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Comp de Grabado\t"
+     "v": "Etch Compensation Tool\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Comp de Grabado"
+     "v": "Etch Compensation Tool"
     }
    }
   },
-  "105553156777152": {
+  "105553177440016": {
    "name": "menutoolaction",
    "props": {
     "text": {
      "t": "str",
-     "v": "Herramienta"
+     "v": "Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta"
+     "v": "Tool"
     }
    },
    "menu": {
@@ -4401,47 +4401,47 @@
     "props": {
      "title": {
       "t": "str",
-      "v": "Herramienta"
+      "v": "Tool"
      }
     },
     "py": "QMenu",
     "items": [
-     "105553156777264",
-     "105553155860608",
-     "105553156095488",
-     "105553155888064",
-     "105553155941408",
-     "105553156162144",
-     "105553155928096",
-     "105553155960608",
-     "105553155206176",
-     "105553156022144",
-     "105553156263744",
-     "105553155085024",
-     "105553155119072",
-     "105553155155136",
-     "105553155189344",
-     "105553155486240",
-     "105553155252000",
-     "105553156149408",
-     "105553155270464",
-     "105553155320192",
-     "105553156159872",
-     "105553156205008",
-     "105553156117664",
-     "105553156124560",
-     "105553156180656",
-     "105553155490816",
-     "105553155543648",
-     "105553155529184",
-     "105553155555904",
-     "105553155563648",
-     "105553155348704",
-     "105553155231616"
+     "105553177440128",
+     "105553176290880",
+     "105553176049632",
+     "105553176236704",
+     "105553176257088",
+     "105553178068496",
+     "105553176211360",
+     "105553176177824",
+     "105553176931104",
+     "105553176951776",
+     "105553178090144",
+     "105553176846784",
+     "105553177077760",
+     "105553177041728",
+     "105553177010112",
+     "105553176978944",
+     "105553176899264",
+     "105553178092848",
+     "105553176868064",
+     "105553176885440",
+     "105553178037760",
+     "105553178049968",
+     "105553178056176",
+     "105553178063072",
+     "105553178004752",
+     "105553176688928",
+     "105553176643808",
+     "105553176596064",
+     "105553176622720",
+     "105553176565824",
+     "105553176580192",
+     "105553175441920"
     ]
    }
   },
-  "105553156777328": {
+  "105553177440192": {
    "name": "menuhelp_manual",
    "props": {
     "icon": {
@@ -4450,20 +4450,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Ayuda en Online\tF1"
+     "v": "Online Help\tF1"
     },
     "toolTip": {
      "t": "str",
-     "v": "Ayuda en Online\tF1"
+     "v": "Online Help\tF1"
     }
    }
   },
-  "105553156777248": {
+  "105553177440112": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156777424": {
+  "105553177440288": {
    "name": "menuhelp_bookmarks_manager",
    "props": {
     "icon": {
@@ -4472,15 +4472,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Administrador de Marcadores\t"
+     "v": "Bookmarks Manager\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Administrador de Marcadores"
+     "v": "Bookmarks Manager"
     }
    }
   },
-  "105553156777360": {
+  "105553177440224": {
    "name": null,
    "props": {
     "icon": {
@@ -4489,11 +4489,11 @@
     },
     "text": {
      "t": "str",
-     "v": "Marcadores"
+     "v": "Bookmarks"
     },
     "toolTip": {
      "t": "str",
-     "v": "Marcadores"
+     "v": "Bookmarks"
     }
    },
    "menu": {
@@ -4501,7 +4501,7 @@
     "props": {
      "title": {
       "t": "str",
-      "v": "Marcadores"
+      "v": "Bookmarks"
      },
      "icon": {
       "t": "QIcon",
@@ -4510,17 +4510,17 @@
     },
     "py": "QMenu",
     "items": [
-     "105553156777248",
-     "105553156777424"
+     "105553177440112",
+     "105553177440288"
     ]
    }
   },
-  "105553156777408": {
+  "105553177440272": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156777472": {
+  "105553177440336": {
    "name": "menuhelp_report_bug",
    "props": {
     "icon": {
@@ -4529,20 +4529,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Reportar un error\t"
+     "v": "Report a bug\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Reportar un error"
+     "v": "Report a bug"
     }
    }
   },
-  "105553156777456": {
+  "105553177440320": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156777520": {
+  "105553177440384": {
    "name": "menuhelp_exc_spec",
    "props": {
     "icon": {
@@ -4551,15 +4551,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Especificación de Excellon\t"
+     "v": "Excellon Specification\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Especificación de Excellon"
+     "v": "Excellon Specification"
     }
    }
   },
-  "105553156777552": {
+  "105553177440416": {
    "name": "menuhelp_gerber_spec",
    "props": {
     "icon": {
@@ -4568,20 +4568,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Especificación de Gerber\t"
+     "v": "Gerber Specification\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Especificación de Gerber"
+     "v": "Gerber Specification"
     }
    }
   },
-  "105553156777312": {
+  "105553177440176": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156777600": {
+  "105553177440464": {
    "name": "menuhelp_shortcut_list",
    "props": {
     "icon": {
@@ -4590,15 +4590,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Lista de accesos directos\tF3"
+     "v": "Shortcuts List\tF3"
     },
     "toolTip": {
      "t": "str",
-     "v": "Lista de accesos directos\tF3"
+     "v": "Shortcuts List\tF3"
     }
    }
   },
-  "105553156777632": {
+  "105553177440496": {
    "name": "menuhelp_videohelp",
    "props": {
     "icon": {
@@ -4607,20 +4607,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Canal de Youtube\tF4"
+     "v": "YouTube Channel\tF4"
     },
     "toolTip": {
      "t": "str",
-     "v": "Canal de Youtube\tF4"
+     "v": "YouTube Channel\tF4"
     }
    }
   },
-  "105553156777504": {
+  "105553177440368": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156777680": {
+  "105553177440544": {
    "name": "menuhelp_readme",
    "props": {
     "icon": {
@@ -4629,15 +4629,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Cómo\t"
+     "v": "How To\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Cómo"
+     "v": "How To"
     }
    }
   },
-  "105553156777712": {
+  "105553177440576": {
    "name": "menuhelp_about",
    "props": {
     "icon": {
@@ -4646,24 +4646,24 @@
     },
     "text": {
      "t": "str",
-     "v": "Acerca de\t"
+     "v": "About\t"
     },
     "toolTip": {
      "t": "str",
-     "v": "Acerca de"
+     "v": "About"
     }
    }
   },
-  "105553156777136": {
+  "105553177440000": {
    "name": null,
    "props": {
     "text": {
      "t": "str",
-     "v": "Ayuda"
+     "v": "Help"
     },
     "toolTip": {
      "t": "str",
-     "v": "Ayuda"
+     "v": "Help"
     }
    },
    "menu": {
@@ -4671,28 +4671,28 @@
     "props": {
      "title": {
       "t": "str",
-      "v": "Ayuda"
+      "v": "Help"
      }
     },
     "py": "QMenu",
     "items": [
-     "105553156777328",
-     "105553156777360",
-     "105553156777408",
-     "105553156777472",
-     "105553156777456",
-     "105553156777520",
-     "105553156777552",
-     "105553156777312",
-     "105553156777600",
-     "105553156777632",
-     "105553156777504",
-     "105553156777680",
-     "105553156777712"
+     "105553177440192",
+     "105553177440224",
+     "105553177440272",
+     "105553177440336",
+     "105553177440320",
+     "105553177440384",
+     "105553177440416",
+     "105553177440176",
+     "105553177440464",
+     "105553177440496",
+     "105553177440368",
+     "105553177440544",
+     "105553177440576"
     ]
    }
   },
-  "105553156777776": {
+  "105553177440640": {
    "name": "geo_add_circle_menuitem",
    "props": {
     "icon": {
@@ -4701,15 +4701,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Círculo\tO"
+     "v": "Add Circle\tO"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Círculo\tO"
+     "v": "Add Circle\tO"
     }
    }
   },
-  "105553156777808": {
+  "105553177440672": {
    "name": "geo_add_arc_menuitem",
    "props": {
     "icon": {
@@ -4718,20 +4718,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Arco\tA"
+     "v": "Add Arc\tA"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Arco\tA"
+     "v": "Add Arc\tA"
     }
    }
   },
-  "105553156777584": {
+  "105553177440448": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156777856": {
+  "105553177440720": {
    "name": "geo_add_rectangle_menuitem",
    "props": {
     "icon": {
@@ -4740,15 +4740,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Rectángulo\tR"
+     "v": "Add Rectangle\tR"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Rectángulo\tR"
+     "v": "Add Rectangle\tR"
     }
    }
   },
-  "105553156777888": {
+  "105553177440752": {
    "name": "geo_add_polygon_menuitem",
    "props": {
     "icon": {
@@ -4757,15 +4757,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Polígono\tN"
+     "v": "Add Polygon\tN"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Polígono\tN"
+     "v": "Add Polygon\tN"
     }
    }
   },
-  "105553156777920": {
+  "105553177440784": {
    "name": "geo_add_path_menuitem",
    "props": {
     "icon": {
@@ -4774,20 +4774,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Ruta\tP"
+     "v": "Add Path\tP"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Ruta\tP"
+     "v": "Add Path\tP"
     }
    }
   },
-  "105553156777840": {
+  "105553177440704": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156777968": {
+  "105553177440832": {
    "name": "geo_add_text_menuitem",
    "props": {
     "icon": {
@@ -4796,20 +4796,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Texto\tT"
+     "v": "Add Text\tT"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Texto\tT"
+     "v": "Add Text\tT"
     }
    }
   },
-  "105553156777952": {
+  "105553177440816": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156778016": {
+  "105553177440880": {
    "name": "geo_union_menuitem",
    "props": {
     "icon": {
@@ -4818,15 +4818,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Unión de polígonos\tU"
+     "v": "Polygon Union\tU"
     },
     "toolTip": {
      "t": "str",
-     "v": "Unión de polígonos\tU"
+     "v": "Polygon Union\tU"
     }
    }
   },
-  "105553156778048": {
+  "105553177440912": {
    "name": "geo_intersection_menuitem",
    "props": {
     "icon": {
@@ -4835,15 +4835,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Intersección de polígonos\tE"
+     "v": "Polygon Intersection\tE"
     },
     "toolTip": {
      "t": "str",
-     "v": "Intersección de polígonos\tE"
+     "v": "Polygon Intersection\tE"
     }
    }
   },
-  "105553156778080": {
+  "105553177440944": {
    "name": "geo_subtract_menuitem",
    "props": {
     "icon": {
@@ -4852,20 +4852,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Sustracción de polígonos\tS"
+     "v": "Polygon Subtraction\tS"
     },
     "toolTip": {
      "t": "str",
-     "v": "Sustracción de polígonos\tS"
+     "v": "Polygon Subtraction\tS"
     }
    }
   },
-  "105553156778000": {
+  "105553177440864": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156778128": {
+  "105553177440992": {
    "name": "geo_cutpath_menuitem",
    "props": {
     "icon": {
@@ -4874,15 +4874,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Camino de Corte\tX"
+     "v": "Cut Path\tX"
     },
     "toolTip": {
      "t": "str",
-     "v": "Camino de Corte\tX"
+     "v": "Cut Path\tX"
     }
    }
   },
-  "105553156778160": {
+  "105553177441024": {
    "name": "geo_copy_menuitem",
    "props": {
     "icon": {
@@ -4891,15 +4891,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Copia Geo\tC"
+     "v": "Copy Geom\tC"
     },
     "toolTip": {
      "t": "str",
-     "v": "Copia Geo\tC"
+     "v": "Copy Geom\tC"
     }
    }
   },
-  "105553156778192": {
+  "105553177441056": {
    "name": "geo_delete_menuitem",
    "props": {
     "icon": {
@@ -4908,20 +4908,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Eliminar forma\tDEL"
+     "v": "Delete Shape\tDEL"
     },
     "toolTip": {
      "t": "str",
-     "v": "Eliminar forma\tDEL"
+     "v": "Delete Shape\tDEL"
     }
    }
   },
-  "105553156778112": {
+  "105553177440976": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156778240": {
+  "105553177441104": {
    "name": "geo_move_menuitem",
    "props": {
     "icon": {
@@ -4930,15 +4930,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Movimiento\tM"
+     "v": "Move\tM"
     },
     "toolTip": {
      "t": "str",
-     "v": "Movimiento\tM"
+     "v": "Move\tM"
     }
    }
   },
-  "105553156778272": {
+  "105553177441136": {
    "name": "geo_buffer_menuitem",
    "props": {
     "icon": {
@@ -4947,15 +4947,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta Buffer\tB"
+     "v": "Buffer Tool\tB"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta Buffer\tB"
+     "v": "Buffer Tool\tB"
     }
    }
   },
-  "105553156778304": {
+  "105553177441168": {
    "name": "geo_paint_menuitem",
    "props": {
     "icon": {
@@ -4964,15 +4964,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de pintura\tI"
+     "v": "Paint Tool\tI"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de pintura\tI"
+     "v": "Paint Tool\tI"
     }
    }
   },
-  "105553156778336": {
+  "105553177441200": {
    "name": "geo_transform_menuitem",
    "props": {
     "icon": {
@@ -4981,20 +4981,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de transformación\tAlt+R"
+     "v": "Transform Tool\tAlt+R"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de transformación\tAlt+R"
+     "v": "Transform Tool\tAlt+R"
     }
    }
   },
-  "105553156777760": {
+  "105553177440624": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156778384": {
+  "105553177441248": {
    "name": "geo_cornersnap_menuitem",
    "props": {
     "icon": {
@@ -5003,15 +5003,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Alternar ajuste de esquina\tK"
+     "v": "Toggle Corner Snap\tK"
     },
     "toolTip": {
      "t": "str",
-     "v": "Alternar ajuste de esquina\tK"
+     "v": "Toggle Corner Snap\tK"
     }
    }
   },
-  "105553156777664": {
+  "105553177440528": {
    "name": null,
    "props": {
     "enabled": {
@@ -5041,33 +5041,33 @@
     },
     "py": "QMenu",
     "items": [
-     "105553156777776",
-     "105553156777808",
-     "105553156777584",
-     "105553156777856",
-     "105553156777888",
-     "105553156777920",
-     "105553156777840",
-     "105553156777968",
-     "105553156777952",
-     "105553156778016",
-     "105553156778048",
-     "105553156778080",
-     "105553156778000",
-     "105553156778128",
-     "105553156778160",
-     "105553156778192",
-     "105553156778112",
-     "105553156778240",
-     "105553156778272",
-     "105553156778304",
-     "105553156778336",
-     "105553156777760",
-     "105553156778384"
+     "105553177440640",
+     "105553177440672",
+     "105553177440448",
+     "105553177440720",
+     "105553177440752",
+     "105553177440784",
+     "105553177440704",
+     "105553177440832",
+     "105553177440816",
+     "105553177440880",
+     "105553177440912",
+     "105553177440944",
+     "105553177440864",
+     "105553177440992",
+     "105553177441024",
+     "105553177441056",
+     "105553177440976",
+     "105553177441104",
+     "105553177441136",
+     "105553177441168",
+     "105553177441200",
+     "105553177440624",
+     "105553177441248"
     ]
    }
   },
-  "105553156778448": {
+  "105553177441312": {
    "name": "exc_add_array_drill_menuitem",
    "props": {
     "icon": {
@@ -5076,15 +5076,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Drill Array\tA"
+     "v": "Add Drill Array\tA"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Drill Array\tA"
+     "v": "Add Drill Array\tA"
     }
    }
   },
-  "105553156778480": {
+  "105553177441344": {
    "name": "exc_add_drill_menuitem",
    "props": {
     "icon": {
@@ -5093,20 +5093,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir taladro\tD"
+     "v": "Add Drill\tD"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir taladro\tD"
+     "v": "Add Drill\tD"
     }
    }
   },
-  "105553156778368": {
+  "105553177441232": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156778528": {
+  "105553177441392": {
    "name": "exc_add_array_slot_menuitem",
    "props": {
     "icon": {
@@ -5115,15 +5115,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Agregar matriz de ranuras\tQ"
+     "v": "Add Slot Array\tQ"
     },
     "toolTip": {
      "t": "str",
-     "v": "Agregar matriz de ranuras\tQ"
+     "v": "Add Slot Array\tQ"
     }
    }
   },
-  "105553156778560": {
+  "105553177441424": {
    "name": "exc_add_slot_menuitem",
    "props": {
     "icon": {
@@ -5132,20 +5132,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Agregar ranura\tW"
+     "v": "Add Slot\tW"
     },
     "toolTip": {
      "t": "str",
-     "v": "Agregar ranura\tW"
+     "v": "Add Slot\tW"
     }
    }
   },
-  "105553156778432": {
+  "105553177441296": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156778608": {
+  "105553177441472": {
    "name": "exc_resize_drill_menuitem",
    "props": {
     "icon": {
@@ -5154,15 +5154,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Cambiar el tamaño de taladro(s)\tR"
+     "v": "Resize Drill(S)\tR"
     },
     "toolTip": {
      "t": "str",
-     "v": "Cambiar el tamaño de taladro(s)\tR"
+     "v": "Resize Drill(S)\tR"
     }
    }
   },
-  "105553156778640": {
+  "105553177441504": {
    "name": "exc_copy_drill_menuitem",
    "props": {
     "icon": {
@@ -5171,15 +5171,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Dupdo\tC"
+     "v": "Copy\tC"
     },
     "toolTip": {
      "t": "str",
-     "v": "Dupdo\tC"
+     "v": "Copy\tC"
     }
    }
   },
-  "105553156778672": {
+  "105553177441536": {
    "name": "exc_delete_drill_menuitem",
    "props": {
     "icon": {
@@ -5188,20 +5188,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Borrar\tDEL"
+     "v": "Delete\tDEL"
     },
     "toolTip": {
      "t": "str",
-     "v": "Borrar\tDEL"
+     "v": "Delete\tDEL"
     }
    }
   },
-  "105553156778592": {
+  "105553177441456": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156778720": {
+  "105553177441584": {
    "name": "exc_move_drill_menuitem",
    "props": {
     "icon": {
@@ -5210,15 +5210,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Mover taladro\tM"
+     "v": "Move Drill\tM"
     },
     "toolTip": {
      "t": "str",
-     "v": "Mover taladro\tM"
+     "v": "Move Drill\tM"
     }
    }
   },
-  "105553156778224": {
+  "105553177441088": {
    "name": null,
    "props": {
     "enabled": {
@@ -5248,21 +5248,21 @@
     },
     "py": "QMenu",
     "items": [
-     "105553156778448",
-     "105553156778480",
-     "105553156778368",
-     "105553156778528",
-     "105553156778560",
-     "105553156778432",
-     "105553156778608",
-     "105553156778640",
-     "105553156778672",
-     "105553156778592",
-     "105553156778720"
+     "105553177441312",
+     "105553177441344",
+     "105553177441232",
+     "105553177441392",
+     "105553177441424",
+     "105553177441296",
+     "105553177441472",
+     "105553177441504",
+     "105553177441536",
+     "105553177441456",
+     "105553177441584"
     ]
    }
   },
-  "105553156778784": {
+  "105553177441648": {
    "name": "grb_add_pad_menuitem",
    "props": {
     "icon": {
@@ -5271,15 +5271,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Pad\tP"
+     "v": "Add Pad\tP"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Pad\tP"
+     "v": "Add Pad\tP"
     }
    }
   },
-  "105553156778816": {
+  "105553177441680": {
    "name": "grb_add_pad_array_menuitem",
    "props": {
     "icon": {
@@ -5288,15 +5288,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Agregar matriz de pad\tA"
+     "v": "Add Pad Array\tA"
     },
     "toolTip": {
      "t": "str",
-     "v": "Agregar matriz de pad\tA"
+     "v": "Add Pad Array\tA"
     }
    }
   },
-  "105553156778848": {
+  "105553177441712": {
    "name": "grb_add_track_menuitem",
    "props": {
     "icon": {
@@ -5305,15 +5305,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Pista\tT"
+     "v": "Add Track\tT"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Pista\tT"
+     "v": "Add Track\tT"
     }
    }
   },
-  "105553156778880": {
+  "105553177441744": {
    "name": "grb_add_region_menuitem",
    "props": {
     "icon": {
@@ -5322,20 +5322,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Región\tN"
+     "v": "Add Region\tN"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Región\tN"
+     "v": "Add Region\tN"
     }
    }
   },
-  "105553156778704": {
+  "105553177441568": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156778928": {
+  "105553177441792": {
    "name": "grb_convert_poly_menuitem",
    "props": {
     "icon": {
@@ -5344,15 +5344,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Poligonizar\tAlt+N"
+     "v": "Poligonize\tAlt+N"
     },
     "toolTip": {
      "t": "str",
-     "v": "Poligonizar\tAlt+N"
+     "v": "Poligonize\tAlt+N"
     }
    }
   },
-  "105553156778960": {
+  "105553177441824": {
    "name": "grb_add_semidisc_menuitem",
    "props": {
     "icon": {
@@ -5361,15 +5361,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir medio disco\tE"
+     "v": "Add SemiDisc\tE"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir medio disco\tE"
+     "v": "Add SemiDisc\tE"
     }
    }
   },
-  "105553156778992": {
+  "105553177441856": {
    "name": "grb_add_disc_menuitem",
    "props": {
     "icon": {
@@ -5378,15 +5378,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Agregar disco\tD"
+     "v": "Add Disc\tD"
     },
     "toolTip": {
      "t": "str",
-     "v": "Agregar disco\tD"
+     "v": "Add Disc\tD"
     }
    }
   },
-  "105553156779024": {
+  "105553177441888": {
    "name": "grb_add_buffer_menuitem",
    "props": {
     "icon": {
@@ -5403,7 +5403,7 @@
     }
    }
   },
-  "105553156779056": {
+  "105553177441920": {
    "name": "grb_add_scale_menuitem",
    "props": {
     "icon": {
@@ -5412,15 +5412,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Escala\tS"
+     "v": "Scale\tS"
     },
     "toolTip": {
      "t": "str",
-     "v": "Escala\tS"
+     "v": "Scale\tS"
     }
    }
   },
-  "105553156779088": {
+  "105553177441952": {
    "name": "grb_add_markarea_menuitem",
    "props": {
     "icon": {
@@ -5429,15 +5429,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Marcar area\tAlt+A"
+     "v": "Mark Area\tAlt+A"
     },
     "toolTip": {
      "t": "str",
-     "v": "Marcar area\tAlt+A"
+     "v": "Mark Area\tAlt+A"
     }
    }
   },
-  "105553156779120": {
+  "105553177441984": {
    "name": "grb_add_eraser_menuitem",
    "props": {
     "icon": {
@@ -5446,15 +5446,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Borrador\tCtrl+E"
+     "v": "Eraser\tCtrl+E"
     },
     "toolTip": {
      "t": "str",
-     "v": "Borrador\tCtrl+E"
+     "v": "Eraser\tCtrl+E"
     }
    }
   },
-  "105553156779152": {
+  "105553177442016": {
    "name": "grb_transform_menuitem",
    "props": {
     "icon": {
@@ -5463,20 +5463,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Transformar\tAlt+R"
+     "v": "Transform\tAlt+R"
     },
     "toolTip": {
      "t": "str",
-     "v": "Transformar\tAlt+R"
+     "v": "Transform\tAlt+R"
     }
    }
   },
-  "105553156778768": {
+  "105553177441632": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156779200": {
+  "105553177442064": {
    "name": "grb_copy_menuitem",
    "props": {
     "icon": {
@@ -5485,15 +5485,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Dupdo\tC"
+     "v": "Copy\tC"
     },
     "toolTip": {
      "t": "str",
-     "v": "Dupdo\tC"
+     "v": "Copy\tC"
     }
    }
   },
-  "105553156779232": {
+  "105553177442096": {
    "name": "grb_delete_menuitem",
    "props": {
     "icon": {
@@ -5502,20 +5502,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Borrar\tDEL"
+     "v": "Delete\tDEL"
     },
     "toolTip": {
      "t": "str",
-     "v": "Borrar\tDEL"
+     "v": "Delete\tDEL"
     }
    }
   },
-  "105553156778912": {
+  "105553177441776": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156779280": {
+  "105553177442144": {
    "name": "grb_move_menuitem",
    "props": {
     "icon": {
@@ -5524,15 +5524,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Movimiento\tM"
+     "v": "Move\tM"
     },
     "toolTip": {
      "t": "str",
-     "v": "Movimiento\tM"
+     "v": "Move\tM"
     }
    }
   },
-  "105553156778512": {
+  "105553177441376": {
    "name": null,
    "props": {
     "enabled": {
@@ -5562,28 +5562,28 @@
     },
     "py": "QMenu",
     "items": [
-     "105553156778784",
-     "105553156778816",
-     "105553156778848",
-     "105553156778880",
-     "105553156778704",
-     "105553156778928",
-     "105553156778960",
-     "105553156778992",
-     "105553156779024",
-     "105553156779056",
-     "105553156779088",
-     "105553156779120",
-     "105553156779152",
-     "105553156778768",
-     "105553156779200",
-     "105553156779232",
-     "105553156778912",
-     "105553156779280"
+     "105553177441648",
+     "105553177441680",
+     "105553177441712",
+     "105553177441744",
+     "105553177441568",
+     "105553177441792",
+     "105553177441824",
+     "105553177441856",
+     "105553177441888",
+     "105553177441920",
+     "105553177441952",
+     "105553177441984",
+     "105553177442016",
+     "105553177441632",
+     "105553177442064",
+     "105553177442096",
+     "105553177441776",
+     "105553177442144"
     ]
    }
   },
-  "105553156211536": {
+  "105553177968976": {
    "name": "file_open_gerber_btn",
    "props": {
     "icon": {
@@ -5592,15 +5592,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Abrir Gerber"
+     "v": "Open Gerber"
     },
     "toolTip": {
      "t": "str",
-     "v": "Abrir Gerber"
+     "v": "Open Gerber"
     }
    }
   },
-  "105553156211600": {
+  "105553177969040": {
    "name": "file_open_excellon_btn",
    "props": {
     "icon": {
@@ -5609,20 +5609,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Abrir Excellon"
+     "v": "Open Excellon"
     },
     "toolTip": {
      "t": "str",
-     "v": "Abrir Excellon"
+     "v": "Open Excellon"
     }
    }
   },
-  "105553156211248": {
+  "105553177968704": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156211680": {
+  "105553177969120": {
    "name": "file_open_btn",
    "props": {
     "icon": {
@@ -5631,15 +5631,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Abrir proyecto"
+     "v": "Open Project"
     },
     "toolTip": {
      "t": "str",
-     "v": "Abrir proyecto"
+     "v": "Open Project"
     }
    }
   },
-  "105553156211744": {
+  "105553177969184": {
    "name": "file_save_btn",
    "props": {
     "icon": {
@@ -5648,15 +5648,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Guardar proyecto"
+     "v": "Save Project"
     },
     "toolTip": {
      "t": "str",
-     "v": "Guardar proyecto"
+     "v": "Save Project"
     }
    }
   },
-  "105553156211808": {
+  "105553177969248": {
    "name": "editgeo_btn",
    "props": {
     "icon": {
@@ -5673,7 +5673,7 @@
     }
    }
   },
-  "105553156211872": {
+  "105553177969312": {
    "name": "update_obj_btn",
    "props": {
     "icon": {
@@ -5682,20 +5682,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Guardar Objeto y cerrar el Editor"
+     "v": "Save Object and close the Editor"
     },
     "toolTip": {
      "t": "str",
-     "v": "Guardar Objeto y cerrar el Editor"
+     "v": "Save Object and close the Editor"
     }
    }
   },
-  "105553156211232": {
+  "105553177968688": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156211952": {
+  "105553177969392": {
    "name": "copy_btn",
    "props": {
     "icon": {
@@ -5704,15 +5704,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Dupdo"
+     "v": "Copy"
     },
     "toolTip": {
      "t": "str",
-     "v": "Dupdo"
+     "v": "Copy"
     }
    }
   },
-  "105553156212016": {
+  "105553177969456": {
    "name": "delete_btn",
    "props": {
     "icon": {
@@ -5721,20 +5721,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Borrar"
+     "v": "Delete"
     },
     "toolTip": {
      "t": "str",
-     "v": "Borrar"
+     "v": "Delete"
     }
    }
   },
-  "105553156211664": {
+  "105553177969104": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156212096": {
+  "105553177969536": {
    "name": "distance_btn",
    "props": {
     "icon": {
@@ -5743,15 +5743,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Dist"
+     "v": "Distance Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Dist"
+     "v": "Distance Tool"
     }
    }
   },
-  "105553156212160": {
+  "105553177969600": {
    "name": "distance_min_btn",
    "props": {
     "icon": {
@@ -5760,15 +5760,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta Distancia Mínima"
+     "v": "Distance Min Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta Distancia Mínima"
+     "v": "Distance Min Tool"
     }
    }
   },
-  "105553156212224": {
+  "105553177969664": {
    "name": "origin_btn",
    "props": {
     "icon": {
@@ -5777,15 +5777,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Establecer origen"
+     "v": "Set Origin"
     },
     "toolTip": {
      "t": "str",
-     "v": "Establecer origen"
+     "v": "Set Origin"
     }
    }
   },
-  "105553156212288": {
+  "105553177969728": {
    "name": "move2origin_btn",
    "props": {
     "icon": {
@@ -5794,15 +5794,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Mover al origen"
+     "v": "Move to Origin"
     },
     "toolTip": {
      "t": "str",
-     "v": "Mover al origen"
+     "v": "Move to Origin"
     }
    }
   },
-  "105553156212352": {
+  "105553177969792": {
    "name": "jmp_btn",
    "props": {
     "icon": {
@@ -5811,15 +5811,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Saltar a la ubicación"
+     "v": "Jump to Location"
     },
     "toolTip": {
      "t": "str",
-     "v": "Saltar a la ubicación"
+     "v": "Jump to Location"
     }
    }
   },
-  "105553156212416": {
+  "105553177969856": {
    "name": "locate_btn",
    "props": {
     "icon": {
@@ -5828,15 +5828,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Localizar en objeto"
+     "v": "Locate in Object"
     },
     "toolTip": {
      "t": "str",
-     "v": "Localizar en objeto"
+     "v": "Locate in Object"
     }
    }
   },
-  "105553156212480": {
+  "105553177969920": {
    "name": "replot_btn",
    "props": {
     "icon": {
@@ -5845,15 +5845,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Replantear"
+     "v": "Replot"
     },
     "toolTip": {
      "t": "str",
-     "v": "Replantear"
+     "v": "Replot"
     }
    }
   },
-  "105553156212544": {
+  "105553177969984": {
    "name": "clear_plot_btn",
    "props": {
     "icon": {
@@ -5862,15 +5862,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Parcela clara"
+     "v": "Clear Plot"
     },
     "toolTip": {
      "t": "str",
-     "v": "Parcela clara"
+     "v": "Clear Plot"
     }
    }
   },
-  "105553156212608": {
+  "105553177970048": {
    "name": "zoom_in_btn",
    "props": {
     "icon": {
@@ -5879,15 +5879,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Acercarse"
+     "v": "Zoom In"
     },
     "toolTip": {
      "t": "str",
-     "v": "Acercarse"
+     "v": "Zoom In"
     }
    }
   },
-  "105553156212672": {
+  "105553177970112": {
    "name": "zoom_out_btn",
    "props": {
     "icon": {
@@ -5896,15 +5896,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Disminuir el zoom"
+     "v": "Zoom Out"
     },
     "toolTip": {
      "t": "str",
-     "v": "Disminuir el zoom"
+     "v": "Zoom Out"
     }
    }
   },
-  "105553156212736": {
+  "105553177970176": {
    "name": "zoom_fit_btn",
    "props": {
     "icon": {
@@ -5913,15 +5913,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Ajuste de zoom"
+     "v": "Zoom Fit"
     },
     "toolTip": {
      "t": "str",
-     "v": "Ajuste de zoom"
+     "v": "Zoom Fit"
     }
    }
   },
-  "105553156212800": {
+  "105553177970240": {
    "name": "shell_btn",
    "props": {
     "icon": {
@@ -5930,15 +5930,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Línea de Comando"
+     "v": "Command Line"
     },
     "toolTip": {
      "t": "str",
-     "v": "Línea de Comando"
+     "v": "Command Line"
     }
    }
   },
-  "105553156212864": {
+  "105553177970304": {
    "name": "new_script_btn",
    "props": {
     "icon": {
@@ -5947,15 +5947,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Nuevo Script ..."
+     "v": "New Script ..."
     },
     "toolTip": {
      "t": "str",
-     "v": "Nuevo Script"
+     "v": "New Script"
     }
    }
   },
-  "105553156212928": {
+  "105553177970368": {
    "name": "open_script_btn",
    "props": {
     "icon": {
@@ -5964,15 +5964,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Abrir Script ..."
+     "v": "Open Script ..."
     },
     "toolTip": {
      "t": "str",
-     "v": "Abrir Script"
+     "v": "Open Script"
     }
    }
   },
-  "105553156212992": {
+  "105553177970432": {
    "name": "run_script_btn",
    "props": {
     "icon": {
@@ -5981,15 +5981,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Ejecutar script TCL ..."
+     "v": "Run Script ..."
     },
     "toolTip": {
      "t": "str",
-     "v": "Ejecutar script TCL"
+     "v": "Run Script"
     }
    }
   },
-  "105553156213056": {
+  "105553177970496": {
    "name": "dblsided_btn",
    "props": {
     "icon": {
@@ -5998,15 +5998,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herra. de 2 lados"
+     "v": "2-Sided Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herra. de 2 lados"
+     "v": "2-Sided Tool"
     }
    }
   },
-  "105553156213120": {
+  "105553177970560": {
    "name": "align_btn",
    "props": {
     "icon": {
@@ -6015,15 +6015,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herram. de Alinear Objetos"
+     "v": "Align Objects Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herram. de Alinear Objetos"
+     "v": "Align Objects Tool"
     }
    }
   },
-  "105553156213184": {
+  "105553177970624": {
    "name": "extract_btn",
    "props": {
     "icon": {
@@ -6032,15 +6032,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herram. de Extracción de Taladros"
+     "v": "Extract Drills Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herram. de Extracción de Taladros"
+     "v": "Extract Drills Tool"
     }
    }
   },
-  "105553156213248": {
+  "105553177970688": {
    "name": "cutout_btn",
    "props": {
     "icon": {
@@ -6049,15 +6049,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Corte"
+     "v": "Cutout Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Corte"
+     "v": "Cutout Tool"
     }
    }
   },
-  "105553156213312": {
+  "105553177970752": {
    "name": "ncc_btn",
    "props": {
     "icon": {
@@ -6066,15 +6066,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta NCC"
+     "v": "NCC Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta NCC"
+     "v": "NCC Tool"
     }
    }
   },
-  "105553156213376": {
+  "105553177970816": {
    "name": "paint_btn",
    "props": {
     "icon": {
@@ -6083,15 +6083,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de pintura"
+     "v": "Paint Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de pintura"
+     "v": "Paint Tool"
     }
    }
   },
-  "105553156213440": {
+  "105553177970880": {
    "name": "isolation_btn",
    "props": {
     "icon": {
@@ -6100,15 +6100,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Aislamiento"
+     "v": "Isolation Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Aislamiento"
+     "v": "Isolation Tool"
     }
    }
   },
-  "105553156213504": {
+  "105553177970944": {
    "name": "drill_btn",
    "props": {
     "icon": {
@@ -6117,20 +6117,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Perforación"
+     "v": "Drilling Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Perforación"
+     "v": "Drilling Tool"
     }
    }
   },
-  "105553156212080": {
+  "105553177969520": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156213584": {
+  "105553177971024": {
    "name": "panelize_btn",
    "props": {
     "icon": {
@@ -6139,15 +6139,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Panel"
+     "v": "Panel Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Panel"
+     "v": "Panel Tool"
     }
    }
   },
-  "105553156213648": {
+  "105553177971088": {
    "name": "film_btn",
    "props": {
     "icon": {
@@ -6156,15 +6156,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Película"
+     "v": "Film Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Película"
+     "v": "Film Tool"
     }
    }
   },
-  "105553156213712": {
+  "105553177971152": {
    "name": "solder_btn",
    "props": {
     "icon": {
@@ -6173,15 +6173,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Pasta"
+     "v": "SolderPaste Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Pasta"
+     "v": "SolderPaste Tool"
     }
    }
   },
-  "105553156213776": {
+  "105553177971216": {
    "name": "sub_btn",
    "props": {
     "icon": {
@@ -6190,15 +6190,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Sustracción"
+     "v": "Subtract Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Sustracción"
+     "v": "Subtract Tool"
     }
    }
   },
-  "105553156213840": {
+  "105553177971280": {
    "name": "rules_btn",
    "props": {
     "icon": {
@@ -6207,15 +6207,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Reglas"
+     "v": "Rules Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Reglas"
+     "v": "Rules Tool"
     }
    }
   },
-  "105553156213904": {
+  "105553177971344": {
    "name": "optimal_btn",
    "props": {
     "icon": {
@@ -6224,20 +6224,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Óptima"
+     "v": "Optimal Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Óptima"
+     "v": "Optimal Tool"
     }
    }
   },
-  "105553156211936": {
+  "105553177969376": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156213984": {
+  "105553177971424": {
    "name": "calculators_btn",
    "props": {
     "icon": {
@@ -6246,15 +6246,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Calculadoras"
+     "v": "Calculators Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Calculadoras"
+     "v": "Calculators Tool"
     }
    }
   },
-  "105553156214048": {
+  "105553177971488": {
    "name": "transform_btn",
    "props": {
     "icon": {
@@ -6263,15 +6263,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de transformación"
+     "v": "Transform Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de transformación"
+     "v": "Transform Tool"
     }
    }
   },
-  "105553156214112": {
+  "105553177971552": {
    "name": "qrcode_btn",
    "props": {
     "icon": {
@@ -6280,15 +6280,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta QRCode"
+     "v": "QRCode Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta QRCode"
+     "v": "QRCode Tool"
     }
    }
   },
-  "105553156214176": {
+  "105553177971616": {
    "name": "copperfill_btn",
    "props": {
     "icon": {
@@ -6297,15 +6297,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta Thieving Tool"
+     "v": "Copper Thieving Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta Thieving Tool"
+     "v": "Copper Thieving Tool"
     }
    }
   },
-  "105553156214240": {
+  "105553177971680": {
    "name": "fiducials_btn",
    "props": {
     "icon": {
@@ -6314,15 +6314,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Fiduciales"
+     "v": "Fiducials Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Fiduciales"
+     "v": "Fiducials Tool"
     }
    }
   },
-  "105553156214304": {
+  "105553177971744": {
    "name": "cal_btn",
    "props": {
     "icon": {
@@ -6331,15 +6331,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Calibración"
+     "v": "Calibration Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Calibración"
+     "v": "Calibration Tool"
     }
    }
   },
-  "105553156214368": {
+  "105553177971808": {
    "name": "punch_btn",
    "props": {
     "icon": {
@@ -6348,15 +6348,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herram. de Perforadora Gerber"
+     "v": "Punch Gerber Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herram. de Perforadora Gerber"
+     "v": "Punch Gerber Tool"
     }
    }
   },
-  "105553156214432": {
+  "105553177971872": {
    "name": "invert_btn",
    "props": {
     "icon": {
@@ -6365,15 +6365,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herram. Invertir Gerber"
+     "v": "Invert Gerber Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herram. Invertir Gerber"
+     "v": "Invert Gerber Tool"
     }
    }
   },
-  "105553156214496": {
+  "105553177971936": {
    "name": "corners_tool_btn",
    "props": {
     "icon": {
@@ -6382,15 +6382,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herram. de Marca. de Esquina"
+     "v": "Corner Markers Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herram. de Marca. de Esquina"
+     "v": "Corner Markers Tool"
     }
    }
   },
-  "105553156214560": {
+  "105553177244384": {
    "name": "etch_btn",
    "props": {
     "icon": {
@@ -6399,15 +6399,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Herramienta de Comp de Grabado"
+     "v": "Etch Compensation Tool"
     },
     "toolTip": {
      "t": "str",
-     "v": "Herramienta de Comp de Grabado"
+     "v": "Etch Compensation Tool"
     }
    }
   },
-  "105553156214624": {
+  "105553177244496": {
    "name": "select_drill_btn",
    "props": {
     "icon": {
@@ -6416,15 +6416,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Seleccionar"
+     "v": "Select"
     },
     "toolTip": {
      "t": "str",
-     "v": "Seleccionar"
+     "v": "Select"
     }
    }
   },
-  "105553156214688": {
+  "105553177244608": {
    "name": "add_drill_btn",
    "props": {
     "icon": {
@@ -6433,15 +6433,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir taladro"
+     "v": "Add Drill"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir taladro"
+     "v": "Add Drill"
     }
    }
   },
-  "105553156214752": {
+  "105553177244720": {
    "name": "add_drill_array_btn",
    "props": {
     "icon": {
@@ -6450,15 +6450,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Drill Array"
+     "v": "Add Drill Array"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Drill Array"
+     "v": "Add Drill Array"
     }
    }
   },
-  "105553156214816": {
+  "105553177244784": {
    "name": "resize_drill_btn",
    "props": {
     "icon": {
@@ -6467,15 +6467,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Redimensionar taladro"
+     "v": "Resize Drill"
     },
     "toolTip": {
      "t": "str",
-     "v": "Redimensionar taladro"
+     "v": "Resize Drill"
     }
    }
   },
-  "105553156214880": {
+  "105553177244848": {
    "name": "add_slot_btn",
    "props": {
     "icon": {
@@ -6484,15 +6484,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Agregar ranura"
+     "v": "Add Slot"
     },
     "toolTip": {
      "t": "str",
-     "v": "Agregar ranura"
+     "v": "Add Slot"
     }
    }
   },
-  "105553156214944": {
+  "105553177244912": {
    "name": "add_slot_array_btn",
    "props": {
     "icon": {
@@ -6501,20 +6501,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Agregar matriz de ranuras"
+     "v": "Add Slot Array"
     },
     "toolTip": {
      "t": "str",
-     "v": "Agregar matriz de ranuras"
+     "v": "Add Slot Array"
     }
    }
   },
-  "105553156213568": {
+  "105553177244320": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156215024": {
+  "105553177244992": {
    "name": "copy_drill_btn",
    "props": {
     "icon": {
@@ -6523,15 +6523,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Copia de taladro"
+     "v": "Copy Drill"
     },
     "toolTip": {
      "t": "str",
-     "v": "Copia de taladro"
+     "v": "Copy Drill"
     }
    }
   },
-  "105553156215088": {
+  "105553177245056": {
    "name": "delete_drill_btn",
    "props": {
     "icon": {
@@ -6540,20 +6540,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Eliminar taladro"
+     "v": "Delete Drill"
     },
     "toolTip": {
      "t": "str",
-     "v": "Eliminar taladro"
+     "v": "Delete Drill"
     }
    }
   },
-  "105553156213968": {
+  "105553177244544": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156215168": {
+  "105553177245136": {
    "name": "move_drill_btn",
    "props": {
     "icon": {
@@ -6562,15 +6562,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Mover taladro"
+     "v": "Move Drill"
     },
     "toolTip": {
      "t": "str",
-     "v": "Mover taladro"
+     "v": "Move Drill"
     }
    }
   },
-  "105553156215232": {
+  "105553177245200": {
    "name": "geo_select_btn",
    "props": {
     "icon": {
@@ -6579,15 +6579,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Seleccionar"
+     "v": "Select"
     },
     "toolTip": {
      "t": "str",
-     "v": "Seleccionar"
+     "v": "Select"
     }
    }
   },
-  "105553156215296": {
+  "105553177245264": {
    "name": "geo_add_circle_btn",
    "props": {
     "icon": {
@@ -6596,15 +6596,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Círculo"
+     "v": "Add Circle"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Círculo"
+     "v": "Add Circle"
     }
    }
   },
-  "105553156215360": {
+  "105553177245328": {
    "name": "geo_add_arc_btn",
    "props": {
     "icon": {
@@ -6613,15 +6613,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Arco"
+     "v": "Add Arc"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Arco"
+     "v": "Add Arc"
     }
    }
   },
-  "105553156215424": {
+  "105553177245392": {
    "name": "geo_add_rectangle_btn",
    "props": {
     "icon": {
@@ -6630,20 +6630,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Rectángulo"
+     "v": "Add Rectangle"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Rectángulo"
+     "v": "Add Rectangle"
     }
    }
   },
-  "105553156215152": {
+  "105553177245120": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156215504": {
+  "105553177245472": {
    "name": "geo_add_path_btn",
    "props": {
     "icon": {
@@ -6652,15 +6652,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Ruta"
+     "v": "Add Path"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Ruta"
+     "v": "Add Path"
     }
    }
   },
-  "105553156215568": {
+  "105553177245536": {
    "name": "geo_add_polygon_btn",
    "props": {
     "icon": {
@@ -6669,20 +6669,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Polígono"
+     "v": "Add Polygon"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Polígono"
+     "v": "Add Polygon"
     }
    }
   },
-  "105553156215008": {
+  "105553177244976": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156215648": {
+  "105553177245616": {
    "name": "geo_add_text_btn",
    "props": {
     "icon": {
@@ -6691,15 +6691,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Texto"
+     "v": "Add Text"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Texto"
+     "v": "Add Text"
     }
    }
   },
-  "105553156215712": {
+  "105553177245680": {
    "name": "geo_add_buffer_btn",
    "props": {
     "icon": {
@@ -6708,15 +6708,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Buffer"
+     "v": "Add Buffer"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Buffer"
+     "v": "Add Buffer"
     }
    }
   },
-  "105553156215776": {
+  "105553177245744": {
    "name": "geo_add_paint_btn",
    "props": {
     "icon": {
@@ -6725,15 +6725,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Forma de pintura"
+     "v": "Paint Shape"
     },
     "toolTip": {
      "t": "str",
-     "v": "Forma de pintura"
+     "v": "Paint Shape"
     }
    }
   },
-  "105553156215840": {
+  "105553177245808": {
    "name": "geo_eraser_btn",
    "props": {
     "icon": {
@@ -6742,20 +6742,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Borrador"
+     "v": "Eraser"
     },
     "toolTip": {
      "t": "str",
-     "v": "Borrador"
+     "v": "Eraser"
     }
    }
   },
-  "105553156215488": {
+  "105553177245456": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156215920": {
+  "105553177245888": {
    "name": "geo_union_btn",
    "props": {
     "icon": {
@@ -6764,15 +6764,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Unión de polígonos"
+     "v": "Polygon Union"
     },
     "toolTip": {
      "t": "str",
-     "v": "Unión de polígonos"
+     "v": "Polygon Union"
     }
    }
   },
-  "105553156215984": {
+  "105553177245952": {
    "name": "geo_explode_btn",
    "props": {
     "icon": {
@@ -6781,15 +6781,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Polígono explotar"
+     "v": "Polygon Explode"
     },
     "toolTip": {
      "t": "str",
-     "v": "Polígono explotar"
+     "v": "Polygon Explode"
     }
    }
   },
-  "105553156216048": {
+  "105553177246016": {
    "name": "geo_intersection_btn",
    "props": {
     "icon": {
@@ -6798,15 +6798,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Intersección de polígonos"
+     "v": "Polygon Intersection"
     },
     "toolTip": {
      "t": "str",
-     "v": "Intersección de polígonos"
+     "v": "Polygon Intersection"
     }
    }
   },
-  "105553156216112": {
+  "105553177246080": {
    "name": "geo_subtract_btn",
    "props": {
     "icon": {
@@ -6815,20 +6815,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Sustracción de polígonos"
+     "v": "Polygon Subtraction"
     },
     "toolTip": {
      "t": "str",
-     "v": "Sustracción de polígonos"
+     "v": "Polygon Subtraction"
     }
    }
   },
-  "105553156215632": {
+  "105553177245600": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156216192": {
+  "105553177246160": {
    "name": "geo_cutpath_btn",
    "props": {
     "icon": {
@@ -6837,15 +6837,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Camino de Corte"
+     "v": "Cut Path"
     },
     "toolTip": {
      "t": "str",
-     "v": "Camino de Corte"
+     "v": "Cut Path"
     }
    }
   },
-  "105553156216256": {
+  "105553177246224": {
    "name": "geo_copy_btn",
    "props": {
     "icon": {
@@ -6854,15 +6854,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Copiar objetos"
+     "v": "Copy Objects"
     },
     "toolTip": {
      "t": "str",
-     "v": "Copiar objetos"
+     "v": "Copy Objects"
     }
    }
   },
-  "105553156216320": {
+  "105553177246288": {
    "name": "geo_delete_btn",
    "props": {
     "icon": {
@@ -6871,15 +6871,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Eliminar forma"
+     "v": "Delete Shape"
     },
     "toolTip": {
      "t": "str",
-     "v": "Eliminar forma"
+     "v": "Delete Shape"
     }
    }
   },
-  "105553156216384": {
+  "105553177246352": {
    "name": "geo_transform_btn",
    "props": {
     "icon": {
@@ -6888,20 +6888,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Transformaciones"
+     "v": "Transformations"
     },
     "toolTip": {
      "t": "str",
-     "v": "Transformaciones"
+     "v": "Transformations"
     }
    }
   },
-  "105553156215904": {
+  "105553177245872": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156216464": {
+  "105553177246432": {
    "name": "geo_move_btn",
    "props": {
     "icon": {
@@ -6910,15 +6910,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Mover objetos"
+     "v": "Move Objects"
     },
     "toolTip": {
      "t": "str",
-     "v": "Mover objetos"
+     "v": "Move Objects"
     }
    }
   },
-  "105553156216528": {
+  "105553177246496": {
    "name": "grb_select_btn",
    "props": {
     "icon": {
@@ -6927,15 +6927,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Seleccionar"
+     "v": "Select"
     },
     "toolTip": {
      "t": "str",
-     "v": "Seleccionar"
+     "v": "Select"
     }
    }
   },
-  "105553156216592": {
+  "105553177246560": {
    "name": "grb_add_pad_btn",
    "props": {
     "icon": {
@@ -6944,15 +6944,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Pad"
+     "v": "Add Pad"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Pad"
+     "v": "Add Pad"
     }
    }
   },
-  "105553156216656": {
+  "105553177246624": {
    "name": "add_pad_ar_btn",
    "props": {
     "icon": {
@@ -6961,15 +6961,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Agregar matriz de pad"
+     "v": "Add Pad Array"
     },
     "toolTip": {
      "t": "str",
-     "v": "Agregar matriz de pad"
+     "v": "Add Pad Array"
     }
    }
   },
-  "105553156216720": {
+  "105553177246688": {
    "name": "grb_add_track_btn",
    "props": {
     "icon": {
@@ -6978,15 +6978,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Pista"
+     "v": "Add Track"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Pista"
+     "v": "Add Track"
     }
    }
   },
-  "105553156216784": {
+  "105553177246752": {
    "name": "grb_add_region_btn",
    "props": {
     "icon": {
@@ -6995,15 +6995,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Añadir Región"
+     "v": "Add Region"
     },
     "toolTip": {
      "t": "str",
-     "v": "Añadir Región"
+     "v": "Add Region"
     }
    }
   },
-  "105553156216848": {
+  "105553177246816": {
    "name": "grb_convert_poly_btn",
    "props": {
     "icon": {
@@ -7012,15 +7012,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Poligonizar"
+     "v": "Poligonize"
     },
     "toolTip": {
      "t": "str",
-     "v": "Poligonizar"
+     "v": "Poligonize"
     }
    }
   },
-  "105553156216912": {
+  "105553177246880": {
    "name": "grb_add_semidisc_btn",
    "props": {
     "icon": {
@@ -7029,15 +7029,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Medio disco"
+     "v": "SemiDisc"
     },
     "toolTip": {
      "t": "str",
-     "v": "Medio disco"
+     "v": "SemiDisc"
     }
    }
   },
-  "105553156216976": {
+  "105553177246944": {
    "name": "grb_add_disc_btn",
    "props": {
     "icon": {
@@ -7046,20 +7046,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Disco"
+     "v": "Disc"
     },
     "toolTip": {
      "t": "str",
-     "v": "Disco"
+     "v": "Disc"
     }
    }
   },
-  "105553156216448": {
+  "105553177246416": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156217056": {
+  "105553177247024": {
    "name": "aperture_buffer_btn",
    "props": {
     "icon": {
@@ -7076,7 +7076,7 @@
     }
    }
   },
-  "105553156217120": {
+  "105553177247088": {
    "name": "aperture_scale_btn",
    "props": {
     "icon": {
@@ -7085,15 +7085,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Escala"
+     "v": "Scale"
     },
     "toolTip": {
      "t": "str",
-     "v": "Escala"
+     "v": "Scale"
     }
    }
   },
-  "105553156217184": {
+  "105553177247152": {
    "name": "aperture_markarea_btn",
    "props": {
     "icon": {
@@ -7102,15 +7102,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Marcar area"
+     "v": "Mark Area"
     },
     "toolTip": {
      "t": "str",
-     "v": "Marcar area"
+     "v": "Mark Area"
     }
    }
   },
-  "105553156217248": {
+  "105553177247216": {
    "name": "aperture_eraser_btn",
    "props": {
     "icon": {
@@ -7119,20 +7119,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Borrador"
+     "v": "Eraser"
     },
     "toolTip": {
      "t": "str",
-     "v": "Borrador"
+     "v": "Eraser"
     }
    }
   },
-  "105553156216176": {
+  "105553177246144": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156217328": {
+  "105553177247296": {
    "name": "aperture_copy_btn",
    "props": {
     "icon": {
@@ -7141,15 +7141,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Dupdo"
+     "v": "Copy"
     },
     "toolTip": {
      "t": "str",
-     "v": "Dupdo"
+     "v": "Copy"
     }
    }
   },
-  "105553156217392": {
+  "105553177247360": {
    "name": "aperture_delete_btn",
    "props": {
     "icon": {
@@ -7158,15 +7158,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Borrar"
+     "v": "Delete"
     },
     "toolTip": {
      "t": "str",
-     "v": "Borrar"
+     "v": "Delete"
     }
    }
   },
-  "105553156217456": {
+  "105553177247424": {
    "name": "grb_transform_btn",
    "props": {
     "icon": {
@@ -7175,20 +7175,20 @@
     },
     "text": {
      "t": "str",
-     "v": "Transformaciones"
+     "v": "Transformations"
     },
     "toolTip": {
      "t": "str",
-     "v": "Transformaciones"
+     "v": "Transformations"
     }
    }
   },
-  "105553156217312": {
+  "105553177247280": {
    "name": null,
    "props": {},
    "separator": true
   },
-  "105553156217536": {
+  "105553177247504": {
    "name": "aperture_move_btn",
    "props": {
     "icon": {
@@ -7197,15 +7197,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Movimiento"
+     "v": "Move"
     },
     "toolTip": {
      "t": "str",
-     "v": "Movimiento"
+     "v": "Move"
     }
    }
   },
-  "105553156869536": {
+  "105553177385296": {
    "name": "grid_snap_btn",
    "props": {
     "checkable": {
@@ -7222,15 +7222,15 @@
     },
     "text": {
      "t": "str",
-     "v": "Encajar a la cuadricula"
+     "v": "Snap to grid"
     },
     "toolTip": {
      "t": "str",
-     "v": "Encajar a la cuadricula"
+     "v": "Snap to grid"
     }
    }
   },
-  "105553156870576": {
+  "105553177386864": {
    "name": "corner_snap_btn",
    "props": {
     "checkable": {
@@ -7247,11 +7247,11 @@
     },
     "text": {
      "t": "str",
-     "v": "Ajustar a la esquina"
+     "v": "Snap to corner"
     },
     "toolTip": {
      "t": "str",
-     "v": "Ajustar a la esquina"
+     "v": "Snap to corner"
     }
    }
   }

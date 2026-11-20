@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Verificar Reglas"
+    "v": "Check Rules"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Verificar Reglas"
+        "v": "Check Rules"
        }
       }
      }
@@ -108,7 +108,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Objetos de Gerber para los cuales verificar las reglas."
+           "v": "Gerber objects for which to check rules."
           },
           "text": {
            "t": "str",
@@ -143,7 +143,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El objeto de cobre Top Gerber para el que se verifican las reglas."
+           "v": "The Top Gerber Copper object for which rules are checked."
           },
           "text": {
            "t": "str",
@@ -198,11 +198,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El objeto de cobre de Gerber inferior para el que se verifican las reglas."
+           "v": "The Bottom Gerber Copper object for which rules are checked."
           },
           "text": {
            "t": "str",
-           "v": "Inferior:"
+           "v": "Bottom:"
           }
          }
         }
@@ -253,7 +253,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El objeto Máscara de soldadura de Gerber superior para el que se verifican las reglas."
+           "v": "The Top Gerber Solder Mask object for which rules are checked."
           },
           "text": {
            "t": "str",
@@ -308,11 +308,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El objeto de máscara de soldadura de Gerber inferior para el que se verifican las reglas."
+           "v": "The Bottom Gerber Solder Mask object for which rules are checked."
           },
           "text": {
            "t": "str",
-           "v": "SM Inferior:"
+           "v": "SM Bottom:"
           }
          }
         }
@@ -363,11 +363,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El objeto de serigrafía Top Gerber para el que se verifican las reglas."
+           "v": "The Top Gerber Silkscreen object for which rules are checked."
           },
           "text": {
            "t": "str",
-           "v": "Top de serigrafía:"
+           "v": "Silk Top:"
           }
          }
         }
@@ -418,11 +418,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El objeto Serigrafía inferior de Gerber para el que se verifican las reglas."
+           "v": "The Bottom Gerber Silkscreen object for which rules are checked."
           },
           "text": {
            "t": "str",
-           "v": "Serigrafía Inferior:"
+           "v": "Silk Bottom:"
           }
          }
         }
@@ -473,11 +473,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El objeto Esquema de Gerber (Recorte) para el que se verifican las reglas."
+           "v": "The Gerber Outline (Cutout) object for which rules are checked."
           },
           "text": {
            "t": "str",
-           "v": "Contorno:"
+           "v": "Outline:"
           }
          }
         }
@@ -541,7 +541,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Excellon objetos para los cuales verificar las reglas."
+           "v": "Excellon objects for which to check rules."
           },
           "text": {
            "t": "str",
@@ -563,7 +563,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Objeto Excellon para el cual verificar las reglas.\nContiene los agujeros chapados o un contenido general del archivo Excellon."
+           "v": "Excellon object for which to check rules.\nHolds the plated holes or a general Excellon file content."
           },
           "text": {
            "t": "str",
@@ -618,7 +618,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Objeto Excellon para el cual verificar las reglas.\nSostiene los agujeros no chapados."
+           "v": "Excellon object for which to check rules.\nHolds the non-plated holes."
           },
           "text": {
            "t": "str",
@@ -692,7 +692,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Esto marca / desmarca todas las reglas a continuación."
+        "v": "This check/uncheck all the rules below."
        },
        "styleSheet": {
         "t": "str",
@@ -700,7 +700,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Todas las reglas"
+        "v": "All Rules"
        }
       }
      }
@@ -745,11 +745,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esto comprueba si se cumple el tamaño mínimo para las trazas."
+           "v": "This checks if the minimum size for traces is met."
           },
           "text": {
            "t": "str",
-           "v": "Tamaño de traza:"
+           "v": "Trace Size:"
           },
           "checked": {
            "t": "bool",
@@ -769,11 +769,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Tamaño de traza mínimo aceptable."
+           "v": "Minimum acceptable trace size."
           },
           "text": {
            "t": "str",
-           "v": "Valor mínimo:"
+           "v": "Min value:"
           }
          }
         }
@@ -817,11 +817,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esto comprueba si la distancia mínima entre cobre\nhuellas se cumplen."
+           "v": "This checks if the minimum clearance between copper\nfeatures is met."
           },
           "text": {
            "t": "str",
-           "v": "Distancia de Cobre a Cobre:"
+           "v": "Copper to Copper clearance:"
           },
           "checked": {
            "t": "bool",
@@ -841,11 +841,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Valor mínimo de distancia aceptable."
+           "v": "Minimum acceptable clearance value."
           },
           "text": {
            "t": "str",
-           "v": "Valor mínimo:"
+           "v": "Min value:"
           }
          }
         }
@@ -889,11 +889,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esto comprueba si la distancia mínima entre cobre\nhuellas y el esquema se cumple."
+           "v": "This checks if the minimum clearance between copper\nfeatures and the outline is met."
           },
           "text": {
            "t": "str",
-           "v": "Distancia de Cobre a Contorno:"
+           "v": "Copper to Outline clearance:"
           },
           "checked": {
            "t": "bool",
@@ -913,11 +913,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Valor mínimo de distancia aceptable."
+           "v": "Minimum acceptable clearance value."
           },
           "text": {
            "t": "str",
-           "v": "Valor mínimo:"
+           "v": "Min value:"
           }
          }
         }
@@ -961,11 +961,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esto comprueba si la distancia mínima entre serigrafía\nhuellas y huellas de serigrafía se cumplen."
+           "v": "This checks if the minimum clearance between silkscreen\nfeatures and silkscreen features is met."
           },
           "text": {
            "t": "str",
-           "v": "Distancia de Serigrafía a Serigrafía:"
+           "v": "Silk to Silk Clearance:"
           },
           "checked": {
            "t": "bool",
@@ -985,11 +985,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Valor mínimo de distancia aceptable."
+           "v": "Minimum acceptable clearance value."
           },
           "text": {
            "t": "str",
-           "v": "Valor mínimo:"
+           "v": "Min value:"
           }
          }
         }
@@ -1033,11 +1033,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esto comprueba si la distancia mínima entre serigrafía\nTraces y soldermask traces se cumplen."
+           "v": "This checks if the minimum clearance between silkscreen\nfeatures and soldermask features is met."
           },
           "text": {
            "t": "str",
-           "v": "Serigrafía para Soldar Máscara Distancia:"
+           "v": "Silk to Solder Mask Clearance:"
           },
           "checked": {
            "t": "bool",
@@ -1057,11 +1057,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Valor mínimo de distancia aceptable."
+           "v": "Minimum acceptable clearance value."
           },
           "text": {
            "t": "str",
-           "v": "Valor mínimo:"
+           "v": "Min value:"
           }
          }
         }
@@ -1105,11 +1105,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esto verifica si el espacio libre mínimo entre la serigrafía\nhuellas y el contorno se cumple."
+           "v": "This checks if the minimum clearance between silk\nfeatures and the outline is met."
           },
           "text": {
            "t": "str",
-           "v": "Serigrafía para Contorno Distancia:"
+           "v": "Silk to Outline Clearance:"
           },
           "checked": {
            "t": "bool",
@@ -1129,11 +1129,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Valor mínimo de distancia aceptable."
+           "v": "Minimum acceptable clearance value."
           },
           "text": {
            "t": "str",
-           "v": "Valor mínimo:"
+           "v": "Min value:"
           }
          }
         }
@@ -1177,11 +1177,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esto verifica si la distancia mínima entre la máscara de soldadura\nrastros y rastros de máscara de soldadura se cumplen."
+           "v": "This checks if the minimum clearance between soldermask\nfeatures and soldermask features is met."
           },
           "text": {
            "t": "str",
-           "v": "Astilla de máscara de soldadura mínima:"
+           "v": "Minimum Solder Mask Sliver:"
           },
           "checked": {
            "t": "bool",
@@ -1201,11 +1201,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Valor mínimo de distancia aceptable."
+           "v": "Minimum acceptable clearance value."
           },
           "text": {
            "t": "str",
-           "v": "Valor mínimo:"
+           "v": "Min value:"
           }
          }
         }
@@ -1249,11 +1249,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esto verifica si queda el anillo de cobre mínimo al perforar\nSe encuentra un agujero en una almohadilla."
+           "v": "This checks if the minimum copper ring left by drilling\na hole into a pad is met."
           },
           "text": {
            "t": "str",
-           "v": "Anillo anular mínimo:"
+           "v": "Minimum Annular Ring:"
           },
           "checked": {
            "t": "bool",
@@ -1273,11 +1273,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Valor mínimo aceptable del anillo."
+           "v": "Minimum acceptable ring value."
           },
           "text": {
            "t": "str",
-           "v": "Valor mínimo:"
+           "v": "Min value:"
           }
          }
         }
@@ -1332,11 +1332,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esto verifica si la distancia mínima entre un taladro\ny se encuentra otro taladro."
+           "v": "This checks if the minimum clearance between a drill hole\nand another drill hole is met."
           },
           "text": {
            "t": "str",
-           "v": "Distancia entre Agujeros:"
+           "v": "Hole to Hole Clearance:"
           },
           "checked": {
            "t": "bool",
@@ -1356,11 +1356,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Valor mínimo de distancia aceptable."
+           "v": "Minimum acceptable clearance value."
           },
           "text": {
            "t": "str",
-           "v": "Valor mínimo:"
+           "v": "Min value:"
           }
          }
         }
@@ -1404,11 +1404,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esto comprueba si los agujeros de perforación\nLos tamaños están por encima del umbral."
+           "v": "This checks if the drill holes\nsizes are above the threshold."
           },
           "text": {
            "t": "str",
-           "v": "Tamaño del Agujero:"
+           "v": "Hole Size:"
           },
           "checked": {
            "t": "bool",
@@ -1428,11 +1428,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Tamaño mínimo aceptable de perforación."
+           "v": "Minimum acceptable drill size."
           },
           "text": {
            "t": "str",
-           "v": "Valor mínimo:"
+           "v": "Min value:"
           }
          }
         }
@@ -1501,7 +1501,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Panelizar el objeto especificado alrededor del cuadro especificado.\nEn otras palabras, crea múltiples copias del objeto fuente,\ndispuestos en una matriz 2D de filas y columnas."
+           "v": "Panelize the specified object around the specified box.\nIn other words it creates multiple copies of the source object,\narranged in a 2D array of rows and columns."
           },
           "styleSheet": {
            "t": "str",
@@ -1509,7 +1509,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Ejecutar Reglas Verificar"
+           "v": "Run Rules Check"
           },
           "icon": {
            "t": "QIcon",
@@ -1547,7 +1547,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Restablecerá los parámetros de la herramienta."
+        "v": "Will reset the tool parameters."
        },
        "styleSheet": {
         "t": "str",
@@ -1555,7 +1555,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Restablecer la Herramienta"
+        "v": "Reset Tool"
        },
        "icon": {
         "t": "QIcon",

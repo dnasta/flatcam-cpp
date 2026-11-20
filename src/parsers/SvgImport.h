@@ -97,7 +97,7 @@ SvgImportResult importSvgAsGeometry(const std::string& svgText, int circleSteps 
  * figura, sus agujeros pasan a ser polígonos aparte, como el original). Falla si hay figuras que no son polígonos. Al final va
  * un polígono vacío: el `solid_geometry` inicial de un Gerber (`Polygon()`), como en el original.
  * @param svgText El archivo. @param circleSteps `gerber_circle_steps` (64).
- * @param fonts Las fuentes para los textos (ver @ref importSvgAsGeometry).
+ * @param fonts Las fuentes para los textos (ver `importSvgAsGeometry`).
  * @return El resultado (los polígonos de la apertura "0").
  */
 SvgImportResult importSvgAsGerber(const std::string& svgText, int circleSteps = 64, const FontParser* fonts = nullptr);
@@ -106,7 +106,7 @@ SvgImportResult importSvgAsGerber(const std::string& svgText, int circleSteps = 
  * @brief Las figuras de un SVG tal cual (invertidas en Y y corridas el alto), sin pasar por un objeto: lo que hace
  * `convert_svg_to_geo` de la herramienta de códigos QR.
  * @param svgText El archivo. @param circleSteps `geometry_circle_steps` (64).
- * @param fonts Las fuentes para los textos (ver @ref importSvgAsGeometry).
+ * @param fonts Las fuentes para los textos (ver `importSvgAsGeometry`).
  * @return El resultado.
  */
 SvgImportResult importSvgShapes(const std::string& svgText, int circleSteps = 64, const FontParser* fonts = nullptr);

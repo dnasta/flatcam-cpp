@@ -254,12 +254,12 @@ bool Isolation::isolate(const ShapeList& solidGeometry, const ShapeList& followG
     error.clear();
     outcome = IsolationOutcome{};
     if (tools.empty()) {
-        error = "No hay herramientas seleccionadas en la tabla";
+        error = "There are no tools selected in the Tool Table.";
         return false;
     }
     for (const IsolationTool& t : tools) {
         if (t.toolDia <= 0) {
-            error = "El diámetro de la herramienta debe ser positivo";
+            error = "The tool diameter must be positive";
             return false;
         }
     }
@@ -350,7 +350,7 @@ bool Isolation::isolate(const ShapeList& solidGeometry, const ShapeList& followG
         return false;
     }
     if (outcome.sets.empty()) {
-        error = "La geometría de aislamiento quedó vacía";
+        error = "The isolation geometry is empty";
         return false;
     }
     return true;

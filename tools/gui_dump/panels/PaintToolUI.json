@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Herramienta de pintura"
+    "v": "Paint Tool"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Herramienta de pintura"
+        "v": "Paint Tool"
        }
       }
      }
@@ -132,11 +132,11 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Especifique el tipo de objeto a pintar.\nPuede ser de tipo: Gerber o Geometría.\nLo que se seleccione aquí dictará el tipo\nde objetos que llenarán el cuadro combinado 'Objeto'."
+               "v": "Specify the type of object to be painted.\nIt can be of type: Gerber or Geometry.\nWhat is selected here will dictate the kind\nof objects that will populate the 'Object' combobox."
               },
               "text": {
                "t": "str",
-               "v": "Tipo de obj:"
+               "v": "Obj Type:"
               }
              }
             }
@@ -180,11 +180,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Objeto a pintar."
+               "v": "Object to be painted."
               },
               "text": {
                "t": "str",
-               "v": "Objeto:"
+               "v": "Object:"
               }
              }
             }
@@ -248,11 +248,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Conjunto de herramientas desde el cual el algoritmo\nelegirá los que se usan para pintar."
+               "v": "Tools pool from which the algorithm\nwill pick the ones used for painting."
               },
               "text": {
                "t": "str",
-               "v": "<b>Tabla de herramientas</b>"
+               "v": "<b>Tools Table</b>"
               }
              }
             }
@@ -323,7 +323,7 @@
               "cols": 4,
               "labels": [
                "#",
-               "Diámetro",
+               "Diameter",
                "TT",
                ""
               ],
@@ -355,11 +355,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Esto establece la forma en que se utilizan las herramientas en la tabla de herramientas.\n'No' -> significa que el orden utilizado es el de la tabla de herramientas\n'Adelante' -> significa que las herramientas se ordenarán de pequeño a grande\n'Atras' -> means que las herramientas ordenarán de grande a pequeño\n\nADVERTENCIA: el uso del mecanizado en reposo establecerá automáticamente el orden\nen reversa y deshabilitar este control."
+               "v": "This set the way that the tools in the tools table are used.\n'No' --> means that the used order is the one in the tool table\n'Forward' --> means that the tools will be ordered from small to big\n'Reverse' --> means that the tools will ordered from big to small\n\nWARNING: using rest machining will automatically set the order\nin reverse and disable this control."
               },
               "text": {
                "t": "str",
-               "v": "<b>Orden de la Herram:</b>"
+               "v": "<b>Tool order:</b>"
               }
              }
             }
@@ -377,7 +377,7 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Esto establece la forma en que se utilizan las herramientas en la tabla de herramientas.\n'No' -> significa que el orden utilizado es el de la tabla de herramientas\n'Adelante' -> significa que las herramientas se ordenarán de pequeño a grande\n'Atras' -> means que las herramientas ordenarán de grande a pequeño\n\nADVERTENCIA: el uso del mecanizado en reposo establecerá automáticamente el orden\nen reversa y deshabilitar este control."
+               "v": "This set the way that the tools in the tools table are used.\n'No' --> means that the used order is the one in the tool table\n'Forward' --> means that the tools will be ordered from small to big\n'Reverse' --> means that the tools will ordered from big to small\n\nWARNING: using rest machining will automatically set the order\nin reverse and disable this control."
               }
              },
              "choices": [
@@ -386,11 +386,11 @@
                "value": "no"
               },
               {
-               "label": "Adelante",
+               "label": "Forward",
                "value": "fwd"
               },
               {
-               "label": "Atras",
+               "label": "Reverse",
                "value": "rev"
               }
              ],
@@ -487,7 +487,7 @@
              "props": {
               "text": {
                "t": "str",
-               "v": "<b>Agregar desde DB</b>"
+               "v": "<b>Add from DB</b>"
               }
              }
             }
@@ -505,11 +505,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Diámetro de la nueva herramienta para agregar en la Tabla de herramientas.\nSi la herramienta es de tipo V, este valor es automáticamente\ncalculado a partir de los otros parámetros."
+               "v": "Diameter for the new tool to add in the Tool Table.\nIf the tool is V-shape type then this value is automatically\ncalculated from the other parameters."
               },
               "text": {
                "t": "str",
-               "v": "Diá. de Herram:"
+               "v": "Tool Dia:"
               }
              }
             }
@@ -573,11 +573,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "Agregar una nueva herramienta a la tabla de herramientas\ncon el diámetro especificado arriba.\nEsto se hace mediante una búsqueda en segundo plano.\nen la base de datos de herramientas. Si no se encuentra nada\nen la base de datos de herramientas, se agrega una herramienta predeterminada."
+                  "v": "Add a new tool to the Tool Table\nwith the diameter specified above.\nThis is done by a background search\nin the Tools Database. If nothing is found\nin the Tools DB then a default tool is added."
                  },
                  "text": {
                   "t": "str",
-                  "v": "Buscar y agregar"
+                  "v": "Search and Add"
                  },
                  "icon": {
                   "t": "QIcon",
@@ -596,11 +596,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "Agregar una nueva herramienta a la tabla de herramientas\nde la base de datos de herramientas.\nHerramientas de administración de bases de datos en:\nMenú: Opciones -> Base de datos de herramientas"
+                  "v": "Add a new tool to the Tool Table\nfrom the Tools Database.\nTools database administration in in:\nMenu: Options -> Tools Database"
                  },
                  "text": {
                   "t": "str",
-                  "v": "Elija de DB"
+                  "v": "Pick from DB"
                  },
                  "icon": {
                   "t": "QIcon",
@@ -656,11 +656,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Eliminar una selección de herramientas en la tabla de herramientas\nseleccionando primero una fila en la Tabla de herramientas."
+               "v": "Delete a selection of tools in the Tool Table\nby first selecting a row in the Tool Table."
               },
               "text": {
                "t": "str",
-               "v": "Borrar"
+               "v": "Delete"
               },
               "icon": {
                "t": "QIcon",
@@ -713,11 +713,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Los datos utilizados para crear GCode.\nCada herramienta almacena su propio conjunto de datos."
+               "v": "The data used for creating GCode.\nEach tool store it's own set of such data."
               },
               "text": {
                "t": "str",
-               "v": "<b>Parámetros para: <font color='#0000FF'>Herramienta 1</font></b>"
+               "v": "<b>Parameters for: <font color='#0000FF'>Tool 1</font></b>"
               }
              }
             }
@@ -791,11 +791,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Cuánto (porcentaje) del ancho de la herramienta para superponer cada pasada de herramienta.\nAjustar el valor comenzando con valores más bajos\ny aumentarlo si las áreas que deben procesarse aún están\nno procesado.Valores más bajos = procesamiento más rápido, ejecución más rápida en CNC.\nValores más altos = procesamiento lento y ejecución lenta en CNC\ndebido a demasiados caminos."
+               "v": "How much (percentage) of the tool width to overlap each tool pass.\nAdjust the value starting with lower values\nand increasing it if areas that should be processed are still \nnot processed.\nLower values = faster processing, faster execution on CNC.\nHigher values = slow processing and slow execution on CNC\ndue of too many paths."
               },
               "text": {
                "t": "str",
-               "v": "Superposición:"
+               "v": "Overlap:"
               }
              }
             }
@@ -855,11 +855,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Distancia por la cual evitar\nlos bordes del polígono a\nser pintado."
+               "v": "Distance by which to avoid\nthe edges of the polygon to\nbe painted."
               },
               "text": {
                "t": "str",
-               "v": "Compensar:"
+               "v": "Offset:"
               }
              }
             }
@@ -907,11 +907,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Algoritmo para pintar:\n- Estándar: paso fijo hacia adentro.\n- Basado en semillas: hacia afuera de la semilla.\n- Basado en líneas: líneas paralelas.\n- Líneas láser: activas solo para objetos Gerber.\nCreará líneas que siguen los rastros.\n- Combo: en caso de falla, se elegirá un nuevo método de los anteriores\nen el orden especificado."
+               "v": "Algorithm for painting:\n- Standard: Fixed step inwards.\n- Seed-based: Outwards from seed.\n- Line-based: Parallel lines.\n- Laser-lines: Active only for Gerber objects.\nWill create lines that follow the traces.\n- Combo: In case of failure a new method will be picked from the above\nin the order specified."
               },
               "text": {
                "t": "str",
-               "v": "Método:"
+               "v": "Method:"
               }
              }
             }
@@ -933,14 +933,14 @@
               },
               "currentText": {
                "t": "str",
-               "v": "Estándar"
+               "v": "Standard"
               }
              },
              "items": [
-              "Estándar",
-              "Semilla",
-              "Líneas",
-              "Lineas laser",
+              "Standard",
+              "Seed",
+              "Lines",
+              "Laser_lines",
               "Combo"
              ],
              "currentIndex": 0
@@ -963,11 +963,11 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Dibuja líneas entre el resultado\nSegmentos para minimizar elevaciones de herramientas."
+               "v": "Draw lines between resulting\nsegments to minimize tool lifts."
               },
               "text": {
                "t": "str",
-               "v": "Conectar"
+               "v": "Connect"
               },
               "checked": {
                "t": "bool",
@@ -993,11 +993,11 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Corta todo el perímetro del polígono.\nPara recortar los bordes ásperos."
+               "v": "Cut around the perimeter of the polygon\nto trim rough edges."
               },
               "text": {
                "t": "str",
-               "v": "Contorno"
+               "v": "Contour"
               },
               "checked": {
                "t": "bool",
@@ -1050,11 +1050,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Se aplicarán los parámetros en el formulario actual\nen todas las herramientas de la tabla de herramientas."
+               "v": "The parameters in the current form will be applied\non all the tools from the Tool Table."
               },
               "text": {
                "t": "str",
-               "v": "Aplicar Parám. a todas las herramientas"
+               "v": "Apply parameters to all tools"
               },
               "icon": {
                "t": "QIcon",
@@ -1107,11 +1107,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Parámetros que son comunes para todas las herramientas."
+               "v": "Parameters that are common for all tools."
               },
               "text": {
                "t": "str",
-               "v": "<b>Parámetros comunes</b>"
+               "v": "<b>Common Parameters</b>"
               }
              }
             }
@@ -1133,11 +1133,11 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Si está marcado, use 'mecanizado en resto'.\nBásicamente procesará cobre fuera de las características de la PCB,\nusando la herramienta más grande y continúe con las siguientes herramientas,\nde mayor a menor, para procesar las características de cobre que\nno pudo ser procesado por la herramienta anterior, hasta que haya\nno queda nada por procesar o no hay más herramientas.\n\nSi no está marcado, use el algoritmo estándar."
+               "v": "If checked, use 'rest machining'.\nBasically it will process copper outside PCB features,\nusing the biggest tool and continue with the next tools,\nfrom bigger to smaller, to process the copper features that\ncould not be processed by previous tool, until there is\nnothing left to process or there are no more tools.\n\nIf not checked, use the standard algorithm."
               },
               "text": {
                "t": "str",
-               "v": "Resto"
+               "v": "Rest"
               }
              }
             }
@@ -1155,11 +1155,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Distancia por la cual evitar\nlos bordes del polígono a\nser pintado."
+               "v": "Distance by which to avoid\nthe edges of the polygon to\nbe painted."
               },
               "text": {
                "t": "str",
-               "v": "Compensar:"
+               "v": "Offset:"
               },
               "hidden": {
                "t": "bool",
@@ -1211,11 +1211,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Selección del área a procesar.\n- 'Selección de polígonos': haga clic con el botón izquierdo del mouse para agregar / eliminar polígonos que se procesarán.\n- 'Selección de área': haga clic con el botón izquierdo del mouse para iniciar la selección del área a procesar.\nMantener presionada una tecla modificadora (CTRL o SHIFT) permitirá agregar múltiples áreas.\n- 'Todos los polígonos': el proceso comenzará después de hacer clic.\n- 'Objeto de referencia': procesará el área especificada por otro objeto."
+               "v": "Selection of area to be processed.\n- 'Polygon Selection' - left mouse click to add/remove polygons to be processed.\n- 'Area Selection' - left mouse click to start selection of the area to be processed.\nKeeping a modifier key pressed (CTRL or SHIFT) will allow to add multiple areas.\n- 'All Polygons' - the process will start after click.\n- 'Reference Object' - will process the area specified by another object."
               },
               "text": {
                "t": "str",
-               "v": "Selección:"
+               "v": "Selection:"
               }
              }
             }
@@ -1237,14 +1237,14 @@
               },
               "currentText": {
                "t": "str",
-               "v": "Todos"
+               "v": "All"
               }
              },
              "items": [
-              "Todos",
-              "Selección de polígono",
-              "Selección de área",
-              "Objeto de referencia"
+              "All",
+              "Polygon Selection",
+              "Area Selection",
+              "Reference Object"
              ],
              "currentIndex": 0
             }
@@ -1262,11 +1262,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "El tipo de objeto FlatCAM que se utilizará como referencia de pintura.\nPuede ser Gerber, Excellon o Geometry."
+               "v": "The type of FlatCAM object to be used as paint reference.\nIt can be Gerber, Excellon or Geometry."
               },
               "text": {
                "t": "str",
-               "v": "Tipo:"
+               "v": "Type:"
               },
               "hidden": {
                "t": "bool",
@@ -1298,7 +1298,7 @@
              "items": [
               "Gerber",
               "Excellon",
-              "Geometría"
+              "Geometry"
              ],
              "currentIndex": 0
             }
@@ -1336,11 +1336,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "El tipo de forma de selección utilizada para la selección de área."
+               "v": "The kind of selection shape used for area selection."
               },
               "text": {
                "t": "str",
-               "v": "Forma:"
+               "v": "Shape:"
               },
               "hidden": {
                "t": "bool",
@@ -1367,11 +1367,11 @@
              },
              "choices": [
               {
-               "label": "Cuadrado",
+               "label": "Square",
                "value": "square"
               },
               {
-               "label": "Polígono",
+               "label": "Polygon",
                "value": "polygon"
               }
              ],
@@ -1399,7 +1399,7 @@
            },
            "toolTip": {
             "t": "str",
-            "v": "Crea un objeto de geometría que pinte los polígonos."
+            "v": "Create a Geometry Object which paints the polygons."
            },
            "styleSheet": {
             "t": "str",
@@ -1407,7 +1407,7 @@
            },
            "text": {
             "t": "str",
-            "v": "Generar Geometría"
+            "v": "Generate Geometry"
            },
            "icon": {
             "t": "QIcon",
@@ -1442,7 +1442,7 @@
            },
            "toolTip": {
             "t": "str",
-            "v": "Restablecerá los parámetros de la herramienta."
+            "v": "Will reset the tool parameters."
            },
            "styleSheet": {
             "t": "str",
@@ -1450,7 +1450,7 @@
            },
            "text": {
             "t": "str",
-            "v": "Restablecer la Herramienta"
+            "v": "Reset Tool"
            },
            "icon": {
             "t": "QIcon",

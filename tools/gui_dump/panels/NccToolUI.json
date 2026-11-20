@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Compensación sin cobre"
+    "v": "Non-Copper Clearing"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -68,7 +68,7 @@
            },
            "text": {
             "t": "str",
-            "v": "Compensación sin cobre"
+            "v": "Non-Copper Clearing"
            }
           }
          }
@@ -109,11 +109,11 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Especifique el tipo de objeto que se eliminará del exceso de cobre.\nPuede ser de tipo: Gerber o Geometría.\nLo que se seleccione aquí dictará el tipo\nde objetos que llenarán el cuadro combinado 'Objeto'."
+               "v": "Specify the type of object to be cleared of excess copper.\nIt can be of type: Gerber or Geometry.\nWhat is selected here will dictate the kind\nof objects that will populate the 'Object' combobox."
               },
               "text": {
                "t": "str",
-               "v": "Tipo de obj:"
+               "v": "Obj Type:"
               }
              }
             }
@@ -129,7 +129,7 @@
              "props": {},
              "choices": [
               {
-               "label": "Geometría",
+               "label": "Geometry",
                "value": "geometry"
               },
               {
@@ -153,11 +153,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Objeto a eliminar del exceso de cobre."
+               "v": "Object to be cleared of excess copper."
               },
               "text": {
                "t": "str",
-               "v": "Objeto:"
+               "v": "Object:"
               }
              }
             }
@@ -217,11 +217,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Conjunto de herramientas desde el cual el algoritmo\nelegirá los utilizados para la limpieza de cobre."
+            "v": "Tools pool from which the algorithm\nwill pick the ones used for copper clearing."
            },
            "text": {
             "t": "str",
-            "v": "<b>Tabla de herramientas</b>"
+            "v": "<b>Tools Table</b>"
            }
           }
          }
@@ -289,7 +289,7 @@
            "cols": 4,
            "labels": [
             "#",
-            "Diámetro",
+            "Diameter",
             "TT",
             ""
            ],
@@ -352,11 +352,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Esto establece la forma en que se utilizan las herramientas en la tabla de herramientas.\n'No' -> significa que el orden utilizado es el de la tabla de herramientas\n'Adelante' -> significa que las herramientas se ordenarán de pequeño a grande\n'Atras' -> means que las herramientas ordenarán de grande a pequeño\n\nADVERTENCIA: el uso del mecanizado en reposo establecerá automáticamente el orden\nen reversa y deshabilitar este control."
+               "v": "This set the way that the tools in the tools table are used.\n'No' --> means that the used order is the one in the tool table\n'Forward' --> means that the tools will be ordered from small to big\n'Reverse' --> means that the tools will ordered from big to small\n\nWARNING: using rest machining will automatically set the order\nin reverse and disable this control."
               },
               "text": {
                "t": "str",
-               "v": "Orden de la Herram:"
+               "v": "Tool order:"
               }
              }
             }
@@ -374,7 +374,7 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Esto establece la forma en que se utilizan las herramientas en la tabla de herramientas.\n'No' -> significa que el orden utilizado es el de la tabla de herramientas\n'Adelante' -> significa que las herramientas se ordenarán de pequeño a grande\n'Atras' -> means que las herramientas ordenarán de grande a pequeño\n\nADVERTENCIA: el uso del mecanizado en reposo establecerá automáticamente el orden\nen reversa y deshabilitar este control."
+               "v": "This set the way that the tools in the tools table are used.\n'No' --> means that the used order is the one in the tool table\n'Forward' --> means that the tools will be ordered from small to big\n'Reverse' --> means that the tools will ordered from big to small\n\nWARNING: using rest machining will automatically set the order\nin reverse and disable this control."
               }
              },
              "choices": [
@@ -383,11 +383,11 @@
                "value": "no"
               },
               {
-               "label": "Adelante",
+               "label": "Forward",
                "value": "fwd"
               },
               {
-               "label": "Atras",
+               "label": "Reverse",
                "value": "rev"
               }
              ],
@@ -511,7 +511,7 @@
              "props": {
               "text": {
                "t": "str",
-               "v": "<b>Agregar desde DB</b>"
+               "v": "<b>Add from DB</b>"
               }
              }
             }
@@ -529,11 +529,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Diámetro para la nueva herramienta"
+               "v": "Diameter for the new tool"
               },
               "text": {
                "t": "str",
-               "v": "Diá. de Herram:"
+               "v": "Tool Dia:"
               }
              }
             }
@@ -567,7 +567,7 @@
                 "props": {
                  "objectName": {
                   "t": "str",
-                  "v": "Diá. de Herram"
+                  "v": "Tool Dia"
                  },
                  "decimals": {
                   "t": "int",
@@ -594,11 +594,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "Encuentre un diámetro de herramienta garantizado\npara hacer un aislamiento completo."
+                  "v": "Find a tool diameter that is guaranteed\nto do a complete isolation."
                  },
                  "text": {
                   "t": "str",
-                  "v": "Óptimo"
+                  "v": "Optimal"
                  },
                  "icon": {
                   "t": "QIcon",
@@ -643,11 +643,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "Agregar una nueva herramienta a la tabla de herramientas\ncon el diámetro especificado arriba.\nEsto se hace mediante una búsqueda en segundo plano.\nen la base de datos de herramientas. Si no se encuentra nada\nen la base de datos de herramientas, se agrega una herramienta predeterminada."
+                  "v": "Add a new tool to the Tool Table\nwith the diameter specified above.\nThis is done by a background search\nin the Tools Database. If nothing is found\nin the Tools DB then a default tool is added."
                  },
                  "text": {
                   "t": "str",
-                  "v": "Buscar y agregar"
+                  "v": "Search and Add"
                  },
                  "icon": {
                   "t": "QIcon",
@@ -666,11 +666,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "Agregar una nueva herramienta a la tabla de herramientas\nde la base de datos de herramientas.\nHerramientas de administración de bases de datos en:\nMenú: Opciones -> Base de datos de herramientas"
+                  "v": "Add a new tool to the Tool Table\nfrom the Tools Database.\nTools database administration in in:\nMenu: Options -> Tools Database"
                  },
                  "text": {
                   "t": "str",
-                  "v": "Elija de DB"
+                  "v": "Pick from DB"
                  },
                  "icon": {
                   "t": "QIcon",
@@ -726,11 +726,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Eliminar una selección de herramientas en la tabla de herramientas\nseleccionando primero una fila en la Tabla de herramientas."
+               "v": "Delete a selection of tools in the Tool Table\nby first selecting a row in the Tool Table."
               },
               "text": {
                "t": "str",
-               "v": "Borrar"
+               "v": "Delete"
               },
               "icon": {
                "t": "QIcon",
@@ -783,11 +783,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Los datos utilizados para crear GCode.\nCada herramienta almacena su propio conjunto de datos."
+               "v": "The data used for creating GCode.\nEach tool store it's own set of such data."
               },
               "text": {
                "t": "str",
-               "v": "<b>Parámetros para: <font color=\"#7777FF\">Herramienta 1</font></b>"
+               "v": "<b>Parameters for: <font color=\"#7777FF\">Tool 1</font></b>"
               }
              }
             }
@@ -805,11 +805,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "La 'Operación' puede ser:\n- Aislamiento -> asegurará que la limpieza sin cobre esté siempre completa.\nSi no tiene éxito, la limpieza sin cobre también fallará.\n- Borrar -> la limpieza regular sin cobre."
+               "v": "The 'Operation' can be:\n- Isolation -> will ensure that the non-copper clearing is always complete.\nIf it's not successful then the non-copper clearing will fail, too.\n- Clear -> the regular non-copper clearing."
               },
               "text": {
                "t": "str",
-               "v": "Operación:"
+               "v": "Operation:"
               }
              }
             }
@@ -832,11 +832,11 @@
              },
              "choices": [
               {
-               "label": "Limpiar",
+               "label": "Clear",
                "value": "clear"
               },
               {
-               "label": "Aislamiento",
+               "label": "Isolation",
                "value": "iso"
               }
              ],
@@ -858,11 +858,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Tipo de fresado:\n- subir / mejor para fresado de precisión y para reducir el uso de la herramienta\n- convencional / útil cuando no hay compensación de contragolpe"
+               "v": "Milling type:\n- climb / best for precision milling and to reduce tool usage\n- conventional / useful when there is no backlash compensation"
               },
               "text": {
                "t": "str",
-               "v": "Tipo de fresado:"
+               "v": "Milling Type:"
               },
               "enabled": {
                "t": "bool",
@@ -888,7 +888,7 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Tipo de fresado:\n- subir / mejor para fresado de precisión y para reducir el uso de la herramienta\n- convencional / útil cuando no hay compensación de contragolpe"
+               "v": "Milling type:\n- climb / best for precision milling and to reduce tool usage\n- conventional / useful when there is no backlash compensation"
               },
               "enabled": {
                "t": "bool",
@@ -897,11 +897,11 @@
              },
              "choices": [
               {
-               "label": "Subida",
+               "label": "Climb",
                "value": "cl"
               },
               {
-               "label": "Convencional",
+               "label": "Conventional",
                "value": "cv"
               }
              ],
@@ -923,11 +923,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Cuánto (porcentaje) del ancho de la herramienta para superponer cada pasada de herramienta.\nAjustar el valor comenzando con valores más bajos\ny aumentarlo si las áreas que deben procesarse aún están\nno procesado.Valores más bajos = procesamiento más rápido, ejecución más rápida en CNC.\nValores más altos = procesamiento lento y ejecución lenta en CNC\ndebido a demasiados caminos."
+               "v": "How much (percentage) of the tool width to overlap each tool pass.\nAdjust the value starting with lower values\nand increasing it if areas that should be processed are still \nnot processed.\nLower values = faster processing, faster execution on CNC.\nHigher values = slow processing and slow execution on CNC\ndue of too many paths."
               },
               "text": {
                "t": "str",
-               "v": "Superposición:"
+               "v": "Overlap:"
               }
              }
             }
@@ -987,11 +987,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Algoritmo para la limpieza de cobre:\n- Estándar: paso fijo hacia adentro.\n- Basado en semillas: hacia afuera de la semilla.\n- Basado en líneas: líneas paralelas."
+               "v": "Algorithm for copper clearing:\n- Standard: Fixed step inwards.\n- Seed-based: Outwards from seed.\n- Line-based: Parallel lines."
               },
               "text": {
                "t": "str",
-               "v": "Método:"
+               "v": "Method:"
               }
              }
             }
@@ -1013,13 +1013,13 @@
               },
               "currentText": {
                "t": "str",
-               "v": "Semilla"
+               "v": "Seed"
               }
              },
              "items": [
-              "Estándar",
-              "Semilla",
-              "Líneas",
+              "Standard",
+              "Seed",
+              "Lines",
               "Combo"
              ],
              "currentIndex": 1
@@ -1038,11 +1038,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Margen de cuadro delimitador."
+               "v": "Bounding box margin."
               },
               "text": {
                "t": "str",
-               "v": "Margen:"
+               "v": "Margin:"
               }
              }
             }
@@ -1098,11 +1098,11 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Dibuja líneas entre el resultado\nSegmentos para minimizar elevaciones de herramientas."
+               "v": "Draw lines between resulting\nsegments to minimize tool lifts."
               },
               "text": {
                "t": "str",
-               "v": "Conectar"
+               "v": "Connect"
               },
               "checked": {
                "t": "bool",
@@ -1128,11 +1128,11 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Corta todo el perímetro del polígono.\nPara recortar los bordes ásperos."
+               "v": "Cut around the perimeter of the polygon\nto trim rough edges."
               },
               "text": {
                "t": "str",
-               "v": "Contorno"
+               "v": "Contour"
               },
               "checked": {
                "t": "bool",
@@ -1158,11 +1158,11 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Si se usa, agregará una compensación a las características de cobre.\nEl claro de cobre terminará a distancia\nde las características de cobre."
+               "v": "If used, it will add an offset to the copper features.\nThe copper clearing will finish to a distance\nfrom the copper features."
               },
               "text": {
                "t": "str",
-               "v": "Compensar"
+               "v": "Offset"
               }
              }
             }
@@ -1245,11 +1245,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Se aplicarán los parámetros en el formulario actual\nen todas las herramientas de la tabla de herramientas."
+               "v": "The parameters in the current form will be applied\non all the tools from the Tool Table."
               },
               "text": {
                "t": "str",
-               "v": "Aplicar Parám. a todas las herramientas"
+               "v": "Apply parameters to all tools"
               },
               "icon": {
                "t": "QIcon",
@@ -1302,11 +1302,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Parámetros que son comunes para todas las herramientas."
+               "v": "Parameters that are common for all tools."
               },
               "text": {
                "t": "str",
-               "v": "<b>Parámetros comunes</b>"
+               "v": "<b>Common Parameters</b>"
               }
              }
             }
@@ -1328,11 +1328,11 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Si está marcado, use 'mecanizado en resto'.\nBásicamente procesará cobre fuera de las características de la PCB,\nusando la herramienta más grande y continúe con las siguientes herramientas,\nde mayor a menor, para procesar las características de cobre que\nno pudo ser procesado por la herramienta anterior, hasta que haya\nno queda nada por procesar o no hay más herramientas.\n\nSi no está marcado, use el algoritmo estándar."
+               "v": "If checked, use 'rest machining'.\nBasically it will process copper outside PCB features,\nusing the biggest tool and continue with the next tools,\nfrom bigger to smaller, to process the copper features that\ncould not be processed by previous tool, until there is\nnothing left to process or there are no more tools.\n\nIf not checked, use the standard algorithm."
               },
               "text": {
                "t": "str",
-               "v": "Resto"
+               "v": "Rest"
               }
              }
             }
@@ -1350,11 +1350,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Margen de cuadro delimitador."
+               "v": "Bounding box margin."
               },
               "text": {
                "t": "str",
-               "v": "Margen:"
+               "v": "Margin:"
               },
               "hidden": {
                "t": "bool",
@@ -1414,11 +1414,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Dibuja líneas entre el resultado\nSegmentos para minimizar elevaciones de herramientas."
+               "v": "Draw lines between resulting\nsegments to minimize tool lifts."
               },
               "text": {
                "t": "str",
-               "v": "Conectar"
+               "v": "Connect"
               },
               "checked": {
                "t": "bool",
@@ -1444,11 +1444,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Corta todo el perímetro del polígono.\nPara recortar los bordes ásperos."
+               "v": "Cut around the perimeter of the polygon\nto trim rough edges."
               },
               "text": {
                "t": "str",
-               "v": "Contorno"
+               "v": "Contour"
               },
               "checked": {
                "t": "bool",
@@ -1474,11 +1474,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Si se usa, agregará una compensación a las características de cobre.\nEl claro de cobre terminará a distancia\nde las características de cobre."
+               "v": "If used, it will add an offset to the copper features.\nThe copper clearing will finish to a distance\nfrom the copper features."
               },
               "text": {
                "t": "str",
-               "v": "Compensar"
+               "v": "Offset"
               },
               "hidden": {
                "t": "bool",
@@ -1538,11 +1538,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Selección del área a procesar.\n- 'Sí mismo': la extensión del procesamiento se basa en el objeto que se procesa.\n- 'Selección de área': haga clic con el botón izquierdo del mouse para iniciar la selección del área a procesar.\n- 'Objeto de referencia': procesará el área especificada por otro objeto."
+               "v": "Selection of area to be processed.\n- 'Itself' - the processing extent is based on the object that is processed.\n - 'Area Selection' - left mouse click to start selection of the area to be processed.\n- 'Reference Object' - will process the area specified by another object."
               },
               "text": {
                "t": "str",
-               "v": "Selección:"
+               "v": "Selection:"
               }
              }
             }
@@ -1564,13 +1564,13 @@
               },
               "currentText": {
                "t": "str",
-               "v": "Sí mismo"
+               "v": "Itself"
               }
              },
              "items": [
-              "Sí mismo",
-              "Selección de área",
-              "Objeto de referencia"
+              "Itself",
+              "Area Selection",
+              "Reference Object"
              ],
              "currentIndex": 0
             }
@@ -1588,11 +1588,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "El tipo de objeto FlatCAM que se utilizará como referencia de compensación sin cobre.\nPuede ser Gerber, Excellon o Geometry."
+               "v": "The type of FlatCAM object to be used as non copper clearing reference.\nIt can be Gerber, Excellon or Geometry."
               },
               "text": {
                "t": "str",
-               "v": "Tipo:"
+               "v": "Type:"
               },
               "hidden": {
                "t": "bool",
@@ -1624,7 +1624,7 @@
              "items": [
               "Gerber",
               "Excellon",
-              "Geometría"
+              "Geometry"
              ],
              "currentIndex": 0
             }
@@ -1662,11 +1662,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "El tipo de forma de selección utilizada para la selección de área."
+               "v": "The kind of selection shape used for area selection."
               },
               "text": {
                "t": "str",
-               "v": "Forma:"
+               "v": "Shape:"
               },
               "hidden": {
                "t": "bool",
@@ -1693,11 +1693,11 @@
              },
              "choices": [
               {
-               "label": "Cuadrado",
+               "label": "Square",
                "value": "square"
               },
               {
-               "label": "Polígono",
+               "label": "Polygon",
                "value": "polygon"
               }
              ],
@@ -1723,11 +1723,11 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Si se marca, se verifican los diámetros de las herramientas.\nsi proporcionarán un aislamiento completo."
+               "v": "If checked then the tools diameters are verified\nif they will provide a complete isolation."
               },
               "text": {
                "t": "str",
-               "v": "Verificar validez"
+               "v": "Check validity"
               },
               "checked": {
                "t": "bool",
@@ -1786,7 +1786,7 @@
            },
            "toolTip": {
             "t": "str",
-            "v": "Crear el objeto de geometría\npara enrutamiento sin cobre."
+            "v": "Create the Geometry Object\nfor non-copper routing."
            },
            "styleSheet": {
             "t": "str",
@@ -1794,7 +1794,7 @@
            },
            "text": {
             "t": "str",
-            "v": "Generar Geometría"
+            "v": "Generate Geometry"
            },
            "icon": {
             "t": "QIcon",
@@ -1829,7 +1829,7 @@
            },
            "toolTip": {
             "t": "str",
-            "v": "Restablecerá los parámetros de la herramienta."
+            "v": "Will reset the tool parameters."
            },
            "styleSheet": {
             "t": "str",
@@ -1837,7 +1837,7 @@
            },
            "text": {
             "t": "str",
-            "v": "Restablecer la Herramienta"
+            "v": "Reset Tool"
            },
            "icon": {
             "t": "QIcon",

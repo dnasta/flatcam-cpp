@@ -66,7 +66,7 @@ bool CncJob::generateFromExcellon(const Excellon& excellon) {
 
     const auto pp = makePreprocessor(settings_.preprocessor, settings_.flavor);
     if (!pp) {
-        lastError_ = "Postprocesador desconocido: " + settings_.preprocessor;
+        lastError_ = "Unknown preprocessor: " + settings_.preprocessor;
         return false;
     }
 
@@ -84,7 +84,7 @@ bool CncJob::generateFromExcellon(const Excellon& excellon) {
         }
     }
     if (selected.empty()) {
-        lastError_ = "El Excellon no tiene agujeros para las herramientas configuradas";
+        lastError_ = "The Excellon has no drills for the selected tools";
         return false;
     }
     for (const auto& [id, tool] : excellon.drillTools()) {
@@ -263,11 +263,11 @@ bool CncJob::toolGcode(int tool, const std::vector<Point2D>& points, const Excel
     const DrillToolSettings& ts = settings_.tools.at(tool);
     const auto pp = makePreprocessor(settings_.preprocessor, settings_.flavor);
     if (points.empty()) {
-        lastError_ = "La herramienta " + std::to_string(tool) + " no tiene agujeros";
+        lastError_ = "Tool " + std::to_string(tool) + " has no drills";
         return false;
     }
     if (ts.cutZ.value() == 0.0) {
-        lastError_ = "La Z de corte de la herramienta " + std::to_string(tool) + " es cero: no habría corte";
+        lastError_ = "The Cut Z of tool " + std::to_string(tool) + " is zero: there would be no cut";
         return false;
     }
 
@@ -665,7 +665,7 @@ bool CncJob::generateFromGeometryTools(const std::vector<GeometryToolJob>& tools
     toolMessages_.clear();
     travelDistance_ = routingTime_ = 0.0;
     if (tools.empty()) {
-        lastError_ = "No hay herramientas";
+        lastError_ = "There are no tools";
         return false;
     }
     // mtool_gen_cncjob (multigeo): cada herramienta con su geometría y sus parámetros, en el mismo trabajo; el código de
@@ -690,7 +690,7 @@ bool CncJob::geometryToolGcode(const ShapeList& geometry, const GeometryJobSetti
 
     const auto pp = makePreprocessor(js.preprocessor, js.flavor);
     if (!pp) {
-        lastError_ = "Postprocesador desconocido: " + js.preprocessor;
+        lastError_ = "Unknown preprocessor: " + js.preprocessor;
         return false;
     }
 
@@ -735,7 +735,7 @@ bool CncJob::geometryToolGcode(const ShapeList& geometry, const GeometryJobSetti
             items.push_back(std::move(item));
         }
         if (items.empty()) {
-            lastError_ = "No hay líneas para recorrer";
+            lastError_ = "There are no lines to travel";
             return false;
         }
 
@@ -846,7 +846,7 @@ bool CncJob::geometryToolGcode(const ShapeList& geometry, const GeometryJobSetti
         }
         tGcode = g;
     } catch (const std::exception& e) {
-        lastError_ = std::string("Error al generar el G-code de la geometría: ") + e.what();
+        lastError_ = std::string("Error generating the G-code of the geometry: ") + e.what();
         Logger::error(lastError_);
         return false;
     }
@@ -1092,7 +1092,7 @@ bool CncJob::generateFromGeometry2(const ShapeList& solid, const Geometry2Settin
         inform("", "Finished G-Code generation", "... " + std::to_string(pathCount) + " ", "paths traced", ".");
         gcode_ = g;
     } catch (const std::exception& e) {
-        lastError_ = std::string("Error al generar el G-code de la geometría: ") + e.what();
+        lastError_ = std::string("Error generating the G-code of the geometry: ") + e.what();
         Logger::error(lastError_);
         return false;
     }

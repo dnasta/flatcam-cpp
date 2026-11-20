@@ -113,7 +113,7 @@
              "props": {
               "text": {
                "t": "str",
-               "v": "Nombre:"
+               "v": "Name:"
               }
              }
             }
@@ -141,11 +141,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Herramientas en este objeto Excellon.\nCuando se utilizan para la perforación."
+            "v": "Tools in this Excellon object\nwhen are used for drilling."
            },
            "text": {
             "t": "str",
-            "v": "<b>Tabla de herramientas</b>"
+            "v": "<b>Tools Table</b>"
            }
           }
          }
@@ -171,7 +171,7 @@
            "cols": 4,
            "labels": [
             "#",
-            "Diámetro",
+            "Diameter",
             "D",
             "S"
            ],
@@ -226,11 +226,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Convierta las ranuras de las herramientas seleccionadas en taladros."
+            "v": "Convert the slots in the selected tools to drills."
            },
            "text": {
             "t": "str",
-            "v": "Convertir ranuras"
+            "v": "Convert Slots"
            },
            "icon": {
             "t": "QIcon",
@@ -277,11 +277,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Agregar / Eliminar una herramienta a la lista de herramientas\npara este objeto Excellon."
+            "v": "Add/Delete a tool to the tool list\nfor this Excellon object."
            },
            "text": {
             "t": "str",
-            "v": "<b>Añadir / Eliminar herramienta</b>"
+            "v": "<b>Add/Delete Tool</b>"
            }
           }
          }
@@ -332,11 +332,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Diámetro para la nueva herramienta"
+               "v": "Diameter for the new tool"
               },
               "text": {
                "t": "str",
-               "v": "Diá. de Herram:"
+               "v": "Tool Dia:"
               }
              }
             }
@@ -398,11 +398,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "Agregar una nueva herramienta a la lista de herramientas\ncon el diámetro especificado anteriormente."
+                  "v": "Add a new tool to the tool list\nwith the diameter specified above."
                  },
                  "text": {
                   "t": "str",
-                  "v": "Añadir"
+                  "v": "Add"
                  },
                  "icon": {
                   "t": "QIcon",
@@ -427,11 +427,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Eliminar una herramienta en la lista de herramientas\nseleccionando una fila en la tabla de herramientas."
+               "v": "Delete a tool in the tool list\nby selecting a row in the tool table."
               },
               "text": {
                "t": "str",
-               "v": "Eliminar herramienta"
+               "v": "Delete Tool"
               },
               "icon": {
                "t": "QIcon",
@@ -532,11 +532,11 @@
               "props": {
                "toolTip": {
                 "t": "str",
-                "v": "Cambiar el tamaño de un ejercicio o una selección de ejercicios."
+                "v": "Resize a drill or a selection of drills."
                },
                "text": {
                 "t": "str",
-                "v": "<b>Herram. de Cambio de Tamaño</b>"
+                "v": "<b>Resize Tool</b>"
                }
               }
              }
@@ -554,11 +554,11 @@
               "props": {
                "toolTip": {
                 "t": "str",
-                "v": "Diámetro para redimensionar a."
+                "v": "Diameter to resize to."
                },
                "text": {
                 "t": "str",
-                "v": "Cambiar el diá:"
+                "v": "Resize Dia:"
                }
               }
              }
@@ -620,11 +620,11 @@
                  "props": {
                   "toolTip": {
                    "t": "str",
-                   "v": "Cambiar el tamaño de taladro"
+                   "v": "Resize drill(s)"
                   },
                   "text": {
                    "t": "str",
-                   "v": "Redimensionar"
+                   "v": "Resize"
                   },
                   "icon": {
                    "t": "QIcon",
@@ -733,11 +733,11 @@
               "props": {
                "toolTip": {
                 "t": "str",
-                "v": "Agregar una matriz de taladros (lineal o circular)"
+                "v": "Add an array of drills (linear or circular array)"
                },
                "text": {
                 "t": "str",
-                "v": "<b>Añadir Drill Array</b>"
+                "v": "<b>Add Drill Array</b>"
                }
               }
              }
@@ -755,11 +755,11 @@
               "props": {
                "toolTip": {
                 "t": "str",
-                "v": "Seleccione el tipo de matriz de ejercicios para crear.\nPuede ser lineal X (Y) o circular"
+                "v": "Select the type of drills array to create.\nIt can be Linear X(Y) or Circular"
                },
                "text": {
                 "t": "str",
-                "v": "Tipo:"
+                "v": "Type:"
                }
               }
              }
@@ -777,7 +777,7 @@
               "props": {},
               "choices": [
                {
-                "label": "Lineal",
+                "label": "Linear",
                 "value": "linear"
                },
                {
@@ -803,11 +803,11 @@
               "props": {
                "toolTip": {
                 "t": "str",
-                "v": "Especifique cuántos ejercicios debe estar en la matriz."
+                "v": "Specify how many drills to be in the array."
                },
                "text": {
                 "t": "str",
-                "v": "Numero:"
+                "v": "Number:"
                }
               }
              }
@@ -906,11 +906,11 @@
                   "props": {
                    "toolTip": {
                     "t": "str",
-                    "v": "Dirección en la que se orienta la matriz lineal:\n- 'X' - eje horizontal\n- 'Y' - eje vertical o\n- 'Ángulo': un ángulo personalizado para la inclinación de la matriz"
+                    "v": "Direction on which the linear array is oriented:\n- 'X' - horizontal axis \n- 'Y' - vertical axis or \n- 'Angle' - a custom angle for the array inclination"
                    },
                    "text": {
                     "t": "str",
-                    "v": "Dirección:"
+                    "v": "Direction:"
                    }
                   }
                  }
@@ -936,7 +936,7 @@
                     "value": "Y"
                    },
                    {
-                    "label": "Ángulo",
+                    "label": "Angle",
                     "value": "A"
                    }
                   ],
@@ -958,11 +958,11 @@
                   "props": {
                    "toolTip": {
                     "t": "str",
-                    "v": "Paso = Distancia entre elementos de la matriz."
+                    "v": "Pitch = Distance between elements of the array."
                    },
                    "text": {
                     "t": "str",
-                    "v": "Paso:"
+                    "v": "Pitch:"
                    }
                   }
                  }
@@ -1011,11 +1011,11 @@
                   "props": {
                    "toolTip": {
                     "t": "str",
-                    "v": "Ángulo en el que se coloca la matriz lineal.\nLa precisión es de max 2 decimales.\nEl valor mínimo es: -360.00 grados.\nEl valor máximo es: 360.00 grados."
+                    "v": "Angle at which the linear array is placed.\nThe precision is of max 2 decimals.\nMin value is: -360.00 degrees.\nMax value is: 360.00 degrees."
                    },
                    "text": {
                     "t": "str",
-                    "v": "Ángulo:"
+                    "v": "Angle:"
                    },
                    "hidden": {
                     "t": "bool",
@@ -1124,11 +1124,11 @@
                   "props": {
                    "toolTip": {
                     "t": "str",
-                    "v": "Dirección para matriz circular.\nPuede ser CW = en sentido horario o CCW = en sentido antihorario."
+                    "v": "Direction for circular array.\nCan be CW = clockwise or CCW = counter clockwise."
                    },
                    "text": {
                     "t": "str",
-                    "v": "Dirección:"
+                    "v": "Direction:"
                    }
                   }
                  }
@@ -1172,11 +1172,11 @@
                   "props": {
                    "toolTip": {
                     "t": "str",
-                    "v": "Ángulo en el que se coloca cada elemento de la matriz circular."
+                    "v": "Angle at which each element in circular array is placed."
                    },
                    "text": {
                     "t": "str",
-                    "v": "Ángulo:"
+                    "v": "Angle:"
                    }
                   }
                  }
@@ -1315,11 +1315,11 @@
               "props": {
                "toolTip": {
                 "t": "str",
-                "v": "Parámetros para agregar una ranura (agujero con forma ovalada)\nya sea solo o como parte de una matriz."
+                "v": "Parameters for adding a slot (hole with oval shape)\neither single or as an part of an array."
                },
                "text": {
                 "t": "str",
-                "v": "<b>Parámetros de ranura</b>"
+                "v": "<b>Slot Parameters</b>"
                }
               }
              }
@@ -1337,11 +1337,11 @@
               "props": {
                "toolTip": {
                 "t": "str",
-                "v": "Longitud. La longitud de la ranura."
+                "v": "Length. The length of the slot."
                },
                "text": {
                 "t": "str",
-                "v": "Longitud:"
+                "v": "Length:"
                }
               }
              }
@@ -1394,11 +1394,11 @@
               "props": {
                "toolTip": {
                 "t": "str",
-                "v": "Dirección en la que se orienta la ranura:\n- 'X' - eje horizontal\n- 'Y' - eje vertical o\n- 'Ángulo': un ángulo personalizado para la inclinación de la ranura"
+                "v": "Direction on which the slot is oriented:\n- 'X' - horizontal axis \n- 'Y' - vertical axis or \n- 'Angle' - a custom angle for the slot inclination"
                },
                "text": {
                 "t": "str",
-                "v": "Dirección:"
+                "v": "Direction:"
                }
               }
              }
@@ -1424,7 +1424,7 @@
                 "value": "Y"
                },
                {
-                "label": "Ángulo",
+                "label": "Angle",
                 "value": "A"
                }
               ],
@@ -1446,11 +1446,11 @@
               "props": {
                "toolTip": {
                 "t": "str",
-                "v": "Ángulo en el que se coloca la ranura.\nLa precisión es de un máximo de 2 decimales.\nEl valor mínimo es: -360.00 grados.\nEl valor máximo es: 360.00 grados."
+                "v": "Angle at which the slot is placed.\nThe precision is of max 2 decimals.\nMin value is: -360.00 degrees.\nMax value is: 360.00 degrees."
                },
                "text": {
                 "t": "str",
-                "v": "Ángulo:"
+                "v": "Angle:"
                }
               }
              }
@@ -1589,11 +1589,11 @@
               "props": {
                "toolTip": {
                 "t": "str",
-                "v": "Parámetros para la matriz de ranuras (matriz lineal o circular)"
+                "v": "Parameters for the array of slots (linear or circular array)"
                },
                "text": {
                 "t": "str",
-                "v": "<b>Parámetros de matriz de ranuras</b>"
+                "v": "<b>Slot Array Parameters</b>"
                }
               }
              }
@@ -1611,11 +1611,11 @@
               "props": {
                "toolTip": {
                 "t": "str",
-                "v": "Seleccione el tipo de matriz de ranuras para crear.\nPuede ser lineal X (Y) o circular"
+                "v": "Select the type of slot array to create.\nIt can be Linear X(Y) or Circular"
                },
                "text": {
                 "t": "str",
-                "v": "Tipo:"
+                "v": "Type:"
                }
               }
              }
@@ -1633,7 +1633,7 @@
               "props": {},
               "choices": [
                {
-                "label": "Lineal",
+                "label": "Linear",
                 "value": "linear"
                },
                {
@@ -1659,11 +1659,11 @@
               "props": {
                "toolTip": {
                 "t": "str",
-                "v": "Especifique cuántas ranuras debe haber en la matriz."
+                "v": "Specify how many slots to be in the array."
                },
                "text": {
                 "t": "str",
-                "v": "Numero:"
+                "v": "Number:"
                }
               }
              }
@@ -1749,11 +1749,11 @@
                   "props": {
                    "toolTip": {
                     "t": "str",
-                    "v": "Dirección en la que se orienta la matriz lineal:\n- 'X' - eje horizontal\n- 'Y' - eje vertical o\n- 'Ángulo': un ángulo personalizado para la inclinación de la matriz"
+                    "v": "Direction on which the linear array is oriented:\n- 'X' - horizontal axis \n- 'Y' - vertical axis or \n- 'Angle' - a custom angle for the array inclination"
                    },
                    "text": {
                     "t": "str",
-                    "v": "Dirección:"
+                    "v": "Direction:"
                    }
                   }
                  }
@@ -1779,7 +1779,7 @@
                     "value": "Y"
                    },
                    {
-                    "label": "Ángulo",
+                    "label": "Angle",
                     "value": "A"
                    }
                   ],
@@ -1801,11 +1801,11 @@
                   "props": {
                    "toolTip": {
                     "t": "str",
-                    "v": "Paso = Distancia entre elementos de la matriz."
+                    "v": "Pitch = Distance between elements of the array."
                    },
                    "text": {
                     "t": "str",
-                    "v": "Paso:"
+                    "v": "Pitch:"
                    }
                   }
                  }
@@ -1858,11 +1858,11 @@
                   "props": {
                    "toolTip": {
                     "t": "str",
-                    "v": "Ángulo en el que se coloca la matriz lineal.\nLa precisión es de max 2 decimales.\nEl valor mínimo es: -360.00 grados.\nEl valor máximo es: 360.00 grados."
+                    "v": "Angle at which the linear array is placed.\nThe precision is of max 2 decimals.\nMin value is: -360.00 degrees.\nMax value is: 360.00 degrees."
                    },
                    "text": {
                     "t": "str",
-                    "v": "Ángulo:"
+                    "v": "Angle:"
                    },
                    "hidden": {
                     "t": "bool",
@@ -1966,11 +1966,11 @@
                   "props": {
                    "toolTip": {
                     "t": "str",
-                    "v": "Dirección para matriz circular.\nPuede ser CW = en sentido horario o CCW = en sentido antihorario."
+                    "v": "Direction for circular array.\nCan be CW = clockwise or CCW = counter clockwise."
                    },
                    "text": {
                     "t": "str",
-                    "v": "Dirección:"
+                    "v": "Direction:"
                    }
                   }
                  }
@@ -2014,11 +2014,11 @@
                   "props": {
                    "toolTip": {
                     "t": "str",
-                    "v": "Ángulo en el que se coloca cada elemento de la matriz circular."
+                    "v": "Angle at which each element in circular array is placed."
                    },
                    "text": {
                     "t": "str",
-                    "v": "Ángulo:"
+                    "v": "Angle:"
                    }
                   }
                  }
@@ -2106,7 +2106,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Salida del editor."
+        "v": "Exit from Editor."
        },
        "styleSheet": {
         "t": "str",
@@ -2114,7 +2114,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Salir del editor"
+        "v": "Exit Editor"
        },
        "icon": {
         "t": "QIcon",

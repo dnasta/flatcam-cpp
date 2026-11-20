@@ -79,7 +79,7 @@
              "props": {
               "text": {
                "t": "str",
-               "v": "<font size=5><b>Editor de código G</b></font>"
+               "v": "<font size=5><b>GCode Editor</b></font>"
               }
              }
             }
@@ -113,7 +113,7 @@
              "props": {
               "text": {
                "t": "str",
-               "v": "Nombre:"
+               "v": "Name:"
               }
              }
             }
@@ -181,8 +181,8 @@
            "labels": [
             "#",
             "Dia",
-            "Compensar",
-            "Tipo",
+            "Offset",
+            "Type",
             "TT",
             ""
            ],
@@ -225,10 +225,10 @@
            "labels": [
             "#",
             "Dia",
-            "Taladros",
-            "Muesca",
+            "Drills",
+            "Slots",
             "",
-            "Corte Z"
+            "Cut Z"
            ],
            "hheader": true,
            "vheader": true,
@@ -285,11 +285,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Fragmento de código definido en Preferencias."
+            "v": "Code snippet defined in Preferences."
            },
            "text": {
             "t": "str",
-            "v": "Fragmento de código CNC 1:"
+            "v": "CNC Code Snippet 1:"
            }
           }
          }
@@ -304,7 +304,7 @@
           "props": {
            "placeholderText": {
             "t": "str",
-            "v": "Escriba aquí los comandos de código G que desee\nme gusta insertar en la ubicación del cursor."
+            "v": "Type here any G-Code commands you would\nlike to insert at the cursor location."
            }
           }
          }
@@ -319,11 +319,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Inserte el código de arriba en la ubicación del cursor."
+            "v": "Insert the code above at the cursor location."
            },
            "text": {
             "t": "str",
-            "v": "Insertar codigo"
+            "v": "Insert Code"
            }
           }
          }
@@ -338,11 +338,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Fragmento de código definido en Preferencias."
+            "v": "Code snippet defined in Preferences."
            },
            "text": {
             "t": "str",
-            "v": "Fragmento de código CNC 2:"
+            "v": "CNC Code Snippet 2:"
            }
           }
          }
@@ -357,7 +357,7 @@
           "props": {
            "placeholderText": {
             "t": "str",
-            "v": "Escriba aquí los comandos de código G que desee\nme gusta insertar en la ubicación del cursor."
+            "v": "Type here any G-Code commands you would\nlike to insert at the cursor location."
            }
           }
          }
@@ -372,11 +372,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Inserte el código de arriba en la ubicación del cursor."
+            "v": "Insert the code above at the cursor location."
            },
            "text": {
             "t": "str",
-            "v": "Insertar codigo"
+            "v": "Insert Code"
            }
           }
          }
@@ -411,7 +411,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Salida del editor."
+        "v": "Exit from Editor."
        },
        "styleSheet": {
         "t": "str",
@@ -419,7 +419,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Salir del editor"
+        "v": "Exit Editor"
        },
        "icon": {
         "t": "QIcon",

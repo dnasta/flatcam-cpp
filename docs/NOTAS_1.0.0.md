@@ -17,6 +17,8 @@ Primera versión completa del port de **FlatCAM 2024.4 beta** a C++17 y Qt6. Cor
 - **Editores** de Geometría (con textos con fuentes), Excellon, Gerber y G-code.
 - **Preferencias** (los 485 campos), nivel Básico y Avanzado, unidades mm/pulgadas, marcadores, archivos recientes.
 - **Consola Tcl** con el intérprete Tcl real y los 65 comandos del original; scripts y documentos.
+- **Idiomas:** alemán, inglés, español, francés, italiano, portugués de Brasil, rumano, ruso y turco (las traducciones
+  del original). Arranca en el idioma del sistema; se cambia en Preferencias -> General -> Idiomas -> "Aplicar idioma".
 
 ## Cómo se verificó
 

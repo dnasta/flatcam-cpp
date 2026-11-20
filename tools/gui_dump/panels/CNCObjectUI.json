@@ -63,7 +63,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "<font size=5><b>Objeto de trabajo CNC</b></font>"
+           "v": "<font size=5><b>CNC Job Object</b></font>"
           }
          }
         }
@@ -78,11 +78,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "BASIC es adecuado para un principiante. Muchos parámetros\nestán ocultos para el usuario en este modo.\nEl modo AVANZADO pondrá a disposición todos los parámetros.\n\nPara cambiar el NIVEL de la aplicación, vaya a:\nEditar -> Preferencias -> General y verificar:\n'APP. NIVEL 'botón de radio."
+           "v": "BASIC is suitable for a beginner. Many parameters\nare hidden from the user in this mode.\nADVANCED mode will make available all parameters.\n\nTo change the application LEVEL, go to:\nEdit -> Preferences -> General and check:\n'APP. LEVEL' radio button."
           },
           "text": {
            "t": "str",
-           "v": "<span style=\"color:green;\"><b>BASIC</b></span>"
+           "v": "<span style=\"color:green;\"><b>Basic</b></span>"
           },
           "alignment": {
            "t": "int",
@@ -170,11 +170,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Esto selecciona el tipo de geometrías en el lienzo para trazar.\nEsos pueden ser de tipo 'Viajes' lo que significa que los movimientos\nPor encima de la pieza de trabajo o puede ser de tipo 'Corte',\nLo que significa los movimientos que cortan en el material."
+              "v": "This selects the kind of geometries on the canvas to plot.\nThose can be either of type 'Travel' which means the moves\nabove the work piece or it can be of type 'Cut',\nwhich means the moves that cut into the material."
              },
              "text": {
               "t": "str",
-              "v": "<b>Opciones de parcela:</b>"
+              "v": "<b>Plot Options:</b>"
              }
             }
            }
@@ -192,15 +192,15 @@
             "props": {},
             "choices": [
              {
-              "label": "Todos",
+              "label": "All",
               "value": "all"
              },
              {
-              "label": "Viajar",
+              "label": "Travel",
               "value": "travel"
              },
              {
-              "label": "Cortar",
+              "label": "Cut",
               "value": "cut"
              }
             ],
@@ -238,7 +238,7 @@
                "props": {
                 "text": {
                  "t": "str",
-                 "v": "<b>Nombre:</b>"
+                 "v": "<b>Name:</b>"
                 }
                }
               }
@@ -280,7 +280,7 @@
              },
              "toolTip": {
               "t": "str",
-              "v": "Inicie el Editor de Objetos"
+              "v": "Start the Object Editor"
              },
              "styleSheet": {
               "t": "str",
@@ -288,7 +288,7 @@
              },
              "text": {
               "t": "str",
-              "v": "Editor de código G"
+              "v": "GCode Editor"
              },
              "icon": {
               "t": "QIcon",
@@ -316,7 +316,7 @@
              },
              "toolTip": {
               "t": "str",
-              "v": "Muestre las propiedades."
+              "v": "Show the Properties."
              },
              "styleSheet": {
               "t": "str",
@@ -324,7 +324,7 @@
              },
              "text": {
               "t": "str",
-              "v": "PROPIEDADES"
+              "v": "PROPERTIES"
              },
              "icon": {
               "t": "QIcon",
@@ -393,11 +393,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Esto selecciona si mostrar la anotación de texto en el gráfico.\nCuando está marcado, mostrará números en orden para cada final.\nde una linea de viaje."
+              "v": "This selects if to display text annotation on the plot.\nWhen checked it will display numbers in order for each end\nof a travel line."
              },
              "text": {
               "t": "str",
-              "v": "Mostrar anotación"
+              "v": "Display Annotation"
              },
              "checked": {
               "t": "bool",
@@ -450,11 +450,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Esta es la distancia total recorrida en el plano X-Y.\nEn unidades actuales."
+              "v": "This is the total travelled distance on X-Y plane.\nIn current units."
              },
              "text": {
               "t": "str",
-              "v": "<b>Distancia recorrida:</b>"
+              "v": "<b>Travelled distance:</b>"
              },
              "hidden": {
               "t": "bool",
@@ -507,11 +507,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Este es el tiempo estimado para hacer el enrutamiento / perforación,\nsin el tiempo dedicado a los eventos de cambio de herramienta."
+              "v": "This is the estimated time to do the routing/drilling,\nwithout the time spent in ToolChange events."
              },
              "text": {
               "t": "str",
-              "v": "<b>Duración estimada:</b>"
+              "v": "<b>Estimated time:</b>"
              },
              "hidden": {
               "t": "bool",
@@ -611,11 +611,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Herramientas en este objeto CNCJob utilizado para cortar.\nEl diámetro de la herramienta se utiliza para trazar en el lienzo.\nLa entrada 'Offset' establecerá un desplazamiento para el corte.\n'Offset' puede estar dentro, fuera, en la ruta (ninguno) y personalizado.\nLa entrada 'Tipo' es solo informativa y permite conocer el\nintención de usar la herramienta actual.\nPuede ser áspero, acabado o aislamiento.\nEl 'Tipo de herramienta' (TT) puede ser circular con 1 a 4 dientes (C1..C4),\nbola (B) o en forma de V (V)."
+              "v": "Tools in this CNCJob object used for cutting.\nThe tool diameter is used for plotting on canvas.\nThe 'Offset' entry will set an offset for the cut.\n'Offset' can be inside, outside, on path (none) and custom.\n'Type' entry is only informative and it allow to know the \nintent of using the current tool. \nIt can be Rough(ing), Finish(ing) or Iso(lation).\nThe 'Tool type'(TT) can be circular with 1 to 4 teeths(C1..C4),\nball(B), or V-Shaped(V)."
              },
              "text": {
               "t": "str",
-              "v": "<b>Tabla de herramientas CNC</b>"
+              "v": "<b>CNC Tools Table</b>"
              }
             }
            }
@@ -640,7 +640,7 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Trazar (mostrar) este objeto."
+              "v": "Plot (show) this object."
              },
              "layoutDirection": {
               "t": "int",
@@ -648,7 +648,7 @@
              },
              "text": {
               "t": "str",
-              "v": "Trazar objeto"
+              "v": "Plot Object"
              },
              "checked": {
               "t": "bool",
@@ -678,8 +678,8 @@
           "labels": [
            "#",
            "Dia",
-           "Compensar",
-           "Tipo",
+           "Offset",
+           "Type",
            "TT",
            "",
            "P"
@@ -720,10 +720,10 @@
           "labels": [
            "#",
            "Dia",
-           "Taladros",
-           "Muesca",
+           "Drills",
+           "Slots",
            "",
-           "Corte Z",
+           "Cut Z",
            "P"
           ],
           "hheader": true,
@@ -781,11 +781,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Actualiza la trama."
+           "v": "Update the plot."
           },
           "text": {
            "t": "str",
-           "v": "Actualizar Trama"
+           "v": "Update Plot"
           }
          }
         }
@@ -828,11 +828,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Cuando se selecciona, incluirá fragmentos de código CNC (anexar y anteponer)\ndefinido en las Preferencias."
+           "v": "When selected, it will include CNC Code snippets (append and prepend)\ndefined in the Preferences."
           },
           "text": {
            "t": "str",
-           "v": "Utilice fragmentos de código CNC"
+           "v": "Use CNC Code Snippets"
           }
          }
         }
@@ -853,7 +853,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Habilite la función de nivelación automática."
+           "v": "Enable the autolevelling feature."
           },
           "styleSheet": {
            "t": "str",
@@ -861,7 +861,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Nivelación automática"
+           "v": "Autolevelling"
           },
           "checkable": {
            "t": "bool",
@@ -1021,11 +1021,11 @@
                    "props": {
                     "toolTip": {
                      "t": "str",
-                     "v": "Genere GCode que obtendrá el mapa de altura"
+                     "v": "Generate GCode that will obtain the height map"
                     },
                     "text": {
                      "t": "str",
-                     "v": "<b>Tabla de puntos de sonda</b>"
+                     "v": "<b>Probe Points Table</b>"
                     }
                    }
                   }
@@ -1050,11 +1050,11 @@
                    "props": {
                     "toolTip": {
                      "t": "str",
-                     "v": "Alternar la visualización de la tabla de puntos de sonda."
+                     "v": "Toggle the display of the Probe Points table."
                     },
                     "text": {
                      "t": "str",
-                     "v": "Mostrar"
+                     "v": "Show"
                     },
                     "checked": {
                      "t": "bool",
@@ -1104,8 +1104,8 @@
                  "cols": 3,
                  "labels": [
                   "#",
-                  "Coordenadas X-Y",
-                  "Altura"
+                  "X-Y Coordinates",
+                  "Height"
                  ],
                  "hheader": true,
                  "vheader": false,
@@ -1132,11 +1132,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "Trace los puntos de palpación en la tabla.\nSi se utiliza un método de Voronoi,\ntambién se trazan las áreas de Voronoi."
+                  "v": "Plot the probing points in the table.\nIf a Voronoi method is used then\nthe Voronoi areas are also plotted."
                  },
                  "text": {
                   "t": "str",
-                  "v": "Trazar puntos de palpación"
+                  "v": "Plot probing points"
                  }
                 }
                }
@@ -1185,11 +1185,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "Creará un GCode que se enviará al controlador,\nya sea a través de un archivo o directamente, con la intención de obtener el mapa de altura\nes decir, modificar el GCode original para nivelar la altura de corte."
+                  "v": "Will create a GCode which will be sent to the controller,\neither through a file or directly, with the intent to get the height map\nthat is to modify the original GCode to level the cutting height."
                  },
                  "text": {
                   "t": "str",
-                  "v": "<b>Generación de sonda GCode</b>:"
+                  "v": "<b>Probe GCode Generation</b>:"
                  }
                 }
                }
@@ -1207,11 +1207,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "La Z segura para la sonda que viaja entre puntos de sonda."
+                  "v": "The safe Z for probe travelling between probe points."
                  },
                  "text": {
                   "t": "str",
-                  "v": "Espacio de la sonda Z:"
+                  "v": "Probe Z travel:"
                  }
                 }
                }
@@ -1259,7 +1259,7 @@
                  },
                  "text": {
                   "t": "str",
-                  "v": "Profundidad de la sonda Z:"
+                  "v": "Probe Z depth:"
                  }
                 }
                }
@@ -1307,11 +1307,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "La velocidad de avance utilizada mientras la sonda está sondeando."
+                  "v": "The feedrate used while the probe is probing."
                  },
                  "text": {
                   "t": "str",
-                  "v": "Avance de la Sonda:"
+                  "v": "Probe Feedrate:"
                  }
                 }
                }
@@ -1386,11 +1386,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "Elija un modo para la generación de mapas de altura.\n- Manual: seleccionará una selección de puntos de sonda haciendo clic en el lienzo\n- Cuadrícula: generará automáticamente una cuadrícula de puntos de sonda"
+                  "v": "Choose a mode for height map generation.\n- Manual: will pick a selection of probe points by clicking on canvas\n- Grid: will automatically generate a grid of probe points"
                  },
                  "text": {
                   "t": "str",
-                  "v": "<b>Modo</b>:"
+                  "v": "<b>Mode</b>:"
                  }
                 }
                }
@@ -1412,7 +1412,7 @@
                   "value": "manual"
                  },
                  {
-                  "label": "Cuadrícula",
+                  "label": "Grid",
                   "value": "grid"
                  }
                 ],
@@ -1434,11 +1434,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "Elija un método para la aproximación de alturas a partir de datos de autonivelación.\n- Voronoi: generará un diagrama de Voronoi\n- Bilineal: utilizará interpolación bilineal. Solo se puede utilizar para el modo de cuadrícula."
+                  "v": "Choose a method for approximation of heights from autolevelling data.\n- Voronoi: will generate a Voronoi diagram\n- Bilinear: will use bilinear interpolation. Usable only for grid mode."
                  },
                  "text": {
                   "t": "str",
-                  "v": "Método:"
+                  "v": "Method:"
                  }
                 }
                }
@@ -1460,7 +1460,7 @@
                   "value": "v"
                  },
                  {
-                  "label": "Bilineal",
+                  "label": "Bilinear",
                   "value": "b"
                  }
                 ],
@@ -1482,11 +1482,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "El número de columnas de la cuadrícula."
+                  "v": "The number of grid columns."
                  },
                  "text": {
                   "t": "str",
-                  "v": "Columnas:"
+                  "v": "Columns:"
                  }
                 }
                }
@@ -1526,11 +1526,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "El número de filas de la cuadrícula."
+                  "v": "The number of grid rows."
                  },
                  "text": {
                   "t": "str",
-                  "v": "Filas:"
+                  "v": "Rows:"
                  }
                 }
                }
@@ -1570,7 +1570,7 @@
                 "props": {
                  "text": {
                   "t": "str",
-                  "v": "Agregar puntos de sonda"
+                  "v": "Add Probe Points"
                  }
                 }
                }
@@ -1619,11 +1619,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "El tipo de controlador para el que generar\nmapa de altura gcode."
+                  "v": "The kind of controller for which to generate\nheight map gcode."
                  },
                  "text": {
                   "t": "str",
-                  "v": "<b>Controlador</b>:"
+                  "v": "<b>Controller</b>:"
                  }
                 }
                }
@@ -1701,7 +1701,7 @@
                     },
                     "tabs": [
                      {
-                      "text": "Conectar",
+                      "text": "Connect",
                       "icon": null,
                       "tooltip": "",
                       "protected": false,
@@ -1782,11 +1782,11 @@
                               "props": {
                                "toolTip": {
                                 "t": "str",
-                                "v": "Muestra los puertos serie disponibles."
+                                "v": "Lists the available serial ports."
                                },
                                "text": {
                                 "t": "str",
-                                "v": "Lista COM:"
+                                "v": "COM list:"
                                }
                               }
                              }
@@ -1819,11 +1819,11 @@
                               "props": {
                                "toolTip": {
                                 "t": "str",
-                                "v": "Busque los puertos serie disponibles."
+                                "v": "Search for the available serial ports."
                                },
                                "text": {
                                 "t": "str",
-                                "v": "Buscar"
+                                "v": "Search"
                                }
                               }
                              }
@@ -1841,11 +1841,11 @@
                               "props": {
                                "toolTip": {
                                 "t": "str",
-                                "v": "Muestra los puertos serie disponibles."
+                                "v": "Lists the available serial ports."
                                },
                                "text": {
                                 "t": "str",
-                                "v": "Tasas de baudios:"
+                                "v": "Baud rates:"
                                }
                               }
                              }
@@ -1898,11 +1898,11 @@
                               "props": {
                                "toolTip": {
                                 "t": "str",
-                                "v": "Velocidad en baudios nueva y personalizada."
+                                "v": "New, custom baudrate."
                                },
                                "text": {
                                 "t": "str",
-                                "v": "Nueva:"
+                                "v": "New:"
                                }
                               }
                              }
@@ -1946,11 +1946,11 @@
                               "props": {
                                "toolTip": {
                                 "t": "str",
-                                "v": "Agregue la velocidad en baudios personalizada especificada a la lista."
+                                "v": "Add the specified custom baudrate to the list."
                                },
                                "text": {
                                 "t": "str",
-                                "v": "Añadir"
+                                "v": "Add"
                                }
                               }
                              }
@@ -1968,7 +1968,7 @@
                               "props": {
                                "text": {
                                 "t": "str",
-                                "v": "Eliminar la velocidad en baudios seleccionada"
+                                "v": "Delete selected baudrate"
                                }
                               }
                              }
@@ -2015,11 +2015,11 @@
                                  "props": {
                                   "toolTip": {
                                    "t": "str",
-                                   "v": "Restablecimiento del software del controlador."
+                                   "v": "Software reset of the controller."
                                   },
                                   "text": {
                                    "t": "str",
-                                   "v": "Reiniciar"
+                                   "v": "Reset"
                                   },
                                   "enabled": {
                                    "t": "bool",
@@ -2038,7 +2038,7 @@
                                  "props": {
                                   "toolTip": {
                                    "t": "str",
-                                   "v": "Conéctese al puerto seleccionado con la velocidad en baudios seleccionada."
+                                   "v": "Connect to the selected port with the selected baud rate."
                                   },
                                   "styleSheet": {
                                    "t": "str",
@@ -2046,7 +2046,7 @@
                                   },
                                   "text": {
                                    "t": "str",
-                                   "v": "Desconectado"
+                                   "v": "Disconnected"
                                   }
                                  }
                                 }
@@ -2062,7 +2062,7 @@
                       }
                      },
                      {
-                      "text": "Controlar",
+                      "text": "Control",
                       "icon": null,
                       "tooltip": "",
                       "protected": false,
@@ -2149,7 +2149,7 @@
                                },
                                "text": {
                                 "t": "str",
-                                "v": "Empujoncito"
+                                "v": "Jog"
                                }
                               }
                              }
@@ -2177,7 +2177,7 @@
                                },
                                "text": {
                                 "t": "str",
-                                "v": "Cero los ejes"
+                                "v": "Zero Axes"
                                }
                               }
                              }
@@ -2263,7 +2263,7 @@
                                   "props": {
                                    "toolTip": {
                                     "t": "str",
-                                    "v": "Mueva el eje Y."
+                                    "v": "Jog the Y axis."
                                    },
                                    "icon": {
                                     "t": "QIcon",
@@ -2285,7 +2285,7 @@
                                   "props": {
                                    "toolTip": {
                                     "t": "str",
-                                    "v": "Mover al origen"
+                                    "v": "Move to Origin"
                                    },
                                    "icon": {
                                     "t": "QIcon",
@@ -2307,7 +2307,7 @@
                                   "props": {
                                    "toolTip": {
                                     "t": "str",
-                                    "v": "Mueva el eje Y."
+                                    "v": "Jog the Y axis."
                                    },
                                    "icon": {
                                     "t": "QIcon",
@@ -2329,7 +2329,7 @@
                                   "props": {
                                    "toolTip": {
                                     "t": "str",
-                                    "v": "Mueva el eje X."
+                                    "v": "Jog the X axis."
                                    },
                                    "icon": {
                                     "t": "QIcon",
@@ -2351,7 +2351,7 @@
                                   "props": {
                                    "toolTip": {
                                     "t": "str",
-                                    "v": "Mueva el eje X."
+                                    "v": "Jog the X axis."
                                    },
                                    "icon": {
                                     "t": "QIcon",
@@ -2373,7 +2373,7 @@
                                   "props": {
                                    "toolTip": {
                                     "t": "str",
-                                    "v": "Mueva el eje Z."
+                                    "v": "Jog the Z axis."
                                    },
                                    "text": {
                                     "t": "str",
@@ -2403,7 +2403,7 @@
                                   "props": {
                                    "toolTip": {
                                     "t": "str",
-                                    "v": "Mueva el eje Z."
+                                    "v": "Jog the Z axis."
                                    },
                                    "text": {
                                     "t": "str",
@@ -2496,7 +2496,7 @@
                                   "props": {
                                    "toolTip": {
                                     "t": "str",
-                                    "v": "Ponga a cero el eje X del CNC en la posición actual."
+                                    "v": "Zero the CNC X axes at current position."
                                    },
                                    "text": {
                                     "t": "str",
@@ -2518,7 +2518,7 @@
                                   "props": {
                                    "toolTip": {
                                     "t": "str",
-                                    "v": "Ponga a cero el eje Y del CNC en la posición actual."
+                                    "v": "Zero the CNC Y axes at current position."
                                    },
                                    "text": {
                                     "t": "str",
@@ -2540,7 +2540,7 @@
                                   "props": {
                                    "toolTip": {
                                     "t": "str",
-                                    "v": "Ponga a cero el eje Z del CNC en la posición actual."
+                                    "v": "Zero the CNC Z axes at current position."
                                    },
                                    "text": {
                                     "t": "str",
@@ -2562,11 +2562,11 @@
                                   "props": {
                                    "toolTip": {
                                     "t": "str",
-                                    "v": "Realice un ciclo de referenciado en todos los ejes."
+                                    "v": "Perform a homing cycle on all axis."
                                    },
                                    "text": {
                                     "t": "str",
-                                    "v": "Hacer homing"
+                                    "v": "Do Home"
                                    }
                                   }
                                  }
@@ -2593,11 +2593,11 @@
                                    },
                                    "toolTip": {
                                     "t": "str",
-                                    "v": "Ponga a cero todos los ejes del CNC en la posición actual."
+                                    "v": "Zero all CNC axes at current position."
                                    },
                                    "text": {
                                     "t": "str",
-                                    "v": "Todos"
+                                    "v": "All"
                                    }
                                   }
                                  }
@@ -2663,7 +2663,7 @@
                                    },
                                    "text": {
                                     "t": "str",
-                                    "v": "Pausar / Reanudar"
+                                    "v": "Pause/Resume"
                                    },
                                    "checkable": {
                                     "t": "bool",
@@ -2722,11 +2722,11 @@
                               "props": {
                                "toolTip": {
                                 "t": "str",
-                                "v": "Cada acción de jog moverá los ejes con este valor."
+                                "v": "Each jog action will move the axes with this value."
                                },
                                "text": {
                                 "t": "str",
-                                "v": "Paso:"
+                                "v": "Step:"
                                }
                               }
                              }
@@ -2838,11 +2838,11 @@
                               "props": {
                                "toolTip": {
                                 "t": "str",
-                                "v": "Avance al trotar."
+                                "v": "Feedrate when jogging."
                                },
                                "text": {
                                 "t": "str",
-                                "v": "Avance:"
+                                "v": "Feedrate:"
                                }
                               }
                              }
@@ -2959,7 +2959,7 @@
                       }
                      },
                      {
-                      "text": "Remitente",
+                      "text": "Sender",
                       "icon": null,
                       "tooltip": "",
                       "protected": false,
@@ -3044,11 +3044,11 @@
                               "props": {
                                "toolTip": {
                                 "t": "str",
-                                "v": "Envíe un comando personalizado a GRBL."
+                                "v": "Send a custom command to GRBL."
                                },
                                "text": {
                                 "t": "str",
-                                "v": "Enviar comando:"
+                                "v": "Send Command:"
                                }
                               }
                              }
@@ -3066,7 +3066,7 @@
                               "props": {
                                "placeholderText": {
                                 "t": "str",
-                                "v": "Escriba el comando GRBL ..."
+                                "v": "Type GRBL command ..."
                                }
                               }
                              }
@@ -3084,11 +3084,11 @@
                               "props": {
                                "toolTip": {
                                 "t": "str",
-                                "v": "Envíe un comando personalizado a GRBL."
+                                "v": "Send a custom command to GRBL."
                                },
                                "text": {
                                 "t": "str",
-                                "v": "Enviar"
+                                "v": "Send"
                                }
                               }
                              }
@@ -3106,11 +3106,11 @@
                               "props": {
                                "toolTip": {
                                 "t": "str",
-                                "v": "Un parámetro de configuración GRBL."
+                                "v": "A GRBL configuration parameter."
                                },
                                "text": {
                                 "t": "str",
-                                "v": "Obtener parámetro de Config:"
+                                "v": "Get Config parameter:"
                                }
                               }
                              }
@@ -3128,7 +3128,7 @@
                               "props": {
                                "placeholderText": {
                                 "t": "str",
-                                "v": "Escriba un parámetro GRBL ..."
+                                "v": "Type GRBL parameter ..."
                                }
                               }
                              }
@@ -3146,11 +3146,11 @@
                               "props": {
                                "toolTip": {
                                 "t": "str",
-                                "v": "Obtiene el valor de un parámetro GRBL especificado."
+                                "v": "Get the value of a specified GRBL parameter."
                                },
                                "text": {
                                 "t": "str",
-                                "v": "Obtener"
+                                "v": "Get"
                                }
                               }
                              }
@@ -3168,11 +3168,11 @@
                               "props": {
                                "toolTip": {
                                 "t": "str",
-                                "v": "Imprima en shell el informe GRBL."
+                                "v": "Print in shell the GRBL report."
                                },
                                "text": {
                                 "t": "str",
-                                "v": "Obtener informe"
+                                "v": "Get Report"
                                }
                               }
                              }
@@ -3206,11 +3206,11 @@
                                  "props": {
                                   "toolTip": {
                                    "t": "str",
-                                   "v": "Enviará el GCode de sondeo al controlador GRBL,\nespere los datos de sondeo Z y luego aplique estos datos\nsobre el GCode original, por lo que se realiza una autonivelación."
+                                   "v": "Will send the probing GCode to the GRBL controller,\nwait for the Z probing data and then apply this data\nover the original GCode therefore doing autolevelling."
                                   },
                                   "text": {
                                    "t": "str",
-                                   "v": "Aplicar nivelación automática"
+                                   "v": "Apply AutoLevelling"
                                   },
                                   "enabled": {
                                    "t": "bool",
@@ -3229,7 +3229,7 @@
                                  "props": {
                                   "toolTip": {
                                    "t": "str",
-                                   "v": "Guardará el mapa de altura GRBL."
+                                   "v": "Will save the GRBL height map."
                                   },
                                   "icon": {
                                    "t": "QIcon",
@@ -3297,11 +3297,11 @@
                     },
                     "toolTip": {
                      "t": "str",
-                     "v": "Guardará el GCode de sondeo."
+                     "v": "Will save the probing GCode."
                     },
                     "text": {
                      "t": "str",
-                     "v": "Guardar GCode de sondeo"
+                     "v": "Save Probing GCode"
                     },
                     "enabled": {
                      "t": "bool",
@@ -3320,7 +3320,7 @@
                    "props": {
                     "toolTip": {
                      "t": "str",
-                     "v": "Ver / editar el GCode de sondeo."
+                     "v": "View/Edit the probing GCode."
                     },
                     "icon": {
                      "t": "QIcon",
@@ -3349,11 +3349,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "Importar el archivo que tiene las alturas Z\nobtenido mediante sondeo y luego aplicar estos datos\nsobre el GCode original por lo tanto\nhaciendo autonivelación."
+                  "v": "Import the file that has the Z heights\nobtained through probing and then apply this data\nover the original GCode therefore\ndoing autolevelling."
                  },
                  "text": {
                   "t": "str",
-                  "v": "Importar mapa de altura"
+                  "v": "Import Height Map"
                  }
                 }
                }
@@ -3406,11 +3406,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Exportar y guardar código G a\nHacer este objeto a un archivo."
+           "v": "Export and save G-Code to\nmake this object to a file."
           },
           "text": {
            "t": "str",
-           "v": "<b>Exportar código CNC:</b>"
+           "v": "<b>Export CNC Code:</b>"
           }
          }
         }
@@ -3450,11 +3450,11 @@
              },
              "toolTip": {
               "t": "str",
-              "v": "Abre el diálogo para guardar el código G\nexpediente."
+              "v": "Opens dialog to save G-Code\nfile."
              },
              "text": {
               "t": "str",
-              "v": "Guardar código CNC"
+              "v": "Save CNC Code"
              },
              "icon": {
               "t": "QIcon",
@@ -3473,7 +3473,7 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Revise el código CNC."
+              "v": "Review CNC Code."
              },
              "icon": {
               "t": "QIcon",
@@ -3580,11 +3580,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Transformaciones geométricas del objeto actual."
+           "v": "Geometrical transformations of the current object."
           },
           "text": {
            "t": "str",
-           "v": "<b>Transformaciones</b>"
+           "v": "<b>Transformations</b>"
           },
           "hidden": {
            "t": "bool",
@@ -3606,7 +3606,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Factor por el cual multiplicar\ncaracterísticas geométricas de este objeto.\nSe permiten expresiones. Por ejemplo: 1 / 25.4"
+           "v": "Factor by which to multiply\ngeometric features of this object.\nExpressions are allowed. E.g: 1/25.4"
           },
           "styleSheet": {
            "t": "str",
@@ -3643,11 +3643,11 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Realizar la operación de escalado."
+           "v": "Perform scaling operation."
           },
           "text": {
            "t": "str",
-           "v": "Escala"
+           "v": "Scale"
           },
           "hidden": {
            "t": "bool",
@@ -3669,7 +3669,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Cantidad por la cual mover el objeto\nen los ejes x e y en formato (x, y).\nSe permiten expresiones. Por ejemplo: (1/3.2, 0.5*3)"
+           "v": "Amount by which to move the object\nin the x and y axes in (x, y) format.\nExpressions are allowed. E.g: (1/3.2, 0.5*3)"
           },
           "styleSheet": {
            "t": "str",
@@ -3706,11 +3706,11 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Realice la operación de desplazamiento."
+           "v": "Perform the offset operation."
           },
           "text": {
            "t": "str",
-           "v": "Compensar"
+           "v": "Offset"
           },
           "hidden": {
            "t": "bool",
@@ -3732,11 +3732,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Transformaciones geométricas del objeto actual."
+           "v": "Geometrical transformations of the current object."
           },
           "text": {
            "t": "str",
-           "v": "Transformaciones"
+           "v": "Transformations"
           },
           "icon": {
            "t": "QIcon",

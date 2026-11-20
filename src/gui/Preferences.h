@@ -201,6 +201,12 @@ public:
     void onCloseButton();
     /** @brief `on_restore_defaults_preferences`: "Restaurar valores predeterminados". */
     void onRestoreDefaults();
+    /**
+     * @brief `on_language_apply_click(restart=True)`: "Aplicar idioma". Si el idioma del combo no es el actual,
+     * pregunta, lo guarda en `settings.ini` (`language`, desvío: su código, no su nombre) y reinicia la aplicación.
+     * @return Verdadero si se guardó el idioma nuevo.
+     */
+    bool onLanguageApply();
     /** @brief `on_preferences_open_folder`: "Abrir carpeta de preferencias". */
     void openFolder();
     /** @brief `on_gui_clear`: borrar los ajustes de la interfaz. @param forced Sin preguntar. */

@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Herramienta Thieving Tool"
+    "v": "Copper Thieving Tool"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Herramienta Thieving Tool"
+        "v": "Copper Thieving Tool"
        }
       }
      }
@@ -106,7 +106,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Gerber Objeto al que se agregará un Copper Thieving."
+           "v": "Gerber Object to which will be added a copper thieving."
           },
           "text": {
            "t": "str",
@@ -224,11 +224,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Parámetros utilizados para esta herramienta."
+           "v": "Parameters used for this tool."
           },
           "text": {
            "t": "str",
-           "v": "<b>Parámetros</b>"
+           "v": "<b>Parameters</b>"
           }
          }
         }
@@ -246,11 +246,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esto establece la distancia entre los componentes de Copper Thieving\n(el relleno de polígono puede dividirse en múltiples polígonos)\ny las rastros de cobre en el archivo Gerber."
+           "v": "This set the distance between the copper thieving components\n(the polygon fill may be split in multiple polygons)\nand the copper traces in the Gerber file."
           },
           "text": {
            "t": "str",
-           "v": "Despeje:"
+           "v": "Clearance:"
           }
          }
         }
@@ -298,11 +298,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Margen de cuadro delimitador."
+           "v": "Bounding box margin."
           },
           "text": {
            "t": "str",
-           "v": "Margen:"
+           "v": "Margin:"
           }
          }
         }
@@ -350,11 +350,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Robar áreas con un área menor a este valor no se agregará."
+           "v": "Thieving areas with area less then this value will not be added."
           },
           "text": {
            "t": "str",
-           "v": "Zona:"
+           "v": "Area:"
           }
          }
         }
@@ -445,11 +445,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "- 'Sí mismo': la extensión de Copper Thieving se basa en la extensión del objeto.\n- 'Selección de área': haga clic con el botón izquierdo del mouse para iniciar la selección del área a rellenar.\n- 'Objeto de referencia': 'Copper Thieving' dentro del área especificada por otro objeto."
+           "v": "- 'Itself' - the copper thieving extent is based on the object extent.\n- 'Area Selection' - left mouse click to start selection of the area to be filled.\n- 'Reference Object' - will do copper thieving within the area specified by another object."
           },
           "text": {
            "t": "str",
-           "v": "Referencia:"
+           "v": "Reference:"
           }
          }
         }
@@ -467,15 +467,15 @@
          "props": {},
          "choices": [
           {
-           "label": "Sí mismo",
+           "label": "Itself",
            "value": "itself"
           },
           {
-           "label": "Selección de área",
+           "label": "Area Selection",
            "value": "area"
           },
           {
-           "label": "Objeto de referencia",
+           "label": "Reference Object",
            "value": "box"
           }
          ],
@@ -497,11 +497,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El tipo de objeto FlatCAM que se utilizará como referencia de 'Copper Thieving'.\nPuede ser Gerber, Excellon o Geometry."
+           "v": "The type of FlatCAM object to be used as copper thieving reference.\nIt can be Gerber, Excellon or Geometry."
           },
           "text": {
            "t": "str",
-           "v": "Tipo de Ref:"
+           "v": "Ref. Type:"
           },
           "hidden": {
            "t": "bool",
@@ -533,7 +533,7 @@
          "items": [
           "Gerber",
           "Excellon",
-          "Geometría"
+          "Geometry"
          ],
          "currentIndex": 0
         }
@@ -551,11 +551,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El objeto FlatCAM que se utilizará como referencia de compensación sin cobre."
+           "v": "The FlatCAM object to be used as non copper clearing reference."
           },
           "text": {
            "t": "str",
-           "v": "Objeto de Ref:"
+           "v": "Ref. Object:"
           },
           "hidden": {
            "t": "bool",
@@ -597,11 +597,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "- 'Rectangular': el cuadro delimitador tendrá forma rectangular.\n- 'Mínimo': el cuadro delimitador tendrá forma de casco convexo."
+           "v": "- 'Rectangular' - the bounding box will be of rectangular shape.\n- 'Minimal' - the bounding box will be the convex hull shape."
           },
           "text": {
            "t": "str",
-           "v": "Tipo de caja:"
+           "v": "Box Type:"
           }
          }
         }
@@ -623,7 +623,7 @@
            "value": "rect"
           },
           {
-           "label": "Mínimo",
+           "label": "Minimal",
            "value": "min"
           }
          ],
@@ -676,11 +676,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "- 'Sólido': el robo de cobre será un polígono sólido.\n- 'Cuadrícula de puntos': el área vacía se rellenará con un patrón de puntos.\n- 'Cuadrícula de cuadrados': el área vacía se rellenará con un patrón de cuadrados.\n- 'Cuadrícula de líneas': el área vacía se rellenará con un patrón de líneas."
+           "v": "- 'Solid' - copper thieving will be a solid polygon.\n- 'Dots Grid' - the empty area will be filled with a pattern of dots.\n- 'Squares Grid' - the empty area will be filled with a pattern of squares.\n- 'Lines Grid' - the empty area will be filled with a pattern of lines."
           },
           "text": {
            "t": "str",
-           "v": "Tipo de relleno:"
+           "v": "Fill Type:"
           }
          }
         }
@@ -698,19 +698,19 @@
          "props": {},
          "choices": [
           {
-           "label": "Sólido",
+           "label": "Solid",
            "value": "solid"
           },
           {
-           "label": "Cuadrícula de puntos",
+           "label": "Dots Grid",
            "value": "dot"
           },
           {
-           "label": "Cuadrícula de cuadrados",
+           "label": "Squares Grid",
            "value": "square"
           },
           {
-           "label": "Cuadrícula de líneas",
+           "label": "Lines Grid",
            "value": "line"
           }
          ],
@@ -776,7 +776,7 @@
           "props": {
            "text": {
             "t": "str",
-            "v": "<b>Parámetros de cuadrícula de puntos</b>:"
+            "v": "<b>Dots Grid Parameters</b>:"
            }
           }
          }
@@ -794,7 +794,7 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Diámetro de punto en cuadrícula de puntos."
+            "v": "Dot diameter in Dots Grid."
            },
            "text": {
             "t": "str",
@@ -846,7 +846,7 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Distancia entre cada dos puntos en la cuadrícula de puntos."
+            "v": "Distance between each two dots in Dots Grid."
            },
            "text": {
             "t": "str",
@@ -943,7 +943,7 @@
           "props": {
            "text": {
             "t": "str",
-            "v": "<b>Parámetros de la cuadrícula de cuadrados</b>:"
+            "v": "<b>Squares Grid Parameters</b>:"
            }
           }
          }
@@ -961,11 +961,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Tamaño del lado cuadrado en cuadrícula de cuadrados."
+            "v": "Square side size in Squares Grid."
            },
            "text": {
             "t": "str",
-            "v": "Tamaño:"
+            "v": "Size:"
            }
           }
          }
@@ -1013,7 +1013,7 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Distancia entre cada dos cuadrados en la cuadrícula de cuadrados."
+            "v": "Distance between each two squares in Squares Grid."
            },
            "text": {
             "t": "str",
@@ -1110,7 +1110,7 @@
           "props": {
            "text": {
             "t": "str",
-            "v": "<b>Parámetros de cuadrícula de líneas</b>:"
+            "v": "<b>Lines Grid Parameters</b>:"
            }
           }
          }
@@ -1128,11 +1128,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Tamaño del grosor de línea en la cuadrícula de líneas."
+            "v": "Line thickness size in Lines Grid."
            },
            "text": {
             "t": "str",
-            "v": "Tamaño:"
+            "v": "Size:"
            }
           }
          }
@@ -1180,7 +1180,7 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Distancia entre cada dos líneas en la cuadrícula de líneas."
+            "v": "Distance between each two lines in Lines Grid."
            },
            "text": {
             "t": "str",
@@ -1239,7 +1239,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Agregará un polígono (puede dividirse en varias partes)\neso rodeará las huellas reales de Gerber a cierta distancia."
+        "v": "Will add a polygon (may be split in multiple parts)\nthat will surround the actual Gerber traces at a certain distance."
        },
        "styleSheet": {
         "t": "str",
@@ -1247,7 +1247,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Insertar Copper thieving"
+        "v": "Insert Copper thieving"
        },
        "icon": {
         "t": "QIcon",
@@ -1368,11 +1368,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Parámetros utilizados para la Robber Bar.\nRobber Bar = borde de cobre para ayudar en el enchapado de agujeros."
+           "v": "Parameters used for the robber bar.\nRobber bar = copper border to help in pattern hole plating."
           },
           "text": {
            "t": "str",
-           "v": "<b>Parámetros de la Robber Bar</b>"
+           "v": "<b>Robber Bar Parameters</b>"
           }
          }
         }
@@ -1390,11 +1390,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Margen límite del recinto para Robber Bar."
+           "v": "Bounding box margin for robber bar."
           },
           "text": {
            "t": "str",
-           "v": "Margen:"
+           "v": "Margin:"
           }
          }
         }
@@ -1446,11 +1446,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El grosor de la Robber Bar."
+           "v": "The robber bar thickness."
           },
           "text": {
            "t": "str",
-           "v": "Espesor:"
+           "v": "Thickness:"
           }
          }
         }
@@ -1504,7 +1504,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Agregará un polígono con un grosor definido\nque rodeará el objeto real de Gerber\na cierta distancia.\nSe requiere cuando se hace un patrón de agujeros."
+           "v": "Will add a polygon with a defined thickness\nthat will surround the actual Gerber object\nat a certain distance.\nRequired when doing holes pattern plating."
           },
           "styleSheet": {
            "t": "str",
@@ -1512,7 +1512,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Insertar Robber Bar"
+           "v": "Insert Robber Bar"
           },
           "icon": {
            "t": "QIcon",
@@ -1565,11 +1565,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Genere una máscara para el enchapado de patrones."
+           "v": "Generate a mask for pattern plating."
           },
           "text": {
            "t": "str",
-           "v": "<b>Máscara de baño de patrones</b>"
+           "v": "<b>Pattern Plating Mask</b>"
           }
          }
         }
@@ -1587,11 +1587,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Objeto Gerber con la máscara de soldadura.\nSe utilizará como base para\nEl patrón de la máscara de recubrimiento."
+           "v": "Gerber Object with the soldermask.\nIt will be used as a base for\nthe pattern plating mask."
           },
           "text": {
            "t": "str",
-           "v": "Seleccionar objeto Soldermask:"
+           "v": "Select Soldermask object:"
           }
          }
         }
@@ -1624,11 +1624,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "La distancia entre los posibles elementos de Copper Thieving.\ny / o Robber Bar y las aberturas reales en la máscara."
+           "v": "The distance between the possible copper thieving elements\nand/or robber bar and the actual openings in the mask."
           },
           "text": {
            "t": "str",
-           "v": "Despeje:"
+           "v": "Clearance:"
           }
          }
         }
@@ -1676,11 +1676,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El área a ser chapada por patrón de chapado.\nBásicamente está hecho de las aberturas en la máscara de recubrimiento.\n\n<<ADVERTENCIA>> - el área calculada es en realidad un poco más grande\nDebido al hecho de que las aberturas de la máscara de soldadura son por diseño\nun poco más grande que las almohadillas de cobre, y esta área es\ncalculado a partir de las aberturas de la máscara de soldadura."
+           "v": "The area to be plated by pattern plating.\nBasically is made from the openings in the plating mask.\n\n<<WARNING>> - the calculated area is actually a bit larger\ndue of the fact that the soldermask openings are by design\na bit larger than the copper pads, and this area is\ncalculated from the soldermask openings."
           },
           "text": {
            "t": "str",
-           "v": "Área chapada:"
+           "v": "Plated area:"
           }
          }
         }
@@ -1734,11 +1734,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Elija qué geometría adicional incluir, si está disponible."
+           "v": "Choose which additional geometry to include, if available."
           },
           "text": {
            "t": "str",
-           "v": "Añadir:"
+           "v": "Add:"
           }
          }
         }
@@ -1756,19 +1756,19 @@
          "props": {},
          "choices": [
           {
-           "label": "Ambas",
+           "label": "Both",
            "value": "b"
           },
           {
-           "label": "Ladrón",
+           "label": "Thieving",
            "value": "t"
           },
           {
-           "label": "Barra de Ladrón",
+           "label": "Robber bar",
            "value": "r"
           },
           {
-           "label": "Ninguno",
+           "label": "None",
            "value": "n"
           }
          ],
@@ -1796,7 +1796,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Agregará a la máscara de soldadura la geometría gerber\nLas geometrías de Copper Thieving y / o\nla Robber Bar si esos fueron generados."
+           "v": "Will add to the soldermask gerber geometry\nthe geometries of the copper thieving and/or\nthe robber bar if those were generated."
           },
           "styleSheet": {
            "t": "str",
@@ -1804,7 +1804,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Generar máscara de recubrimiento de patrón"
+           "v": "Generate pattern plating mask"
           },
           "icon": {
            "t": "QIcon",
@@ -1842,7 +1842,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Restablecerá los parámetros de la herramienta."
+        "v": "Will reset the tool parameters."
        },
        "styleSheet": {
         "t": "str",
@@ -1850,7 +1850,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Restablecer la Herramienta"
+        "v": "Reset Tool"
        },
        "icon": {
         "t": "QIcon",

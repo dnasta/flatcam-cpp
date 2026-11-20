@@ -24,7 +24,7 @@ struct Coord {
     std::optional<double> v;
     bool broken{false};
     double get() const {
-        if (broken) throw ParseError("la posición quedó con una tupla después de AA");
+        if (broken) throw ParseError("the position was left as a tuple after AA");
         return *v;
     }
 };

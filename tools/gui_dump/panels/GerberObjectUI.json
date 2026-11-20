@@ -63,7 +63,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "<font size=5><b>Objeto Gerber</b></font>"
+           "v": "<font size=5><b>Gerber Object</b></font>"
           }
          }
         }
@@ -78,11 +78,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "BASIC es adecuado para un principiante. Muchos parámetros\nestán ocultos para el usuario en este modo.\nEl modo AVANZADO pondrá a disposición todos los parámetros.\n\nPara cambiar el NIVEL de la aplicación, vaya a:\nEditar -> Preferencias -> General y verificar:\n'APP. NIVEL 'botón de radio."
+           "v": "BASIC is suitable for a beginner. Many parameters\nare hidden from the user in this mode.\nADVANCED mode will make available all parameters.\n\nTo change the application LEVEL, go to:\nEdit -> Preferences -> General and check:\n'APP. LEVEL' radio button."
           },
           "text": {
            "t": "str",
-           "v": "<span style=\"color:green;\"><b>BASIC</b></span>"
+           "v": "<span style=\"color:green;\"><b>Basic</b></span>"
           },
           "alignment": {
            "t": "int",
@@ -179,7 +179,7 @@
             "props": {
              "text": {
               "t": "str",
-              "v": "<b>Opciones de parcela:</b>"
+              "v": "<b>Plot Options:</b>"
              }
             }
            }
@@ -197,11 +197,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Polígonos de color liso."
+              "v": "Solid color polygons."
              },
              "text": {
               "t": "str",
-              "v": "Sólido"
+              "v": "Solid"
              },
              "checked": {
               "t": "bool",
@@ -223,11 +223,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Dibuja polígonos en diferentes colores."
+              "v": "Draw polygons in different colors."
              },
              "text": {
               "t": "str",
-              "v": "Multicolor"
+              "v": "Multi-Color"
              }
             }
            }
@@ -261,7 +261,7 @@
                "props": {
                 "text": {
                  "t": "str",
-                 "v": "<b>Nombre:</b>"
+                 "v": "<b>Name:</b>"
                 }
                }
               }
@@ -297,11 +297,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Trazar (mostrar) este objeto."
+              "v": "Plot (show) this object."
              },
              "text": {
               "t": "str",
-              "v": "Gráfico:"
+              "v": "Plot:"
              }
             }
            }
@@ -337,11 +337,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Generar una geometría 'Seguir'.\nEsto significa que cortará a través\nEl medio de la traza."
+              "v": "Generate a 'Follow' geometry.\nThis means that it will cut through\nthe middle of the trace."
              },
              "text": {
               "t": "str",
-              "v": "Seguir"
+              "v": "Follow"
              },
              "hidden": {
               "t": "bool",
@@ -369,7 +369,7 @@
              },
              "toolTip": {
               "t": "str",
-              "v": "Inicie el Editor de Objetos"
+              "v": "Start the Object Editor"
              },
              "styleSheet": {
               "t": "str",
@@ -405,7 +405,7 @@
              },
              "toolTip": {
               "t": "str",
-              "v": "Muestre las propiedades."
+              "v": "Show the Properties."
              },
              "styleSheet": {
               "t": "str",
@@ -413,7 +413,7 @@
              },
              "text": {
               "t": "str",
-              "v": "PROPIEDADES"
+              "v": "PROPERTIES"
              },
              "icon": {
               "t": "QIcon",
@@ -482,11 +482,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Tabla de Aperturas para el Objeto Gerber."
+              "v": "Apertures Table for the Gerber Object."
              },
              "text": {
               "t": "str",
-              "v": "Aberturas:"
+              "v": "Apertures:"
              },
              "hidden": {
               "t": "bool",
@@ -508,7 +508,7 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Alternar la visualización de la tabla de herramientas."
+              "v": "Toggle the display of the Tools Table."
              },
              "hidden": {
               "t": "bool",
@@ -556,7 +556,7 @@
                "props": {
                 "toolTip": {
                  "t": "str",
-                 "v": "Cuando está marcado, mostrará todas las aperturas.\nCuando no está marcada, eliminará todas las formas de las marcas.\nque se dibujan en lienzo."
+                 "v": "When checked it will display all the apertures.\nWhen unchecked, it will delete all mark shapes\nthat are drawn on canvas."
                 },
                 "layoutDirection": {
                  "t": "int",
@@ -564,7 +564,7 @@
                 },
                 "text": {
                  "t": "str",
-                 "v": "Márc. todo"
+                 "v": "Mark All"
                 },
                 "hidden": {
                  "t": "bool",
@@ -600,9 +600,9 @@
              "cols": 6,
              "labels": [
               "#",
-              "Código",
-              "Tipo",
-              "Tamaño",
+              "Code",
+              "Type",
+              "Size",
               "Dim",
               "M"
              ],
@@ -634,11 +634,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Este botón se muestra solo cuando el archivo Gerber\nse carga sin almacenamiento en búfer.\nAl hacer clic en esto, se creará la geometría almacenada\nrequerido para el aislamiento."
+              "v": "This button is shown only when the Gerber file\nis loaded without buffering.\nClicking this will create the buffered geometry\nrequired for isolation."
              },
              "text": {
               "t": "str",
-              "v": "Buffer la Geometria solida"
+              "v": "Buffer Solid Geometry"
              },
              "hidden": {
               "t": "bool",
@@ -691,7 +691,7 @@
             "props": {
              "text": {
               "t": "str",
-              "v": "<b>HERRAMIENTAS</b>"
+              "v": "<b>TOOLS</b>"
              }
             }
            }
@@ -715,7 +715,7 @@
              },
              "toolTip": {
               "t": "str",
-              "v": "Crear un objeto de geometría con\nTrayectorias para cortar alrededor de polígonos."
+              "v": "Create a Geometry object with\ntoolpaths to cut around polygons."
              },
              "styleSheet": {
               "t": "str",
@@ -723,7 +723,7 @@
              },
              "text": {
               "t": "str",
-              "v": "Enrutamiento de aislamiento"
+              "v": "Isolation Routing"
              }
             }
            }
@@ -741,11 +741,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Crear el objeto de geometría\npara enrutamiento sin cobre."
+              "v": "Create the Geometry Object\nfor non-copper routing."
              },
              "text": {
               "t": "str",
-              "v": "Herramienta NCC"
+              "v": "NCC Tool"
              },
              "icon": {
               "t": "QIcon",
@@ -767,11 +767,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Generar la geometría para\nEl recorte del tablero."
+              "v": "Generate the geometry for\nthe board cutout."
              },
              "text": {
               "t": "str",
-              "v": "Herramienta de Corte"
+              "v": "Cutout Tool"
              },
              "icon": {
               "t": "QIcon",
@@ -830,7 +830,7 @@
              },
              "toolTip": {
               "t": "str",
-              "v": "Muestre las utilidades."
+              "v": "Show the Utilties."
              },
              "styleSheet": {
               "t": "str",
@@ -838,7 +838,7 @@
              },
              "text": {
               "t": "str",
-              "v": "UTILIDADES"
+              "v": "UTILTIES"
              },
              "icon": {
               "t": "QIcon",
@@ -936,11 +936,11 @@
                    "props": {
                     "toolTip": {
                      "t": "str",
-                     "v": "Crear polígonos que cubran el\náreas sin cobre en el PCB.\nEquivalente al inverso de este\nobjeto. Se puede usar para eliminar todo\ncobre de una región específica."
+                     "v": "Create polygons covering the\nareas without copper on the PCB.\nEquivalent to the inverse of this\nobject. Can be used to remove all\ncopper from a specified region."
                     },
                     "text": {
                      "t": "str",
-                     "v": "<b>Regiones no cobre</b>"
+                     "v": "<b>Non-copper regions</b>"
                     }
                    }
                   }
@@ -958,11 +958,11 @@
                    "props": {
                     "toolTip": {
                      "t": "str",
-                     "v": "Especifique el borde de la PCB\ndibujando una caja alrededor de todos\nobjetos con este mínimo\ndistancia."
+                     "v": "Specify the edge of the PCB\nby drawing a box around all\nobjects with this minimum\ndistance."
                     },
                     "text": {
                      "t": "str",
-                     "v": "Margen límite:"
+                     "v": "Boundary Margin:"
                     }
                    }
                   }
@@ -1014,11 +1014,11 @@
                    "props": {
                     "toolTip": {
                      "t": "str",
-                     "v": "La geometría resultante tendrá esquinas redondeadas."
+                     "v": "Resulting geometry will have rounded corners."
                     },
                     "text": {
                      "t": "str",
-                     "v": "Redondeado"
+                     "v": "Rounded"
                     }
                    }
                   }
@@ -1036,7 +1036,7 @@
                    "props": {
                     "text": {
                      "t": "str",
-                     "v": "Generar Geometría"
+                     "v": "Generate Geometry"
                     },
                     "icon": {
                      "t": "QIcon",
@@ -1089,11 +1089,11 @@
                    "props": {
                     "toolTip": {
                      "t": "str",
-                     "v": "Crea una geometría que rodea el objeto Gerber.\nForma cuadrada."
+                     "v": "Create a geometry surrounding the Gerber object.\nSquare shape."
                     },
                     "text": {
                      "t": "str",
-                     "v": "<b>Cuadro delimitador</b>"
+                     "v": "<b>Bounding Box</b>"
                     }
                    }
                   }
@@ -1111,11 +1111,11 @@
                    "props": {
                     "toolTip": {
                      "t": "str",
-                     "v": "Distancia de los bordes de la caja.\nal polígono más cercano."
+                     "v": "Distance of the edges of the box\nto the nearest polygon."
                     },
                     "text": {
                      "t": "str",
-                     "v": "Margen límite:"
+                     "v": "Boundary Margin:"
                     }
                    }
                   }
@@ -1167,11 +1167,11 @@
                    "props": {
                     "toolTip": {
                      "t": "str",
-                     "v": "Si el cuadro delimitador es\ntener esquinas redondeadas\nsu radio es igual a\nel margen."
+                     "v": "If the bounding box is \nto have rounded corners\ntheir radius is equal to\nthe margin."
                     },
                     "text": {
                      "t": "str",
-                     "v": "Redondeado"
+                     "v": "Rounded"
                     }
                    }
                   }
@@ -1189,11 +1189,11 @@
                    "props": {
                     "toolTip": {
                      "t": "str",
-                     "v": "Genera el objeto Geometry."
+                     "v": "Generate the Geometry object."
                     },
                     "text": {
                      "t": "str",
-                     "v": "Generar Geometría"
+                     "v": "Generate Geometry"
                     },
                     "icon": {
                      "t": "QIcon",
@@ -1293,11 +1293,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Transformaciones geométricas del objeto actual."
+           "v": "Geometrical transformations of the current object."
           },
           "text": {
            "t": "str",
-           "v": "<b>Transformaciones</b>"
+           "v": "<b>Transformations</b>"
           }
          }
         }
@@ -1315,7 +1315,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Factor por el cual multiplicar\ncaracterísticas geométricas de este objeto.\nSe permiten expresiones. Por ejemplo: 1 / 25.4"
+           "v": "Factor by which to multiply\ngeometric features of this object.\nExpressions are allowed. E.g: 1/25.4"
           },
           "styleSheet": {
            "t": "str",
@@ -1348,11 +1348,11 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Realizar la operación de escalado."
+           "v": "Perform scaling operation."
           },
           "text": {
            "t": "str",
-           "v": "Escala"
+           "v": "Scale"
           }
          }
         }
@@ -1370,7 +1370,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Cantidad por la cual mover el objeto\nen los ejes x e y en formato (x, y).\nSe permiten expresiones. Por ejemplo: (1/3.2, 0.5*3)"
+           "v": "Amount by which to move the object\nin the x and y axes in (x, y) format.\nExpressions are allowed. E.g: (1/3.2, 0.5*3)"
           },
           "styleSheet": {
            "t": "str",
@@ -1403,11 +1403,11 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Realice la operación de desplazamiento."
+           "v": "Perform the offset operation."
           },
           "text": {
            "t": "str",
-           "v": "Compensar"
+           "v": "Offset"
           }
          }
         }
@@ -1425,11 +1425,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Transformaciones geométricas del objeto actual."
+           "v": "Geometrical transformations of the current object."
           },
           "text": {
            "t": "str",
-           "v": "Transformaciones"
+           "v": "Transformations"
           },
           "icon": {
            "t": "QIcon",

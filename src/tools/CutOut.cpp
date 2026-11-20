@@ -96,7 +96,7 @@ HandlerResult cutoutHandler(const ShapeList& geom, double gapsize, CutoutGaps ga
 /// Contorno exterior de un polígono; falla si la figura no es un polígono (el original lanza una excepción).
 bool exteriorOf(const Shape& g, Shape& ring, std::string& error) {
     if (g.type() != ShapeType::Polygon) {
-        error = "El contorno desplazado no es un polígono único: no se puede tomar su borde exterior";
+        error = "The offset outline is not a single polygon: its exterior can not be taken";
         return false;
     }
     ring = g.exterior();
@@ -170,7 +170,7 @@ bool CutOut::freeform(const ShapeList& objectGeometry, bool isGerber, const Cuto
     error.clear();
     result = CutoutResult{};
     if (o.toolDia == 0.0) {
-        error = "El diámetro de la herramienta es cero: cambialo por un número positivo";
+        error = "Tool Diameter is zero value. Change it to a positive real number.";
         return false;
     }
     try {
@@ -215,7 +215,7 @@ bool CutOut::freeform(const ShapeList& objectGeometry, bool isGerber, const Cuto
                     } else {
                         const Shape buf = geomStruct.buffer(-o.margin + std::fabs(o.toolDia / 2));
                         if (buf.type() != ShapeType::Polygon) {
-                            error = "El contorno desplazado no es un polígono único";
+                            error = "The offset outline is not a single polygon";
                             return false;
                         }
                         geomList = buf.interiors();
@@ -229,7 +229,7 @@ bool CutOut::freeform(const ShapeList& objectGeometry, bool isGerber, const Cuto
             }
         }
         if (solid.empty()) {
-            error = "No quedó ninguna línea de corte";
+            error = "No cut line is left";
             return false;
         }
         result.solidGeometry = Shape::lineMerge(solid);
@@ -252,7 +252,7 @@ bool CutOut::freeform(const ShapeList& objectGeometry, bool isGerber, const Cuto
                         } else {
                             const Shape buf = geomStruct.buffer(-o.margin + mbBuff);
                             if (buf.type() != ShapeType::Polygon) {
-                                error = "El contorno desplazado no es un polígono único";
+                                error = "The offset outline is not a single polygon";
                                 return false;
                             }
                             geomList = buf.interiors();
@@ -328,11 +328,11 @@ bool CutOut::rectangular(const ShapeList& objectGeometry, bool isGerber, const C
     error.clear();
     result = CutoutResult{};
     if (o.toolDia == 0.0) {
-        error = "El diámetro de la herramienta es cero: cambialo por un número positivo";
+        error = "Tool Diameter is zero value. Change it to a positive real number.";
         return false;
     }
     if (o.gaps == CutoutGaps::None) {
-        error = "Sin puentes el corte rectangular no genera líneas (el original también falla)";
+        error = "Without gaps the rectangular cutout makes no lines (the original fails too)";
         return false;
     }
     try {
@@ -359,7 +359,7 @@ bool CutOut::rectangular(const ShapeList& objectGeometry, bool isGerber, const C
             const Shape u = Shape::unaryUnion(objectGeometry);
             double xmin = 0, ymin = 0, xmax = 0, ymax = 0;
             if (!boundsOfShape(u, xmin, ymin, xmax, ymax)) {
-                error = "El objeto no tiene límites";
+                error = "The object has no bounds";
                 return false;
             }
             Shape geo = Shape::box(xmin, ymin, xmax, ymax);
@@ -368,7 +368,7 @@ bool CutOut::rectangular(const ShapeList& objectGeometry, bool isGerber, const C
             if (thin) appendParts(gapsSolid, subtractGeo({geo}, Shape::unaryUnion(solid)));
         } else {
             if (isGerber && o.margin < 0) {
-                error = "El corte rectangular con margen negativo no es posible";
+                error = "Rectangular cutout with negative margin is not possible.";
                 return false;
             }
             for (const Shape& item : objectGeometry) {
@@ -383,7 +383,7 @@ bool CutOut::rectangular(const ShapeList& objectGeometry, bool isGerber, const C
             }
         }
         if (solid.empty()) {
-            error = "No quedó ninguna línea de corte";
+            error = "No cut line is left";
             return false;
         }
         result.solidGeometry = Shape::lineMerge(solid);
@@ -394,7 +394,7 @@ bool CutOut::rectangular(const ShapeList& objectGeometry, bool isGerber, const C
                 const Shape u = Shape::unaryUnion(objectGeometry);
                 double xmin = 0, ymin = 0, xmax = 0, ymax = 0;
                 if (!boundsOfShape(u, xmin, ymin, xmax, ymax)) {
-                    error = "El objeto no tiene límites";
+                    error = "The object has no bounds";
                     return false;
                 }
                 Shape mbGeo = Shape::box(xmin, ymin, xmax, ymax);
@@ -403,7 +403,7 @@ bool CutOut::rectangular(const ShapeList& objectGeometry, bool isGerber, const C
                 appendParts(mouseBitesGeo, subtractGeo({mbGeo}, Shape::unaryUnion(mbSolid)));
             } else {
                 // El original suma líneas a una geometría ya unida (`solid_geo += c_geo`) y lanza un TypeError.
-                error = "Los mouse bites del corte rectangular con varias figuras fallan en el original (TypeError)";
+                error = "The mouse bites of a rectangular cutout with several shapes fail in the original (TypeError)";
                 return false;
             }
             for (const Shape& line : mouseBitesGeo) {

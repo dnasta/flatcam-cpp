@@ -4,19 +4,21 @@
 #include <QKeySequence>
 #include <QSpacerItem>
 
+#include "gui/Translation.h"
+
 namespace flatcam::gui {
 
 void ThievingToolUIBase::setupUi() {
     // ---- acciones (compartidas entre menús y barras)
     this->setAutoFillBackground(true);
-    this->setProperty("objectName", QString::fromUtf8("Herramienta Thieving Tool"));
+    this->setProperty("objectName", QString::fromUtf8("Copper Thieving Tool"));
     layout = new QVBoxLayout();
     layout->setContentsMargins(9, 9, 9, 9);
     layout->setSpacing(6);
     auto* w1 = new FCLabel(nullptr);
     { QFont f = w1->font(); f.setBold(true); f.setPixelSize(16); w1->setFont(f); }
     w1->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"));
-    w1->setText(QString::fromUtf8("Herramienta Thieving Tool"));
+    w1->setText(trUi_(QString::fromUtf8("Copper Thieving Tool")));
     layout->addWidget(w1, 0);
     auto* w2 = new FCLabel(nullptr);
     layout->addWidget(w2, 0);
@@ -25,8 +27,8 @@ void ThievingToolUIBase::setupUi() {
     lay3->setHorizontalSpacing(6);
     lay3->setVerticalSpacing(6);
     grbobj_label = new FCLabel(nullptr);
-    grbobj_label->setText(QString::fromUtf8("<b>GERBER:</b>"));
-    grbobj_label->setToolTip(QString::fromUtf8("Gerber Objeto al que se agregará un Copper Thieving."));
+    grbobj_label->setText(trUi_(QString::fromUtf8("<b>GERBER:</b>")));
+    grbobj_label->setToolTip(trUi_(QString::fromUtf8("Gerber Object to which will be added a copper thieving.")));
     lay3->addWidget(grbobj_label, 0, 0, 1, 1);
     grb_object_combo = new FCComboBox(nullptr);
     lay3->addWidget(grb_object_combo, 1, 0, 1, 2);
@@ -42,12 +44,12 @@ void ThievingToolUIBase::setupUi() {
     lay5->setHorizontalSpacing(6);
     lay5->setVerticalSpacing(6);
     copper_fill_label = new FCLabel(nullptr);
-    copper_fill_label->setText(QString::fromUtf8("<b>Parámetros</b>"));
-    copper_fill_label->setToolTip(QString::fromUtf8("Parámetros utilizados para esta herramienta."));
+    copper_fill_label->setText(trUi_(QString::fromUtf8("<b>Parameters</b>")));
+    copper_fill_label->setToolTip(trUi_(QString::fromUtf8("Parameters used for this tool.")));
     lay5->addWidget(copper_fill_label, 0, 0, 1, 2);
     clearance_label = new FCLabel(nullptr);
-    clearance_label->setText(QString::fromUtf8("Despeje:"));
-    clearance_label->setToolTip(QString::fromUtf8("Esto establece la distancia entre los componentes de Copper Thieving\n(el relleno de polígono puede dividirse en múltiples polígonos)\ny las rastros de cobre en el archivo Gerber."));
+    clearance_label->setText(trUi_(QString::fromUtf8("Clearance:")));
+    clearance_label->setToolTip(trUi_(QString::fromUtf8("This set the distance between the copper thieving components\n(the polygon fill may be split in multiple polygons)\nand the copper traces in the Gerber file.")));
     lay5->addWidget(clearance_label, 2, 0, 1, 1);
     clearance_entry = new FCDoubleSpinner(nullptr);
     clearance_entry->setProperty("decimals", 4);
@@ -56,8 +58,8 @@ void ThievingToolUIBase::setupUi() {
     clearance_entry->setProperty("value", 0.25);
     lay5->addWidget(clearance_entry, 2, 1, 1, 1);
     margin_label = new FCLabel(nullptr);
-    margin_label->setText(QString::fromUtf8("Margen:"));
-    margin_label->setToolTip(QString::fromUtf8("Margen de cuadro delimitador."));
+    margin_label->setText(trUi_(QString::fromUtf8("Margin:")));
+    margin_label->setToolTip(trUi_(QString::fromUtf8("Bounding box margin.")));
     lay5->addWidget(margin_label, 4, 0, 1, 1);
     margin_entry = new FCDoubleSpinner(nullptr);
     margin_entry->setProperty("decimals", 4);
@@ -66,8 +68,8 @@ void ThievingToolUIBase::setupUi() {
     margin_entry->setProperty("value", 1.0);
     lay5->addWidget(margin_entry, 4, 1, 1, 1);
     area_label = new FCLabel(nullptr);
-    area_label->setText(QString::fromUtf8("Zona:"));
-    area_label->setToolTip(QString::fromUtf8("Robar áreas con un área menor a este valor no se agregará."));
+    area_label->setText(trUi_(QString::fromUtf8("Area:")));
+    area_label->setToolTip(trUi_(QString::fromUtf8("Thieving areas with area less then this value will not be added.")));
     lay5->addWidget(area_label, 6, 0, 1, 1);
     auto* lay6 = new QHBoxLayout();
     lay6->setContentsMargins(0, 0, 0, 0);
@@ -80,41 +82,41 @@ void ThievingToolUIBase::setupUi() {
     area_entry->setProperty("value", 0.1);
     lay6->addWidget(area_entry, 0);
     auto* w7 = new FCLabel(nullptr);
-    w7->setText(QString::fromUtf8("mm<sup>2</sup>"));
+    w7->setText(trUi_(QString::fromUtf8("mm<sup>2</sup>")));
     lay6->addWidget(w7, 0);
     lay5->addLayout(lay6, 6, 1, 1, 1);
     reference_label = new FCLabel(nullptr);
-    reference_label->setText(QString::fromUtf8("Referencia:"));
-    reference_label->setToolTip(QString::fromUtf8("- 'Sí mismo': la extensión de Copper Thieving se basa en la extensión del objeto.\n- 'Selección de área': haga clic con el botón izquierdo del mouse para iniciar la selección del área a rellenar.\n- 'Objeto de referencia': 'Copper Thieving' dentro del área especificada por otro objeto."));
+    reference_label->setText(trUi_(QString::fromUtf8("Reference:")));
+    reference_label->setToolTip(trUi_(QString::fromUtf8("- 'Itself' - the copper thieving extent is based on the object extent.\n- 'Area Selection' - left mouse click to start selection of the area to be filled.\n- 'Reference Object' - will do copper thieving within the area specified by another object.")));
     lay5->addWidget(reference_label, 8, 0, 1, 1);
-    reference_radio = new RadioSet({{QString::fromUtf8("Sí mismo"), QVariant(QString::fromUtf8("itself"))}, {QString::fromUtf8("Selección de área"), QVariant(QString::fromUtf8("area"))}, {QString::fromUtf8("Objeto de referencia"), QVariant(QString::fromUtf8("box"))}}, Qt::Vertical, false, nullptr);
+    reference_radio = new RadioSet({{trUi_(QString::fromUtf8("Itself")), QVariant(QString::fromUtf8("itself"))}, {trUi_(QString::fromUtf8("Area Selection")), QVariant(QString::fromUtf8("area"))}, {trUi_(QString::fromUtf8("Reference Object")), QVariant(QString::fromUtf8("box"))}}, Qt::Vertical, false, nullptr);
     reference_radio->setValue(QVariant(QString::fromUtf8("itself")));
     lay5->addWidget(reference_radio, 8, 1, 1, 1);
     ref_combo_type_label = new FCLabel(nullptr);
-    ref_combo_type_label->setText(QString::fromUtf8("Tipo de Ref:"));
-    ref_combo_type_label->setToolTip(QString::fromUtf8("El tipo de objeto FlatCAM que se utilizará como referencia de 'Copper Thieving'.\nPuede ser Gerber, Excellon o Geometry."));
+    ref_combo_type_label->setText(trUi_(QString::fromUtf8("Ref. Type:")));
+    ref_combo_type_label->setToolTip(trUi_(QString::fromUtf8("The type of FlatCAM object to be used as copper thieving reference.\nIt can be Gerber, Excellon or Geometry.")));
     ref_combo_type_label->setHidden(true);
     lay5->addWidget(ref_combo_type_label, 10, 0, 1, 1);
     ref_combo_type = new FCComboBox(nullptr);
-    ref_combo_type->setProperty("currentText", QString::fromUtf8("Gerber"));
+    ref_combo_type->setProperty("currentText", trUi_(QString::fromUtf8("Gerber")));
     ref_combo_type->setHidden(true);
-    ref_combo_type->addItem(QString::fromUtf8("Gerber"));
-    ref_combo_type->addItem(QString::fromUtf8("Excellon"));
-    ref_combo_type->addItem(QString::fromUtf8("Geometría"));
+    ref_combo_type->addItem(trUi_(QString::fromUtf8("Gerber")));
+    ref_combo_type->addItem(trUi_(QString::fromUtf8("Excellon")));
+    ref_combo_type->addItem(trUi_(QString::fromUtf8("Geometry")));
     lay5->addWidget(ref_combo_type, 10, 1, 1, 1);
     ref_combo_label = new FCLabel(nullptr);
-    ref_combo_label->setText(QString::fromUtf8("Objeto de Ref:"));
-    ref_combo_label->setToolTip(QString::fromUtf8("El objeto FlatCAM que se utilizará como referencia de compensación sin cobre."));
+    ref_combo_label->setText(trUi_(QString::fromUtf8("Ref. Object:")));
+    ref_combo_label->setToolTip(trUi_(QString::fromUtf8("The FlatCAM object to be used as non copper clearing reference.")));
     ref_combo_label->setHidden(true);
     lay5->addWidget(ref_combo_label, 12, 0, 1, 1);
     ref_combo = new FCComboBox(nullptr);
     ref_combo->setHidden(true);
     lay5->addWidget(ref_combo, 12, 1, 1, 1);
     bbox_type_label = new FCLabel(nullptr);
-    bbox_type_label->setText(QString::fromUtf8("Tipo de caja:"));
-    bbox_type_label->setToolTip(QString::fromUtf8("- 'Rectangular': el cuadro delimitador tendrá forma rectangular.\n- 'Mínimo': el cuadro delimitador tendrá forma de casco convexo."));
+    bbox_type_label->setText(trUi_(QString::fromUtf8("Box Type:")));
+    bbox_type_label->setToolTip(trUi_(QString::fromUtf8("- 'Rectangular' - the bounding box will be of rectangular shape.\n- 'Minimal' - the bounding box will be the convex hull shape.")));
     lay5->addWidget(bbox_type_label, 14, 0, 1, 1);
-    bbox_type_radio = new RadioSet({{QString::fromUtf8("Rectangular"), QVariant(QString::fromUtf8("rect"))}, {QString::fromUtf8("Mínimo"), QVariant(QString::fromUtf8("min"))}}, Qt::Horizontal, false, nullptr);
+    bbox_type_radio = new RadioSet({{trUi_(QString::fromUtf8("Rectangular")), QVariant(QString::fromUtf8("rect"))}, {trUi_(QString::fromUtf8("Minimal")), QVariant(QString::fromUtf8("min"))}}, Qt::Horizontal, false, nullptr);
     bbox_type_radio->setValue(QVariant(QString::fromUtf8("rect")));
     lay5->addWidget(bbox_type_radio, 14, 1, 1, 1);
     auto* w8 = new QFrame(nullptr);
@@ -123,10 +125,10 @@ void ThievingToolUIBase::setupUi() {
     { QSizePolicy sp(QSizePolicy::Policy(1), QSizePolicy::Policy(0)); sp.setHorizontalStretch(0); sp.setVerticalStretch(0); w8->setSizePolicy(sp); }
     lay5->addWidget(w8, 16, 0, 1, 2);
     fill_type_label = new FCLabel(nullptr);
-    fill_type_label->setText(QString::fromUtf8("Tipo de relleno:"));
-    fill_type_label->setToolTip(QString::fromUtf8("- 'Sólido': el robo de cobre será un polígono sólido.\n- 'Cuadrícula de puntos': el área vacía se rellenará con un patrón de puntos.\n- 'Cuadrícula de cuadrados': el área vacía se rellenará con un patrón de cuadrados.\n- 'Cuadrícula de líneas': el área vacía se rellenará con un patrón de líneas."));
+    fill_type_label->setText(trUi_(QString::fromUtf8("Fill Type:")));
+    fill_type_label->setToolTip(trUi_(QString::fromUtf8("- 'Solid' - copper thieving will be a solid polygon.\n- 'Dots Grid' - the empty area will be filled with a pattern of dots.\n- 'Squares Grid' - the empty area will be filled with a pattern of squares.\n- 'Lines Grid' - the empty area will be filled with a pattern of lines.")));
     lay5->addWidget(fill_type_label, 18, 0, 1, 1);
-    fill_type_radio = new RadioSet({{QString::fromUtf8("Sólido"), QVariant(QString::fromUtf8("solid"))}, {QString::fromUtf8("Cuadrícula de puntos"), QVariant(QString::fromUtf8("dot"))}, {QString::fromUtf8("Cuadrícula de cuadrados"), QVariant(QString::fromUtf8("square"))}, {QString::fromUtf8("Cuadrícula de líneas"), QVariant(QString::fromUtf8("line"))}}, Qt::Vertical, false, nullptr);
+    fill_type_radio = new RadioSet({{trUi_(QString::fromUtf8("Solid")), QVariant(QString::fromUtf8("solid"))}, {trUi_(QString::fromUtf8("Dots Grid")), QVariant(QString::fromUtf8("dot"))}, {trUi_(QString::fromUtf8("Squares Grid")), QVariant(QString::fromUtf8("square"))}, {trUi_(QString::fromUtf8("Lines Grid")), QVariant(QString::fromUtf8("line"))}}, Qt::Vertical, false, nullptr);
     fill_type_radio->setValue(QVariant(QString::fromUtf8("solid")));
     lay5->addWidget(fill_type_radio, 18, 1, 1, 1);
     lay5->setColumnStretch(1, 1);
@@ -138,11 +140,11 @@ void ThievingToolUIBase::setupUi() {
     lay9->setHorizontalSpacing(6);
     lay9->setVerticalSpacing(6);
     dots_label = new FCLabel(nullptr);
-    dots_label->setText(QString::fromUtf8("<b>Parámetros de cuadrícula de puntos</b>:"));
+    dots_label->setText(trUi_(QString::fromUtf8("<b>Dots Grid Parameters</b>:")));
     lay9->addWidget(dots_label, 0, 0, 1, 2);
     dotdia_label = new FCLabel(nullptr);
-    dotdia_label->setText(QString::fromUtf8("Dia:"));
-    dotdia_label->setToolTip(QString::fromUtf8("Diámetro de punto en cuadrícula de puntos."));
+    dotdia_label->setText(trUi_(QString::fromUtf8("Dia:")));
+    dotdia_label->setToolTip(trUi_(QString::fromUtf8("Dot diameter in Dots Grid.")));
     lay9->addWidget(dotdia_label, 1, 0, 1, 1);
     dot_dia_entry = new FCDoubleSpinner(nullptr);
     dot_dia_entry->setProperty("decimals", 4);
@@ -151,8 +153,8 @@ void ThievingToolUIBase::setupUi() {
     dot_dia_entry->setProperty("value", 1.0);
     lay9->addWidget(dot_dia_entry, 1, 1, 1, 1);
     dotspacing_label = new FCLabel(nullptr);
-    dotspacing_label->setText(QString::fromUtf8("Spacing:"));
-    dotspacing_label->setToolTip(QString::fromUtf8("Distancia entre cada dos puntos en la cuadrícula de puntos."));
+    dotspacing_label->setText(trUi_(QString::fromUtf8("Spacing:")));
+    dotspacing_label->setToolTip(trUi_(QString::fromUtf8("Distance between each two dots in Dots Grid.")));
     lay9->addWidget(dotspacing_label, 2, 0, 1, 1);
     dot_spacing_entry = new FCDoubleSpinner(nullptr);
     dot_spacing_entry->setProperty("decimals", 4);
@@ -170,11 +172,11 @@ void ThievingToolUIBase::setupUi() {
     lay10->setHorizontalSpacing(6);
     lay10->setVerticalSpacing(6);
     squares_label = new FCLabel(nullptr);
-    squares_label->setText(QString::fromUtf8("<b>Parámetros de la cuadrícula de cuadrados</b>:"));
+    squares_label->setText(trUi_(QString::fromUtf8("<b>Squares Grid Parameters</b>:")));
     lay10->addWidget(squares_label, 0, 0, 1, 2);
     square_size_label = new FCLabel(nullptr);
-    square_size_label->setText(QString::fromUtf8("Tamaño:"));
-    square_size_label->setToolTip(QString::fromUtf8("Tamaño del lado cuadrado en cuadrícula de cuadrados."));
+    square_size_label->setText(trUi_(QString::fromUtf8("Size:")));
+    square_size_label->setToolTip(trUi_(QString::fromUtf8("Square side size in Squares Grid.")));
     lay10->addWidget(square_size_label, 1, 0, 1, 1);
     square_size_entry = new FCDoubleSpinner(nullptr);
     square_size_entry->setProperty("decimals", 4);
@@ -183,8 +185,8 @@ void ThievingToolUIBase::setupUi() {
     square_size_entry->setProperty("value", 1.0);
     lay10->addWidget(square_size_entry, 1, 1, 1, 1);
     squares_spacing_label = new FCLabel(nullptr);
-    squares_spacing_label->setText(QString::fromUtf8("Spacing:"));
-    squares_spacing_label->setToolTip(QString::fromUtf8("Distancia entre cada dos cuadrados en la cuadrícula de cuadrados."));
+    squares_spacing_label->setText(trUi_(QString::fromUtf8("Spacing:")));
+    squares_spacing_label->setToolTip(trUi_(QString::fromUtf8("Distance between each two squares in Squares Grid.")));
     lay10->addWidget(squares_spacing_label, 2, 0, 1, 1);
     squares_spacing_entry = new FCDoubleSpinner(nullptr);
     squares_spacing_entry->setProperty("decimals", 4);
@@ -202,11 +204,11 @@ void ThievingToolUIBase::setupUi() {
     lay11->setHorizontalSpacing(6);
     lay11->setVerticalSpacing(6);
     lines_label = new FCLabel(nullptr);
-    lines_label->setText(QString::fromUtf8("<b>Parámetros de cuadrícula de líneas</b>:"));
+    lines_label->setText(trUi_(QString::fromUtf8("<b>Lines Grid Parameters</b>:")));
     lay11->addWidget(lines_label, 0, 0, 1, 2);
     line_size_label = new FCLabel(nullptr);
-    line_size_label->setText(QString::fromUtf8("Tamaño:"));
-    line_size_label->setToolTip(QString::fromUtf8("Tamaño del grosor de línea en la cuadrícula de líneas."));
+    line_size_label->setText(trUi_(QString::fromUtf8("Size:")));
+    line_size_label->setToolTip(trUi_(QString::fromUtf8("Line thickness size in Lines Grid.")));
     lay11->addWidget(line_size_label, 1, 0, 1, 1);
     line_size_entry = new FCDoubleSpinner(nullptr);
     line_size_entry->setProperty("decimals", 4);
@@ -215,8 +217,8 @@ void ThievingToolUIBase::setupUi() {
     line_size_entry->setProperty("value", 0.25);
     lay11->addWidget(line_size_entry, 1, 1, 1, 1);
     lines_spacing_label = new FCLabel(nullptr);
-    lines_spacing_label->setText(QString::fromUtf8("Spacing:"));
-    lines_spacing_label->setToolTip(QString::fromUtf8("Distancia entre cada dos líneas en la cuadrícula de líneas."));
+    lines_spacing_label->setText(trUi_(QString::fromUtf8("Spacing:")));
+    lines_spacing_label->setToolTip(trUi_(QString::fromUtf8("Distance between each two lines in Lines Grid.")));
     lay11->addWidget(lines_spacing_label, 2, 0, 1, 1);
     lines_spacing_entry = new FCDoubleSpinner(nullptr);
     lines_spacing_entry->setProperty("decimals", 4);
@@ -231,8 +233,8 @@ void ThievingToolUIBase::setupUi() {
     { QFont f = fill_button->font(); f.setBold(true); fill_button->setFont(f); }
     fill_button->setIcon(QIcon(QString::fromUtf8(":/images/copperfill32.png")));
     fill_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"));
-    fill_button->setText(QString::fromUtf8("Insertar Copper thieving"));
-    fill_button->setToolTip(QString::fromUtf8("Agregará un polígono (puede dividirse en varias partes)\neso rodeará las huellas reales de Gerber a cierta distancia."));
+    fill_button->setText(trUi_(QString::fromUtf8("Insert Copper thieving")));
+    fill_button->setToolTip(trUi_(QString::fromUtf8("Will add a polygon (may be split in multiple parts)\nthat will surround the actual Gerber traces at a certain distance.")));
     layout->addWidget(fill_button, 0);
     auto* lay12 = new QGridLayout();
     lay12->setContentsMargins(0, 0, 0, 0);
@@ -246,12 +248,12 @@ void ThievingToolUIBase::setupUi() {
     auto* w14 = new FCLabel(nullptr);
     lay12->addWidget(w14, 1, 0, 1, 1);
     robber_bar_label = new FCLabel(nullptr);
-    robber_bar_label->setText(QString::fromUtf8("<b>Parámetros de la Robber Bar</b>"));
-    robber_bar_label->setToolTip(QString::fromUtf8("Parámetros utilizados para la Robber Bar.\nRobber Bar = borde de cobre para ayudar en el enchapado de agujeros."));
+    robber_bar_label->setText(trUi_(QString::fromUtf8("<b>Robber Bar Parameters</b>")));
+    robber_bar_label->setToolTip(trUi_(QString::fromUtf8("Parameters used for the robber bar.\nRobber bar = copper border to help in pattern hole plating.")));
     lay12->addWidget(robber_bar_label, 2, 0, 1, 3);
     rb_margin_label = new FCLabel(nullptr);
-    rb_margin_label->setText(QString::fromUtf8("Margen:"));
-    rb_margin_label->setToolTip(QString::fromUtf8("Margen límite del recinto para Robber Bar."));
+    rb_margin_label->setText(trUi_(QString::fromUtf8("Margin:")));
+    rb_margin_label->setToolTip(trUi_(QString::fromUtf8("Bounding box margin for robber bar.")));
     lay12->addWidget(rb_margin_label, 4, 0, 1, 1);
     rb_margin_entry = new FCDoubleSpinner(nullptr);
     rb_margin_entry->setProperty("decimals", 4);
@@ -261,8 +263,8 @@ void ThievingToolUIBase::setupUi() {
     rb_margin_entry->setProperty("value", 1.0);
     lay12->addWidget(rb_margin_entry, 4, 1, 1, 2);
     rb_thickness_label = new FCLabel(nullptr);
-    rb_thickness_label->setText(QString::fromUtf8("Espesor:"));
-    rb_thickness_label->setToolTip(QString::fromUtf8("El grosor de la Robber Bar."));
+    rb_thickness_label->setText(trUi_(QString::fromUtf8("Thickness:")));
+    rb_thickness_label->setToolTip(trUi_(QString::fromUtf8("The robber bar thickness.")));
     lay12->addWidget(rb_thickness_label, 6, 0, 1, 1);
     rb_thickness_entry = new FCDoubleSpinner(nullptr);
     rb_thickness_entry->setProperty("decimals", 4);
@@ -274,8 +276,8 @@ void ThievingToolUIBase::setupUi() {
     { QFont f = rb_button->font(); f.setBold(true); rb_button->setFont(f); }
     rb_button->setIcon(QIcon(QString::fromUtf8(":/images/robber32.png")));
     rb_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"));
-    rb_button->setText(QString::fromUtf8("Insertar Robber Bar"));
-    rb_button->setToolTip(QString::fromUtf8("Agregará un polígono con un grosor definido\nque rodeará el objeto real de Gerber\na cierta distancia.\nSe requiere cuando se hace un patrón de agujeros."));
+    rb_button->setText(trUi_(QString::fromUtf8("Insert Robber Bar")));
+    rb_button->setToolTip(trUi_(QString::fromUtf8("Will add a polygon with a defined thickness\nthat will surround the actual Gerber object\nat a certain distance.\nRequired when doing holes pattern plating.")));
     lay12->addWidget(rb_button, 8, 0, 1, 3);
     auto* w15 = new QFrame(nullptr);
     w15->setProperty("frameShadow", 48);
@@ -283,18 +285,18 @@ void ThievingToolUIBase::setupUi() {
     { QSizePolicy sp(QSizePolicy::Policy(1), QSizePolicy::Policy(0)); sp.setHorizontalStretch(0); sp.setVerticalStretch(0); w15->setSizePolicy(sp); }
     lay12->addWidget(w15, 10, 0, 1, 3);
     patern_mask_label = new FCLabel(nullptr);
-    patern_mask_label->setText(QString::fromUtf8("<b>Máscara de baño de patrones</b>"));
-    patern_mask_label->setToolTip(QString::fromUtf8("Genere una máscara para el enchapado de patrones."));
+    patern_mask_label->setText(trUi_(QString::fromUtf8("<b>Pattern Plating Mask</b>")));
+    patern_mask_label->setToolTip(trUi_(QString::fromUtf8("Generate a mask for pattern plating.")));
     lay12->addWidget(patern_mask_label, 12, 0, 1, 3);
     sm_obj_label = new FCLabel(nullptr);
-    sm_obj_label->setText(QString::fromUtf8("Seleccionar objeto Soldermask:"));
-    sm_obj_label->setToolTip(QString::fromUtf8("Objeto Gerber con la máscara de soldadura.\nSe utilizará como base para\nEl patrón de la máscara de recubrimiento."));
+    sm_obj_label->setText(trUi_(QString::fromUtf8("Select Soldermask object:")));
+    sm_obj_label->setToolTip(trUi_(QString::fromUtf8("Gerber Object with the soldermask.\nIt will be used as a base for\nthe pattern plating mask.")));
     lay12->addWidget(sm_obj_label, 14, 0, 1, 3);
     sm_object_combo = new FCComboBox(nullptr);
     lay12->addWidget(sm_object_combo, 16, 0, 1, 3);
     clearance_ppm_label = new FCLabel(nullptr);
-    clearance_ppm_label->setText(QString::fromUtf8("Despeje:"));
-    clearance_ppm_label->setToolTip(QString::fromUtf8("La distancia entre los posibles elementos de Copper Thieving.\ny / o Robber Bar y las aberturas reales en la máscara."));
+    clearance_ppm_label->setText(trUi_(QString::fromUtf8("Clearance:")));
+    clearance_ppm_label->setToolTip(trUi_(QString::fromUtf8("The distance between the possible copper thieving elements\nand/or robber bar and the actual openings in the mask.")));
     lay12->addWidget(clearance_ppm_label, 18, 0, 1, 1);
     clearance_ppm_entry = new FCDoubleSpinner(nullptr);
     clearance_ppm_entry->setProperty("decimals", 4);
@@ -303,28 +305,28 @@ void ThievingToolUIBase::setupUi() {
     clearance_ppm_entry->setProperty("singleStep", 0.1);
     lay12->addWidget(clearance_ppm_entry, 18, 1, 1, 2);
     plated_area_label = new FCLabel(nullptr);
-    plated_area_label->setText(QString::fromUtf8("Área chapada:"));
-    plated_area_label->setToolTip(QString::fromUtf8("El área a ser chapada por patrón de chapado.\nBásicamente está hecho de las aberturas en la máscara de recubrimiento.\n\n<<ADVERTENCIA>> - el área calculada es en realidad un poco más grande\nDebido al hecho de que las aberturas de la máscara de soldadura son por diseño\nun poco más grande que las almohadillas de cobre, y esta área es\ncalculado a partir de las aberturas de la máscara de soldadura."));
+    plated_area_label->setText(trUi_(QString::fromUtf8("Plated area:")));
+    plated_area_label->setToolTip(trUi_(QString::fromUtf8("The area to be plated by pattern plating.\nBasically is made from the openings in the plating mask.\n\n<<WARNING>> - the calculated area is actually a bit larger\ndue of the fact that the soldermask openings are by design\na bit larger than the copper pads, and this area is\ncalculated from the soldermask openings.")));
     lay12->addWidget(plated_area_label, 20, 0, 1, 1);
     plated_area_entry = new FCEntry(nullptr);
     plated_area_entry->setEnabled(false);
     lay12->addWidget(plated_area_entry, 20, 1, 1, 1);
     units_area_label = new FCLabel(nullptr);
-    units_area_label->setText(QString::fromUtf8("mm<sup>2</sup>"));
+    units_area_label->setText(trUi_(QString::fromUtf8("mm<sup>2</sup>")));
     lay12->addWidget(units_area_label, 20, 2, 1, 1);
     ppm_choice_label = new FCLabel(nullptr);
-    ppm_choice_label->setText(QString::fromUtf8("Añadir:"));
-    ppm_choice_label->setToolTip(QString::fromUtf8("Elija qué geometría adicional incluir, si está disponible."));
+    ppm_choice_label->setText(trUi_(QString::fromUtf8("Add:")));
+    ppm_choice_label->setToolTip(trUi_(QString::fromUtf8("Choose which additional geometry to include, if available.")));
     lay12->addWidget(ppm_choice_label, 22, 0, 1, 1);
-    ppm_choice_radio = new RadioSet({{QString::fromUtf8("Ambas"), QVariant(QString::fromUtf8("b"))}, {QString::fromUtf8("Ladrón"), QVariant(QString::fromUtf8("t"))}, {QString::fromUtf8("Barra de Ladrón"), QVariant(QString::fromUtf8("r"))}, {QString::fromUtf8("Ninguno"), QVariant(QString::fromUtf8("n"))}}, Qt::Vertical, false, nullptr);
+    ppm_choice_radio = new RadioSet({{trUi_(QString::fromUtf8("Both")), QVariant(QString::fromUtf8("b"))}, {trUi_(QString::fromUtf8("Thieving")), QVariant(QString::fromUtf8("t"))}, {trUi_(QString::fromUtf8("Robber bar")), QVariant(QString::fromUtf8("r"))}, {trUi_(QString::fromUtf8("None")), QVariant(QString::fromUtf8("n"))}}, Qt::Vertical, false, nullptr);
     ppm_choice_radio->setValue(QVariant(QString::fromUtf8("b")));
     lay12->addWidget(ppm_choice_radio, 22, 1, 1, 2);
     ppm_button = new QPushButton(nullptr);
     { QFont f = ppm_button->font(); f.setBold(true); ppm_button->setFont(f); }
     ppm_button->setIcon(QIcon(QString::fromUtf8(":/images/pattern32.png")));
     ppm_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"));
-    ppm_button->setText(QString::fromUtf8("Generar máscara de recubrimiento de patrón"));
-    ppm_button->setToolTip(QString::fromUtf8("Agregará a la máscara de soldadura la geometría gerber\nLas geometrías de Copper Thieving y / o\nla Robber Bar si esos fueron generados."));
+    ppm_button->setText(trUi_(QString::fromUtf8("Generate pattern plating mask")));
+    ppm_button->setToolTip(trUi_(QString::fromUtf8("Will add to the soldermask gerber geometry\nthe geometries of the copper thieving and/or\nthe robber bar if those were generated.")));
     lay12->addWidget(ppm_button, 24, 0, 1, 3);
     lay12->setColumnStretch(1, 1);
     layout->addLayout(lay12, 0);
@@ -333,8 +335,8 @@ void ThievingToolUIBase::setupUi() {
     { QFont f = reset_button->font(); f.setBold(true); reset_button->setFont(f); }
     reset_button->setIcon(QIcon(QString::fromUtf8(":/images/reset32.png")));
     reset_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"));
-    reset_button->setText(QString::fromUtf8("Restablecer la Herramienta"));
-    reset_button->setToolTip(QString::fromUtf8("Restablecerá los parámetros de la herramienta."));
+    reset_button->setText(trUi_(QString::fromUtf8("Reset Tool")));
+    reset_button->setToolTip(trUi_(QString::fromUtf8("Will reset the tool parameters.")));
     layout->addWidget(reset_button, 0);
     setLayout(layout);
 }

@@ -4,19 +4,21 @@
 #include <QKeySequence>
 #include <QSpacerItem>
 
+#include "gui/Translation.h"
+
 namespace flatcam::gui {
 
 void ExtractDrillsToolUIBase::setupUi() {
     // ---- acciones (compartidas entre menús y barras)
     this->setAutoFillBackground(true);
-    this->setProperty("objectName", QString::fromUtf8("Extraer Taladros"));
+    this->setProperty("objectName", QString::fromUtf8("Extract Drills"));
     layout = new QVBoxLayout();
     layout->setContentsMargins(9, 9, 9, 9);
     layout->setSpacing(6);
     auto* w1 = new QLabel(nullptr);
     { QFont f = w1->font(); f.setBold(true); f.setPixelSize(16); w1->setFont(f); }
     w1->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"));
-    w1->setText(QString::fromUtf8("Extraer Taladros"));
+    w1->setText(trUi_(QString::fromUtf8("Extract Drills")));
     layout->addWidget(w1, 0);
     auto* w2 = new QLabel(nullptr);
     layout->addWidget(w2, 0);
@@ -25,35 +27,35 @@ void ExtractDrillsToolUIBase::setupUi() {
     lay3->setHorizontalSpacing(6);
     lay3->setVerticalSpacing(6);
     grb_label = new QLabel(nullptr);
-    grb_label->setText(QString::fromUtf8("<b>GERBER:</b>"));
-    grb_label->setToolTip(QString::fromUtf8("Gerber de donde extraer agujeros de perforación."));
+    grb_label->setText(trUi_(QString::fromUtf8("<b>GERBER:</b>")));
+    grb_label->setToolTip(trUi_(QString::fromUtf8("Gerber from which to extract drill holes.")));
     lay3->addWidget(grb_label, 0, 0, 1, 2);
     gerber_object_combo = new FCComboBox(nullptr);
     lay3->addWidget(gerber_object_combo, 1, 0, 1, 2);
     padt_label = new QLabel(nullptr);
-    padt_label->setText(QString::fromUtf8("<b>Tipo de almohadillas procesadas</b>"));
-    padt_label->setToolTip(QString::fromUtf8("El tipo de forma de almohadillas que se procesará.\nSi la PCB tiene muchas almohadillas SMD con almohadillas rectangulares,\ndeshabilitar la apertura rectangular."));
+    padt_label->setText(trUi_(QString::fromUtf8("<b>Processed Pads Type</b>")));
+    padt_label->setToolTip(trUi_(QString::fromUtf8("The type of pads shape to be processed.\nIf the PCB has many SMD pads with rectangular pads,\ndisable the Rectangular aperture.")));
     lay3->addWidget(padt_label, 2, 0, 1, 2);
     circular_cb = new FCCheckBox(nullptr);
     circular_cb->setChecked(true);
-    circular_cb->setText(QString::fromUtf8("Circular"));
-    circular_cb->setToolTip(QString::fromUtf8("Proceso de Almohadillas Circulares."));
+    circular_cb->setText(trUi_(QString::fromUtf8("Circular")));
+    circular_cb->setToolTip(trUi_(QString::fromUtf8("Process Circular Pads.")));
     lay3->addWidget(circular_cb, 3, 0, 1, 2);
     oblong_cb = new FCCheckBox(nullptr);
-    oblong_cb->setText(QString::fromUtf8("Oblongo"));
-    oblong_cb->setToolTip(QString::fromUtf8("Procesar almohadillas oblongas."));
+    oblong_cb->setText(trUi_(QString::fromUtf8("Oblong")));
+    oblong_cb->setToolTip(trUi_(QString::fromUtf8("Process Oblong Pads.")));
     lay3->addWidget(oblong_cb, 4, 0, 1, 2);
     square_cb = new FCCheckBox(nullptr);
-    square_cb->setText(QString::fromUtf8("Cuadrado"));
-    square_cb->setToolTip(QString::fromUtf8("Procesar almohadillas cuadradas."));
+    square_cb->setText(trUi_(QString::fromUtf8("Square")));
+    square_cb->setToolTip(trUi_(QString::fromUtf8("Process Square Pads.")));
     lay3->addWidget(square_cb, 5, 0, 1, 2);
     rectangular_cb = new FCCheckBox(nullptr);
-    rectangular_cb->setText(QString::fromUtf8("Rectangular"));
-    rectangular_cb->setToolTip(QString::fromUtf8("Proceso Almohadillas Rectangulares."));
+    rectangular_cb->setText(trUi_(QString::fromUtf8("Rectangular")));
+    rectangular_cb->setToolTip(trUi_(QString::fromUtf8("Process Rectangular Pads.")));
     lay3->addWidget(rectangular_cb, 6, 0, 1, 2);
     other_cb = new FCCheckBox(nullptr);
-    other_cb->setText(QString::fromUtf8("Otros"));
-    other_cb->setToolTip(QString::fromUtf8("Procese los pads no en las categorías anteriores."));
+    other_cb->setText(trUi_(QString::fromUtf8("Others")));
+    other_cb->setToolTip(trUi_(QString::fromUtf8("Process pads not in the categories above.")));
     lay3->addWidget(other_cb, 7, 0, 1, 2);
     auto* w4 = new QFrame(nullptr);
     w4->setProperty("frameShadow", 48);
@@ -67,10 +69,10 @@ void ExtractDrillsToolUIBase::setupUi() {
     lay5->setHorizontalSpacing(6);
     lay5->setVerticalSpacing(6);
     method_label = new QLabel(nullptr);
-    method_label->setText(QString::fromUtf8("<b>Método</b>"));
-    method_label->setToolTip(QString::fromUtf8("El método para procesar almohadillas. Puede ser:\n- Diámetro fijo -> todos los agujeros tendrán un tamaño establecido\n- Anillo anular fijo -> todos los agujeros tendrán un anillo anular establecido\n- Proporcional -> cada tamaño de agujero será una fracción del tamaño de la almohadilla"));
+    method_label->setText(trUi_(QString::fromUtf8("<b>Method</b>")));
+    method_label->setToolTip(trUi_(QString::fromUtf8("The method for processing pads. Can be:\n- Fixed Diameter -> all holes will have a set size\n- Fixed Annular Ring -> all holes will have a set annular ring\n- Proportional -> each hole size will be a fraction of the pad size")));
     lay5->addWidget(method_label, 2, 0, 1, 2);
-    hole_size_radio = new RadioSet({{QString::fromUtf8("Diámetro fijo"), QVariant(QString::fromUtf8("fixed"))}, {QString::fromUtf8("Proporcional"), QVariant(QString::fromUtf8("prop"))}, {QString::fromUtf8("Anillo anular fijo"), QVariant(QString::fromUtf8("ring"))}}, Qt::Vertical, false, nullptr);
+    hole_size_radio = new RadioSet({{trUi_(QString::fromUtf8("Fixed Diameter")), QVariant(QString::fromUtf8("fixed"))}, {trUi_(QString::fromUtf8("Proportional")), QVariant(QString::fromUtf8("prop"))}, {trUi_(QString::fromUtf8("Fixed Annular Ring")), QVariant(QString::fromUtf8("ring"))}}, Qt::Vertical, false, nullptr);
     hole_size_radio->setValue(QVariant(QString::fromUtf8("fixed")));
     lay5->addWidget(hole_size_radio, 3, 0, 1, 2);
     auto* w6 = new QFrame(nullptr);
@@ -79,11 +81,11 @@ void ExtractDrillsToolUIBase::setupUi() {
     { QSizePolicy sp(QSizePolicy::Policy(1), QSizePolicy::Policy(0)); sp.setHorizontalStretch(0); sp.setVerticalStretch(0); w6->setSizePolicy(sp); }
     lay5->addWidget(w6, 5, 0, 1, 2);
     fixed_label = new QLabel(nullptr);
-    fixed_label->setText(QString::fromUtf8("<b>Diámetro fijo</b>"));
+    fixed_label->setText(trUi_(QString::fromUtf8("<b>Fixed Diameter</b>")));
     lay5->addWidget(fixed_label, 6, 0, 1, 2);
     dia_label = new QLabel(nullptr);
-    dia_label->setText(QString::fromUtf8("Valor:"));
-    dia_label->setToolTip(QString::fromUtf8("Diámetro fijo del agujero."));
+    dia_label->setText(trUi_(QString::fromUtf8("Value:")));
+    dia_label->setToolTip(trUi_(QString::fromUtf8("Fixed hole diameter.")));
     lay5->addWidget(dia_label, 8, 0, 1, 1);
     dia_entry = new FCDoubleSpinner(nullptr);
     dia_entry->setProperty("decimals", 4);
@@ -102,12 +104,12 @@ void ExtractDrillsToolUIBase::setupUi() {
     lay7->setHorizontalSpacing(6);
     lay7->setVerticalSpacing(6);
     ring_label = new QLabel(nullptr);
-    ring_label->setText(QString::fromUtf8("<b>Anillo anular fijo</b>"));
-    ring_label->setToolTip(QString::fromUtf8("El tamaño del anillo anular.\nLa astilla de cobre entre el exterior del agujero\ny el margen de la almohadilla de cobre."));
+    ring_label->setText(trUi_(QString::fromUtf8("<b>Fixed Annular Ring</b>")));
+    ring_label->setToolTip(trUi_(QString::fromUtf8("The size of annular ring.\nThe copper sliver between the hole exterior\nand the margin of the copper pad.")));
     lay7->addWidget(ring_label, 0, 0, 1, 2);
     circular_ring_label = new QLabel(nullptr);
-    circular_ring_label->setText(QString::fromUtf8("Circular:"));
-    circular_ring_label->setToolTip(QString::fromUtf8("El tamaño del anillo anular para almohadillas circulares."));
+    circular_ring_label->setText(trUi_(QString::fromUtf8("Circular:")));
+    circular_ring_label->setToolTip(trUi_(QString::fromUtf8("The size of annular ring for circular pads.")));
     lay7->addWidget(circular_ring_label, 1, 0, 1, 1);
     circular_ring_entry = new FCDoubleSpinner(nullptr);
     circular_ring_entry->setProperty("decimals", 4);
@@ -115,8 +117,8 @@ void ExtractDrillsToolUIBase::setupUi() {
     circular_ring_entry->setProperty("value", 0.2);
     lay7->addWidget(circular_ring_entry, 1, 1, 1, 1);
     oblong_ring_label = new QLabel(nullptr);
-    oblong_ring_label->setText(QString::fromUtf8("Oblongo:"));
-    oblong_ring_label->setToolTip(QString::fromUtf8("El tamaño del anillo anular para almohadillas oblongas."));
+    oblong_ring_label->setText(trUi_(QString::fromUtf8("Oblong:")));
+    oblong_ring_label->setToolTip(trUi_(QString::fromUtf8("The size of annular ring for oblong pads.")));
     lay7->addWidget(oblong_ring_label, 2, 0, 1, 1);
     oblong_ring_entry = new FCDoubleSpinner(nullptr);
     oblong_ring_entry->setProperty("decimals", 4);
@@ -125,8 +127,8 @@ void ExtractDrillsToolUIBase::setupUi() {
     oblong_ring_entry->setProperty("value", 0.2);
     lay7->addWidget(oblong_ring_entry, 2, 1, 1, 1);
     square_ring_label = new QLabel(nullptr);
-    square_ring_label->setText(QString::fromUtf8("Cuadrado:"));
-    square_ring_label->setToolTip(QString::fromUtf8("El tamaño del anillo anular para almohadillas cuadradas."));
+    square_ring_label->setText(trUi_(QString::fromUtf8("Square:")));
+    square_ring_label->setToolTip(trUi_(QString::fromUtf8("The size of annular ring for square pads.")));
     lay7->addWidget(square_ring_label, 3, 0, 1, 1);
     square_ring_entry = new FCDoubleSpinner(nullptr);
     square_ring_entry->setProperty("decimals", 4);
@@ -135,8 +137,8 @@ void ExtractDrillsToolUIBase::setupUi() {
     square_ring_entry->setProperty("value", 0.2);
     lay7->addWidget(square_ring_entry, 3, 1, 1, 1);
     rectangular_ring_label = new QLabel(nullptr);
-    rectangular_ring_label->setText(QString::fromUtf8("Rectangular:"));
-    rectangular_ring_label->setToolTip(QString::fromUtf8("El tamaño del anillo anular para almohadillas rectangulares."));
+    rectangular_ring_label->setText(trUi_(QString::fromUtf8("Rectangular:")));
+    rectangular_ring_label->setToolTip(trUi_(QString::fromUtf8("The size of annular ring for rectangular pads.")));
     lay7->addWidget(rectangular_ring_label, 4, 0, 1, 1);
     rectangular_ring_entry = new FCDoubleSpinner(nullptr);
     rectangular_ring_entry->setProperty("decimals", 4);
@@ -145,8 +147,8 @@ void ExtractDrillsToolUIBase::setupUi() {
     rectangular_ring_entry->setProperty("value", 0.2);
     lay7->addWidget(rectangular_ring_entry, 4, 1, 1, 1);
     other_ring_label = new QLabel(nullptr);
-    other_ring_label->setText(QString::fromUtf8("Otros:"));
-    other_ring_label->setToolTip(QString::fromUtf8("El tamaño del anillo anular para otras almohadillas."));
+    other_ring_label->setText(trUi_(QString::fromUtf8("Others:")));
+    other_ring_label->setToolTip(trUi_(QString::fromUtf8("The size of annular ring for other pads.")));
     lay7->addWidget(other_ring_label, 5, 0, 1, 1);
     other_ring_entry = new FCDoubleSpinner(nullptr);
     other_ring_entry->setProperty("decimals", 4);
@@ -163,19 +165,19 @@ void ExtractDrillsToolUIBase::setupUi() {
     lay8->setHorizontalSpacing(6);
     lay8->setVerticalSpacing(6);
     prop_label = new QLabel(nullptr);
-    prop_label->setText(QString::fromUtf8("<b>Diá. proporcional</b>"));
+    prop_label->setText(trUi_(QString::fromUtf8("<b>Proportional Diameter</b>")));
     prop_label->setHidden(true);
     lay8->addWidget(prop_label, 2, 0, 1, 2);
     factor_label = new QLabel(nullptr);
-    factor_label->setText(QString::fromUtf8("Valor:"));
-    factor_label->setToolTip(QString::fromUtf8("Diámetro proporcional.\nEl diámetro del agujero será una fracción del tamaño de la almohadilla."));
+    factor_label->setText(trUi_(QString::fromUtf8("Value:")));
+    factor_label->setToolTip(trUi_(QString::fromUtf8("Proportional Diameter.\nThe hole diameter will be a fraction of the pad size.")));
     factor_label->setHidden(true);
     lay8->addWidget(factor_label, 3, 0, 1, 1);
     factor_entry = new FCDoubleSpinner(nullptr);
     factor_entry->setProperty("decimals", 4);
     factor_entry->setProperty("maximum", 100.0);
     factor_entry->setProperty("singleStep", 0.1);
-    factor_entry->setProperty("suffix", QString::fromUtf8(" %"));
+    factor_entry->setProperty("suffix", trUi_(QString::fromUtf8(" %")));
     factor_entry->setProperty("value", 80.0);
     factor_entry->setHidden(true);
     lay8->addWidget(factor_entry, 3, 1, 1, 1);
@@ -190,16 +192,16 @@ void ExtractDrillsToolUIBase::setupUi() {
     { QFont f = e_drills_button->font(); f.setBold(true); e_drills_button->setFont(f); }
     e_drills_button->setIcon(QIcon(QString::fromUtf8(":/images/drill16.png")));
     e_drills_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t\t\t"));
-    e_drills_button->setText(QString::fromUtf8("Extraer Taladros"));
-    e_drills_button->setToolTip(QString::fromUtf8("Extraer simulacros de un archivo Gerber dado."));
+    e_drills_button->setText(trUi_(QString::fromUtf8("Extract Drills")));
+    e_drills_button->setToolTip(trUi_(QString::fromUtf8("Extract drills from a given Gerber file.")));
     layout->addWidget(e_drills_button, 0);
     layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Policy(1), QSizePolicy::Policy(7)));
     reset_button = new QPushButton(nullptr);
     { QFont f = reset_button->font(); f.setBold(true); reset_button->setFont(f); }
     reset_button->setIcon(QIcon(QString::fromUtf8(":/images/reset32.png")));
     reset_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\tQPushButton\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"));
-    reset_button->setText(QString::fromUtf8("Restablecer la Herramienta"));
-    reset_button->setToolTip(QString::fromUtf8("Restablecerá los parámetros de la herramienta."));
+    reset_button->setText(trUi_(QString::fromUtf8("Reset Tool")));
+    reset_button->setToolTip(trUi_(QString::fromUtf8("Will reset the tool parameters.")));
     layout->addWidget(reset_button, 0);
     setLayout(layout);
 }

@@ -77,6 +77,16 @@ def cstr(s):
     return 'QString::fromUtf8("%s")' % "".join(out).replace("??", '?""?')  # evita trigrafos
 
 
+def tstr(s):
+    """Un texto visible: el del original en inglés, que `trUi_` pasa al idioma elegido (resources/i18n/<idioma>.json,
+    armado por build_translations.py emparejando los volcados de la interfaz original en cada idioma)."""
+    return "trUi_(%s)" % cstr(s)
+
+
+# Propiedades de texto que se ponen con setProperty y dependen del idioma.
+TEXT_PROPS = {"currentText", "placeholderText", "suffix", "plainText", "prefix", "specialValueText"}
+
+
 class Gen:
     def __init__(self, data):
         self.data = data
@@ -121,7 +131,7 @@ class Gen:
                 if isinstance(x, float):
                     return "QVariant(%r)" % x
                 return "QVariant(%s)" % cstr(str(x))
-            choices = ", ".join("{%s, %s}" % (cstr(c["label"]), val(c["value"])) for c in node["choices"])
+            choices = ", ".join("{%s, %s}" % (tstr(c["label"]), val(c["value"])) for c in node["choices"])
             return "new RadioSet({%s}, %s, %s, %s)" % (choices, "Qt::Vertical" if node.get("vertical") else "Qt::Horizontal",
                                                       "true" if node.get("stretch") else "false", parent)
         if py == "FCSliderWithSpinner":
@@ -150,17 +160,17 @@ class Gen:
         for name, val in order:
             t, x = val["t"], val["v"]
             if name == "text":
-                self.emit("%s->setText(%s);" % (v, cstr(x)))
+                self.emit("%s->setText(%s);" % (v, tstr(x)))
             elif name == "toolTip":
-                self.emit("%s->setToolTip(%s);" % (v, cstr(x)))
+                self.emit("%s->setToolTip(%s);" % (v, tstr(x)))
             elif name == "statusTip":
-                self.emit("%s->setStatusTip(%s);" % (v, cstr(x)))
+                self.emit("%s->setStatusTip(%s);" % (v, tstr(x)))
             elif name == "whatsThis":
-                self.emit("%s->setWhatsThis(%s);" % (v, cstr(x)))
+                self.emit("%s->setWhatsThis(%s);" % (v, tstr(x)))
             elif name == "title":
-                self.emit("%s->setTitle(%s);" % (v, cstr(x)))
+                self.emit("%s->setTitle(%s);" % (v, tstr(x)))
             elif name == "windowTitle":
-                self.emit("%s->setWindowTitle(%s);" % (v, cstr(x)))
+                self.emit("%s->setWindowTitle(%s);" % (v, tstr(x)))
             elif name == "styleSheet":
                 self.emit("%s->setStyleSheet(%s);" % (v, cstr(x)))
             elif name == "pixmap":
@@ -198,7 +208,7 @@ class Gen:
                 self.emit("%s->%s(%s);" % (v, setter, "true" if x else "false"))
             elif t in ("int", "enum", "double", "str"):
                 # Enumeraciones y demás: por el sistema de propiedades de Qt (convierte el entero al enum).
-                lit = cstr(x) if t == "str" else repr(x)
+                lit = (tstr(x) if name in TEXT_PROPS else cstr(x)) if t == "str" else repr(x)
                 self.emit('%s->setProperty("%s", %s);' % (v, name, lit))
             elif t == "QKeySequence":
                 self.emit("%s->setShortcut(QKeySequence(%s));" % (v, cstr(x)))
@@ -274,7 +284,7 @@ class Gen:
             t = node["table"]
             self.emit("%s->setColumnCount(%d);" % (v, t["cols"]))
             if any(t["labels"]):
-                self.emit("%s->setHorizontalHeaderLabels({%s});" % (v, ", ".join(cstr(x) for x in t["labels"])))
+                self.emit("%s->setHorizontalHeaderLabels({%s});" % (v, ", ".join(tstr(x) for x in t["labels"])))
             if not t["hheader"]:
                 self.emit("%s->horizontalHeader()->setVisible(false);" % v)
             if not t["vheader"]:
@@ -295,11 +305,11 @@ class Gen:
             for t in node["tabs"]:
                 child = self.widget(t["widget"])
                 icon = "QIcon(%s), " % cstr(t["icon"]) if t.get("icon") else ""
-                self.emit("%s->addTab(%s, %s%s);" % (v, child, icon, cstr(t["text"])))
+                self.emit("%s->addTab(%s, %s%s);" % (v, child, icon, tstr(t["text"])))
                 if t.get("protected"):
                     self.emit("%s->protectTab(%s->count() - 1);" % (v, v))
                 if t.get("tooltip"):
-                    self.emit("%s->setTabToolTip(%s->count() - 1, %s);" % (v, v, cstr(t["tooltip"])))
+                    self.emit("%s->setTabToolTip(%s->count() - 1, %s);" % (v, v, tstr(t["tooltip"])))
             return v
         if qt == "QSplitter":
             for c in node["widgets"]:
@@ -325,7 +335,7 @@ class Gen:
             self.emit("%s->setMenu(%s);" % (v, mv))
         if "items" in node and qt == "QComboBox":
             for it in node["items"]:
-                self.emit("%s->addItem(%s);" % (v, cstr(it)))
+                self.emit("%s->addItem(%s);" % (v, tstr(it)))
             if node.get("currentIndex", 0) > 0:
                 self.emit("%s->setCurrentIndex(%d);" % (v, node["currentIndex"]))
         if "layout" in node:
@@ -503,7 +513,7 @@ class Gen:
                    "};", "", "}  // namespace flatcam::gui", ""]
         header.insert(3, "#include <map>\n#include <string>")
         body = ["// ARCHIVO GENERADO por tools/gui_dump/gen_cpp.py a partir de la interfaz original - no editar a mano.",
-                '#include "gui/generated/%s.h"' % base, "", "#include <QKeySequence>", "#include <QSpacerItem>", "",
+                '#include "gui/generated/%s.h"' % base, "", "#include <QKeySequence>", "#include <QSpacerItem>", "", "#include \"gui/Translation.h\"", "",
                 "namespace flatcam::gui {", "", "void %s::setupUi() {" % base]
         body += self.lines
         body += ["}", "", "std::map<std::string, QObject*> %s::membersByName() const {" % base, "    return {"]
@@ -542,7 +552,7 @@ class Gen:
             header.append("    %s* %s{nullptr};  ///< `%s` del original." % (self.members[name], name, name))
         header += ["    ///@}", "};", "", "}  // namespace flatcam::gui", ""]
         body = ["// ARCHIVO GENERADO por tools/gui_dump/gen_cpp.py a partir de la interfaz original - no editar a mano.",
-                '#include "gui/generated/MainGUIBase.h"', "", "#include <QKeySequence>", "#include <QSpacerItem>", "",
+                '#include "gui/generated/MainGUIBase.h"', "", "#include <QKeySequence>", "#include <QSpacerItem>", "", "#include \"gui/Translation.h\"", "",
                 "namespace flatcam::gui {", "", "void MainGUIBase::setupUi() {"]
         body += self.lines
         body += ["}", "", "}  // namespace flatcam::gui", ""]

@@ -394,7 +394,7 @@ protected:
                 // job_init: `res, start_gcode = 'fail'` no se puede desempaquetar.
                 if (job->lastError() == "fail")
                     informInitializeFailed(app_, "cncjob", "too many values to unpack (expected 2)");
-                else informInitializeFailed(app_, "cncjob", QString::fromStdString(job->lastError()));
+                else informInitializeFailed(app_, "cncjob", tr_(QString::fromStdString(job->lastError())));
                 return std::nullopt;
             }
             // job_init: gcode_parse sobre el cuerpo (self.gcode) y el aviso final.
@@ -600,7 +600,7 @@ protected:
             const bool ok = job->generateFromExcellonByTool(ex, s, msgs);
             informMessages(app_, cncMessagesText(msgs));
             if (!ok) {
-                if (job->lastError() != "fail") throw TclError(QString::fromStdString(job->lastError()));
+                if (job->lastError() != "fail") throw TclError(tr_(QString::fromStdString(job->lastError())));
                 // initialize devolvió 'fail': new_object avisa igual y no crea nada.
                 app_->shellMessage(QString("%1 %2. %3 seconds executing initialize().")
                                        .arg(tr_("New object with name:"), outname, QString::number(0.0, 'f', 6)));

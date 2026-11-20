@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Herramienta de Aislamiento"
+    "v": "Isolation Tool"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -80,7 +80,7 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Crear un objeto de geometría con\nTrayectorias para cortar alrededor de polígonos."
+               "v": "Create a Geometry object with\ntoolpaths to cut around polygons."
               },
               "styleSheet": {
                "t": "str",
@@ -88,7 +88,7 @@
               },
               "text": {
                "t": "str",
-               "v": "Herramienta de Aislamiento"
+               "v": "Isolation Tool"
               }
              }
             }
@@ -103,11 +103,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "BASIC es adecuado para un principiante. Muchos parámetros\nestán ocultos para el usuario en este modo.\nEl modo AVANZADO pondrá a disposición todos los parámetros.\n\nPara cambiar el NIVEL de la aplicación, vaya a:\nEditar -> Preferencias -> General y verificar:\n'APP. NIVEL 'botón de radio."
+               "v": "BASIC is suitable for a beginner. Many parameters\nare hidden from the user in this mode.\nADVANCED mode will make available all parameters.\n\nTo change the application LEVEL, go to:\nEdit -> Preferences -> General and check:\n'APP. LEVEL' radio button."
               },
               "text": {
                "t": "str",
-               "v": "<span style=\"color:green;\"><b>BASIC</b></span>"
+               "v": "<span style=\"color:green;\"><b>Basic</b></span>"
               },
               "alignment": {
                "t": "int",
@@ -129,7 +129,7 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Objeto Gerber para enrutamiento de aislamiento."
+            "v": "Gerber object for isolation routing."
            },
            "text": {
             "t": "str",
@@ -188,11 +188,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Conjunto de herramientas desde el cual el algoritmo\nelegirá los utilizados para la limpieza de cobre."
+            "v": "Tools pool from which the algorithm\nwill pick the ones used for copper clearing."
            },
            "text": {
             "t": "str",
-            "v": "<b>Tabla de herramientas</b>"
+            "v": "<b>Tools Table</b>"
            }
           }
          }
@@ -260,7 +260,7 @@
            "cols": 4,
            "labels": [
             "#",
-            "Diámetro",
+            "Diameter",
             "TT",
             ""
            ],
@@ -323,11 +323,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Esto establece la forma en que se utilizan las herramientas en la tabla de herramientas.\n'No' -> significa que el orden utilizado es el de la tabla de herramientas\n'Adelante' -> significa que las herramientas se ordenarán de pequeño a grande\n'Atras' -> means que las herramientas ordenarán de grande a pequeño\n\nADVERTENCIA: el uso del mecanizado en reposo establecerá automáticamente el orden\nen reversa y deshabilitar este control."
+               "v": "This set the way that the tools in the tools table are used.\n'No' --> means that the used order is the one in the tool table\n'Forward' --> means that the tools will be ordered from small to big\n'Reverse' --> means that the tools will ordered from big to small\n\nWARNING: using rest machining will automatically set the order\nin reverse and disable this control."
               },
               "text": {
                "t": "str",
-               "v": "Orden de la Herram:"
+               "v": "Tool order:"
               }
              }
             }
@@ -349,11 +349,11 @@
                "value": "no"
               },
               {
-               "label": "Adelante",
+               "label": "Forward",
                "value": "fwd"
               },
               {
-               "label": "Atras",
+               "label": "Reverse",
                "value": "rev"
               }
              ],
@@ -482,7 +482,7 @@
              "props": {
               "text": {
                "t": "str",
-               "v": "<b>Agregar desde DB</b>"
+               "v": "<b>Add from DB</b>"
               }
              }
             }
@@ -500,11 +500,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Diámetro para la nueva herramienta"
+               "v": "Diameter for the new tool"
               },
               "text": {
                "t": "str",
-               "v": "Diá. de Herram:"
+               "v": "Tool Dia:"
               }
              }
             }
@@ -565,11 +565,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "Encuentre un diámetro de herramienta garantizado\npara hacer un aislamiento completo."
+                  "v": "Find a tool diameter that is guaranteed\nto do a complete isolation."
                  },
                  "text": {
                   "t": "str",
-                  "v": "Óptimo"
+                  "v": "Optimal"
                  },
                  "icon": {
                   "t": "QIcon",
@@ -614,11 +614,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "Agregar una nueva herramienta a la tabla de herramientas\ncon el diámetro especificado arriba.\nEsto se hace mediante una búsqueda en segundo plano.\nen la base de datos de herramientas. Si no se encuentra nada\nen la base de datos de herramientas, se agrega una herramienta predeterminada."
+                  "v": "Add a new tool to the Tool Table\nwith the diameter specified above.\nThis is done by a background search\nin the Tools Database. If nothing is found\nin the Tools DB then a default tool is added."
                  },
                  "text": {
                   "t": "str",
-                  "v": "Buscar y agregar"
+                  "v": "Search and Add"
                  },
                  "icon": {
                   "t": "QIcon",
@@ -637,11 +637,11 @@
                 "props": {
                  "toolTip": {
                   "t": "str",
-                  "v": "Agregar una nueva herramienta a la tabla de herramientas\nde la base de datos de herramientas.\nHerramientas de administración de bases de datos en:\nMenú: Opciones -> Base de datos de herramientas"
+                  "v": "Add a new tool to the Tool Table\nfrom the Tools Database.\nTools database administration in in:\nMenu: Options -> Tools Database"
                  },
                  "text": {
                   "t": "str",
-                  "v": "Elija de DB"
+                  "v": "Pick from DB"
                  },
                  "icon": {
                   "t": "QIcon",
@@ -697,11 +697,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Eliminar una selección de herramientas en la tabla de herramientas\nseleccionando primero una fila en la Tabla de herramientas."
+               "v": "Delete a selection of tools in the Tool Table\nby first selecting a row in the Tool Table."
               },
               "text": {
                "t": "str",
-               "v": "Borrar"
+               "v": "Delete"
               },
               "icon": {
                "t": "QIcon",
@@ -754,11 +754,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Los datos utilizados para crear GCode.\nCada herramienta almacena su propio conjunto de datos."
+               "v": "The data used for creating GCode.\nEach tool store it's own set of such data."
               },
               "text": {
                "t": "str",
-               "v": "<b>Parámetros para: <font color=\"#7777FF\">Herramienta 1</font></b>"
+               "v": "<b>Parameters for: <font color=\"#7777FF\">Tool 1</font></b>"
               }
              }
             }
@@ -776,11 +776,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Ancho de la brecha de aislamiento en\nNúmero (entero) de anchos de herramienta."
+               "v": "Width of the isolation gap in\nnumber (integer) of tool widths."
               },
               "text": {
                "t": "str",
-               "v": "Pases:"
+               "v": "Passes:"
               }
              }
             }
@@ -828,11 +828,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Cuánto (porcentaje) del ancho de la herramienta para superponer cada pasada de herramienta."
+               "v": "How much (percentage) of the tool width to overlap each tool pass."
               },
               "text": {
                "t": "str",
-               "v": "Superposición:"
+               "v": "Overlap:"
               }
              }
             }
@@ -892,11 +892,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Tipo de fresado:\n- subir / mejor para fresado de precisión y para reducir el uso de la herramienta\n- convencional / útil cuando no hay compensación de contragolpe"
+               "v": "Milling type:\n- climb / best for precision milling and to reduce tool usage\n- conventional / useful when there is no backlash compensation"
               },
               "text": {
                "t": "str",
-               "v": "Tipo de fresado:"
+               "v": "Milling Type:"
               },
               "hidden": {
                "t": "bool",
@@ -922,7 +922,7 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Tipo de fresado:\n- subir / mejor para fresado de precisión y para reducir el uso de la herramienta\n- convencional / útil cuando no hay compensación de contragolpe"
+               "v": "Milling type:\n- climb / best for precision milling and to reduce tool usage\n- conventional / useful when there is no backlash compensation"
               },
               "hidden": {
                "t": "bool",
@@ -931,11 +931,11 @@
              },
              "choices": [
               {
-               "label": "Subida",
+               "label": "Climb",
                "value": "cl"
               },
               {
-               "label": "Convencional",
+               "label": "Conventional",
                "value": "cv"
               }
              ],
@@ -957,11 +957,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Generar una geometría 'Seguir'.\nEsto significa que cortará a través\nEl medio de la traza."
+               "v": "Generate a 'Follow' geometry.\nThis means that it will cut through\nthe middle of the trace."
               },
               "text": {
                "t": "str",
-               "v": "Seguir:"
+               "v": "Follow:"
               },
               "hidden": {
                "t": "bool",
@@ -987,7 +987,7 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Generar una geometría 'Seguir'.\nEsto significa que cortará a través\nEl medio de la traza."
+               "v": "Generate a 'Follow' geometry.\nThis means that it will cut through\nthe middle of the trace."
               },
               "hidden": {
                "t": "bool",
@@ -1009,11 +1009,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Elija cómo se ejecutará el aislamiento:\n- 'Completo' -> aislamiento completo de polígonos\n- 'Ext' -> aislará solo en el exterior\n- 'Int' -> aislará solo en el interior\nEl aislamiento 'exterior' es casi siempre posible\n(con la herramienta adecuada) pero 'Interior'\nel aislamiento solo se puede hacer cuando hay una abertura\ndentro del polígono (por ejemplo, el polígono tiene forma de 'rosquilla')."
+               "v": "Choose how the isolation will be executed:\n- 'Full' -> complete isolation of polygons\n- 'Ext' -> will isolate only on the outside\n- 'Int' -> will isolate only on the inside\n'Exterior' isolation is almost always possible\n(with the right tool) but 'Interior'\nisolation can be done only when there is an opening\ninside of the polygon (e.g polygon is a 'doughnut' shape)."
               },
               "text": {
                "t": "str",
-               "v": "Tipo de aislamiento:"
+               "v": "Isolation Type:"
               },
               "hidden": {
                "t": "bool",
@@ -1044,15 +1044,15 @@
              },
              "choices": [
               {
-               "label": "Completo",
+               "label": "Full",
                "value": "full"
               },
               {
-               "label": "Exterior",
+               "label": "Ext",
                "value": "ext"
               },
               {
-               "label": "Interior",
+               "label": "Int",
                "value": "int"
               }
              ],
@@ -1105,11 +1105,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Se aplicarán los parámetros en el formulario actual\nen todas las herramientas de la tabla de herramientas."
+               "v": "The parameters in the current form will be applied\non all the tools from the Tool Table."
               },
               "text": {
                "t": "str",
-               "v": "Aplicar Parám. a todas las herramientas"
+               "v": "Apply parameters to all tools"
               },
               "icon": {
                "t": "QIcon",
@@ -1162,11 +1162,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Parámetros que son comunes para todas las herramientas."
+               "v": "Parameters that are common for all tools."
               },
               "text": {
                "t": "str",
-               "v": "<b>Parámetros comunes</b>"
+               "v": "<b>Common Parameters</b>"
               }
              }
             }
@@ -1188,11 +1188,11 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Si está marcado, use 'mecanizado en resto'.\nBásicamente procesará cobre fuera de las características de la PCB,\nusando la herramienta más grande y continúe con las siguientes herramientas,\nde mayor a menor, para procesar las características de cobre que\nno pudo ser procesado por la herramienta anterior, hasta que haya\nno queda nada por procesar o no hay más herramientas.\n\nSi no está marcado, use el algoritmo estándar."
+               "v": "If checked, use 'rest machining'.\nBasically it will process copper outside PCB features,\nusing the biggest tool and continue with the next tools,\nfrom bigger to smaller, to process the copper features that\ncould not be processed by previous tool, until there is\nnothing left to process or there are no more tools.\n\nIf not checked, use the standard algorithm."
               },
               "text": {
                "t": "str",
-               "v": "Resto"
+               "v": "Rest"
               },
               "hidden": {
                "t": "bool",
@@ -1214,11 +1214,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Cuando se marca, el aislamiento se realizará con la herramienta actual, incluso si\nNo se pudieron aislar los interiores de un polígono (agujeros en el polígono).\nFunciona cuando se usa 'mecanizado en reposo'."
+               "v": "When checked the isolation will be done with the current tool even if\ninteriors of a polygon (holes in the polygon) could not be isolated.\nWorks when 'rest machining' is used."
               },
               "text": {
                "t": "str",
-               "v": "Forzado Resto"
+               "v": "Forced Rest"
               },
               "checked": {
                "t": "bool",
@@ -1252,11 +1252,11 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Combina todos los pases en un objeto"
+               "v": "Combine all passes into one object"
               },
               "text": {
                "t": "str",
-               "v": "Combinar"
+               "v": "Combine"
               },
               "checked": {
                "t": "bool",
@@ -1282,11 +1282,11 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Si se marca, se verifican los diámetros de las herramientas.\nsi proporcionarán un aislamiento completo."
+               "v": "If checked then the tools diameters are verified\nif they will provide a complete isolation."
               },
               "text": {
                "t": "str",
-               "v": "Verificar validez"
+               "v": "Check validity"
               }
              }
             }
@@ -1308,11 +1308,11 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Cuando se genera la geometría de Aislamiento,\nmarcando esto, el área del objeto a continuación\nserá restado de la geometría de aislamiento."
+               "v": "When the isolation geometry is generated,\nby checking this, the area of the object below\nwill be subtracted from the isolation geometry."
               },
               "text": {
                "t": "str",
-               "v": "Excepto"
+               "v": "Except"
               },
               "hidden": {
                "t": "bool",
@@ -1334,7 +1334,7 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Especifique el tipo de objeto que se excluirá del aislamiento.\nPuede ser de tipo: Gerber o Geometría.\nLo que se seleccione aquí dictará el tipo\nde objetos que llenarán el cuadro combinado 'Objeto'."
+               "v": "Specify the type of object to be excepted from isolation.\nIt can be of type: Gerber or Geometry.\nWhat is selected here will dictate the kind\nof objects that will populate the 'Object' combobox."
               },
               "hidden": {
                "t": "bool",
@@ -1347,7 +1347,7 @@
              },
              "choices": [
               {
-               "label": "Geometría",
+               "label": "Geometry",
                "value": "geometry"
               },
               {
@@ -1373,7 +1373,7 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Objeto cuya área se eliminará de la geometría de aislamiento."
+               "v": "Object whose area will be removed from isolation geometry."
               },
               "hidden": {
                "t": "bool",
@@ -1401,11 +1401,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Alcance de aislamiento. Elija qué aislar:\n- 'Todos' -> Aislar todos los polígonos en el objeto\n- 'Selección de área' -> Aislar polígonos dentro de un área de selección.\n- 'Selección de polígonos' -> Aislar una selección de polígonos.\n- 'Objeto de referencia': procesará el área especificada por otro objeto."
+               "v": "Isolation scope. Choose what to isolate:\n- 'All' -> Isolate all the polygons in the object\n- 'Area Selection' -> Isolate polygons within a selection area.\n- 'Polygon Selection' -> Isolate a selection of polygons.\n- 'Reference Object' - will process the area specified by another object."
               },
               "text": {
                "t": "str",
-               "v": "Selección:"
+               "v": "Selection:"
               },
               "hidden": {
                "t": "bool",
@@ -1431,7 +1431,7 @@
               },
               "currentText": {
                "t": "str",
-               "v": "Todos"
+               "v": "All"
               },
               "hidden": {
                "t": "bool",
@@ -1439,10 +1439,10 @@
               }
              },
              "items": [
-              "Todos",
-              "Selección de área",
-              "Selección de polígono",
-              "Objeto de referencia"
+              "All",
+              "Area Selection",
+              "Polygon Selection",
+              "Reference Object"
              ],
              "currentIndex": 0
             }
@@ -1460,7 +1460,7 @@
              "props": {
               "text": {
                "t": "str",
-               "v": "Tipo:"
+               "v": "Type:"
               },
               "hidden": {
                "t": "bool",
@@ -1492,7 +1492,7 @@
              "items": [
               "Gerber",
               "Excellon",
-              "Geometría"
+              "Geometry"
              ],
              "currentIndex": 0
             }
@@ -1530,11 +1530,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Cuando está marcada, el usuario puede seleccionar interiores de un polígono.\n(agujeros en el polígono)."
+               "v": "When checked the user can select interiors of a polygon.\n(holes in the polygon)."
               },
               "text": {
                "t": "str",
-               "v": "Interiores"
+               "v": "Interiors"
               },
               "hidden": {
                "t": "bool",
@@ -1556,11 +1556,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "El tipo de forma de selección utilizada para la selección de área."
+               "v": "The kind of selection shape used for area selection."
               },
               "text": {
                "t": "str",
-               "v": "Forma:"
+               "v": "Shape:"
               },
               "hidden": {
                "t": "bool",
@@ -1587,11 +1587,11 @@
              },
              "choices": [
               {
-               "label": "Cuadrado",
+               "label": "Square",
                "value": "square"
               },
               {
-               "label": "Polígono",
+               "label": "Polygon",
                "value": "polygon"
               }
              ],
@@ -1650,7 +1650,7 @@
            },
            "toolTip": {
             "t": "str",
-            "v": "Cree un objeto de geometría con trayectorias de herramientas para cortar\naislamiento afuera, adentro o en ambos lados del\nobjeto. Para un objeto Gerber afuera significa afuera\nde la característica de Gerber y dentro significa dentro de\nla característica de Gerber, si es posible. Esto significa\nque solo si la función Gerber tiene aberturas adentro,\nserá aislado Si lo que se quiere es cortar el aislamiento\ndentro de la función real de Gerber, use una herramienta negativa\ndiámetro arriba."
+            "v": "Create a Geometry object with toolpaths to cut \nisolation outside, inside or on both sides of the\nobject. For a Gerber object outside means outside\nof the Gerber feature and inside means inside of\nthe Gerber feature, if possible at all. This means\nthat only if the Gerber feature has openings inside, they\nwill be isolated. If what is wanted is to cut isolation\ninside the actual Gerber feature, use a negative tool\ndiameter above."
            },
            "styleSheet": {
             "t": "str",
@@ -1658,7 +1658,7 @@
            },
            "text": {
             "t": "str",
-            "v": "Generar Geometría"
+            "v": "Generate Geometry"
            },
            "icon": {
             "t": "QIcon",
@@ -1677,11 +1677,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Este botón se muestra solo cuando el archivo Gerber\nse carga sin almacenamiento en búfer.\nAl hacer clic en esto, se creará la geometría almacenada\nrequerido para el aislamiento."
+            "v": "This button is shown only when the Gerber file\nis loaded without buffering.\nClicking this will create the buffered geometry\nrequired for isolation."
            },
            "text": {
             "t": "str",
-            "v": "Buffer la Geometria solida"
+            "v": "Buffer Solid Geometry"
            },
            "hidden": {
             "t": "bool",
@@ -1716,7 +1716,7 @@
            },
            "toolTip": {
             "t": "str",
-            "v": "Restablecerá los parámetros de la herramienta."
+            "v": "Will reset the tool parameters."
            },
            "styleSheet": {
             "t": "str",
@@ -1724,7 +1724,7 @@
            },
            "text": {
             "t": "str",
-            "v": "Restablecer la Herramienta"
+            "v": "Reset Tool"
            },
            "icon": {
             "t": "QIcon",

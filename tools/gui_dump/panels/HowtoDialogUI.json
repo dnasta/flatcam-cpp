@@ -6,7 +6,7 @@
   "props": {
    "windowTitle": {
     "t": "str",
-    "v": "Cómo ..."
+    "v": "How To ..."
    }
   },
   "layout": {
@@ -61,7 +61,7 @@
          },
          "tabs": [
           {
-           "text": "Contribuir",
+           "text": "Contribute",
            "icon": null,
            "tooltip": "",
            "protected": false,
@@ -167,7 +167,7 @@
                      "props": {
                       "text": {
                        "t": "str",
-                       "v": "Este programa es <a href = 'https://opensource.org/'<b>Open Source</b></a> y gratuito en un sentido muy amplio de la palabra.<br>Sin embargo, no puede evolucionar sin <b> contribuciones </b>.<br><br>Si quieres ver esta aplicación crecer y ser mejor y mejor,<br>usted puede <b> contribuir </b> al desarrollo usted mismo:<br><ul><li> &nbsp;Solicitudes de extracción en el repositorio de Bitbucket, si es desarrollador <a href = 'https://bitbucket.org/jpcgt/flatcam/pull-requests/'<b>click</b></a></li><li> &nbsp;Informes de errores al proporcionar los pasos necesarios para reproducir el error <a href = 'https://bitbucket.org/jpcgt/flatcam/issues/new'<b>click</b></a></li></ul><br><br>Si te gusta lo que has visto hasta ahora ... <br><span style='color: blue;'>NO se requieren donaciones.</span> Pero ellos son bienvenidos <a href = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=WLTJJ3Q77D98L&currency_code=USD&source=url'<b>click</b></a><br>"
+                       "v": "This program is <a href = 'https://opensource.org/'<b>Open Source</b></a> and free in a very wide meaning of the word.<br>Yet it cannot evolve without <b>contributions</b>.<br><br>If you want to see this application grow and become better and better,<br>you can <b>contribute</b> to the development yourself by:<br><ul><li> &nbsp;Pull Requests on the Bitbucket repository, if you are a developer <a href = 'https://bitbucket.org/jpcgt/flatcam/pull-requests/'<b>click</b></a></li><li> &nbsp;Bug Reports by providing the steps required to reproduce the bug <a href = 'https://bitbucket.org/jpcgt/flatcam/issues/new'<b>click</b></a></li></ul><br><br>If you like what you have seen so far ... <br><span style='color: blue;'>Donations are NOT required.</span> But they are welcomed <a href = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=WLTJJ3Q77D98L&currency_code=USD&source=url'<b>click</b></a><br>"
                       },
                       "openExternalLinks": {
                        "t": "bool",
@@ -186,7 +186,7 @@
            }
           },
           {
-           "text": "Intercambio de enlaces",
+           "text": "Links Exchange",
            "icon": null,
            "tooltip": "",
            "protected": false,
@@ -263,7 +263,7 @@
                      "props": {
                       "text": {
                        "t": "str",
-                       "v": "Pronto ..."
+                       "v": "Soon ..."
                       }
                      }
                     }
@@ -355,7 +355,7 @@
                      "props": {
                       "text": {
                        "t": "str",
-                       "v": "Pronto ..."
+                       "v": "Soon ..."
                       }
                      }
                     }
@@ -411,7 +411,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "Cerca"
+           "v": "Close"
           },
           "autoDefault": {
            "t": "bool",

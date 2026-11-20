@@ -4,27 +4,29 @@
 #include <QKeySequence>
 #include <QSpacerItem>
 
+#include "gui/Translation.h"
+
 namespace flatcam::gui {
 
 void SolderPasteToolUIBase::setupUi() {
     // ---- acciones (compartidas entre menús y barras)
     this->setAutoFillBackground(true);
-    this->setProperty("objectName", QString::fromUtf8("Herra. de Pasta de Soldadura"));
+    this->setProperty("objectName", QString::fromUtf8("Solder Paste Tool"));
     layout = new QVBoxLayout();
     layout->setContentsMargins(9, 9, 9, 9);
     layout->setSpacing(6);
     auto* w1 = new QLabel(nullptr);
     { QFont f = w1->font(); f.setBold(true); f.setPixelSize(16); w1->setFont(f); }
     w1->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t   QLabel\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-size: 16px;\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "));
-    w1->setText(QString::fromUtf8("Herra. de Pasta de Soldadura"));
+    w1->setText(trUi_(QString::fromUtf8("Solder Paste Tool")));
     layout->addWidget(w1, 0);
     auto* lay2 = new QFormLayout();
     lay2->setContentsMargins(0, 0, 0, 0);
     lay2->setHorizontalSpacing(6);
     lay2->setVerticalSpacing(6);
     object_label = new QLabel(nullptr);
-    object_label->setText(QString::fromUtf8("<b>GERBER</b>:"));
-    object_label->setToolTip(QString::fromUtf8("Objeto de pasta de soldadura Gerber."));
+    object_label->setText(trUi_(QString::fromUtf8("<b>GERBER</b>:")));
+    object_label->setToolTip(trUi_(QString::fromUtf8("Gerber Solderpaste object.")));
     lay2->setWidget(0, QFormLayout::ItemRole(2), object_label);
     obj_combo = new FCComboBox(nullptr);
     lay2->setWidget(1, QFormLayout::ItemRole(2), obj_combo);
@@ -35,8 +37,8 @@ void SolderPasteToolUIBase::setupUi() {
     lay2->setWidget(2, QFormLayout::ItemRole(2), w3);
     layout->addLayout(lay2, 0);
     tools_table_label = new QLabel(nullptr);
-    tools_table_label->setText(QString::fromUtf8("<b>Tabla de herramientas</b>"));
-    tools_table_label->setToolTip(QString::fromUtf8("Conjunto de herramientas desde el cual el algoritmo\nelegirá los que se usan para dispensar pasta de soldadura."));
+    tools_table_label->setText(trUi_(QString::fromUtf8("<b>Tools Table</b>")));
+    tools_table_label->setToolTip(trUi_(QString::fromUtf8("Tools pool from which the algorithm\nwill pick the ones used for dispensing solder paste.")));
     layout->addWidget(tools_table_label, 0);
     tools_table = new FCTable(nullptr);
     tools_table->setProperty("columnCount", 3);
@@ -46,7 +48,7 @@ void SolderPasteToolUIBase::setupUi() {
     tools_table->setProperty("rowCount", 2);
     tools_table->setProperty("verticalScrollBarPolicy", 1);
     tools_table->setColumnCount(3);
-    tools_table->setHorizontalHeaderLabels({QString::fromUtf8("#"), QString::fromUtf8("Diámetro"), QString::fromUtf8("")});
+    tools_table->setHorizontalHeaderLabels({trUi_(QString::fromUtf8("#")), trUi_(QString::fromUtf8("Diameter")), trUi_(QString::fromUtf8(""))});
     tools_table->verticalHeader()->setVisible(false);
     tools_table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeMode(2));
     tools_table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeMode(1));
@@ -56,8 +58,8 @@ void SolderPasteToolUIBase::setupUi() {
     lay4->setContentsMargins(0, 0, 0, 0);
     lay4->setSpacing(6);
     addtool_entry_lbl = new QLabel(nullptr);
-    addtool_entry_lbl->setText(QString::fromUtf8("<b>Nueva herra. de boquilla:</b>"));
-    addtool_entry_lbl->setToolTip(QString::fromUtf8("Diámetro de la nueva herramienta para agregar en la tabla de herramientas"));
+    addtool_entry_lbl->setText(trUi_(QString::fromUtf8("<b>New Nozzle Tool:</b>")));
+    addtool_entry_lbl->setToolTip(trUi_(QString::fromUtf8("Diameter for the new tool to add in the Tool Table")));
     lay4->addWidget(addtool_entry_lbl, 0);
     addtool_entry = new FCDoubleSpinner(nullptr);
     addtool_entry->setProperty("decimals", 4);
@@ -71,12 +73,12 @@ void SolderPasteToolUIBase::setupUi() {
     lay5->setHorizontalSpacing(6);
     lay5->setVerticalSpacing(6);
     addtool_btn = new QPushButton(nullptr);
-    addtool_btn->setText(QString::fromUtf8("Añadir"));
-    addtool_btn->setToolTip(QString::fromUtf8("Agregue una nueva herramienta de boquilla a la tabla de herramientas\ncon el diámetro especificado anteriormente."));
+    addtool_btn->setText(trUi_(QString::fromUtf8("Add")));
+    addtool_btn->setToolTip(trUi_(QString::fromUtf8("Add a new nozzle tool to the Tool Table\nwith the diameter specified above.")));
     lay5->addWidget(addtool_btn, 0, 0, 1, 1);
     deltool_btn = new QPushButton(nullptr);
-    deltool_btn->setText(QString::fromUtf8("Borrar"));
-    deltool_btn->setToolTip(QString::fromUtf8("Eliminar una selección de herramientas en la tabla de herramientas\nseleccionando primero una fila en la Tabla de herramientas."));
+    deltool_btn->setText(trUi_(QString::fromUtf8("Delete")));
+    deltool_btn->setToolTip(trUi_(QString::fromUtf8("Delete a selection of tools in the Tool Table\nby first selecting a row in the Tool Table.")));
     lay5->addWidget(deltool_btn, 0, 2, 1, 1);
     auto* w6 = new QFrame(nullptr);
     w6->setProperty("frameShadow", 48);
@@ -89,11 +91,11 @@ void SolderPasteToolUIBase::setupUi() {
     lay7->setHorizontalSpacing(6);
     lay7->setVerticalSpacing(6);
     auto* w8 = new QLabel(nullptr);
-    w8->setText(QString::fromUtf8("<b>PASO 1:</b>"));
-    w8->setToolTip(QString::fromUtf8("El primer paso es seleccionar una serie de herramientas de boquillas para su uso\ny luego opcionalmente modificar los parámetros GCode a continuación."));
+    w8->setText(trUi_(QString::fromUtf8("<b>STEP 1:</b>")));
+    w8->setToolTip(trUi_(QString::fromUtf8("First step is to select a number of nozzle tools for usage\nand then optionally modify the GCode parameters below.")));
     lay7->addWidget(w8, 0, 0, 1, 1, Qt::Alignment(32));
     auto* w9 = new QLabel(nullptr);
-    w9->setText(QString::fromUtf8("Seleccionar herramientas.\nModificar parámetros."));
+    w9->setText(trUi_(QString::fromUtf8("Select tools.\nModify parameters.")));
     lay7->addWidget(w9, 0, 2, 1, 1, Qt::Alignment(64));
     layout->addLayout(lay7, 0);
     gcode_frame = new QFrame(nullptr);
@@ -105,8 +107,8 @@ void SolderPasteToolUIBase::setupUi() {
     gcode_form_layout->setHorizontalSpacing(6);
     gcode_form_layout->setVerticalSpacing(6);
     z_start_label = new QLabel(nullptr);
-    z_start_label->setText(QString::fromUtf8("Inicio de dispen. Z:"));
-    z_start_label->setToolTip(QString::fromUtf8("La altura (Z) cuando comienza la dispensación de pasta de soldadura."));
+    z_start_label->setText(trUi_(QString::fromUtf8("Z Dispense Start:")));
+    z_start_label->setToolTip(trUi_(QString::fromUtf8("The height (Z) when solder paste dispensing starts.")));
     gcode_form_layout->setWidget(0, QFormLayout::ItemRole(0), z_start_label);
     z_start_entry = new FCDoubleSpinner(nullptr);
     z_start_entry->setProperty("decimals", 4);
@@ -115,8 +117,8 @@ void SolderPasteToolUIBase::setupUi() {
     z_start_entry->setProperty("value", 0.05);
     gcode_form_layout->setWidget(0, QFormLayout::ItemRole(1), z_start_entry);
     z_dispense_label = new QLabel(nullptr);
-    z_dispense_label->setText(QString::fromUtf8("Dispensación Z:"));
-    z_dispense_label->setToolTip(QString::fromUtf8("La altura (Z) al dispensar pasta de soldadura."));
+    z_dispense_label->setText(trUi_(QString::fromUtf8("Z Dispense:")));
+    z_dispense_label->setToolTip(trUi_(QString::fromUtf8("The height (Z) when doing solder paste dispensing.")));
     gcode_form_layout->setWidget(1, QFormLayout::ItemRole(0), z_dispense_label);
     z_dispense_entry = new FCDoubleSpinner(nullptr);
     z_dispense_entry->setProperty("decimals", 4);
@@ -125,8 +127,8 @@ void SolderPasteToolUIBase::setupUi() {
     z_dispense_entry->setProperty("value", 0.1);
     gcode_form_layout->setWidget(1, QFormLayout::ItemRole(1), z_dispense_entry);
     z_stop_label = new QLabel(nullptr);
-    z_stop_label->setText(QString::fromUtf8("Parada de dispen. Z:"));
-    z_stop_label->setToolTip(QString::fromUtf8("La altura (Z) cuando se detiene la dispensación de pasta de soldadura."));
+    z_stop_label->setText(trUi_(QString::fromUtf8("Z Dispense Stop:")));
+    z_stop_label->setToolTip(trUi_(QString::fromUtf8("The height (Z) when solder paste dispensing stops.")));
     gcode_form_layout->setWidget(2, QFormLayout::ItemRole(0), z_stop_label);
     z_stop_entry = new FCDoubleSpinner(nullptr);
     z_stop_entry->setProperty("decimals", 4);
@@ -135,8 +137,8 @@ void SolderPasteToolUIBase::setupUi() {
     z_stop_entry->setProperty("value", 0.05);
     gcode_form_layout->setWidget(2, QFormLayout::ItemRole(1), z_stop_entry);
     z_travel_label = new QLabel(nullptr);
-    z_travel_label->setText(QString::fromUtf8("Viajar Z:"));
-    z_travel_label->setToolTip(QString::fromUtf8("La altura (Z) para viajar entre almohadillas\n(sin dispensar pasta de soldadura)."));
+    z_travel_label->setText(trUi_(QString::fromUtf8("Z Travel:")));
+    z_travel_label->setToolTip(trUi_(QString::fromUtf8("The height (Z) for travel between pads\n(without dispensing solder paste).")));
     gcode_form_layout->setWidget(3, QFormLayout::ItemRole(0), z_travel_label);
     z_travel_entry = new FCDoubleSpinner(nullptr);
     z_travel_entry->setProperty("decimals", 4);
@@ -145,8 +147,8 @@ void SolderPasteToolUIBase::setupUi() {
     z_travel_entry->setProperty("value", 0.1);
     gcode_form_layout->setWidget(3, QFormLayout::ItemRole(1), z_travel_entry);
     z_toolchange_label = new QLabel(nullptr);
-    z_toolchange_label->setText(QString::fromUtf8("Cambio de herra. Z:"));
-    z_toolchange_label->setToolTip(QString::fromUtf8("La altura (Z) para el cambio de herramienta (boquilla)."));
+    z_toolchange_label->setText(trUi_(QString::fromUtf8("Z Toolchange:")));
+    z_toolchange_label->setToolTip(trUi_(QString::fromUtf8("The height (Z) for tool (nozzle) change.")));
     gcode_form_layout->setWidget(4, QFormLayout::ItemRole(0), z_toolchange_label);
     z_toolchange_entry = new FCDoubleSpinner(nullptr);
     z_toolchange_entry->setProperty("decimals", 4);
@@ -155,15 +157,15 @@ void SolderPasteToolUIBase::setupUi() {
     z_toolchange_entry->setProperty("value", 1.0);
     gcode_form_layout->setWidget(4, QFormLayout::ItemRole(1), z_toolchange_entry);
     xy_toolchange_label = new QLabel(nullptr);
-    xy_toolchange_label->setText(QString::fromUtf8("Cambio de herra X, Y:"));
-    xy_toolchange_label->setToolTip(QString::fromUtf8("La ubicación X, Y para el cambio de herramienta (boquilla).\nEl formato es (x, y) donde x e y son números reales."));
+    xy_toolchange_label->setText(trUi_(QString::fromUtf8("Toolchange X-Y:")));
+    xy_toolchange_label->setToolTip(trUi_(QString::fromUtf8("The X,Y location for tool (nozzle) change.\nThe format is (x, y) where x and y are real numbers.")));
     gcode_form_layout->setWidget(5, QFormLayout::ItemRole(0), xy_toolchange_label);
     xy_toolchange_entry = new FCEntry(nullptr);
-    xy_toolchange_entry->setText(QString::fromUtf8("0.0, 0.0"));
+    xy_toolchange_entry->setText(trUi_(QString::fromUtf8("0.0, 0.0")));
     gcode_form_layout->setWidget(5, QFormLayout::ItemRole(1), xy_toolchange_entry);
     frxy_label = new QLabel(nullptr);
-    frxy_label->setText(QString::fromUtf8("Avance X-Y:"));
-    frxy_label->setToolTip(QString::fromUtf8("Avance (velocidad) mientras se mueve en el plano X-Y."));
+    frxy_label->setText(trUi_(QString::fromUtf8("Feedrate X-Y:")));
+    frxy_label->setToolTip(trUi_(QString::fromUtf8("Feedrate (speed) while moving on the X-Y plane.")));
     gcode_form_layout->setWidget(6, QFormLayout::ItemRole(0), frxy_label);
     frxy_entry = new FCDoubleSpinner(nullptr);
     frxy_entry->setProperty("decimals", 4);
@@ -172,8 +174,8 @@ void SolderPasteToolUIBase::setupUi() {
     frxy_entry->setProperty("value", 150.0);
     gcode_form_layout->setWidget(6, QFormLayout::ItemRole(1), frxy_entry);
     frz_label = new QLabel(nullptr);
-    frz_label->setText(QString::fromUtf8("Avance Z:"));
-    frz_label->setToolTip(QString::fromUtf8("Avance (velocidad) mientras se mueve verticalmente\n(en el plano Z)."));
+    frz_label->setText(trUi_(QString::fromUtf8("Feedrate Z:")));
+    frz_label->setToolTip(trUi_(QString::fromUtf8("Feedrate (speed) while moving vertically\n(on Z plane).")));
     gcode_form_layout->setWidget(7, QFormLayout::ItemRole(0), frz_label);
     frz_entry = new FCDoubleSpinner(nullptr);
     frz_entry->setProperty("decimals", 4);
@@ -182,8 +184,8 @@ void SolderPasteToolUIBase::setupUi() {
     frz_entry->setProperty("value", 150.0);
     gcode_form_layout->setWidget(7, QFormLayout::ItemRole(1), frz_entry);
     frz_dispense_label = new QLabel(nullptr);
-    frz_dispense_label->setText(QString::fromUtf8("Avance de Dispens. Z:"));
-    frz_dispense_label->setToolTip(QString::fromUtf8("Avance (velocidad) mientras se mueve verticalmente\npara dispensar la posición (en el plano Z)."));
+    frz_dispense_label->setText(trUi_(QString::fromUtf8("Feedrate Z Dispense:")));
+    frz_dispense_label->setToolTip(trUi_(QString::fromUtf8("Feedrate (speed) while moving up vertically\nto Dispense position (on Z plane).")));
     gcode_form_layout->setWidget(8, QFormLayout::ItemRole(0), frz_dispense_label);
     frz_dispense_entry = new FCDoubleSpinner(nullptr);
     frz_dispense_entry->setProperty("decimals", 4);
@@ -192,8 +194,8 @@ void SolderPasteToolUIBase::setupUi() {
     frz_dispense_entry->setProperty("value", 1.0);
     gcode_form_layout->setWidget(8, QFormLayout::ItemRole(1), frz_dispense_entry);
     speedfwd_label = new QLabel(nullptr);
-    speedfwd_label->setText(QString::fromUtf8("Veloc. del husillo FWD:"));
-    speedfwd_label->setToolTip(QString::fromUtf8("La velocidad del dispensador mientras empuja la pasta de soldadura\na través de la boquilla dispensadora."));
+    speedfwd_label->setText(trUi_(QString::fromUtf8("Spindle Speed FWD:")));
+    speedfwd_label->setToolTip(trUi_(QString::fromUtf8("The dispenser speed while pushing solder paste\nthrough the dispenser nozzle.")));
     gcode_form_layout->setWidget(9, QFormLayout::ItemRole(0), speedfwd_label);
     speedfwd_entry = new FCSpinner(nullptr);
     speedfwd_entry->setProperty("maximum", 999999);
@@ -201,8 +203,8 @@ void SolderPasteToolUIBase::setupUi() {
     speedfwd_entry->setProperty("value", 300);
     gcode_form_layout->setWidget(9, QFormLayout::ItemRole(1), speedfwd_entry);
     dwellfwd_label = new QLabel(nullptr);
-    dwellfwd_label->setText(QString::fromUtf8("Morar FWD:"));
-    dwellfwd_label->setToolTip(QString::fromUtf8("Pausa después de la dispensación de soldadura."));
+    dwellfwd_label->setText(trUi_(QString::fromUtf8("Dwell FWD:")));
+    dwellfwd_label->setToolTip(trUi_(QString::fromUtf8("Pause after solder dispensing.")));
     gcode_form_layout->setWidget(10, QFormLayout::ItemRole(0), dwellfwd_label);
     dwellfwd_entry = new FCDoubleSpinner(nullptr);
     dwellfwd_entry->setProperty("decimals", 4);
@@ -211,8 +213,8 @@ void SolderPasteToolUIBase::setupUi() {
     dwellfwd_entry->setProperty("value", 1.0);
     gcode_form_layout->setWidget(10, QFormLayout::ItemRole(1), dwellfwd_entry);
     speedrev_label = new QLabel(nullptr);
-    speedrev_label->setText(QString::fromUtf8("Veloc. del husillo REV:"));
-    speedrev_label->setToolTip(QString::fromUtf8("La velocidad del dispensador mientras se retrae la pasta de soldadura\na través de la boquilla dispensadora."));
+    speedrev_label->setText(trUi_(QString::fromUtf8("Spindle Speed REV:")));
+    speedrev_label->setToolTip(trUi_(QString::fromUtf8("The dispenser speed while retracting solder paste\nthrough the dispenser nozzle.")));
     gcode_form_layout->setWidget(11, QFormLayout::ItemRole(0), speedrev_label);
     speedrev_entry = new FCSpinner(nullptr);
     speedrev_entry->setProperty("maximum", 999999);
@@ -220,8 +222,8 @@ void SolderPasteToolUIBase::setupUi() {
     speedrev_entry->setProperty("value", 200);
     gcode_form_layout->setWidget(11, QFormLayout::ItemRole(1), speedrev_entry);
     dwellrev_label = new QLabel(nullptr);
-    dwellrev_label->setText(QString::fromUtf8("Morar REV:"));
-    dwellrev_label->setToolTip(QString::fromUtf8("Pausa después de que el dispensador de pasta de soldadura se retraiga,\npara permitir el equilibrio de presión."));
+    dwellrev_label->setText(trUi_(QString::fromUtf8("Dwell REV:")));
+    dwellrev_label->setToolTip(trUi_(QString::fromUtf8("Pause after solder paste dispenser retracted,\nto allow pressure equilibrium.")));
     gcode_form_layout->setWidget(12, QFormLayout::ItemRole(0), dwellrev_label);
     dwellrev_entry = new FCDoubleSpinner(nullptr);
     dwellrev_entry->setProperty("decimals", 4);
@@ -230,8 +232,8 @@ void SolderPasteToolUIBase::setupUi() {
     dwellrev_entry->setProperty("value", 1.0);
     gcode_form_layout->setWidget(12, QFormLayout::ItemRole(1), dwellrev_entry);
     auto* w10 = new QLabel(nullptr);
-    w10->setText(QString::fromUtf8("Postprocesador:"));
-    w10->setToolTip(QString::fromUtf8("Archivos que controlan la generación de GCode."));
+    w10->setText(trUi_(QString::fromUtf8("Preprocessor:")));
+    w10->setToolTip(trUi_(QString::fromUtf8("Files that control the GCode generation.")));
     gcode_form_layout->setWidget(13, QFormLayout::ItemRole(0), w10);
     pp_combo = new FCComboBox(nullptr);
     gcode_form_layout->setWidget(13, QFormLayout::ItemRole(1), pp_combo);
@@ -247,14 +249,14 @@ void SolderPasteToolUIBase::setupUi() {
     lay11->setHorizontalSpacing(6);
     lay11->setVerticalSpacing(6);
     auto* w12 = new QLabel(nullptr);
-    w12->setText(QString::fromUtf8("<b>PASO 2:</b>"));
-    w12->setToolTip(QString::fromUtf8("El segundo paso es crear una dispensación de pasta de soldadura\ngeometría de un archivo Gerber de máscara de pasta de soldadura."));
+    w12->setText(trUi_(QString::fromUtf8("<b>STEP 2:</b>")));
+    w12->setToolTip(trUi_(QString::fromUtf8("Second step is to create a solder paste dispensing\ngeometry out of an Solder Paste Mask Gerber file.")));
     lay11->addWidget(w12, 0, 0, 1, 1);
     soldergeo_btn = new QPushButton(nullptr);
     { QFont f = soldergeo_btn->font(); f.setBold(true); soldergeo_btn->setFont(f); }
     soldergeo_btn->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t\t\t\t\t   "));
-    soldergeo_btn->setText(QString::fromUtf8("Generar Geo"));
-    soldergeo_btn->setToolTip(QString::fromUtf8("Generar geometría de dispensación de pasta de soldadura."));
+    soldergeo_btn->setText(trUi_(QString::fromUtf8("Generate Geo")));
+    soldergeo_btn->setToolTip(trUi_(QString::fromUtf8("Generate solder paste dispensing geometry.")));
     lay11->addWidget(soldergeo_btn, 0, 2, 1, 1);
     generation_box->addLayout(lay11, 0);
     auto* lay13 = new QFormLayout();
@@ -262,8 +264,8 @@ void SolderPasteToolUIBase::setupUi() {
     lay13->setHorizontalSpacing(6);
     lay13->setVerticalSpacing(6);
     geo_object_label = new QLabel(nullptr);
-    geo_object_label->setText(QString::fromUtf8("Resultado Geo:"));
-    geo_object_label->setToolTip(QString::fromUtf8("Objeto de pasta de soldadura de geometría.\nEl nombre del objeto tiene que terminar en:\n'_solderpaste' como protección."));
+    geo_object_label->setText(trUi_(QString::fromUtf8("Geo Result:")));
+    geo_object_label->setToolTip(trUi_(QString::fromUtf8("Geometry Solder Paste object.\nThe name of the object has to end in:\n'_solderpaste' as a protection.")));
     lay13->setWidget(0, QFormLayout::ItemRole(0), geo_object_label);
     geo_obj_combo = new FCComboBox(nullptr);
     lay13->setWidget(0, QFormLayout::ItemRole(1), geo_obj_combo);
@@ -273,14 +275,14 @@ void SolderPasteToolUIBase::setupUi() {
     lay14->setHorizontalSpacing(6);
     lay14->setVerticalSpacing(6);
     auto* w15 = new QLabel(nullptr);
-    w15->setText(QString::fromUtf8("<b>PASO 3:</b>"));
-    w15->setToolTip(QString::fromUtf8("El tercer paso es seleccionar una geometría de distribución de pasta de soldadura,\ny luego generar un objeto CNCJob.\n\nRECUERDE: si desea crear un CNCJob con nuevos parámetros,\nprimero necesitas generar una geometría con esos nuevos parámetros,\ny solo después de eso puede generar un CNCJob actualizado."));
+    w15->setText(trUi_(QString::fromUtf8("<b>STEP 3:</b>")));
+    w15->setToolTip(trUi_(QString::fromUtf8("Third step is to select a solder paste dispensing geometry,\nand then generate a CNCJob object.\n\nREMEMBER: if you want to create a CNCJob with new parameters,\nfirst you need to generate a geometry with those new params,\nand only after that you can generate an updated CNCJob.")));
     lay14->addWidget(w15, 0, 0, 1, 1);
     solder_gcode_btn = new QPushButton(nullptr);
     { QFont f = solder_gcode_btn->font(); f.setBold(true); solder_gcode_btn->setFont(f); }
     solder_gcode_btn->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "));
-    solder_gcode_btn->setText(QString::fromUtf8("Generar GCode"));
-    solder_gcode_btn->setToolTip(QString::fromUtf8("Generar GCodelo para dispensar pasta de soldadura\nen almohadillas de PCB."));
+    solder_gcode_btn->setText(trUi_(QString::fromUtf8("Generate GCode")));
+    solder_gcode_btn->setToolTip(trUi_(QString::fromUtf8("Generate GCode for Solder Paste dispensing\non PCB pads.")));
     lay14->addWidget(solder_gcode_btn, 0, 2, 1, 1);
     generation_box->addLayout(lay14, 0);
     auto* lay16 = new QFormLayout();
@@ -288,8 +290,8 @@ void SolderPasteToolUIBase::setupUi() {
     lay16->setHorizontalSpacing(6);
     lay16->setVerticalSpacing(6);
     cnc_object_label = new QLabel(nullptr);
-    cnc_object_label->setText(QString::fromUtf8("Resultado del CNC:"));
-    cnc_object_label->setToolTip(QString::fromUtf8("CNCJob soldar pegar objeto.\nPara habilitar la sección de guardar GCode,\nel nombre del objeto debe terminar en:\n'_solderpaste' como protección."));
+    cnc_object_label->setText(trUi_(QString::fromUtf8("CNC Result:")));
+    cnc_object_label->setToolTip(trUi_(QString::fromUtf8("CNCJob Solder paste object.\nIn order to enable the GCode save section,\nthe name of the object has to end in:\n'_solderpaste' as a protection.")));
     lay16->setWidget(0, QFormLayout::ItemRole(0), cnc_object_label);
     cnc_obj_combo = new FCComboBox(nullptr);
     lay16->setWidget(0, QFormLayout::ItemRole(1), cnc_obj_combo);
@@ -299,20 +301,20 @@ void SolderPasteToolUIBase::setupUi() {
     lay17->setHorizontalSpacing(6);
     lay17->setVerticalSpacing(6);
     auto* w18 = new QLabel(nullptr);
-    w18->setText(QString::fromUtf8("<b>PASO 4:</b>"));
-    w18->setToolTip(QString::fromUtf8("Cuarto paso (y último) es seleccionar un CNCJob hecho de\nuna geometría de dispensación de pasta de soldadura, y luego ver / guardar su código GC."));
+    w18->setText(trUi_(QString::fromUtf8("<b>STEP 4:</b>")));
+    w18->setToolTip(trUi_(QString::fromUtf8("Fourth step (and last) is to select a CNCJob made from \na solder paste dispensing geometry, and then view/save it's GCode.")));
     lay17->addWidget(w18, 0, 0, 1, 1);
     solder_gcode_view_btn = new QPushButton(nullptr);
     { QFont f = solder_gcode_view_btn->font(); f.setBold(true); solder_gcode_view_btn->setFont(f); }
     solder_gcode_view_btn->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "));
-    solder_gcode_view_btn->setText(QString::fromUtf8("Ver GCode"));
-    solder_gcode_view_btn->setToolTip(QString::fromUtf8("Ver el GCode generado para la dispensación de pasta de soldadura\nen almohadillas de PCB."));
+    solder_gcode_view_btn->setText(trUi_(QString::fromUtf8("View GCode")));
+    solder_gcode_view_btn->setToolTip(trUi_(QString::fromUtf8("View the generated GCode for Solder Paste dispensing\non PCB pads.")));
     lay17->addWidget(solder_gcode_view_btn, 0, 2, 1, 1);
     solder_gcode_save_btn = new QPushButton(nullptr);
     { QFont f = solder_gcode_save_btn->font(); f.setBold(true); solder_gcode_save_btn->setFont(f); }
     solder_gcode_save_btn->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "));
-    solder_gcode_save_btn->setText(QString::fromUtf8("Guardar GCode"));
-    solder_gcode_save_btn->setToolTip(QString::fromUtf8("Guarde el GCode generado para la dispensación de pasta de soldadura\nen almohadillas de PCB, a un archivo."));
+    solder_gcode_save_btn->setText(trUi_(QString::fromUtf8("Save GCode")));
+    solder_gcode_save_btn->setToolTip(trUi_(QString::fromUtf8("Save the generated GCode for Solder Paste dispensing\non PCB pads, to a file.")));
     lay17->addWidget(solder_gcode_save_btn, 1, 0, 1, 3);
     generation_box->addLayout(lay17, 0);
     generation_frame->setLayout(generation_box);
@@ -322,8 +324,8 @@ void SolderPasteToolUIBase::setupUi() {
     { QFont f = reset_button->font(); f.setBold(true); reset_button->setFont(f); }
     reset_button->setIcon(QIcon(QString::fromUtf8(":/images/reset32.png")));
     reset_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "));
-    reset_button->setText(QString::fromUtf8("Restablecer la Herramienta"));
-    reset_button->setToolTip(QString::fromUtf8("Restablecerá los parámetros de la herramienta."));
+    reset_button->setText(trUi_(QString::fromUtf8("Reset Tool")));
+    reset_button->setToolTip(trUi_(QString::fromUtf8("Will reset the tool parameters.")));
     layout->addWidget(reset_button, 0);
     setLayout(layout);
 }

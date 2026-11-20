@@ -388,7 +388,8 @@ if __name__ == "__main__":
     import os
     import sys
     qapp, fa, gui = fr.build_app()
-    out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(fr.ROOT, "tools", "gui_dump", "main_gui.json")
+    out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(fr.DUMP_DIR or os.path.join(fr.ROOT, "tools", "gui_dump"),
+                                                             "main_gui.json")
     with open(out, "w", encoding="utf-8") as f:
         json.dump(dump_main_window(gui, fa), f, ensure_ascii=False, indent=1)
     print("Escrito", out)

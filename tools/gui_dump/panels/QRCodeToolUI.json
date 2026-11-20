@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Herramienta QRCode"
+    "v": "QRCode Tool"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Herramienta QRCode"
+        "v": "QRCode Tool"
        }
       }
      }
@@ -111,7 +111,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Objeto Gerber al que se agregará el QRCode."
+           "v": "Gerber Object to which the QRCode will be added."
           },
           "text": {
            "t": "str",
@@ -179,11 +179,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Datos de QRCode. Texto alfanumérico a codificar en el Código QR."
+           "v": "QRCode Data. Alphanumeric text to be encoded in the QRCode."
           },
           "text": {
            "t": "str",
-           "v": "<b>Datos de QRCode</b>:"
+           "v": "<b>QRCode Data</b>:"
           }
          }
         }
@@ -201,7 +201,7 @@
          "props": {
           "placeholderText": {
            "t": "str",
-           "v": "Agregue aquí el texto que se incluirá en el QRCode ..."
+           "v": "Add here the text to be included in the QRCode..."
           }
          }
         }
@@ -291,11 +291,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Los parámetros utilizados para dar forma al QRCode."
+           "v": "The parameters used to shape the QRCode."
           },
           "text": {
            "t": "str",
-           "v": "<b>Parámetros</b>"
+           "v": "<b>Parameters</b>"
           }
          }
         }
@@ -313,11 +313,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "La versión de QRCode puede tener valores de 1 (21x21 elementos)\na 40 (177x177 elementos)."
+           "v": "QRCode version can have values from 1 (21x21 boxes)\nto 40 (177x177 boxes)."
           },
           "text": {
            "t": "str",
-           "v": "Versión:"
+           "v": "Version:"
           }
          }
         }
@@ -365,11 +365,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Parámetro que controla la corrección de errores utilizada para el código QR.\nL = máximo 7 %% de errores pueden ser corregidos\nM = máximo 15%% de errores pueden ser corregidos\nQ = se puede corregir un máximo de 25%% de errores\nH = máximo 30 %% de errores pueden ser corregidos."
+           "v": "Parameter that controls the error correction used for the QR Code.\nL = maximum 7%% errors can be corrected\nM = maximum 15%% errors can be corrected\nQ = maximum 25%% errors can be corrected\nH = maximum 30%% errors can be corrected."
           },
           "text": {
            "t": "str",
-           "v": "Corrección de error:"
+           "v": "Error correction:"
           }
          }
         }
@@ -387,7 +387,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Parámetro que controla la corrección de errores utilizada para el código QR.\nL = máximo 7 %% de errores pueden ser corregidos\nM = máximo 15%% de errores pueden ser corregidos\nQ = se puede corregir un máximo de 25%% de errores\nH = máximo 30 %% de errores pueden ser corregidos."
+           "v": "Parameter that controls the error correction used for the QR Code.\nL = maximum 7%% errors can be corrected\nM = maximum 15%% errors can be corrected\nQ = maximum 25%% errors can be corrected\nH = maximum 30%% errors can be corrected."
           }
          },
          "choices": [
@@ -426,11 +426,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El tamaño del elemento controla el tamaño general del código QR\najustando el tamaño de cada cuadro en el código."
+           "v": "Box size control the overall size of the QRcode\nby adjusting the size of each box in the code."
           },
           "text": {
            "t": "str",
-           "v": "Tamaño de Elementos:"
+           "v": "Box Size:"
           }
          }
         }
@@ -478,11 +478,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Tamaño del borde del código QR. Cuántos elementos tiene el borde.\nEl valor predeterminado es 4. El ancho del espacio libre alrededor del Código QR."
+           "v": "Size of the QRCode border. How many boxes thick is the border.\nDefault value is 4. The width of the clearance around the QRCode."
           },
           "text": {
            "t": "str",
-           "v": "Tamaño de borde:"
+           "v": "Border Size:"
           }
          }
         }
@@ -530,11 +530,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Elija la polaridad del código QR.\nSe puede dibujar de forma negativa (los cuadrados son claros)\no de manera positiva (los cuadrados son opacos)."
+           "v": "Choose the polarity of the QRCode.\nIt can be drawn in a negative way (squares are clear)\nor in a positive way (squares are opaque)."
           },
           "text": {
            "t": "str",
-           "v": "Polaridad:"
+           "v": "Polarity:"
           }
          }
         }
@@ -552,16 +552,16 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Elija el tipo de QRCode que se creará.\nSi se agrega en un archivo de Silkscreen Gerber, el QRCode puede\nser agregado como positivo Si se agrega a un cobre Gerber\nentonces quizás el QRCode se pueda agregar como negativo."
+           "v": "Choose the type of QRCode to be created.\nIf added on a Silkscreen Gerber file the QRCode may\nbe added as positive. If it is added to a Copper Gerber\nfile then perhaps the QRCode can be added as negative."
           }
          },
          "choices": [
           {
-           "label": "Negativa",
+           "label": "Negative",
            "value": "neg"
           },
           {
-           "label": "Positivo",
+           "label": "Positive",
            "value": "pos"
           }
          ],
@@ -583,11 +583,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El cuadro delimitador, que significa el espacio vacío que rodea\nLa geometría QRCode, puede tener una forma redondeada o cuadrada."
+           "v": "The bounding box, meaning the empty space that surrounds\nthe QRCode geometry, can have a rounded or a square shape."
           },
           "text": {
            "t": "str",
-           "v": "Cuadro delimitador:"
+           "v": "Bounding Box:"
           }
          }
         }
@@ -605,16 +605,16 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El cuadro delimitador, que significa el espacio vacío que rodea\nLa geometría QRCode, puede tener una forma redondeada o cuadrada."
+           "v": "The bounding box, meaning the empty space that surrounds\nthe QRCode geometry, can have a rounded or a square shape."
           }
          },
          "choices": [
           {
-           "label": "Redondeado",
+           "label": "Rounded",
            "value": "r"
           },
           {
-           "label": "Cuadrado",
+           "label": "Square",
            "value": "s"
           }
          ],
@@ -636,11 +636,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Mostrar un conjunto de controles que permiten exportar el QRCode\na un archivo SVG o un archivo PNG."
+           "v": "Show a set of controls allowing to export the QRCode\nto a SVG file or an PNG file."
           },
           "text": {
            "t": "str",
-           "v": "Exportar el código QR"
+           "v": "Export QRCode"
           }
          }
         }
@@ -704,11 +704,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Establezca el color de relleno del código QR (color de cuadrados / elementos)."
+            "v": "Set the QRCode fill color (squares color)."
            },
            "text": {
             "t": "str",
-            "v": "Color de relleno:"
+            "v": "Fill Color:"
            }
           }
          }
@@ -798,7 +798,7 @@
           "props": {
            "text": {
             "t": "str",
-            "v": "Color de fondo transparente"
+            "v": "Transparent back color"
            }
           }
          }
@@ -816,11 +816,11 @@
           "props": {
            "toolTip": {
             "t": "str",
-            "v": "Establece el color de fondo del QRCode."
+            "v": "Set the QRCode background color."
            },
            "text": {
             "t": "str",
-            "v": "Color de fondo:"
+            "v": "Back Color:"
            }
           }
          }
@@ -916,7 +916,7 @@
            },
            "toolTip": {
             "t": "str",
-            "v": "Exporte un archivo SVG con el contenido de QRCode."
+            "v": "Export a SVG file with the QRCode content."
            },
            "styleSheet": {
             "t": "str",
@@ -924,7 +924,7 @@
            },
            "text": {
             "t": "str",
-            "v": "Exportar el QRCode SVG"
+            "v": "Export QRCode SVG"
            }
           }
          }
@@ -948,7 +948,7 @@
            },
            "toolTip": {
             "t": "str",
-            "v": "Exporte un archivo de imagen PNG con el contenido de QRCode."
+            "v": "Export a PNG image file with the QRCode content."
            },
            "styleSheet": {
             "t": "str",
@@ -956,7 +956,7 @@
            },
            "text": {
             "t": "str",
-            "v": "Exportar el QRCode PNG"
+            "v": "Export QRCode PNG"
            }
           }
          }
@@ -981,7 +981,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Crea el objeto QRCode."
+        "v": "Create the QRCode object."
        },
        "styleSheet": {
         "t": "str",
@@ -989,7 +989,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Insertar QRCode"
+        "v": "Insert QRCode"
        },
        "icon": {
         "t": "QIcon",
@@ -1024,7 +1024,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Restablecerá los parámetros de la herramienta."
+        "v": "Will reset the tool parameters."
        },
        "styleSheet": {
         "t": "str",
@@ -1032,7 +1032,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Restablecer la Herramienta"
+        "v": "Reset Tool"
        },
        "icon": {
         "t": "QIcon",

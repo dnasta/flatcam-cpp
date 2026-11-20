@@ -346,7 +346,16 @@
     <file>images/zoom_fit32.png</file>
     <file>images/zoom_in32.png</file>
     <file>images/zoom_out32.png</file>
-    <file>es.json</file>
+    <file>i18n/languages.json</file>
+    <file>i18n/de.json</file>
+    <file>i18n/en.json</file>
+    <file>i18n/es.json</file>
+    <file>i18n/fr.json</file>
+    <file>i18n/it.json</file>
+    <file>i18n/pt_BR.json</file>
+    <file>i18n/ro.json</file>
+    <file>i18n/ru.json</file>
+    <file>i18n/tr.json</file>
     <file>factory_defaults.json</file>
     <file>preferences_fields.json</file>
     <file>shortcuts.json</file>

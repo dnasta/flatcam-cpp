@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import fc_runtime as fr  # noqa: E402
 from dump_tree import dump_widget  # noqa: E402
 
-OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "panels")
+OUT = fr.DUMP_DIR or os.path.join(os.path.dirname(os.path.abspath(__file__)), "panels")
 
 # clase del panel -> (tipo de objeto, módulo, clase del objeto)
 OBJECT_UIS = {"GerberObjectUI": ("gerber", "appObjects.FlatCAMGerber", "GerberObject"),

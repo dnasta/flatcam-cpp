@@ -119,13 +119,13 @@ bool Ncc::clearCopper(const ShapeList& solidGeometry, const NccOptions& o, Shape
     error.clear();
     paths.clear();
     if (o.toolDia <= 0) {
-        error = "El diámetro de la herramienta debe ser positivo";
+        error = "The tool diameter must be positive";
         return false;
     }
     try {
         const ShapeList area = emptyArea(solidGeometry, o);
         if (area.empty()) {
-            error = "No se pudo obtener la extensión del área a limpiar";
+            error = "Could not get the extent of the area to be non copper cleared.";
             return false;
         }
         for (const Shape& region : area) {
@@ -147,7 +147,7 @@ bool Ncc::clearCopper(const ShapeList& solidGeometry, const NccOptions& o, Shape
         return false;
     }
     if (paths.empty()) {
-        error = "No hay geometría de NCC: la herramienta es demasiado grande para el área a limpiar";
+        error = "There is no NCC Geometry in the file.\nUsually it means that the tool diameter is too big for the painted geometry.\nChange the painting parameters and try again.";
         return false;
     }
     return true;
@@ -162,7 +162,7 @@ bool Ncc::clearCopperRest(const ShapeList& solidGeometry, const std::vector<NccR
     try {
         ShapeList area = emptyArea(solidGeometry, common);
         if (area.empty()) {
-            error = "No se pudo obtener la extensión del área a limpiar";
+            error = "Could not get the extent of the area to be non copper cleared.";
             return false;
         }
         std::vector<std::size_t> order(tools.size());
@@ -198,7 +198,7 @@ bool Ncc::clearCopperRest(const ShapeList& solidGeometry, const std::vector<NccR
         return false;
     }
     if (perTool.empty()) {
-        error = "No hay geometría de NCC: las herramientas son demasiado grandes para el área a limpiar";
+        error = "There is no NCC Geometry in the file.\nUsually it means that the tool diameter is too big for the painted geometry.\nChange the painting parameters and try again.";
         return false;
     }
     return true;

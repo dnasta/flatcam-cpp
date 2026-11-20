@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Herramienta de texto"
+    "v": "Text Input Tool"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -68,7 +68,7 @@
            },
            "text": {
             "t": "str",
-            "v": "Herramienta de texto"
+            "v": "Text Input Tool"
            }
           }
          }
@@ -325,7 +325,7 @@
              "props": {
               "text": {
                "t": "str",
-               "v": "Tamaño:"
+               "v": "Size:"
               }
              }
             }
@@ -475,7 +475,7 @@
              "props": {
               "text": {
                "t": "str",
-               "v": "Texto:"
+               "v": "Text:"
               }
              }
             }
@@ -544,7 +544,7 @@
                 "props": {
                  "text": {
                   "t": "str",
-                  "v": "Aplicar"
+                  "v": "Apply"
                  }
                 }
                }

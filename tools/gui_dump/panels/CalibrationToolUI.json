@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Herramienta de Calibración"
+    "v": "Calibration Tool"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Herramienta de Calibración"
+        "v": "Calibration Tool"
        }
       }
      }
@@ -158,11 +158,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Parámetros utilizados al crear el GCode en esta herramienta."
+           "v": "Parameters used when creating the GCode in this tool."
           },
           "text": {
            "t": "str",
-           "v": "<b>Parámetros:</b>"
+           "v": "<b>Parameters:</b>"
           }
          }
         }
@@ -180,11 +180,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Altura (Z) para viajar entre los puntos."
+           "v": "Height (Z) for travelling between the points."
           },
           "text": {
            "t": "str",
-           "v": "Viaje Z:"
+           "v": "Travel Z:"
           }
          }
         }
@@ -236,11 +236,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Altura (Z) para verificar el punto."
+           "v": "Height (Z) for checking the point."
           },
           "text": {
            "t": "str",
-           "v": "Verificación Z:"
+           "v": "Verification Z:"
           }
          }
         }
@@ -292,11 +292,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Incluya una secuencia para poner a cero la altura (Z)\nde la herramienta de verificación."
+           "v": "Include a sequence to zero the height (Z)\nof the verification tool."
           },
           "text": {
            "t": "str",
-           "v": "Cero la Z para Herram."
+           "v": "Zero Z tool"
           }
          }
         }
@@ -314,11 +314,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Altura (Z) para montar la sonda de verificación."
+           "v": "Height (Z) for mounting the verification probe."
           },
           "text": {
            "t": "str",
-           "v": "Cambio de herramienta Z:"
+           "v": "Toolchange Z:"
           },
           "enabled": {
            "t": "bool",
@@ -374,11 +374,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Posición de cambio de herramienta X, Y.\nSi no se ingresa ningún valor, entonces el actual\n(x, y) se utilizará el punto,"
+           "v": "Toolchange X,Y position.\nIf no value is entered then the current\n(x, y) point will be used,"
           },
           "text": {
            "t": "str",
-           "v": "Cambio de herra X, Y:"
+           "v": "Toolchange X-Y:"
           },
           "enabled": {
            "t": "bool",
@@ -449,11 +449,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El segundo punto en la verificación de Gcode puede ser:\n- arriba a la izquierda -> el usuario alineará la PCB verticalmente\n- abajo a la derecha -> el usuario alineará la PCB horizontalmente"
+           "v": "Second point in the Gcode verification can be:\n- top-left -> the user will align the PCB vertically\n- bottom-right -> the user will align the PCB horizontally"
           },
           "text": {
            "t": "str",
-           "v": "Segundo punto:"
+           "v": "Second point:"
           }
          }
         }
@@ -471,11 +471,11 @@
          "props": {},
          "choices": [
           {
-           "label": "Arriba a la izquierda",
+           "label": "Top Left",
            "value": "tl"
           },
           {
-           "label": "Abajo a la derecha",
+           "label": "Bottom Right",
            "value": "br"
           }
          ],
@@ -541,11 +541,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Elija cuatro puntos haciendo clic en el lienzo.\nEsos cuatro puntos deberían estar en los cuatro\n(tanto como sea posible) esquinas del objeto."
+           "v": "Pick four points by clicking on canvas.\nThose four points should be in the four\n(as much as possible) corners of the object."
           },
           "text": {
            "t": "str",
-           "v": "<b>PASO 1: Adquiera puntos de calibración</b>"
+           "v": "<b>STEP 1: Acquire Calibration Points</b>"
           }
          }
         }
@@ -563,11 +563,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "La fuente de los puntos de calibración.\nPuede ser:\n- Objeto -> haga clic en un agujero geo para Excellon o una almohadilla para Gerber\n- Libre -> haga clic libremente en el lienzo para adquirir los puntos de calibración"
+           "v": "The source of calibration points.\nIt can be:\n- Object -> click a hole geo for Excellon or a pad for Gerber\n- Free -> click freely on canvas to acquire the calibration points"
           },
           "text": {
            "t": "str",
-           "v": "<b>Tipo de Fuente:</b>"
+           "v": "<b>Source Type:</b>"
           }
          }
         }
@@ -585,11 +585,11 @@
          "props": {},
          "choices": [
           {
-           "label": "Objeto",
+           "label": "Object",
            "value": "object"
           },
           {
-           "label": "Libre",
+           "label": "Free",
            "value": "free"
           }
          ],
@@ -611,7 +611,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "Tipo de objeto:"
+           "v": "Object Type:"
           }
          }
         }
@@ -652,11 +652,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Objeto FlatCAM que se utilizará como fuente de puntos de referencia."
+           "v": "FlatCAM Object to be used as a source for reference points."
           },
           "text": {
            "t": "str",
-           "v": "Selección de objeto de origen:"
+           "v": "Source object selection:"
           }
          }
         }
@@ -689,11 +689,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Contiene los puntos de calibración esperados y el\nlos medidos."
+           "v": "Contain the expected calibration points and the\nones measured."
           },
           "text": {
            "t": "str",
-           "v": "<b>Puntos de calibración</b>"
+           "v": "<b>Calibration Points</b>"
           }
          }
         }
@@ -748,9 +748,9 @@
           "cols": 4,
           "labels": [
            "#",
-           "Nombre",
-           "Objetivo",
-           "Delta encontrado"
+           "Name",
+           "Target",
+           "Found Delta"
           ],
           "hheader": true,
           "vheader": false,
@@ -784,7 +784,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Elija cuatro puntos haciendo clic en el lienzo si la opción de origen\nes 'libre' o está dentro de la geometría del objeto si la fuente es 'objeto'.\nEsos cuatro puntos deben estar en los cuatro cuadrados de\nel objeto."
+           "v": "Pick four points by clicking on canvas if the source choice\nis 'free' or inside the object geometry if the source is 'object'.\nThose four points should be in the four squares of\nthe object."
           },
           "styleSheet": {
            "t": "str",
@@ -792,7 +792,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Obtener puntos"
+           "v": "Get Points"
           }
          }
         }
@@ -854,11 +854,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Genere un archivo GCode para localizar y alinear la PCB utilizando\nLos cuatro puntos adquiridos anteriormente.\nLa secuencia de puntos es:\n- primer punto -> establecer el origen\n- segundo punto -> punto de alineación. Puede ser: arriba a la izquierda o abajo a la derecha.\n- tercer punto -> punto de control. Puede ser: arriba a la izquierda o abajo a la derecha.\n- cuarto punto -> punto de verificación final. Solo para evaluación."
+           "v": "Generate GCode file to locate and align the PCB by using\nthe four points acquired above.\nThe points sequence is:\n- first point -> set the origin\n- second point -> alignment point. Can be: top-left or bottom-right.\n- third point -> check point. Can be: top-left or bottom-right.\n- forth point -> final verification point. Just for evaluation."
           },
           "text": {
            "t": "str",
-           "v": "<b>PASO 2: Verificación GCode</b>"
+           "v": "<b>STEP 2: Verification GCode</b>"
           }
          }
         }
@@ -882,7 +882,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Genere un archivo GCode para localizar y alinear la PCB utilizando\nLos cuatro puntos adquiridos anteriormente.\nLa secuencia de puntos es:\n- primer punto -> establecer el origen\n- segundo punto -> punto de alineación. Puede ser: arriba a la izquierda o abajo a la derecha.\n- tercer punto -> punto de control. Puede ser: arriba a la izquierda o abajo a la derecha.\n- cuarto punto -> punto de verificación final. Solo para evaluación."
+           "v": "Generate GCode file to locate and align the PCB by using\nthe four points acquired above.\nThe points sequence is:\n- first point -> set the origin\n- second point -> alignment point. Can be: top-left or bottom-right.\n- third point -> check point. Can be: top-left or bottom-right.\n- forth point -> final verification point. Just for evaluation."
           },
           "styleSheet": {
            "t": "str",
@@ -890,7 +890,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Generar GCode"
+           "v": "Generate GCode"
           }
          }
         }
@@ -952,11 +952,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Calcular factores de escala y sesgo basados en las diferencias (delta)\nencontrado al verificar el patrón de PCB. Las diferencias deben llenarse\nen los campos encontrados (Delta)."
+           "v": "Calculate Scale and Skew factors based on the differences (delta)\nfound when checking the PCB pattern. The differences must be filled\nin the fields Found (Delta)."
           },
           "text": {
            "t": "str",
-           "v": "<b>PASO 3: Ajustes</b>"
+           "v": "<b>STEP 3: Adjustments</b>"
           }
          }
         }
@@ -980,7 +980,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Calcular factores de escala y sesgo basados en las diferencias (delta)\nencontrado al verificar el patrón de PCB. Las diferencias deben llenarse\nen los campos encontrados (Delta)."
+           "v": "Calculate Scale and Skew factors based on the differences (delta)\nfound when checking the PCB pattern. The differences must be filled\nin the fields Found (Delta)."
           },
           "styleSheet": {
            "t": "str",
@@ -988,7 +988,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Calcular factores"
+           "v": "Calculate Factors"
           }
          }
         }
@@ -1050,11 +1050,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Generar un archivo GCode de verificación ajustado con\nLos factores anteriores."
+           "v": "Generate verification GCode file adjusted with\nthe factors above."
           },
           "text": {
            "t": "str",
-           "v": "<b>PASO 4: Código GC ajustado</b>"
+           "v": "<b>STEP 4: Adjusted GCode</b>"
           }
          }
         }
@@ -1072,11 +1072,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Factor para la acción de escala sobre el eje X."
+           "v": "Factor for Scale action over X axis."
           },
           "text": {
            "t": "str",
-           "v": "Factor de escala X:"
+           "v": "Scale Factor X:"
           }
          }
         }
@@ -1124,11 +1124,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Factor de acción de escala sobre eje Y."
+           "v": "Factor for Scale action over Y axis."
           },
           "text": {
            "t": "str",
-           "v": "Factor de escala Y:"
+           "v": "Scale Factor Y:"
           }
          }
         }
@@ -1182,7 +1182,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Aplicar factores de escala en los puntos de calibración."
+           "v": "Apply Scale factors on the calibration points."
           },
           "styleSheet": {
            "t": "str",
@@ -1190,7 +1190,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Aplicar factores de escala"
+           "v": "Apply Scale Factors"
           }
          }
         }
@@ -1208,11 +1208,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Ángulo, en grados.\nNúmero Real entre -360 y 359."
+           "v": "Angle, in degrees.\nFloat number between -360 and 359."
           },
           "text": {
            "t": "str",
-           "v": "Ángulo de Inclinar X:"
+           "v": "Skew Angle X:"
           }
          }
         }
@@ -1260,11 +1260,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Ángulo, en grados.\nNúmero Real entre -360 y 359."
+           "v": "Angle, in degrees.\nFloat number between -360 and 359."
           },
           "text": {
            "t": "str",
-           "v": "Ángulo de Inclinar Y:"
+           "v": "Skew Angle Y:"
           }
          }
         }
@@ -1318,7 +1318,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Aplicar factores de inclinación en los puntos de calibración."
+           "v": "Apply Skew factors on the calibration points."
           },
           "styleSheet": {
            "t": "str",
@@ -1326,7 +1326,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Aplicar factores Sesgados"
+           "v": "Apply Skew Factors"
           }
          }
         }
@@ -1350,7 +1350,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Generar un archivo GCode de verificación ajustado con\nLos factores establecidos anteriormente.\nLos parámetros GCode se pueden reajustar\nantes de hacer clic en este botón."
+           "v": "Generate verification GCode file adjusted with\nthe factors set above.\nThe GCode parameters can be readjusted\nbefore clicking this button."
           },
           "styleSheet": {
            "t": "str",
@@ -1358,7 +1358,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Generar código GC ajustado"
+           "v": "Generate Adjusted GCode"
           }
          }
         }
@@ -1420,11 +1420,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Ajuste los objetos FlatCAM\ncon los factores determinados y verificados anteriormente."
+           "v": "Adjust the FlatCAM objects\nwith the factors determined and verified above."
           },
           "text": {
            "t": "str",
-           "v": "<b>PASO 5: Calibrar objetos FlatCAM</b>"
+           "v": "<b>STEP 5: Calibrate FlatCAM Objects</b>"
           }
          }
         }
@@ -1442,11 +1442,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Tipo del objeto FlatCAM que se ajustará."
+           "v": "Type of the FlatCAM Object to be adjusted."
           },
           "text": {
            "t": "str",
-           "v": "Tipo de objeto ajustado:"
+           "v": "Adjusted object type:"
           }
          }
         }
@@ -1470,7 +1470,7 @@
          "items": [
           "Gerber",
           "Excellon",
-          "Geometría"
+          "Geometry"
          ],
          "currentIndex": 0
         }
@@ -1488,11 +1488,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El objeto FlatCAM a ajustar."
+           "v": "The FlatCAM Object to be adjusted."
           },
           "text": {
            "t": "str",
-           "v": "Selección de objeto ajustada:"
+           "v": "Adjusted object selection:"
           }
          }
         }
@@ -1531,7 +1531,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Ajustar (escalar y / o sesgar) los objetos\ncon los factores determinados anteriormente."
+           "v": "Adjust (scale and/or skew) the objects\nwith the factors determined above."
           },
           "styleSheet": {
            "t": "str",
@@ -1539,7 +1539,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Calibrar"
+           "v": "Calibrate"
           }
          }
         }
@@ -1617,7 +1617,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Restablecerá los parámetros de la herramienta."
+        "v": "Will reset the tool parameters."
        },
        "styleSheet": {
         "t": "str",
@@ -1625,7 +1625,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Restablecer la Herramienta"
+        "v": "Reset Tool"
        },
        "icon": {
         "t": "QIcon",

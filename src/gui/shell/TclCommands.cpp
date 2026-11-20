@@ -1,6 +1,7 @@
 // register_all_commands: los comandos portados y, para los demás del original, uno que avisa que todavía no está
 // (así `help` lista lo mismo que el original).
 #include "gui/shell/TclCommands.h"
+#include "gui/Translation.h"
 
 #include <algorithm>
 #include <set>
@@ -17,7 +18,7 @@ public:
 
 protected:
     std::optional<QString> execute(const TclArgs&) override {
-        raiseTclError(QString("El comando %1 todavía no está en el port.").arg(meta().aliases.value(0)));
+        raiseTclError(tr_("The command %1 is not in the port yet.").arg(meta().aliases.value(0)));
     }
 };
 

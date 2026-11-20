@@ -4,19 +4,21 @@
 #include <QKeySequence>
 #include <QSpacerItem>
 
+#include "gui/Translation.h"
+
 namespace flatcam::gui {
 
 void CalibrationToolUIBase::setupUi() {
     // ---- acciones (compartidas entre menús y barras)
     this->setAutoFillBackground(true);
-    this->setProperty("objectName", QString::fromUtf8("Herramienta de Calibración"));
+    this->setProperty("objectName", QString::fromUtf8("Calibration Tool"));
     layout = new QVBoxLayout();
     layout->setContentsMargins(9, 9, 9, 9);
     layout->setSpacing(6);
     auto* w1 = new QLabel(nullptr);
     { QFont f = w1->font(); f.setBold(true); f.setPixelSize(16); w1->setFont(f); }
     w1->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\tQLabel\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tfont-size: 16px;\n\t\t\t\t\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t"));
-    w1->setText(QString::fromUtf8("Herramienta de Calibración"));
+    w1->setText(trUi_(QString::fromUtf8("Calibration Tool")));
     layout->addWidget(w1, 0);
     auto* w2 = new QLabel(nullptr);
     layout->addWidget(w2, 0);
@@ -25,12 +27,12 @@ void CalibrationToolUIBase::setupUi() {
     lay3->setHorizontalSpacing(6);
     lay3->setVerticalSpacing(6);
     gcode_title_label = new QLabel(nullptr);
-    gcode_title_label->setText(QString::fromUtf8("<b>Parámetros:</b>"));
-    gcode_title_label->setToolTip(QString::fromUtf8("Parámetros utilizados al crear el GCode en esta herramienta."));
+    gcode_title_label->setText(trUi_(QString::fromUtf8("<b>Parameters:</b>")));
+    gcode_title_label->setToolTip(trUi_(QString::fromUtf8("Parameters used when creating the GCode in this tool.")));
     lay3->addWidget(gcode_title_label, 0, 0, 1, 3);
     auto* w4 = new QLabel(nullptr);
-    w4->setText(QString::fromUtf8("Viaje Z:"));
-    w4->setToolTip(QString::fromUtf8("Altura (Z) para viajar entre los puntos."));
+    w4->setText(trUi_(QString::fromUtf8("Travel Z:")));
+    w4->setToolTip(trUi_(QString::fromUtf8("Height (Z) for travelling between the points.")));
     lay3->addWidget(w4, 1, 0, 1, 1);
     travelz_entry = new FCDoubleSpinner(nullptr);
     travelz_entry->setProperty("decimals", 4);
@@ -40,8 +42,8 @@ void CalibrationToolUIBase::setupUi() {
     travelz_entry->setProperty("value", 2.0);
     lay3->addWidget(travelz_entry, 1, 1, 1, 2);
     auto* w5 = new QLabel(nullptr);
-    w5->setText(QString::fromUtf8("Verificación Z:"));
-    w5->setToolTip(QString::fromUtf8("Altura (Z) para verificar el punto."));
+    w5->setText(trUi_(QString::fromUtf8("Verification Z:")));
+    w5->setToolTip(trUi_(QString::fromUtf8("Height (Z) for checking the point.")));
     lay3->addWidget(w5, 2, 0, 1, 1);
     verz_entry = new FCDoubleSpinner(nullptr);
     verz_entry->setProperty("decimals", 4);
@@ -51,13 +53,13 @@ void CalibrationToolUIBase::setupUi() {
     verz_entry->setProperty("value", 0.1);
     lay3->addWidget(verz_entry, 2, 1, 1, 2);
     zeroz_cb = new FCCheckBox(nullptr);
-    zeroz_cb->setText(QString::fromUtf8("Cero la Z para Herram."));
-    zeroz_cb->setToolTip(QString::fromUtf8("Incluya una secuencia para poner a cero la altura (Z)\nde la herramienta de verificación."));
+    zeroz_cb->setText(trUi_(QString::fromUtf8("Zero Z tool")));
+    zeroz_cb->setToolTip(trUi_(QString::fromUtf8("Include a sequence to zero the height (Z)\nof the verification tool.")));
     lay3->addWidget(zeroz_cb, 3, 0, 1, 3);
     auto* w6 = new QLabel(nullptr);
     w6->setEnabled(false);
-    w6->setText(QString::fromUtf8("Cambio de herramienta Z:"));
-    w6->setToolTip(QString::fromUtf8("Altura (Z) para montar la sonda de verificación."));
+    w6->setText(trUi_(QString::fromUtf8("Toolchange Z:")));
+    w6->setToolTip(trUi_(QString::fromUtf8("Height (Z) for mounting the verification probe.")));
     lay3->addWidget(w6, 4, 0, 1, 1);
     toolchangez_entry = new FCDoubleSpinner(nullptr);
     toolchangez_entry->setProperty("decimals", 4);
@@ -68,8 +70,8 @@ void CalibrationToolUIBase::setupUi() {
     lay3->addWidget(toolchangez_entry, 4, 1, 1, 2);
     auto* w7 = new QLabel(nullptr);
     w7->setEnabled(false);
-    w7->setText(QString::fromUtf8("Cambio de herra X, Y:"));
-    w7->setToolTip(QString::fromUtf8("Posición de cambio de herramienta X, Y.\nSi no se ingresa ningún valor, entonces el actual\n(x, y) se utilizará el punto,"));
+    w7->setText(trUi_(QString::fromUtf8("Toolchange X-Y:")));
+    w7->setToolTip(trUi_(QString::fromUtf8("Toolchange X,Y position.\nIf no value is entered then the current\n(x, y) point will be used,")));
     lay3->addWidget(w7, 5, 0, 1, 1);
     toolchange_xy_entry = new FCEntry(nullptr);
     toolchange_xy_entry->setEnabled(false);
@@ -80,10 +82,10 @@ void CalibrationToolUIBase::setupUi() {
     { QSizePolicy sp(QSizePolicy::Policy(1), QSizePolicy::Policy(0)); sp.setHorizontalStretch(0); sp.setVerticalStretch(0); w8->setSizePolicy(sp); }
     lay3->addWidget(w8, 6, 0, 1, 3);
     auto* w9 = new QLabel(nullptr);
-    w9->setText(QString::fromUtf8("Segundo punto:"));
-    w9->setToolTip(QString::fromUtf8("El segundo punto en la verificación de Gcode puede ser:\n- arriba a la izquierda -> el usuario alineará la PCB verticalmente\n- abajo a la derecha -> el usuario alineará la PCB horizontalmente"));
+    w9->setText(trUi_(QString::fromUtf8("Second point:")));
+    w9->setToolTip(trUi_(QString::fromUtf8("Second point in the Gcode verification can be:\n- top-left -> the user will align the PCB vertically\n- bottom-right -> the user will align the PCB horizontally")));
     lay3->addWidget(w9, 7, 0, 1, 1);
-    second_point_radio = new RadioSet({{QString::fromUtf8("Arriba a la izquierda"), QVariant(QString::fromUtf8("tl"))}, {QString::fromUtf8("Abajo a la derecha"), QVariant(QString::fromUtf8("br"))}}, Qt::Vertical, true, nullptr);
+    second_point_radio = new RadioSet({{trUi_(QString::fromUtf8("Top Left")), QVariant(QString::fromUtf8("tl"))}, {trUi_(QString::fromUtf8("Bottom Right")), QVariant(QString::fromUtf8("br"))}}, Qt::Vertical, true, nullptr);
     second_point_radio->setValue(QVariant(QString::fromUtf8("tl")));
     lay3->addWidget(second_point_radio, 7, 1, 1, 2);
     auto* w10 = new QFrame(nullptr);
@@ -94,34 +96,34 @@ void CalibrationToolUIBase::setupUi() {
     auto* w11 = new QLabel(nullptr);
     lay3->addWidget(w11, 9, 0, 1, 3);
     auto* w12 = new QLabel(nullptr);
-    w12->setText(QString::fromUtf8("<b>PASO 1: Adquiera puntos de calibración</b>"));
-    w12->setToolTip(QString::fromUtf8("Elija cuatro puntos haciendo clic en el lienzo.\nEsos cuatro puntos deberían estar en los cuatro\n(tanto como sea posible) esquinas del objeto."));
+    w12->setText(trUi_(QString::fromUtf8("<b>STEP 1: Acquire Calibration Points</b>")));
+    w12->setToolTip(trUi_(QString::fromUtf8("Pick four points by clicking on canvas.\nThose four points should be in the four\n(as much as possible) corners of the object.")));
     lay3->addWidget(w12, 10, 0, 1, 3);
     cal_source_lbl = new QLabel(nullptr);
-    cal_source_lbl->setText(QString::fromUtf8("<b>Tipo de Fuente:</b>"));
-    cal_source_lbl->setToolTip(QString::fromUtf8("La fuente de los puntos de calibración.\nPuede ser:\n- Objeto -> haga clic en un agujero geo para Excellon o una almohadilla para Gerber\n- Libre -> haga clic libremente en el lienzo para adquirir los puntos de calibración"));
+    cal_source_lbl->setText(trUi_(QString::fromUtf8("<b>Source Type:</b>")));
+    cal_source_lbl->setToolTip(trUi_(QString::fromUtf8("The source of calibration points.\nIt can be:\n- Object -> click a hole geo for Excellon or a pad for Gerber\n- Free -> click freely on canvas to acquire the calibration points")));
     lay3->addWidget(cal_source_lbl, 11, 0, 1, 1);
-    cal_source_radio = new RadioSet({{QString::fromUtf8("Objeto"), QVariant(QString::fromUtf8("object"))}, {QString::fromUtf8("Libre"), QVariant(QString::fromUtf8("free"))}}, Qt::Horizontal, false, nullptr);
+    cal_source_radio = new RadioSet({{trUi_(QString::fromUtf8("Object")), QVariant(QString::fromUtf8("object"))}, {trUi_(QString::fromUtf8("Free")), QVariant(QString::fromUtf8("free"))}}, Qt::Horizontal, false, nullptr);
     cal_source_radio->setValue(QVariant(QString::fromUtf8("object")));
     lay3->addWidget(cal_source_radio, 11, 1, 1, 2);
     obj_type_label = new QLabel(nullptr);
-    obj_type_label->setText(QString::fromUtf8("Tipo de objeto:"));
+    obj_type_label->setText(trUi_(QString::fromUtf8("Object Type:")));
     lay3->addWidget(obj_type_label, 12, 0, 1, 1);
     obj_type_combo = new FCComboBox(nullptr);
-    obj_type_combo->setProperty("currentText", QString::fromUtf8("Excellon"));
-    obj_type_combo->addItem(QString::fromUtf8("Gerber"));
-    obj_type_combo->addItem(QString::fromUtf8("Excellon"));
+    obj_type_combo->setProperty("currentText", trUi_(QString::fromUtf8("Excellon")));
+    obj_type_combo->addItem(trUi_(QString::fromUtf8("Gerber")));
+    obj_type_combo->addItem(trUi_(QString::fromUtf8("Excellon")));
     obj_type_combo->setCurrentIndex(1);
     lay3->addWidget(obj_type_combo, 12, 1, 1, 2);
     object_label = new QLabel(nullptr);
-    object_label->setText(QString::fromUtf8("Selección de objeto de origen:"));
-    object_label->setToolTip(QString::fromUtf8("Objeto FlatCAM que se utilizará como fuente de puntos de referencia."));
+    object_label->setText(trUi_(QString::fromUtf8("Source object selection:")));
+    object_label->setToolTip(trUi_(QString::fromUtf8("FlatCAM Object to be used as a source for reference points.")));
     lay3->addWidget(object_label, 13, 0, 1, 3);
     object_combo = new FCComboBox(nullptr);
     lay3->addWidget(object_combo, 14, 0, 1, 3);
     points_table_label = new QLabel(nullptr);
-    points_table_label->setText(QString::fromUtf8("<b>Puntos de calibración</b>"));
-    points_table_label->setToolTip(QString::fromUtf8("Contiene los puntos de calibración esperados y el\nlos medidos."));
+    points_table_label->setText(trUi_(QString::fromUtf8("<b>Calibration Points</b>")));
+    points_table_label->setToolTip(trUi_(QString::fromUtf8("Contain the expected calibration points and the\nones measured.")));
     lay3->addWidget(points_table_label, 15, 0, 1, 3);
     points_table = new FCTable(nullptr);
     points_table->setProperty("columnCount", 4);
@@ -132,7 +134,7 @@ void CalibrationToolUIBase::setupUi() {
     points_table->setProperty("sizeAdjustPolicy", 2);
     points_table->setProperty("verticalScrollBarPolicy", 1);
     points_table->setColumnCount(4);
-    points_table->setHorizontalHeaderLabels({QString::fromUtf8("#"), QString::fromUtf8("Nombre"), QString::fromUtf8("Objetivo"), QString::fromUtf8("Delta encontrado")});
+    points_table->setHorizontalHeaderLabels({trUi_(QString::fromUtf8("#")), trUi_(QString::fromUtf8("Name")), trUi_(QString::fromUtf8("Target")), trUi_(QString::fromUtf8("Found Delta"))});
     points_table->verticalHeader()->setVisible(false);
     points_table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeMode(2));
     points_table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeMode(2));
@@ -142,8 +144,8 @@ void CalibrationToolUIBase::setupUi() {
     start_button = new QPushButton(nullptr);
     { QFont f = start_button->font(); f.setBold(true); start_button->setFont(f); }
     start_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "));
-    start_button->setText(QString::fromUtf8("Obtener puntos"));
-    start_button->setToolTip(QString::fromUtf8("Elija cuatro puntos haciendo clic en el lienzo si la opción de origen\nes 'libre' o está dentro de la geometría del objeto si la fuente es 'objeto'.\nEsos cuatro puntos deben estar en los cuatro cuadrados de\nel objeto."));
+    start_button->setText(trUi_(QString::fromUtf8("Get Points")));
+    start_button->setToolTip(trUi_(QString::fromUtf8("Pick four points by clicking on canvas if the source choice\nis 'free' or inside the object geometry if the source is 'object'.\nThose four points should be in the four squares of\nthe object.")));
     lay3->addWidget(start_button, 17, 0, 1, 3);
     auto* w13 = new QFrame(nullptr);
     w13->setProperty("frameShadow", 48);
@@ -153,14 +155,14 @@ void CalibrationToolUIBase::setupUi() {
     auto* w14 = new QLabel(nullptr);
     lay3->addWidget(w14, 19, 0, 1, 1);
     auto* w15 = new QLabel(nullptr);
-    w15->setText(QString::fromUtf8("<b>PASO 2: Verificación GCode</b>"));
-    w15->setToolTip(QString::fromUtf8("Genere un archivo GCode para localizar y alinear la PCB utilizando\nLos cuatro puntos adquiridos anteriormente.\nLa secuencia de puntos es:\n- primer punto -> establecer el origen\n- segundo punto -> punto de alineación. Puede ser: arriba a la izquierda o abajo a la derecha.\n- tercer punto -> punto de control. Puede ser: arriba a la izquierda o abajo a la derecha.\n- cuarto punto -> punto de verificación final. Solo para evaluación."));
+    w15->setText(trUi_(QString::fromUtf8("<b>STEP 2: Verification GCode</b>")));
+    w15->setToolTip(trUi_(QString::fromUtf8("Generate GCode file to locate and align the PCB by using\nthe four points acquired above.\nThe points sequence is:\n- first point -> set the origin\n- second point -> alignment point. Can be: top-left or bottom-right.\n- third point -> check point. Can be: top-left or bottom-right.\n- forth point -> final verification point. Just for evaluation.")));
     lay3->addWidget(w15, 20, 0, 1, 3);
     gcode_button = new QPushButton(nullptr);
     { QFont f = gcode_button->font(); f.setBold(true); gcode_button->setFont(f); }
     gcode_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "));
-    gcode_button->setText(QString::fromUtf8("Generar GCode"));
-    gcode_button->setToolTip(QString::fromUtf8("Genere un archivo GCode para localizar y alinear la PCB utilizando\nLos cuatro puntos adquiridos anteriormente.\nLa secuencia de puntos es:\n- primer punto -> establecer el origen\n- segundo punto -> punto de alineación. Puede ser: arriba a la izquierda o abajo a la derecha.\n- tercer punto -> punto de control. Puede ser: arriba a la izquierda o abajo a la derecha.\n- cuarto punto -> punto de verificación final. Solo para evaluación."));
+    gcode_button->setText(trUi_(QString::fromUtf8("Generate GCode")));
+    gcode_button->setToolTip(trUi_(QString::fromUtf8("Generate GCode file to locate and align the PCB by using\nthe four points acquired above.\nThe points sequence is:\n- first point -> set the origin\n- second point -> alignment point. Can be: top-left or bottom-right.\n- third point -> check point. Can be: top-left or bottom-right.\n- forth point -> final verification point. Just for evaluation.")));
     lay3->addWidget(gcode_button, 21, 0, 1, 3);
     auto* w16 = new QFrame(nullptr);
     w16->setProperty("frameShadow", 48);
@@ -170,14 +172,14 @@ void CalibrationToolUIBase::setupUi() {
     auto* w17 = new QLabel(nullptr);
     lay3->addWidget(w17, 23, 0, 1, 3);
     auto* w18 = new QLabel(nullptr);
-    w18->setText(QString::fromUtf8("<b>PASO 3: Ajustes</b>"));
-    w18->setToolTip(QString::fromUtf8("Calcular factores de escala y sesgo basados en las diferencias (delta)\nencontrado al verificar el patrón de PCB. Las diferencias deben llenarse\nen los campos encontrados (Delta)."));
+    w18->setText(trUi_(QString::fromUtf8("<b>STEP 3: Adjustments</b>")));
+    w18->setToolTip(trUi_(QString::fromUtf8("Calculate Scale and Skew factors based on the differences (delta)\nfound when checking the PCB pattern. The differences must be filled\nin the fields Found (Delta).")));
     lay3->addWidget(w18, 24, 0, 1, 3);
     generate_factors_button = new QPushButton(nullptr);
     { QFont f = generate_factors_button->font(); f.setBold(true); generate_factors_button->setFont(f); }
     generate_factors_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "));
-    generate_factors_button->setText(QString::fromUtf8("Calcular factores"));
-    generate_factors_button->setToolTip(QString::fromUtf8("Calcular factores de escala y sesgo basados en las diferencias (delta)\nencontrado al verificar el patrón de PCB. Las diferencias deben llenarse\nen los campos encontrados (Delta)."));
+    generate_factors_button->setText(trUi_(QString::fromUtf8("Calculate Factors")));
+    generate_factors_button->setToolTip(trUi_(QString::fromUtf8("Calculate Scale and Skew factors based on the differences (delta)\nfound when checking the PCB pattern. The differences must be filled\nin the fields Found (Delta).")));
     lay3->addWidget(generate_factors_button, 25, 0, 1, 3);
     auto* w19 = new QFrame(nullptr);
     w19->setProperty("frameShadow", 48);
@@ -187,12 +189,12 @@ void CalibrationToolUIBase::setupUi() {
     auto* w20 = new QLabel(nullptr);
     lay3->addWidget(w20, 27, 0, 1, 3);
     auto* w21 = new QLabel(nullptr);
-    w21->setText(QString::fromUtf8("<b>PASO 4: Código GC ajustado</b>"));
-    w21->setToolTip(QString::fromUtf8("Generar un archivo GCode de verificación ajustado con\nLos factores anteriores."));
+    w21->setText(trUi_(QString::fromUtf8("<b>STEP 4: Adjusted GCode</b>")));
+    w21->setToolTip(trUi_(QString::fromUtf8("Generate verification GCode file adjusted with\nthe factors above.")));
     lay3->addWidget(w21, 28, 0, 1, 3);
     scalex_label = new QLabel(nullptr);
-    scalex_label->setText(QString::fromUtf8("Factor de escala X:"));
-    scalex_label->setToolTip(QString::fromUtf8("Factor para la acción de escala sobre el eje X."));
+    scalex_label->setText(trUi_(QString::fromUtf8("Scale Factor X:")));
+    scalex_label->setToolTip(trUi_(QString::fromUtf8("Factor for Scale action over X axis.")));
     lay3->addWidget(scalex_label, 29, 0, 1, 1);
     scalex_entry = new FCDoubleSpinner(nullptr);
     scalex_entry->setProperty("decimals", 4);
@@ -201,8 +203,8 @@ void CalibrationToolUIBase::setupUi() {
     scalex_entry->setProperty("value", 1.0);
     lay3->addWidget(scalex_entry, 29, 1, 1, 2);
     scaley_label = new QLabel(nullptr);
-    scaley_label->setText(QString::fromUtf8("Factor de escala Y:"));
-    scaley_label->setToolTip(QString::fromUtf8("Factor de acción de escala sobre eje Y."));
+    scaley_label->setText(trUi_(QString::fromUtf8("Scale Factor Y:")));
+    scaley_label->setToolTip(trUi_(QString::fromUtf8("Factor for Scale action over Y axis.")));
     lay3->addWidget(scaley_label, 30, 0, 1, 1);
     scaley_entry = new FCDoubleSpinner(nullptr);
     scaley_entry->setProperty("decimals", 4);
@@ -213,12 +215,12 @@ void CalibrationToolUIBase::setupUi() {
     scale_button = new QPushButton(nullptr);
     { QFont f = scale_button->font(); f.setBold(true); scale_button->setFont(f); }
     scale_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\t\t  QPushButton\n\t\t\t\t\t\t\t\t\t  {\n\t\t\t\t\t\t\t\t\t\t  font-weight: bold;\n\t\t\t\t\t\t\t\t\t  }\n\t\t\t\t\t\t\t\t\t  "));
-    scale_button->setText(QString::fromUtf8("Aplicar factores de escala"));
-    scale_button->setToolTip(QString::fromUtf8("Aplicar factores de escala en los puntos de calibración."));
+    scale_button->setText(trUi_(QString::fromUtf8("Apply Scale Factors")));
+    scale_button->setToolTip(trUi_(QString::fromUtf8("Apply Scale factors on the calibration points.")));
     lay3->addWidget(scale_button, 31, 0, 1, 3);
     skewx_label = new QLabel(nullptr);
-    skewx_label->setText(QString::fromUtf8("Ángulo de Inclinar X:"));
-    skewx_label->setToolTip(QString::fromUtf8("Ángulo, en grados.\nNúmero Real entre -360 y 359."));
+    skewx_label->setText(trUi_(QString::fromUtf8("Skew Angle X:")));
+    skewx_label->setToolTip(trUi_(QString::fromUtf8("Angle, in degrees.\nFloat number between -360 and 359.")));
     lay3->addWidget(skewx_label, 32, 0, 1, 1);
     skewx_entry = new FCDoubleSpinner(nullptr);
     skewx_entry->setProperty("decimals", 4);
@@ -227,8 +229,8 @@ void CalibrationToolUIBase::setupUi() {
     skewx_entry->setProperty("singleStep", 0.1);
     lay3->addWidget(skewx_entry, 32, 1, 1, 2);
     skewy_label = new QLabel(nullptr);
-    skewy_label->setText(QString::fromUtf8("Ángulo de Inclinar Y:"));
-    skewy_label->setToolTip(QString::fromUtf8("Ángulo, en grados.\nNúmero Real entre -360 y 359."));
+    skewy_label->setText(trUi_(QString::fromUtf8("Skew Angle Y:")));
+    skewy_label->setToolTip(trUi_(QString::fromUtf8("Angle, in degrees.\nFloat number between -360 and 359.")));
     lay3->addWidget(skewy_label, 33, 0, 1, 1);
     skewy_entry = new FCDoubleSpinner(nullptr);
     skewy_entry->setProperty("decimals", 4);
@@ -239,14 +241,14 @@ void CalibrationToolUIBase::setupUi() {
     skew_button = new QPushButton(nullptr);
     { QFont f = skew_button->font(); f.setBold(true); skew_button->setFont(f); }
     skew_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t\t\t  QPushButton\n\t\t\t\t\t\t\t\t\t  {\n\t\t\t\t\t\t\t\t\t\t  font-weight: bold;\n\t\t\t\t\t\t\t\t\t  }\n\t\t\t\t\t\t\t\t\t  "));
-    skew_button->setText(QString::fromUtf8("Aplicar factores Sesgados"));
-    skew_button->setToolTip(QString::fromUtf8("Aplicar factores de inclinación en los puntos de calibración."));
+    skew_button->setText(trUi_(QString::fromUtf8("Apply Skew Factors")));
+    skew_button->setToolTip(trUi_(QString::fromUtf8("Apply Skew factors on the calibration points.")));
     lay3->addWidget(skew_button, 34, 0, 1, 3);
     adj_gcode_button = new QPushButton(nullptr);
     { QFont f = adj_gcode_button->font(); f.setBold(true); adj_gcode_button->setFont(f); }
     adj_gcode_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "));
-    adj_gcode_button->setText(QString::fromUtf8("Generar código GC ajustado"));
-    adj_gcode_button->setToolTip(QString::fromUtf8("Generar un archivo GCode de verificación ajustado con\nLos factores establecidos anteriormente.\nLos parámetros GCode se pueden reajustar\nantes de hacer clic en este botón."));
+    adj_gcode_button->setText(trUi_(QString::fromUtf8("Generate Adjusted GCode")));
+    adj_gcode_button->setToolTip(trUi_(QString::fromUtf8("Generate verification GCode file adjusted with\nthe factors set above.\nThe GCode parameters can be readjusted\nbefore clicking this button.")));
     lay3->addWidget(adj_gcode_button, 42, 0, 1, 3);
     auto* w22 = new QFrame(nullptr);
     w22->setProperty("frameShadow", 48);
@@ -256,30 +258,30 @@ void CalibrationToolUIBase::setupUi() {
     auto* w23 = new QLabel(nullptr);
     lay3->addWidget(w23, 44, 0, 1, 3);
     auto* w24 = new QLabel(nullptr);
-    w24->setText(QString::fromUtf8("<b>PASO 5: Calibrar objetos FlatCAM</b>"));
-    w24->setToolTip(QString::fromUtf8("Ajuste los objetos FlatCAM\ncon los factores determinados y verificados anteriormente."));
+    w24->setText(trUi_(QString::fromUtf8("<b>STEP 5: Calibrate FlatCAM Objects</b>")));
+    w24->setToolTip(trUi_(QString::fromUtf8("Adjust the FlatCAM objects\nwith the factors determined and verified above.")));
     lay3->addWidget(w24, 45, 0, 1, 3);
     adj_object_type_label = new QLabel(nullptr);
-    adj_object_type_label->setText(QString::fromUtf8("Tipo de objeto ajustado:"));
-    adj_object_type_label->setToolTip(QString::fromUtf8("Tipo del objeto FlatCAM que se ajustará."));
+    adj_object_type_label->setText(trUi_(QString::fromUtf8("Adjusted object type:")));
+    adj_object_type_label->setToolTip(trUi_(QString::fromUtf8("Type of the FlatCAM Object to be adjusted.")));
     lay3->addWidget(adj_object_type_label, 46, 0, 1, 3);
     adj_object_type_combo = new FCComboBox(nullptr);
-    adj_object_type_combo->setProperty("currentText", QString::fromUtf8("Gerber"));
-    adj_object_type_combo->addItem(QString::fromUtf8("Gerber"));
-    adj_object_type_combo->addItem(QString::fromUtf8("Excellon"));
-    adj_object_type_combo->addItem(QString::fromUtf8("Geometría"));
+    adj_object_type_combo->setProperty("currentText", trUi_(QString::fromUtf8("Gerber")));
+    adj_object_type_combo->addItem(trUi_(QString::fromUtf8("Gerber")));
+    adj_object_type_combo->addItem(trUi_(QString::fromUtf8("Excellon")));
+    adj_object_type_combo->addItem(trUi_(QString::fromUtf8("Geometry")));
     lay3->addWidget(adj_object_type_combo, 47, 0, 1, 3);
     adj_object_label = new QLabel(nullptr);
-    adj_object_label->setText(QString::fromUtf8("Selección de objeto ajustada:"));
-    adj_object_label->setToolTip(QString::fromUtf8("El objeto FlatCAM a ajustar."));
+    adj_object_label->setText(trUi_(QString::fromUtf8("Adjusted object selection:")));
+    adj_object_label->setToolTip(trUi_(QString::fromUtf8("The FlatCAM Object to be adjusted.")));
     lay3->addWidget(adj_object_label, 48, 0, 1, 3);
     adj_object_combo = new FCComboBox(nullptr);
     lay3->addWidget(adj_object_combo, 49, 0, 1, 3);
     cal_button = new QPushButton(nullptr);
     { QFont f = cal_button->font(); f.setBold(true); cal_button->setFont(f); }
     cal_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "));
-    cal_button->setText(QString::fromUtf8("Calibrar"));
-    cal_button->setToolTip(QString::fromUtf8("Ajustar (escalar y / o sesgar) los objetos\ncon los factores determinados anteriormente."));
+    cal_button->setText(trUi_(QString::fromUtf8("Calibrate")));
+    cal_button->setToolTip(trUi_(QString::fromUtf8("Adjust (scale and/or skew) the objects\nwith the factors determined above.")));
     lay3->addWidget(cal_button, 50, 0, 1, 3);
     auto* w25 = new QFrame(nullptr);
     w25->setProperty("frameShadow", 48);
@@ -295,8 +297,8 @@ void CalibrationToolUIBase::setupUi() {
     { QFont f = reset_button->font(); f.setBold(true); reset_button->setFont(f); }
     reset_button->setIcon(QIcon(QString::fromUtf8(":/images/reset32.png")));
     reset_button->setStyleSheet(QString::fromUtf8("\n\t\t\t\t\t\t\t   QPushButton\n\t\t\t\t\t\t\t   {\n\t\t\t\t\t\t\t\t   font-weight: bold;\n\t\t\t\t\t\t\t   }\n\t\t\t\t\t\t\t   "));
-    reset_button->setText(QString::fromUtf8("Restablecer la Herramienta"));
-    reset_button->setToolTip(QString::fromUtf8("Restablecerá los parámetros de la herramienta."));
+    reset_button->setText(trUi_(QString::fromUtf8("Reset Tool")));
+    reset_button->setToolTip(trUi_(QString::fromUtf8("Will reset the tool parameters.")));
     layout->addWidget(reset_button, 0);
     setLayout(layout);
 }

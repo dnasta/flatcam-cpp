@@ -410,7 +410,7 @@ void App::setupCanvasMenu() {
     // Las Geometrías del port son siempre multiherramienta ("MultiGeo"): convertir entre los dos tipos no aplica.
     for (QAction* a : {ui_->menuedit_convert_sg2mg, ui_->menuedit_convert_mg2sg})
         connect(a, &QAction::triggered, this, [this] {
-            ui_->inform("[WARNING_NOTCL] Las Geometrías del port son siempre de varias herramientas (MultiGeo).");
+            ui_->inform("[WARNING_NOTCL] " + tr_("The Geometries of the port always have several tools (MultiGeo)."));
         });
     for (QAction* a : {ui_->menuedit_move2origin, ui_->move2origin_btn})
         connect(a, &QAction::triggered, this, [this] { onMove2Origin(); });

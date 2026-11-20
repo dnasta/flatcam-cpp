@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Extraer Taladros"
+    "v": "Extract Drills"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Extraer Taladros"
+        "v": "Extract Drills"
        }
       }
      }
@@ -112,7 +112,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Gerber de donde extraer agujeros de perforación."
+           "v": "Gerber from which to extract drill holes."
           },
           "text": {
            "t": "str",
@@ -149,11 +149,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El tipo de forma de almohadillas que se procesará.\nSi la PCB tiene muchas almohadillas SMD con almohadillas rectangulares,\ndeshabilitar la apertura rectangular."
+           "v": "The type of pads shape to be processed.\nIf the PCB has many SMD pads with rectangular pads,\ndisable the Rectangular aperture."
           },
           "text": {
            "t": "str",
-           "v": "<b>Tipo de almohadillas procesadas</b>"
+           "v": "<b>Processed Pads Type</b>"
           }
          }
         }
@@ -171,7 +171,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Proceso de Almohadillas Circulares."
+           "v": "Process Circular Pads."
           },
           "text": {
            "t": "str",
@@ -197,11 +197,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Procesar almohadillas oblongas."
+           "v": "Process Oblong Pads."
           },
           "text": {
            "t": "str",
-           "v": "Oblongo"
+           "v": "Oblong"
           }
          }
         }
@@ -219,11 +219,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Procesar almohadillas cuadradas."
+           "v": "Process Square Pads."
           },
           "text": {
            "t": "str",
-           "v": "Cuadrado"
+           "v": "Square"
           }
          }
         }
@@ -241,7 +241,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Proceso Almohadillas Rectangulares."
+           "v": "Process Rectangular Pads."
           },
           "text": {
            "t": "str",
@@ -263,11 +263,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Procese los pads no en las categorías anteriores."
+           "v": "Process pads not in the categories above."
           },
           "text": {
            "t": "str",
-           "v": "Otros"
+           "v": "Others"
           }
          }
         }
@@ -356,11 +356,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El método para procesar almohadillas. Puede ser:\n- Diámetro fijo -> todos los agujeros tendrán un tamaño establecido\n- Anillo anular fijo -> todos los agujeros tendrán un anillo anular establecido\n- Proporcional -> cada tamaño de agujero será una fracción del tamaño de la almohadilla"
+           "v": "The method for processing pads. Can be:\n- Fixed Diameter -> all holes will have a set size\n- Fixed Annular Ring -> all holes will have a set annular ring\n- Proportional -> each hole size will be a fraction of the pad size"
           },
           "text": {
            "t": "str",
-           "v": "<b>Método</b>"
+           "v": "<b>Method</b>"
           }
          }
         }
@@ -378,15 +378,15 @@
          "props": {},
          "choices": [
           {
-           "label": "Diámetro fijo",
+           "label": "Fixed Diameter",
            "value": "fixed"
           },
           {
-           "label": "Proporcional",
+           "label": "Proportional",
            "value": "prop"
           },
           {
-           "label": "Anillo anular fijo",
+           "label": "Fixed Annular Ring",
            "value": "ring"
           }
          ],
@@ -439,7 +439,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "<b>Diámetro fijo</b>"
+           "v": "<b>Fixed Diameter</b>"
           }
          }
         }
@@ -457,11 +457,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Diámetro fijo del agujero."
+           "v": "Fixed hole diameter."
           },
           "text": {
            "t": "str",
-           "v": "Valor:"
+           "v": "Value:"
           }
          }
         }
@@ -568,11 +568,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "El tamaño del anillo anular.\nLa astilla de cobre entre el exterior del agujero\ny el margen de la almohadilla de cobre."
+               "v": "The size of annular ring.\nThe copper sliver between the hole exterior\nand the margin of the copper pad."
               },
               "text": {
                "t": "str",
-               "v": "<b>Anillo anular fijo</b>"
+               "v": "<b>Fixed Annular Ring</b>"
               }
              }
             }
@@ -590,7 +590,7 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "El tamaño del anillo anular para almohadillas circulares."
+               "v": "The size of annular ring for circular pads."
               },
               "text": {
                "t": "str",
@@ -638,11 +638,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "El tamaño del anillo anular para almohadillas oblongas."
+               "v": "The size of annular ring for oblong pads."
               },
               "text": {
                "t": "str",
-               "v": "Oblongo:"
+               "v": "Oblong:"
               }
              }
             }
@@ -690,11 +690,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "El tamaño del anillo anular para almohadillas cuadradas."
+               "v": "The size of annular ring for square pads."
               },
               "text": {
                "t": "str",
-               "v": "Cuadrado:"
+               "v": "Square:"
               }
              }
             }
@@ -742,7 +742,7 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "El tamaño del anillo anular para almohadillas rectangulares."
+               "v": "The size of annular ring for rectangular pads."
               },
               "text": {
                "t": "str",
@@ -794,11 +794,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "El tamaño del anillo anular para otras almohadillas."
+               "v": "The size of annular ring for other pads."
               },
               "text": {
                "t": "str",
-               "v": "Otros:"
+               "v": "Others:"
               }
              }
             }
@@ -887,7 +887,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "<b>Diá. proporcional</b>"
+           "v": "<b>Proportional Diameter</b>"
           },
           "hidden": {
            "t": "bool",
@@ -909,11 +909,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Diámetro proporcional.\nEl diámetro del agujero será una fracción del tamaño de la almohadilla."
+           "v": "Proportional Diameter.\nThe hole diameter will be a fraction of the pad size."
           },
           "text": {
            "t": "str",
-           "v": "Valor:"
+           "v": "Value:"
           },
           "hidden": {
            "t": "bool",
@@ -1010,7 +1010,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Extraer simulacros de un archivo Gerber dado."
+        "v": "Extract drills from a given Gerber file."
        },
        "styleSheet": {
         "t": "str",
@@ -1018,7 +1018,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Extraer Taladros"
+        "v": "Extract Drills"
        },
        "icon": {
         "t": "QIcon",
@@ -1053,7 +1053,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Restablecerá los parámetros de la herramienta."
+        "v": "Will reset the tool parameters."
        },
        "styleSheet": {
         "t": "str",
@@ -1061,7 +1061,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Restablecer la Herramienta"
+        "v": "Reset Tool"
        },
        "icon": {
         "t": "QIcon",

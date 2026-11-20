@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Transform. de objetos"
+    "v": "Object Transform"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Transform. de objetos"
+        "v": "Object Transform"
        }
       }
      }
@@ -161,11 +161,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El punto de referencia para Rotate, Skew, Scale, Mirror.\nPuede ser:\n- Origen -> es el punto 0, 0\n- Selección -> el centro del cuadro delimitador de los objetos seleccionados\n- Punto -> un punto personalizado definido por coordenadas X, Y\n- Objeto -> el centro del cuadro delimitador de un objeto específico"
+           "v": "The reference point for Rotate, Skew, Scale, Mirror.\nCan be:\n- Origin -> it is the 0, 0 point\n- Selection -> the center of the bounding box of the selected objects\n- Point -> a custom point defined by X,Y coordinates\n- Object -> the center of the bounding box of a specific object"
           },
           "text": {
            "t": "str",
-           "v": "Referencia:"
+           "v": "Reference:"
           }
          }
         }
@@ -183,14 +183,14 @@
          "props": {
           "currentText": {
            "t": "str",
-           "v": "Selección"
+           "v": "Selection"
           }
          },
          "items": [
-          "Origen",
-          "Selección",
-          "Punto",
-          "Objeto"
+          "Origin",
+          "Selection",
+          "Point",
+          "Object"
          ],
          "currentIndex": 1
         }
@@ -208,11 +208,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Un punto de referencia en formato X, Y."
+           "v": "A point of reference in format X,Y."
           },
           "text": {
            "t": "str",
-           "v": "Valor:"
+           "v": "Value:"
           },
           "hidden": {
            "t": "bool",
@@ -256,11 +256,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Agregar coordenadas de puntos desde el portapapeles."
+           "v": "Add point coordinates from clipboard."
           },
           "text": {
            "t": "str",
-           "v": "Añadir"
+           "v": "Add"
           },
           "hidden": {
            "t": "bool",
@@ -282,11 +282,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El tipo de objeto utilizado como referencia."
+           "v": "The type of object used as reference."
           },
           "text": {
            "t": "str",
-           "v": "Tipo:"
+           "v": "Type:"
           },
           "hidden": {
            "t": "bool",
@@ -318,7 +318,7 @@
          "items": [
           "Gerber",
           "Excellon",
-          "Geometría"
+          "Geometry"
          ],
          "currentIndex": 0
         }
@@ -336,7 +336,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El objeto utilizado como referencia.\nEl punto utilizado es el centro de su cuadro delimitador."
+           "v": "The object used as reference.\nThe used point is the center of it's bounding box."
           },
           "hidden": {
            "t": "bool",
@@ -391,7 +391,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "<font size=3><b>Girar</b></font>"
+           "v": "<font size=3><b>Rotate</b></font>"
           }
          }
         }
@@ -409,11 +409,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Ángulo, en grados.\nNúmero Real entre -360 y 359.\nNúmeros positivos para el movimiento CW.\nNúmeros negativos para movimiento CCW."
+           "v": "Angle, in degrees.\nFloat number between -360 and 359.\nPositive numbers for CW motion.\nNegative numbers for CCW motion."
           },
           "text": {
            "t": "str",
-           "v": "Ángulo:"
+           "v": "Angle:"
           }
          }
         }
@@ -476,11 +476,11 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Rotar los objetos seleccionados.\nEl punto de referencia es el medio de\nel cuadro delimitador para todos los objetos seleccionados."
+           "v": "Rotate the selected object(s).\nThe point of reference is the middle of\nthe bounding box for all selected objects."
           },
           "text": {
            "t": "str",
-           "v": "Girar"
+           "v": "Rotate"
           }
          }
         }
@@ -529,7 +529,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "<font size=3><b>Sesgo / cizalla</b></font>"
+           "v": "<font size=3><b>Skew/Shear</b></font>"
           }
          }
         }
@@ -547,11 +547,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Enlace la entrada Y a la entrada X y copie su contenido."
+           "v": "Link the Y entry to X entry and copy its content."
           },
           "text": {
            "t": "str",
-           "v": "Enlazar"
+           "v": "Link"
           },
           "checked": {
            "t": "bool",
@@ -573,11 +573,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Ángulo para sesgo de acción, en grados.\nNúmero Real entre -360 y 360."
+           "v": "Angle for Skew action, in degrees.\nFloat number between -360 and 360."
           },
           "text": {
            "t": "str",
-           "v": "Ángulo X:"
+           "v": "X angle:"
           }
          }
         }
@@ -628,11 +628,11 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Incline / corte los objetos seleccionados.\nEl punto de referencia es el medio de\nel cuadro delimitador para todos los objetos seleccionados."
+           "v": "Skew/shear the selected object(s).\nThe point of reference is the middle of\nthe bounding box for all selected objects."
           },
           "text": {
            "t": "str",
-           "v": "Inclinar X"
+           "v": "Skew X"
           }
          }
         }
@@ -650,11 +650,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Ángulo para sesgo de acción, en grados.\nNúmero Real entre -360 y 360."
+           "v": "Angle for Skew action, in degrees.\nFloat number between -360 and 360."
           },
           "text": {
            "t": "str",
-           "v": "Ángulo Y:"
+           "v": "Y angle:"
           },
           "enabled": {
            "t": "bool",
@@ -713,11 +713,11 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Incline / corte los objetos seleccionados.\nEl punto de referencia es el medio de\nel cuadro delimitador para todos los objetos seleccionados."
+           "v": "Skew/shear the selected object(s).\nThe point of reference is the middle of\nthe bounding box for all selected objects."
           },
           "text": {
            "t": "str",
-           "v": "Inclinar Y"
+           "v": "Skew Y"
           },
           "enabled": {
            "t": "bool",
@@ -770,7 +770,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "<font size=3><b>Escala</b></font>"
+           "v": "<font size=3><b>Scale</b></font>"
           }
          }
         }
@@ -788,11 +788,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Enlace la entrada Y a la entrada X y copie su contenido."
+           "v": "Link the Y entry to X entry and copy its content."
           },
           "text": {
            "t": "str",
-           "v": "Enlazar"
+           "v": "Link"
           },
           "checked": {
            "t": "bool",
@@ -814,11 +814,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Factor de escalado en eje X."
+           "v": "Factor for scaling on X axis."
           },
           "text": {
            "t": "str",
-           "v": "Factor X:"
+           "v": "X factor:"
           }
          }
         }
@@ -869,11 +869,11 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Escala los objetos seleccionados.\nEl punto de referencia depende de\nel estado de la casilla de verificación Escalar referencia."
+           "v": "Scale the selected object(s).\nThe point of reference depends on \nthe Scale reference checkbox state."
           },
           "text": {
            "t": "str",
-           "v": "Escala x"
+           "v": "Scale X"
           }
          }
         }
@@ -891,11 +891,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Factor de escalado en eje Y."
+           "v": "Factor for scaling on Y axis."
           },
           "text": {
            "t": "str",
-           "v": "Factor Y:"
+           "v": "Y factor:"
           },
           "enabled": {
            "t": "bool",
@@ -954,11 +954,11 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Escala los objetos seleccionados.\nEl punto de referencia depende de\nel estado de la casilla de verificación Escalar referencia."
+           "v": "Scale the selected object(s).\nThe point of reference depends on \nthe Scale reference checkbox state."
           },
           "text": {
            "t": "str",
-           "v": "Escala Y"
+           "v": "Scale Y"
           },
           "enabled": {
            "t": "bool",
@@ -1011,7 +1011,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "<font size=3><b>Espejo (Flip)</b></font>"
+           "v": "<font size=3><b>Mirror (Flip)</b></font>"
           }
          }
         }
@@ -1045,11 +1045,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Voltee los objetos seleccionados sobre el eje X."
+              "v": "Flip the selected object(s) over the X axis."
              },
              "text": {
               "t": "str",
-              "v": "Voltear en X"
+              "v": "Flip on X"
              }
             }
            }
@@ -1064,11 +1064,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Voltee los objetos seleccionados sobre el eje X."
+              "v": "Flip the selected object(s) over the X axis."
              },
              "text": {
               "t": "str",
-              "v": "Voltear en Y"
+              "v": "Flip on Y"
              }
             }
            }
@@ -1120,7 +1120,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "<font size=3><b>Compensar</b></font>"
+           "v": "<font size=3><b>Offset</b></font>"
           }
          }
         }
@@ -1138,11 +1138,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Distancia a desplazamiento en el eje X. En unidades actuales."
+           "v": "Distance to offset on X axis. In current units."
           },
           "text": {
            "t": "str",
-           "v": "Valor X:"
+           "v": "X val:"
           }
          }
         }
@@ -1189,7 +1189,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Desplazar los objetos seleccionados.\nEl punto de referencia es el medio de\nel cuadro delimitador para todos los objetos seleccionados.\n"
+           "v": "Offset the selected object(s).\nThe point of reference is the middle of\nthe bounding box for all selected objects.\n"
           },
           "text": {
            "t": "str",
@@ -1211,11 +1211,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Distancia a desplazamiento en el eje Y. En unidades actuales."
+           "v": "Distance to offset on Y axis. In current units."
           },
           "text": {
            "t": "str",
-           "v": "Valor Y:"
+           "v": "Y val:"
           }
          }
         }
@@ -1262,7 +1262,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Desplazar los objetos seleccionados.\nEl punto de referencia es el medio de\nel cuadro delimitador para todos los objetos seleccionados.\n"
+           "v": "Offset the selected object(s).\nThe point of reference is the middle of\nthe bounding box for all selected objects.\n"
           },
           "text": {
            "t": "str",
@@ -1333,11 +1333,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Si se marca, el búfer rodeará la forma tamponada,\nCada rincón será redondeado.\nSi no está marcado, el búfer seguirá la geometría exacta\nde la forma amortiguada."
+           "v": "If checked then the buffer will surround the buffered shape,\nevery corner will be rounded.\nIf not checked then the buffer will follow the exact geometry\nof the buffered shape."
           },
           "text": {
            "t": "str",
-           "v": "Redondeado"
+           "v": "Rounded"
           },
           "checked": {
            "t": "bool",
@@ -1359,11 +1359,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Un valor positivo creará el efecto de dilatación,\nmientras que un valor negativo creará el efecto de la erosión.\nCada elemento de geometría del objeto se incrementará\no disminuido con la 'distancia'."
+           "v": "A positive value will create the effect of dilation,\nwhile a negative value will create the effect of erosion.\nEach geometry element of the object will be increased\nor decreased with the 'distance'."
           },
           "text": {
            "t": "str",
-           "v": "Distancia:"
+           "v": "Distance:"
           }
          }
         }
@@ -1422,7 +1422,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Crea el efecto de amortiguación en cada geometría,\nelemento del objeto seleccionado, utilizando la distancia."
+           "v": "Create the buffer effect on each geometry,\nelement from the selected object, using the distance."
           },
           "text": {
            "t": "str",
@@ -1444,11 +1444,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Un valor positivo creará el efecto de dilatación,\nmientras que un valor negativo creará el efecto de la erosión.\nCada elemento de geometría del objeto se incrementará\no disminuido para ajustarse al 'Valor'. El Valor es un porcentaje\nde la dimensión inicial."
+           "v": "A positive value will create the effect of dilation,\nwhile a negative value will create the effect of erosion.\nEach geometry element of the object will be increased\nor decreased to fit the 'Value'. Value is a percentage\nof the initial dimension."
           },
           "text": {
            "t": "str",
-           "v": "Valor:"
+           "v": "Value:"
           }
          }
         }
@@ -1511,7 +1511,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Crea el efecto de amortiguación en cada geometría,\nelemento del objeto seleccionado, utilizando el factor."
+           "v": "Create the buffer effect on each geometry,\nelement from the selected object, using the factor."
           },
           "text": {
            "t": "str",
@@ -1562,7 +1562,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Restablecerá los parámetros de la herramienta."
+        "v": "Will reset the tool parameters."
        },
        "styleSheet": {
         "t": "str",
@@ -1570,7 +1570,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Restablecer la Herramienta"
+        "v": "Reset Tool"
        },
        "icon": {
         "t": "QIcon",

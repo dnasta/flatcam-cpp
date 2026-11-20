@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Herramienta de Perforación"
+    "v": "Drilling Tool"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -80,7 +80,7 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Cree CNCJob con trayectorias de herramientas para taladrar o fresar agujeros."
+               "v": "Create CNCJob with toolpaths for drilling or milling holes."
               },
               "styleSheet": {
                "t": "str",
@@ -88,7 +88,7 @@
               },
               "text": {
                "t": "str",
-               "v": "Herramienta de Perforación"
+               "v": "Drilling Tool"
               }
              }
             }
@@ -103,11 +103,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "BASIC es adecuado para un principiante. Muchos parámetros\nestán ocultos para el usuario en este modo.\nEl modo AVANZADO pondrá a disposición todos los parámetros.\n\nPara cambiar el NIVEL de la aplicación, vaya a:\nEditar -> Preferencias -> General y verificar:\n'APP. NIVEL 'botón de radio."
+               "v": "BASIC is suitable for a beginner. Many parameters\nare hidden from the user in this mode.\nADVANCED mode will make available all parameters.\n\nTo change the application LEVEL, go to:\nEdit -> Preferences -> General and check:\n'APP. LEVEL' radio button."
               },
               "text": {
                "t": "str",
-               "v": "<span style=\"color:green;\"><b>BASIC</b></span>"
+               "v": "<span style=\"color:green;\"><b>Basic</b></span>"
               },
               "alignment": {
                "t": "int",
@@ -171,7 +171,7 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Objeto Excellon para operación de taladrado / fresado."
+               "v": "Excellon object for drilling/milling operation."
               },
               "text": {
                "t": "str",
@@ -292,10 +292,10 @@
               "cols": 5,
               "labels": [
                "#",
-               "Diámetro",
-               "Taladros",
+               "Diameter",
+               "Drills",
                "",
-               "Muesca"
+               "Slots"
               ],
               "hheader": true,
               "vheader": false,
@@ -326,11 +326,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Esto establece la forma en que se utilizan las herramientas en la tabla de herramientas.\n'No' -> significa que el orden utilizado es el de la tabla de herramientas\n'Adelante' -> significa que las herramientas se ordenarán de pequeño a grande\n'Atras' -> means que las herramientas ordenarán de grande a pequeño\n\nADVERTENCIA: el uso del mecanizado en reposo establecerá automáticamente el orden\nen reversa y deshabilitar este control."
+               "v": "This set the way that the tools in the tools table are used.\n'No' --> means that the used order is the one in the tool table\n'Forward' --> means that the tools will be ordered from small to big\n'Reverse' --> means that the tools will ordered from big to small\n\nWARNING: using rest machining will automatically set the order\nin reverse and disable this control."
               },
               "text": {
                "t": "str",
-               "v": "Orden de la Herram:"
+               "v": "Tool order:"
               }
              }
             }
@@ -352,11 +352,11 @@
                "value": "no"
               },
               {
-               "label": "Adelante",
+               "label": "Forward",
                "value": "fwd"
               },
               {
-               "label": "Atras",
+               "label": "Reverse",
                "value": "rev"
               }
              ],
@@ -378,11 +378,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Buscará e intentará reemplazar las herramientas de la Tabla de herramientas\ncon herramientas de DB que tienen un valor de diámetro cercano."
+               "v": "Will search and try to replace the tools from Tools Table\nwith tools from DB that have a close diameter value."
               },
               "text": {
                "t": "str",
-               "v": "Buscar en la BD"
+               "v": "Search DB"
               },
               "icon": {
                "t": "QIcon",
@@ -435,11 +435,11 @@
              "props": {
               "toolTip": {
                "t": "str",
-               "v": "Los datos utilizados para crear GCode.\nCada herramienta almacena su propio conjunto de datos."
+               "v": "The data used for creating GCode.\nEach tool store it's own set of such data."
               },
               "text": {
                "t": "str",
-               "v": "<b>Parámetros para: <font color='#0000FF'>Ninguna herramienta seleccionada</font></b>"
+               "v": "<b>Parameters for: <font color='#0000FF'>No Tool Selected</font></b>"
               }
              }
             }
@@ -545,11 +545,11 @@
                     "props": {
                      "toolTip": {
                       "t": "str",
-                      "v": "Profundidad de perforación (negativo)\ndebajo de la superficie de cobre."
+                      "v": "Drill depth (negative)\nbelow the copper surface."
                      },
                      "text": {
                       "t": "str",
-                      "v": "Corte Z:"
+                      "v": "Cut Z:"
                      }
                     }
                    }
@@ -609,11 +609,11 @@
                      },
                      "toolTip": {
                       "t": "str",
-                      "v": "Usa múltiples pases para limitar\nLa profundidad de corte en cada pasada. Será\ncortar varias veces hasta que el Corte Z sea\nalcanzado."
+                      "v": "Use multiple passes to limit\nthe cut depth in each pass. Will\ncut multiple times until Cut Z is\nreached."
                      },
                      "text": {
                       "t": "str",
-                      "v": "Profund. Múlti:"
+                      "v": "Multi-Depth:"
                      }
                     }
                    }
@@ -635,7 +635,7 @@
                      },
                      "toolTip": {
                       "t": "str",
-                      "v": "Profundidad de cada pase (positivo)."
+                      "v": "Depth of each pass (positive)."
                      },
                      "decimals": {
                       "t": "int",
@@ -669,11 +669,11 @@
                     "props": {
                      "toolTip": {
                       "t": "str",
-                      "v": "Altura de herramienta al viajar\nA través del plano XY."
+                      "v": "Tool height when travelling\nacross the XY plane."
                      },
                      "text": {
                       "t": "str",
-                      "v": "Viaje Z:"
+                      "v": "Travel Z:"
                      }
                     }
                    }
@@ -725,11 +725,11 @@
                     "props": {
                      "toolTip": {
                       "t": "str",
-                      "v": "Velocidad de herramienta durante la perforación\n(en unidades por minuto).\nLa llamada velocidad de avance 'Plunge'.\nEsto es para el movimiento lineal G01."
+                      "v": "Tool speed while drilling\n(in units per minute).\nSo called 'Plunge' feedrate.\nThis is for linear move G01."
                      },
                      "text": {
                       "t": "str",
-                      "v": "Avance Z:"
+                      "v": "Feedrate Z:"
                      }
                     }
                    }
@@ -781,11 +781,11 @@
                     "props": {
                      "toolTip": {
                       "t": "str",
-                      "v": "Velocidad de la herramienta durante la perforación\n(en unidades por minuto).\nEsto es para el movimiento rápido G00.\nEs útil solo para Marlin,\nIgnorar para cualquier otro caso."
+                      "v": "Tool speed while drilling\n(in units per minute).\nThis is for the rapid move G00.\nIt is useful only for Marlin,\nignore for any other cases."
                      },
                      "text": {
                       "t": "str",
-                      "v": "Rápidos de avance:"
+                      "v": "Feedrate Rapids:"
                      },
                      "hidden": {
                       "t": "bool",
@@ -845,11 +845,11 @@
                     "props": {
                      "toolTip": {
                       "t": "str",
-                      "v": "Velocidad del husillo\nen RPM (opcional)"
+                      "v": "Speed of the spindle\nin RPM (optional)"
                      },
                      "text": {
                       "t": "str",
-                      "v": "Eje de velocidad:"
+                      "v": "Spindle speed:"
                      }
                     }
                    }
@@ -897,11 +897,11 @@
                      },
                      "toolTip": {
                       "t": "str",
-                      "v": "Pausa para permitir que el husillo alcance su\nVelocidad antes del corte."
+                      "v": "Pause to allow the spindle to reach its\nspeed before cutting."
                      },
                      "text": {
                       "t": "str",
-                      "v": "Habitar:"
+                      "v": "Dwell:"
                      }
                     }
                    }
@@ -923,7 +923,7 @@
                      },
                      "toolTip": {
                       "t": "str",
-                      "v": "Número de unidades de tiempo para que el husillo permanezca."
+                      "v": "Number of time units for spindle to dwell."
                      },
                      "decimals": {
                       "t": "int",
@@ -957,7 +957,7 @@
                     "props": {
                      "toolTip": {
                       "t": "str",
-                      "v": "Algunas brocas (las más grandes) necesitan profundizar más\npara crear el diámetro del orificio de salida deseado debido a la forma de la punta.\nEl valor aquí puede compensar el parámetro Z de corte."
+                      "v": "Some drill bits (the larger ones) need to drill deeper\nto create the desired exit hole diameter due of the tip shape.\nThe value here can compensate the Cut Z parameter."
                      },
                      "text": {
                       "t": "str",
@@ -1013,11 +1013,11 @@
                      },
                      "toolTip": {
                       "t": "str",
-                      "v": "Si la herramienta seleccionada tiene ranuras, se perforarán."
+                      "v": "If the selected tool has slots then they will be drilled."
                      },
                      "text": {
                       "t": "str",
-                      "v": "Perforar las Ranuras"
+                      "v": "Drill slots"
                      },
                      "hidden": {
                       "t": "bool",
@@ -1039,11 +1039,11 @@
                     "props": {
                      "toolTip": {
                       "t": "str",
-                      "v": "Cuánto (porcentaje) del diámetro de la herramienta debe superponerse al taladro anterior."
+                      "v": "How much (percentage) of the tool diameter to overlap previous drill hole."
                      },
                      "text": {
                       "t": "str",
-                      "v": "Superposición:"
+                      "v": "Overlap:"
                      },
                      "hidden": {
                       "t": "bool",
@@ -1107,11 +1107,11 @@
                      },
                      "toolTip": {
                       "t": "str",
-                      "v": "Si la longitud de la ranura no está completamente cubierta por taladros,\nagregue un taladro en el punto final de la ranura."
+                      "v": "If the slot length is not completely covered by drill holes,\nadd a drill hole on the slot end point."
                      },
                      "text": {
                       "t": "str",
-                      "v": "Último ejercicio"
+                      "v": "Last drill"
                      },
                      "checked": {
                       "t": "bool",
@@ -1225,11 +1225,11 @@
                     "props": {
                      "toolTip": {
                       "t": "str",
-                      "v": "Se aplicarán los parámetros en el formulario actual\nen todas las herramientas de la tabla de herramientas."
+                      "v": "The parameters in the current form will be applied\non all the tools from the Tool Table."
                      },
                      "text": {
                       "t": "str",
-                      "v": "Aplicar Parám. a todas las herramientas"
+                      "v": "Apply parameters to all tools"
                      },
                      "icon": {
                       "t": "QIcon",
@@ -1282,11 +1282,11 @@
                     "props": {
                      "toolTip": {
                       "t": "str",
-                      "v": "Parámetros que son comunes para todas las herramientas."
+                      "v": "Parameters that are common for all tools."
                      },
                      "text": {
                       "t": "str",
-                      "v": "<b>Parámetros comunes</b>"
+                      "v": "<b>Common Parameters</b>"
                      }
                     }
                    }
@@ -1308,11 +1308,11 @@
                      },
                      "toolTip": {
                       "t": "str",
-                      "v": "Incluir secuencia de cambio de herramienta\nen G-Code (Pausa para cambio de herramienta)."
+                      "v": "Include tool-change sequence\nin G-Code (Pause for tool change)."
                      },
                      "text": {
                       "t": "str",
-                      "v": "Cambio de herram"
+                      "v": "Tool change"
                      }
                     }
                    }
@@ -1330,11 +1330,11 @@
                     "props": {
                      "toolTip": {
                       "t": "str",
-                      "v": "Posición del eje Z (altura) para\ncambio de herramienta."
+                      "v": "Z-axis position (height) for\ntool change."
                      },
                      "text": {
                       "t": "str",
-                      "v": "Cambio de herra. Z:"
+                      "v": "Tool change Z:"
                      }
                     }
                    }
@@ -1386,11 +1386,11 @@
                     "props": {
                      "toolTip": {
                       "t": "str",
-                      "v": "Altura de la herramienta justo después de comenzar el trabajo.\nElimine el valor si no necesita esta característica."
+                      "v": "Height of the tool just after starting the work.\nDelete the value if you don't need this feature."
                      },
                      "text": {
                       "t": "str",
-                      "v": "Comience Z:"
+                      "v": "Start Z:"
                      },
                      "hidden": {
                       "t": "bool",
@@ -1438,11 +1438,11 @@
                     "props": {
                      "toolTip": {
                       "t": "str",
-                      "v": "Altura de la herramienta después de\nEl último movimiento al final del trabajo."
+                      "v": "Height of the tool after\nthe last move at the end of the job."
                      },
                      "text": {
                       "t": "str",
-                      "v": "Fin del movi. Z:"
+                      "v": "End move Z:"
                      }
                     }
                    }
@@ -1494,11 +1494,11 @@
                     "props": {
                      "toolTip": {
                       "t": "str",
-                      "v": "Fin movimiento X, Y posición. En formato (x, y).\nSi no se ingresa ningún valor, entonces no hay movimiento\nen el plano X, Y al final del trabajo."
+                      "v": "End move X,Y position. In format (x,y).\nIf no value is entered then there is no move\non X,Y plane at the end of the job."
                      },
                      "text": {
                       "t": "str",
-                      "v": "X, Y Fin del movimiento:"
+                      "v": "End move X,Y:"
                      }
                     }
                    }
@@ -1528,7 +1528,7 @@
                      },
                      "placeholderText": {
                       "t": "str",
-                      "v": "Coordenadas X, Y"
+                      "v": "X,Y coordinates"
                      }
                     }
                    }
@@ -1550,7 +1550,7 @@
                      },
                      "text": {
                       "t": "str",
-                      "v": "Profundidad de la sonda Z:"
+                      "v": "Probe Z depth:"
                      },
                      "hidden": {
                       "t": "bool",
@@ -1614,11 +1614,11 @@
                     "props": {
                      "toolTip": {
                       "t": "str",
-                      "v": "La velocidad de avance utilizada mientras la sonda está sondeando."
+                      "v": "The feedrate used while the probe is probing."
                      },
                      "text": {
                       "t": "str",
-                      "v": "Sonda de avance:"
+                      "v": "Feedrate Probe:"
                      },
                      "hidden": {
                       "t": "bool",
@@ -1678,11 +1678,11 @@
                     "props": {
                      "toolTip": {
                       "t": "str",
-                      "v": "El archivo JSON del preprocesador que dicta\nSalida de Gcode para objetos Excellon."
+                      "v": "The preprocessor JSON file that dictates\nGcode output for Excellon Objects."
                      },
                      "text": {
                       "t": "str",
-                      "v": "Postprocesador:"
+                      "v": "Preprocessor:"
                      }
                     }
                    }
@@ -1724,11 +1724,11 @@
                      },
                      "toolTip": {
                       "t": "str",
-                      "v": "Incluir áreas de exclusión.\nEn esas áreas el recorrido de las herramientas.\nestá prohibido."
+                      "v": "Include exclusion areas.\nIn those areas the travel of the tools\nis forbidden."
                      },
                      "text": {
                       "t": "str",
-                      "v": "Agregar Areas de Exclusión"
+                      "v": "Add exclusion areas"
                      }
                     }
                    }
@@ -1813,9 +1813,9 @@
                          "cols": 4,
                          "labels": [
                           "#",
-                          "Objeto",
-                          "Estrategia",
-                          "Sobre ZSuperposición"
+                          "Object",
+                          "Strategy",
+                          "Over Z"
                          ],
                          "hheader": true,
                          "vheader": false,
@@ -1876,11 +1876,11 @@
                            "props": {
                             "toolTip": {
                              "t": "str",
-                             "v": "La estrategia seguida al encontrar un área de exclusión.\nPuede ser:\n- Sobre -> al encontrar el área, la herramienta irá a una altura establecida\n- Alrededor -> evitará el área de exclusión recorriendo el área"
+                             "v": "The strategy followed when encountering an exclusion area.\nCan be:\n- Over -> when encountering the area, the tool will go to a set height\n- Around -> will avoid the exclusion area by going around the area"
                             },
                             "text": {
                              "t": "str",
-                             "v": "Estrategia:"
+                             "v": "Strategy:"
                             }
                            }
                           }
@@ -1903,11 +1903,11 @@
                            },
                            "choices": [
                             {
-                             "label": "Sobre",
+                             "label": "Over",
                              "value": "over"
                             },
                             {
-                             "label": "AlrededorRedondo",
+                             "label": "Around",
                              "value": "around"
                             }
                            ],
@@ -1929,11 +1929,11 @@
                            "props": {
                             "toolTip": {
                              "t": "str",
-                             "v": "La altura Z a la que se elevará la herramienta para evitar\nUn área de interdicción."
+                             "v": "The height Z to which the tool will rise in order to avoid\nan interdiction area."
                             },
                             "text": {
                              "t": "str",
-                             "v": "Sobre ZSuperposición:"
+                             "v": "Over Z:"
                             }
                            }
                           }
@@ -1981,11 +1981,11 @@
                            "props": {
                             "toolTip": {
                              "t": "str",
-                             "v": "Agregar un área de exclusión."
+                             "v": "Add an Exclusion Area."
                             },
                             "text": {
                              "t": "str",
-                             "v": "Agregar Zona:"
+                             "v": "Add Area:"
                             }
                            }
                           }
@@ -2007,16 +2007,16 @@
                             },
                             "toolTip": {
                              "t": "str",
-                             "v": "El tipo de forma de selección utilizada para la selección de área."
+                             "v": "The kind of selection shape used for area selection."
                             }
                            },
                            "choices": [
                             {
-                             "label": "Cuadrado",
+                             "label": "Square",
                              "value": "square"
                             },
                             {
-                             "label": "Polígono",
+                             "label": "Polygon",
                              "value": "polygon"
                             }
                            ],
@@ -2054,11 +2054,11 @@
                            "props": {
                             "toolTip": {
                              "t": "str",
-                             "v": "Eliminar todas las áreas de exclusión."
+                             "v": "Delete all exclusion areas."
                             },
                             "text": {
                              "t": "str",
-                             "v": "Eliminar todosEliminar taladro"
+                             "v": "Delete All"
                             }
                            }
                           }
@@ -2073,11 +2073,11 @@
                            "props": {
                             "toolTip": {
                              "t": "str",
-                             "v": "Elimine todas las áreas de exclusión que están seleccionadas en la tabla."
+                             "v": "Delete all exclusion areas that are selected in the table."
                             },
                             "text": {
                              "t": "str",
-                             "v": "Eliminar seleccionado"
+                             "v": "Delete Selected"
                             }
                            }
                           }
@@ -2183,7 +2183,7 @@
               },
               "toolTip": {
                "t": "str",
-               "v": "Genere el trabajo del CNC.\nSi está fresando, se creará un objeto Geometry adicional.\nAgregue / seleccione al menos una herramienta en la tabla de herramientas.\nHaga clic en el encabezado # para seleccionar todo, o Ctrl + LMB\npara la selección personalizada de herramientas."
+               "v": "Generate the CNC Job.\nIf milling then an additional Geometry object will be created.\nAdd / Select at least one tool in the tool-table.\nClick the # header to select all, or Ctrl + LMB\nfor custom selection of tools."
               },
               "styleSheet": {
                "t": "str",
@@ -2191,7 +2191,7 @@
               },
               "text": {
                "t": "str",
-               "v": "Generar objeto CNCJob"
+               "v": "Generate CNCJob object"
               },
               "icon": {
                "t": "QIcon",
@@ -2233,7 +2233,7 @@
            },
            "toolTip": {
             "t": "str",
-            "v": "Restablecerá los parámetros de la herramienta."
+            "v": "Will reset the tool parameters."
            },
            "styleSheet": {
             "t": "str",
@@ -2241,7 +2241,7 @@
            },
            "text": {
             "t": "str",
-            "v": "Restablecer la Herramienta"
+            "v": "Reset Tool"
            },
            "icon": {
             "t": "QIcon",

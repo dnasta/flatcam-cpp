@@ -4,11 +4,13 @@
 #include <QKeySequence>
 #include <QSpacerItem>
 
+#include "gui/Translation.h"
+
 namespace flatcam::gui {
 
 void HowtoDialogUIBase::setupUi() {
     // ---- acciones (compartidas entre menús y barras)
-    this->setWindowTitle(QString::fromUtf8("Cómo ..."));
+    this->setWindowTitle(trUi_(QString::fromUtf8("How To ...")));
     auto* lay1 = new QVBoxLayout();
     lay1->setContentsMargins(11, 11, 11, 11);
     lay1->setSpacing(6);
@@ -36,14 +38,14 @@ void HowtoDialogUIBase::setupUi() {
     grid_lay->addWidget(w6, 0, 0, 1, 1);
     auto* w7 = new QLabel(nullptr);
     w7->setOpenExternalLinks(true);
-    w7->setText(QString::fromUtf8("Este programa es <a href = 'https://opensource.org/'<b>Open Source</b></a> y gratuito en un sentido muy amplio de la palabra.<br>Sin embargo, no puede evolucionar sin <b> contribuciones </b>.<br><br>Si quieres ver esta aplicación crecer y ser mejor y mejor,<br>usted puede <b> contribuir </b> al desarrollo usted mismo:<br><ul><li> &nbsp;Solicitudes de extracción en el repositorio de Bitbucket, si es desarrollador <a href = 'https://bitbucket.org/jpcgt/flatcam/pull-requests/'<b>click</b></a></li><li> &nbsp;Informes de errores al proporcionar los pasos necesarios para reproducir el error <a href = 'https://bitbucket.org/jpcgt/flatcam/issues/new'<b>click</b></a></li></ul><br><br>Si te gusta lo que has visto hasta ahora ... <br><span style='color: blue;'>NO se requieren donaciones.</span> Pero ellos son bienvenidos <a href = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=WLTJJ3Q77D98L&currency_code=USD&source=url'<b>click</b></a><br>"));
+    w7->setText(trUi_(QString::fromUtf8("This program is <a href = 'https://opensource.org/'<b>Open Source</b></a> and free in a very wide meaning of the word.<br>Yet it cannot evolve without <b>contributions</b>.<br><br>If you want to see this application grow and become better and better,<br>you can <b>contribute</b> to the development yourself by:<br><ul><li> &nbsp;Pull Requests on the Bitbucket repository, if you are a developer <a href = 'https://bitbucket.org/jpcgt/flatcam/pull-requests/'<b>click</b></a></li><li> &nbsp;Bug Reports by providing the steps required to reproduce the bug <a href = 'https://bitbucket.org/jpcgt/flatcam/issues/new'<b>click</b></a></li></ul><br><br>If you like what you have seen so far ... <br><span style='color: blue;'>Donations are NOT required.</span> But they are welcomed <a href = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=WLTJJ3Q77D98L&currency_code=USD&source=url'<b>click</b></a><br>")));
     grid_lay->addWidget(w7, 0, 1, 1, 1);
     grid_lay->setColumnStretch(1, 1);
     w5->setLayout(grid_lay);
     w4->setWidget(w5);
     intro_tab_layout->addWidget(w4, 0);
     intro_tab->setLayout(intro_tab_layout);
-    w3->addTab(intro_tab, QString::fromUtf8("Contribuir"));
+    w3->addTab(intro_tab, trUi_(QString::fromUtf8("Contribute")));
     links_tab = new QWidget(nullptr);
     links_tab->setHidden(true);
     links_tab_layout = new QVBoxLayout();
@@ -58,13 +60,13 @@ void HowtoDialogUIBase::setupUi() {
     links_lay->setContentsMargins(9, 9, 9, 9);
     links_lay->setSpacing(6);
     auto* w10 = new QLabel(nullptr);
-    w10->setText(QString::fromUtf8("Pronto ..."));
+    w10->setText(trUi_(QString::fromUtf8("Soon ...")));
     links_lay->addWidget(w10, 0, Qt::Alignment(132));
     w9->setLayout(links_lay);
     w8->setWidget(w9);
     links_tab_layout->addWidget(w8, 0);
     links_tab->setLayout(links_tab_layout);
-    w3->addTab(links_tab, QString::fromUtf8("Intercambio de enlaces"));
+    w3->addTab(links_tab, trUi_(QString::fromUtf8("Links Exchange")));
     howto_tab = new QWidget(nullptr);
     howto_tab->setHidden(true);
     howto_tab_layout = new QVBoxLayout();
@@ -79,13 +81,13 @@ void HowtoDialogUIBase::setupUi() {
     howto_lay->setContentsMargins(9, 9, 9, 9);
     howto_lay->setSpacing(6);
     auto* w13 = new QLabel(nullptr);
-    w13->setText(QString::fromUtf8("Pronto ..."));
+    w13->setText(trUi_(QString::fromUtf8("Soon ...")));
     howto_lay->addWidget(w13, 0, Qt::Alignment(132));
     w12->setLayout(howto_lay);
     w11->setWidget(w12);
     howto_tab_layout->addWidget(w11, 0);
     howto_tab->setLayout(howto_tab_layout);
-    w3->addTab(howto_tab, QString::fromUtf8("How To's"));
+    w3->addTab(howto_tab, trUi_(QString::fromUtf8("How To's")));
     lay2->addWidget(w3, 0);
     lay1->addLayout(lay2, 0);
     auto* lay14 = new QHBoxLayout();
@@ -94,7 +96,7 @@ void HowtoDialogUIBase::setupUi() {
     lay14->addItem(new QSpacerItem(0, 0, QSizePolicy::Policy(7), QSizePolicy::Policy(1)));
     auto* w15 = new QPushButton(nullptr);
     w15->setAutoDefault(true);
-    w15->setText(QString::fromUtf8("Cerca"));
+    w15->setText(trUi_(QString::fromUtf8("Close")));
     lay14->addWidget(w15, 0);
     lay1->addLayout(lay14, 0);
     setLayout(lay1);

@@ -37,13 +37,13 @@ bool Paint::paintAll(const ShapeList& solidGeometry, const PaintOptions& o, Shap
     error.clear();
     paths.clear();
     if (o.toolDia <= 0) {
-        error = "El diámetro de la herramienta debe ser positivo";
+        error = "The tool diameter must be positive";
         return false;
     }
     try {
         const ShapeList area = flattenToPolygons(solidGeometry);
         if (area.empty()) {
-            error = "No hay polígonos para pintar";
+            error = "There are no polygons to paint";
             return false;
         }
         ShapeList buffered;
@@ -53,13 +53,13 @@ bool Paint::paintAll(const ShapeList& solidGeometry, const PaintOptions& o, Shap
         }
         for (const Shape& pp : buffered) {
             if (pp.type() != ShapeType::Polygon && pp.type() != ShapeType::MultiPolygon) {
-                error = "Se esperaba un polígono o un multipolígono (el original falla con otras figuras)";
+                error = "A Polygon or MultiPolygon was expected (the original fails with other shapes)";
                 return false;
             }
             if (o.method == PolygonClearing::Method::LaserLines) {
                 // Solo para Gerber: con otra geometría el original no ofrece el método.
                 if (!gerber) {
-                    error = "El método Líneas láser solo sirve para objetos Gerber";
+                    error = "The Laser Lines method only works for Gerber objects";
                     return false;
                 }
                 if (const auto laser = laserLines(pp, *gerber, o))
@@ -80,7 +80,7 @@ bool Paint::paintAll(const ShapeList& solidGeometry, const PaintOptions& o, Shap
         return false;
     }
     if (paths.empty()) {
-        error = "La herramienta es demasiado grande para la geometría: no se generó ninguna trayectoria";
+        error = "There is no Painting Geometry in the file.\nUsually it means that the tool diameter is too big for the painted geometry.\nChange the painting parameters and try again.";
         return false;
     }
     return true;
@@ -263,7 +263,7 @@ bool Paint::paintRest(const ShapeList& geometry, const std::vector<PaintRestTool
         }
         Shape polyBuf = Shape::unaryUnion(bufs);
         if (polyBuf.isEmpty()) {
-            error = "No hay polígonos para pintar";
+            error = "There are no polygons to paint";
             return false;
         }
         std::vector<std::size_t> order(tools.size());
@@ -326,7 +326,7 @@ bool Paint::paintRest(const ShapeList& geometry, const std::vector<PaintRestTool
         return false;
     }
     if (perTool.empty()) {
-        error = "La herramienta es demasiado grande para la geometría: no se generó ninguna trayectoria";
+        error = "There is no Painting Geometry in the file.\nUsually it means that the tool diameter is too big for the painted geometry.\nChange the painting parameters and try again.";
         return false;
     }
     return true;

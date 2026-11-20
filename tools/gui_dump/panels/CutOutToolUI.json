@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "PCB de corte"
+    "v": "Cutout PCB"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "PCB de corte"
+        "v": "Cutout PCB"
        }
       }
      }
@@ -162,11 +162,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Objeto a recortar."
+           "v": "Object to be cutout."
           },
           "text": {
            "t": "str",
-           "v": "<b>Objeto fuente:</b>"
+           "v": "<b>Source Object:</b>"
           }
          }
         }
@@ -184,11 +184,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Elección del tipo de objeto que queremos recortar.\n- Único: contiene un único objeto de contorno de PCB Gerber.\n- Panel: un objeto de panel PCB Gerber, que se hace\nde muchos esquemas de PCB individuales."
+           "v": "Choice of what kind the object we want to cutout is.\n- Single: contain a single PCB Gerber outline object.\n- Panel: a panel PCB Gerber object, which is made\nout of many individual PCB outlines."
           },
           "text": {
            "t": "str",
-           "v": "Tipo:"
+           "v": "Kind:"
           }
          }
         }
@@ -206,7 +206,7 @@
          "props": {},
          "choices": [
           {
-           "label": "Soltero",
+           "label": "Single",
            "value": "single"
           },
           {
@@ -232,11 +232,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Especifique el tipo de objeto a recortar.\nPuede ser de tipo: Gerber o Geometría.\nLo que se seleccione aquí dictará el tipo\nde objetos que llenarán el cuadro combinado 'Objeto'."
+           "v": "Specify the type of object to be cutout.\nIt can be of type: Gerber or Geometry.\nWhat is selected here will dictate the kind\nof objects that will populate the 'Object' combobox."
           },
           "text": {
            "t": "str",
-           "v": "Tipo:"
+           "v": "Type:"
           }
          }
         }
@@ -258,7 +258,7 @@
            "value": "grb"
           },
           {
-           "label": "Geometría",
+           "label": "Geometry",
            "value": "geo"
           }
          ],
@@ -295,11 +295,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Crea una forma convexa que rodea toda la PCB.\nSe usa solo si el tipo de objeto de origen es Gerber."
+           "v": "Create a convex shape surrounding the entire PCB.\nUsed only if the source object type is Gerber."
           },
           "text": {
            "t": "str",
-           "v": "Forma convexa:"
+           "v": "Convex Shape:"
           }
          }
         }
@@ -317,7 +317,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Crea una forma convexa que rodea toda la PCB.\nSe usa solo si el tipo de objeto de origen es Gerber."
+           "v": "Create a convex shape surrounding the entire PCB.\nUsed only if the source object type is Gerber."
           }
          }
         }
@@ -366,7 +366,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "<b>Herramienta de Corte</b>"
+           "v": "<b>Cutout Tool</b>"
           }
          }
         }
@@ -384,11 +384,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Diámetro de la herramienta utilizada para cortar\nLa forma de PCB fuera del material circundante."
+           "v": "Diameter of the tool used to cutout\nthe PCB shape out of the surrounding material."
           },
           "text": {
            "t": "str",
-           "v": "Diá. de Herram:"
+           "v": "Tool Dia:"
           }
          }
         }
@@ -448,11 +448,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Agregar una nueva herramienta a la tabla de herramientas\ncon el diámetro especificado arriba.\nEsto se hace mediante una búsqueda en segundo plano.\nen la base de datos de herramientas. Si no se encuentra nada\nen la base de datos de herramientas, se agrega una herramienta predeterminada."
+              "v": "Add a new tool to the Tool Table\nwith the diameter specified above.\nThis is done by a background search\nin the Tools Database. If nothing is found\nin the Tools DB then a default tool is added."
              },
              "text": {
               "t": "str",
-              "v": "Buscar y agregar"
+              "v": "Search and Add"
              },
              "icon": {
               "t": "QIcon",
@@ -471,11 +471,11 @@
             "props": {
              "toolTip": {
               "t": "str",
-              "v": "Agregar una nueva herramienta a la tabla de herramientas\nde la base de datos de herramientas.\nHerramientas de administración de bases de datos en:\nMenú: Opciones -> Base de datos de herramientas"
+              "v": "Add a new tool to the Tool Table\nfrom the Tools Database.\nTools database administration in in:\nMenu: Options -> Tools Database"
              },
              "text": {
               "t": "str",
-              "v": "Elija de DB"
+              "v": "Pick from DB"
              },
              "icon": {
               "t": "QIcon",
@@ -531,7 +531,7 @@
          "props": {
           "text": {
            "t": "str",
-           "v": "<b>Parámetros de Herramienta:</b>"
+           "v": "<b>Tool Parameters:</b>"
           }
          }
         }
@@ -549,11 +549,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Profundidad de corte (negativo)\ndebajo de la superficie de cobre."
+           "v": "Cutting depth (negative)\nbelow the copper surface."
           },
           "text": {
            "t": "str",
-           "v": "Corte Z:"
+           "v": "Cut Z:"
           }
          }
         }
@@ -605,11 +605,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Usa múltiples pases para limitar\nLa profundidad de corte en cada pasada. Será\ncortar varias veces hasta que el Corte Z sea\nalcanzado."
+           "v": "Use multiple passes to limit\nthe cut depth in each pass. Will\ncut multiple times until Cut Z is\nreached."
           },
           "text": {
            "t": "str",
-           "v": "Profund. Múlti:"
+           "v": "Multi-Depth:"
           },
           "checked": {
            "t": "bool",
@@ -631,7 +631,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Profundidad de cada pase (positivo)."
+           "v": "Depth of each pass (positive)."
           },
           "decimals": {
            "t": "int",
@@ -665,11 +665,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Margen sobre los límites. Un valor positivo aquí\nhará que el corte de la PCB esté más alejado de\nel borde real de PCB"
+           "v": "Margin over bounds. A positive value here\nwill make the cutout of the PCB further from\nthe actual PCB border"
           },
           "text": {
            "t": "str",
-           "v": "Margen:"
+           "v": "Margin:"
           }
          }
         }
@@ -721,11 +721,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El tamaño de los huecos del puente en el recorte\nsolía mantener la placa conectada a\nel material circundante (el\nde la cual se corta el PCB)."
+           "v": "The size of the bridge gaps in the cutout\nused to keep the board connected to\nthe surrounding material (the one \nfrom which the PCB is cutout)."
           },
           "text": {
            "t": "str",
-           "v": "Tamaño de la brecha:"
+           "v": "Gap size:"
           }
          }
         }
@@ -765,11 +765,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El tipo de brecha:\n- Puente -> el corte será interrumpido por puentes\n- Delgado -> igual que 'puente' pero será más delgado al fresar parcialmente el espacio\n- M-Bites -> 'Mouse Bites' - igual que el 'puente' pero cubierto con agujeros"
+           "v": "The type of gap:\n- Bridge -> the cutout will be interrupted by bridges\n- Thin -> same as 'bridge' but it will be thinner by partially milling the gap\n- M-Bites -> 'Mouse Bites' - same as 'bridge' but covered with drill holes"
           },
           "text": {
            "t": "str",
-           "v": "Tipo de brecha:"
+           "v": "Gap type:"
           }
          }
         }
@@ -787,11 +787,11 @@
          "props": {},
          "choices": [
           {
-           "label": "Puente",
+           "label": "Bridge",
            "value": "b"
           },
           {
-           "label": "Delgado",
+           "label": "Thin",
            "value": "bt"
           },
           {
@@ -817,11 +817,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "La profundidad hasta que se hace el fresado\npara adelgazar los huecos."
+           "v": "The depth until the milling is done\nin order to thin the gaps."
           },
           "text": {
            "t": "str",
-           "v": "Profundidad:"
+           "v": "Depth:"
           },
           "hidden": {
            "t": "bool",
@@ -881,11 +881,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El diámetro del taladro al hacer 'mouse bytes'."
+           "v": "The drill hole diameter when doing mouse bites."
           },
           "text": {
            "t": "str",
-           "v": "Diá. de Herram:"
+           "v": "Tool Diameter:"
           },
           "hidden": {
            "t": "bool",
@@ -937,7 +937,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El espacio entre los taladros al hacer 'mouse bites'."
+           "v": "The spacing between drill holes when doing mouse bites."
           },
           "text": {
            "t": "str",
@@ -1024,11 +1024,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esta sección maneja la creación de espacios de puente automáticos."
+           "v": "This section handle creation of automatic bridge gaps."
           },
           "text": {
            "t": "str",
-           "v": "<b>Auto Huecos de puentes</b>:"
+           "v": "<b>Automatic Bridge Gaps</b>:"
           }
          }
         }
@@ -1046,11 +1046,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Número de huecos utilizados para el recorte automático.\nPuede haber un máximo de 8 puentes / huecos.\nLas opciones son:\n- Ninguno - sin espacios\n- lr - izquierda + derecha\n- tb - arriba + abajo\n- 4 - izquierda + derecha + arriba + abajo\n- 2lr - 2 * izquierda + 2 * derecha\n- 2tb - 2 * arriba + 2 * abajo\n- 8 - 2 * izquierda + 2 * derecha + 2 * arriba + 2 * abajo"
+           "v": "Number of gaps used for the Automatic cutout.\nThere can be maximum 8 bridges/gaps.\nThe choices are:\n- None  - no gaps\n- lr    - left + right\n- tb    - top + bottom\n- 4     - left + right +top + bottom\n- 2lr   - 2*left + 2*right\n- 2tb  - 2*top + 2*bottom\n- 8     - 2*left + 2*right +2*top + 2*bottom"
           },
           "text": {
            "t": "str",
-           "v": "Brechas:"
+           "v": "Gaps:"
           }
          }
         }
@@ -1102,7 +1102,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Recorta el objeto seleccionado.\nLa forma recortada puede ser de cualquier forma.\nÚtil cuando la PCB tiene una forma no rectangular."
+           "v": "Cutout the selected object.\nThe cutout shape can be of any shape.\nUseful when the PCB has a non-rectangular shape."
           },
           "styleSheet": {
            "t": "str",
@@ -1110,7 +1110,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Generar Geometría"
+           "v": "Generate Geometry"
           },
           "icon": {
            "t": "QIcon",
@@ -1138,7 +1138,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Recorta el objeto seleccionado.\nLa forma de corte resultante es\nsiempre una forma rectangular y será\nEl cuadro delimitador del objeto."
+           "v": "Cutout the selected object.\nThe resulting cutout shape is\nalways a rectangle shape and it will be\nthe bounding box of the Object."
           },
           "styleSheet": {
            "t": "str",
@@ -1146,7 +1146,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Generar Geometría"
+           "v": "Generate Geometry"
           },
           "icon": {
            "t": "QIcon",
@@ -1199,11 +1199,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esta sección maneja la creación de espacios de puente manuales.\nEsto se hace haciendo clic con el mouse en el perímetro del\nObjeto de geometría que se utiliza como objeto recortado. "
+           "v": "This section handle creation of manual bridge gaps.\nThis is done by mouse clicking on the perimeter of the\nGeometry object that is used as a cutout object. "
           },
           "text": {
            "t": "str",
-           "v": "<b>Manual Huecos de puentes</b>:"
+           "v": "<b>Manual Bridge Gaps</b>:"
           }
          }
         }
@@ -1221,11 +1221,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Use un cursor grande cuando agregue espacios manuales."
+           "v": "Use a big cursor when adding manual gaps."
           },
           "text": {
            "t": "str",
-           "v": "Cursor grande:"
+           "v": "Big cursor:"
           }
          }
         }
@@ -1261,11 +1261,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Si el objeto a recortar es un Gerber\nprimero crea una Geometría que lo rodea,\npara ser utilizado como recorte, si aún no existe.\nSeleccione el archivo fuente de Gerber en el cuadro combinado de objeto superior."
+           "v": "If the object to be cutout is a Gerber\nfirst create a Geometry that surrounds it,\nto be used as the cutout, if one doesn't exist yet.\nSelect the source Gerber file in the top object combobox."
           },
           "text": {
            "t": "str",
-           "v": "Generar geometría manual"
+           "v": "Generate Manual Geometry"
           },
           "icon": {
            "t": "QIcon",
@@ -1287,11 +1287,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Objeto de geometría utilizado para crear el recorte manual."
+           "v": "Geometry object used to create the manual cutout."
           },
           "text": {
            "t": "str",
-           "v": "Geometría de corte manual:"
+           "v": "Manual cutout Geometry:"
           }
          }
         }
@@ -1330,7 +1330,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Haga clic con el botón izquierdo del mouse (LMB)\npara crear un espacio de puente para separar la PCB de\nEl material circundante.\nEl clic LMB debe hacerse en el perímetro de\nEl objeto Geometry utilizado como geometría de recorte."
+           "v": "Use the left mouse button (LMB) click\nto create a bridge gap to separate the PCB from\nthe surrounding material.\nThe LMB click has to be done on the perimeter of\nthe Geometry object used as a cutout geometry."
           },
           "styleSheet": {
            "t": "str",
@@ -1338,7 +1338,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Agregar huecos de puente manuales"
+           "v": "Manual Add Bridge Gaps"
           },
           "icon": {
            "t": "QIcon",
@@ -1376,7 +1376,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Restablecerá los parámetros de la herramienta."
+        "v": "Will reset the tool parameters."
        },
        "styleSheet": {
         "t": "str",
@@ -1384,7 +1384,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Restablecer la Herramienta"
+        "v": "Reset Tool"
        },
        "icon": {
         "t": "QIcon",

@@ -404,7 +404,7 @@ std::vector<FlatCAMObj*> IsolationTool::runIsolation(GerberObject* grb, const st
         if (!flatcam::Isolation::isolate(grb->gerber().solidGeometry(), grb->gerber().followGeometry(), isoTools, o, out,
                                          error, geometry)) {
             app_->ui()->inform("[ERROR_NOTCL] " + tr_("Isolation geometry could not be generated.") +
-                               (error.empty() ? QString() : " " + QString::fromStdString(error)));
+                               (error.empty() ? QString() : " " + tr_(QString::fromStdString(error))));
             return created;
         }
     }

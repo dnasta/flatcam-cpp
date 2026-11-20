@@ -6,7 +6,7 @@
   "props": {
    "objectName": {
     "t": "str",
-    "v": "Herramienta de Fiduciales"
+    "v": "Fiducials Tool"
    },
    "autoFillBackground": {
     "t": "bool",
@@ -47,7 +47,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Herramienta de Fiduciales"
+        "v": "Fiducials Tool"
        }
       }
      }
@@ -72,11 +72,11 @@
       "props": {
        "toolTip": {
         "t": "str",
-        "v": "Una tabla con las coordenadas de los puntos fiduciales,\nen el formato (x, y)."
+        "v": "A table with the fiducial points coordinates,\nin the format (x, y)."
        },
        "text": {
         "t": "str",
-        "v": "<b>Coordenadas Fiduciales:</b>"
+        "v": "<b>Fiducials Coordinates:</b>"
        }
       }
      }
@@ -128,8 +128,8 @@
        "cols": 3,
        "labels": [
         "#",
-        "Nombre",
-        "Coordenadas"
+        "Name",
+        "Coordinates"
        ],
        "hheader": true,
        "vheader": false,
@@ -228,11 +228,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Parámetros utilizados para esta herramienta."
+           "v": "Parameters used for this tool."
           },
           "text": {
            "t": "str",
-           "v": "<b>Parámetros:</b>"
+           "v": "<b>Parameters:</b>"
           }
          }
         }
@@ -250,11 +250,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Esto establece el diámetro fiducial si el tipo fiducial es circular,\nde lo contrario es el tamaño del fiducial.\nLa apertura de la máscara de soldadura es el doble que eso."
+           "v": "This set the fiducial diameter if fiducial type is circular,\notherwise is the size of the fiducial.\nThe soldermask opening is double than that."
           },
           "text": {
            "t": "str",
-           "v": "Tamaño:"
+           "v": "Size:"
           }
          }
         }
@@ -310,11 +310,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Margen de cuadro delimitador."
+           "v": "Bounding box margin."
           },
           "text": {
            "t": "str",
-           "v": "Margen:"
+           "v": "Margin:"
           }
          }
         }
@@ -366,11 +366,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "- 'Auto' - colocación automática de fiduciales en las esquinas del cuadro delimitador.\n- 'Manual' - colocación manual de fiduciales."
+           "v": "- 'Auto' - automatic placement of fiducials in the corners of the bounding box.\n- 'Manual' - manual placement of fiducials."
           },
           "text": {
            "t": "str",
-           "v": "Modo:"
+           "v": "Mode:"
           }
          }
         }
@@ -414,11 +414,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "La posición para el segundo fiducial.\n- 'Arriba' - el orden es: abajo a la izquierda, arriba a la izquierda, arriba a la derecha.\n- 'Abajo' - el orden es: abajo a la izquierda, abajo a la derecha, arriba a la derecha.\n- 'Ninguno' - no hay un segundo fiducial. El orden es: abajo a la izquierda, arriba a la derecha."
+           "v": "The position for the second fiducial.\n- 'Up' - the order is: bottom-left, top-left, top-right.\n- 'Down' - the order is: bottom-left, bottom-right, top-right.\n- 'None' - there is no second fiducial. The order is: bottom-left, top-right."
           },
           "text": {
            "t": "str",
-           "v": "Segundo fiducial:"
+           "v": "Second fiducial:"
           }
          }
         }
@@ -436,15 +436,15 @@
          "props": {},
          "choices": [
           {
-           "label": "Arriba",
+           "label": "Up",
            "value": "up"
           },
           {
-           "label": "Abajo",
+           "label": "Down",
            "value": "down"
           },
           {
-           "label": "Ninguno",
+           "label": "None",
            "value": "no"
           }
          ],
@@ -497,11 +497,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El tipo de fiducial.\n- 'Circular': este es el fiducial regular.\n- 'Cruce' - líneas cruzadas fiduciales.\n- 'Ajedrez' - patrón de ajedrez fiducial."
+           "v": "The type of fiducial.\n- 'Circular' - this is the regular fiducial.\n- 'Cross' - cross lines fiducial.\n- 'Chess' - chess pattern fiducial."
           },
           "text": {
            "t": "str",
-           "v": "Tipo fiducial:"
+           "v": "Fiducial Type:"
           }
          }
         }
@@ -523,11 +523,11 @@
            "value": "circular"
           },
           {
-           "label": "Cruce",
+           "label": "Cross",
            "value": "cross"
           },
           {
-           "label": "Ajedrez",
+           "label": "Chess",
            "value": "chess"
           }
          ],
@@ -549,11 +549,11 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Espesor de la línea que hace al fiducial."
+           "v": "Thickness of the line that makes the fiducial."
           },
           "text": {
            "t": "str",
-           "v": "Grosor de la línea:"
+           "v": "Line thickness:"
           },
           "enabled": {
            "t": "bool",
@@ -640,7 +640,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "Gerber Objeto al que se agregará un Copper Thieving."
+           "v": "Gerber Object to which will be added a copper thieving."
           },
           "text": {
            "t": "str",
@@ -683,7 +683,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Agregará un polígono en la capa de cobre para servir como fiducial."
+           "v": "Will add a polygon on the copper layer to serve as fiducial."
           },
           "styleSheet": {
            "t": "str",
@@ -691,7 +691,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Añadir Fiducial"
+           "v": "Add Fiducial"
           },
           "icon": {
            "t": "QIcon",
@@ -744,7 +744,7 @@
          "props": {
           "toolTip": {
            "t": "str",
-           "v": "El objeto Soldermask Gerber."
+           "v": "The Soldermask Gerber object."
           },
           "text": {
            "t": "str",
@@ -787,7 +787,7 @@
           },
           "toolTip": {
            "t": "str",
-           "v": "Agregará un polígono en la capa de máscara de soldadura\npara servir como apertura fiducial.\nEl diámetro siempre es el doble del diámetro.\npara el cobre fiducial."
+           "v": "Will add a polygon on the soldermask layer\nto serve as fiducial opening.\nThe diameter is always double of the diameter\nfor the copper fiducial."
           },
           "styleSheet": {
            "t": "str",
@@ -795,7 +795,7 @@
           },
           "text": {
            "t": "str",
-           "v": "Agregar apertura de Soldermask"
+           "v": "Add Soldermask Opening"
           }
          }
         }
@@ -829,7 +829,7 @@
        },
        "toolTip": {
         "t": "str",
-        "v": "Restablecerá los parámetros de la herramienta."
+        "v": "Will reset the tool parameters."
        },
        "styleSheet": {
         "t": "str",
@@ -837,7 +837,7 @@
        },
        "text": {
         "t": "str",
-        "v": "Restablecer la Herramienta"
+        "v": "Reset Tool"
        },
        "icon": {
         "t": "QIcon",
