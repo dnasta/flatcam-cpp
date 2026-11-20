@@ -631,6 +631,32 @@ protected:
     std::optional<QString> execute(const TclArgs& args) override {
         FlatCAMObj* o = app_->collection()->byName(args.str("name"));
         if (args.has("use_thread") && args.hasValue("use_thread")) pyTruthCapitalized(args.str("use_thread"));
+        if (!reproduceOriginalBugs()) {
+            // Corregido: fresa los agujeros (o las ranuras) de las herramientas pedidas, como el panel del Excellon.
+            auto* exc = dynamic_cast<ExcellonObject*>(o);
+            if (!exc) raiseTclError(QString("Expected ExcellonObject, got %1 %2.").arg(args.str("name"), pyType(o)));
+            const double tooldia = args.has("tooldia") ? args.num("tooldia") : defNum("tools_mill_tooldia", 0.1);
+            const double tol = args.has("diatol") ? args.num("diatol") / 100.0 : 0.0;
+            std::vector<int> tools;
+            const bool all = !args.has("milled_dias") || args.str("milled_dias") == "all";
+            std::vector<double> dias;
+            if (!all)
+                for (const QString& d : args.str("milled_dias").split(',', Qt::SkipEmptyParts)) {
+                    bool ok = false;
+                    dias.push_back(d.trimmed().toDouble(&ok));
+                    if (!ok) raiseTclError("Bad tools: " + d);
+                }
+            for (const auto& [id, t] : exc->excellon().drillTools()) {
+                if ((slots_ ? t.slots.empty() : t.drills.empty())) continue;
+                bool take = all;
+                for (double d : dias) take = take || std::fabs(t.tooldia - d) <= d * tol + 1e-9;
+                if (take) tools.push_back(id);
+            }
+            FlatCAMObj* out = app_->millExcellon(exc, tools, tooldia, slots_, args.has("outname") ? args.str("outname")
+                                                                                                    : QString());
+            if (!out) raiseTclError(slots_ ? "Failed to create Milling Slots." : "Failed to create Milling Drills.");
+            return std::nullopt;
+        }
         raiseTclError(QString("'%1' object has no attribute '%2'").arg(pyClassName(o), slots_ ? "slots" : "drills"));
         return std::nullopt;
     }
@@ -653,6 +679,12 @@ protected:
         const double gapsizePar = args.has("gapsize") ? args.num("gapsize") : defNum("tools_cutout_gapsize");
         const QString outname = args.has("outname") ? args.str("outname") : name + "_cutout";
         FlatCAMObj* o = app_->collection()->byName(name);
+        if (!reproduceOriginalBugs()) {
+            // Corregido: los errores son de Tcl (no un "terminado" después de fallar).
+            if (!o) raiseTclError(QString("%1: %2").arg(tr_("Object not found"), name));
+            if (gaps != "tb" && gaps != "lr" && gaps != "4")
+                raiseTclError("Incorrect -gaps values. Can be only: 'lr', 'tb' or '4'. Got: " + gaps);
+        }
         // geo_init_me: lo que falla adentro lo atrapa new_object.
         if (!o) {
             informInitializeFailed(app_, "geometry", "'NoneType' object has no attribute 'bounds'");
@@ -698,10 +730,14 @@ protected:
     std::optional<QString> execute(const TclArgs& args) override {
         const QString name = args.str("name");
         const QString outname = args.has("outname") ? args.str("outname") : name + "_iso";
-        const bool follow = args.has("follow") && args.hasValue("follow") && !args.str("follow").isEmpty();
+        // -follow es un texto: cualquier valor lo activa (corregido: un valor lógico de Tcl)
+        const bool follow = args.has("follow") && args.hasValue("follow") && !args.str("follow").isEmpty() &&
+                            (reproduceOriginalBugs() || pyTruthCapitalized(args.str("follow")));
         bool combine = false;
         if (args.has("combine")) {
             combine = args.hasValue("combine") && pyTruthCapitalized(args.str("combine"));
+        } else if (!reproduceOriginalBugs()) {
+            combine = defBool("tools_iso_combine_passes");  // corregido: la preferencia es un valor lógico
         } else {
             // bool(eval(defaults["tools_iso_combine_passes"])): de fábrica es un bool y eval() solo acepta texto.
             const JsonValue& v = appDefaults()["tools_iso_combine_passes"];
@@ -766,7 +802,9 @@ protected:
                     informInitializeFailed(app_, "geometry", "Empty Geometry");
                     continue;
                 }
-                makeGeo(outname, solid, false);
+                // las pasadas separadas tienen todas el mismo nombre (corregido: <nombre>_<n>)
+                makeGeo(reproduceOriginalBugs() || passes == 1 ? outname : outname + "_" + QString::number(i + 1), solid,
+                        false);
             }
         }
         return std::nullopt;
@@ -905,7 +943,28 @@ protected:
             return out;
         };
         app_->ui()->inform("Generating panel ... Please wait.");
-        if (o->kind() == ObjectKind::Excellon) {
+        if (o->kind() == ObjectKind::Excellon && !reproduceOriginalBugs()) {
+            // Corregido: las copias de los agujeros y las ranuras de cada herramienta, sin tocar el Excellon de origen.
+            auto ex = std::make_unique<Excellon>();
+            for (const auto& [id, t] : static_cast<ExcellonObject*>(o)->excellon().drillTools()) {
+                std::vector<Point2D> drills;
+                std::vector<std::pair<Point2D, Point2D>> slots;
+                double cy = 0.0;
+                for (int r = 0; r < rows; ++r) {
+                    double cx = 0.0;
+                    for (int c = 0; c < columns; ++c) {
+                        for (const Point2D& d : t.drills) drills.push_back({d.x + cx, d.y + cy});
+                        for (const auto& [s0, s1] : t.slots)
+                            slots.push_back({{s0.x + cx, s0.y + cy}, {s1.x + cx, s1.y + cy}});
+                        cx += lx;
+                    }
+                    cy += ly;
+                }
+                ex->addDrillTool(id, t.tooldia, drills, slots);
+            }
+            ex->createGeometry();
+            app_->addObject(std::make_unique<ExcellonObject>(outname, std::move(ex)), false);
+        } else if (o->kind() == ObjectKind::Excellon) {
             // job_init_excellon: tools.copy() comparte los diccionarios y create_geometry los vacía antes de fallar
             // con las claves 'drills', 'slots' y 'solid_geometry' que agregó; después bounds() falla y no se crea.
             static_cast<ExcellonObject*>(o)->excellon().clearToolGeometry();
@@ -929,7 +988,11 @@ protected:
             }
             app_->addObject(std::move(out), false);
         }
-        // '[success]' % _("Done."): sin hilo es un TypeError; con hilo lo atrapa job_thread.
+        // '[success]' % _("Done."): sin hilo es un TypeError; con hilo lo atrapa job_thread (corregido: "Hecho.").
+        if (!reproduceOriginalBugs()) {
+            app_->ui()->inform("[success] " + tr_("Done."));
+            return std::nullopt;
+        }
         if (!threaded) raiseTclError("not all arguments converted during string formatting");
         return std::nullopt;
     }
@@ -990,6 +1053,8 @@ protected:
             py = 0.5 * (bb->ymin + bb->ymax);
         } else {
             px = py = args.has("dist") ? args.num("dist") : 0.0;
+            // Corregido: con -grid y sin -box, la grilla sobre la caja del propio objeto.
+            if (!reproduceOriginalBugs() && !holesArg) bb = exactBounds(o).value_or(BoundingBox{0, 0, 0, 0});
         }
         // alligndrill_init_me
         std::vector<Point2D> drills;
@@ -1001,12 +1066,12 @@ protected:
         if (holesArg) {
             for (const Point2D& h : holes) addWithMirror(h);
         } else if (bb) {
-            if (!args.has("minoffset")) {
+            if (!args.has("minoffset") && reproduceOriginalBugs()) {
                 informInitializeFailed(app_, "excellon", "'minoffset'");
                 created = false;
             } else {
                 const double axisoffset = args.has("axisoffset") ? args.num("axisoffset") : 0;
-                const double grid = args.num("grid"), minoff = args.num("minoffset");
+                const double grid = args.num("grid"), minoff = args.has("minoffset") ? args.num("minoffset") : 0.0;
                 const double lo = axis == "X" ? bb->xmin : bb->ymin, hi = axis == "X" ? bb->xmax : bb->ymax;
                 double first = args.num("gridoffset");
                 while ((lo - minoff) < first) first -= grid;
@@ -1124,7 +1189,16 @@ protected:
             tools.push_back(v);
         }
         const bool rest = argTruth(args, "rest", "tools_ncc_rest");
-        const QString outname = args.has("outname") ? args.str("outname") : name + (rest ? "_ncc" : "_ncc_rm");
+        const bool fixed = !reproduceOriginalBugs();
+        // Los sufijos están cambiados en el original (corregido: con resto `_ncc_rm`).
+        const QString outname = args.has("outname") ? args.str("outname")
+                                                    : name + ((rest != fixed) ? "_ncc" : "_ncc_rm");
+        // El método (corregido: el pedido; el original termina siempre en el de líneas).
+        int method = 2;
+        if (fixed) {
+            const QString m = (args.has("method") ? args.str("method") : defStr("tools_ncc_method")).toLower();
+            method = m == "standard" || m == "0" ? 0 : m == "seed" || m == "1" ? 1 : 2;
+        }
         std::vector<StoredTool> storage;
         for (double t : tools) storage.push_back({roundedDia(t, appDecimals()), {}});
         FlatCAMObj* sel = obj;
@@ -1133,6 +1207,7 @@ protected:
             if (!args.has("box")) raiseTclError(tr_("Expected either -box <value> or -all."));
             select = 2;
             if (FlatCAMObj* b = app_->collection()->byName(args.str("box"))) sel = b;  // si no está, el propio objeto
+            else if (fixed) raiseTclError(QString("%1: %2").arg(tr_("Object not found"), args.str("box")));
         }
 
         // clear_copper_tcl
@@ -1156,6 +1231,9 @@ protected:
             ShapeList buff;
             for (const Shape& g : items) buff.push_back(g.buffer(margin, 16, JoinStyle::Mitre));
             bbox = Shape::unaryUnion(buff);
+        } else if (sel->kind() == ObjectKind::Gerber && fixed) {
+            // Corregido: el cobre de la caja elegida, agrandado el margen.
+            bbox = Shape::unaryUnion(geoN).buffer(margin, 16, JoinStyle::Mitre);
         } else if (sel->kind() == ObjectKind::Gerber) {
             // unary_union(self.ncc_obj.solid_geometry): el objeto de la herramienta (de la interfaz), que no hay.
             raiseTclError("'NoneType' object has no attribute 'solid_geometry'");
@@ -1185,8 +1263,13 @@ protected:
         bool restSolidIsList = false;
         {
             if (rest) {
-                app_->ui()->inform("_(NCC Tool. Rest machining copper clearing task started.");
-                app_->ui()->inform("NCC Tool. Calculate 'empty' area.");
+                if (fixed) {
+                    app_->ui()->inform(tr_("NCC Tool. Finished non-copper polygons. Rest machining copper clearing task started."));
+                    app_->ui()->inform(tr_("NCC Tool. Calculate 'empty' area."));
+                } else {
+                    app_->ui()->inform("_(NCC Tool. Rest machining copper clearing task started.");
+                    app_->ui()->inform("NCC Tool. Calculate 'empty' area.");
+                }
             } else {
                 app_->ui()->inform(tr_("NCC Tool. Calculate 'empty' area."));
             }
@@ -1197,12 +1280,12 @@ protected:
                     return std::nullopt;
                 }
                 sol = Shape::unaryUnion(solidOf(obj));
-                restSolidIsList = rest;  // en el resto, sol_geo es la lista del Gerber
+                restSolidIsList = rest && !fixed;  // en el resto, sol_geo es la lista del Gerber
             } else if (obj->kind() == ObjectKind::Geometry) {
                 sol = Shape::unaryUnion(solidOf(obj));
             } else {
                 app_->ui()->inform("[ERROR_NOTCL] " + tr_("The selected object is not suitable for copper clearing."));
-                if (!rest) return failed();
+                if (!rest || fixed) return failed();
                 // gen_clear_area_rest devuelve None (no 'fail'): new_object crea la Geometría vacía.
                 auto g = std::make_unique<GeometryObject>(outname);
                 g->tools()[1] = defaultGeometryTool();
@@ -1230,8 +1313,10 @@ protected:
         auto out = std::make_unique<GeometryObject>(outname);
         std::vector<std::size_t> setOrder;  // las herramientas en el orden en que se agregan a geo_obj.tools
         const auto clearPart = [&](const Shape& pol, double tool, ShapeList& into) -> bool {
-            const auto lines = PolygonClearing::clearPolygonLines(pol, tool, defInt("gerber_circle_steps", 64), overlap,
-                                                                  connect, contour);
+            const int steps = defInt("gerber_circle_steps", 64);
+            const auto lines = method == 0   ? PolygonClearing::clearPolygon(pol, tool, steps, overlap, connect)
+                               : method == 1 ? PolygonClearing::clearPolygonSeed(pol, tool, steps, overlap, connect, contour)
+                                             : PolygonClearing::clearPolygonLines(pol, tool, steps, overlap, connect, contour);
             if (!lines) return false;
             for (const auto& l : *lines) into.push_back(PolygonClearing::toShape(l));
             return true;
@@ -1248,7 +1333,9 @@ protected:
                 started(tool);
                 ShapeList clearedGeo;
                 offsetA -= (tool - 1e-12);
-                Shape area = empty.buffer(-offsetA);
+                // Corregido: cada herramienta trabaja sobre el área vacía menos lo limpiado (el original la achica con
+                // la suma de los diámetros de las herramientas que faltan).
+                Shape area = fixed ? empty : empty.buffer(-offsetA);
                 if (cleared) area = area.difference(*cleared);
                 for (const Shape& part : polygonsOf(area)) {
                     const Shape p = part.buffer(0);
@@ -1257,7 +1344,15 @@ protected:
                         if (pol.type() == ShapeType::Polygon) clearPart(pol, tool, clearedGeo);
                 }
                 if (!clearedGeo.empty()) {
-                    cleared = empty.buffer(-offsetA * (1 + overlap)).buffer(-tool / 1.999999).buffer(tool / 1.999999).buffer(0);
+                    if (fixed) {
+                        ShapeList buf;
+                        for (const Shape& l : clearedGeo) buf.push_back(l.buffer(tool / 1.9999999));
+                        if (cleared) buf.push_back(*cleared);
+                        cleared = Shape::unaryUnion(buf).buffer(0.0000001);
+                    } else {
+                        cleared = empty.buffer(-offsetA * (1 + overlap)).buffer(-tool / 1.999999).buffer(tool / 1.999999)
+                                      .buffer(0);
+                    }
                     storage[toolFor(storage, tool)].solid = clearedGeo;
                 }
             }
@@ -1371,8 +1466,16 @@ protected:
         const QString tooldia = args.has("tooldia") ? args.str("tooldia") : PropertiesTool::pyStr(appDefaults()["tools_paint_tooldia"]);
         const QString order = args.has("order") ? args.str("order") : defStr("tools_paint_order");
         const double offset = args.has("offset") ? args.num("offset") : defNum("tools_paint_offset");
-        if (args.has("connect")) argTruth(args, "connect", "tools_paint_connect");
-        if (args.has("contour")) argTruth(args, "contour", "tools_paint_contour");
+        if (args.has("connect")) connect_ = argTruth(args, "connect", "tools_paint_connect");
+        else connect_ = defBool("tools_paint_connect");
+        if (args.has("contour")) contour_ = argTruth(args, "contour", "tools_paint_contour");
+        else contour_ = defBool("tools_paint_contour");
+        // El solape se divide por 100 una vez (el original lo hace dos veces).
+        overlap_ = (args.has("overlap") ? args.num("overlap") : defNum("tools_paint_overlap")) / 100.0;
+        {
+            const QString m = (args.has("method") ? args.str("method") : defStr("tools_paint_method")).toLower();
+            method_ = m == "standard" || m == "0" ? 0 : m == "seed" || m == "1" ? 1 : 2;
+        }
         const QString outname = args.has("outname") ? args.str("outname") : name + "_paint";
         std::vector<double> tools;
         for (const QString& d : tooldia.split(',')) {
@@ -1423,7 +1526,10 @@ protected:
                 for (double v : xy) items << tclFloat(v);
                 raiseTclError(QString("%1 Got: [%2]").arg(tr_("Expected a tuple value like -single 3.2,0.1."), items.join(", ")));
             }
-            if (xy.empty()) raiseTclError("list index out of range");
+            if (xy.empty())
+                raiseTclError(reproduceOriginalBugs()
+                                  ? QString("list index out of range")
+                                  : QString("%1 Got: %2").arg(tr_("Expected a tuple value like -single 3.2,0.1."), single));
             started(tr_("Normal painting polygon task started."));
             const auto poly = findPolygon(solid, {xy[0], xy[1]});
             if (!poly) {
@@ -1435,9 +1541,16 @@ protected:
         }
         if (args.has("box")) {
             FlatCAMObj* box = app_->collection()->byName(args.str("box"));
-            if (!box) raiseTclError("'NoneType' object has no attribute 'solid_geometry'");
+            if (!box)
+                raiseTclError(reproduceOriginalBugs() ? QString("'NoneType' object has no attribute 'solid_geometry'")
+                                                      : QString("%1: %2").arg(tr_("Object not found"), args.str("box")));
             bool boxList = true;
-            const ShapeList geo = solidWithExcellon(box, boxList);
+            ShapeList geo = solidWithExcellon(box, boxList);
+            if (!reproduceOriginalBugs()) {  // corregido: la caja es el objeto pedido
+                geo = {Shape::unaryUnion(geo)};
+                if (geo[0].type() != ShapeType::MultiPolygon) geo[0] = Shape::collection({geo[0]});
+                boxList = false;
+            }
             // Salvo un MultiPolygon suelto, el original usa self.bound_obj (de la interfaz), que no hay.
             if (boxList || geo.size() != 1 || geo[0].type() != ShapeType::MultiPolygon) {
                 app_->ui()->inform("[ERROR_NOTCL] " + tr_("No object available."));
@@ -1470,6 +1583,45 @@ protected:
         if (order == "fwd") std::sort(tools.begin(), tools.end());
         else if (order == "rev") std::sort(tools.begin(), tools.end(), std::greater<double>());
         const QString units = app_->paintTool ? app_->paintTool->toolUnits().toLower() : QString();
+        if (!reproduceOriginalBugs()) {
+            // Corregido: cada polígono se pinta con el método pedido y cada herramienta queda en la Geometría.
+            auto out = std::make_unique<GeometryObject>(outname);
+            ShapeList all;
+            int uid = 0;
+            const int steps = defInt("geometry_circle_steps", 64);
+            for (double tool : tools) {
+                app_->ui()->inform(QString("[success] %1 %2%3 %4")
+                                       .arg(tr_("Painting with tool diameter = "), tclFloat(tool), units, tr_("started")));
+                ShapeList painted;
+                for (const Shape& pol : geometry)
+                    for (const Shape& b : polygonsOf(pol.buffer(-offset))) {
+                        if (b.type() != ShapeType::Polygon || b.isEmpty()) continue;
+                        const auto lines =
+                            method_ == 0   ? PolygonClearing::clearPolygon(b, tool, steps, overlap_, connect_)
+                            : method_ == 1 ? PolygonClearing::clearPolygonSeed(b, tool, steps, overlap_, connect_, contour_)
+                                           : PolygonClearing::clearPolygonLines(b, tool, steps, overlap_, connect_, contour_);
+                        if (!lines) continue;
+                        for (const auto& l : *lines) painted.push_back(PolygonClearing::toShape(l));
+                    }
+                if (painted.empty()) {
+                    app_->ui()->inform("[ERROR_NOTCL] " + tr_("Geometry could not be painted completely"));
+                    continue;
+                }
+                GeometryTool t = defaultGeometryTool();
+                t.tooldia = tool;
+                t.solidGeometry = painted;
+                out->tools()[++uid] = t;
+                all.insert(all.end(), painted.begin(), painted.end());
+            }
+            if (all.empty()) {
+                app_->ui()->inform("[ERROR] " + tr_("Failed."));
+                return;
+            }
+            out->solidGeometry() = all;
+            app_->addObject(std::move(out), false);
+            app_->ui()->inform("[success] " + tr_("Paint Done."));
+            return;
+        }
         for (double tool : tools) {
             app_->ui()->inform(QString("[success] %1 %2%3 %4")
                                    .arg(tr_("Painting with tool diameter = "), tclFloat(tool), units, tr_("started")));
@@ -1488,6 +1640,11 @@ protected:
                                .arg(tr_("New object with name:"), outname, QString::number(0.0, 'f', 6)));
         app_->ui()->inform("[ERROR] " + tr_("Failed."));
     }
+
+    int method_ = 0;        ///< 0 estándar, 1 semilla, 2 líneas.
+    double overlap_ = 0.2;  ///< Solape (0 a 1).
+    bool connect_ = true;   ///< Conectar los trazos.
+    bool contour_ = true;   ///< Repasar el contorno.
 };
 
 }  // namespace
