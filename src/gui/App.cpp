@@ -1025,7 +1025,8 @@ FlatCAMObj* App::generateCncJob(GeometryObject* geo, const std::vector<int>& too
     return addObject(std::move(job));
 }
 
-FlatCAMObj* App::millExcellon(ExcellonObject* exc, const std::vector<int>& tools, double tooldia, bool slots) {
+FlatCAMObj* App::millExcellon(ExcellonObject* exc, const std::vector<int>& tools, double tooldia, bool slots,
+                              const QString& outname) {
     // on_generate_milling_button_click / on_generate_milling_slots_button_click: generate_milling_drills / _slots.
     const MillingResult r = slots ? millSlots(exc->excellon(), tools, tooldia, appDecimals(),
                                               defInt("geometry_circle_steps", 64))
@@ -1044,7 +1045,8 @@ FlatCAMObj* App::millExcellon(ExcellonObject* exc, const std::vector<int>& tools
     }
     // new_object("geometry", "<nombre>_mill" o "<nombre>_mill_slot"): una Geometría de una herramienta con el
     // diámetro de la fresa (cnctooldia = str(tooldia)).
-    auto geo = std::make_unique<GeometryObject>(exc->name() + (slots ? "_mill_slot" : "_mill"));
+    auto geo = std::make_unique<GeometryObject>(!outname.isEmpty() ? outname
+                                                                     : exc->name() + (slots ? "_mill_slot" : "_mill"));
     geo->solidGeometry() = r.rings;
     GeometryTool t = defaultGeometryTool();
     t.tooldia = tooldia;

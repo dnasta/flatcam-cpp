@@ -306,3 +306,52 @@ TEST(GuiFixed, TclDrillcncjobAndBoundingBox) {
     EXPECT_TRUE(ok);
     EXPECT_TRUE(app.collection()->byName("edge")->plotEnabled());
 }
+
+TEST(GuiFixed, TclMillPanelizeAlignNccPaintCutoutIsolate) {
+    flatcam::OriginalBugsScope fixed(false);
+    App app;
+    FCShell* sh = app.shell();
+    bool ok = false;
+    const QString dir = QString(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-";
+    const auto run = [&](const QString& c) {
+        const QString r = sh->eval(c, &ok);
+        EXPECT_TRUE(ok) << c.toStdString() << ": " << r.toStdString();
+        return r;
+    };
+    run("open_excellon {" + dir + "PTH.drl} -outname drl");
+    run("open_gerber {" + dir + "Logo.gbr} -outname logo");
+    run("open_gerber {" + dir + "Edge_Cuts.gbr} -outname edge");
+    // milldrills fresa los agujeros.
+    run("milldrills drl -tooldia 0.5 -outname m");
+    ASSERT_NE(app.collection()->byName("m"), nullptr);
+    EXPECT_FALSE(dynamic_cast<GeometryObject*>(app.collection()->byName("m"))->solidGeometry().empty());
+    // panelize de un Excellon: 2 x 3 copias, sin el error de formato.
+    run("panelize drl -columns 2 -rows 3 -outname p");
+    auto* p = dynamic_cast<ExcellonObject*>(app.collection()->byName("p"));
+    ASSERT_NE(p, nullptr);
+    std::size_t src = 0, dst = 0;
+    for (const auto& [id, t] : dynamic_cast<ExcellonObject*>(app.collection()->byName("drl"))->excellon().drillTools())
+        src += t.drills.size();
+    for (const auto& [id, t] : p->excellon().drillTools()) dst += t.drills.size();
+    EXPECT_EQ(dst, src * 6);
+    // aligndrill con -grid y sin -box: la grilla sobre el propio objeto.
+    run("aligndrill edge -dia 1 -axis X -grid 10 -gridoffset 0 -outname a");
+    auto* a = dynamic_cast<ExcellonObject*>(app.collection()->byName("a"));
+    ASSERT_NE(a, nullptr);
+    EXPECT_FALSE(a->excellon().drillTools().empty());
+    // ncc_clear: con resto el sufijo es _ncc_rm; sin resto _ncc, y con el método estándar.
+    run("ncc_clear logo -tooldia 0.2 -all 1 -method standard");
+    EXPECT_NE(app.collection()->byName("logo_ncc"), nullptr);
+    // paint -all pinta.
+    run("paint logo -tooldia 0.1 -all 1 -method standard -outname lp");
+    auto* lp = dynamic_cast<GeometryObject*>(app.collection()->byName("lp"));
+    ASSERT_NE(lp, nullptr);
+    EXPECT_FALSE(lp->solidGeometry().empty());
+    // cutout con un objeto que no está es un error.
+    sh->eval("cutout nada", &ok);
+    EXPECT_FALSE(ok);
+    // isolate con pasadas separadas: un nombre por pasada.
+    run("isolate edge -dia 0.2 -passes 2 -combine 0 -outname iso");
+    EXPECT_NE(app.collection()->byName("iso_1"), nullptr);
+    EXPECT_NE(app.collection()->byName("iso_2"), nullptr);
+}
