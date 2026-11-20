@@ -6,6 +6,7 @@
 #include <cmath>
 #include <string>
 
+#include "core/OriginalBugs.h"
 #include "editors/GeoEditorModel.h"
 #include "golden_geo_editor.h"
 
@@ -150,4 +151,50 @@ TEST(GeoEditor, MatchesTheOriginal) {
         ASSERT_EQ(result.size(), s.result.size());
         for (std::size_t i = 0; i < result.size(); ++i) EXPECT_TRUE(same(result[i], Shape::fromWkt(s.result[i]))) << i;
     }
+}
+
+TEST(GeoEditorFixed, BufferExplodeIndexUnionClickAndClimb) {
+    flatcam::OriginalBugsScope fixed(false);
+    using flatcam::GeoEditorModel;
+    using flatcam::Point2D;
+    using flatcam::Shape;
+    GeoEditorModel m;
+    const Shape sq = Shape::polygon({{0, 0}, {10, 0}, {10, 10}, {0, 10}}, {{{3, 3}, {6, 3}, {6, 6}, {3, 6}}});
+    const Shape line = Shape::lineString({{20, 0}, {25, 0}, {25, 5}});
+    auto a = m.add(sq);
+    auto b = m.add(line);
+    // Unir sin nada elegido no agrega nada.
+    m.selected.clear();
+    m.unite();
+    EXPECT_EQ(m.storage.size(), 2u);
+    // Clic: la figura bajo el mouse; lejos de todo, no elige nada.
+    m.clickSelect({10, 5}, false, 0.1);
+    ASSERT_EQ(m.selected.size(), 1u);
+    EXPECT_EQ(m.selected.front(), a);
+    m.clickSelect({100, 100}, false, 0.1);
+    EXPECT_TRUE(m.selected.empty());
+    // Buffer: exterior agrega un polígono más grande; interior uno más chico.
+    m.selected = {a};
+    ASSERT_FALSE(m.bufferTool(GeoEditorModel::BufferKind::Exterior, 1.0, 1, 64));
+    EXPECT_EQ(m.storage.size(), 3u);
+    m.selected = {a};
+    EXPECT_TRUE(m.bufferTool(GeoEditorModel::BufferKind::Interior, -1.0, 1, 64).has_value());  // negativo
+    // Mover actualiza el índice: después de desplazar, el clic en el lugar nuevo elige la línea.
+    m.selected = {b};
+    m.offset(0, 100);
+    m.clickSelect({25, 105}, false, 0.1);
+    ASSERT_EQ(m.selected.size(), 1u);
+    EXPECT_EQ(m.selected.front(), b);
+    EXPECT_EQ(m.storage.nearest({25, 105})->second, b);
+    // Explotar una línea y un polígono con agujero: 2 + 4 + 4 segmentos.
+    m.selected = {a, b};
+    const auto segs = m.explode();
+    ASSERT_TRUE(segs.has_value());
+    EXPECT_EQ(segs->size(), 10u);
+    // Fresado por ascenso: los anillos siguen siendo anillos.
+    const auto out = m.complete({Shape::linearRing({{0, 0}, {1, 0}, {1, 1}, {0, 0}}), line}, true, true);
+    ASSERT_EQ(out.size(), 2u);
+    EXPECT_EQ(out[0]->geo.type(), flatcam::ShapeType::LinearRing);
+    EXPECT_EQ(out[1]->geo.type(), flatcam::ShapeType::LineString);
+    EXPECT_EQ(out[1]->geo.coordinates().front().x, 25);
 }

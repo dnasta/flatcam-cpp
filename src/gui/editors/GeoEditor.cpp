@@ -4,6 +4,9 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QFont>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QFormLayout>
 #include <QHeaderView>
 #include <QScrollArea>
 #include <QSplitter>
@@ -23,6 +26,10 @@
 #include "gui/objects/GeometryObject.h"
 #include "gui/tools/DistanceTool.h"
 #include "gui/widgets/DialogBoxRadio.h"
+#include "gui/widgets/FCButton.h"
+#include "gui/widgets/FCComboBox.h"
+#include "gui/widgets/FCLabel.h"
+#include "gui/widgets/FCSpinners.h"
 
 namespace flatcam::gui {
 
@@ -240,10 +247,10 @@ void GeoTransformTool::onSkewX(std::optional<double> val, std::optional<int> ref
     done("[success] " + tr_("Skew on the X axis done") + "...");
 }
 
-void GeoTransformTool::onSkewY() {
-    const double y = skewy_entry->value();
+void GeoTransformTool::onSkewY(std::optional<double> val, std::optional<int> ref) {
+    const double y = val ? *val : skewy_entry->value();
     if (y == 0) return;
-    const auto p = reference();
+    const auto p = reference(ref);
     if (!p) return;
     if (ed_->model().selected.empty()) return ed_->app()->ui()->inform("[WARNING_NOTCL] " + tr_("No shape selected."));
     ed_->model().skew(0, y, *p);
@@ -288,8 +295,8 @@ void GeoTransformTool::onOffX(std::optional<double> val) {
     done("[success] " + tr_("Offset on the X axis done") + "...");
 }
 
-void GeoTransformTool::onOffY() {
-    const double v = offy_entry->value();
+void GeoTransformTool::onOffY(std::optional<double> val) {
+    const double v = val ? *val : offy_entry->value();
     MainGUI* ui = ed_->app()->ui();
     if (v == 0) return ui->inform("[WARNING_NOTCL] " + tr_("Offset transformation can not be done for a value of 0."));
     if (ed_->model().selected.empty()) return ui->inform("[WARNING_NOTCL] " + tr_("No shape selected."));
@@ -337,7 +344,9 @@ void GeoTransformTool::onOffYKey() {
     box.setWindowIcon(QIcon(":/images/offsety32.png"));
     if (box.exec() != QDialog::Accepted)
         return ed_->app()->ui()->inform("[success] " + tr_("Offset on the Y axis canceled") + "...");
-    onOffX(box.wdg->value());  // el original llama a on_offx
+    // el original llama a on_offx (corregido: en Y)
+    if (reproduceOriginalBugs()) onOffX(box.wdg->value());
+    else onOffY(box.wdg->value());
     ed_->app()->ui()->inform("[success] " + tr_("Offset on Y axis done") + "...");
 }
 
@@ -357,8 +366,65 @@ void GeoTransformTool::onSkewYKey() {
     box.setWindowIcon(QIcon(":/images/skewY.png"));
     if (box.exec() != QDialog::Accepted)
         return ed_->app()->ui()->inform("[success] " + tr_("Skew on Y axis canceled") + "...");
-    onSkewX(box.wdg->value(), 3);  // el original llama a on_skewx
+    // el original llama a on_skewx (corregido: en Y)
+    if (reproduceOriginalBugs()) onSkewX(box.wdg->value(), 3);
+    else onSkewY(box.wdg->value(), 3);
     ed_->app()->ui()->inform("[success] " + tr_("Skew on Y axis done") + "...");
+}
+
+GeoBufferTool::GeoBufferTool(GeoEditor* ed, QWidget* parent) : QWidget(parent), ed_(ed) {
+    auto* lay = new QVBoxLayout(this);
+    auto* title = new FCLabel(this);
+    title->setText("Editor " + tr_("Buffer Selection"));
+    title->setStyleSheet("QLabel { font-size: 16px; font-weight: bold; }");
+    lay->addWidget(title);
+    auto* form = new QFormLayout();
+    lay->addLayout(form);
+    buffer_distance_entry = new FCDoubleSpinner(this);
+    buffer_distance_entry->setPrecision(appDecimals());
+    buffer_distance_entry->setRange_(0.0, 9910000.0);
+    buffer_distance_entry->setValue(0.01);
+    form->addRow(tr_("Buffer distance") + ":", buffer_distance_entry);
+    auto* corner = new FCLabel(this);
+    corner->setText(tr_("Buffer corner") + ":");
+    corner->setToolTip(tr_("There are 3 types of corners:\n"
+                           " - 'Round': the corner is rounded for exterior buffer.\n"
+                           " - 'Square': the corner is met in a sharp angle for exterior buffer.\n"
+                           " - 'Beveled': the corner is a line that directly connects the features meeting in the corner"));
+    buffer_corner_cb = new FCComboBox(this);
+    buffer_corner_cb->addItems({tr_("Round"), tr_("Square"), tr_("Beveled")});
+    form->addRow(corner, buffer_corner_cb);
+    auto* h1 = new QHBoxLayout();
+    lay->addLayout(h1);
+    buffer_int_button = new FCButton(this, tr_("Buffer Interior"));
+    buffer_ext_button = new FCButton(this, tr_("Buffer Exterior"));
+    h1->addWidget(buffer_int_button);
+    h1->addWidget(buffer_ext_button);
+    buffer_button = new FCButton(this, tr_("Full Buffer"));
+    lay->addWidget(buffer_button);
+    lay->addStretch();
+    using K = GeoEditorModel::BufferKind;
+    connect(buffer_button, &QPushButton::clicked, this, [this] { apply(K::Full); });
+    connect(buffer_int_button, &QPushButton::clicked, this, [this] { apply(K::Interior); });
+    connect(buffer_ext_button, &QPushButton::clicked, this, [this] { apply(K::Exterior); });
+}
+
+void GeoBufferTool::apply(GeoEditorModel::BufferKind kind) {
+    MainGUI* ui = ed_->app()->ui();
+    if (ed_->model().selected.empty())
+        return ui->inform(QString("[WARNING_NOTCL] %1 %2").arg(tr_("Cancelled."), tr_("No shape selected.")));
+    const auto err = ed_->model().bufferTool(kind, buffer_distance_entry->value(), buffer_corner_cb->currentIndex() + 1,
+                                             defInt("geometry_circle_steps", 64));
+    ed_->buildUi();
+    ed_->replot();
+    if (err) {
+        const bool warn = *err == "Nothing selected.";
+        return ui->inform((warn ? "[WARNING_NOTCL] " : "[ERROR_NOTCL] ") + tr_(err->c_str()));
+    }
+    using K = GeoEditorModel::BufferKind;
+    ui->inform("[success] " + (kind == K::Full       ? tr_("Full buffer geometry created.")
+                               : kind == K::Interior ? tr_("Interior buffer geometry created.")
+                                                     : tr_("Exterior buffer geometry created.")));
 }
 
 namespace {
@@ -471,6 +537,7 @@ GeoEditor::GeoEditor(App* app) : QObject(app), app_(app) {
     paintTool_ = new GeoPaintTool(this);
     transformTool_ = new GeoTransformTool(this);
     textTool_ = new GeoTextTool(this);
+    bufferTool_ = new GeoBufferTool(this);
     connect(panel_->exit_editor_button, &QPushButton::clicked, this, [this] { app_->editorToObject(); });
     connect(panel_->tw, &QTreeWidget::itemSelectionChanged, this, [this] {
         // on_tree_selection_change
@@ -506,8 +573,10 @@ GeoEditor::GeoEditor(App* app) : QObject(app), app_(app) {
         paintTool_->setToolUi();
         app_->runTool(paintTool_, {tr_("Paint Tool"), tr_("Paint Tool")}, false);
     });
-    // on_buffer_tool: BufferSelectionTool falla al construirse ("%S:"): no hace nada.
-    onMenu(ui->geo_buffer_menuitem, [] {});
+    // on_buffer_tool: BufferSelectionTool falla al construirse ("%S:"): no hace nada (corregido: abre el panel).
+    onMenu(ui->geo_buffer_menuitem, [this] {
+        if (!reproduceOriginalBugs()) app_->runTool(bufferTool_, {tr_("Buffer Selection"), tr_("Buffer Tool")}, false);
+    });
     onMenu(ui->geo_transform_menuitem, [this] {
         transformTool_->setToolUi();
         app_->runTool(transformTool_, {tr_("Transform Tool"), tr_("Transform Tool")});
@@ -687,6 +756,7 @@ void GeoEditor::newTool(const QString& name) {
     } else if (name == "buffer") {
         // FCBuffer: avisa y falla al construir BufferSelectionTool ('%S:' no es un formato válido).
         ui->inform(tr_("Create buffer geometry ..."));
+        if (!reproduceOriginalBugs()) app_->runTool(bufferTool_, {tr_("Buffer Selection"), tr_("Buffer Tool")}, false);
         return;
     } else if (name == "paint") {
         ui->inform(tr_("Create Paint geometry ..."));
@@ -785,8 +855,10 @@ void GeoEditor::onPress(const QPointF& world, Qt::MouseButton button) {
         ui->inform(tr_("Click on next Point or click right mouse button to complete ..."));
     } else if (n == "move" || n == "copy") {
         if (model_.selected.empty()) {
-            model_.clickSelect(p, QApplication::keyboardModifiers() ==
-                                      (defStr("global_mselect_key") == "Control" ? Qt::ControlModifier : Qt::ShiftModifier));
+            model_.clickSelect(p,
+                               QApplication::keyboardModifiers() ==
+                                   (defStr("global_mselect_key") == "Control" ? Qt::ControlModifier : Qt::ShiftModifier),
+                               clickTolerance());
             replot();
             ui->inform(tr_("Click on reference location ..."));
             return;
@@ -905,7 +977,7 @@ void GeoEditor::onRelease(const QPointF& world, Qt::MouseButton button, bool dra
             replot();
         } else if (tool_->name == "select") {
             // FCSelect.click_release con la posición del clic.
-            model_.clickSelect(pos_, QApplication::keyboardModifiers() == mselect);
+            model_.clickSelect(pos_, QApplication::keyboardModifiers() == mselect, clickTolerance());
             syncTreeSelection();
             replot();
         }
@@ -1033,10 +1105,28 @@ void GeoEditor::buildUi() {
     }
 }
 
+double GeoEditor::clickTolerance() const {
+    // Unos 6 píxeles de pantalla en unidades del canvas (y al menos la décima de la grilla).
+    const PlotCanvas* c = app_->ui()->plotCanvas();
+    const double px = std::fabs(c->toWorld(QPointF(6, 0)).x() - c->toWorld(QPointF(0, 0)).x());
+    return std::max(px, 1e-6);
+}
+
 void GeoEditor::syncTreeSelection() {
-    // El original busca el id en la columna 1 (la del tipo): nunca coincide y la lista no muestra lo elegido.
+    // El original busca el id en la columna 1 (la del tipo): nunca coincide y la lista no muestra lo elegido
+    // (corregido: se marcan las filas de lo elegido).
     QSignalBlocker block(panel_->tw);
     panel_->tw->selectionModel()->clearSelection();
+    if (reproduceOriginalBugs()) return;
+    const auto objs = model_.storage.objects();
+    for (int r = 0; r < panel_->tw->topLevelItemCount(); ++r) {
+        QTreeWidgetItem* it = panel_->tw->topLevelItem(r);
+        const int i = it->data(0, Qt::UserRole).toInt();
+        if (i >= 0 && i < static_cast<int>(objs.size()) &&
+            std::find(model_.selected.begin(), model_.selected.end(), objs[static_cast<std::size_t>(i)]) !=
+                model_.selected.end())
+            it->setSelected(true);
+    }
 }
 
 void GeoEditor::unite() {
