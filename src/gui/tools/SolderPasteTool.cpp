@@ -30,11 +30,7 @@ std::optional<std::array<PyNumber, 2>> pair(const QString& s) {
 SolderPasteTool::SolderPasteTool(App* app, QWidget* parent) : SolderPasteToolUIBase(parent), app_(app) {
     setupUi();
     connect(addtool_btn, &QPushButton::clicked, this, [this] { addTool(); });
-    connect(deltool_btn, &QPushButton::clicked, this, [this] {
-        for (QTableWidgetItem* it : tools_table->selectedItems())
-            if (it->column() == 2) tools_.erase(it->text().toInt());
-        buildUi();
-    });
+    connect(deltool_btn, &QPushButton::clicked, this, [this] { deleteTools(); });
     connect(soldergeo_btn, &QPushButton::clicked, this, [this] { createGeometry(); });
     connect(solder_gcode_btn, &QPushButton::clicked, this, [this] { createGcode(); });
     connect(solder_gcode_view_btn, &QPushButton::clicked, this, [this] {
@@ -120,6 +116,14 @@ void SolderPasteTool::addTool(double dia) {
     tools_[uid] = d;
     buildUi();
     app_->ui()->inform("[success] " + tr_("New Nozzle tool added to Tool Table."));
+}
+
+void SolderPasteTool::deleteTools() {
+    // on_tool_delete: la fila de cualquier celda elegida; el número de la boquilla está en la columna 2 (oculta).
+    for (QTableWidgetItem* it : tools_table->selectedItems())
+        if (QTableWidgetItem* uid = tools_table->item(it->row(), 2)) tools_.erase(uid->text().toInt());
+    app_->ui()->inform("[success] " + tr_("Tools deleted from Tool Table."));
+    buildUi();
 }
 
 FlatCAMObj* SolderPasteTool::createGeometry() {

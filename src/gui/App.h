@@ -664,6 +664,19 @@ public:
     class QMenu* canvasMenu() const { return popMenu_; }
     ///@}
 
+    /**
+     * @brief Tecla T sin modificador (`on_tool_add_keypress`, y en `keyPressEvent` la base de herramientas): agrega una
+     * herramienta, pidiendo el diámetro, en la tabla de lo que está a la vista: la Geometría de Propiedades (solo en el
+     * nivel Avanzado), NCC, Paint, Pasta de soldar, Isolation o la pestaña de la base de herramientas.
+     */
+    void onToolAddKeypress();
+    /**
+     * @brief Tecla Supr sin modificador (`on_delete_keypress`): borra las herramientas elegidas de la tabla que está a
+     * la vista (la base de herramientas, la Geometría de Propiedades, NCC, Paint, Pasta de soldar o Isolation) y, en
+     * la pestaña Proyecto, los objetos elegidos.
+     */
+    void onDeleteKeypress();
+
 protected:
     /** @brief Atajos de teclado de la ventana y arrastrar y soltar archivos. @param obj Objeto. @param ev Evento. @return Si se consumió. */
     bool eventFilter(QObject* obj, QEvent* ev) override;

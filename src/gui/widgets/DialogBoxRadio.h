@@ -8,6 +8,8 @@
 #include <QDialog>
 #include <QIcon>
 #include <QLineEdit>
+#include <QToolButton>
+#include <functional>
 
 #include "gui/widgets/RadioSet.h"
 
@@ -56,6 +58,25 @@ public:
     FCInputDoubleSpinner(QWidget* parent, const QString& title, const QString& text, double min, double max, double step,
                          int decimals, double initVal);
     FCDoubleSpinner* wdg;  ///< `wdg`: el campo.
+};
+
+/**
+ * @brief Pide un número con un campo de decimales y un botón al lado (`FCInputDialogSpinnerButton` con
+ * `FCButtonWithDoubleSpinner`): el diámetro de una herramienta nueva de NCC e Isolation, con el botón del diámetro
+ * óptimo. Se muestra con `exec()`; el valor queda en @ref spinner.
+ */
+class FCInputDialogSpinnerButton : public QDialog {
+    Q_OBJECT
+public:
+    /**
+     * @brief Arma el diálogo. @param parent Padre. @param title Título. @param text Mensaje. @param min Mínimo.
+     * @param max Máximo. @param decimals Decimales. @param buttonIcon Ícono del botón. @param callback Lo que hace el
+     * botón.
+     */
+    FCInputDialogSpinnerButton(QWidget* parent, const QString& title, const QString& text, double min, double max,
+                               int decimals, const QIcon& buttonIcon, std::function<void()> callback);
+    FCDoubleSpinner* spinner;  ///< `wdg.spinner`: el campo.
+    QToolButton* button;       ///< `wdg.button`: el botón.
 };
 
 }  // namespace flatcam::gui

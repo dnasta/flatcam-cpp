@@ -49,6 +49,8 @@
 #include "tools/ExcellonMilling.h"
 #include "gui/widgets/FCLabel.h"
 #include "gui/widgets/RadioSet.h"
+#include "gui/widgets/DialogBoxRadio.h"
+#include "gui/widgets/FCSpinners.h"
 #include <QProcess>
 #include "gui/tools/ClearingTools.h"
 #include "gui/objects/ObjectUIs.h"
@@ -1317,7 +1319,8 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
         case Qt::Key_1: return selectTab(ui->project_tab);
         case Qt::Key_2: return selectTab(ui->properties_tab);
         case Qt::Key_3: return selectTab(ui->tool_tab);
-        case Qt::Key_Delete: deleteSelected(); return true;  // on_delete_keypress
+        case Qt::Key_Delete: onDeleteKeypress(); return true;
+        case Qt::Key_T: onToolAddKeypress(); return true;
         case Qt::Key_Escape:
             // on_key_press de las herramientas: Escape cancela Mover o la selección de zonas o polígonos.
             if (moveTool->active()) {
@@ -1384,6 +1387,99 @@ bool App::handleKey(int key, Qt::KeyboardModifiers modifiers) {
         case Qt::Key_Minus: canvas->zoom(1 / defNum("global_zoom_ratio"), mouse_); return true;
         case Qt::Key_QuoteLeft: ui->onToggleNotebook(); return true;
         default: return false;
+    }
+}
+
+void App::onToolAddKeypress() {
+    // keyPressEvent: con la pestaña de la base de herramientas a la vista, agrega allí.
+    if (QWidget* cur = ui_->plot_tab_area->currentWidget(); cur && cur->objectName() == "database_tab") {
+        if (auto* db = qobject_cast<ToolsDBTab*>(cur)) db->addTool();
+        return;
+    }
+    const QString newTool = QString("%1...").arg(tr_("New Tool"));
+    const QString enterDia = QString("%1:").arg(tr_("Enter a Tool Diameter"));
+    const QIcon tIcon(":/images/letter_t_32.png");
+    // El diálogo y los avisos comunes a todas las ramas: nada si se cancela o el diámetro es 0.
+    auto ask = [this](QDialog& box, FCDoubleSpinner* w) -> std::optional<double> {
+        if (box.exec() != QDialog::Accepted) {
+            ui_->inform("[WARNING_NOTCL] " + tr_("Adding Tool cancelled") + "...");
+            return std::nullopt;
+        }
+        if (w->value() == 0) {
+            ui_->inform("[WARNING_NOTCL] " + tr_("Please enter a tool diameter with non-zero value, in Float format."));
+            return std::nullopt;
+        }
+        return w->value();
+    };
+    QWidget* tab = ui_->notebook->currentWidget();
+    if (tab == ui_->properties_tab) {
+        // Solo una Geometría, y solo en el nivel Avanzado. (Sin objeto activo el original falla; acá no hace nada.)
+        auto* geo = dynamic_cast<GeometryObject*>(activeObject());
+        if (!geo) return;
+        if (defStr("global_app_level") != "a") {
+            QMessageBox box(ui_.get());
+            box.setText(tr_("Adding Tool works only when Advanced is checked.\n"
+                            "Go to Preferences -> General - Show Advanced Options."));
+            box.setWindowTitle("Tool adding ...");
+            box.setWindowIcon(QIcon(":/images/warning.png"));
+            box.setIcon(QMessageBox::Warning);
+            box.setDefaultButton(box.addButton(tr_("Ok"), QMessageBox::AcceptRole));
+            box.exec();
+            return;
+        }
+        // FCInputSpinner: un campo de decimales de 0 a 100 con paso 0,1.
+        FCInputDoubleSpinner box(ui_.get(), newTool, enterDia, 0.0, 100.0, 0.1, appDecimals(), 0.0);
+        box.setWindowIcon(tIcon);
+        box.wdg->selectAll();
+        if (const auto dia = ask(box, box.wdg))
+            if (auto* p = qobject_cast<GeometryObjectUI*>(geo->builtUi())) p->addTool(*dia);
+        return;
+    }
+    if (tab != ui_->tool_tab) return;
+    QWidget* panel = ui_->tool_scroll_area->widget();
+    if (panel == nccTool || panel == isolationTool) {
+        // FCInputDialogSpinnerButton: el botón calcula el diámetro óptimo y lo pone en el campo.
+        FCInputDialogSpinnerButton box(ui_.get(), newTool, enterDia, 0.0001, 10000.0, appDecimals(),
+                                       QIcon(":/images/open_excellon32.png"), {});
+        box.setWindowIcon(tIcon);
+        connect(box.button, &QToolButton::clicked, &box, [this, panel, &box] {
+            const auto d = panel == nccTool ? nccTool->findOptimalToolDia() : isolationTool->findOptimalToolDia();
+            if (d) box.spinner->setValue(*d);
+        });
+        if (const auto dia = ask(box, box.spinner)) {
+            if (panel == nccTool) nccTool->onToolAdd(*dia);
+            else isolationTool->onToolAdd(*dia);
+        }
+    } else if (panel == paintTool) {
+        FCInputDoubleSpinner box(ui_.get(), newTool, enterDia, 0.0, 99.9999, 1, appDecimals(), 0.0);
+        box.setWindowIcon(tIcon);
+        if (const auto dia = ask(box, box.wdg)) paintTool->onToolAdd(*dia);
+    } else if (panel == solderPasteTool) {
+        FCInputDoubleSpinner box(ui_.get(), newTool, enterDia, 0.0, 100.0, 0.1, appDecimals(), 0.0);
+        box.setWindowIcon(tIcon);
+        if (const auto dia = ask(box, box.wdg)) solderPasteTool->addTool(*dia);
+    }
+}
+
+void App::onDeleteKeypress() {
+    // keyPressEvent: con la pestaña de la base de herramientas a la vista, borra allí.
+    if (QWidget* cur = ui_->plot_tab_area->currentWidget(); cur && cur->objectName() == "database_tab") {
+        if (auto* db = qobject_cast<ToolsDBTab*>(cur)) db->deleteTools();
+        return;
+    }
+    QWidget* tab = ui_->notebook->currentWidget();
+    if (tab == ui_->properties_tab) {
+        // Solo las herramientas de una Geometría; con otro objeto no hace nada.
+        if (auto* geo = dynamic_cast<GeometryObject*>(activeObject()))
+            if (auto* p = qobject_cast<GeometryObjectUI*>(geo->builtUi())) p->deleteTools();
+    } else if (tab == ui_->tool_tab) {
+        QWidget* panel = ui_->tool_scroll_area->widget();
+        if (panel == nccTool) nccTool->onToolDelete();
+        else if (panel == paintTool) paintTool->onToolDelete();
+        else if (panel == solderPasteTool) solderPasteTool->deleteTools();
+        else if (panel == isolationTool) isolationTool->onToolDelete();
+    } else {
+        deleteSelected();  // on_delete
     }
 }
 

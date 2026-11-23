@@ -4,6 +4,8 @@
  */
 #pragma once
 
+#include <optional>
+
 #include "io/JsonValue.h"
 
 #include <map>
@@ -38,8 +40,9 @@ public:
     /**
      * @brief Botón "Óptimo" (`on_find_optimal_tooldia`): calcula el diámetro seguro del Gerber elegido y lo pone en el
      * campo de la herramienta nueva.
+     * @return El diámetro encontrado, o nada si no se pudo calcular.
      */
-    void findOptimalToolDia();
+    std::optional<double> findOptimalToolDia();
     /** @brief Crea el panel. @param app Aplicación. @param parent Widget padre. */
     explicit IsolationTool(App* app, QWidget* parent = nullptr);
 
@@ -81,6 +84,14 @@ public:
      * @return `true` si se agregó.
      */
     bool addDbTool(const JsonValue& tool, double dia, const std::string& prefix);
+    /**
+     * @brief Agregar una herramienta (`on_tool_add`): primero la busca en la base de datos de herramientas y, si no
+     * está, agrega la de fábrica con ese diámetro. Lo usan el botón y la tecla T.
+     * @param newDia Diámetro.
+     */
+    void onToolAdd(double newDia);
+    /** @brief Borra las herramientas elegidas de la tabla (`on_tool_delete`): el botón y la tecla Supr. */
+    void onToolDelete();
 
 private:
     void updateUi();

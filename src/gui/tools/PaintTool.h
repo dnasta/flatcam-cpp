@@ -83,6 +83,14 @@ public:
      * @return `true` si se agregó.
      */
     bool addDbTool(const JsonValue& tool, double dia, const std::string& prefix);
+    /**
+     * @brief Agregar una herramienta (`on_tool_add`): primero la busca en la base de datos de herramientas y, si no
+     * está, agrega la de fábrica con ese diámetro. Lo usan el botón y la tecla T.
+     * @param newDia Diámetro.
+     */
+    void onToolAdd(double newDia);
+    /** @brief Borra las herramientas elegidas de la tabla (`on_tool_delete`): el botón y la tecla Supr. */
+    void onToolDelete();
 
 private:
     QString units_;  ///< `self.units`.

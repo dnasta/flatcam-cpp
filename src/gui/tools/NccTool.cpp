@@ -34,29 +34,7 @@ NccTool::NccTool(App* app, QWidget* parent) : NccToolUIBase(parent), app_(app) {
     connect(tools_table, &QTableWidget::itemSelectionChanged, this, [this] {
         if (!muted_) updateUi();
     });
-    connect(add_newtool_button, &QPushButton::clicked, this, [this] {
-        // on_tool_add: primero busca el diámetro en la base de datos de herramientas.
-        // El original compara tool_target con el texto "NCC", y la base guarda números: no encuentra nunca (corregido:
-        // el número de NCC, 5).
-        JsonValue dbTool;
-        double dia = 0;
-        switch (lookupToolForAdd(app_->ui(), app_->dataPath(), tools_, new_tooldia_entry->value(),
-                                 [ncc = tr_("NCC")](const JsonValue& t) {
-                                     if (!reproduceOriginalBugs()) return t.isNumber() && t.toDouble() == 5;
-                                     return t.isString() && QString::fromStdString(t.text()) == ncc;
-                                 }, dbTool, dia)) {
-            case DbAddResult::Cancel: return;
-            case DbAddResult::Default:
-                if (addTool(new_tooldia_entry->value()))
-                    app_->ui()->inform("[success] " + tr_("Default tool added to Tool Table."));
-                return;
-            case DbAddResult::FromDb:
-                // El original copia los tools_iso* (corregido: los tools_ncc*).
-                if (addDbTool(dbTool, dia, reproduceOriginalBugs() ? "tools_iso" : "tools_ncc"))
-                    app_->ui()->inform("[success] " + tr_("New tool added to Tool Table from Tools Database."));
-                return;
-        }
-    });
+    connect(add_newtool_button, &QPushButton::clicked, this, [this] { onToolAdd(new_tooldia_entry->value()); });
     // "Agregar desde la base": abre la pestaña; la herramienta que se transfiere entra a la tabla.
     connect(addtool_from_db_btn, &QPushButton::clicked, this, [this] {
         app_->openToolsDatabase([this](const JsonValue& tool) {
@@ -71,16 +49,7 @@ NccTool::NccTool(App* app, QWidget* parent) : NccToolUIBase(parent), app_(app) {
             if (ok) app_->ui()->inform("[success] " + tr_("Tool from DB added in Tool Table."));
         });
     });
-    connect(deltool_btn, &QPushButton::clicked, this, [this] {
-        const std::vector<int> ids = selectedClearingTools(tools_table);
-        if (ids.empty()) {
-            app_->ui()->inform("[WARNING_NOTCL] " + tr_("Delete failed. Select a tool to delete."));
-            return;
-        }
-        for (int id : ids) tools_.erase(id);
-        rebuild();
-        app_->ui()->inform("[success] " + tr_("Tool(s) deleted from Tool Table."));
-    });
+    connect(deltool_btn, &QPushButton::clicked, this, [this] { onToolDelete(); });
     // form_to_storage: lo que se cambia va a las herramientas elegidas.
     for (FCDoubleSpinner* w : {ncc_overlap_entry, ncc_margin_entry, ncc_offset_spinner})
         connect(w, &QDoubleSpinBox::valueChanged, this, [this, w] { formToStorage(w); });
@@ -140,6 +109,41 @@ void NccTool::onTypeObjChanged() {
     for (FlatCAMObj* o : app_->collection()->objects())
         if (o->kind() == (gerber ? ObjectKind::Gerber : ObjectKind::Geometry)) object_combo->addItem(o->name());
     object_combo->setCurrentIndex(0);
+}
+
+void NccTool::onToolAdd(double newDia) {
+    // on_tool_add: primero busca el diámetro en la base de datos de herramientas.
+    // El original compara tool_target con el texto "NCC", y la base guarda números: no encuentra nunca (corregido:
+    // el número de NCC, 5).
+    JsonValue dbTool;
+    double dia = 0;
+    switch (lookupToolForAdd(app_->ui(), app_->dataPath(), tools_, newDia,
+                             [ncc = tr_("NCC")](const JsonValue& t) {
+                                 if (!reproduceOriginalBugs()) return t.isNumber() && t.toDouble() == 5;
+                                 return t.isString() && QString::fromStdString(t.text()) == ncc;
+                             }, dbTool, dia)) {
+        case DbAddResult::Cancel: return;
+        case DbAddResult::Default:
+            if (addTool(newDia))
+                app_->ui()->inform("[success] " + tr_("Default tool added to Tool Table."));
+            return;
+        case DbAddResult::FromDb:
+            // El original copia los tools_iso* (corregido: los tools_ncc*).
+            if (addDbTool(dbTool, dia, reproduceOriginalBugs() ? "tools_iso" : "tools_ncc"))
+                app_->ui()->inform("[success] " + tr_("New tool added to Tool Table from Tools Database."));
+            return;
+    }
+}
+
+void NccTool::onToolDelete() {
+    const std::vector<int> ids = selectedClearingTools(tools_table);
+    if (ids.empty()) {
+        app_->ui()->inform("[WARNING_NOTCL] " + tr_("Delete failed. Select a tool to delete."));
+        return;
+    }
+    for (int id : ids) tools_.erase(id);
+    rebuild();
+    app_->ui()->inform("[success] " + tr_("Tool(s) deleted from Tool Table."));
 }
 
 void NccTool::setToolUi() {
@@ -287,12 +291,14 @@ void NccTool::formToStorage(QObject* w) {
     }
 }
 
-void NccTool::findOptimalToolDia() {
+std::optional<double> NccTool::findOptimalToolDia() {
     const QString name = object_combo->currentText();
     if (const auto d = findSafeToolDia(app_->ui(), app_->collection()->byName(name), name)) {
         new_tooldia_entry->setValue(*d);
         app_->ui()->inform(QString("[success] %1: %2 %3").arg(tr_("Optimal tool diameter found")).arg(*d).arg("mm"));
+        return d;
     }
+    return std::nullopt;
 }
 
 FlatCAMObj* NccTool::clearCopper() {

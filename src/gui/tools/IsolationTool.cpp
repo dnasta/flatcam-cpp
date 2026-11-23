@@ -43,24 +43,7 @@ IsolationTool::IsolationTool(App* app, QWidget* parent) : IsolationToolUIBase(pa
     connect(tools_table, &QTableWidget::itemSelectionChanged, this, [this] {
         if (!muted_) updateUi();
     });
-    connect(search_and_add_btn, &QPushButton::clicked, this, [this] {
-        // on_tool_add: primero busca el diámetro en la base de datos de herramientas.
-        // Aislamiento: tool_target == 3.
-        JsonValue dbTool;
-        double dia = 0;
-        switch (lookupToolForAdd(app_->ui(), app_->dataPath(), tools_, new_tooldia_entry->value(),
-                                 [](const JsonValue& t) { return t.isNumber() && t.toDouble() == 3; }, dbTool, dia)) {
-            case DbAddResult::Cancel: return;
-            case DbAddResult::Default:
-                if (addTool(new_tooldia_entry->value()))
-                    app_->ui()->inform("[success] " + tr_("Default tool added to Tool Table."));
-                return;
-            case DbAddResult::FromDb:
-                if (addDbTool(dbTool, dia, "tools_iso"))  
-                    app_->ui()->inform("[success] " + tr_("New tool added to Tool Table from Tools Database."));
-                return;
-        }
-    });
+    connect(search_and_add_btn, &QPushButton::clicked, this, [this] { onToolAdd(new_tooldia_entry->value()); });
     // "Agregar desde la base": abre la pestaña; la herramienta que se transfiere entra a la tabla.
     connect(addtool_from_db_btn, &QPushButton::clicked, this, [this] {
         app_->openToolsDatabase([this](const JsonValue& tool) {
@@ -75,16 +58,7 @@ IsolationTool::IsolationTool(App* app, QWidget* parent) : IsolationToolUIBase(pa
             if (ok) app_->ui()->inform("[success] " + tr_("Tool from DB added in Tool Table."));
         });
     });
-    connect(deltool_btn, &QPushButton::clicked, this, [this] {
-        const std::vector<int> ids = selectedClearingTools(tools_table);
-        if (ids.empty()) {
-            app_->ui()->inform("[WARNING_NOTCL] " + tr_("Delete failed. Select a tool to delete."));
-            return;
-        }
-        for (int id : ids) tools_.erase(id);
-        rebuild();
-        app_->ui()->inform("[success] " + tr_("Tool(s) deleted from Tool Table."));
-    });
+    connect(deltool_btn, &QPushButton::clicked, this, [this] { onToolDelete(); });
     // on_find_optimal_tooldia: el diámetro seguro pasa al campo de la herramienta nueva.
     connect(find_optimal_button, &QToolButton::clicked, this, [this] { findOptimalToolDia(); });
     // form_to_storage: lo que se cambia va a las herramientas elegidas.
@@ -96,6 +70,36 @@ IsolationTool::IsolationTool(App* app, QWidget* parent) : IsolationToolUIBase(pa
 }
 
 ToolInfo IsolationTool::info() { return {tr_("Isolation Tool"), tr_("Isolation Tool")}; }
+
+void IsolationTool::onToolAdd(double newDia) {
+    // on_tool_add: primero busca el diámetro en la base de datos de herramientas.
+    // Aislamiento: tool_target == 3.
+    JsonValue dbTool;
+    double dia = 0;
+    switch (lookupToolForAdd(app_->ui(), app_->dataPath(), tools_, newDia,
+                             [](const JsonValue& t) { return t.isNumber() && t.toDouble() == 3; }, dbTool, dia)) {
+        case DbAddResult::Cancel: return;
+        case DbAddResult::Default:
+            if (addTool(newDia))
+                app_->ui()->inform("[success] " + tr_("Default tool added to Tool Table."));
+            return;
+        case DbAddResult::FromDb:
+            if (addDbTool(dbTool, dia, "tools_iso"))
+                app_->ui()->inform("[success] " + tr_("New tool added to Tool Table from Tools Database."));
+            return;
+    }
+}
+
+void IsolationTool::onToolDelete() {
+    const std::vector<int> ids = selectedClearingTools(tools_table);
+    if (ids.empty()) {
+        app_->ui()->inform("[WARNING_NOTCL] " + tr_("Delete failed. Select a tool to delete."));
+        return;
+    }
+    for (int id : ids) tools_.erase(id);
+    rebuild();
+    app_->ui()->inform("[success] " + tr_("Tool(s) deleted from Tool Table."));
+}
 
 void IsolationTool::setToolUi() {
     muted_ = true;
@@ -283,12 +287,14 @@ void IsolationTool::formToStorage(QObject* w) {
     }
 }
 
-void IsolationTool::findOptimalToolDia() {
+std::optional<double> IsolationTool::findOptimalToolDia() {
     const QString name = object_combo->currentText();
     if (const auto d = findSafeToolDia(app_->ui(), app_->collection()->byName(name), name)) {
         new_tooldia_entry->setValue(*d);
         app_->ui()->inform(QString("[success] %1: %2 %3").arg(tr_("Optimal tool diameter found")).arg(*d).arg("mm"));
+        return d;
     }
+    return std::nullopt;
 }
 
 std::vector<FlatCAMObj*> IsolationTool::isolate() {

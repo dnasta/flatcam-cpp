@@ -27,6 +27,8 @@ public:
     void setToolUi();
     /** @brief `on_tool_add`. @param dia Diámetro (0: el del campo). */
     void addTool(double dia = 0.0);
+    /** @brief Borra las boquillas elegidas de la tabla (`on_tool_delete`): el botón y la tecla Supr. */
+    void deleteTools();
     /** @brief `on_create_geo_click`. @return La Geometría creada, o nula. */
     FlatCAMObj* createGeometry();
     /** @brief `on_create_gcode_click`. @return El CNC Job creado, o nulo. */

@@ -2,6 +2,8 @@
 
 #include <QDialogButtonBox>
 #include <QFormLayout>
+#include <QFrame>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -84,6 +86,42 @@ FCInputDoubleSpinner::FCInputDoubleSpinner(QWidget* parent, const QString& title
     lay->addWidget(box);
     box->button(QDialogButtonBox::Ok)->setText(tr_("Ok"));
     box->button(QDialogButtonBox::Cancel)->setText(tr_("Cancel"));
+    setLayout(lay);
+}
+
+FCInputDialogSpinnerButton::FCInputDialogSpinnerButton(QWidget* parent, const QString& title, const QString& text,
+                                                       double min, double max, int decimals, const QIcon& buttonIcon,
+                                                       std::function<void()> callback)
+    : QDialog(parent) {
+    setWindowTitle(title.isEmpty() ? QString("title") : title);
+    auto* lbl = new FCLabel();
+    lbl->setText(text.isEmpty() ? QString("text") : text);
+    // FCButtonWithDoubleSpinner: el campo (ancho mínimo 70, se estira) y el botón a su derecha.
+    auto* frame = new QFrame();
+    spinner = new FCDoubleSpinner();
+    spinner->setPrecision(decimals);
+    spinner->setRange_(min, max);
+    spinner->setSingleStep(1);
+    spinner->setMinimumWidth(70);
+    spinner->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+    spinner->setValue(0.0);
+    button = new QToolButton();
+    button->setIcon(buttonIcon);
+    if (callback) connect(button, &QToolButton::clicked, this, [cb = std::move(callback)] { cb(); });
+    auto* row = new QHBoxLayout(frame);
+    row->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    row->setContentsMargins(0, 0, 0, 0);
+    row->addWidget(spinner);
+    row->addWidget(button);
+    auto* box = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(box, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    connect(box, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    box->button(QDialogButtonBox::Ok)->setText(tr_("Ok"));
+    box->button(QDialogButtonBox::Cancel)->setText(tr_("Cancel"));
+    auto* lay = new QVBoxLayout();
+    lay->addWidget(lbl);
+    lay->addWidget(frame);
+    lay->addWidget(box);
     setLayout(lay);
 }
 

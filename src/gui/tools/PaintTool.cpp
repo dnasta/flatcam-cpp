@@ -34,28 +34,7 @@ PaintTool::PaintTool(App* app, QWidget* parent) : PaintToolUIBase(parent), app_(
     connect(tools_table, &QTableWidget::itemSelectionChanged, this, [this] {
         if (!muted_) updateUi();
     });
-    connect(add_newtool_button, &QPushButton::clicked, this, [this] {
-        // on_tool_add: primero busca el diámetro en la base de datos de herramientas.
-        // El original compara tool_target con el texto "Paint", y la base guarda números: no encuentra nunca (corregido:
-        // el número de Pintura, 4).
-        JsonValue dbTool;
-        double dia = 0;
-        switch (lookupToolForAdd(app_->ui(), app_->dataPath(), tools_, new_tooldia_entry->value(),
-                                 [paint = tr_("Paint")](const JsonValue& t) {
-                                     if (!reproduceOriginalBugs()) return t.isNumber() && t.toDouble() == 4;
-                                     return t.isString() && QString::fromStdString(t.text()) == paint;
-                                 }, dbTool, dia)) {
-            case DbAddResult::Cancel: return;
-            case DbAddResult::Default:
-                if (addTool(new_tooldia_entry->value()))
-                    app_->ui()->inform("[success] " + tr_("Default tool added to Tool Table."));
-                return;
-            case DbAddResult::FromDb:
-                if (addDbTool(dbTool, dia, "tools_paint"))  
-                    app_->ui()->inform("[success] " + tr_("New tool added to Tool Table from Tools Database."));
-                return;
-        }
-    });
+    connect(add_newtool_button, &QPushButton::clicked, this, [this] { onToolAdd(new_tooldia_entry->value()); });
     // "Agregar desde la base": abre la pestaña; la herramienta que se transfiere entra a la tabla.
     connect(addtool_from_db_btn, &QPushButton::clicked, this, [this] {
         app_->openToolsDatabase([this](const JsonValue& tool) {
@@ -70,16 +49,7 @@ PaintTool::PaintTool(App* app, QWidget* parent) : PaintToolUIBase(parent), app_(
             if (ok) app_->ui()->inform("[success] " + tr_("Tool from DB added in Tool Table."));
         });
     });
-    connect(deltool_btn, &QPushButton::clicked, this, [this] {
-        const std::vector<int> ids = selectedClearingTools(tools_table);
-        if (ids.empty()) {
-            app_->ui()->inform("[WARNING_NOTCL] " + tr_("Delete failed. Select a tool to delete."));
-            return;
-        }
-        for (int id : ids) tools_.erase(id);
-        rebuild();
-        app_->ui()->inform("[success] " + tr_("Tool(s) deleted from Tool Table."));
-    });
+    connect(deltool_btn, &QPushButton::clicked, this, [this] { onToolDelete(); });
     // form_to_storage: lo que se cambia va a las herramientas elegidas.
     for (FCDoubleSpinner* w : {paintoverlap_entry, offset_entry})
         connect(w, &QDoubleSpinBox::valueChanged, this, [this, w] { formToStorage(w); });
@@ -130,6 +100,40 @@ void PaintTool::onTypeObjChanged() {
         if (QStandardItem* item = model->item(3)) item->setEnabled(gerber);
     }
     if (!gerber && paintmethod_combo->indexValue() == 3) paintmethod_combo->setIndexValue(4);
+}
+
+void PaintTool::onToolAdd(double newDia) {
+    // on_tool_add: primero busca el diámetro en la base de datos de herramientas.
+    // El original compara tool_target con el texto "Paint", y la base guarda números: no encuentra nunca (corregido:
+    // el número de Pintura, 4).
+    JsonValue dbTool;
+    double dia = 0;
+    switch (lookupToolForAdd(app_->ui(), app_->dataPath(), tools_, newDia,
+                             [paint = tr_("Paint")](const JsonValue& t) {
+                                 if (!reproduceOriginalBugs()) return t.isNumber() && t.toDouble() == 4;
+                                 return t.isString() && QString::fromStdString(t.text()) == paint;
+                             }, dbTool, dia)) {
+        case DbAddResult::Cancel: return;
+        case DbAddResult::Default:
+            if (addTool(newDia))
+                app_->ui()->inform("[success] " + tr_("Default tool added to Tool Table."));
+            return;
+        case DbAddResult::FromDb:
+            if (addDbTool(dbTool, dia, "tools_paint"))
+                app_->ui()->inform("[success] " + tr_("New tool added to Tool Table from Tools Database."));
+            return;
+    }
+}
+
+void PaintTool::onToolDelete() {
+    const std::vector<int> ids = selectedClearingTools(tools_table);
+    if (ids.empty()) {
+        app_->ui()->inform("[WARNING_NOTCL] " + tr_("Delete failed. Select a tool to delete."));
+        return;
+    }
+    for (int id : ids) tools_.erase(id);
+    rebuild();
+    app_->ui()->inform("[success] " + tr_("Tool(s) deleted from Tool Table."));
 }
 
 void PaintTool::setToolUi() {
