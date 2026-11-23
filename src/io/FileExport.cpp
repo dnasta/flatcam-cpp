@@ -1,7 +1,9 @@
 #include "core/OriginalBugs.h"
 #include "io/FileExport.h"
 
+#include <algorithm>
 #include <cstdio>
+#include <set>
 #include <string>
 
 #include "cam/PyNumber.h"
@@ -68,6 +70,117 @@ bool isLine(const Shape& s) {
     return s.type() == ShapeType::LineString || s.type() == ShapeType::LinearRing || s.type() == ShapeType::MultiLineString;
 }
 
+/// Una región (con sus agujeros) en polaridad oscura y los agujeros en clara.
+void writeRegion(GerberWriter& w, const Shape& poly) {
+    w.out += "G36*\n";
+    w.path(poly.exterior().coordinates(), false);
+    w.out += "D02*\nG37*\n";
+    const ShapeList holes = poly.interiors();
+    if (holes.empty()) return;
+    w.out += "%LPC*%\n";
+    for (const Shape& r : holes) {
+        w.out += "G36*\n";
+        w.path(r.coordinates(), true);
+        w.out += "D02*\nG37*\n";
+    }
+    w.out += "%LPD*%\n";
+}
+
+/**
+ * Corregido (sección 14): la apertura "0" y las macros como regiones, en un orden en que los agujeros (polaridad clara)
+ * no borran lo que se dibujó antes adentro de ellos. El original escribe las regiones en el orden de la lista: una isla
+ * dibujada antes que la región que la rodea desaparecía al escribir el agujero de esa región.
+ */
+void writeRegionsFixed(const Gerber& g, const std::vector<std::string>& order, GerberWriter& w) {
+    struct Item {
+        std::optional<Shape> region;  // polígono (región)
+        std::optional<Shape> other;   // línea o punto de la apertura "0"
+        std::optional<Shape> clear;
+        BoundingBox box;
+    };
+    std::vector<Item> items;
+    auto addSolid = [&](const Shape& geo, const std::optional<Shape>& clear) {
+        bool first = true;
+        for (const Shape& part : geo.parts()) {
+            if (part.isEmpty()) continue;
+            Item it;
+            if (part.type() == ShapeType::Polygon) it.region = part;
+            else it.other = part;
+            it.box = part.bounds().value_or(BoundingBox{});
+            if (first) it.clear = clear;
+            first = false;
+            items.push_back(std::move(it));
+        }
+        if (first && clear) items.push_back(Item{std::nullopt, std::nullopt, clear, {}});
+    };
+    for (const std::string& id : order) {
+        const Aperture& ap = g.apertures().at(id);
+        if (id != "0" && ap.type != "AM") continue;
+        for (const ApertureGeometry& el : ap.geometry) {
+            if (el.solid && !el.solid->isEmpty()) addSolid(*el.solid, el.clear && !el.clear->isEmpty() ? el.clear : std::nullopt);
+            else if (el.clear && !el.clear->isEmpty()) items.push_back(Item{std::nullopt, std::nullopt, el.clear, {}});
+        }
+    }
+    // i va antes que j si un agujero de i toca a j (orden topológico estable; con ciclos, el orden de la lista).
+    const std::size_t n = items.size();
+    std::vector<std::vector<std::size_t>> after(n);
+    std::vector<int> indeg(n, 0);
+    auto overlaps = [](const BoundingBox& a, const BoundingBox& b) {
+        return a.xmin <= b.xmax && b.xmin <= a.xmax && a.ymin <= b.ymax && b.ymin <= a.ymax;
+    };
+    for (std::size_t i = 0; i < n; ++i) {
+        if (!items[i].region) continue;
+        for (const Shape& hole : items[i].region->interiors()) {
+            const Shape hp = Shape::polygon(hole.coordinates());
+            const BoundingBox hb = hp.bounds().value_or(BoundingBox{});
+            const PreparedShape prep(hp);
+            for (std::size_t j = 0; j < n; ++j) {
+                if (j == i) continue;
+                const Shape* s = items[j].region ? &*items[j].region : items[j].other ? &*items[j].other : nullptr;
+                if (!s || !overlaps(hb, items[j].box) || !prep.intersects(*s)) continue;
+                // Una región que solo toca el borde del agujero no se borra (y no arma un ciclo con su vecina).
+                if (items[j].region && hp.intersection(*s).area() <= 1e-12) continue;
+                if (std::find(after[i].begin(), after[i].end(), j) == after[i].end()) {
+                    after[i].push_back(j);
+                    ++indeg[j];
+                }
+            }
+        }
+    }
+    std::vector<std::size_t> sorted;
+    sorted.reserve(n);
+    std::set<std::size_t> ready;
+    for (std::size_t i = 0; i < n; ++i)
+        if (indeg[i] == 0) ready.insert(i);
+    while (!ready.empty()) {
+        const std::size_t i = *ready.begin();
+        ready.erase(ready.begin());
+        sorted.push_back(i);
+        for (std::size_t j : after[i])
+            if (--indeg[j] == 0) ready.insert(j);
+    }
+    if (sorted.size() != n) {  // ciclo: lo que queda, en el orden de la lista
+        std::vector<bool> done(n, false);
+        for (std::size_t i : sorted) done[i] = true;
+        for (std::size_t i = 0; i < n; ++i)
+            if (!done[i]) sorted.push_back(i);
+    }
+    for (std::size_t i : sorted) {
+        const Item& it = items[i];
+        if (it.region) writeRegion(w, *it.region);
+        else if (it.other && it.other->type() == ShapeType::Point) w.point(*it.other);
+        else if (it.other) w.path(it.other->coordinates(), true);
+        if (it.clear) {
+            for (const Shape& c : it.clear->parts()) {
+                if (c.type() != ShapeType::Polygon || c.isEmpty()) continue;
+                w.out += "%LPC*%\nG36*\n";
+                w.path(c.exterior().coordinates(), true);
+                w.out += "D02*\nG37*\n%LPD*%\n";
+            }
+        }
+    }
+}
+
 }  // namespace
 
 std::string exportGerber(const Gerber& g, const GerberExportFormat& fmt, const ExportHeader& h) {
@@ -90,12 +203,19 @@ std::string exportGerber(const Gerber& g, const GerberExportFormat& fmt, const E
         else if (ap.type == "R" || ap.type == "O")
             head += "%ADD" + id + ap.type + "," + pyFloatRepr(factor * ap.width) + "X" + pyFloatRepr(factor * ap.height) +
                     "*%\n";
+        else if (ap.type == "P" && !reproduceOriginalBugs())
+            // Corregido: el original no declara las aperturas P (ni las AM) y el archivo no se puede volver a abrir.
+            head += "%ADD" + id + "P," + pyFloatRepr(factor * ap.diam) + "X" + std::to_string(ap.nVertices) +
+                    (ap.rotation ? "X" + pyFloatRepr(*ap.rotation) : std::string()) + "*%\n";
     }
     head += "\n";
     head += fmt.units == "IN" ? "G70*\n" : "G71*\n";
     head += "G90*\nG01*\n%LPD*%\n";
 
     GerberWriter w{fmt, factor, {}};
+    if (!reproduceOriginalBugs()) {
+        writeRegionsFixed(g, order, w);
+    } else
     // La apertura "0": regiones (G36/G37) con sus agujeros en polaridad clara, y líneas o puntos sueltos.
     if (const auto it = g.apertures().find("0"); it != g.apertures().end()) {
         for (const ApertureGeometry& el : it->second.geometry) {
@@ -130,6 +250,8 @@ std::string exportGerber(const Gerber& g, const GerberExportFormat& fmt, const E
     }
     for (const std::string& id : order) {
         if (id == "0") continue;
+        // Corregido: las macros (AM) ya se escribieron como regiones (su figura, en las unidades de salida).
+        if (!reproduceOriginalBugs() && g.apertures().at(id).type == "AM") continue;
         w.out += "D" + id + "*\n";
         for (const ApertureGeometry& el : g.apertures().at(id).geometry) {
             if (el.follow && !el.follow->isEmpty() && el.follow->type() != ShapeType::MultiLineString) {

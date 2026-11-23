@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <fstream>
 #include <limits>
 
 #include <regex>
@@ -17,6 +18,9 @@
 #include "core/Shape.h"
 #include "io/FileExport.h"
 #include "io/SvgExport.h"
+#include "io/ProjectFile.h"
+#include "parsers/DxfImport.h"
+#include "parsers/SvgImport.h"
 #include "parsers/Excellon.h"
 #include "tools/Film.h"
 #include "parsers/Gerber.h"
@@ -432,4 +436,118 @@ TEST(GeosRegression, BufferOfACollectionWithAMultiPolygonKeepsEveryPart) {
     double area = 0;
     for (const Shape& s : g.solidGeometry()) area += s.area();
     EXPECT_NEAR(area, a.area() + b.area(), 1e-3);
+}
+
+TEST(LineEndings, CarriageReturnOnlyFilesAreRead) {
+    // Python (open en modo texto) lee los archivos con "\r" solo; std::getline no los cortaba.
+    const std::string dir = ::testing::TempDir();
+    {
+        std::ofstream f(dir + "/cr.gbr", std::ios::binary);
+        f << "%FSLAX24Y24*%\r%MOMM*%\r%ADD10C,2.0*%\rD10*\rX10000Y20000D03*\rM02*\r";
+    }
+    Gerber g;
+    ASSERT_TRUE(g.parseFile(dir + "/cr.gbr")) << g.lastError();
+    double area = 0;
+    for (const Shape& s : g.solidGeometry()) area += s.area();
+    EXPECT_NEAR(area, 3.14159, 0.01);
+    {
+        std::ofstream f(dir + "/cr.drl", std::ios::binary);
+        f << "M48\rMETRIC\rT1C0.8\r%\rT1\rX10.0Y10.0\rM30\r";
+    }
+    ExcellonOptions opt;
+    Excellon e(opt);
+    ASSERT_TRUE(e.parseFile(dir + "/cr.drl")) << e.lastError();
+    ASSERT_EQ(e.drillTools().count(1), 1u);
+    EXPECT_NEAR(e.drillTools().at(1).tooldia, 0.8, 1e-9);
+    EXPECT_EQ(e.drillTools().at(1).drills.size(), 1u);
+}
+
+TEST(DeepInputs, NestingIsAnErrorInsteadOfAStackOverflow) {
+    // El original da RecursionError (una excepción); el port se caía entero al desbordar la pila.
+    JsonValue root;
+    std::string error;
+    EXPECT_FALSE(ProjectFile::parse(std::string(200000, '[') + std::string(200000, ']'), root, error));
+    EXPECT_FALSE(error.empty());
+    EXPECT_TRUE(ProjectFile::parse("[[[[1]]]]", root, error)) << error;
+
+    std::string deep = "<svg width=\"10\" height=\"10\">";
+    for (int i = 0; i < 100000; ++i) deep += "<g>";
+    for (int i = 0; i < 100000; ++i) deep += "</g>";
+    EXPECT_FALSE(importSvgAsGeometry(deep + "</svg>").ok);
+    const SvgImportResult self = importSvgAsGeometry(
+        "<svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"10\" height=\"10\"><g id=\"a\"><rect width=\"1\" "
+        "height=\"1\"/><use xlink:href=\"#a\"/></g></svg>");
+    EXPECT_FALSE(self.ok);
+
+    const std::string block = "0\nSECTION\n2\nBLOCKS\n0\nBLOCK\n8\n0\n2\nB\n70\n0\n10\n0\n20\n0\n30\n0\n0\nINSERT\n8\n0\n2\n"
+                              "B\n10\n0\n20\n0\n30\n0\n0\nENDBLK\n0\nENDSEC\n";
+    const DxfImportResult d = importDxfAsGeometry(block + "0\nSECTION\n2\nENTITIES\n0\nINSERT\n8\n0\n2\nB\n10\n0\n20\n0\n30"
+                                                          "\n0\n0\nENDSEC\n0\nEOF\n");
+    EXPECT_FALSE(d.ok);
+
+    Gerber g;
+    std::string expr(100000, '(');
+    expr += "1" + std::string(100000, ')');
+    EXPECT_NO_FATAL_FAILURE((void)g.parseLines({"%FSLAX46Y46*%", "%MOMM*%", "%AMDEEP*1,1," + expr + ",0,0*%",
+                                                "%ADD10DEEP*%", "D10*", "X0Y0D03*", "M02*"}));
+    Gerber m;
+    EXPECT_NO_FATAL_FAILURE((void)m.parseLines({"%FSLAX46Y46*%", "%MOMM*%", "%AMNEG*1,1," + std::string(100000, '-') +
+                                                "1,0,0*%", "%ADD10NEG*%", "D10*", "X0Y0D03*", "M02*"}));
+}
+
+namespace {
+double reexportedArea(const Gerber& g, std::string* text = nullptr) {
+    GerberExportFormat f;
+    f.units = "MM";
+    f.appUnits = "MM";
+    f.whole = 3;
+    f.fract = 6;
+    const std::string out = exportGerber(g, f, {});
+    if (text) *text = out;
+    std::vector<std::string> lines;
+    std::istringstream in(out);
+    for (std::string l; std::getline(in, l);) lines.push_back(l);
+    Gerber back;
+    if (!back.parseLines(lines)) return -1;
+    return Shape::unaryUnion(back.solidGeometry()).area();
+}
+}  // namespace
+
+TEST(ExportFixed, RegionHolesMacrosAndPolygonApertures) {
+    OriginalBugsScope fixed(false);
+    // Una isla dibujada antes que la región que la rodea: el agujero de la región (en polaridad clara) la borraba.
+    Gerber islands;
+    ASSERT_TRUE(islands.parseLines({"%FSLAX46Y46*%", "%MOMM*%", "G36*", "X0Y0D02*", "X10000000Y0D01*", "X10000000Y10000000D01*", "X0Y10000000D01*",
+                                    "X0Y0D01*", "G37*", "%LPC*%", "G36*", "X2000000Y2000000D02*", "X8000000Y2000000D01*",
+                                    "X8000000Y8000000D01*", "X2000000Y8000000D01*", "X2000000Y2000000D01*", "G37*",
+                                    "%LPD*%", "G36*", "X4000000Y4000000D02*", "X6000000Y4000000D01*",
+                                    "X6000000Y6000000D01*", "X4000000Y6000000D01*", "X4000000Y4000000D01*", "G37*",
+                                    "M02*"}));
+    const double area = Shape::unaryUnion(islands.solidGeometry()).area();
+    EXPECT_NEAR(area, 100 - 36 + 4, 1e-4);
+    EXPECT_NEAR(reexportedArea(islands), area, 1e-4);
+    // Macros y aperturas P: antes no se declaraban y el archivo exportado no se podía volver a abrir.
+    Gerber pads;
+    ASSERT_TRUE(pads.parseLines({"%FSLAX46Y46*%", "%MOMM*%", "%AMTWO*1,1,1.0,0,0*1,1,1.0,3,0*%", "%ADD10TWO*%",
+                                 "%ADD11P,2.0X6X15*%", "D10*", "X0Y0D03*", "D11*", "X10000000Y0D03*", "M02*"}));
+    const double padArea = Shape::unaryUnion(pads.solidGeometry()).area();
+    std::string text;
+    EXPECT_NEAR(reexportedArea(pads, &text), padArea, 1e-3) << text;
+    EXPECT_NE(text.find("%ADD11P,2.0X6X15"), std::string::npos) << text;
+}
+
+TEST(ExportFixed, UserBottomCopperKeepsItsArea) {
+    OriginalBugsScope fixed(false);
+    Gerber g;
+    ASSERT_TRUE(g.parseFile(std::string(FLATCAM_TEST_DATA_DIR) + "/luz_de_noche/luz de noche Pascual-B_Cu.gbr"));
+    const double area = Shape::unaryUnion(g.solidGeometry()).area();
+    EXPECT_NEAR(reexportedArea(g), area, area * 1e-4);
+}
+
+TEST(ExportFixed, DispenserBottomCopperKeepsItsArea) {
+    OriginalBugsScope fixed(false);
+    Gerber g;
+    ASSERT_TRUE(g.parseFile(std::string(FLATCAM_TEST_DATA_DIR) + "/PCB principal-B_Cu.gbl"));
+    const double area = Shape::unaryUnion(g.solidGeometry()).area();
+    EXPECT_NEAR(reexportedArea(g), area, area * 1e-4);
 }

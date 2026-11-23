@@ -6,6 +6,7 @@
 #include <cmath>
 #include <map>
 #include <fstream>
+#include <sstream>
 #include <iterator>
 #include <regex>
 #include <stdexcept>
@@ -271,12 +272,25 @@ std::optional<std::string> Gerber::apertureParse(const std::string& id, const st
 }
 
 bool Gerber::parseFile(const std::string& path, bool /*follow*/) {
-    std::ifstream in(path);
-    if (!in) {
+    std::ifstream file(path, std::ios::binary);
+    if (!file) {
         lastError_ = "No se pudo abrir el archivo: " + path;
         Logger::error(lastError_);
         return false;
     }
+    // Como open(..., 'r') de Python: también los archivos con solo "\r" como fin de línea (Mac clásico).
+    std::string text((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    std::string norm;
+    norm.reserve(text.size());
+    for (std::size_t k = 0; k < text.size(); ++k) {
+        if (text[k] == '\r') {
+            norm += '\n';
+            if (k + 1 < text.size() && text[k + 1] == '\n') ++k;
+        } else {
+            norm += text[k];
+        }
+    }
+    std::istringstream in(norm);
     std::vector<std::string> statements;
     std::string line;
     while (std::getline(in, line)) {

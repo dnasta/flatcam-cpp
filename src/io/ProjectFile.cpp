@@ -89,6 +89,8 @@ class Parser {
 public:
     Parser(ByteSource& src, const JsonSkipFn& skip) : src_(src), skip_(skip), buf_(1 << 20) {}
 
+    int depth_{0};  ///< Profundidad de anidamiento de parseValue.
+
     JsonValue parseDocument() {
         JsonValue v = parseValue(nullptr);
         skipWs();
@@ -214,6 +216,12 @@ private:
 
     /// Lee un valor; si @p store es falso lo saltea sin guardarlo.
     JsonValue parseValue(const JsonValue* /*parent*/, bool store = true) {
+        // Listas u objetos anidados sin límite: Python da RecursionError; acá se desbordaba la pila.
+        if (++depth_ > 1000) fail("maximum recursion depth exceeded");
+        struct DepthGuard {
+            int& d;
+            ~DepthGuard() { --d; }
+        } guard{depth_};
         skipWs();
         const int c = peek();
         if (c == '{') {

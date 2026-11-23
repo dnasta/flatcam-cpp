@@ -5,6 +5,8 @@
 #include <cctype>
 #include <cmath>
 #include <fstream>
+#include <sstream>
+#include <iterator>
 #include <regex>
 #include <set>
 #include <stdexcept>
@@ -155,12 +157,25 @@ std::optional<double> Excellon::parseNumber(const std::string& text) const {
 }
 
 bool Excellon::parseFile(const std::string& path) {
-    std::ifstream in(path);
-    if (!in) {
+    std::ifstream file(path, std::ios::binary);
+    if (!file) {
         lastError_ = "No se pudo abrir el archivo: " + path;
         Logger::error(lastError_);
         return false;
     }
+    // Como open(..., 'r') de Python: también los archivos con solo "\r" como fin de línea (Mac clásico).
+    std::string text((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    std::string norm;
+    norm.reserve(text.size());
+    for (std::size_t k = 0; k < text.size(); ++k) {
+        if (text[k] == '\r') {
+            norm += '\n';
+            if (k + 1 < text.size() && text[k + 1] == '\n') ++k;
+        } else {
+            norm += text[k];
+        }
+    }
+    std::istringstream in(norm);
     std::vector<std::string> lines;
     std::string line;
     while (std::getline(in, line)) lines.push_back(line);

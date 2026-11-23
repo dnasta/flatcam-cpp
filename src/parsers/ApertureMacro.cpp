@@ -21,6 +21,12 @@ public:
     ExprParser(const std::string& text, const std::map<std::string, double>& vars)
         : s_(text), vars_(vars) {}
 
+    struct DepthGuard {
+        int& d;
+        ~DepthGuard() { --d; }
+    };
+    int depth_{0};
+
     double parse() {
         const double v = expr();
         skipSpaces();
@@ -62,6 +68,9 @@ private:
         }
     }
     double unary() {
+        // Paréntesis o signos anidados sin límite: el original da RecursionError; acá se desbordaba la pila.
+        if (++depth_ > 1000) fail();
+        DepthGuard guard{depth_};
         skipSpaces();
         if (peekIs('+')) { ++pos_; return unary(); }
         if (peekIs('-')) { ++pos_; return -unary(); }

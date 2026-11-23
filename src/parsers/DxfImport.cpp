@@ -298,6 +298,13 @@ std::vector<Point2D> withBulges(const std::vector<Point2D>& v, const std::vector
 std::optional<Shape> entityGeo(const Document& doc, const Entity& e, ShapeList& many);
 
 ShapeList getGeo(const Document& doc, const std::vector<Entity>& container) {
+    // Un bloque que se inserta a sí mismo: el original da RecursionError; acá se desbordaba la pila.
+    static thread_local int depth = 0;
+    if (depth > 1000) throw DxfError("maximum recursion depth exceeded");
+    ++depth;
+    struct DepthGuard {
+        ~DepthGuard() { --depth; }
+    } depthGuard;
     ShapeList geo;
     for (const Entity& e : container) {
         ShapeList many;
@@ -373,6 +380,12 @@ std::optional<Shape> entityGeo(const Document& doc, const Entity& e, ShapeList& 
         }
         const double r = e.num(40, 1);
         if (start > end) start -= 360;
+        // Con el mismo ángulo al principio y al final el paso es 0 y el original no termina nunca. Corregido: en DXF es
+        // la circunferencia completa. (Con el interruptor del original, un error: un cuelgue no se puede comparar.)
+        if (start == end) {
+            if (reproduceOriginalBugs()) throw DxfError("ARC with the same start and end angle");
+            end = start + 360;
+        }
         double angle = start;
         const double step = std::abs(end - start) / 100;
         std::vector<Point2D> pts;
@@ -395,7 +408,13 @@ std::optional<Shape> entityGeo(const Document& doc, const Entity& e, ShapeList& 
         const Vec3 major = e.point(11, Vec3{1, 0, 0});
         const double ratio = e.num(40, 1);
         if (start >= end) end += 2.0 * kPi;
-        const int lineSeg = static_cast<int>((100 * (end - start)) / kPi);
+        const bool fixed = !reproduceOriginalBugs();
+        // Corregido: un parámetro final enorme (1e12) daba millones de tramos y desbordaba el int; más de una vuelta no
+        // dibuja nada nuevo.
+        if (fixed && end - start > 2.0 * kPi) end = start + 2.0 * kPi;
+        if (!std::isfinite(start) || !std::isfinite(end) || (end - start) * 100 / kPi > 1e6)
+            throw DxfError("ELLIPSE with an invalid parameter range");
+        const int lineSeg = std::max(1, static_cast<int>((100 * (end - start)) / kPi));
         const double step = std::abs(end - start) / static_cast<double>(lineSeg);
         double angle = start;
         const double m = std::sqrt(major.x * major.x + major.y * major.y + major.z * major.z);
@@ -403,6 +422,14 @@ std::optional<Shape> entityGeo(const Document& doc, const Entity& e, ShapeList& 
         const Vec3 minorDim{ratio * majorDim.x, ratio * majorDim.y, ratio * majorDim.z};
         std::vector<Point2D> pts;
         for (int s = 0; s <= lineSeg; ++s) {
+            if (fixed) {
+                // Corregido: P = C + M cos t + razón * (-My, Mx) sin t. La fórmula del original solo da una elipse con el
+                // eje mayor en X: a 45 grados es una recta y con el eje en Y sale reflejada.
+                pts.push_back({c.x + major.x * std::cos(angle) - ratio * major.y * std::sin(angle),
+                               c.y + major.y * std::cos(angle) + ratio * major.x * std::sin(angle)});
+                angle += step;
+                continue;
+            }
             const double vx = (majorDim.x + majorDim.y) * std::cos(angle);
             const double vy = (minorDim.x + minorDim.y) * std::sin(angle);
             pts.push_back({c.x + major.x * vx + major.y * vy, c.y + major.y * vx + major.x * vy});

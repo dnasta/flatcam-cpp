@@ -141,3 +141,31 @@ TEST(DxfImportFixed, BulgesSolidsSplinesInsertsAndSingleLines) {
         EXPECT_NEAR(ymax, 170.0, 1e-9);
     }
 }
+
+TEST(DxfImportFixed, ArcWithEqualAnglesAndRotatedEllipses) {
+    OriginalBugsScope fixed(false);
+    // ARC con el mismo ángulo inicial y final: la circunferencia (el original no terminaba nunca).
+    const std::string arc = "0\nARC\n8\n0\n10\n0\n20\n0\n30\n0\n40\n1\n50\n10\n51\n10\n";
+    const DxfImportResult a = importDxfAsGeometry(dxf("", arc));
+    ASSERT_TRUE(a.ok) << a.error;
+    EXPECT_NEAR(lengthOf(a.geometry), 2 * 3.14159265358979, 0.01);
+    // ELLIPSE con el eje mayor (1, 1) y razón 0,5: una elipse de semiejes sqrt(2) y sqrt(2)/2, no una recta.
+    const std::string el = "0\nELLIPSE\n8\n0\n10\n0\n20\n0\n30\n0\n11\n1\n21\n1\n31\n0\n40\n0.5\n41\n0\n42\n6.283185307179586\n";
+    const DxfImportResult e = importDxfAsGeometry(dxf("", el));
+    ASSERT_TRUE(e.ok) << e.error;
+    double maxOff = 0;  // distancia a la recta x = y
+    for (const Shape& s : e.geometry)
+        for (const Point2D& q : s.coordinates()) maxOff = std::max(maxOff, std::abs(q.x - q.y) / std::sqrt(2.0));
+    EXPECT_NEAR(maxOff, std::sqrt(2.0) / 2, 1e-3);
+    // Con el eje mayor en Y y medio recorrido (0 a pi), la mitad del lado de las X negativas, como en DXF.
+    const std::string half = "0\nELLIPSE\n8\n0\n10\n0\n20\n0\n30\n0\n11\n0\n21\n2\n31\n0\n40\n0.5\n41\n0\n42\n3.141592653589793\n";
+    const DxfImportResult h = importDxfAsGeometry(dxf("", half));
+    ASSERT_TRUE(h.ok) << h.error;
+    double minX = 1e9;
+    for (const Shape& s : h.geometry)
+        for (const Point2D& q : s.coordinates()) minX = std::min(minX, q.x);
+    EXPECT_NEAR(minX, -1.0, 1e-3);
+    // Un parámetro final enorme no cuelga.
+    const std::string big = "0\nELLIPSE\n8\n0\n10\n0\n20\n0\n30\n0\n11\n1\n21\n0\n31\n0\n40\n0.5\n41\n0\n42\n1e12\n";
+    EXPECT_TRUE(importDxfAsGeometry(dxf("", big)).ok);
+}

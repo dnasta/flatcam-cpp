@@ -115,7 +115,14 @@ struct XmlReader {
         }
         return false;
     }
+    int depth = 0;
     XmlElement element() {
+        // Elementos anidados sin límite (100.000 <g>): antes se desbordaba la pila.
+        if (++depth > 1000) fail("maximum recursion depth exceeded");
+        struct Guard {
+            int& d;
+            ~Guard() { --d; }
+        } guard{depth};
         if (s[i] != '<') fail("se esperaba un elemento");
         ++i;
         std::size_t j = i;
@@ -866,6 +873,13 @@ ShapeList svgText(const XmlElement& node) {
 }
 
 Geos getsvggeo(const XmlElement& node, const XmlElement& root, int res, double factor) {
+    // Un <use> que apunta a un antepasado propio se repite sin fin (el original da RecursionError, que atrapa).
+    static thread_local int depth = 0;
+    if (depth > 1000) throw SvgError("maximum recursion depth exceeded");
+    ++depth;
+    struct DepthGuard {
+        ~DepthGuard() { --depth; }
+    } depthGuard;
     // El relleno se hereda de los grupos (fill o style); se restaura al salir.
     struct FillScope {
         bool saved = tFillNone;
