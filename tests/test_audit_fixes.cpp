@@ -2,6 +2,9 @@
 // apagado (la aplicación) y, donde se puede comparar, que con el interruptor encendido siga como el original.
 #include <gtest/gtest.h>
 
+#include <algorithm>
+#include <limits>
+
 #include <regex>
 #include <sstream>
 #include <string>
@@ -9,6 +12,7 @@
 
 #include "cam/Autolevel.h"
 #include "cam/CncJob.h"
+#include "cam/PathOptimizer.h"
 #include "core/OriginalBugs.h"
 #include "core/Shape.h"
 #include "io/FileExport.h"
@@ -403,4 +407,15 @@ TEST(CncSvgFixed, EveryToolKeepsItsStrokeWidth) {
     EXPECT_NE(s.find("stroke-width=\"1.2\""), std::string::npos) << s;
     // Los viajes van debajo de todos los cortes.
     EXPECT_LT(s.find("#F0E24D"), s.find("#5E6CFF"));
+}
+
+TEST(PathOptimizerRobust, NanCoordinatesDoNotCrash) {
+    const double nan = std::numeric_limits<double>::quiet_NaN();
+    const std::vector<Point2D> pts{{1, 1}, {nan, 2}, {3, nan}, {0, 0}};
+    const auto o = PathOptimizer::order(pts, {0, 0});
+    ASSERT_EQ(o.size(), pts.size());
+    std::vector<std::size_t> sorted = o;
+    std::sort(sorted.begin(), sorted.end());
+    for (std::size_t i = 0; i < sorted.size(); ++i) EXPECT_EQ(sorted[i], i);
+    EXPECT_EQ(PathOptimizer::order(pts, {nan, nan}).size(), pts.size());
 }

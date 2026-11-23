@@ -323,7 +323,7 @@ PlatingMaskResult platingMaskImpl(const Gerber& sm, double clearance, char choic
         } else {
             if (r.apertures.empty() && reproduceOriginalBugs()) return r;  // max() de una lista vacía: ValueError
             // Corregido: el máximo numérico (el original compara los números como texto) y "10" sin aperturas.
-            const int maxId = r.apertures.empty() ? 0 : std::stoi(maxKey(r.apertures));
+            const int maxId = r.apertures.empty() || !reproduceOriginalBugs() ? 0 : std::stoi(maxKey(r.apertures));
             const std::string id = reproduceOriginalBugs() ? (maxId != 0 ? std::to_string(maxId + 1) : "10")
                                                            : Gerber::newApertureId(r.apertures);
             Aperture ap;

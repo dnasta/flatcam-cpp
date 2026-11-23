@@ -75,6 +75,11 @@ std::vector<std::size_t> PathOptimizer::order(const std::vector<Point2D>& points
                 best = i;
             }
         }
+        // Con coordenadas NaN ninguna distancia es menor que infinito: se toma el primero que queda (antes se salía
+        // del vector).
+        if (best == n)
+            for (std::size_t i = 0; i < n && best == n; ++i)
+                if (!used[i]) best = i;
         used[best] = true;
         nearest.push_back(best);
         current = points[best];
