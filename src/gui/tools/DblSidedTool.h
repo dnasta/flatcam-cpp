@@ -4,6 +4,7 @@
  */
 #pragma once
 
+#include <QPointer>
 #include <QMetaObject>
 #include <QPointF>
 
@@ -61,7 +62,7 @@ private:
 
     App* app_;
     QString drillValues_;                 ///< `drill_values`: los agujeros agregados con el botón.
-    FlatCAMObj* pickObject_{nullptr};     ///< Excellon del que se elige un agujero.
+    QPointer<FlatCAMObj> pickObject_;     ///< Excellon del que se elige un agujero.
     QMetaObject::Connection pickConnection_;
     bool restoreGrid_{false};  ///< `grid_status_memory`: volver a encender la grilla al terminar de elegir.
 };

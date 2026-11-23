@@ -150,7 +150,7 @@ FlatCAMObj* ThievingTool::createGerber(FlatCAMObj* src, const QString& name, Sha
 void ThievingTool::copperThievingRun(const ShapeList& area, FlatCAMObj* ref) {
     MainGUI* ui = app_->ui();
     ui->inform(tr_("Copper Thieving Tool started. Reading parameters."));
-    const Gerber& g = static_cast<GerberObject*>(grb_)->gerber();
+    const Gerber& g = static_cast<GerberObject*>(grb_.data())->gerber();
     ThievingParams p;
     p.clearance = clearance_;
     p.margin = margin_;
@@ -207,7 +207,7 @@ FlatCAMObj* ThievingTool::addRobberBar() {
         ui->inform("[WARNING_NOTCL] " + tr_("There is no Gerber object loaded ..."));
         return nullptr;
     }
-    const Gerber& g = static_cast<GerberObject*>(grb_)->gerber();
+    const Gerber& g = static_cast<GerberObject*>(grb_.data())->gerber();
     RobberBarResult r = robberBar(g, margin, rbThickness_);
     robber_ = r.bar;
     robberLine_ = r.line;

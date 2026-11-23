@@ -5121,6 +5121,7 @@
 "was found but the Excellon file have no informations regarding the tool diameters therefore the application will try to load it by using some 'fake' diameters.\nThe user needs to edit the resulting Excellon object and change the diameters to reflect the real diameters.": "было найдено, но в файле Excellon нет информации о диаметрах инструмента, поэтому приложение попытается загрузить его с помощью некоторых \"поддельных\" диаметров.\nПользователю необходимо отредактировать полученный объект Excellon и изменить диаметры, чтобы отразить реальные диаметры.",
 "with diameter": "с диаметром",
 "you can <b>contribute</b> to the development yourself by:": "вы можете <b> внести свой вклад </b> в разработку самостоятельно:",
-"{text} Too big for the constrain area. Final panel has {col} columns and {row} rows": "{text} Слишком большой для выбранного участка. Итоговая панель содержит {col} столбцов и {row} строк"
+"{text} Too big for the constrain area. Final panel has {col} columns and {row} rows": "{text} Слишком большой для выбранного участка. Итоговая панель содержит {col} столбцов и {row} строк",
+"Mouse bites diameter and spacing can't both be zero.": "Диаметр и шаг mouse bites не могут быть одновременно равны нулю."
 }
 }

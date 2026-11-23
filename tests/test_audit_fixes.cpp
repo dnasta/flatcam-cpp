@@ -419,3 +419,17 @@ TEST(PathOptimizerRobust, NanCoordinatesDoNotCrash) {
     for (std::size_t i = 0; i < sorted.size(); ++i) EXPECT_EQ(sorted[i], i);
     EXPECT_EQ(PathOptimizer::order(pts, {nan, nan}).size(), pts.size());
 }
+
+TEST(GeosRegression, BufferOfACollectionWithAMultiPolygonKeepsEveryPart) {
+    // GEOS 3.15.0: el buffer de una colección con una figura múltiple dentro se quedaba con la primera parte (un Gerber
+    // con una macro de dos círculos o un térmico perdía cobre).
+    const Shape a = Shape::point({0, 0}).buffer(0.5), b = Shape::point({3, 0}).buffer(0.5);
+    const Shape gc = Shape::collection({Shape::collection({a, b})});
+    EXPECT_NEAR(gc.buffer(1e-8).area(), a.area() + b.area(), 1e-6);
+    Gerber g;
+    ASSERT_TRUE(g.parseLines({"%FSLAX46Y46*%", "%MOMM*%", "%AMTWO*1,1,1.0,0,0*1,1,1.0,3,0*%", "%ADD10TWO*%", "D10*",
+                              "X0Y0D03*", "M02*"}));
+    double area = 0;
+    for (const Shape& s : g.solidGeometry()) area += s.area();
+    EXPECT_NEAR(area, a.area() + b.area(), 1e-3);
+}

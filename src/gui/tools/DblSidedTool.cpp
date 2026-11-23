@@ -256,7 +256,7 @@ FlatCAMObj* DblSidedTool::createAlignmentHoles() {
 }
 
 bool DblSidedTool::pickHoleAt(const QPointF& world) {
-    auto* exc = dynamic_cast<ExcellonObject*>(pickObject_);
+    auto* exc = dynamic_cast<ExcellonObject*>(pickObject_.data());
     if (!exc) return false;
     const Shape click = Shape::point({world.x(), world.y()});
     for (const auto& [id, t] : exc->excellon().drillTools()) {

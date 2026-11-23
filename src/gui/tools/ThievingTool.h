@@ -5,6 +5,7 @@
  */
 #pragma once
 
+#include <QPointer>
 #include <optional>
 
 #include "core/Shape.h"
@@ -59,7 +60,7 @@ private:
     void onExit();
 
     App* app_;
-    FlatCAMObj* grb_{nullptr};
+    QPointer<FlatCAMObj> grb_;
     FlatCAMObj* lastCreated_{nullptr};
     double clearance_{0.0};
     double margin_{0.0};

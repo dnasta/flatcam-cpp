@@ -4991,6 +4991,7 @@
 "was found but the Excellon file have no informations regarding the tool diameters therefore the application will try to load it by using some 'fake' diameters.\nThe user needs to edit the resulting Excellon object and change the diameters to reflect the real diameters.": "a fost gasită dar fisierul Excellon nu are info's despre diametrele uneltelor prin urmare aplicatia va folosi valori 'false'.\nUserul trebuie să editeze obictul Excellon rezultat si sa ajusteze diametrele a.i sa reflecte diametrele reale.",
 "with diameter": "cu diametrul",
 "you can <b>contribute</b> to the development yourself by:": "puteți <b> contribui </b> la dezvoltare prin:",
-"{text} Too big for the constrain area. Final panel has {col} columns and {row} rows": "{text} Prea mare pt aria desemnată. Panelul final are {col} coloane si {row} linii"
+"{text} Too big for the constrain area. Final panel has {col} columns and {row} rows": "{text} Prea mare pt aria desemnată. Panelul final are {col} coloane si {row} linii",
+"Mouse bites diameter and spacing can't both be zero.": "Diametrul și distanța mouse bites nu pot fi ambele zero."
 }
 }

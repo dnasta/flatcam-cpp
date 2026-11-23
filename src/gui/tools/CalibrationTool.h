@@ -6,6 +6,7 @@
  */
 #pragma once
 
+#include <QPointer>
 #include <array>
 #include <vector>
 
@@ -71,7 +72,7 @@ private:
     CalibrationPoints readTargets();
     App* app_;
     std::vector<Point2D> points_;  ///< `click_points`.
-    FlatCAMObj* target_{nullptr};
+    QPointer<FlatCAMObj> target_;
     bool picking_{false};
     bool gridMemory_{false};
     QMetaObject::Connection conn_;

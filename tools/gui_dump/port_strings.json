@@ -223,5 +223,15 @@
   "ro": "Comanda %1 nu este încă disponibilă în această versiune.",
   "ru": "Команда %1 пока не поддерживается в этой версии.",
   "tr": "%1 komutu bu sürümde henüz yok."
+ },
+ "Mouse bites diameter and spacing can't both be zero.": {
+  "es": "El diámetro y la separación de los mouse bites no pueden ser los dos cero.",
+  "de": "Durchmesser und Abstand der Mouse Bites dürfen nicht beide null sein.",
+  "fr": "Le diamètre et l'espacement des mouse bites ne peuvent pas être tous deux nuls.",
+  "it": "Diametro e spaziatura dei mouse bites non possono essere entrambi zero.",
+  "pt_BR": "O diâmetro e o espaçamento dos mouse bites não podem ser ambos zero.",
+  "ro": "Diametrul și distanța mouse bites nu pot fi ambele zero.",
+  "ru": "Диаметр и шаг mouse bites не могут быть одновременно равны нулю.",
+  "tr": "Mouse bites çapı ve aralığı ikisi birden sıfır olamaz."
  }
 }

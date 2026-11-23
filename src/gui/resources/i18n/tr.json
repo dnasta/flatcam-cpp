@@ -5122,6 +5122,7 @@
 "was found but the Excellon file have no informations regarding the tool diameters therefore the application will try to load it by using some 'fake' diameters.\nThe user needs to edit the resulting Excellon object and change the diameters to reflect the real diameters.": "bulundu, ancak Excellon dosyasında uç kalınlıkları hakkında hiçbir bilgi yok, bu yüzden uygulama bazı \"sahte\" kalınlıkları kullanarak dosyayı yüklemeye çalışacaktır.\nKullanıcı, elde edilen Excellon nesnesini düzenlemeli ve gerçek kalınlıkları yansıtacak şekilde kalınlıkları değiştirmelidir.",
 "with diameter": "çap ile",
 "you can <b>contribute</b> to the development yourself by:": "geliştirmeye <b> katkıda bulunabilirsiniz </b>:",
-"{text} Too big for the constrain area. Final panel has {col} columns and {row} rows": "{text} Kısıtlama alanı için çok büyük. Son panelde {col} sütun ve {row} satır var"
+"{text} Too big for the constrain area. Final panel has {col} columns and {row} rows": "{text} Kısıtlama alanı için çok büyük. Son panelde {col} sütun ve {row} satır var",
+"Mouse bites diameter and spacing can't both be zero.": "Mouse bites çapı ve aralığı ikisi birden sıfır olamaz."
 }
 }

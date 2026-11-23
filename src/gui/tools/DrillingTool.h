@@ -4,6 +4,7 @@
  */
 #pragma once
 
+#include <QPointer>
 #include <map>
 
 #include "cam/CncJob.h"
@@ -43,6 +44,12 @@ public:
 
     /** @brief Genera el CNC Job (`on_cnc_button_click`). @return El objeto creado, o `nullptr` si falló. */
     class FlatCAMObj* generateCnc();
+    /**
+     * @brief Convierte los parámetros de cada herramienta (Z, avances, X,Y) al cambiar las unidades (corregido,
+     * sección 14: el original los deja y el G-code en pulgadas sale con las Z en mm) y vuelve a mostrarlos.
+     * @param factor 25,4 o 1 / 25,4.
+     */
+    void scaleUnits(double factor);
 
 private:
     /// Parámetros de una herramienta (`excellon_tools[tool]['data']`).
@@ -64,7 +71,7 @@ private:
     ToolData defaultToolData() const;
 
     App* app_;
-    ExcellonObject* excellon_{nullptr};
+    QPointer<ExcellonObject> excellon_;
     std::map<int, ToolData> storage_;   ///< Por número de herramienta del Excellon.
     std::vector<int> tableOrder_;       ///< Herramienta de cada fila de la tabla.
     /// El orden de `excellon_tools` del original: lo deja cada `build_tool_ui` (y `rebuild_ui` al arrastrar filas).

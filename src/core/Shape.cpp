@@ -3,6 +3,7 @@
 #include <geos_c.h>
 
 #include <algorithm>
+#include <functional>
 #include <cmath>
 #include <cstdlib>
 #include <utility>
@@ -407,7 +408,38 @@ Shape Shape::buffer(double distance, int resolution, JoinStyle join, CapStyle ca
     GEOSBufferParams_setJoinStyle_r(H(), params, static_cast<int>(join));
     GEOSBufferParams_setQuadrantSegments_r(H(), params, resolution);
     GEOSBufferParams_setMitreLimit_r(H(), params, mitreLimit);
-    GEOSGeometry* result = GEOSBufferWithParams_r(H(), raw(*this), params, distance);
+    // GEOS 3.15.0 tiene una regresión: el buffer (con distancia no nula) de una GeometryCollection que contiene una
+    // figura múltiple se queda solo con la primera parte de esa figura. Se aplana la colección antes (con 3.11 y 3.12
+    // el resultado es el mismo).
+    GEOSGeometry* flat = nullptr;
+    if (GEOSGeomTypeId_r(H(), raw(*this)) == GEOS_GEOMETRYCOLLECTION) {
+        std::vector<GEOSGeometry*> kids;
+        bool nested = false;
+        std::function<void(const GEOSGeometry*)> add = [&](const GEOSGeometry* g) {
+            const int type = GEOSGeomTypeId_r(H(), g);
+            if (type == GEOS_MULTIPOLYGON || type == GEOS_MULTILINESTRING || type == GEOS_MULTIPOINT ||
+                type == GEOS_GEOMETRYCOLLECTION) {
+                for (int i = 0, n = GEOSGetNumGeometries_r(H(), g); i < n; ++i) add(GEOSGetGeometryN_r(H(), g, i));
+            } else {
+                kids.push_back(GEOSGeom_clone_r(H(), g));
+            }
+        };
+        for (int i = 0, n = GEOSGetNumGeometries_r(H(), raw(*this)); i < n; ++i) {
+            const GEOSGeometry* g = GEOSGetGeometryN_r(H(), raw(*this), i);
+            const int type = GEOSGeomTypeId_r(H(), g);
+            nested = nested || type == GEOS_MULTIPOLYGON || type == GEOS_MULTILINESTRING || type == GEOS_MULTIPOINT ||
+                     type == GEOS_GEOMETRYCOLLECTION;
+            add(g);
+        }
+        if (nested) {
+            flat = GEOSGeom_createCollection_r(H(), GEOS_GEOMETRYCOLLECTION, kids.empty() ? nullptr : kids.data(),
+                                               static_cast<unsigned int>(kids.size()));
+        } else {
+            for (GEOSGeometry* k : kids) GEOSGeom_destroy_r(H(), k);
+        }
+    }
+    GEOSGeometry* result = GEOSBufferWithParams_r(H(), flat ? flat : raw(*this), params, distance);
+    if (flat) GEOSGeom_destroy_r(H(), flat);
     GEOSBufferParams_destroy_r(H(), params);
     return wrap(result, "buffer");
 }

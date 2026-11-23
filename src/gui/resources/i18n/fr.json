@@ -5016,6 +5016,7 @@
 "was found but the Excellon file have no informations regarding the tool diameters therefore the application will try to load it by using some 'fake' diameters.\nThe user needs to edit the resulting Excellon object and change the diameters to reflect the real diameters.": "a été trouvé, mais le fichier Excellon ne contient aucune information sur les diamètres d’outil. Par conséquent, l’application essaiera de le charger en utilisant des diamètres «faux».\nL'utilisateur doit modifier l'objet Excellon résultant et modifier les diamètres pour refléter les diamètres réels.",
 "with diameter": "avec diamètre",
 "you can <b>contribute</b> to the development yourself by:": "vous pouvez <b> contribuer </b> au développement vous-même en:",
-"{text} Too big for the constrain area. Final panel has {col} columns and {row} rows": "{text} Trop grand pour la zone contrainte. Le panneau final contient {col} colonnes et {row}"
+"{text} Too big for the constrain area. Final panel has {col} columns and {row} rows": "{text} Trop grand pour la zone contrainte. Le panneau final contient {col} colonnes et {row}",
+"Mouse bites diameter and spacing can't both be zero.": "Le diamètre et l'espacement des mouse bites ne peuvent pas être tous deux nuls."
 }
 }

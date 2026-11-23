@@ -371,9 +371,18 @@ std::vector<FlatCAMObj*> IsolationTool::isolate() {
     return runIsolation(grb, ids, geometry, {}, false);
 }
 
-std::vector<FlatCAMObj*> IsolationTool::runIsolation(GerberObject* grb, const std::vector<int>& ids,
+std::vector<FlatCAMObj*> IsolationTool::runIsolation(GerberObject* grb, const std::vector<int>& idsIn,
                                                      const ShapeList* geometry, const ShapeList& limitedArea,
                                                      bool negativeDia) {
+    // Las herramientas se pudieron borrar mientras se elegía el área con el mouse (los ids son de cuando se apretó
+    // Generar): se usan las que quedan.
+    std::vector<int> ids;
+    for (int id : idsIn)
+        if (tools_.count(id)) ids.push_back(id);
+    if (ids.empty()) {
+        app_->ui()->inform("[ERROR_NOTCL] " + tr_("No selected tools in Tool Table."));
+        return {};
+    }
     std::vector<FlatCAMObj*> created;
     std::vector<flatcam::IsolationTool> isoTools;
     for (int id : ids) {

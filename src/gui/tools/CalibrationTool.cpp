@@ -158,11 +158,15 @@ void CalibrationTool::onRelease(const QPointF& world, Qt::MouseButton button, bo
         if (dragged) return;  // el original borra el rectángulo de selección y no elige nada
         const Point2D click{world.x(), world.y()};
         if (cal_source_radio->value().toString() == "object") {
+            if (!target_) {  // el objeto se borró mientras se elegían los puntos
+                app_->ui()->inform(QString("[ERROR_NOTCL] %1.").arg(tr_("Object not found")));
+                return;
+            }
             std::vector<Point2D> picked;
             if (target_->kind() == ObjectKind::Excellon)
-                picked = alignPickExcellon(static_cast<ExcellonObject*>(target_)->excellon(), click, decimals);
+                picked = alignPickExcellon(static_cast<ExcellonObject*>(target_.data())->excellon(), click, decimals);
             else if (target_->kind() == ObjectKind::Gerber)
-                picked = alignPickGerber(static_cast<GerberObject*>(target_)->gerber(), click, decimals);
+                picked = alignPickGerber(static_cast<GerberObject*>(target_.data())->gerber(), click, decimals);
             // Cada figura bajo el clic agrega un punto (también después del cuarto), como el original (corregido: la
             // primera, y nada después del cuarto).
             if (!reproduceOriginalBugs()) {

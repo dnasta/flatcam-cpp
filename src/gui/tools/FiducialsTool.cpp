@@ -141,6 +141,11 @@ void FiducialsTool::addFiducials() {
 }
 
 FlatCAMObj* FiducialsTool::addGeo(FlatCAMObj* obj, double size, const QString& type) {
+    if (!obj) {  // el Gerber se borró mientras se elegían los puntos
+        app_->ui()->inform(QString("[ERROR_NOTCL] %1.").arg(tr_("Object not found")));
+        onExit();
+        return nullptr;
+    }
     const FiducialType t = type == "circular" ? FiducialType::Circular
                            : type == "cross"  ? FiducialType::Cross
                                               : FiducialType::Chess;

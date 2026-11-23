@@ -10,6 +10,7 @@
 
 #include "gui/tools/PropertiesTool.h"
 #include "core/OriginalBugs.h"
+#include "gui/tools/ToolPanels.h"
 #include "gui/App.h"
 #include "gui/Preferences.h"
 #include "gui/Translation.h"
@@ -200,6 +201,9 @@ void App::onToggleUnits(bool noPref) {
             o->convertUnits(u);
             objectChanged(o);  // las propiedades guardadas y el panel (build_ui)
         }
+        // Corregido (sección 14): los parámetros que ya tiene Perforación también cambian de unidades (el original los
+        // deja: con la tecla Q el G-code en pulgadas salía con las Z y los avances en mm).
+        if (!reproduceOriginalBugs() && drillingTool) drillingTool->scaleUnits(factor);
         // Error del original: con el área de trabajo encendida llama a draw_workspace(pagesize=...), que no tiene ese
         // parámetro (TypeError), y no sigue (corregido: vuelve a dibujar la hoja en las unidades nuevas).
         if (defBool("global_workspace")) {

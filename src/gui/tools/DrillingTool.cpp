@@ -262,6 +262,7 @@ void DrillingTool::rebuildUi() {
 }
 
 void DrillingTool::loadToolsFromDb() {
+    if (!excellon_) return;  // el Excellon se borró (excellon_ es un QPointer)
     JsonValue db;
     QString error;
     if (!ToolsDatabase::load(ToolsDatabase::fileName(app_->dataPath()), db, error)) {
@@ -528,6 +529,25 @@ std::vector<Point2D> DrillingTool::slotAsDrills(const Point2D& start, const Poin
     }
     if (addLastPoint && std::hypot(stop.x - out.back().x, stop.y - out.back().y) >= overlap / 10) out.push_back(stop);
     return out;
+}
+
+void DrillingTool::scaleUnits(double f) {
+    auto num = [f](PyNumber& n) { n = PyNumber(n.value() * f); };
+    auto pair = [f](std::optional<std::array<double, 2>>& p) {
+        if (p) p = std::array<double, 2>{(*p)[0] * f, (*p)[1] * f};
+    };
+    for (auto& [id, d] : storage_) {
+        DrillToolSettings& s = d.s;
+        for (PyNumber* n : {&s.cutZ, &s.feedrateZ, &s.feedrateRapid, &s.travelZ, &s.depthPerPass, &s.offsetZ,
+                            &s.toolchangeZ, &s.endZ, &s.zPdepth, &s.feedrateProbe})
+            num(*n);
+        if (s.startZ) num(*s.startZ);
+        pair(s.toolchangeXY);
+        pair(s.endXY);
+    }
+    for (auto& [id, dia] : diaOverride_) dia *= f;
+    buildToolUi();
+    onRowSelectionChange();
 }
 
 FlatCAMObj* DrillingTool::generateCnc() {

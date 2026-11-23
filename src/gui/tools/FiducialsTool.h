@@ -4,6 +4,7 @@
  */
 #pragma once
 
+#include <QPointer>
 #include <set>
 #include <vector>
 
@@ -75,7 +76,7 @@ private:
     void fillCombo(FCComboBox* combo);
 
     App* app_;
-    FlatCAMObj* grb_{nullptr};
+    QPointer<FlatCAMObj> grb_;
     FlatCAMObj* lastCreated_{nullptr};
     std::vector<Point2D> points_;
     QString secPosition_;

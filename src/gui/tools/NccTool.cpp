@@ -366,8 +366,17 @@ FlatCAMObj* NccTool::clearCopper() {
     return clearRegion(src, geometry, ids, std::nullopt);
 }
 
-FlatCAMObj* NccTool::clearRegion(FlatCAMObj* src, const ShapeList& geometry, const std::vector<int>& ids,
+FlatCAMObj* NccTool::clearRegion(FlatCAMObj* src, const ShapeList& geometry, const std::vector<int>& idsIn,
                                  const std::optional<Shape>& region) {
+    // Las herramientas se pudieron borrar mientras se elegía el área con el mouse (los ids son de cuando se apretó
+    // Generar): se usan las que quedan.
+    std::vector<int> ids;
+    for (int id : idsIn)
+        if (tools_.count(id)) ids.push_back(id);
+    if (ids.empty()) {
+        app_->ui()->inform("[ERROR_NOTCL] " + tr_("No selected tools in Tool Table."));
+        return nullptr;
+    }
     // El original calcula en un hilo de trabajo; acá se calcula en el de la interfaz con el indicador de actividad.
     BusyScope busy(app_->ui());
     // gen_clear_area: el margen es el del formulario; el resto, de cada herramienta.

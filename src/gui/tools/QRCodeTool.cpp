@@ -165,7 +165,7 @@ void QRCodeTool::onRelease(const QPointF& world, Qt::MouseButton b) {
 void QRCodeTool::make(const QPointF& pos) {
     onExit();
     if (!grb_ || !geo_) return;
-    Gerber& g = static_cast<GerberObject*>(grb_)->gerber();
+    Gerber& g = static_cast<GerberObject*>(grb_.data())->gerber();
     QrGerber r = qrInsert(g, *geo_, {pos.x(), pos.y()}, bsize_entry->value(), border_size_entry->value(),
                           bb_radio->value().toString() == "r", pol_radio->value().toString() != "pos");
     g.replaceGeometry(std::move(r.solid), std::move(r.apertures), {r.newAperture, "0"});

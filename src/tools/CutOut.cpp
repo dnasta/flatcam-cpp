@@ -169,6 +169,13 @@ bool CutOut::freeform(const ShapeList& objectGeometry, bool isGerber, const Cuto
                       std::string& error) {
     error.clear();
     result = CutoutResult{};
+    // Corregido: con un diámetro y una separación de los mouse bites que suman 0 el original no termina nunca (el
+    // largo recorrido no avanza y la lista de agujeros crece hasta agotar la memoria). Vale también con el interruptor
+    // del original: un cuelgue no se puede comparar.
+    if (o.mouseBites && o.mbDia + o.mbSpacing <= 0) {
+        error = "Mouse bites diameter and spacing can't both be zero.";
+        return false;
+    }
     if (o.toolDia == 0.0) {
         error = "Tool Diameter is zero value. Change it to a positive real number.";
         return false;
@@ -327,6 +334,13 @@ bool CutOut::rectangular(const ShapeList& objectGeometry, bool isGerber, const C
                          std::string& error) {
     error.clear();
     result = CutoutResult{};
+    // Corregido: con un diámetro y una separación de los mouse bites que suman 0 el original no termina nunca (el
+    // largo recorrido no avanza y la lista de agujeros crece hasta agotar la memoria). Vale también con el interruptor
+    // del original: un cuelgue no se puede comparar.
+    if (o.mouseBites && o.mbDia + o.mbSpacing <= 0) {
+        error = "Mouse bites diameter and spacing can't both be zero.";
+        return false;
+    }
     if (o.toolDia == 0.0) {
         error = "Tool Diameter is zero value. Change it to a positive real number.";
         return false;

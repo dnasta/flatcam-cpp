@@ -4,6 +4,7 @@
  */
 #pragma once
 
+#include <QPointer>
 #include <optional>
 
 #include <QMetaObject>
@@ -58,7 +59,7 @@ private:
     void onTransparent(bool on);
 
     App* app_;
-    FlatCAMObj* grb_{nullptr};
+    QPointer<FlatCAMObj> grb_;
     std::optional<QrGeometry> geo_;
     bool placing_{false};
     QString oldBackColor_;

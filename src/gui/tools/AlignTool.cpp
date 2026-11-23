@@ -73,12 +73,17 @@ void AlignTool::onRelease(const QPointF& world, Qt::MouseButton button, bool dra
     if (button == Qt::LeftButton) {
         // Con arrastre el original borra el rectángulo de selección y no elige nada.
         if (dragged) return;
+        if (!target_ || !aligned_ || !aligner_) {  // un objeto se borró mientras se elegían los puntos
+            app_->ui()->inform(QString("[ERROR_NOTCL] %1.").arg(tr_("Object not found")));
+            disconnectEvents();
+            return;
+        }
         const Point2D click{world.x(), world.y()};
         std::vector<Point2D> picked;
         if (target_->kind() == ObjectKind::Excellon)
-            picked = alignPickExcellon(static_cast<ExcellonObject*>(target_)->excellon(), click, appDecimals());
+            picked = alignPickExcellon(static_cast<ExcellonObject*>(target_.data())->excellon(), click, appDecimals());
         else if (target_->kind() == ObjectKind::Gerber)
-            picked = alignPickGerber(static_cast<GerberObject*>(target_)->gerber(), click, appDecimals());
+            picked = alignPickGerber(static_cast<GerberObject*>(target_.data())->gerber(), click, appDecimals());
         // Cada punto agregado avanza un paso (con dos figuras bajo el clic, dos pasos), como el original.
         for (const Point2D& p : picked) {
             points_.push_back(p);
@@ -134,6 +139,7 @@ void AlignTool::checkPoints() {
 }
 
 void AlignTool::applyMove(bool rotate) {
+    if (!aligned_) return;
     const AlignMove m = alignMove(points_, appDecimals());
     aligned_->offset(m.offset.x, m.offset.y);
     if (rotate && m.angle) aligned_->rotate(*m.angle, m.origin);
@@ -142,6 +148,7 @@ void AlignTool::applyMove(bool rotate) {
 }
 
 void AlignTool::setColor() {
+    if (!target_) return;
     const QColor c = colorFromFlatCam("#15678abf");
     const QColor fill = target_->fillColor, line = target_->outlineColor;
     target_->fillColor = target_->outlineColor = c;

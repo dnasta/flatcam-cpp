@@ -333,7 +333,16 @@ FlatCAMObj* PaintTool::paint() {
     return paintGeometry(src, geometry, ids);
 }
 
-FlatCAMObj* PaintTool::paintGeometry(FlatCAMObj* src, const ShapeList& geometry, const std::vector<int>& ids) {
+FlatCAMObj* PaintTool::paintGeometry(FlatCAMObj* src, const ShapeList& geometry, const std::vector<int>& idsIn) {
+    // Las herramientas se pudieron borrar mientras se elegía el área con el mouse (los ids son de cuando se apretó
+    // Generar): se usan las que quedan.
+    std::vector<int> ids;
+    for (int id : idsIn)
+        if (tools_.count(id)) ids.push_back(id);
+    if (ids.empty()) {
+        app_->ui()->inform("[ERROR_NOTCL] " + tr_("No selected tools in Tool Table."));
+        return nullptr;
+    }
     if (geometry.empty()) {
         app_->ui()->inform("[WARNING] " + tr_("No polygon found."));
         return nullptr;

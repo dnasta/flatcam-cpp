@@ -4,6 +4,7 @@
  */
 #pragma once
 
+#include <QPointer>
 #include <vector>
 
 #include <QMetaObject>
@@ -58,9 +59,9 @@ private:
     void applyMove(bool rotate);
 
     App* app_;
-    FlatCAMObj* aligned_{nullptr};
-    FlatCAMObj* aligner_{nullptr};
-    FlatCAMObj* target_{nullptr};
+    QPointer<FlatCAMObj> aligned_;
+    QPointer<FlatCAMObj> aligner_;
+    QPointer<FlatCAMObj> target_;
     std::vector<Point2D> points_;
     QString alignType_;
     bool picking_{false};
