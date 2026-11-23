@@ -26,6 +26,38 @@ std::optional<BoundingBox> boundsOf(const ShapeList& list) {
     return acc;
 }
 
+/**
+ * Profundidades de las pasadas de un taladrado con profundidad múltiple (`excellon_tool_gcode_gen`).
+ * El original resta en coma flotante y corrige con un `<` estricto: cuando la Z de corte es múltiplo de la profundidad
+ * por pasada (-2,1 con 0,7) la suma no llega (-2,0999...) y hace otra pasada a -2,8, debajo de la Z de corte.
+ * Corregido (sección 14): en nanómetros enteros, como las pasadas de la Geometría; la última es la Z de corte.
+ * Con 0 (o menos) por pasada el original queda en un bucle infinito: siempre es una sola pasada.
+ */
+std::vector<double> drillDepths(double doc, double dpp) {
+    std::vector<double> out;
+    if (dpp <= 0) return {doc};
+    if (reproduceOriginalBugs()) {
+        double z = 0.0;
+        while (std::fabs(z) < std::fabs(doc)) {
+            z -= dpp;
+            if (std::fabs(doc) < std::fabs(z) && std::fabs(z) < std::fabs(doc) + dpp) z = doc;
+            out.push_back(z);
+        }
+        return out;
+    }
+    const long long target = -std::llabs(static_cast<long long>(std::nearbyint(doc * 1e9)));
+    const long long step = static_cast<long long>(std::nearbyint(dpp * 1e9));
+    for (long long d = 0; d > target;) {
+        d -= step;
+        if (d <= target) {
+            out.push_back(doc);
+            break;
+        }
+        out.push_back(static_cast<double>(d) / 1e9);
+    }
+    return out;
+}
+
 std::optional<std::array<PyNumber, 2>> toPyPair(const std::optional<std::array<double, 2>>& v) {
     if (!v) return std::nullopt;
     return std::array<PyNumber, 2>{PyNumber((*v)[0]), PyNumber((*v)[1])};
@@ -260,7 +292,19 @@ std::string exclusionTravel(const Preprocessor& pp, PreprocessorParams& p, const
 bool CncJob::toolGcode(int tool, const std::vector<Point2D>& points, const Excellon& ex,
                        std::array<double, 2>& firstPoint, bool isFirst, bool isLast, std::string& tGcode,
                        std::string& startGcode) {
-    const DrillToolSettings& ts = settings_.tools.at(tool);
+    DrillToolSettings checked = settings_.tools.at(tool);
+    // Corregido (sección 14): la interfaz del original no deja escribir una Z de corte positiva ni una Z de viaje 0 o
+    // negativa (sin `machinist`), pero el generador no lo controla (Tcl, proyectos, preferencias). Como en
+    // generate_from_geometry_2: la Z de corte pasa a negativa y la de viaje a positiva; con la Z de viaje 0 falla.
+    if (!reproduceOriginalBugs() && !settings_.machinist) {
+        if (checked.cutZ.value() > 0) checked.cutZ = PyNumber(-checked.cutZ.value());
+        if (checked.travelZ.value() < 0) checked.travelZ = PyNumber(-checked.travelZ.value());
+        if (checked.travelZ.value() == 0) {
+            lastError_ = "The Z Travel parameter is zero. This is dangerous, skipping file";
+            return false;
+        }
+    }
+    const DrillToolSettings& ts = checked;
     const auto pp = makePreprocessor(settings_.preprocessor, settings_.flavor);
     if (points.empty()) {
         lastError_ = "Tool " + std::to_string(tool) + " has no drills";
@@ -328,11 +372,9 @@ bool CncJob::toolGcode(int tool, const std::vector<Point2D>& points, const Excel
             }
         };
         if (ts.multidepth && std::fabs(zCut) > std::fabs(ts.depthPerPass.value())) {
-            const double doc = zCut;
-            double z = 0.0;
-            while (std::fabs(z) < std::fabs(doc)) {
-                z -= ts.depthPerPass.value();
-                if (std::fabs(doc) < std::fabs(z) && std::fabs(z) < std::fabs(doc) + ts.depthPerPass.value()) z = doc;
+            double z = zCut;
+            for (const double depth : drillDepths(zCut, ts.depthPerPass.value())) {
+                z = depth;
                 p.zCut = PyNumber(z);
                 tGcode += pp->downCode(p) + "\n";
                 measure(z);
@@ -630,9 +672,13 @@ std::string multiPass(GeoContext& c, PathItem& item, const Point2D& oldPoint) {
     long long depth = 0;
     bool reverse = false;
     const bool exactLineString = !item.isPoint && !item.isLinearRing;  // `type(geometry) == LineString`
+    // Corregido (sección 14): con 0 (o menos) por pasada el original corta una sola vez a la Z 0 (encima de la pieza);
+    // acá es una sola pasada a la Z de corte.
+    const bool fixed = !reproduceOriginalBugs();
+    Point2D toolAt = item.coords.back();  // dónde queda la herramienta después de la última pasada
     while (depth > zCut) {
         depth -= perCut;
-        if (depth < zCut) depth = zCut;
+        if (depth < zCut || (fixed && perCut <= 0)) depth = zCut;
         const double depthValue = static_cast<double>(depth) / 1e9;
         if (item.isPoint) {
             g += point2gcode(c, item.coords.front());
@@ -640,6 +686,7 @@ std::string multiPass(GeoContext& c, PathItem& item, const Point2D& oldPoint) {
         }
         if (!c.ts.extracut || !item.isRing) g += linear2gcode(c, item.coords, depthValue, true, false);
         else g += linear2gcodeExtra(c, item.coords, depthValue, false);
+        toolAt = item.coords.back();
         if (exactLineString) {
             std::reverse(item.coords.begin(), item.coords.end());
             reverse = true;
@@ -647,7 +694,15 @@ std::string multiPass(GeoContext& c, PathItem& item, const Point2D& oldPoint) {
         if (perCut <= 0) break;  // evita un bucle infinito con una profundidad por pasada inválida
     }
     if (reverse && exactLineString) std::reverse(item.coords.begin(), item.coords.end());
-    g += lift(c, oldPoint.x, oldPoint.y);
+    // Corregido (sección 14): el original sube con las X,Y del trazado anterior (`old_point`); en los postprocesadores
+    // cuya subida lleva X,Y (line_xyz, Roland_MDX_20) eso es un rápido en diagonal con la fresa enterrada. Se sube
+    // donde quedó la herramienta (en el corte extra de un anillo, su comienzo).
+    if (fixed) {
+        if (c.ts.extracut && item.isRing && !item.isPoint) toolAt = item.coords.front();
+        g += lift(c, toolAt.x, toolAt.y);
+    } else {
+        g += lift(c, oldPoint.x, oldPoint.y);
+    }
     return g;
 }
 
@@ -684,9 +739,38 @@ bool CncJob::generateFromGeometryTools(const std::vector<GeometryToolJob>& tools
 
 bool CncJob::geometryToolGcode(const ShapeList& geometry, const GeometryJobSettings& js, bool isFirst, bool isLast,
                                std::string& tGcode, std::string& startGcode) {
-    const GeometryToolSettings& ts = js.toolSettings;
     // geometry_tool_gcode_gen controla la Z de corte (positiva o cero), la de viaje y la profundidad por pasada ANTES de
-    // leerlas de la herramienta (camlib.py 3532-3575 contra 3577), así que en la práctica no cambian nada: no se portan.
+    // leerlas de la herramienta (camlib.py 3532-3575 contra 3577), así que en la práctica no cambian nada. Corregido
+    // (sección 14): sin `machinist` se controlan las de la herramienta, con los mismos avisos del original.
+    GeometryToolSettings checked = js.toolSettings;
+    if (!reproduceOriginalBugs() && !js.machinist) {
+        auto warn = [this](const std::string& level, const std::string& text, const std::string& suffix = {}) {
+            if (!toolMessages_.empty()) toolMessages_.back().push_back({level, text, suffix, "", ""});
+        };
+        const bool laser = js.preprocessor.find("laser") != std::string::npos;
+        if (checked.cutZ > 0) {
+            warn("WARNING", "The Cut Z parameter has positive value. It is the depth value to cut into material.\n"
+                            "The Cut Z parameter needs to have a negative value, assuming it is a typo therefore "
+                            "the app will convert the value to negative.Check the resulting CNC code (Gcode etc).");
+            checked.cutZ = -checked.cutZ;
+        } else if (checked.cutZ == 0 && !laser) {
+            warn("WARNING", "The Cut Z parameter is zero. There will be no cut, skipping file");
+            lastError_ = "The Cut Z parameter is zero. There will be no cut, skipping file";
+            return false;
+        }
+        if (checked.travelZ < 0) {
+            warn("WARNING", "The Travel Z parameter has negative value. It is the height value to travel between "
+                            "cuts.\nThe Z Travel parameter needs to have a positive value, assuming it is a typo "
+                            "therefore the app will convert the value to positive.Check the resulting CNC code "
+                            "(Gcode etc).");
+            checked.travelZ = -checked.travelZ;
+        } else if (checked.travelZ == 0) {
+            warn("WARNING", "The Z Travel parameter is zero. This is dangerous, skipping file");
+            lastError_ = "The Z Travel parameter is zero. This is dangerous, skipping file";
+            return false;
+        }
+    }
+    const GeometryToolSettings& ts = checked;
 
     const auto pp = makePreprocessor(js.preprocessor, js.flavor);
     if (!pp) {
@@ -1300,10 +1384,7 @@ bool CncJob::generateFromExcellonByTool(const Excellon& ex, const ExcellonByTool
             const double zm = std::fabs(s.zMove.value());
             if (s.multidepth && std::fabs(*zCut) > std::fabs(s.depthPerCut.value())) {
                 const double doc = *zCut;
-                double z = 0.0;
-                while (std::fabs(z) < std::fabs(doc)) {
-                    z -= s.depthPerCut.value();
-                    if (std::fabs(doc) < std::fabs(z) && std::fabs(z) < std::fabs(doc) + s.depthPerCut.value()) z = doc;
+                for (const double z : drillDepths(doc, s.depthPerCut.value())) {
                     p.zCut = PyNumber(z);
                     g += pp->downCode(p) + "\n";
                     down += std::fabs(z) + zm;

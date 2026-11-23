@@ -151,7 +151,11 @@ double Gerber::parseGerberNumber(const std::string& number, int intDigits, int f
     };
     const auto intVal = static_cast<double>(std::stoll(number));
     if (zeros == 'T') {
-        const int k = (intDigits + fracDigits) - static_cast<int>(number.size());
+        // Corregido (sección 14): el original cuenta el signo como un dígito, así que con ceros finales omitidos "-1" se
+        // lee como -1 en vez de -10 (formato 2.4).
+        int digits = static_cast<int>(number.size());
+        if (!reproduceOriginalBugs() && !number.empty() && (number[0] == '-' || number[0] == '+')) --digits;
+        const int k = (intDigits + fracDigits) - digits;
         const double scaled = k >= 0 ? intVal * pow10(k) : intVal * (1.0 / pow10(-k));
         return scaled * (1.0 / pow10(fracDigits));
     }

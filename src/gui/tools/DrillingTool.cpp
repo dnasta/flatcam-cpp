@@ -567,6 +567,7 @@ FlatCAMObj* DrillingTool::generateCnc() {
     js.coordsDecimals = defInt("cncjob_coords_decimals", 4);
     js.frDecimals = defInt("cncjob_fr_decimals", 2);
     js.decimals = appDecimals();
+    js.machinist = defBool("global_machinist_setting");
     std::vector<CncToolRow> rows;
     // excellon_tools está renumerado en el orden de la tabla: el número T de cada herramienta es su fila + 1.
     Excellon renumbered = excellon_->excellon().renumbered(tableOrder_);

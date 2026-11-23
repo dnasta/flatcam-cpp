@@ -557,8 +557,7 @@ public:
         return feedrateCode(p) + "\n" + positionCode(p) + ",0;";
     }
     std::string positionCode(const PreprocessorParams& p) const override {
-        const double x = inches(p) ? p.x / 25.4 : p.x;
-        const double y = inches(p) ? p.y / 25.4 : p.y;
+        const double x = toMm(p, p.x), y = toMm(p, p.y);
         return "Z" + fmt(1, x * 40.0) + "," + fmt(1, y * 40.0);
     }
     std::string rapidCode(const PreprocessorParams& p) const override { return move(p, rapidFeed(p), p.zMove.value()); }
@@ -567,23 +566,33 @@ public:
         return p.z ? move(p, feedrateCode(p), p.z->value()) : "";
     }
     std::string endCode(const PreprocessorParams& p) const override { return move(p, rapidFeed(p), p.zEnd.value()); }
-    std::string feedrateCode(const PreprocessorParams& p) const override { return speed(p.feedrate.value()); }
-    std::string zFeedrateCode(const PreprocessorParams& p) const override { return speed(p.zFeedrate.value()); }
+    std::string feedrateCode(const PreprocessorParams& p) const override { return speed(p.feedrate.value() * feedToMm(p)); }
+    std::string zFeedrateCode(const PreprocessorParams& p) const override {
+        return speed(p.zFeedrate.value() * feedToMm(p));
+    }
     std::string spindleCode(const PreprocessorParams&) const override { return "!MC1"; }
     std::string dwellCode(const PreprocessorParams&) const override { return ""; }
     std::string spindleStopCode(const PreprocessorParams&) const override { return "!MC0"; }
 
 private:
     static bool inches(const PreprocessorParams& p) { return upper(p.units) == "IN"; }
+    /// Una coordenada en mm. El original divide por 25,4 las que están en pulgadas (corregido, sección 14:
+    /// la máquina trabaja en unidades de 0,025 mm, así que se multiplican).
+    static double toMm(const PreprocessorParams& p, double v) {
+        if (!inches(p)) return v;
+        return reproduceOriginalBugs() ? v / 25.4 : v * 25.4;
+    }
+    /// Factor del avance a mm/min: el original lo toma siempre como mm/min (corregido: pulgadas/min por 25,4).
+    static double feedToMm(const PreprocessorParams& p) { return inches(p) && !reproduceOriginalBugs() ? 25.4 : 1.0; }
     static std::string speed(double feedrate) {
         double frSec = feedrate / 60;
         if (feedrate >= 900) frSec = 15;
         if (feedrate < 6) frSec = 6;
         return "V" + fmt(1, frSec) + ";";
     }
-    static std::string rapidFeed(const PreprocessorParams& p) { return speed(p.feedrateRapid.value()); }
+    static std::string rapidFeed(const PreprocessorParams& p) { return speed(p.feedrateRapid.value() * feedToMm(p)); }
     std::string move(const PreprocessorParams& p, const std::string& feed, double z) const {
-        if (inches(p)) z = z / 25.4;
+        z = toMm(p, z);
         return feed + "\n" + positionCode(p) + "," + pyFloatRepr(z * 40.0) + ";";
     }
 };

@@ -306,6 +306,7 @@ std::unique_ptr<CNCJobObject> GeometryObject::makeCncJob(const std::vector<int>&
         s.coordsDecimals = defInt("cncjob_coords_decimals", 4);
         s.frDecimals = defInt("cncjob_fr_decimals", 2);
         s.decimals = appDecimals();
+        s.machinist = defBool("global_machinist_setting");
         s.stepsPerCircle = defInt("geometry_circle_steps", 64);
         s.tool = id;          // self.tool = str(tool): el identificador de la herramienta (la 9999 imprime T9999)
         s.toolSettings = t.data;

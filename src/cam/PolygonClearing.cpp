@@ -67,9 +67,21 @@ std::optional<std::vector<EndpointStorage::Line>> PolygonClearing::paintConnect(
     return optimized.objects();
 }
 
+namespace {
+
+/**
+ * El paso entre pasadas, `tooldia * (1 - overlap)`, tiene que avanzar: con un diámetro 0 o un solape del 100 % el
+ * original repite la misma pasada para siempre (y con un paso de micras tarda horas). Sin un paso de al menos un
+ * nanómetro no hay relleno.
+ */
+bool validStep(double tooldia, double overlap) { return tooldia > 0 && tooldia * (1 - overlap) >= 1e-6; }
+
+}  // namespace
+
 std::optional<std::vector<EndpointStorage::Line>> PolygonClearing::clearPolygon(const Shape& polygon, double tooldia,
                                                                                  int stepsPerCircle, double overlap,
                                                                                  bool connect) {
+    if (!validStep(tooldia, overlap)) return std::nullopt;
     EndpointStorage geoms;
     Shape current = polygon.buffer(-tooldia / 1.999999, stepsPerCircle);
     if (current.area() == 0) return std::nullopt;
@@ -104,6 +116,7 @@ std::optional<std::vector<EndpointStorage::Line>> PolygonClearing::clearPolygonS
                                                                                      int stepsPerCircle, double overlap,
                                                                                      bool connect, bool contour,
                                                                                      std::optional<Point2D> seed) {
+    if (!validStep(tooldia, overlap)) return std::nullopt;
     EndpointStorage geoms;
     double radius = tooldia / 2 * (1 - overlap);
     const Shape pathMargin = polygon.buffer(-tooldia / 2, stepsPerCircle);
@@ -135,7 +148,7 @@ std::optional<std::vector<EndpointStorage::Line>> PolygonClearing::clearPolygonL
                                                                                       double tooldia, int stepsPerCircle,
                                                                                       double overlap, bool connect,
                                                                                       bool contour) {
-    if (polygon.type() != ShapeType::Polygon) return std::nullopt;
+    if (polygon.type() != ShapeType::Polygon || !validStep(tooldia, overlap)) return std::nullopt;
     EndpointStorage geoms;
     std::vector<Shape> trimmed;
     const auto b = polygon.bounds();

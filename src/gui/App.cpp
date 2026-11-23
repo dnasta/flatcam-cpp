@@ -22,6 +22,7 @@
 
 #include <QApplication>
 #include <algorithm>
+#include <clocale>
 #include <QDateTime>
 #include <QDragEnterEvent>
 #include <QDropEvent>
@@ -107,6 +108,10 @@ QString kindName(ObjectKind k) {
 }  // namespace
 
 App::App(QObject* parent) : QObject(parent), ui_(std::make_unique<MainGUI>()) {
+    // El núcleo escribe y lee los números con snprintf/strtod, que siguen a LC_NUMERIC: QApplication pone el locale del
+    // sistema y en español o alemán el G-code saldría con coma decimal. (La consola Tcl también lo vuelve a "C", pero
+    // eso es una casualidad de la versión de Tcl.)
+    std::setlocale(LC_NUMERIC, "C");
     collection_ = new ObjectCollection(this);
     ui_->collection_view->setModel(collection_);
     ui_->collection_view->setMinimumWidth(290);

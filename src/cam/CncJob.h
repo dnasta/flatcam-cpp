@@ -56,6 +56,7 @@ struct DrillToolSettings {
 /** @brief Todo lo necesario para generar el G-code de un Excellon. */
 struct DrillJobSettings {
     std::string preprocessor{"default"};  ///< Postprocesador (`tools_drill_ppname_e`).
+    bool machinist{false};  ///< `machinist_setting`: sin él se controlan las Z (corregido; ver CncJob::toolGcode).
     GcodeFlavor flavor{GcodeFlavor::FlatCAM8_994};  ///< Versión cuyo G-code se reproduce (solo cambia `GRBL_laser`).
     std::vector<ExclusionArea> exclusionAreas;  ///< Áreas que esquivan los viajes entre agujeros (`app.exc_areas`).
     std::string units{"MM"};              ///< `"MM"` o `"IN"`.
@@ -104,6 +105,7 @@ struct GeometryToolSettings {
 /** @brief Todo lo necesario para generar el G-code de una geometría con una herramienta. */
 struct GeometryJobSettings {
     std::string preprocessor{"default"};   ///< Postprocesador (`ppname_g`).
+    bool machinist{false};  ///< `machinist_setting`: sin él se controlan las Z (corregido, sección 14).
     std::string units{"MM"};               ///< `"MM"` o `"IN"`.
     int coordsDecimals{4};                 ///< Decimales de las coordenadas.
     int decimals{4};                       ///< Decimales generales.

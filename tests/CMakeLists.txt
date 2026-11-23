@@ -24,6 +24,7 @@ add_executable(core_tests
     test_preprocessors.cpp
     test_cnc_job.cpp
     test_cnc_job_geometry.cpp
+    test_audit_fixes.cpp
     test_cutout.cpp
     test_cnc_job_laser.cpp
     test_paint.cpp

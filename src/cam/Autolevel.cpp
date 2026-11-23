@@ -76,9 +76,13 @@ std::string autolevelProbingGcode(const std::vector<Point2D>& points, const Prob
     header += "(Units: " + p.units + ")\n";
     header += "(Created on " + p.timeStr + ")\n";
     std::string g = header + "\n";
-    if (p.controller == "LinuxCNC")
+    // Corregido (sección 14): el original escribe este aviso sin paréntesis, como órdenes que LinuxCNC rechaza.
+    if (p.controller == "LinuxCNC" && reproduceOriginalBugs())
         g += "The file with the stored probing points can be found\nin the configuration folder for LinuxCNC.\n"
              "The name of the file is: a_probing_points_file.txt.\n";
+    else if (p.controller == "LinuxCNC")
+        g += "(The file with the stored probing points can be found)\n(in the configuration folder for LinuxCNC.)\n"
+             "(The name of the file is: a_probing_points_file.txt.)\n";
     g += p.units == "MM" ? "G21\n" : "G20\n";
     g += "G90\n";
     g += openfile + "\n";

@@ -4,6 +4,8 @@
 #include <gtest/gtest.h>
 
 #include <QApplication>
+#include <clocale>
+#include <cstdio>
 #include <QKeyEvent>
 #include <QMessageBox>
 #include <QTimer>
@@ -220,4 +222,16 @@ TEST(GuiToolKeys, ToolsDatabaseTabAddsAndDeletesWithTAndDelete) {
     key(app, Qt::Key_Delete);
     EXPECT_EQ(db->tools().members().size(), n0);
     EXPECT_EQ(info(app), tr_("Tool removed from Tools DB."));
+}
+
+TEST(GuiLocale, NumbersUseADecimalPointWhateverTheSystemLocale) {
+    // Con un locale que usa coma decimal, el G-code y la lectura de números no pueden cambiar.
+    if (!std::setlocale(LC_NUMERIC, "es_ES.UTF-8") && !std::setlocale(LC_NUMERIC, "de_DE.UTF-8"))
+        GTEST_SKIP() << "no hay un locale con coma decimal";
+    ASSERT_STREQ(std::localeconv()->decimal_point, ",");
+    App app;
+    EXPECT_STREQ(std::localeconv()->decimal_point, ".");
+    char buf[32];
+    std::snprintf(buf, sizeof buf, "%.4f", 1.5);
+    EXPECT_STREQ(buf, "1.5000");
 }

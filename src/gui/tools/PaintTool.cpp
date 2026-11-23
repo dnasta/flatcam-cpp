@@ -17,6 +17,9 @@ namespace flatcam::gui {
 
 PaintTool::PaintTool(App* app, QWidget* parent) : PaintToolUIBase(parent), app_(app) {
     setupUi();
+    // Corregido (sección 14): el solape llega a 100 % y con eso el pintado no termina nunca; como en NCC e Isolation,
+    // el máximo es 99,9999 %.
+    if (!reproduceOriginalBugs()) paintoverlap_entry->setMaximum(99.9999);
     connect(generate_paint_button, &QPushButton::clicked, this, [this] { paint(); });
     connect(type_obj_radio, &RadioSet::activatedCustom, this, [this] { onTypeObjChanged(); });
     connect(reset_button, &QPushButton::clicked, this, [this] { setToolUi(); });
