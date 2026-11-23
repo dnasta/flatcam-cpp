@@ -26,6 +26,7 @@ struct GerberExportFormat {
     int whole{2};             ///< Dígitos enteros.
     int fract{4};             ///< Dígitos decimales.
     std::string zeros{"L"};   ///< `"L"` o `"T"`.
+    std::string appUnits{"MM"};  ///< Unidades de la aplicación (en las que está el objeto): `"MM"` o `"IN"`.
 };
 
 /** @brief Formato de un Excellon exportado (`excellon_exp_*`; de fábrica pulgadas, decimal, 2:4). */
@@ -36,6 +37,7 @@ struct ExcellonExportFormat {
     std::string zeros{"LZ"};          ///< `"LZ"` o `"TZ"` (solo sin decimales).
     std::string format{"dec"};        ///< `"dec"` o `"ndec"`.
     std::string slotType{"routing"};  ///< `"routing"` o `"drilling"`.
+    std::string appUnits{"MM"};       ///< Unidades de la aplicación (en las que está el objeto): `"MM"` o `"IN"`.
 };
 
 /**

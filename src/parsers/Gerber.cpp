@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cmath>
+#include <map>
 #include <fstream>
 #include <iterator>
 #include <regex>
@@ -34,6 +35,8 @@ const std::regex kRegionOn(R"re(^G36\*$)re");
 const std::regex kRegionOff(R"re(^G37\*$)re");
 const std::regex kEof(R"re(^M02\*)re");
 const std::regex kLpol(R"re(^%LP([DC])\*%$)re");
+/// Paso y repetición (`%SR`, no está en el original): sin argumentos o con X1Y1 cierra el bloque.
+const std::regex kSr(R"re(^%SR(?:X(\d+)Y(\d+)I([-+]?[\d.]+)J([-+]?[\d.]+))?\*%$)re");
 const std::regex kUnits(R"re(^G7([01])\*$)re");
 const std::regex kAbsRel(R"re(^G9([01])\*$)re");
 const std::regex kAm1(R"re(^%AM([^\*]+)\*([^%]+)?(%)?$)re");
@@ -320,6 +323,15 @@ bool Gerber::parseLines(const std::vector<std::string>& glines) {
     int lineNum = 0;
     std::string gline;
     Shape solid = emptyPolygon();  // acumulador `self.solid_geometry` durante el análisis
+    // Bloque de paso y repetición abierto (`%SR`, corregido: el original lo ignora).
+    struct StepRepeat {
+        bool active{false};
+        int nx{1}, ny{1};
+        double dx{0}, dy{0};
+        std::size_t followMark{0};
+        std::map<std::string, std::size_t> apertureMarks;   // geometrías que ya tenía cada apertura al abrir el bloque
+        std::vector<std::pair<char, Shape>> ops;            // lo que el bloque sumó o restó al cobre, en orden
+    } sr;
 
     // ---- utilidades locales
     auto keyError = [&](const std::optional<std::string>& key) -> const Aperture& {
@@ -404,6 +416,65 @@ bool Gerber::parseLines(const std::vector<std::string>& glines) {
         }
     };
 
+    // Cierra el trazo en curso (como al final del archivo) y vuelca lo pendiente al cobre; si había un bloque de paso
+    // y repetición abierto, agrega sus copias desplazadas: lo que sumó o restó al cobre, la geometría de seguimiento y
+    // la de cada apertura.
+    auto closeStepRepeat = [&]() {
+        if (path.size() > 1) {
+            const auto t = apertureType(lastPathAperture);
+            if (!(t && *t == "R")) {
+                ApertureGeometry dict;
+                const Shape gf = Shape::lineString(path);
+                if (!gf.isEmpty()) {
+                    followBuffer.push_back(gf);
+                    dict.follow = gf;
+                }
+                const Shape gs = Shape::lineString(path).buffer(strokeWidth(lastPathAperture) / 1.999, quad);
+                if (!gs.isEmpty()) {
+                    addPoly(gs);
+                    setSolidOrClear(dict, gs);
+                }
+                addGeometry(lastPathAperture, dict);
+            }
+        }
+        if (!path.empty()) path = {path.back()};
+        if (!polyBuffer.empty()) {
+            const Shape u = Shape::unaryUnion(polyBuffer);
+            if (sr.active) sr.ops.emplace_back(currentPolarity, u);
+            solid = (currentPolarity == 'D') ? solid.unite(u) : solid.difference(u);
+            polyBuffer.clear();
+        }
+        if (!sr.active) return;
+        sr.active = false;
+        const std::size_t followEnd = followBuffer.size();
+        std::map<std::string, std::size_t> apertureEnd;
+        for (const auto& [k, a] : apertures_) apertureEnd[k] = a.geometry.size();
+        auto moved = [](const std::optional<Shape>& s, double dx, double dy) -> std::optional<Shape> {
+            if (!s) return std::nullopt;
+            return s->translate(dx, dy);
+        };
+        for (int j = 0; j < sr.ny; ++j) {
+            for (int i = 0; i < sr.nx; ++i) {
+                if (i == 0 && j == 0) continue;
+                const double dx = i * sr.dx, dy = j * sr.dy;
+                for (const auto& [pol, s] : sr.ops) {
+                    const Shape c = s.translate(dx, dy);
+                    solid = pol == 'D' ? solid.unite(c) : solid.difference(c);
+                }
+                for (std::size_t k = sr.followMark; k < followEnd; ++k)
+                    followBuffer.push_back(followBuffer[k].translate(dx, dy));
+                for (auto& [key, ap] : apertures_) {
+                    const auto mark = sr.apertureMarks.find(key);
+                    const std::size_t from = mark == sr.apertureMarks.end() ? 0 : mark->second;
+                    for (std::size_t k = from; k < apertureEnd[key]; ++k) {
+                        const ApertureGeometry g = ap.geometry[k];  // copia: push_back puede mover el vector
+                        ap.geometry.push_back({moved(g.solid, dx, dy), moved(g.follow, dx, dy), moved(g.clear, dx, dy)});
+                    }
+                }
+            }
+        }
+    };
+
     try {
         for (const std::string& rawLine : glines) {
             ++lineNum;
@@ -435,10 +506,31 @@ bool Gerber::parseLines(const std::vector<std::string>& glines) {
                 }
                 if (!polyBuffer.empty()) {
                     const Shape u = Shape::unaryUnion(polyBuffer);
+                    if (sr.active) sr.ops.emplace_back(currentPolarity, u);
                     solid = (currentPolarity == 'D') ? solid.unite(u) : solid.difference(u);
                     polyBuffer.clear();
                 }
                 currentPolarity = newPolarity;
+                continue;
+            }
+
+            // ---- paso y repetición (corregido, sección 14: el original no lo implementa y deja una sola copia)
+            if (!reproduceOriginalBugs() && std::regex_search(gline, m, kSr)) {
+                closeStepRepeat();
+                if (m[1].matched) {
+                    const int nx = std::stoi(m[1].str()), ny = std::stoi(m[2].str());
+                    if (nx > 1 || ny > 1) {
+                        sr.active = true;
+                        sr.nx = nx;
+                        sr.ny = ny;
+                        sr.dx = std::stod(m[3].str());
+                        sr.dy = std::stod(m[4].str());
+                        sr.followMark = followBuffer.size();
+                        sr.apertureMarks.clear();
+                        for (const auto& [k, a] : apertures_) sr.apertureMarks[k] = a.geometry.size();
+                        sr.ops.clear();
+                    }
+                }
                 continue;
             }
 
@@ -808,6 +900,8 @@ bool Gerber::parseLines(const std::vector<std::string>& glines) {
             Logger::warning("Line ignored (" + std::to_string(lineNum) + "): " + gline);
         }
 
+        // ---- fin del archivo: un bloque de paso y repetición sin cerrar se cierra acá
+        if (sr.active) closeStepRepeat();
         // ---- fin del archivo: se cierra el último trazo
         if (path.size() > 1) {
             const auto t = apertureType(lastPathAperture);

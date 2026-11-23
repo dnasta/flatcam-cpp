@@ -11,6 +11,7 @@
 #include "cam/CncJob.h"
 #include "core/OriginalBugs.h"
 #include "core/Shape.h"
+#include "io/FileExport.h"
 #include "parsers/Excellon.h"
 #include "parsers/Gerber.h"
 
@@ -272,4 +273,65 @@ TEST(AutolevelFixed, LinuxCncNoteIsAComment) {
         if (line.find("probing points") != std::string::npos || line.find("LinuxCNC") != std::string::npos ||
             line.find("name of the file") != std::string::npos)
             EXPECT_TRUE(line.front() == '(' && line.back() == ')') << line;
+}
+
+TEST(GerberStepRepeatFixed, BlocksAreRepeatedWithTheirPolarity) {
+    // %SR no está en el original: deja una sola copia.
+    const std::vector<std::string> lines{"%FSLAX24Y24*%", "%MOMM*%", "%ADD10C,0.5*%", "%ADD11R,4X4*%", "D11*",
+                                         "X0Y0D03*", "%SRX3Y2I10J5*%", "X0Y200000D03*", "%SR*%", "M02*"};
+    auto box = [](const Gerber& g) {
+        BoundingBox b{1e9, 1e9, -1e9, -1e9};
+        for (const Shape& s : g.solidGeometry())
+            if (auto sb = s.bounds()) b = b.merged(*sb);
+        return b;
+    };
+    {
+        OriginalBugsScope scope(true);
+        Gerber g;
+        ASSERT_TRUE(g.parseLines(lines));
+        EXPECT_NEAR(box(g).xmax, 2.0, 1e-6);
+    }
+    OriginalBugsScope scope(false);
+    Gerber g;
+    ASSERT_TRUE(g.parseLines(lines));
+    const BoundingBox b = box(g);
+    EXPECT_NEAR(b.xmin, -2.0, 1e-6);
+    EXPECT_NEAR(b.xmax, 22.0, 1e-6);  // 3 columnas cada 10
+    EXPECT_NEAR(b.ymax, 27.0, 1e-6);  // 2 filas cada 5
+    double area = 0;
+    for (const Shape& s : g.solidGeometry()) area += s.area();
+    EXPECT_NEAR(area, 7 * 16.0, 1e-4);  // el pad del origen y las 6 copias
+    EXPECT_EQ(g.apertures().at("11").geometry.size(), 7u);
+    EXPECT_EQ(g.followGeometry().size(), 7u);
+
+    // Polaridad clara dentro del bloque: cada copia borra su parte (sin cerrar el bloque: se cierra al final).
+    Gerber h;
+    ASSERT_TRUE(h.parseLines({"%FSLAX24Y24*%", "%MOMM*%", "%ADD10C,1*%", "%ADD11R,30X4*%", "D11*", "X100000Y0D03*",
+                              "%SRX3Y1I10J0*%", "%LPC*%", "D10*", "X0Y0D03*", "%LPD*%", "M02*"}));
+    double ha = 0;
+    for (const Shape& s : h.solidGeometry()) ha += s.area();
+    EXPECT_NEAR(ha, 120.0 - 3 * 0.785, 0.01);  // el rectángulo menos tres círculos de diámetro 1
+}
+
+TEST(ExportUnits, ObjectsInInchesAreScaledLikeTheOriginal) {
+    // Con la aplicación en pulgadas los objetos están en pulgadas: el original multiplica por 25,4 al exportar en mm
+    // (el port suponía siempre mm). Vale en los dos modos (era un error del port).
+    ExcellonOptions opt;
+    Excellon ex(opt);
+    ASSERT_TRUE(ex.parseLines({"M48", "METRIC", "T1C1.0", "%", "T1", "X1.0Y2.0", "M30"}));  // tomado como pulgadas
+    ExcellonExportFormat f;
+    f.units = "METRIC";
+    f.appUnits = "IN";
+    f.format = "dec";
+    const std::string text = exportExcellon(ex, f, {});
+    EXPECT_NE(text.find("X25.4000Y50.8000"), std::string::npos) << text;
+    f.units = "INCH";
+    EXPECT_NE(exportExcellon(ex, f, {}).find("X1.0000Y2.0000"), std::string::npos);
+    Gerber g;
+    ASSERT_TRUE(g.parseLines({"%FSLAX24Y24*%", "%MOIN*%", "%ADD10C,0.1*%", "D10*", "X10000Y20000D03*", "M02*"}));
+    GerberExportFormat gf;
+    gf.units = "MM";
+    gf.appUnits = "IN";
+    const std::string gt = exportGerber(g, gf, {});
+    EXPECT_NE(gt.find("X254000Y508000D03"), std::string::npos) << gt;
 }

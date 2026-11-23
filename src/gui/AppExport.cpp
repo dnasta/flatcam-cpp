@@ -41,6 +41,7 @@ ExportHeader headerFor(const QString& name) {
 
 GerberExportFormat gerberFormat(const JsonValue& o) {
     GerberExportFormat f;
+    f.appUnits = appUnits().toUpper().toStdString();
     if (o["gerber_exp_units"].isString()) f.units = o["gerber_exp_units"].text();
     f.whole = static_cast<int>(o["gerber_exp_integer"].toDouble(f.whole));
     f.fract = static_cast<int>(o["gerber_exp_decimals"].toDouble(f.fract));
@@ -50,6 +51,7 @@ GerberExportFormat gerberFormat(const JsonValue& o) {
 
 ExcellonExportFormat excellonFormat(const JsonValue& o) {
     ExcellonExportFormat f;
+    f.appUnits = appUnits().toUpper().toStdString();
     if (o["excellon_exp_units"].isString()) f.units = o["excellon_exp_units"].text();
     f.whole = static_cast<int>(o["excellon_exp_integer"].toDouble(f.whole));
     f.fract = static_cast<int>(o["excellon_exp_decimals"].toDouble(f.fract));
