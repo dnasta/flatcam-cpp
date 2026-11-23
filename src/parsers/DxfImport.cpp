@@ -539,11 +539,23 @@ DxfImportResult importDxfAsGerber(const std::string& dxfText) {
                 else lines.push_back(g);
             }
             if (!lines.empty()) {
+                // Las líneas cerradas (una polilínea cerrada, o tramos que se unen en un contorno) son regiones con área,
+                // como en la importación de SVG; las abiertas quedan como líneas.
+                auto add = [&r](const Shape& l) {
+                    const auto c = l.coordinates();
+                    if (l.type() == ShapeType::LinearRing || (c.size() >= 4 && c.front() == c.back())) {
+                        const Shape poly = Shape::polygon(c).buffer(0);
+                        for (const Shape& pp : poly.parts().empty() ? ShapeList{poly} : poly.parts())
+                            if (!pp.isEmpty()) r.geometry.push_back(pp);
+                    } else {
+                        r.geometry.push_back(l);
+                    }
+                };
                 const Shape merged = Shape::lineMerge(lines);
                 if (merged.parts().empty()) {
-                    if (!merged.isEmpty()) r.geometry.push_back(merged);
+                    if (!merged.isEmpty()) add(merged);
                 } else {
-                    for (const Shape& pp : merged.parts()) r.geometry.push_back(pp);
+                    for (const Shape& pp : merged.parts()) add(pp);
                 }
             }
             r.ok = true;

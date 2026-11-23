@@ -32,11 +32,14 @@ FlatCAMObj* App::importSvg(const QString& filename, bool asGerber, const QString
     // Las fuentes (las mismas de la herramienta Texto) solo si hay textos: leerlas tarda.
     const FontParser* fonts =
         !reproduceOriginalBugs() && text.find("<text") != std::string::npos ? &GeoTextTool::fonts() : nullptr;
-    const SvgImportResult r = asGerber ? importSvgAsGerber(text, 64, fonts) : importSvgAsGeometry(text, 64, fonts);
+    SvgImportResult r = asGerber ? importSvgAsGerber(text, 64, fonts) : importSvgAsGeometry(text, 64, fonts);
     if (!r.ok) {
         ui_->inform("[ERROR_NOTCL]" + tr_("Import failed."));
         return nullptr;
     }
+    // Un SVG con unidades físicas viene en mm: con la aplicación en pulgadas se convierte.
+    if (r.millimeters && appUnits().toUpper() == "IN")
+        for (Shape& s : r.geometry) s = s.scale(1 / 25.4, 1 / 25.4, Point2D{0, 0});
     const QString name = outname.isEmpty() ? QFileInfo(filename).fileName() : outname;
     FlatCAMObj* obj = nullptr;
     if (asGerber) {
@@ -146,7 +149,7 @@ FlatCAMObj* App::openHpgl2(const QString& filename) {
         return nullptr;
     }
     const std::string text = f.readAll().toStdString();
-    const Hpgl2Result r = parseHpgl2(text);
+    const Hpgl2Result r = parseHpgl2(text, 64, !reproduceOriginalBugs());  // --original-bugs también aquí
     if (!r.ok) {
         if (!r.error.empty()) ui_->inform("[ERROR] " + tr_("HPGL2 Parser ERROR") + "\n" + tr_(QString::fromStdString(r.error)));
         ui_->inform("[ERROR_NOTCL] " + tr_("Object is not HPGL2 file or empty. Aborting object creation."));

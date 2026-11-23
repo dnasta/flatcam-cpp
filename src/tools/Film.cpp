@@ -71,7 +71,10 @@ FilmResult filmSvg(const ShapeList& obj, const ShapeList& box, const BoundingBox
     // escala la película queda corrida respecto del viewBox (corregido: las dos desde la esquina).
     if (fixed) scaleReference = trScaleReference;
     const Shape boxGeo = Shape::unaryUnion(box);
-    const std::optional<Point2D> skewRef = skewOrigin(o.skewReference, boxGeo);
+    // Corregido (sección 14): el original toma la referencia de la inclinación y el centro del espejo de la caja para
+    // la caja y del objeto para el objeto; si no coinciden, la película queda corrida respecto del viewBox. Se usan
+    // los de la caja (la inclinación desde la caja ya escalada, el espejo desde la caja ya inclinada) para los dos.
+    std::optional<Point2D> skewRef = skewOrigin(o.skewReference, boxGeo);
 
     // La caja: las transformaciones se acumulan.
     Shape tbox = boxGeo;
@@ -79,9 +82,11 @@ FilmResult filmSvg(const ShapeList& obj, const ShapeList& box, const BoundingBox
     else if (sx == 0.0 && sy != 0.0) tbox = scaleShape(tbox, 1.0, sy, trScaleReference);
     else if (sx != 0.0 && sy != 0.0) tbox = scaleShape(tbox, sx, sy, trScaleReference);
     const bool kx = truthy(o.skewX), ky = truthy(o.skewY);
+    if (fixed) skewRef = skewRef ? skewOrigin(o.skewReference, tbox) : std::optional<Point2D>(centerOf(tbox));
     if (kx && !ky) tbox = skewShape(tbox, *o.skewX, 0.0, skewRef);
     else if (!kx && ky) tbox = skewShape(tbox, 0.0, *o.skewY, skewRef);
     else if (kx && ky) tbox = skewShape(tbox, *o.skewX, *o.skewY, skewRef);
+    const std::optional<Point2D> mirrorRef = fixed ? std::optional<Point2D>(centerOf(tbox)) : std::nullopt;
     if (o.mirror == "x") tbox = scaleShape(tbox, 1.0, -1.0, std::nullopt);
     if (o.mirror == "y") tbox = scaleShape(tbox, -1.0, 1.0, std::nullopt);
     if (o.mirror == "both") tbox = scaleShape(tbox, -1.0, -1.0, std::nullopt);
@@ -90,7 +95,7 @@ FilmResult filmSvg(const ShapeList& obj, const ShapeList& box, const BoundingBox
 
     // Geometry.export_svg: cada transformación parte de la geometría sin transformar (la última que aplica gana).
     const Shape geomSvg = Shape::unaryUnion(obj);
-    const std::optional<Point2D> objSkewRef = skewOrigin(o.skewReference, geomSvg);
+    const std::optional<Point2D> objSkewRef = fixed ? skewRef : skewOrigin(o.skewReference, geomSvg);
     Shape geom = geomSvg;
     if (sx != 0.0 && sy == 0.0) geom = scaleShape(geomSvg, sx, 1.0, scaleReference);
     else if (sx == 0.0 && sy != 0.0) geom = scaleShape(geomSvg, 1.0, sy, scaleReference);
@@ -101,9 +106,9 @@ FilmResult filmSvg(const ShapeList& obj, const ShapeList& box, const BoundingBox
     else if (!kx && ky) geom = skewShape(afterScale, 0.0, *o.skewY, objSkewRef);
     else if (kx && ky) geom = skewShape(afterScale, *o.skewX, *o.skewY, objSkewRef);
     const Shape afterSkew = fixed ? geom : geomSvg;
-    if (o.mirror == "x") geom = scaleShape(afterSkew, 1.0, -1.0, std::nullopt);
-    if (o.mirror == "y") geom = scaleShape(afterSkew, -1.0, 1.0, std::nullopt);
-    if (o.mirror == "both") geom = scaleShape(afterSkew, -1.0, -1.0, std::nullopt);
+    if (o.mirror == "x") geom = scaleShape(afterSkew, 1.0, -1.0, mirrorRef);
+    if (o.mirror == "y") geom = scaleShape(afterSkew, -1.0, 1.0, mirrorRef);
+    if (o.mirror == "both") geom = scaleShape(afterSkew, -1.0, -1.0, mirrorRef);
     const double stroke = o.strokeFactor <= 0 ? 0.01 : o.strokeFactor;
 
     // ET.fromstring: se cambian los atributos de los hijos directos de la raíz (un polígono suelto no tiene hijos).

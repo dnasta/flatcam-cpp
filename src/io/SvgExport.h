@@ -42,6 +42,21 @@ std::string exportSvg(const ShapeList& shapes, const std::string& units, double 
 std::string exportCncSvg(const ShapeList& travels, const ShapeList& cuts, const BoundingBox& bounds,
                          const std::string& units, double scaleStrokeFactor);
 
+/** @brief Viajes y cortes de una herramienta de un CNC Job, con su trazo (`tooldia / 2`). */
+struct CncSvgTool {
+    ShapeList travels;   ///< Viajes (`'T'`).
+    ShapeList cuts;      ///< Cortes (`'C'`).
+    double stroke{0.0};  ///< Factor del trazo (0 pasa a 0,01).
+};
+
+/**
+ * @brief Como el otro `exportCncSvg`, pero con un grupo por herramienta y cada uno con su trazo (corregido, sección
+ * 14: el original usa el diámetro de la última herramienta para todas). Primero todos los viajes y después los cortes.
+ * @param tools Las herramientas. @param bounds Los límites. @param units `"mm"` o `"in"`.
+ * @return El documento, o vacío si no hay figuras.
+ */
+std::string exportCncSvg(const std::vector<CncSvgTool>& tools, const BoundingBox& bounds, const std::string& units);
+
 /** @brief Un objeto para imprimir (`save_pdf`): sus figuras y el color y la opacidad que le pone el original. */
 struct PrintSvgItem {
     ShapeList shapes;      ///< `flatten()` del objeto.

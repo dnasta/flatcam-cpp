@@ -177,6 +177,23 @@ std::string exportCncSvg(const ShapeList& travels, const ShapeList& cuts, const 
     return prettyMiniXml(parseMiniXml(doc));
 }
 
+std::string exportCncSvg(const std::vector<CncSvgTool>& tools, const BoundingBox& b, const std::string& units) {
+    std::string travels, cuts;
+    for (const CncSvgTool& t : tools) {
+        const double sf = t.stroke == 0 ? 0.01 : t.stroke;
+        if (!t.travels.empty()) travels += shapelySvg(Shape::unaryUnion(t.travels), sf, "#F0E24D");
+        if (!t.cuts.empty()) cuts += shapelySvg(Shape::unaryUnion(t.cuts), sf, "#5E6CFF");
+    }
+    if (travels.empty() && cuts.empty()) return {};
+    const double w = std::abs(b.xmax - b.xmin), h = std::abs(b.ymax - b.ymin);
+    const std::string svgw = pyFloatRepr(w), svgh = pyFloatRepr(h);
+    std::string doc = "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" ";
+    doc += "width=\"" + svgw + units + "\" height=\"" + svgh + units + "\" viewBox=\"" + pyFloatRepr(b.xmin) + " " +
+           pyFloatRepr(b.ymin - h) + " " + svgw + " " + svgh + "\">";
+    doc += "<g transform=\"scale(1,-1)\">" + travels + cuts + "</g> </svg>";
+    return prettyMiniXml(parseMiniXml(doc));
+}
+
 std::string exportPrintSvg(const std::vector<PrintSvgItem>& items, const BoundingBox& b, const std::string& uom) {
     const double boundary = std::string("mm").find(uom) != std::string::npos ? 1.0 : 0.0393701;
     const double w = b.xmax - b.xmin, h = b.ymax - b.ymin;

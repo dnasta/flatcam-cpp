@@ -571,6 +571,8 @@ std::optional<Shape> polygonOf(const std::vector<Point2D>& pts, const std::vecto
     }
 }
 
+thread_local bool tFillNone = false;              ///< `fill: none` del elemento o de un grupo que lo contiene.
+
 std::optional<ShapeList> path2shapely(const std::vector<SvgSegment>& path, double factor) {
     std::vector<Point2D> points;
     std::vector<std::vector<Point2D>> rings;
@@ -618,10 +620,35 @@ std::optional<ShapeList> path2shapely(const std::vector<SvgSegment>& path, doubl
     }
     const bool openEnd = !points.empty() && !closed;
     if (!points.empty()) rings.push_back(points);
-    if (!reproduceOriginalBugs() && rings.size() == 1 && openEnd && !(rings[0].front() == rings[0].back())) {
-        // Corregido: un trayecto abierto es una línea (el original lo cierra y lo convierte en polígono).
-        if (rings[0].size() < 2) return std::nullopt;
-        return ShapeList{Shape::lineString(rings[0])};
+    if (!reproduceOriginalBugs() && tFillNone) {
+        // Corregido: sin relleno (`fill: none`) cada subtrayecto es una línea (el original los cierra y los convierte en
+        // polígono). Con relleno (el de fábrica de SVG es negro) un trayecto abierto se rellena cerrado, como lo dibuja
+        // un navegador.
+        (void)openEnd;
+        ShapeList lines;
+        for (const auto& r : rings)
+            if (r.size() >= 2) lines.push_back(Shape::lineString(r));
+        return lines;
+    }
+    if (!reproduceOriginalBugs() && rings.size() > 1) {
+        // Corregido: cada subtrayecto relleno es su propio polígono y se combinan con la regla par-impar (un subtrayecto
+        // dentro de otro es un agujero). El original toma el primero como contorno y los demás como agujeros, y si no
+        // están adentro arma un polígono con los dos primeros puntos de cada uno.
+        std::optional<Shape> acc;
+        for (const auto& r : rings) {
+            if (r.size() < 3) continue;
+            const auto q = polygonOf(r);
+            if (!q) continue;
+            const Shape c = q->buffer(0);
+            acc = acc ? acc->symmetricDifference(c) : c;
+        }
+        ShapeList out;
+        if (acc && !acc->isEmpty()) {
+            const ShapeList parts = acc->parts();
+            if (parts.empty()) out.push_back(*acc);
+            else out.insert(out.end(), parts.begin(), parts.end());
+        }
+        return out;
     }
     // MultiLineString(rings): cada anillo necesita al menos dos puntos.
     for (const auto& r : rings)
@@ -839,6 +866,17 @@ ShapeList svgText(const XmlElement& node) {
 }
 
 Geos getsvggeo(const XmlElement& node, const XmlElement& root, int res, double factor) {
+    // El relleno se hereda de los grupos (fill o style); se restaura al salir.
+    struct FillScope {
+        bool saved = tFillNone;
+        ~FillScope() { tFillNone = saved; }
+    } fillScope;
+    {
+        const auto st = styleOf(node, {});
+        std::optional<std::string> fill = node.get("fill");
+        if (const auto it = st.find("fill"); it != st.end()) fill = it->second;
+        if (fill) tFillNone = *fill == "none";
+    }
     Geos geo = ShapeList{};
     const std::string& kind = node.tag;
     if (kind == "defs" && !reproduceOriginalBugs()) {
@@ -925,16 +963,19 @@ Geos getsvggeo(const XmlElement& node, const XmlElement& root, int res, double f
             const auto list = parseTransform(*tr);
             for (auto it = list.rbegin(); it != list.rend(); ++it) {
                 for (Shape& g : *geo) {
+                    // Corregido: las figuras ya están multiplicadas por el factor del viewBox, así que los
+                    // desplazamientos y el centro del giro también (el original los usa sin el factor).
+                    const double f = reproduceOriginalBugs() ? 1.0 : factor;
                     const auto& v = it->v;
-                    if (it->name == "translate") g = g.translate(v[0], v[1]);
+                    if (it->name == "translate") g = g.translate(v[0] * f, v[1] * f);
                     else if (it->name == "scale") g = g.scale(v[0], v[1], Point2D{0, 0});
-                    else if (it->name == "rotate") g = g.rotate(v[0], Point2D{v[1], v[2]});
+                    else if (it->name == "rotate") g = g.rotate(v[0], Point2D{v[1] * f, v[2] * f});
                     else if (it->name == "skew") g = g.skew(v[0], v[1], Point2D{0, 0});
                     // affine_transform(geo, [a, b, c, d, e, f]): Shapely lo toma como [a, b, d, e, xoff, yoff].
                     // Corregido: matrix(a b c d e f) es x' = a x + c y + e, y' = b x + d y + f.
                     else if (it->name == "matrix")
                         g = g.transform(reproduceOriginalBugs() ? AffineTransform(v[0], v[1], v[2], v[3], v[4], v[5])
-                                                                : AffineTransform(v[0], v[2], v[1], v[3], v[4], v[5]));
+                                                                : AffineTransform(v[0], v[2], v[1], v[3], v[4] * f, v[5] * f));
                 }
             }
         }
@@ -953,13 +994,29 @@ SvgImportResult readSvg(const std::string& text, int res, ShapeList& geos, const
     const auto root = parseXml(text, r.error);
     if (!root) return r;
     try {
-        const double h = svgLength(root->get("height"));
+        const bool fixed = !reproduceOriginalBugs();
+        // Corregido: los milímetros de una unidad física del ancho o el alto (el original no tiene unidades: el número
+        // se toma en las unidades de la aplicación). Sin unidad, como el original.
+        auto mmPerUnit = [&](const std::optional<std::string>& s) -> double {
+            if (!fixed || !s) return 0;
+            static const std::regex re("(" + kNumber + ")\\s*(in|cm|mm|pt|pc|px)\\s*$");
+            std::smatch m;
+            if (!std::regex_search(*s, m, re)) return 0;
+            const std::string u = m[2].str();
+            return u == "mm" ? 1 : u == "cm" ? 10 : u == "in" ? 25.4 : u == "pt" ? 25.4 / 72 : u == "pc" ? 25.4 / 6
+                                                                                                         : 25.4 / 96;
+        };
+        const double wUnit = mmPerUnit(root->get("width")), hUnit = mmPerUnit(root->get("height"));
+        r.millimeters = wUnit > 0 || hUnit > 0;
+        const double h = svgLength(root->get("height")) * (hUnit > 0 ? hUnit : 1.0);
         double factor = 1.0;
+        Point2D origin{0, 0};  // min-x y min-y del viewBox (corregido: el original los ignora)
+        if (fixed && !root->get("viewBox") && wUnit > 0) factor = 25.4 / 96;  // sin viewBox la unidad es el px
         if (const auto vb = root->get("viewBox")) {
             std::vector<double> v;
             std::string tok;
             for (char c : *vb + " ") {
-                if (std::isspace(static_cast<unsigned char>(c))) {
+                if (std::isspace(static_cast<unsigned char>(c)) || (fixed && c == ',')) {
                     if (!tok.empty()) v.push_back(pyFloat(tok));
                     tok.clear();
                 } else {
@@ -967,11 +1024,13 @@ SvgImportResult readSvg(const std::string& text, int res, ShapeList& geos, const
                 }
             }
             if (v.size() < 3) throw SvgError("viewBox");
-            factor = svgLength(root->get("width")) / v[2];
+            factor = svgLength(root->get("width")) * (wUnit > 0 ? wUnit : 1.0) / v[2];
+            if (fixed && v.size() >= 2) origin = {v[0] * factor, v[1] * factor};
         }
         const Geos g = getsvggeo(*root, *root, res, factor);
         if (!g) throw SvgError("'NoneType' object is not iterable");
-        for (const Shape& s : *g) geos.push_back(s.scale(1.0, -1.0, Point2D{0, 0}).translate(0, h));
+        for (const Shape& s : *g)
+            geos.push_back(s.translate(-origin.x, -origin.y).scale(1.0, -1.0, Point2D{0, 0}).translate(0, h));
         r.textWithoutStyle = tspanWithoutStyle(*root);
         r.textsSkipped = tTextsSkipped;
         r.ok = true;

@@ -12,7 +12,9 @@
 #include "core/OriginalBugs.h"
 #include "core/Shape.h"
 #include "io/FileExport.h"
+#include "io/SvgExport.h"
 #include "parsers/Excellon.h"
+#include "tools/Film.h"
 #include "parsers/Gerber.h"
 
 using namespace flatcam;
@@ -334,4 +336,71 @@ TEST(ExportUnits, ObjectsInInchesAreScaledLikeTheOriginal) {
     gf.appUnits = "IN";
     const std::string gt = exportGerber(g, gf, {});
     EXPECT_NE(gt.find("X254000Y508000D03"), std::string::npos) << gt;
+}
+
+TEST(ExportFixed, NegativeCoordinatesWithLeadingZeros) {
+    // Excellon LZ (ceros a la izquierda) y Gerber con ceros finales omitidos ("T"): el signo no es un dígito.
+    ExcellonOptions opt;
+    Excellon ex(opt);
+    ASSERT_TRUE(ex.parseLines({"M48", "METRIC", "T1C1.0", "%", "T1", "X-1.5Y2.25", "M30"}));
+    ExcellonExportFormat f;
+    f.units = "METRIC";
+    f.format = "ndec";
+    f.zeros = "LZ";
+    f.whole = 3;
+    f.fract = 3;
+    {
+        OriginalBugsScope scope(true);
+        EXPECT_NE(exportExcellon(ex, f, {}).find("X0-1500"), std::string::npos);
+    }
+    OriginalBugsScope scope(false);
+    const std::string text = exportExcellon(ex, f, {});
+    EXPECT_NE(text.find("X-001500Y002250"), std::string::npos) << text;
+    // Y se vuelve a leer igual.
+    Excellon back(opt);
+    ASSERT_TRUE(back.parseLines([&] {
+        std::vector<std::string> v;
+        std::istringstream in(text);
+        for (std::string l; std::getline(in, l);) v.push_back(l);
+        return v;
+    }()));
+    ASSERT_FALSE(back.drillTools().empty());
+    const auto& d = back.drillTools().begin()->second.drills;
+    ASSERT_EQ(d.size(), 1u);
+    EXPECT_NEAR(d[0].x, -1.5, 1e-9);
+    EXPECT_NEAR(d[0].y, 2.25, 1e-9);
+}
+
+TEST(FilmFixed, MirrorAndSkewUseTheBoxAsReference) {
+    // Un cuadrado chico en una esquina de la caja: reflejado en X tiene que ir a la otra esquina de la caja, no
+    // quedarse en su lugar (el original lo refleja alrededor de su propio centro).
+    const ShapeList obj{Shape::box(1, 1, 2, 2)};
+    const ShapeList box{Shape::box(0, 0, 10, 10)};
+    FilmOptions o;
+    o.negative = false;
+    o.mirror = "y";
+    auto svgOf = [&] { return filmSvg(obj, box, BoundingBox{0, 0, 10, 10}, "mm", o).svg; };
+    {
+        OriginalBugsScope scope(true);
+        EXPECT_EQ(svgOf().find("9.0,"), std::string::npos);
+    }
+    OriginalBugsScope scope(false);
+    const std::string s = svgOf();
+    EXPECT_NE(s.find("9.0,"), std::string::npos) << s;
+    EXPECT_NE(s.find("8.0,"), std::string::npos) << s;
+}
+
+TEST(CncSvgFixed, EveryToolKeepsItsStrokeWidth) {
+    CncSvgTool a, b;
+    a.cuts = {Shape::lineString({{0, 0}, {10, 0}})};
+    a.stroke = 0.25;
+    b.cuts = {Shape::lineString({{0, 5}, {10, 5}})};
+    b.travels = {Shape::lineString({{10, 0}, {0, 5}})};
+    b.stroke = 0.6;
+    const std::string s = exportCncSvg({a, b}, BoundingBox{0, 0, 10, 5}, "mm");
+    // Shapely escribe stroke-width = 2 * factor.
+    EXPECT_NE(s.find("stroke-width=\"0.5\""), std::string::npos) << s;
+    EXPECT_NE(s.find("stroke-width=\"1.2\""), std::string::npos) << s;
+    // Los viajes van debajo de todos los cortes.
+    EXPECT_LT(s.find("#F0E24D"), s.find("#5E6CFF"));
 }

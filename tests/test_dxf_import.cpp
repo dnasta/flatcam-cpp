@@ -96,6 +96,10 @@ TEST(DxfImportFixed, BulgesSolidsSplinesInsertsAndSingleLines) {
         const DxfImportResult r = importDxfAsGeometry(dxf("", pl));
         ASSERT_TRUE(r.ok) << r.error;
         EXPECT_NEAR(lengthOf(r.geometry), 10 * 3.14159265358979, 0.05);
+        // Como Gerber, una polilínea cerrada es una región con área (antes quedaba una línea sin área).
+        const DxfImportResult g = importDxfAsGerber(dxf("", pl));
+        ASSERT_TRUE(g.ok) << g.error;
+        EXPECT_NEAR(areaOf(g.geometry), 25 * 3.14159265358979, 0.5);
     }
     // Un SOLID: el cuadrado relleno (los puntos 1, 2, 4, 3).
     {

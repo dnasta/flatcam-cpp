@@ -776,11 +776,14 @@ FlatCAMObj* App::openByExtension(const QString& filename) {
                                           "ply", "rol", "sbp", "tap", "xpi"};
     if (kGerberExt.contains(ext)) return openGerber(filename);
     if (ext == "tap" && !reproduceOriginalBugs()) {
-        // Corregido: se abre una sola vez, según el contenido (la cabecera de un Excellon: M48 o una herramienta TnnC).
+        // Corregido: se abre una sola vez, según el contenido: un Excellon declara sus herramientas (TnnC...) o, después
+        // de M48, sus unidades o su formato. M48 solo no alcanza: en G-code es habilitar el ajuste del avance.
         QFile f(filename);
         const QString text = f.open(QIODevice::ReadOnly) ? QString::fromLatin1(f.read(1 << 20)) : QString();
-        static const QRegularExpression excellon(R"((^|\n)\s*(M48|T\d+C[\d.]+))");
-        return excellon.match(text).hasMatch() ? openExcellon(filename) : openGcode(filename);
+        static const QRegularExpression tool(R"((^|\n)\s*T\d+C[\d.]+)");
+        static const QRegularExpression header(R"((^|\n)\s*M48\s*\r?\n(.*\n){0,20}?\s*(METRIC|INCH|;\s*FORMAT|FMAT))");
+        const bool isExcellon = tool.match(text).hasMatch() || header.match(text).hasMatch();
+        return isExcellon ? openExcellon(filename) : openGcode(filename);
     }
     if (ext == "tap") {
         FlatCAMObj* e = openExcellon(filename);

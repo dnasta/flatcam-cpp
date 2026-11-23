@@ -28,11 +28,18 @@ std::string lz(double v, int fract) {
 
 /// `tz_format` / "LZ" del Excellon: la parte entera completada con ceros a la izquierda hasta `whole`, sin el punto.
 std::string tz(double v, int whole, int fract) {
-    const std::string s = fixed(v, fract);
+    std::string s = fixed(v, fract);
+    // Corregido (sección 14): el original cuenta el signo como un dígito y completa con ceros delante del signo
+    // ("0-1..."): el signo va primero y se completan solo los dígitos.
+    std::string sign;
+    if (!reproduceOriginalBugs() && !s.empty() && s[0] == '-') {
+        sign = "-";
+        s.erase(0, 1);
+    }
     const auto dot = s.find('.');
     std::string w = s.substr(0, dot);
     if (static_cast<int>(w.size()) < whole) w = std::string(whole - w.size(), '0') + w;
-    return w + s.substr(dot + 1);
+    return sign + w + s.substr(dot + 1);
 }
 
 struct GerberWriter {

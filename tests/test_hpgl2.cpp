@@ -135,3 +135,12 @@ TEST(Hpgl2Fixed, PenChangeWithOnePointPenDownWithoutPathAndNoSelectPen) {
     ASSERT_EQ(b.tools.count(1), 1u);
     EXPECT_EQ(b.tools.at(1).size(), 2u);
 }
+
+TEST(Hpgl2Fixed, InitializeLeavesThePenAtTheOrigin) {
+    // IN pone la pluma en (0, 0): un PD seguido de PA dibuja desde el origen (antes quedaba un trazo de un punto).
+    const auto r = flatcam::parseHpgl2("IN;\nSP1;\nPD;\nPA100,100;\n");
+    ASSERT_TRUE(r.ok) << r.error;
+    ASSERT_EQ(r.tools.count(1), 1u);
+    ASSERT_EQ(r.tools.at(1).size(), 1u);
+    EXPECT_GT(r.tools.at(1)[0].length(), 0.0);
+}

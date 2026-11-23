@@ -79,6 +79,8 @@ struct SvgImportResult {
      */
     bool textWithoutStyle{false};
     int textsSkipped{0};  ///< Textos que no se pudieron escribir (la fuente no está o no hay FreeType).
+    /** @brief Si el ancho o el alto del SVG tienen unidades físicas: las figuras están en mm (corregido, sección 14). */
+    bool millimeters{false};
 };
 
 /**

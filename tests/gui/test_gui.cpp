@@ -558,7 +558,12 @@ TEST(GuiFixed, CncSvgOfADrillingJobWithEveryTool) {
     app.drillingTool->toolchange_cb->setChecked(true);  // un G-code por herramienta
     auto* cnc = dynamic_cast<CNCJobObject*>(app.drillingTool->generateCnc());
     ASSERT_NE(cnc, nullptr);
-    const std::string orig = app.cncSvgText(cnc);  // el original: solo la última herramienta
+    std::string orig;
+    {
+        flatcam::OriginalBugsScope original(true);
+        orig = app.cncSvgText(cnc);  // el original: solo la última herramienta
+    }
+    ASSERT_FALSE(orig.empty());
     flatcam::OriginalBugsScope fixed(false);
     const std::string svg = app.cncSvgText(cnc);
     ASSERT_FALSE(svg.empty());
@@ -2842,11 +2847,19 @@ TEST(GuiFiles, OpenHpgl2) {
     ASSERT_NE(geo, nullptr);
     EXPECT_EQ(geo->tools().size(), 2u);
     EXPECT_EQ(geo->tools().begin()->second.type, "Iso");
-    // Varias órdenes por línea: el original no lo lee; el port sí (corrección consciente).
-    EXPECT_NE(app.openHpgl2(QString::fromStdString(std::string(FLATCAM_TEST_DATA_DIR) + "/hpgl2/multi_cmd.plt")), nullptr);
-    // Bajar la pluma sin trazo empezado sigue fallando, como en el original.
-    EXPECT_EQ(app.openHpgl2(QString::fromStdString(std::string(FLATCAM_TEST_DATA_DIR) + "/hpgl2/pen_down_first.plt")),
-              nullptr);
+    const auto open = [&app](const char* name) {
+        return app.openHpgl2(QString::fromStdString(std::string(FLATCAM_TEST_DATA_DIR) + "/hpgl2/" + name));
+    };
+    {
+        // Con --original-bugs: varias órdenes por línea y bajar la pluma sin trazo hacen fallar la lectura.
+        flatcam::OriginalBugsScope original(true);
+        EXPECT_EQ(open("multi_cmd.plt"), nullptr);
+        EXPECT_EQ(open("pen_down_first.plt"), nullptr);
+    }
+    // Corregidos (sección 14, a pedido del usuario).
+    flatcam::OriginalBugsScope fixed(false);
+    EXPECT_NE(open("multi_cmd.plt"), nullptr);
+    EXPECT_NE(open("pen_down_first.plt"), nullptr);
 }
 
 // "Geometría de fresado" del panel del Excellon: Fresar agujeros y Fresar ranuras (generate_milling_drills / _slots).
@@ -4189,6 +4202,7 @@ TEST(GuiFixed, TapFileOpensOnceByItsContent) {
     QFile::copy(QString(FLATCAM_TEST_DATA_DIR) + "/DosCau_PPal-Edge_Cuts.nc", gcode);
     QFile::copy(QString(FLATCAM_TEST_DATA_DIR) + "/PCB principal-Drill.drl", drill);
     {
+        flatcam::OriginalBugsScope original(true);
         App app;  // como el original: el Excellon se abre y el lector de G-code avisa el error
         QStringList messages;
         QObject::connect(app.ui(), &MainGUI::informed, [&messages](const QString& m) { messages << m; });
@@ -4198,6 +4212,8 @@ TEST(GuiFixed, TapFileOpensOnceByItsContent) {
     }
     flatcam::OriginalBugsScope fixed(false);
     App app;
+    QStringList messages;
+    QObject::connect(app.ui(), &MainGUI::informed, [&messages](const QString& m) { messages << m; });
     FlatCAMObj* g = app.openByExtension(gcode);
     ASSERT_NE(g, nullptr);
     EXPECT_NE(dynamic_cast<CNCJobObject*>(g), nullptr);
@@ -4205,4 +4221,12 @@ TEST(GuiFixed, TapFileOpensOnceByItsContent) {
     ASSERT_NE(e, nullptr);
     EXPECT_NE(dynamic_cast<ExcellonObject*>(e), nullptr);
     EXPECT_EQ(app.collection()->objects().size(), 2u);
+    EXPECT_FALSE(messages.join("\n").contains("[ERROR")) << messages.join("\n").toStdString();
+    // Un G-code con M48 (en algunos controladores, habilitar el ajuste del avance) sigue siendo G-code.
+    const QString m48 = tmp.path() + "/m48.tap";
+    QFile out(m48);
+    ASSERT_TRUE(out.open(QIODevice::WriteOnly));
+    out.write("G21\nG90\nM48\nG00 Z5.0\nG00 X1.0 Y1.0\nG01 Z-1.0 F100\nG01 X10.0 Y1.0\nG00 Z5.0\nM02\n");
+    out.close();
+    EXPECT_NE(dynamic_cast<CNCJobObject*>(app.openByExtension(m48)), nullptr);
 }

@@ -30,11 +30,12 @@ int main(int argc, char* argv[]) {
     // apply_language: el idioma guardado (Preferencias -> General -> Idiomas) o, la primera vez, el del sistema.
     flatcam::gui::setLanguage(flatcam::gui::startupLanguage(
         QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/settings.ini"));
-    flatcam::gui::App app;
     QStringList args = QApplication::arguments().mid(1);
     // --original-bugs (o FLATCAM_ORIGINAL_BUGS=1): reproducir los errores del FlatCAM original (core/OriginalBugs.h).
+    // Antes de crear la aplicación: los paneles leen el interruptor al armarse.
     if (args.removeAll("--original-bugs") > 0 || qEnvironmentVariableIntValue("FLATCAM_ORIGINAL_BUGS") == 1)
         flatcam::setReproduceOriginalBugs(true);
+    flatcam::gui::App app;
     QString shotPath;
     const int shot = args.indexOf("--screenshot");
     if (shot >= 0 && shot + 1 < args.size()) {

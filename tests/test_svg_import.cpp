@@ -89,12 +89,19 @@ TEST(SvgImportFixed, ViewBoxFactorRectsMatrixPathsAndDefs) {
     OriginalBugsScope fixed(false);
     // Un trayecto de líneas: el inicio también con el factor (cuadrado de 10 -> 20 x 20).
     EXPECT_NEAR(totalArea(geometryOf("<path d=\"M 5 5 L 15 5 L 15 15 L 5 15 Z\"/>")), 400.0, 1e-6);
-    // Un trayecto abierto es una línea.
+    // Un trayecto abierto sin relleno es una línea; con relleno (el de fábrica de SVG es negro) se rellena cerrado.
     {
-        const ShapeList g = geometryOf("<path d=\"M 0 0 L 10 0 L 10 10\"/>");
+        const ShapeList g = geometryOf("<path fill=\"none\" d=\"M 0 0 L 10 0 L 10 10\"/>");
         ASSERT_EQ(g.size(), 1u);
         EXPECT_EQ(g[0].type(), ShapeType::LineString);
         EXPECT_NEAR(g[0].length(), 40.0, 1e-9);
+        EXPECT_NEAR(totalArea(geometryOf("<path d=\"M 0 0 L 10 0 L 10 10\"/>")), 200.0, 1e-6);
+        // El relleno se hereda del grupo (atributo o style) y el elemento lo puede volver a pedir.
+        const ShapeList h = geometryOf("<g style=\"fill:none\"><path d=\"M 0 0 L 10 0 L 10 10 M 20 0 L 30 0\"/></g>");
+        ASSERT_EQ(h.size(), 2u);
+        EXPECT_EQ(h[1].type(), ShapeType::LineString);
+        EXPECT_NEAR(totalArea(geometryOf("<g fill=\"none\"><path fill=\"red\" d=\"M 0 0 L 10 0 L 10 10\"/></g>")),
+                    200.0, 1e-6);
     }
     // El rect con el ancho y el alto escalados; con esquinas redondeadas.
     EXPECT_NEAR(totalArea(geometryOf("<rect x=\"0\" y=\"0\" width=\"10\" height=\"5\"/>")), 200.0, 1e-6);
@@ -166,4 +173,56 @@ TEST(SvgImportFixed, TextsAreWrittenWithTheirFont) {
     bool hole = false;
     for (const Shape& s : r.geometry) hole = hole || !s.interiors().empty();
     EXPECT_TRUE(hole);
+}
+
+TEST(SvgImportFixed, TransformsViewBoxOriginAndPhysicalUnits) {
+    auto bounds = [](const std::string& svg) {
+        const SvgImportResult r = importSvgAsGeometry(svg);
+        EXPECT_TRUE(r.ok) << r.error;
+        BoundingBox b{1e9, 1e9, -1e9, -1e9};
+        for (const Shape& s : r.geometry)
+            if (auto sb = s.bounds()) b = b.merged(*sb);
+        return b;
+    };
+    const std::string rect = "<rect x=\"0\" y=\"0\" width=\"5\" height=\"5\"/>";
+    // viewBox 0 0 50 50 en 100 mm: factor 2. translate(10, 0) son 20 mm.
+    const std::string tr = "<svg width=\"100mm\" height=\"100mm\" viewBox=\"0 0 50 50\"><g transform=\"translate(10,0)\">" +
+                           rect + "</g></svg>";
+    {
+        OriginalBugsScope scope(true);
+        EXPECT_NEAR(bounds(tr).xmin, 10.0, 1e-9);
+    }
+    OriginalBugsScope scope(false);
+    EXPECT_NEAR(bounds(tr).xmin, 20.0, 1e-9);
+    // matrix(1 0 0 1 10 0) igual; rotate(90, 5, 5) alrededor del centro del cuadrado lo deja en su lugar.
+    EXPECT_NEAR(bounds("<svg width=\"100mm\" height=\"100mm\" viewBox=\"0 0 50 50\"><g transform=\"matrix(1 0 0 1 10 0)\">" +
+                       rect + "</g></svg>").xmin, 20.0, 1e-9);
+    const BoundingBox rot = bounds("<svg width=\"100mm\" height=\"100mm\" viewBox=\"0 0 50 50\"><g "
+                                   "transform=\"rotate(90 2.5 2.5)\">" + rect + "</g></svg>");
+    EXPECT_NEAR(rot.xmin, 0.0, 1e-9);
+    EXPECT_NEAR(rot.xmax, 10.0, 1e-9);
+    // El origen del viewBox (con comas) queda en (0, 0).
+    const BoundingBox o = bounds("<svg width=\"100mm\" height=\"100mm\" viewBox=\"10,10,50,50\">"
+                                 "<rect x=\"10\" y=\"55\" width=\"5\" height=\"5\"/></svg>");
+    EXPECT_NEAR(o.xmin, 0.0, 1e-9);
+    EXPECT_NEAR(o.ymin, 0.0, 1e-9);
+    // Unidades físicas: 1 pulgada de ancho son 25,4 mm.
+    const std::string in = "<svg width=\"1in\" height=\"1in\" viewBox=\"0 0 10 10\"><rect x=\"0\" y=\"0\" width=\"10\" "
+                           "height=\"10\"/></svg>";
+    const SvgImportResult r = importSvgAsGeometry(in);
+    EXPECT_TRUE(r.millimeters);
+    EXPECT_NEAR(bounds(in).xmax, 25.4, 1e-9);
+    EXPECT_NEAR(bounds(in).ymax, 25.4, 1e-9);
+    // Sin unidades, como antes.
+    EXPECT_FALSE(importSvgAsGeometry("<svg width=\"10\" height=\"10\">" + rect + "</svg>").millimeters);
+}
+
+TEST(SvgImportFixed, FilledSubpathsUseTheEvenOddRule) {
+    OriginalBugsScope scope(false);
+    // Dos cuadrados separados (abiertos): dos polígonos de 20 x 20 con el factor 2.
+    EXPECT_NEAR(totalArea(geometryOf("<path d=\"M 0 0 L 10 0 L 10 10 L 0 10 M 20 0 L 30 0 L 30 10 L 20 10\"/>")),
+                800.0, 1e-6);
+    // Uno dentro del otro: un agujero.
+    EXPECT_NEAR(totalArea(geometryOf("<path d=\"M 0 0 L 20 0 L 20 20 L 0 20 Z M 5 5 L 15 5 L 15 15 L 5 15 Z\"/>")),
+                4 * (400.0 - 100.0), 1e-6);
 }

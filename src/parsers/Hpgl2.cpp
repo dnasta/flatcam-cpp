@@ -145,6 +145,8 @@ Hpgl2Result parseHpgl2(const std::string& text, int circleSteps, bool fixOrigina
             if (std::regex_search(g, m, commentRe)) continue;
             if (std::regex_search(g, m, initRe)) {
                 init = true;
+                // corregido: IN deja la pluma en (0, 0), así un trazo que empieza con PD parte de ahí
+                if (fixOriginalBugs && !lx.v) lx = ly = cx = cy = Coord{0.0, false};
                 continue;
             }
             if (!init) continue;

@@ -138,7 +138,10 @@ std::string App::cncSvgText(const CNCJobObject* job) const {
     } else {
         for (std::size_t i = 0; i < gcodes.size(); ++i) parts.push_back({gcodes[i], &tools[i]});
     }
+    std::vector<CncSvgTool> perTool;
     for (const auto& [gcode, row] : parts) {
+    CncSvgTool& tool = perTool.emplace_back();
+    tool.stroke = (row ? row->dia : defNum("cncjob_tooldia", 1.0)) / 2;
     const bool laser =
         row && row->data[drilling ? "tools_drill_ppname_e" : "ppname_g"].text().find("laser") != std::string::npos;
     const JsonValue parsed = ProjectIO::gcodeParse(gcode, laser, drilling && row ? row->dia : 0.0);
@@ -146,8 +149,8 @@ std::string App::cncSvgText(const CNCJobObject* job) const {
         const Shape g = Shape::fromWkt(seg["geom"]["__inst__"].text());
         all.push_back(g);
         const std::string k = seg["kind"].items().empty() ? std::string() : seg["kind"].items()[0].text();
-        if (k == "C") cuts.push_back(g);
-        if (k == "T") travels.push_back(g);
+        if (k == "C") cuts.push_back(g), tool.cuts.push_back(g);
+        if (k == "T") travels.push_back(g), tool.travels.push_back(g);
     }
     }
     // bounds(): un trabajo de una herramienta (G-code abierto) usa solid_geometry = la unión de todo lo interpretado; uno
@@ -156,6 +159,9 @@ std::string App::cncSvgText(const CNCJobObject* job) const {
     if (forBounds.empty()) return {};
     const BoundingBox b = Shape::unaryUnion(forBounds).bounds().value_or(BoundingBox{});
     const double tooldia = tools.empty() ? defNum("cncjob_tooldia", 1.0) : last->dia;
+    // Corregido: cada herramienta con su diámetro (el original usa el de la última para todas).
+    if (!reproduceOriginalBugs() && perTool.size() > 1)
+        return exportCncSvg(perTool, b, job->header().units == "IN" ? "in" : "mm");
     return exportCncSvg(travels, cuts, b, job->header().units == "IN" ? "in" : "mm", tooldia / 2);
 }
 
