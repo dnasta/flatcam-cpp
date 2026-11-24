@@ -332,8 +332,10 @@ std::string exportExcellon(const Excellon& e, const ExcellonExportFormat& fmt, c
         head += fmt.units + "," + fmt.zeros + "\n";
         head += ";FILE_FORMAT=" + std::to_string(fmt.whole) + ":" + std::to_string(fmt.fract) + "\n";
     }
+    // Corregido (sección 14): en METRIC el original escribe los diámetros con 2 decimales (0,762 pasa a 0,76).
+    const int diaDecimals = fmt.units == "METRIC" && reproduceOriginalBugs() ? 2 : 4;
     for (const auto& [id, t] : e.drillTools())
-        head += "T" + std::to_string(id) + "F00S00C" + fixed(t.tooldia * factor, fmt.units == "METRIC" ? 2 : 4) + "\n";
+        head += "T" + std::to_string(id) + "F00S00C" + fixed(t.tooldia * factor, diaDecimals) + "\n";
     head += "%\n";
     return head + code + "M30\n";
 }

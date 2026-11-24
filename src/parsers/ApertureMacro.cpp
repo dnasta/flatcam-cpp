@@ -1,3 +1,4 @@
+#include "core/OriginalBugs.h"
 #include "parsers/ApertureMacro.h"
 
 #include <algorithm>
@@ -289,7 +290,11 @@ ApertureMacro::Primitive ApertureMacro::makeThermal(const std::vector<double>& m
                             .buffer(t / 2.0, kMacroResolution, JoinStyle::Round, CapStyle::Square);
     const Shape vline = Shape::lineString({{x, y - dout / 2.0}, {x, y + dout / 2.0}})
                             .buffer(t / 2.0, kMacroResolution, JoinStyle::Round, CapStyle::Square);
-    return {1, ring.difference(hline.unite(vline))};
+    const Shape thermal = ring.difference(hline.unite(vline));
+    // Corregido (sección 14): el original ignora la rotación (el sexto parámetro); un térmico girado 45 grados salía
+    // con los rayos en cruz. Como las demás primitivas, alrededor del origen de la macro.
+    if (!reproduceOriginalBugs() && v[5] != 0) return {1, thermal.rotate(v[5], Point2D{0, 0})};
+    return {1, thermal};
 }
 
 }  // namespace flatcam

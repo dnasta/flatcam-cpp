@@ -551,3 +551,49 @@ TEST(ExportFixed, DispenserBottomCopperKeepsItsArea) {
     const double area = Shape::unaryUnion(g.solidGeometry()).area();
     EXPECT_NEAR(reexportedArea(g), area, area * 1e-4);
 }
+
+TEST(AuditIoFixed, ExcellonRoutingThermalRotationUseOffsetAndDiameters) {
+    OriginalBugsScope fixed(false);
+    // Después de una ranura ruteada (G00/M15/G01/M16) los agujeros se perdían.
+    ExcellonOptions opt;
+    Excellon e(opt);
+    ASSERT_TRUE(e.parseLines({"M48", "METRIC", "T1C0.762", "%", "T1", "G00X1.0Y1.0", "M15", "G01X5.0Y1.0", "M16", "G05",
+                              "X10.0Y10.0", "X20.0Y20.0", "M30"}));
+    ASSERT_EQ(e.drillTools().count(1), 1u);
+    EXPECT_EQ(e.drillTools().at(1).slots.size(), 1u);
+    EXPECT_EQ(e.drillTools().at(1).drills.size(), 2u);
+    {
+        OriginalBugsScope original(true);
+        Excellon o(opt);
+        ASSERT_TRUE(o.parseLines({"M48", "METRIC", "T1C0.762", "%", "T1", "G00X1.0Y1.0", "M15", "G01X5.0Y1.0", "M16",
+                                  "G05", "X10.0Y10.0", "M30"}));
+        EXPECT_TRUE(o.drillTools().at(1).drills.empty());
+    }
+    // Diámetros METRIC con 4 decimales (antes 0,76).
+    ExcellonExportFormat f;
+    f.units = "METRIC";
+    f.format = "dec";
+    EXPECT_NE(exportExcellon(e, f, {}).find("C0.7620"), std::string::npos);
+
+    // Térmico girado 45 grados: los cortes van en diagonal, así que el punto (1, 0) del anillo queda con cobre.
+    auto thermal = [](const std::string& rot) {
+        Gerber g;
+        EXPECT_TRUE(g.parseLines({"%FSLAX46Y46*%", "%MOMM*%", "%AMTH*7,0,0,2.5,1.5,0.3," + rot + "*%", "%ADD10TH*%", "D10*",
+                                  "X0Y0D03*", "M02*"}));
+        return Shape::unaryUnion(g.solidGeometry());
+    };
+    EXPECT_FALSE(thermal("0").contains(Shape::point({1.0, 0.0})));
+    EXPECT_TRUE(thermal("45").contains(Shape::point({1.0, 0.0})));
+    EXPECT_FALSE(thermal("45").contains(Shape::point({0.7071, 0.7071})));
+
+    // <use x="10">: el contenido corrido 10 unidades.
+    const SvgImportResult r = importSvgAsGeometry(
+        "<svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"100\" height=\"100\"><defs><rect id=\"r\" width=\"2\" "
+        "height=\"2\"/></defs><use xlink:href=\"#r\" x=\"10\" y=\"0\"/></svg>");
+    ASSERT_TRUE(r.ok) << r.error;
+    ASSERT_FALSE(r.geometry.empty());
+    const auto b = Shape::unaryUnion(r.geometry).bounds();
+    ASSERT_TRUE(b);
+    EXPECT_NEAR(b->xmax - b->xmin, 2.0, 1e-6);
+    EXPECT_NEAR(b->xmin, 10.0, 1e-6);
+}

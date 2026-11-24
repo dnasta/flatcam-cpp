@@ -968,7 +968,14 @@ Geos getsvggeo(const XmlElement& node, const XmlElement& root, int res, double f
         if (!href) throw SvgError("KeyError: href");
         std::string id = *href;
         id.erase(std::remove(id.begin(), id.end(), '#'), id.end());
-        if (const XmlElement* ref = findById(root, id)) geo = getsvggeo(*ref, root, res, factor);
+        if (const XmlElement* ref = findById(root, id)) {
+            geo = getsvggeo(*ref, root, res, factor);
+            // Corregido (sección 14): el original ignora x e y del <use> (el contenido se desplaza en esa medida, antes
+            // de la transformación del propio <use>).
+            const double ux = svgLength(node.get("x")) * factor, uy = svgLength(node.get("y")) * factor;
+            if (geo && !reproduceOriginalBugs() && (ux != 0 || uy != 0))
+                for (Shape& s : *geo) s = s.translate(ux, uy);
+        }
     } else {
         geo = std::nullopt;  // "Unknown kind"
     }

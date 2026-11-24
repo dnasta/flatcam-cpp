@@ -128,6 +128,17 @@ bool App::editorToObject(std::optional<bool> save, bool cleanup) {
             else if (box.clickedButton() == no) save = false;
             else return false;
         }
+        // El objeto se borró mientras se editaba (por ejemplo con `delete` desde la consola Tcl) o el activo es otro (con
+        // `set_active`): antes se decía "contenido guardado" sin guardar nada, o se guardaba con el editor equivocado. Se
+        // avisa y se sale sin guardar.
+        const bool matches = obj && ((callSource_ == "geo_editor" && dynamic_cast<GeometryObject*>(obj)) ||
+                                     (callSource_ == "grb_editor" && dynamic_cast<GerberObject*>(obj)) ||
+                                     (callSource_ == "exc_editor" && dynamic_cast<ExcellonObject*>(obj)) ||
+                                     (callSource_ == "gcode_editor" && dynamic_cast<CNCJobObject*>(obj)));
+        if (*save && !matches) {
+            ui->inform("[ERROR_NOTCL] " + tr_("Object not found"));
+            save = false;
+        }
         if (*save) {
             restoreTools();
             QString type;

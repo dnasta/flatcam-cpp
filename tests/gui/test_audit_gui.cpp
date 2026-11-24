@@ -15,6 +15,7 @@
 #include "gui/Preferences.h"
 #include "gui/Translation.h"
 #include "gui/objects/CNCJobObject.h"
+#include "gui/shell/FCShell.h"
 #include "gui/objects/ObjectCollection.h"
 #include "gui/tools/ToolPanels.h"
 #include "gui/widgets/FCLabel.h"
@@ -198,4 +199,17 @@ TEST(GuiAudit, MouseBitesWithZeroDiameterAndSpacingDoNotHang) {
     EXPECT_EQ(c->freeformCutout(), nullptr);
     EXPECT_TRUE(info(app).contains(tr_("Mouse bites diameter and spacing can't both be zero.")));
     EXPECT_EQ(c->rectangularCutout(), nullptr);
+}
+
+TEST(GuiAudit, DeletingTheEditedObjectFromTclDoesNotClaimItWasSaved) {
+    AutoAccept accept;
+    App app;
+    FlatCAMObj* logo = app.openByExtension(kLuz + "Logo.gbr");
+    select(app, logo);
+    app.objectToEditor();
+    bool ok = false;
+    app.shell()->eval("delete {" + logo->name() + "}", &ok);
+    app.editorToObject(true);
+    EXPECT_TRUE(info(app).contains(tr_("Editor exited. Editor content was not saved."))) << info(app).toStdString();
+    EXPECT_TRUE(app.collection()->objects().empty());
 }

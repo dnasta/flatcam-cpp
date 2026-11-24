@@ -352,6 +352,16 @@ bool Excellon::parseLines(const std::vector<std::string>& elines) {
                     continue;
                 }
 
+                // Corregido (sección 14): el original nunca vuelve a apagar el ruteo, así que después de la primera ranura
+                // con G00/M15/G01/M16 todos los agujeros del archivo se perdían. Al subir la herramienta (M16/M17) o al
+                // volver a taladrar (G05) se apaga.
+                if (!reproduceOriginalBugs() && (contains(eline, "M16") || contains(eline, "M17") || contains(eline, "G05"))) {
+                    matchRoutingStart_ = false;
+                    matchRoutingStop_ = false;
+                    routingFlag_ = true;
+                    if (!matchCoords(eline, false) && !matchCoords(eline, true)) continue;
+                }
+
                 // ---- coordenadas sin punto decimal
                 if (const auto nc = matchCoords(eline, false)) {
                     std::smatch rep;
