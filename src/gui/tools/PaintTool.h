@@ -44,6 +44,13 @@ public:
     void setToolUi();
 
     /**
+     * @brief Cambia de unidades lo que ya tiene el panel (los campos con dimensiones y la tabla de herramientas), al
+     * cambiar las unidades de la aplicación (corregido, sección 14: el original los deja como estaban).
+     * @param factor 25,4 o 1 / 25,4.
+     */
+    void scaleUnits(double factor);
+
+    /**
      * @brief `self.units` de la herramienta: vacío hasta que se abre por primera vez (lo usan los avisos de `paint` de la
      * consola Tcl, que pasan por `paint_geo`).
      * @return Las unidades en mayúsculas, o vacío.

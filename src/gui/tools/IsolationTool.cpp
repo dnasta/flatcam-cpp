@@ -101,6 +101,19 @@ void IsolationTool::onToolDelete() {
     app_->ui()->inform("[success] " + tr_("Tool(s) deleted from Tool Table."));
 }
 
+void IsolationTool::scaleUnits(double factor) {
+    muted_ = true;
+    scaleSpinners({new_tooldia_entry}, factor);
+    muted_ = false;
+    const std::vector<int> sel = selectedClearingTools(tools_table);
+    scaleClearingToolUnits(tools_, factor, appDecimals());
+    rebuild();
+    muted_ = true;
+    reselectClearingTools(tools_table, sel);
+    muted_ = false;
+    updateUi();
+}
+
 void IsolationTool::setToolUi() {
     muted_ = true;
     object_combo->clear();

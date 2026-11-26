@@ -528,6 +528,9 @@ void App::connectSignals() {
 QString App::lastFolder() const { return lastFolder_; }
 
 void App::clearProject() {
+    // Sin objetos no queda nada que editar ni un área que elegir para un panel que se borra (antes: memoria liberada).
+    if (editorActive()) editorToObject(false, true);
+    if (picker_ && picker_->active()) picker_->cancel();
     ui_->properties_scroll_area->takeWidget();
     showProperties(nullptr);
     for (FlatCAMObj* o : collection_->objects()) {

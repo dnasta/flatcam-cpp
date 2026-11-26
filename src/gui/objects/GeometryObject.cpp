@@ -362,6 +362,15 @@ std::unique_ptr<CNCJobObject> GeometryObject::makeCncJob(const std::vector<int>&
 
 namespace flatcam::gui {
 
+void scaleGeometryToolUnits(GeometryTool& t, double factor, int decimals) {
+    t.tooldia = QString::number(t.tooldia * factor, 'f', decimals).toDouble();  // float('%.*f' % (decimals, dia))
+    t.offsetValue *= factor;
+    GeometryToolSettings& d = t.data;
+    for (double* v : {&d.cutZ, &d.depthPerPass, &d.travelZ, &d.feedrate, &d.feedrateZ, &d.feedrateRapid, &d.endZ,
+                      &d.toolchangeZ})
+        *v *= factor;
+}
+
 double GeometryObject::convertUnits(Units units) {
     // camlib.Geometry.convert_units: scale(factor, factor) desde el origen.
     if (units == units_) return 1.0;
@@ -370,12 +379,7 @@ double GeometryObject::convertUnits(Units units) {
     scale(factor, factor, {0, 0});
     const int dec = appDecimals();
     for (auto& [id, t] : tools_) {
-        t.tooldia = QString::number(t.tooldia * factor, 'f', dec).toDouble();  // float('%.*f' % (decimals, dia))
-        t.offsetValue *= factor;
-        GeometryToolSettings& d = t.data;
-        for (double* v : {&d.cutZ, &d.depthPerPass, &d.travelZ, &d.feedrate, &d.feedrateZ, &d.feedrateRapid, &d.endZ,
-                          &d.toolchangeZ})
-            *v *= factor;
+        scaleGeometryToolUnits(t, factor, dec);
         // Error del original: 'solid_geometry' no pasa al diccionario nuevo (corregido: se conserva, ya escalada).
         if (reproduceOriginalBugs()) t.solidGeometry.clear();
     }

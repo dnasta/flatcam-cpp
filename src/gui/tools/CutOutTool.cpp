@@ -98,6 +98,11 @@ void CutOutTool::onTypeObjChanged() {
     convex_box_cb->setDisabled(!gerber);
 }
 
+void CutOutTool::scaleUnits(double factor) {
+    scaleSpinners({dia, margin, gapsize, cutz_entry, maxdepth_entry, mb_dia_entry, mb_spacing_entry, thin_depth_entry},
+                  factor);
+}
+
 void CutOutTool::setToolUi() {
     // set_tool_ui: el objeto activo (Gerber o, si no, Geometría) queda elegido.
     FlatCAMObj* active = app_->activeObject();

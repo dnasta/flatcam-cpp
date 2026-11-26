@@ -6,6 +6,7 @@
 #pragma once
 
 #include <functional>
+#include <initializer_list>
 #include <map>
 #include <optional>
 #include <vector>
@@ -20,6 +21,7 @@ class QTableWidget;
 namespace flatcam::gui {
 
 class MainGUI;
+class FCDoubleSpinner;
 
 /**
  * @brief Mientras existe, la barra de estado muestra "Ocupado" y el cursor de espera (`proc_container.new`): para los
@@ -67,6 +69,25 @@ struct ClearingTool {
  * @param order `fwd` (ascendente), `rev` (descendente) o `no` (como están).
  */
 void buildClearingTable(QTableWidget* table, const std::map<int, ClearingTool>& tools, const QString& order);
+
+/**
+ * @brief Cambia de unidades las herramientas de Paint, NCC o Isolation: la herramienta de la Geometría (diámetro, Z y
+ * avances), el margen y el desplazamiento.
+ * @param tools Herramientas. @param factor 25,4 o 1 / 25,4. @param decimals Decimales de la aplicación.
+ */
+void scaleClearingToolUnits(std::map<int, ClearingTool>& tools, double factor, int decimals);
+
+/**
+ * @brief Vuelve a elegir en la tabla las filas de esas herramientas (después de rearmarla).
+ * @param table Tabla. @param ids Identificadores (columna 3).
+ */
+void reselectClearingTools(QTableWidget* table, const std::vector<int>& ids);
+
+/**
+ * @brief Multiplica el valor de cada campo por @p factor (los campos con dimensiones de un panel).
+ * @param fields Campos. @param factor Factor.
+ */
+void scaleSpinners(std::initializer_list<FCDoubleSpinner*> fields, double factor);
 
 /**
  * @brief Identificadores de las filas elegidas, en el orden de la tabla.

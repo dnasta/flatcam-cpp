@@ -2,12 +2,14 @@
 
 #include <QApplication>
 #include <QHeaderView>
+#include <QItemSelectionModel>
 #include <QTableWidget>
 #include <algorithm>
 
 #include "gui/MainGUI.h"
 #include "gui/Translation.h"
 #include "gui/widgets/FCComboBox.h"
+#include "gui/widgets/FCSpinners.h"
 #include "gui/widgets/FCTable.h"
 #include "gui/ToolsDatabase.h"
 #include "tools/Isolation.h"
@@ -131,5 +133,27 @@ DbAddResult lookupToolForAdd(MainGUI* ui, const QString& dataPath, const std::ma
     return DbAddResult::FromDb;
 }
 
-}  // namespace flatcam::gui
+void scaleClearingToolUnits(std::map<int, ClearingTool>& tools, double factor, int decimals) {
+    for (auto& [id, t] : tools) {
+        scaleGeometryToolUnits(t.geo, factor, decimals);
+        t.margin *= factor;
+        t.offset *= factor;
+    }
+}
 
+void reselectClearingTools(QTableWidget* table, const std::vector<int>& ids) {
+    table->clearSelection();
+    for (int r = 0; r < table->rowCount(); ++r) {
+        const QTableWidgetItem* it = table->item(r, 3);
+        if (it && std::find(ids.begin(), ids.end(), it->text().toInt()) != ids.end())
+            table->selectionModel()->select(table->model()->index(r, 0),
+                                            QItemSelectionModel::Select | QItemSelectionModel::Rows);
+    }
+}
+
+void scaleSpinners(std::initializer_list<FCDoubleSpinner*> fields, double factor) {
+    for (FCDoubleSpinner* f : fields)
+        if (f) f->setValue(f->value() * factor);
+}
+
+}  // namespace flatcam::gui

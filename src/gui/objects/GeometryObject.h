@@ -51,6 +51,13 @@ struct GeometryTool {
 JsonValue geometryToolDataJson(const GeometryTool& t, JsonValue base = JsonValue::object());
 
 /**
+ * @brief Cambia de unidades una herramienta (como `convert_units` de la Geometría): el diámetro redondeado a
+ * @p decimals, el desplazamiento propio y las Z y avances de sus parámetros.
+ * @param t Herramienta. @param factor 25,4 o 1 / 25,4. @param decimals Decimales de la aplicación.
+ */
+void scaleGeometryToolUnits(GeometryTool& t, double factor, int decimals);
+
+/**
  * @brief Parámetros de fábrica de una herramienta nueva (`geometry_*` de `defaults.py`, como `default_data`).
  * @return Los parámetros, con la tolerancia del CNC Job (`global_tolerance / 20`).
  */

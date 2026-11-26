@@ -1,6 +1,7 @@
 #include "gui/ExclusionAreasManager.h"
 
 #include <QItemSelectionModel>
+#include <QPointer>
 #include <QPushButton>
 #include <algorithm>
 
@@ -31,7 +32,18 @@ void ExclusionAreasManager::startAdding(RadioSet* shapeRadio, FCDoubleSpinner* o
     ui_->inform("[WARNING_NOTCL] " + tr_("Click the start point of the area."));
     const auto mode = shapeRadio->value().toString() == "square" ? CanvasPicker::Mode::Rectangles
                                                                   : CanvasPicker::Mode::Polygons;
-    picker_->start(mode, {}, [this, overZ, strategy, cncButton, solidGeometry, objType](const ShapeList& zones) {
+    // QPointer: los campos son del panel del objeto, que se borra con él si se lo borra mientras se dibuja el área.
+    QPointer<FCDoubleSpinner> overZp(overZ);
+    QPointer<RadioSet> strategyp(strategy);
+    QPointer<QPushButton> cncButtonp(cncButton);
+    picker_->start(mode, {}, [this, overZp, strategyp, cncButtonp, solidGeometry, objType](const ShapeList& zones) {
+        if (!overZp || !strategyp || !cncButtonp) {
+            ui_->inform("[WARNING_NOTCL] " + tr_("Cancelled."));
+            return;
+        }
+        FCDoubleSpinner* overZ = overZp.data();
+        RadioSet* strategy = strategyp.data();
+        QPushButton* cncButton = cncButtonp.data();
         // Cada zona con la estrategia y la Z que muestra el panel.
         for (const Shape& z : zones)
             areas_.push_back(ExclusionArea{objType.toStdString(), z, strategy->value().toString().toStdString(),

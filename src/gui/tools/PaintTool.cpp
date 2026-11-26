@@ -139,6 +139,19 @@ void PaintTool::onToolDelete() {
     app_->ui()->inform("[success] " + tr_("Tool(s) deleted from Tool Table."));
 }
 
+void PaintTool::scaleUnits(double factor) {
+    muted_ = true;
+    scaleSpinners({new_tooldia_entry, offset_entry, rest_offset_entry}, factor);
+    muted_ = false;
+    const std::vector<int> sel = selectedClearingTools(tools_table);
+    scaleClearingToolUnits(tools_, factor, appDecimals());
+    rebuild();
+    muted_ = true;
+    reselectClearingTools(tools_table, sel);
+    muted_ = false;
+    updateUi();
+}
+
 void PaintTool::setToolUi() {
     muted_ = true;
     units_ = defStr("units").toUpper();

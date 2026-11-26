@@ -146,6 +146,21 @@ void NccTool::onToolDelete() {
     app_->ui()->inform("[success] " + tr_("Tool(s) deleted from Tool Table."));
 }
 
+void NccTool::scaleUnits(double factor) {
+    muted_ = true;
+    scaleSpinners({ncc_margin_entry, ncc_offset_spinner, new_tooldia_entry, rest_ncc_margin_entry,
+                   rest_ncc_offset_spinner},
+                  factor);
+    muted_ = false;
+    const std::vector<int> sel = selectedClearingTools(tools_table);
+    scaleClearingToolUnits(tools_, factor, appDecimals());
+    rebuild();
+    muted_ = true;
+    reselectClearingTools(tools_table, sel);
+    muted_ = false;
+    updateUi();
+}
+
 void NccTool::setToolUi() {
     muted_ = true;
     FlatCAMObj* active = app_->activeObject();

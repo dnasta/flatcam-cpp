@@ -14,7 +14,11 @@
 #include "gui/MainGUI.h"
 #include "gui/Preferences.h"
 #include "gui/Translation.h"
+#include "gui/ExclusionAreasManager.h"
+#include "gui/editors/GCodeEditor.h"
 #include "gui/objects/CNCJobObject.h"
+#include "gui/objects/ObjectUIs.h"
+#include "gui/tools/ClearingTools.h"
 #include "gui/shell/FCShell.h"
 #include "gui/objects/ObjectCollection.h"
 #include "gui/tools/ToolPanels.h"
@@ -212,4 +216,90 @@ TEST(GuiAudit, DeletingTheEditedObjectFromTclDoesNotClaimItWasSaved) {
     app.editorToObject(true);
     EXPECT_TRUE(info(app).contains(tr_("Editor exited. Editor content was not saved."))) << info(app).toStdString();
     EXPECT_TRUE(app.collection()->objects().empty());
+}
+
+TEST(GuiAudit, GCodeEditorAfterItsCncJobIsDeleted) {
+    // Antes: memoria liberada (el editor guardaba un puntero crudo al CNC Job).
+    AutoAccept accept;
+    App app;
+    FlatCAMObj* cnc = app.openGcode(kLuz + "PTH.drl_cnc.nc");
+    ASSERT_NE(cnc, nullptr);
+    select(app, cnc);
+    app.objectToEditor();
+    bool ok = false;
+    app.shell()->eval("delete {" + cnc->name() + "}", &ok);
+    app.gcodeEditor->onToggleAllRows();
+    app.gcodeEditor->onRowSelectionChange();
+    EXPECT_TRUE(app.collection()->objects().empty());
+
+    // Nuevo proyecto con el editor abierto: sale del editor.
+    FlatCAMObj* again = app.openGcode(kLuz + "PTH.drl_cnc.nc");
+    select(app, again);
+    app.objectToEditor();
+    ASSERT_TRUE(app.editorActive());
+    app.clearProject();
+    EXPECT_FALSE(app.editorActive());
+    app.gcodeEditor->onToggleAllRows();
+}
+
+TEST(GuiAudit, ExclusionAreaWhileItsGeometryIsDeleted) {
+    // Antes: el área terminada leía la estrategia y la Z del panel de la Geometría borrada.
+    AutoAccept accept;
+    App app;
+    for (int round = 0; round < 2; ++round) {
+        FlatCAMObj* geo = app.newGeometryObject();
+        select(app, geo);
+        app.showProperties(geo);
+        auto* ui = qobject_cast<GeometryObjectUI*>(app.ui()->properties_scroll_area->widget());
+        ASSERT_NE(ui, nullptr);
+        ui->exclusion_cb->setChecked(true);
+        ui->area_shape_radio->setValue("square");
+        ui->add_area_button->click();
+        ASSERT_TRUE(app.picker()->active());
+        if (round == 0) {
+            bool ok = false;
+            app.shell()->eval("delete {" + geo->name() + "}", &ok);
+            for (const QPointF& p : {QPointF(-200, -200), QPointF(200, 200)})
+                app.picker()->onRelease(p, Qt::LeftButton, false);
+            app.picker()->onRelease(QPointF(200, 200), Qt::RightButton, false);
+            EXPECT_TRUE(app.excAreas()->areas().empty());
+        } else {
+            app.clearProject();  // Nuevo proyecto: la elección se cancela
+            EXPECT_FALSE(app.picker()->active());
+        }
+    }
+}
+
+TEST(GuiAudit, OpenToolsFollowTheUnits) {
+    // Con la tecla Q, NCC, Paint, Isolation y Corte se quedaban con los números en mm leídos como pulgadas.
+    OriginalBugsScope fixed(false);
+    App app;
+    FlatCAMObj* logo = app.openByExtension(kLuz + "Logo.gbr");
+    FlatCAMObj* edge = app.openByExtension(kLuz + "Edge_Cuts.gbr");
+    select(app, logo);
+    app.ui()->ncc_btn->trigger();
+    app.ui()->paint_btn->trigger();
+    app.ui()->isolation_btn->trigger();
+    select(app, edge);
+    app.ui()->cutout_btn->trigger();
+    auto firstDia = [](const std::map<int, ClearingTool>& tools) { return tools.begin()->second.geo.tooldia; };
+    ASSERT_FALSE(app.nccTool->tools().empty());
+    const double ncc = firstDia(app.nccTool->tools()), paint = firstDia(app.paintTool->tools()),
+                 iso = firstDia(app.isolationTool->tools()), cut = app.cutoutTool->dia->value(),
+                 margin = app.nccTool->ncc_margin_entry->value();
+    app.setUnitsAutoAnswer(true);
+    app.onToggleUnitsClick();
+    EXPECT_NEAR(firstDia(app.nccTool->tools()), ncc / 25.4, 1e-4);
+    EXPECT_NEAR(firstDia(app.paintTool->tools()), paint / 25.4, 1e-4);
+    EXPECT_NEAR(firstDia(app.isolationTool->tools()), iso / 25.4, 1e-4);
+    EXPECT_NEAR(app.cutoutTool->dia->value(), cut / 25.4, 1e-4);
+    EXPECT_NEAR(app.nccTool->ncc_margin_entry->value(), margin / 25.4, 1e-4);
+    EXPECT_NE(app.cutoutTool->rectangularCutout(), nullptr) << info(app).toStdString();
+    // Al volver a abrir una herramienta, sus valores de las preferencias también están en pulgadas.
+    select(app, edge);
+    app.ui()->cutout_btn->trigger();
+    EXPECT_NEAR(app.cutoutTool->dia->value(), cut / 25.4, 1e-3);
+    select(app, logo);
+    app.ui()->ncc_btn->trigger();
+    EXPECT_NEAR(firstDia(app.nccTool->tools()), ncc / 25.4, 1e-3);
 }

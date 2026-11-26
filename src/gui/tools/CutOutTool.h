@@ -39,6 +39,13 @@ public:
     /** @brief Prepara la herramienta al abrirla (`set_tool_ui`): objeto activo y valores de fábrica. */
     void setToolUi();
 
+    /**
+     * @brief Cambia de unidades lo que ya tiene el panel (los campos con dimensiones y la tabla de herramientas), al
+     * cambiar las unidades de la aplicación (corregido, sección 14: el original los deja como estaban).
+     * @param factor 25,4 o 1 / 25,4.
+     */
+    void scaleUnits(double factor);
+
     /** @brief Corte libre (`on_freeform_cutout`). @return La Geometría creada, o `nullptr` si falló. */
     FlatCAMObj* freeformCutout();
 

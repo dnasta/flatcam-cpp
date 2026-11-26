@@ -52,6 +52,13 @@ public:
     /** @brief Prepara la herramienta al abrirla (`set_tool_ui`). */
     void setToolUi();
 
+    /**
+     * @brief Cambia de unidades lo que ya tiene el panel (los campos con dimensiones y la tabla de herramientas), al
+     * cambiar las unidades de la aplicación (corregido, sección 14: el original los deja como estaban).
+     * @param factor 25,4 o 1 / 25,4.
+     */
+    void scaleUnits(double factor);
+
     /** @brief Limpia el cobre (`on_ncc_click` → `clear_copper`). @return La Geometría creada, o `nullptr` si falló. */
     FlatCAMObj* clearCopper();
 

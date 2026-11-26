@@ -68,7 +68,7 @@ private:
     App* app_;
     GCodeEditorUI* ui_;
     QPointer<AppTextEditor> tab_;
-    CNCJobObject* obj_{nullptr};
+    QPointer<CNCJobObject> obj_;  ///< QPointer: el CNC Job se puede borrar con el editor abierto (desde Tcl).
     QString editedObjName_;
 };
 

@@ -160,7 +160,9 @@ void App::onToggleUnitsClick() {
     unitsRadioMuted_ = true;  // el original desconecta activated_custom mientras cambia la opción
     r->setValue(prefs_->value("units").text() == "MM" ? QString("IN") : QString("MM"));
     unitsRadioMuted_ = false;
-    onToggleUnits(true);
+    // Corregido (sección 14): también se escalan las preferencias, como desde la pestaña; si no, al volver a abrir
+    // una herramienta sus valores de mm se leían como pulgadas.
+    onToggleUnits(reproduceOriginalBugs());
 }
 
 void App::onToggleUnits(bool noPref) {
@@ -203,7 +205,14 @@ void App::onToggleUnits(bool noPref) {
         }
         // Corregido (sección 14): los parámetros que ya tiene Perforación también cambian de unidades (el original los
         // deja: con la tecla Q el G-code en pulgadas salía con las Z y los avances en mm).
-        if (!reproduceOriginalBugs() && drillingTool) drillingTool->scaleUnits(factor);
+        // Lo mismo con lo que ya tienen NCC, Paint, Isolation y Corte (con Q, una fresa de 2,4 mm pasaba a ser de 2,4").
+        if (!reproduceOriginalBugs()) {
+            if (drillingTool) drillingTool->scaleUnits(factor);
+            if (nccTool) nccTool->scaleUnits(factor);
+            if (paintTool) paintTool->scaleUnits(factor);
+            if (isolationTool) isolationTool->scaleUnits(factor);
+            if (cutoutTool) cutoutTool->scaleUnits(factor);
+        }
         // Error del original: con el área de trabajo encendida llama a draw_workspace(pagesize=...), que no tiene ese
         // parámetro (TypeError), y no sigue (corregido: vuelve a dibujar la hoja en las unidades nuevas).
         if (defBool("global_workspace")) {
