@@ -130,8 +130,6 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
     static const std::regex cmRe(
         R"(^(q)?\s*(-?\d+\.?\d*) (-?\d+\.?\d*) (-?\d+\.?\d*) (-?\d+\.?\d*) (-?\d+\.?\d*) (-?\d+\.?\d*)\s+cm$)");
     static const std::regex clipRe(R"(^W[*]? n?$)");
-    static const std::regex saveRe(R"(^q.*?$)");
-    static const std::regex restoreRe(R"(^.*Q.*$)");
 
     const double f = (units == "MM" || units == "mm") ? 25.4 / 72 : 1.0 / 72;
     struct {
@@ -222,7 +220,10 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
     try {
         for (const std::string& line : lines) {
             std::smatch m;
-            if (std::regex_search(line, m, strokeColor)) {
+            // std::regex de libstdc++ (Linux) es recursivo por carácter y desborda la pila con una línea muy larga;
+            // los operadores que se leen ocupan cada uno su línea, así que una línea así no tiene nada que leer.
+            const bool shortLine = line.size() <= 4096;
+            if (shortLine && std::regex_search(line, m, strokeColor)) {
                 const std::array<double, 3> color{num(m[1]), num(m[2]), num(m[3])};
                 if (oldColor && *oldColor == color) continue;
                 if (!aps.empty()) {
@@ -235,11 +236,11 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                 flagClear = false;
                 continue;
             }
-            if (std::regex_search(line, m, fillColor)) {
+            if (shortLine && std::regex_search(line, m, fillColor)) {
                 flagClear = num(m[1]) == 1 && num(m[2]) == 1 && num(m[3]) == 1;
                 continue;
             }
-            if (fixed && std::regex_search(line, m, cmRe)) {
+            if (fixed && shortLine && std::regex_search(line, m, cmRe)) {
                 if (m[1].matched && m[1].str() == "q") {
                     gsCtm.push_back(ctm);
                     gsWidth.push_back(size);
@@ -275,7 +276,7 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                     }
                 }
             }
-            if (!fixed && std::regex_search(line, m, cmRe)) {
+            if (!fixed && shortLine && std::regex_search(line, m, cmRe)) {
                 if (m[1].matched && m[1].str() == "q") {
                     gsTransform.push_back({offset, scale});
                     gsWidth.push_back(size);
@@ -290,11 +291,11 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                 }
                 continue;
             }
-            if (!fixed && std::regex_search(line, saveRe)) {
+            if (!fixed && !line.empty() && line[0] == 'q') {  // re.search(r'^q.*?$', line)
                 gsTransform.push_back({offset, scale});
                 gsWidth.push_back(size);
             }
-            if (!fixed && std::regex_search(line, restoreRe)) {
+            if (!fixed && line.find('Q') != std::string::npos) {  // re.search(r'^.*Q.*$', line)
                 if (!gsTransform.empty()) {
                     offset = gsTransform.back().offset;
                     scale = gsTransform.back().scale;
@@ -305,7 +306,7 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                     gsWidth.pop_back();
                 }
             }
-            if (std::regex_search(line, m, moveRe)) {
+            if (shortLine && std::regex_search(line, m, moveRe)) {
                 closeSubpath = false;
                 sub.lines.clear();
                 sub.bezier.clear();
@@ -315,28 +316,28 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                 currentPoint = startPoint;
                 continue;
             }
-            if (std::regex_search(line, m, lineRe)) {
+            if (shortLine && std::regex_search(line, m, lineRe)) {
                 current = "lines";
                 const Point2D p = pt(m, 1);
                 sub.lines.push_back(p);
                 currentPoint = p;
                 continue;
             }
-            if (std::regex_search(line, m, curveRe)) {
+            if (shortLine && std::regex_search(line, m, curveRe)) {
                 current = "bezier";
                 const Point2D s = need(currentPoint), c1 = pt(m, 1), c2 = pt(m, 3), e = pt(m, 5);
                 sub.bezier.push_back({s, c1, c2, e});
                 currentPoint = e;
                 continue;
             }
-            if (std::regex_search(line, m, vRe)) {
+            if (shortLine && std::regex_search(line, m, vRe)) {
                 current = "bezier";
                 const Point2D s = need(currentPoint), c2 = pt(m, 1), e = pt(m, 3);
                 sub.bezier.push_back({s, s, c2, e});
                 currentPoint = e;
                 continue;
             }
-            if (std::regex_search(line, m, yRe)) {
+            if (shortLine && std::regex_search(line, m, yRe)) {
                 // como el original: 'y' no marca el trazado como curva (corregido: sí)
                 if (fixed) current = "bezier";
                 const Point2D s = need(currentPoint), c1 = pt(m, 1), e = pt(m, 3);
@@ -344,7 +345,7 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                 currentPoint = e;
                 continue;
             }
-            if (std::regex_search(line, m, rectRe)) {
+            if (shortLine && std::regex_search(line, m, rectRe)) {
                 current = "rectangle";
                 // como el original, al ancho y al alto también se les suma el desplazamiento
                 const double x = (num(m[1]) + offset[0]) * f * scale[0], y = (num(m[2]) + offset[1]) * f * scale[1];
@@ -362,7 +363,7 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                 currentPoint = p1;
                 continue;
             }
-            if (std::regex_search(line, clipRe)) {
+            if (shortLine && std::regex_search(line, clipRe)) {
                 sub.lines.clear();
                 sub.bezier.clear();
                 sub.rectangle.clear();
@@ -379,7 +380,7 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                 }
                 continue;
             }
-            if (std::regex_search(line, endRe)) {
+            if (shortLine && std::regex_search(line, endRe)) {
                 closeSubpath = true;
                 if (current == "lines") {
                     sub.lines.push_back(need(startPoint));
@@ -394,17 +395,17 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                 }
                 continue;
             }
-            if (std::regex_search(line, m, widthRe)) {
+            if (shortLine && std::regex_search(line, m, widthRe)) {
                 size = num(m[1]);
                 continue;
             }
-            if (std::regex_search(line, noOpRe)) {
+            if (shortLine && std::regex_search(line, noOpRe)) {
                 sub.lines.clear();
                 sub.bezier.clear();
                 sub.rectangle.clear();
                 continue;
             }
-            if (std::regex_search(line, strokeRe)) {
+            if (shortLine && std::regex_search(line, strokeRe)) {
                 const double applied = size * widthScale() * f;
                 ShapeList pathGeo;
                 auto stroke = [&](const std::vector<Point2D>& pts) {
@@ -447,7 +448,7 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                 for (const Shape& g : pathGeo) addSolid(ap, g);
                 continue;
             }
-            if (std::regex_search(line, fillRe)) {
+            if (shortLine && std::regex_search(line, fillRe)) {
                 const double applied = size * widthScale() * f;
                 ShapeList pathGeo;
                 auto fill = [&](const std::vector<Point2D>& pts) {
@@ -516,7 +517,7 @@ std::map<int, PdfApertures> parsePdf(const std::string& content, const std::stri
                     continue;
                 }
             }
-            if (std::regex_search(line, fillStrokeRe)) {
+            if (shortLine && std::regex_search(line, fillStrokeRe)) {
                 const double applied = size * widthScale() * f;
                 ShapeList pathGeo, fillGeo;
                 auto fill = [&](std::vector<Point2D> pts) {

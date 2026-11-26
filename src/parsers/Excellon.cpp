@@ -19,6 +19,8 @@ namespace flatcam {
 namespace {
 
 // Expresiones regulares del parser original (appParsers/ParseExcellon.py) que no usan lookahead.
+/// Largo máximo de una línea que se pasa por std::regex (ver parseLines).
+constexpr std::size_t kMaxLineLength = 4096;
 const std::regex kHBegin(R"re(^M48$)re");
 const std::regex kAllegroHBegin(R"re(;\s*(HEADER))re");
 const std::regex kHEnd(R"re(^(?:M95|%)$)re");
@@ -212,6 +214,11 @@ bool Excellon::parseLines(const std::vector<std::string>& elines) {
             eline = strip(raw, " \r\n");
             std::smatch m;
 
+            // Como en el Gerber: std::regex de libstdc++ desborda la pila con líneas muy largas.
+            if (eline.size() > kMaxLineLength) {
+                if (eline[0] == ';') continue;
+                throw std::runtime_error("line too long (" + std::to_string(eline.size()) + " characters)");
+            }
             if (std::regex_search(eline, m, kDetectGcode)) {
                 Logger::warning("This is GCODE mark: " + eline);
                 return false;
@@ -517,7 +524,8 @@ bool Excellon::parseLines(const std::vector<std::string>& elines) {
             }
         }
     } catch (const std::exception& e) {
-        lastError_ = "Excellon Parser error. Parsing Failed. Line " + std::to_string(lineNum) + " [" + eline + "]: " + e.what();
+        lastError_ = "Excellon Parser error. Parsing Failed. Line " + std::to_string(lineNum) + " [" +
+                     (eline.size() > 200 ? eline.substr(0, 200) + "..." : eline) + "]: " + e.what();
         Logger::error(lastError_);
         return false;
     }

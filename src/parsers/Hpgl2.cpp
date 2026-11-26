@@ -1,5 +1,6 @@
 #include "parsers/Hpgl2.h"
 
+#include <cctype>
 #include <cmath>
 #include <optional>
 #include <regex>
@@ -51,8 +52,6 @@ Hpgl2Result parseHpgl2(const std::string& text, int circleSteps, bool fixOrigina
     static const std::regex commentRe(R"(^CO\s*["']([a-zA-Z0-9\s]*)["'];?$)");
     static const std::regex spRe(R"(SP(\d);?$)");
     static const std::regex penRe(R"(^(P[U|D]);?$)");
-    static const std::regex penCoordsRe(R"(^(P[UD])\s*([-+\d.,\s]+);?$)");  // PU/PD con coordenadas (corregido)
-    static const std::regex paListRe(R"(^PA\s*([-+\d.,\s]+);?$)");          // PA con varios pares (corregido)
     static const std::regex initRe(R"(^(IN);?$)");
     static const std::regex absRe(R"(^PA\s*(-?\d+\.?\d*),?\s*(-?\d+\.?\d*)*;?$)");
     static const std::regex circRe(R"(^CI\s*(\+?\d+\.?\d+?)?\s*;?\s*$)");
@@ -139,9 +138,39 @@ Hpgl2Result parseHpgl2(const std::string& text, int circleSteps, bool fixOrigina
             }
         }
     }
+    // ^(P[UD])\s*([-+\d.,\s]+);?$ y ^PA\s*([-+\d.,\s]+);?$ sin std::regex: un PA con miles de pares en una línea es
+    // común y std::regex de libstdc++ (Linux) es recursivo por carácter (desborda la pila).
+    auto matchCoordList = [](const std::string& g, std::string& op, std::string& body) {
+        if (g.size() < 3 || g[0] != 'P' || (g[1] != 'U' && g[1] != 'D' && g[1] != 'A')) return false;
+        std::size_t end = g.size();
+        if (g[end - 1] == ';') --end;
+        std::size_t i = 2;
+        while (i < end && std::isspace(static_cast<unsigned char>(g[i]))) ++i;
+        if (i >= end) return false;
+        for (std::size_t k = i; k < end; ++k) {
+            const char c = g[k];
+            if (!(std::isdigit(static_cast<unsigned char>(c)) || c == '-' || c == '+' || c == '.' || c == ',' ||
+                  std::isspace(static_cast<unsigned char>(c))))
+                return false;
+        }
+        op = g.substr(0, 2);
+        // el \s* de la expresión es codicioso pero el grupo también acepta espacios: el grupo empieza en el primer
+        // carácter que no es espacio, salvo que vuelva atrás para tener al menos uno (no hace falta: i < end)
+        body = g.substr(i, end - i);
+        return true;
+    };
     try {
         for (const std::string& g : commands) {
             std::smatch m;
+            std::string listOp, listBody;
+            const bool isList = fixOriginalBugs && matchCoordList(g, listOp, listBody);
+            if (isList && (listOp != "PA" || g.size() > 4096)) {
+                if (!init) continue;
+                if (listOp != "PA") penDown = listOp == "PD";
+                moveList(listBody);
+                continue;
+            }
+            if (g.size() > 4096 && !isList) continue;  // ninguna orden que se lea es tan larga
             if (std::regex_search(g, m, commentRe)) continue;
             if (std::regex_search(g, m, initRe)) {
                 init = true;
@@ -162,17 +191,12 @@ Hpgl2Result parseHpgl2(const std::string& text, int circleSteps, bool fixOrigina
                 penDown = m[1] == "PD";
                 continue;
             }
-            if (fixOriginalBugs && std::regex_search(g, m, penCoordsRe)) {
-                penDown = m[1] == "PD";
-                moveList(m[2]);
-                continue;
-            }
             if (std::regex_search(g, m, absRe)) {
                 moveTo(num(m[1]), m[2].matched && !m[2].str().empty() ? std::optional<double>(num(m[2])) : std::nullopt);
                 continue;
             }
-            if (fixOriginalBugs && std::regex_search(g, m, paListRe)) {
-                moveList(m[1]);
+            if (isList) {  // PA con varios pares (corregido)
+                moveList(listBody);
                 continue;
             }
             if (std::regex_search(g, m, circRe)) {

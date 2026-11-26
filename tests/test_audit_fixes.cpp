@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <cmath>
 #include <fstream>
 #include <limits>
 
@@ -20,6 +21,8 @@
 #include "io/SvgExport.h"
 #include "io/ProjectFile.h"
 #include "parsers/DxfImport.h"
+#include "parsers/Hpgl2.h"
+#include "parsers/PdfImport.h"
 #include "parsers/SvgImport.h"
 #include "parsers/Excellon.h"
 #include "tools/Film.h"
@@ -493,6 +496,73 @@ TEST(DeepInputs, NestingIsAnErrorInsteadOfAStackOverflow) {
     Gerber m;
     EXPECT_NO_FATAL_FAILURE((void)m.parseLines({"%FSLAX46Y46*%", "%MOMM*%", "%AMNEG*1,1," + std::string(100000, '-') +
                                                 "1,0,0*%", "%ADD10NEG*%", "D10*", "X0Y0D03*", "M02*"}));
+}
+
+TEST(DeepInputs, VeryLongLinesDoNotOverflowTheStack) {
+    // std::regex de libstdc++ (Linux) es recursivo por carácter: una línea de 200.000 caracteres desbordaba la pila
+    // (lo encontró el CI). Los comentarios largos se leen; otra línea así es un error de lectura.
+    const std::string longText(200000, 'a');
+    Gerber g;
+    EXPECT_TRUE(g.parseLines({"G04 " + longText + "*", "%FSLAX46Y46*%", "%MOMM*%", "%ADD10C,1.0*%", "D10*",
+                              "X0Y0D03*", "M02*"}))
+        << g.lastError();
+    EXPECT_NEAR(Shape::unaryUnion(g.solidGeometry()).area(), 0.785, 0.01);
+    // Justo debajo del límite sí pasan por std::regex (el CI de Linux comprueba que el límite alcanza).
+    const std::string nearLimit(4090, 'b');
+    Gerber nearG;
+    EXPECT_TRUE(nearG.parseLines({"G04 " + nearLimit + "*", "%FSLAX46Y46*%", "%MOMM*%", "%ADD10C,1.0*%", "D10*",
+                                  "X0Y0D03*", "M02*"}));
+    Excellon nearE;
+    EXPECT_TRUE(nearE.parseLines({"M48", ";" + nearLimit, "METRIC", "T1C1.0", "%", "T1", "X1.0Y1.0", "M30"}));
+    std::string nearPdf = "1 0 0 RG\n";
+    nearPdf += std::string(4090, ' ') + "\n0 0 m\n10 0 l\nS\n";
+    EXPECT_NO_FATAL_FAILURE((void)parsePdf(nearPdf, "MM"));
+
+    // Un contorno (primitiva 4) de 300 vértices es una sola orden de más de 4096 caracteres: se lee igual, en una línea
+    // o repartido en varias como KiCad (el original da 6,282725 con estos dos destellos).
+    std::string outline = "4,1,300";
+    for (int i = 0; i <= 300; ++i) {
+        const double a = 2 * M_PI * (i % 300) / 300;
+        outline += "," + std::to_string(std::cos(a)) + "," + std::to_string(std::sin(a));
+    }
+    outline += ",0";
+    ASSERT_GT(outline.size(), 4096u);
+    const std::vector<std::string> tail{"%ADD10POLY1*%", "D10*", "X0Y0D03*", "X5000000Y0D03*", "M02*"};
+    std::vector<std::string> oneLine{"%FSLAX46Y46*%", "%MOMM*%", "%AMPOLY1*" + outline + "*%"};
+    std::vector<std::string> multiLine{"%FSLAX46Y46*%", "%MOMM*%", "%AMPOLY1*", outline + "*", "%"};
+    for (auto* lines : {&oneLine, &multiLine}) {
+        lines->insert(lines->end(), tail.begin(), tail.end());
+        Gerber pg;
+        ASSERT_TRUE(pg.parseLines(*lines)) << pg.lastError();
+        EXPECT_NEAR(Shape::unaryUnion(pg.solidGeometry()).area(), 6.282725, 1e-4);
+    }
+
+    Gerber bad;
+    EXPECT_FALSE(bad.parseLines({"%FSLAX46Y46*%", "%MOMM*%", "%ADD10C," + longText + "*%", "M02*"}));
+    EXPECT_NE(bad.lastError().find("line too long"), std::string::npos);
+    EXPECT_LT(bad.lastError().size(), 400u);
+
+    Excellon e;
+    EXPECT_TRUE(e.parseLines({"M48", ";" + longText, "METRIC", "T1C1.0", "%", "T1", "X1.0Y1.0", "M30"}));
+    ASSERT_EQ(e.drillTools().size(), 1u);
+    EXPECT_EQ(e.drillTools().at(1).drills.size(), 1u);
+    Excellon eb;
+    EXPECT_FALSE(eb.parseLines({"M48", "METRIC", "T1C" + std::string(200000, '1'), "%", "M30"}));
+
+    // HPGL2: un PA con 20.000 pares en una sola orden (lo escriben así otros programas).
+    std::string pa = "IN;SP1;PU0,0;PD";
+    for (int i = 1; i <= 20000; ++i) pa += std::to_string(i % 2 ? 4000 : 0) + "," + std::to_string(i) + (i < 20000 ? "," : "");
+    pa += ";PU;";
+    const Hpgl2Result h = parseHpgl2(pa);
+    EXPECT_TRUE(h.ok) << h.error;
+    EXPECT_FALSE(h.solidGeometry.empty());
+
+    // PDF: una línea enorme no se lee (ninguna orden ocupa tanto), las demás sí.
+    const std::string pdf = "1 0 0 RG\n" + longText + "\n0 0 m\n10 0 l\nS\n";
+    for (bool original : {true, false}) {
+        OriginalBugsScope scope(original);
+        EXPECT_NO_FATAL_FAILURE((void)parsePdf(pdf, "MM"));
+    }
 }
 
 namespace {

@@ -22,6 +22,8 @@ namespace {
 constexpr double kPi = 3.14159265358979323846;
 
 // Expresiones regulares del parser original (appParsers/ParseGerber.py).
+/// Largo máximo de una línea que se pasa por std::regex (ver parseLines).
+constexpr std::size_t kMaxLineLength = 4096;
 const std::regex kFmt(R"re(%?FS([LTD])?([AI])X(\d)(\d)Y\d\d\*%?$)re");
 const std::regex kFmtAlt(R"re(%FS([LTD])?([AI])X(\d)(\d)Y\d\d\*MO(IN|MM)\*%$)re");
 const std::regex kFmtOrcad(R"re((G\d+)*\**%FS([LTD])?([AI]).*X(\d)(\d)Y\d\d\*%$)re");
@@ -40,8 +42,6 @@ const std::regex kLpol(R"re(^%LP([DC])\*%$)re");
 const std::regex kSr(R"re(^%SR(?:X(\d+)Y(\d+)I([-+]?[\d.]+)J([-+]?[\d.]+))?\*%$)re");
 const std::regex kUnits(R"re(^G7([01])\*$)re");
 const std::regex kAbsRel(R"re(^G9([01])\*$)re");
-const std::regex kAm1(R"re(^%AM([^\*]+)\*([^%]+)?(%)?$)re");
-const std::regex kAm2(R"re((.*)%$)re");
 
 /// Quita los caracteres indicados de ambos extremos (`str.strip(chars)`).
 std::string strip(const std::string& s, const std::string& chars) {
@@ -489,6 +489,35 @@ bool Gerber::parseLines(const std::vector<std::string>& glines) {
         }
     };
 
+    // Macros de apertura: ^%AM([^\*]+)\*([^%]+)?(%)?$ para la primera línea y (.*)%$ para el final, sin std::regex
+    // (equivalentes; ver kMaxLineLength).
+    auto handleMacro = [&](const std::string& line) {
+        if (!currentMacro) {
+            if (line.rfind("%AM", 0) != 0) return false;
+            const std::size_t star = line.find('*', 3);
+            if (star == std::string::npos || star == 3) return false;
+            std::string rest = line.substr(star + 1);
+            bool closed = false;
+            if (!rest.empty() && rest.back() == '%') {
+                rest.pop_back();
+                closed = true;
+            }
+            if (rest.find('%') != std::string::npos) return false;
+            currentMacro = line.substr(3, star - 3);
+            macros_[*currentMacro] = std::make_shared<ApertureMacro>(*currentMacro);
+            if (!rest.empty()) macros_[*currentMacro]->append(rest);
+            if (closed) currentMacro.reset();
+            return true;
+        }
+        if (!line.empty() && line.back() == '%') {
+            macros_[*currentMacro]->append(line.substr(0, line.size() - 1));
+            currentMacro.reset();
+        } else {
+            macros_[*currentMacro]->append(line);
+        }
+        return true;
+    };
+
     try {
         for (const std::string& rawLine : glines) {
             ++lineNum;
@@ -496,6 +525,15 @@ bool Gerber::parseLines(const std::vector<std::string>& glines) {
             gline = strip(rawLine, " \r\n");
             std::smatch m;
 
+            // std::regex de libstdc++ (Linux) es recursivo por carácter: con una línea de decenas de miles de
+            // caracteres desborda la pila. Un comentario largo se saltea sin expresión regular; cualquier otra línea
+            // larga es un error de lectura (ningún Gerber real tiene líneas así; Python las lee).
+            // Las macros (un contorno de cientos de vértices es una sola orden larga) se leen sin std::regex.
+            if (gline.size() > kMaxLineLength) {
+                if (gline.rfind("G04", 0) == 0 || gline.rfind("G4", 0) == 0) continue;
+                if (handleMacro(gline)) continue;
+                throw std::runtime_error("line too long (" + std::to_string(gline.size()) + " characters)");
+            }
             if (std::regex_search(gline, m, kComm)) continue;
 
             // ---- polaridad de la capa
@@ -591,23 +629,7 @@ bool Gerber::parseLines(const std::vector<std::string>& glines) {
             }
 
             // ---- macros de apertura
-            if (!currentMacro) {
-                if (std::regex_search(gline, m, kAm1)) {
-                    currentMacro = m[1].str();
-                    macros_[*currentMacro] = std::make_shared<ApertureMacro>(*currentMacro);
-                    if (m[2].matched && m[2].length() > 0) macros_[*currentMacro]->append(m[2].str());
-                    if (m[3].matched) currentMacro.reset();
-                    continue;
-                }
-            } else {
-                if (std::regex_search(gline, m, kAm2)) {
-                    macros_[*currentMacro]->append(m[1].str());
-                    currentMacro.reset();
-                } else {
-                    macros_[*currentMacro]->append(gline);
-                }
-                continue;
-            }
+            if (handleMacro(gline)) continue;
 
             // ---- definición de apertura
             if (std::regex_search(gline, m, kAd)) {
@@ -987,7 +1009,8 @@ bool Gerber::parseLines(const std::vector<std::string>& glines) {
         }
         conversionDone_ = false;
     } catch (const std::exception& e) {
-        lastError_ = "Gerber Parser ERROR, line " + std::to_string(lineNum) + " [" + gline + "]: " + e.what();
+        lastError_ = "Gerber Parser ERROR, line " + std::to_string(lineNum) + " [" +
+                     (gline.size() > 200 ? gline.substr(0, 200) + "..." : gline) + "]: " + e.what();
         Logger::error(lastError_);
         return false;
     }
